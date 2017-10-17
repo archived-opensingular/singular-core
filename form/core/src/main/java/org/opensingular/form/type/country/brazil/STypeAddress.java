@@ -31,7 +31,7 @@ public class STypeAddress extends STypeComposite<SIComposite> implements Loggabl
     public STypeString  complemento;
     public STypeString  cidade;
     public STypeCEP     cep;
-    public STypeInteger numero;
+    public STypeString  numero;
     public STypeUF      estado;
     public STypeString  bairro;
     public STypeString  pais;
@@ -45,8 +45,13 @@ public class STypeAddress extends STypeComposite<SIComposite> implements Loggabl
         logradouro = this.addFieldString("logradouro");
         logradouro.asAtr().label("Logradouro").asAtrBootstrap().colPreference(8);
 
-        numero = this.addFieldInteger("numero");
-        numero.asAtr().label("Número").asAtrBootstrap().colPreference(2);
+        numero = this.addFieldString("numero");
+        numero
+                .asAtr()
+                .maxLength(20)
+                .label("Número")
+                .asAtrBootstrap()
+                .colPreference(2);
 
         complemento = this.addFieldString("complemento");
         complemento.asAtr().label("Complemento").asAtrBootstrap().colPreference(6);
