@@ -99,19 +99,21 @@ public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {
         boolean first = true;
         for (SInstance val : ((SIList<?>) mi).getChildren()) {
             Serializable converted = mi.asAtrProvider().getConverter().toObject(val);
-            String label = mi.asAtrProvider().getDisplayFunction().apply(converted);
-            if (first) {
-                output.append(label);
-                first = false;
-            } else {
-                //TODO implementar logica de auto detecção
-                PhraseBreak phraseBreak = mi.asAtr().phraseBreak();
-                if (phraseBreak == PhraseBreak.BREAK_LINE) {
-                    output.append('\n');
-                } else if (phraseBreak == PhraseBreak.COMMA) {
-                    output.append(", ");
+            if(converted != null) {
+                String label = mi.asAtrProvider().getDisplayFunction().apply(converted);
+                if (first) {
+                    output.append(label);
+                    first = false;
+                } else {
+                    //TODO implementar logica de auto detecção
+                    PhraseBreak phraseBreak = mi.asAtr().phraseBreak();
+                    if (phraseBreak == PhraseBreak.BREAK_LINE) {
+                        output.append('\n');
+                    } else if (phraseBreak == PhraseBreak.COMMA) {
+                        output.append(", ");
+                    }
+                    output.append(label);
                 }
-                output.append(label);
             }
         }
         return output.toString();

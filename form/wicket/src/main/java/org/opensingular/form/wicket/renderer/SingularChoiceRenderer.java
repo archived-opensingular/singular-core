@@ -36,11 +36,17 @@ public class SingularChoiceRenderer implements IChoiceRenderer<Serializable> {
 
     @Override
     public String getDisplayValue(Serializable val) {
+        if(val == null){
+            return null;
+        }
         return String.valueOf(model.getObject().asAtrProvider().getDisplayFunction().apply(val));
     }
 
     @Override
     public String getIdValue(Serializable val, int index) {
+        if (val == null) {
+            return null;
+        }
         return String.valueOf(model.getObject().asAtrProvider().getIdFunction().apply(val));
     }
 

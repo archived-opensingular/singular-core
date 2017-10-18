@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.util.tester.FormTester;
 import org.junit.Test;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
@@ -69,7 +68,7 @@ public class WicketFormUtilsTest {
         assertSame(rootComponent, WicketFormUtils.getRootContainer(idComponent));
         assertTrue(WicketFormUtils.isForInstance(idComponent, idInstance));
 
-        assertSame(idComponent, WicketFormUtils.resolveRefreshingComponent(idComponent));
+        assertSame(idComponent, WicketFormUtils.findUpdatableComponentInHierarchy(idComponent));
     }
 
     @Test

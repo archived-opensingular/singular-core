@@ -124,7 +124,7 @@ public class SelectMapper extends AbstractControlsFieldComponentMapper {
                  */
                 values.forEach(v -> ids.add(idFunction.apply(v)));
 
-                if (!ids.contains(idFunction.apply(converted))) {
+                if (converted != null && !ids.contains(idFunction.apply(converted))) {
 
                     /*
                       Se for requisição Ajax, limpa o campo caso o valor não for encontrado,
