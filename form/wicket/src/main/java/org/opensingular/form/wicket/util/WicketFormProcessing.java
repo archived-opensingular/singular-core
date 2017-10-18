@@ -44,7 +44,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 /*
- * TODO: depois, acho que esta classe tem que deixar de ter métodos estáticos, e se tornar algo plugável e estendível,
+ * TODO: depois, acho que esta classe tem que deixar de ter métodos estáticos, e se tornar algo plugável e extensível,
  *  análogo ao RequestCycle do Wicket.
  * @author ronaldtm
  */
