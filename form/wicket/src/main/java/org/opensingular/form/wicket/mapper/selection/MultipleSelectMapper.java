@@ -75,7 +75,7 @@ public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected ListMultipleChoice<?> retrieveChoices(IModel<? extends SInstance> model, final  IModel<List<Serializable>> valuesModel) {
+    protected ListMultipleChoice<?> retrieveChoices(IModel<? extends SInstance> model, final IModel<List<Serializable>> valuesModel) {
         return new SListMultipleChoice(model.getObject().getName(), new MultipleSelectSInstanceAwareModel(model), valuesModel, renderer(model));
     }
 
@@ -99,24 +99,29 @@ public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {
         boolean first = true;
         for (SInstance val : ((SIList<?>) mi).getChildren()) {
             Serializable converted = mi.asAtrProvider().getConverter().toObject(val);
-            if(converted != null) {
+            if (converted != null) {
                 String label = mi.asAtrProvider().getDisplayFunction().apply(converted);
                 if (first) {
                     output.append(label);
                     first = false;
                 } else {
                     //TODO implementar logica de auto detecção
-                    PhraseBreak phraseBreak = mi.asAtr().phraseBreak();
-                    if (phraseBreak == PhraseBreak.BREAK_LINE) {
-                        output.append('\n');
-                    } else if (phraseBreak == PhraseBreak.COMMA) {
-                        output.append(", ");
-                    }
+                    output.append(processPhraseBreak(mi));
                     output.append(label);
                 }
             }
         }
         return output.toString();
+    }
+
+    private String processPhraseBreak(SInstance mi) {
+        PhraseBreak phraseBreak = mi.asAtr().phraseBreak();
+        if (phraseBreak == PhraseBreak.BREAK_LINE) {
+            return "\n";
+        } else if (phraseBreak == PhraseBreak.COMMA) {
+            return ", ";
+        }
+        return "";
     }
 
 }
