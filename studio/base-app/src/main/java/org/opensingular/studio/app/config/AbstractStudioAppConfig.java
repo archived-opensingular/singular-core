@@ -1,10 +1,10 @@
 package org.opensingular.studio.app.config;
 
-import org.opensingular.form.context.ServiceRegistry;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.spring.SpringSDocumentFactoryEmpty;
-import org.opensingular.form.spring.SpringServiceRegistry;
+import org.opensingular.lib.commons.context.ServiceRegistry;
 import org.opensingular.lib.commons.context.SingularSingletonStrategy;
+import org.opensingular.lib.commons.context.spring.SpringServiceRegistry;
 import org.opensingular.lib.context.singleton.SpringBoundedSingletonStrategy;
 import org.opensingular.studio.app.spring.DefaulSpringSecurityConfig;
 import org.opensingular.studio.app.spring.StudioPersistenceConfiguration;

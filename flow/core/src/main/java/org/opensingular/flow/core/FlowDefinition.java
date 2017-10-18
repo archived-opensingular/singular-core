@@ -38,11 +38,13 @@ import org.opensingular.flow.core.variable.VarService;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.internal.lib.support.spring.injection.SingularSpringInjector;
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.net.Lnk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Collection;
@@ -110,7 +112,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
      *            o tipo da instância da definição a ser instanciada.
      */
     protected FlowDefinition(Class<I> instanceClass) {
-        this(instanceClass, VarService.basic());
+        this(instanceClass, VarService.basic(), null);
     }
 
     /**
@@ -123,23 +125,31 @@ public abstract class FlowDefinition<I extends FlowInstance>
      * @param varService
      *            o serviço de consulta das definições de variáveis.
      */
-    protected FlowDefinition(Class<I> processInstanceClass, VarService varService) {
-        if (!this.getClass().isAnnotationPresent(DefinitionInfo.class)) {
+    protected FlowDefinition(Class<I> processInstanceClass, VarService varService, @Nullable String flowKey) {
+        this.key = resolveFlowKey(flowKey);
+        this.processInstanceClass = Objects.requireNonNull(processInstanceClass, "processInstanceClass");
+        this.variableService = varService;
+        inject(this);
+    }
+
+    @Nonnull
+    private String resolveFlowKey(@Nullable String flowKey) {
+        String key = flowKey;
+        if (key == null) {
+            if (this.getClass().isAnnotationPresent(DefinitionInfo.class)) {
+                key = this.getClass().getAnnotation(DefinitionInfo.class).value();
+            }
+        }
+        key = StringUtils.trimToNull(key);
+        if (key == null) {
             throw new SingularFlowException(
                     "A definição de fluxo (classe " + getClass().getName() + ") deve ser anotada com " +
                             DefinitionInfo.class.getName(), this);
-        }
-        String flowKey = this.getClass().getAnnotation(DefinitionInfo.class).value();
-        Objects.requireNonNull(flowKey, "key");
-        Objects.requireNonNull(processInstanceClass, "processInstanceClass");
-        if (getClass().getSimpleName().equalsIgnoreCase(flowKey)) {
+        } else if (getClass().getSimpleName().equalsIgnoreCase(key)) {
             throw new SingularFlowException("O nome simples da classe do processo(" + getClass().getSimpleName() +
                     ") não pode ser igual a chave definida em @DefinitionInfo.", this);
         }
-        this.key = flowKey;
-        this.processInstanceClass = processInstanceClass;
-        this.variableService = varService;
-        inject(this);
+        return key;
     }
 
     /**
@@ -709,7 +719,8 @@ public abstract class FlowDefinition<I extends FlowInstance>
     @Nonnull
     final <V> V inject(@Nonnull V target) {
         if (injector == null) {
-            injector = SingularSpringInjector.get();
+            Optional<SingularInjector> result = ServiceRegistryLocator.locate().lookupSingularInjectorOpt();
+            injector = result.orElseGet(() -> SingularSpringInjector.get());
         }
         injector.inject(Objects.requireNonNull(target));
         return target;

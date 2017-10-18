@@ -1,7 +1,6 @@
 package org.opensingular.studio.core.panel;
 
 import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
-import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
@@ -61,7 +60,7 @@ public class CrudListContent extends CrudShellContent {
         tableBuilder.setBorderedTable(false);
         StudioTableDefinition configuredStudioTable = getConfiguredStudioTable();
         configuredStudioTable.getColumns()
-                .forEach((name, path) -> tableBuilder.appendPropertyColumn(Model.of(name), ins -> ins.getValue(path)));
+                .forEach((name, path) -> tableBuilder.appendPropertyColumn(Model.of(name), ins -> ins.getField(path).toStringDisplay()));
 
         tableBuilder.appendActionColumn("", (BSDataTableBuilder.BSActionColumnCallback<SInstance, String>)
                 actionColumn -> configuredStudioTable.getActions().forEach(listAction -> {
@@ -121,7 +120,9 @@ public class CrudListContent extends CrudShellContent {
     private class CreateNewHeaderRightButton implements HeaderRightButton {
         @Override
         public void onAction(AjaxRequestTarget target) {
-            getCrudShellManager().replaceContent(target, new CrudEditContent(getCrudShellManager(), CrudListContent.this, null));
+            CrudEditContent crudEditContent = getCrudShellManager()
+                    .makeEditContent(getCrudShellManager().getCrudShellContent(), null);
+            getCrudShellManager().replaceContent(target, crudEditContent);
         }
 
         @Override
@@ -210,7 +211,8 @@ public class CrudListContent extends CrudShellContent {
 
         @Override
         public void onAction(AjaxRequestTarget target, IModel<SInstance> model) {
-            crudShellManager.replaceContent(target, new CrudEditContent(crudShellManager, crudShellManager.getCrudShellContent(), model));
+            CrudEditContent crudEditContent = crudShellManager.makeEditContent(crudShellManager.getCrudShellContent(), model);
+            crudShellManager.replaceContent(target, crudEditContent);
         }
     }
 
@@ -230,7 +232,8 @@ public class CrudListContent extends CrudShellContent {
 
         @Override
         public void onAction(AjaxRequestTarget target, IModel<SInstance> model) {
-            CrudEditContent crudEditContent = new CrudEditContent(crudShellManager, crudShellManager.getCrudShellContent(), model);
+            CrudEditContent crudEditContent = crudShellManager
+                    .makeEditContent(crudShellManager.getCrudShellContent(), model);
             crudEditContent.setViewMode(ViewMode.READ_ONLY);
             crudShellManager.replaceContent(target, crudEditContent);
         }
@@ -254,26 +257,13 @@ public class CrudListContent extends CrudShellContent {
 
         @Override
         public void onAction(AjaxRequestTarget target, IModel<SInstance> model) {
-            RemoveAjaxBehaviour removeAjaxAction = new RemoveAjaxBehaviour(model);
-            crudShellManager.getCrudShellContent().add(removeAjaxAction);
-            target.appendJavaScript("bootbox.confirm('Tem certeza que deseja excluir?', " +
-                    "function(ok){if(ok){Wicket.Ajax.get({u:'" + removeAjaxAction.getCallbackUrl() + "'});}})");
-        }
-
-        private class RemoveAjaxBehaviour extends AbstractDefaultAjaxBehavior {
-            private final IModel<SInstance> model;
-
-            private RemoveAjaxBehaviour(IModel<SInstance> model) {
-                this.model = model;
-            }
-
-            @Override
-            protected void respond(AjaxRequestTarget ajaxRequestTarget) {
+            crudShellManager.addConfirm("Tem certeza que deseja excluir?", target, (ajaxRequestTarget) -> {
                 studioDefinition.getRepository().delete(FormKey.from(model.getObject()));
                 crudShellManager.addToastrMessage(ToastrType.INFO, "Item excluido com sucesso.");
                 crudShellManager.update(ajaxRequestTarget);
-            }
+            });
         }
+
     }
 
 

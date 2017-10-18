@@ -5,7 +5,6 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
-import org.opensingular.form.RefService;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
@@ -14,6 +13,7 @@ import org.opensingular.form.provider.SimpleProvider;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
+import org.opensingular.lib.commons.context.RefService;
 
 import java.util.List;
 import java.util.stream.Collectors;

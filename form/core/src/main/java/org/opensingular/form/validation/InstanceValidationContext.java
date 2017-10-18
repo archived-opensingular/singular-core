@@ -49,6 +49,7 @@ public class InstanceValidationContext {
 
     public void validateAll(SInstance rootInstance) {
         final List<String> pathsWithError = new ArrayList<>();
+        rootInstance.getDocument().updateAttributes(rootInstance, null);
         SInstances.visitPostOrder(rootInstance, (inst, v) -> {
             final InstanceValidatableImpl<?> validatable = new InstanceValidatableImpl<>(inst, this::onError);
             final boolean containsInvalidChild = pathsWithError.stream().anyMatch(s -> s.contains(inst.getPathFull()));

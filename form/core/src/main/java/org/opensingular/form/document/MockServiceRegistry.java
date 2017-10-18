@@ -16,12 +16,12 @@
 
 package org.opensingular.form.document;
 
-import org.opensingular.form.RefService;
-import org.opensingular.form.context.ServiceRegistry;
 import org.opensingular.internal.lib.commons.injection.FieldInjectionInfo;
 import org.opensingular.internal.lib.commons.injection.SingularFieldValueFactory;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.internal.lib.commons.injection.SingularInjectorImpl;
+import org.opensingular.lib.commons.context.RefService;
+import org.opensingular.lib.commons.context.ServiceRegistry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

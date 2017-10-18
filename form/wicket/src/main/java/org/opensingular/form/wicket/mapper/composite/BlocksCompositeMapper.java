@@ -32,6 +32,7 @@ import org.opensingular.form.type.core.SPackageBootstrap;
 import org.opensingular.form.view.Block;
 import org.opensingular.form.view.SViewByBlock;
 import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.feedback.SValidationFeedbackPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
@@ -106,6 +107,11 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
                 targetGrid = targetGrid.newGrid();
                 rootContext.setPreFormPanelFactory(null);
             }
+
+            SValidationFeedbackPanel feedback = ctx.createFeedbackPanel("feedback").setShowBox(true);
+            targetGrid.appendTag("div", feedback);
+
+            targetGrid = targetGrid.newGrid();
 
             for (int i = 0; i < view.getBlocks().size(); i++) {
                 final Block block = view.getBlocks().get(i);

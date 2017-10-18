@@ -46,7 +46,7 @@ class SingularContextImpl extends DelegationSingletonStrategy implements Singula
         if (strategy2 instanceof ResetEnabledSingularSingletonStrategy) {
             ((ResetEnabledSingularSingletonStrategy) strategy2).reset();
         }
-        SingularContextImpl.strategy = null;
+        strategy = null;
     }
 
     @Nonnull

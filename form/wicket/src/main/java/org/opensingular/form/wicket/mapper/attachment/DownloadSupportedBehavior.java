@@ -17,6 +17,8 @@ package org.opensingular.form.wicket.mapper.attachment;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.IResourceListener;
+import org.apache.wicket.Session;
+import org.apache.wicket.SharedResources;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -30,6 +32,8 @@ import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.request.resource.SharedResourceReference;
 import org.apache.wicket.util.string.StringValue;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.document.SDocument;
@@ -88,7 +92,6 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
             getLogger().debug(null, e);
             throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-
     }
 
     private void handleRequest() throws IOException {
@@ -113,6 +116,36 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
         return component.urlFor(this, IResourceListener.INTERFACE, new PageParameters()).toString();
     }
 
+    private AttachmentResource addAttachmentSharedResourceToCurrentSession() {
+        String sessionKey = getSessionKey();
+        getWebApplication().mountResource(AttachmentResource.getMountPath(sessionKey), new SharedResourceReference(sessionKey));
+        AttachmentResource attachmentResource = new AttachmentResource(sessionKey);
+        getSharedResources().add(sessionKey, attachmentResource);
+        return attachmentResource;
+    }
+
+    private String getSessionKey() {
+        return Session.get().getId();
+    }
+
+    protected WebApplication getWebApplication() {
+        return WebApplication.get();
+    }
+
+    public AttachmentResource lookupAttachmentSharedResourceOnCurrentSession() {
+        ResourceReference resourceReference = getSharedResources().get(Session.get().getId());
+        if (resourceReference == null) {
+            return addAttachmentSharedResourceToCurrentSession();
+        } else {
+            return (AttachmentResource) resourceReference.getResource();
+        }
+    }
+
+    protected SharedResources getSharedResources() {
+        return getWebApplication().getSharedResources();
+    }
+
+
     /**
      * Registra um recurso compartilhado do wicket para permitir o download
      * sem bloquear a fila de ajax do wicket.
@@ -124,9 +157,8 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
      * @return
      */
     String getDownloadURL(String attachmentKey, String filename) {
-        final AttachmentResource resource = new AttachmentResource(filename, contentDisposition, findAttachmentRef(attachmentKey));
-        final AttachmentShareHandler shareHandler = new AttachmentShareHandler(attachmentKey, (WebApplication) component.getApplication());
-        return shareHandler.share(resource);
+        AttachmentResource attachmentResource = lookupAttachmentSharedResourceOnCurrentSession();
+        return attachmentResource.addAttachment(filename, contentDisposition, findAttachmentRef(attachmentKey));
     }
 
     public IAttachmentRef findAttachmentRef(String attachmentKey) {
@@ -149,4 +181,5 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
         sDocument.getAttachmentPersistencePermanentHandler().ifPresent(services::add);
         return services;
     }
+
 }

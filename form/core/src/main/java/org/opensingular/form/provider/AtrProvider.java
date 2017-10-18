@@ -73,7 +73,7 @@ public class AtrProvider extends STranslatorForAttribute {
         return (FilteredProvider) getProvider();
     }
 
-    public Provider getProvider() {
+    public <T extends Serializable, S extends SInstance> Provider<T, S> getProvider() {
         return getAttributeValue(SPackageProvider.PROVIDER);
     }
 

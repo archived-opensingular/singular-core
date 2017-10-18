@@ -18,6 +18,8 @@ package org.opensingular.form.context;
 
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.document.TypeLoader;
+import org.opensingular.lib.commons.context.ServiceRegistry;
+import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 
 import java.io.Serializable;
 

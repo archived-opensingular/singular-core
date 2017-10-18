@@ -87,7 +87,7 @@ public interface SingularSingletonStrategy {
 
     /**
      * 
-     * Get an exsisting singleton entry or create it if is necessary using @param singletonFactory
+     * Get an existing singleton entry or create it if is necessary using @param singletonFactory
      * lambda
      * @param classKey
      * @param singletonFactory

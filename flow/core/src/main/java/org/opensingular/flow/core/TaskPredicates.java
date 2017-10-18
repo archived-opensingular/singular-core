@@ -119,7 +119,7 @@ public class TaskPredicates {
         }
 
         @Override
-        public EventType getEventType() {
+        public EventType getDisplayEventType() {
             return eventType;
         }
 
@@ -150,7 +150,7 @@ public class TaskPredicates {
 
         @Override
         public String toString() {
-            return "TaskPredicateImpl [getName()=" + getName() + ", getEventType()=" + getEventType() + ", getFullDescription()=" + getFullDescription() + "]";
+            return "TaskPredicateImpl [getName()=" + getName() + ", getDisplayEventType()=" + getDisplayEventType() + ", getFullDescription()=" + getFullDescription() + "]";
         }
 
     }

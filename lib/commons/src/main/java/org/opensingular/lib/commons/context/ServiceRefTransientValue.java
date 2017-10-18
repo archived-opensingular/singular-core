@@ -14,17 +14,26 @@
  * limitations under the License.
  */
 
-package org.opensingular.internal.lib.commons.injection;
+package org.opensingular.lib.commons.context;
 
 /**
- * Indica que um bean que era esperado não foi localizado no registro de beans em uso.
+ * Faz referência para um serviço que não deverá ser serializado, ou seja, o
+ * valor será descartado em caso de serialização da referência. Tipicamente é
+ * utilizado para referência do tipo cache ou que pode ser recalculada depois.
  *
- * @author Daniel C. Bordin on 17/05/2017.
+ * @author Daniel C. Bordin
  */
-public class SingularBeanNotFoundException extends SingularInjectionException {
+public class ServiceRefTransientValue<T> implements RefService<T> {
 
-    public SingularBeanNotFoundException(FieldInjectionInfo fieldInfo, Object target, String msg, Throwable cause) {
-        super(fieldInfo, target, msg, cause);
+    private final transient T value;
+
+    public ServiceRefTransientValue(T value) {
+        this.value = value;
+    }
+
+    @Override
+    public T get() {
+        return value;
     }
 
 }

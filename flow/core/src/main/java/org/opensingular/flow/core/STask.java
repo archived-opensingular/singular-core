@@ -16,7 +16,6 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.core.entity.TransitionType;
 import org.opensingular.flow.core.property.MetaData;
 import org.opensingular.flow.core.property.MetaDataEnabled;
 
@@ -30,6 +29,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({ "serial", "unchecked" })
 public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
@@ -67,7 +67,7 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
 
     public abstract boolean canReallocate();
 
-    public abstract IEntityTaskType getTaskType();
+    public abstract TaskType getTaskType();
 
     public boolean isImmediateExecution() {
         return false;
@@ -141,16 +141,16 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
     }
 
     public STransition addTransition(String actionName, STask<?> destination) {
-        return addTransition(flowMap.newTransition(this, actionName, destination, TransitionType.H));
+        return addTransition(flowMap.newTransition(this, actionName, destination));
     }
 
     public STransition addTransition(STask<?> destination) {
-        return addTransition(flowMap.newTransition(this, destination.getName(), destination, TransitionType.H));
+        return addTransition(flowMap.newTransition(this, destination.getName(), destination));
     }
 
     public STransition addAutomaticTransition(@Nonnull ITaskPredicate predicate, @Nonnull STask<?> destination) {
         inject(predicate);
-        STransition transition = flowMap.newTransition(this, predicate.getName(), destination, TransitionType.A);
+        STransition transition = flowMap.newTransition(this, predicate.getName(), destination);
         transition.setPredicate(predicate);
         addAutomaticAction(TaskActions.executeTransition(predicate, transition));
         return addTransition(transition);
@@ -206,6 +206,13 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
     @Nonnull
     public List<STransition> getTransitions() {
         return transitions;
+    }
+
+    /** Lists all the transition that arrives to this task. */
+    @Nonnull
+    public List<STransition> getTransitionsArriving() {
+        return getFlowMap().getAllTasks().stream().flatMap(t -> t.transitions.stream()).filter(
+                t -> t.getDestination().equals(this)).collect(Collectors.toList());
     }
 
     /** Recupera a transição com o nome informado ou dispara exception senão encontrar. */

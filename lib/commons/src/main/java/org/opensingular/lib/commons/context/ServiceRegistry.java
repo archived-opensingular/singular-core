@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.context;
+package org.opensingular.lib.commons.context;
 
-import org.opensingular.form.RefService;
-import org.opensingular.form.SingularFormException;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
 
 import javax.annotation.Nonnull;
@@ -42,7 +40,7 @@ public interface ServiceRegistry {
     @Nonnull
     default <T> T lookupServiceOrException(@Nonnull Class<T> targetClass) {
         return lookupService(targetClass).orElseThrow(
-                () -> new SingularFormException("Bean of class " + targetClass + " not found"));
+                () -> new SingularBeanNotFoundException("Bean of class " + targetClass + " not found"));
     }
 
     /**
@@ -54,7 +52,7 @@ public interface ServiceRegistry {
     @Nonnull
     default <T> T lookupServiceOrException(@Nonnull String name, @Nonnull Class<T> targetClass) {
         return lookupService(name, targetClass).orElseThrow(
-                () -> new SingularFormException("Bean of class " + targetClass + " and name " + name + " not found"));
+                () -> new SingularBeanNotFoundException("Bean of class " + targetClass + " and name " + name + " not found"));
     }
 
     /**
@@ -67,7 +65,7 @@ public interface ServiceRegistry {
     @Nonnull
     default <T> T lookupServiceOrException(@Nonnull String name) {
         return (T) lookupService(name).orElseThrow(
-                () -> new SingularFormException("Bean of name " + name + " not found"));
+                () -> new SingularBeanNotFoundException("Bean of name " + name + " not found"));
     }
 
     /**
@@ -75,7 +73,17 @@ public interface ServiceRegistry {
      */
     @Nonnull
     default SingularInjector lookupSingularInjector() {
+        Optional<SingularInjector> injector = lookupService(SingularInjector.class);
+        if (injector.isPresent()) {
+            return injector.get();
+        }
         return SingularInjector.getEmptyInjector();
+    }
+
+    /** Returns {@link SingularInjector} if there is one already configured. */
+    @Nonnull
+    default Optional<SingularInjector> lookupSingularInjectorOpt() {
+        return lookupService(SingularInjector.class);
     }
 
     /**

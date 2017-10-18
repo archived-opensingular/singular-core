@@ -1,7 +1,7 @@
 package org.opensingular.studio.app.spring;
 
-import org.opensingular.form.context.ServiceRegistry;
 import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.lib.commons.context.ServiceRegistry;
 import org.opensingular.lib.commons.context.SingularSingletonStrategy;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.studio.app.config.StudioAppConfig;
