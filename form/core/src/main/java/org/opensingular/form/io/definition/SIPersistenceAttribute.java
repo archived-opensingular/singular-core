@@ -46,12 +46,13 @@ public class SIPersistenceAttribute extends SIComposite {
     }
 
     public void setAttrValue(Object value) {
-        if (value != null && (ClassUtils.isPrimitiveOrWrapper(value.getClass()) || value instanceof String)) {
-            value = String.valueOf(value);
-        } else if (value != null) {
-            value = LAMBDA_VALUE;//NOSONAR
+        Object newValue = value;
+        if (newValue != null && (ClassUtils.isPrimitiveOrWrapper(newValue.getClass()) || newValue instanceof String)) {
+            newValue = String.valueOf(newValue);
+        } else if (newValue != null) {
+            newValue = LAMBDA_VALUE;//NOSONAR
         }
-        this.setValue(getSType().attrValue, value);
+        this.setValue(getSType().attrValue, newValue);
     }
 
     public void setAttrType(String type) {
