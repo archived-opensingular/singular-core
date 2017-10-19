@@ -19,6 +19,6 @@ package org.opensingular.flow.core;
 @FunctionalInterface
 public interface StartedTaskListener  {
 
-    void onTaskStart(TaskInstance taskInstance, ExecutionContext execucaoTask);
+    void onTaskStart(TaskInstance taskInstance, ExecutionContext executionContext);
 
 }

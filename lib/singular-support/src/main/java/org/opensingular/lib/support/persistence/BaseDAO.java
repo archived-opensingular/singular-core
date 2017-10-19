@@ -38,24 +38,24 @@ import java.util.Optional;
 
 public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends SimpleDAO {
 
-    protected Class<T> tipo;
+    protected Class<T> entityClass;
 
-    public BaseDAO(Class<T> tipo) {
-        this.tipo = tipo;
+    public BaseDAO(Class<T> entityClass) {
+        this.entityClass = entityClass;
     }
 
-    public ID save(T novoObj) {
-        return (ID) getSession().save(novoObj);
+    public ID save(T newEntity) {
+        return (ID) getSession().save(newEntity);
     }
 
-    public void saveOrUpdate(T novoObj) {
-        getSession().saveOrUpdate(novoObj);
+    public void saveOrUpdate(T newEntity) {
+        getSession().saveOrUpdate(newEntity);
     }
 
     @Nonnull
     public Optional<T> get(@Nonnull ID id) {
         Objects.requireNonNull(id);
-        return Optional.ofNullable((T) getSession().get(tipo, id));
+        return Optional.ofNullable((T) getSession().get(entityClass, id));
     }
 
     public T getOrException(@Nonnull ID id) {
@@ -63,13 +63,13 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
         if (result.isPresent()) {
             return result.get();
         }
-        throw SingularException.rethrow("Não foi encontrado a entidade " + tipo.getName() + " com ID=" + id);
+        throw SingularException.rethrow("Não foi encontrado a entidade " + entityClass.getName() + " com ID=" + id);
     }
 
     @Nonnull
     public Optional<T> find(@Nonnull ID id) {
         Objects.requireNonNull(id);
-        return Optional.ofNullable((T) getSession().createCriteria(tipo).add(Restrictions.idEq(id)).uniqueResult());
+        return Optional.ofNullable((T) getSession().createCriteria(entityClass).add(Restrictions.idEq(id)).uniqueResult());
     }
 
     @Nonnull
@@ -78,15 +78,15 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
         if (result.isPresent()) {
             return result.get();
         }
-        throw SingularException.rethrow("Não foi encontrado a entidade " + tipo.getName() + " com ID=" + id);
+        throw SingularException.rethrow("Não foi encontrado a entidade " + entityClass.getName() + " com ID=" + id);
     }
 
     public List<T> listAll() {
-        return getSession().createCriteria(tipo).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        return getSession().createCriteria(entityClass).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public T merge(T novoObj) {
-        return (T) getSession().merge(novoObj);
+    public T merge(T newEntity) {
+        return (T) getSession().merge(newEntity);
     }
 
     public void delete(T obj) {
@@ -106,7 +106,7 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
     }
 
     public <T> T findByUniqueProperty(String propertyName, Object value) {
-        return (T) getSession().createCriteria(tipo).add(Restrictions.eq(propertyName, value)).setMaxResults(1).uniqueResult();
+        return (T) getSession().createCriteria(entityClass).add(Restrictions.eq(propertyName, value)).setMaxResults(1).uniqueResult();
     }
 
     public <T> List<T> findByExample(T filter) {
@@ -116,8 +116,8 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
 
     public <T> List<T> findByExample(T filter, Integer maxResults) {
         try {
-            Criteria criteria = getSession().createCriteria(tipo);
-            MirrorList<Field> properties = new Mirror().on(tipo).reflectAll().fields();
+            Criteria criteria = getSession().createCriteria(entityClass);
+            MirrorList<Field> properties = new Mirror().on(entityClass).reflectAll().fields();
 
             for (Field f : properties) {
                 f.setAccessible(true);
@@ -142,7 +142,7 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
 
     @SuppressWarnings("unchecked")
     public <T> List<T> findByProperty(String propertyName, String value, MatchMode matchMode, Integer maxResults) {
-        Criteria criteria = getSession().createCriteria(tipo);
+        Criteria criteria = getSession().createCriteria(entityClass);
 
         if (value != null && !value.isEmpty()) {
             MatchMode mode = matchMode == null ? MatchMode.EXACT : matchMode;

@@ -236,7 +236,7 @@ public final class XPathToolkit {
      * @param n No alvo
      * @return String Retorna o nome por extenso ou null se N for null.
      */
-    public static String getNomeTipo(Node n) {
+    public static String getNodeTypeName(Node n) {
         if (n == null) {
             return null;
         }
@@ -328,7 +328,7 @@ public final class XPathToolkit {
         if (!isNodeTypeElement(result)) {
             throw new SingularException(
                     "O elemento resultante (" + getFullPath(result) + ") não é um Element, mas um " +
-                            getNomeTipo(result));
+                            getNodeTypeName(result));
         }
         return (Element) result;
     }
@@ -360,30 +360,30 @@ public final class XPathToolkit {
      * @param xPath Consulta para seleção dos nodes
      * @return Sempre not null. Se não encontrar nada retorna vazio.
      */
-    public static List<String> getValores(Node contextNode, String xPath) {
+    public static List<String> getValues(Node contextNode, String xPath) {
         List<String> lista = null;
         if (isSelectSimples(xPath)) {
             MElementResult rs = new MElementResult((Element) contextNode, xPath);
             while (rs.next()) {
-                lista = addToList(lista, rs.getValor());
+                lista = addToList(lista, rs.getValue());
             }
         } else {
             NodeList list = selectNodeList(contextNode, xPath);
             int tam = list.getLength();
             for (int i = 0; i < tam; i++) {
-                lista = addToList(lista, MElement.getValorTexto(list.item(i)));
+                lista = addToList(lista, MElement.getValueText(list.item(i)));
             }
         }
         return lista == null ? Collections.emptyList() : lista;
     }
 
-    private static List<String> addToList(List<String> lista, String valor) {
-        List<String> nova = lista;
-        if (valor != null) {
-            if (lista == null) {
+    private static List<String> addToList(List<String> list, String value) {
+        List<String> nova = list;
+        if (value != null) {
+            if (list == null) {
                 nova = new ArrayList<>();
             }
-            nova.add(valor);
+            nova.add(value);
         }
         return nova;
     }
@@ -426,13 +426,13 @@ public final class XPathToolkit {
      * Para caminho simples, faz a pesquisa manual em vez de usar a
      * biblioteca XPath. A diferença de tempo pode ser da ordem de 1000 vezes.
      *
-     * @param pai Elemento onde será pesquisado
+     * @param parent Elemento onde será pesquisado
      * @param path Caminho a ser pesquisa deve conter apenas nomes e /
      * @return O elemento se for encontrado.
      */
-    private static Node findSimples(final Node pai, final String nodePath) {
+    private static Node findSimples(final Node parent, final String nodePath) {
 
-        Node resp = pai;
+        Node resp = parent;
         String path = nodePath;
         if (path.charAt(0) == '/') {
             resp = XmlUtil.getRootParent(resp);
@@ -442,25 +442,25 @@ public final class XPathToolkit {
             path = path.substring(1);
         }
 
-        String nomeElemento;
+        String elementName;
         while ((resp != null) && (path != null)) {
             int pos = path.indexOf('/');
             if (pos == -1) {
-                nomeElemento = path;
+                elementName = path;
                 path = null;
             } else {
-                nomeElemento = path.substring(0, pos);
+                elementName = path.substring(0, pos);
                 path = path.substring(pos + 1);
             }
 
-            if (nomeElemento.charAt(0) == '@') {
+            if (elementName.charAt(0) == '@') {
                 if ((path != null) || !isNodeTypeElement(resp)) {
                     throw SingularException.rethrow("O xPath '" + path + "' é inválido");
                 }
-                return ((Element) resp).getAttributeNode(nomeElemento.substring(1));
+                return ((Element) resp).getAttributeNode(elementName.substring(1));
             }
 
-            resp = XmlUtil.nextSiblingOfTypeElement(resp.getFirstChild(), nomeElemento);
+            resp = XmlUtil.nextSiblingOfTypeElement(resp.getFirstChild(), elementName);
         }
         return resp;
     }

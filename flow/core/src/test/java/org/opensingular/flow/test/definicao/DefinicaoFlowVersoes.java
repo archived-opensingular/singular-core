@@ -17,12 +17,12 @@
 package org.opensingular.flow.test.definicao;
 
 import org.opensingular.flow.core.DefinitionInfo;
+import org.opensingular.flow.core.FlowDefinition;
 import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.ITaskDefinition;
-import org.opensingular.flow.core.FlowDefinition;
+import org.opensingular.flow.core.SFlowUtil;
 import org.opensingular.flow.core.builder.BuilderBusinessRole;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
-import org.opensingular.flow.core.defaults.NullPageStrategy;
 
 @DefinitionInfo("DefVersoes")
 public class DefinicaoFlowVersoes extends FlowDefinition<FlowVersoes> {
@@ -69,7 +69,7 @@ public class DefinicaoFlowVersoes extends FlowDefinition<FlowVersoes> {
 
                 });
                 ITaskDefinition people = () -> "People";
-                flow.addHumanTask(people, papelTecnico).withExecutionPage(new NullPageStrategy());
+                flow.addHumanTask(people, papelTecnico).withExecutionPage(SFlowUtil.dummyITaskPageStrategy());
                 ITaskDefinition end = () -> "End";
                 flow.addEndTask(end);
 
@@ -99,7 +99,7 @@ public class DefinicaoFlowVersoes extends FlowDefinition<FlowVersoes> {
                 flow.addJavaTask(task).call(p -> {
                 });
                 ITaskDefinition people = () -> "People";
-                flow.addHumanTask(people, papelAnalista).withExecutionPage(new NullPageStrategy());
+                flow.addHumanTask(people, papelAnalista).withExecutionPage(SFlowUtil.dummyITaskPageStrategy());
                 ITaskDefinition end = () -> "End";
                 flow.addEndTask(end);
 
@@ -130,7 +130,7 @@ public class DefinicaoFlowVersoes extends FlowDefinition<FlowVersoes> {
 
                 });
                 ITaskDefinition people = () -> "People 2";
-                flow.addHumanTask(people, papelTecnico).withExecutionPage(new NullPageStrategy());
+                flow.addHumanTask(people, papelTecnico).withExecutionPage(SFlowUtil.dummyITaskPageStrategy());
                 ITaskDefinition end = () -> "End 2";
                 flow.addEndTask(end);
 

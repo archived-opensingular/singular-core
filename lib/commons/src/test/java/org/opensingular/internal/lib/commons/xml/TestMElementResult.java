@@ -22,7 +22,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
-import org.w3c.dom.NodeList;
 
 import java.util.Iterator;
 
@@ -44,11 +43,11 @@ public class TestMElementResult {
 
     @Test
     public void createWithNodeList(){
-        MElement pai = MElement.newInstance("raiz");
-        pai.addElement("nome", "joaquim");
-        pai.addElement("idade", "10");
+        MElement parent = MElement.newInstance("raiz");
+        parent.addElement("nome", "joaquim");
+        parent.addElement("idade", "10");
 
-        MElementResult result = new MElementResult(pai.getChildNodes());
+        MElementResult result = new MElementResult(parent.getChildNodes());
 
         Assert.assertEquals(2, result.count());
 
@@ -61,11 +60,11 @@ public class TestMElementResult {
 
     @Test
     public void testAtributesMethods(){
-        MElement pai = MElement.newInstance("raiz");
-        pai.addElement("nome", "joaquim");
-        pai.addElement("idade", "10");
+        MElement parent = MElement.newInstance("raiz");
+        parent.addElement("nome", "joaquim");
+        parent.addElement("idade", "10");
 
-        MElementResult result = new MElementResult(pai.getChildNodes());
+        MElementResult result = new MElementResult(parent.getChildNodes());
         result.next();
 
         result.setAttribute("atr", "val");
@@ -93,10 +92,10 @@ public class TestMElementResult {
 
     @Test
     public void testAttrNSMethods(){
-        MElement pai = MElement.newInstance("raiz");
-        pai.addElement("nome", "joaquim");
+        MElement parent = MElement.newInstance("raiz");
+        parent.addElement("nome", "joaquim");
 
-        MElementResult result = new MElementResult(pai.getChildNodes());
+        MElementResult result = new MElementResult(parent.getChildNodes());
         result.next();
 
         result.setAttributeNS("arg1", "arg2", "arg3");
@@ -114,12 +113,12 @@ public class TestMElementResult {
 
     @Test
     public void testNodeMethods(){
-        MElement pai = MElement.newInstance("raiz");
-        MElement nome = pai.addElement("nome", "joaquim");
-        pai.addElement("nome", "joao");
-        pai.addElement("idade", "10");
+        MElement parent = MElement.newInstance("raiz");
+        MElement name = parent.addElement("nome", "joaquim");
+        parent.addElement("nome", "joao");
+        parent.addElement("idade", "10");
 
-        MElementResult result = new MElementResult(pai.getChildNodes());
+        MElementResult result = new MElementResult(parent.getChildNodes());
         result.next();
 
         result.setNodeValue("valor");
@@ -149,23 +148,23 @@ public class TestMElementResult {
 
     @Test(expected = DOMException.class)
     public void testCompareDocumentPosition(){
-        MElement pai = MElement.newInstance("raiz");
-        MElement nome = pai.addElement("nome", "joaquim");
+        MElement parent = MElement.newInstance("raiz");
+        MElement nome = parent.addElement("nome", "joaquim");
 
-        MElementResult result = new MElementResult(pai.getChildNodes());
+        MElementResult result = new MElementResult(parent.getChildNodes());
         result.next();
         result.compareDocumentPosition(nome);
     }
 
     @Test
     public void testSetTextContentAndSetIdAttribute(){
-        MElement pai = MElement.newInstance("raiz");
-        pai.addElement("nome", "joaquim");
+        MElement parent = MElement.newInstance("raiz");
+        parent.addElement("nome", "joaquim");
 
-        MElementResult result = new MElementResult(pai.getChildNodes());
+        MElementResult result = new MElementResult(parent.getChildNodes());
         result.next();
         result.setTextContent("novo valor");
-        Assert.assertEquals("novo valor", result.getAtual().getTextContent());
+        Assert.assertEquals("novo valor", result.getCurrent().getTextContent());
 
         result.setAttributeNS("arg0", "arg1", "arg2");
         Attr attributeNodeNS = result.getAttributeNodeNS("arg0", "arg1");
@@ -183,12 +182,12 @@ public class TestMElementResult {
 
     @Test
     public void testSomeMethods(){
-        MElement pai = MElement.newInstance("raiz");
-        pai.addElement("nome", "joaquim");
-        pai.addElement("nome", "joao");
-        MElement idade = pai.addElement("idade", "10");
+        MElement parent = MElement.newInstance("raiz");
+        parent.addElement("nome", "joaquim");
+        parent.addElement("nome", "joao");
+        MElement idade = parent.addElement("idade", "10");
 
-        MElementResult result = new MElementResult(pai.getChildNodes());
+        MElementResult result = new MElementResult(parent.getChildNodes());
         result.next();
 
         Assert.assertNull(result.getNamespaceURI());
@@ -212,12 +211,12 @@ public class TestMElementResult {
 
     @Test
     public void testIterator(){
-        MElement pai = MElement.newInstance("raiz");
-        pai.addElement("nome", "joaquim");
-        pai.addElement("nome", "joao");
-        pai.addElement("idade", "10");
+        MElement parent = MElement.newInstance("raiz");
+        parent.addElement("nome", "joaquim");
+        parent.addElement("nome", "joao");
+        parent.addElement("idade", "10");
 
-        MElementResult result = new MElementResult(pai.getChildNodes());
+        MElementResult result = new MElementResult(parent.getChildNodes());
         Iterator<MElement> iterator = result.iterator();
 
         Assert.assertTrue(iterator.hasNext());

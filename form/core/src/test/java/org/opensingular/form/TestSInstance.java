@@ -22,9 +22,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.internal.lib.commons.xml.MElement;
 
 @RunWith(Parameterized.class)
 public class TestSInstance extends TestCaseForm {
@@ -75,8 +75,8 @@ public class TestSInstance extends TestCaseForm {
         assertId(pedido2.getField("itens[0].nome"), 14, 14);
     }
 
-    private static void assertId(SInstance pedido, int idInstancia, int lastId) {
-        Assert.assertEquals((Integer) idInstancia, pedido.getId());
+    private static void assertId(SInstance pedido, int idInstance, int lastId) {
+        Assert.assertEquals((Integer) idInstance, pedido.getId());
         Assert.assertEquals(lastId, pedido.getDocument().getLastId());
     }
 

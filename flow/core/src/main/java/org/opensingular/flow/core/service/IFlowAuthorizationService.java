@@ -16,12 +16,12 @@
 
 package org.opensingular.flow.core.service;
 
-import java.util.Set;
-
 import org.opensingular.flow.core.authorization.AccessLevel;
 
+import java.util.Set;
+
 public interface IFlowAuthorizationService {
-    public Set<String> listProcessDefinitionsWithAccess(String userCod, AccessLevel accessLevel);
-    public boolean hasAccessToProcessDefinition(String processDefinitionKey, String userCod, AccessLevel accessLevel);
-    public boolean hasAccessToProcessInstance(String processInstanceFullId, String userCod, AccessLevel accessLevel);
+    public Set<String> listFlowDefinitionsWithAccess(String userCod, AccessLevel accessLevel);
+    public boolean hasAccessToFlowDefinition(String flowDefinitionKey, String userCod, AccessLevel accessLevel);
+    public boolean hasAccessToFlowInstance(String flowInstanceFullId, String userCod, AccessLevel accessLevel);
 }

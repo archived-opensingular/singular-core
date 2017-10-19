@@ -31,8 +31,8 @@ import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.lowerCase;
 import static org.apache.commons.lang3.StringUtils.substringAfterLast;
-import static org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo.ARQUIVO_NAO_PODE_SER_DE_TAMANHO_0_ZERO;
-import static org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo.TIPO_DE_ARQUIVO_NAO_PERMITIDO;
+import static org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo.FILE_MUST_NOT_HAVE_LENGTH_ZERO;
+import static org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo.FILE_TYPE_NOT_ALLOWED;
 
 public class FileUploadProcessor implements Serializable {
 
@@ -49,10 +49,10 @@ public class FileUploadProcessor implements Serializable {
             final String extension = lowerCase(substringAfterLast(originalFilename, "."));
 
             if (item.getSize() == 0) {
-                responses.add(new UploadResponseInfo(originalFilename, ARQUIVO_NAO_PODE_SER_DE_TAMANHO_0_ZERO));
+                responses.add(new UploadResponseInfo(originalFilename, FILE_MUST_NOT_HAVE_LENGTH_ZERO));
 
             } else if (!(upInfo.isFileTypeAllowed(contentType) || upInfo.isFileTypeAllowed(extension))) {
-                responses.add(new UploadResponseInfo(originalFilename, TIPO_DE_ARQUIVO_NAO_PERMITIDO + Joiner.on(", ").join(upInfo.getAllowedFileExtensions())));
+                responses.add(new UploadResponseInfo(originalFilename, FILE_TYPE_NOT_ALLOWED + Joiner.on(", ").join(upInfo.getAllowedFileExtensions())));
 
             } else {
                 try (InputStream in = item.getInputStream()) {

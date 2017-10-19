@@ -18,23 +18,17 @@
 
 package org.opensingular.form.wicket.mapper.attachment.upload.info;
 
-import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
-import org.opensingular.lib.commons.base.SingularUtil;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.util.List;
 
 public class UploadResponseInfo implements Serializable {
 
-    public static final String ARQUIVO_NAO_PODE_SER_DE_TAMANHO_0_ZERO = "Arquivo não pode ser de tamanho 0 (zero)";
-    public static final String TIPO_DE_ARQUIVO_NAO_PERMITIDO          = "Tipo de arquivo não permitido. <BR> Permitido: ";
+    public static final String FILE_MUST_NOT_HAVE_LENGTH_ZERO = "Arquivo não pode ser de tamanho 0 (zero)";
+    public static final String FILE_TYPE_NOT_ALLOWED = "Tipo de arquivo não permitido. <BR> Permitido: ";
 
     private final AttachmentKey fileId;
     private final String        name;

@@ -112,13 +112,13 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
         assertEquals(caminhoCompletoEsperado, caminho);
 
         String esperadoFull;
-        SInstance raiz = registro.getDocument().getRoot();
+        SInstance root = registro.getDocument().getRoot();
         if (caminho == null) {
-            esperadoFull = raiz.getName();
-        } else if (raiz instanceof SIList) {
-            esperadoFull = raiz.getName() + caminho;
+            esperadoFull = root.getName();
+        } else if (root instanceof SIList) {
+            esperadoFull = root.getName() + caminho;
         } else {
-            esperadoFull = raiz.getName() + "." + caminho;
+            esperadoFull = root.getName() + "." + caminho;
         }
         assertEquals(esperadoFull, esperada.getPathFull());
 
@@ -128,9 +128,9 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
     }
 
     protected static <R extends SInstance & ICompositeInstance> void testAtribuicao(R registro, String path, Object valor,
-                                                                                    int qtdFilhosEsperados) {
+                                                                                    int qtdExpectedChildren) {
         testAtribuicao(registro, path, valor);
-        assertFilhos(registro, qtdFilhosEsperados);
+        assertChildren(registro, qtdExpectedChildren);
     }
 
     protected static <R extends SInstance & ICompositeInstance> void testAtribuicao(R registro, String path, Object valor) {
@@ -138,16 +138,16 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
         assertEquals(valor, registro.getValue(path));
     }
 
-    protected static void assertEqualsList(Object valor, Object... valoresEsperados) {
-        if (!(valor instanceof List)) {
+    protected static void assertEqualsList(Object value, Object... expectedValues) {
+        if (!(value instanceof List)) {
             throw new RuntimeException("Não é uma lista");
         }
-        List<?> valores = (List<?>) valor;
-        assertEquals(valoresEsperados.length, valores.size());
-        for (int i = 0; i < valoresEsperados.length; i++) {
-            if (!Objects.equals(valoresEsperados[i], valores.get(i))) {
+        List<?> values = (List<?>) value;
+        assertEquals(expectedValues.length, values.size());
+        for (int i = 0; i < expectedValues.length; i++) {
+            if (!Objects.equals(expectedValues[i], values.get(i))) {
                 throw new RuntimeException(
-                        "Valores diferentes na posição " + i + ": era esparado " + valoresEsperados[i] + " e veio " + valores.get(i));
+                        "Valores diferentes na posição " + i + ": era esparado " + expectedValues[i] + " e veio " + values.get(i));
             }
         }
     }
@@ -155,30 +155,30 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
     /**
      * Faz alguns verifições quanto a integridade dos filhos;
      */
-    protected static void assertFilhos(SInstance pai, int qtdFilhosEsperados) {
+    protected static void assertChildren(SInstance parent, int qtdExpectChildren) {
         int[] counter = new int[1];
-        assertNotNull(pai.getDocument());
-        assertFilhos(pai, pai, counter);
-        assertEquals(qtdFilhosEsperados, counter[0]);
+        assertNotNull(parent.getDocument());
+        assertChildren(parent, parent, counter);
+        assertEquals(qtdExpectChildren, counter[0]);
 
-        SInstance atual = pai;
-        while (atual != null) {
-            assertEquals(pai.getDocument(), atual.getDocument());
-            if (atual.getParent() == null) {
-                assertEquals(atual, pai.getDocument().getRoot());
+        SInstance current = parent;
+        while (current != null) {
+            assertEquals(parent.getDocument(), current.getDocument());
+            if (current.getParent() == null) {
+                assertEquals(current, parent.getDocument().getRoot());
             }
-            atual = atual.getParent();
+            current = current.getParent();
         }
 
     }
 
-    private static void assertFilhos(SInstance raiz, SInstance pai, int[] counter) {
-        if (pai instanceof ICompositeInstance) {
-            for (SInstance filho : ((ICompositeInstance) pai).getChildren()) {
-                assertEquals(raiz.getDocument(), filho.getDocument());
-                assertEquals(pai, filho.getParent());
+    private static void assertChildren(SInstance root, SInstance parent, int[] counter) {
+        if (parent instanceof ICompositeInstance) {
+            for (SInstance child : ((ICompositeInstance) parent).getChildren()) {
+                assertEquals(root.getDocument(), child.getDocument());
+                assertEquals(parent, child.getParent());
                 counter[0]++;
-                assertFilhos(raiz, filho, counter);
+                assertChildren(root, child, counter);
             }
         }
     }

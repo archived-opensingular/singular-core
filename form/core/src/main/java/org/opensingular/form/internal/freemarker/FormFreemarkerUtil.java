@@ -158,14 +158,14 @@ public final class FormFreemarkerUtil {
     }
 
     private Configuration newConfiguration(TemplateExceptionHandler exceptionHandler) {
-        Configuration novo = new Configuration(Configuration.VERSION_2_3_22);
-        novo.setDefaultEncoding(StandardCharsets.UTF_8.name());
-        novo.setLocale(new Locale("pt", "BR"));
-        novo.setTemplateExceptionHandler(exceptionHandler);
+        Configuration conf = new Configuration(Configuration.VERSION_2_3_22);
+        conf.setDefaultEncoding(StandardCharsets.UTF_8.name());
+        conf.setLocale(new Locale("pt", "BR"));
+        conf.setTemplateExceptionHandler(exceptionHandler);
         if (configurationConsumer != null) {
-            configurationConsumer.accept(novo);
+            configurationConsumer.accept(conf);
         }
-        return novo;
+        return conf;
     }
 
 }

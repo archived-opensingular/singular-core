@@ -65,8 +65,8 @@ public final class SFormXMLUtil {
      * conteúdo persistido no XML informado.
      */
     @Nonnull
-    public static <T extends SInstance> T fromXML(@Nonnull SType<T> tipo, @Nullable String xmlString) {
-        return fromXMLInterno(tipo.newInstance(), parseXml(xmlString));
+    public static <T extends SInstance> T fromXML(@Nonnull SType<T> type, @Nullable String xmlString) {
+        return fromXMLInterno(type.newInstance(), parseXml(xmlString));
     }
 
     /**
@@ -74,8 +74,8 @@ public final class SFormXMLUtil {
      * conteúdo persistido no XML informado.
      */
     @Nonnull
-    public static <T extends SInstance> T fromXML(@Nonnull SType<T> tipo, @Nullable MElement xml) {
-        return fromXMLInterno(tipo.newInstance(), xml);
+    public static <T extends SInstance> T fromXML(@Nonnull SType<T> type, @Nullable MElement xml) {
+        return fromXMLInterno(type.newInstance(), xml);
     }
 
     /**
@@ -95,8 +95,8 @@ public final class SFormXMLUtil {
     @Nonnull
     public static <T extends SInstance> T fromXML(@Nonnull RefType refType, @Nullable MElement xml,
                                                   @Nonnull SDocumentFactory documentFactory) {
-        SInstance novo = documentFactory.createInstance(refType, false);
-        return (T) fromXMLInterno(novo, xml);
+        SInstance instance = documentFactory.createInstance(refType, false);
+        return (T) fromXMLInterno(instance, xml);
     }
 
     @Nonnull
@@ -108,35 +108,35 @@ public final class SFormXMLUtil {
      * Preenche a instância criada com o xml fornecido.
      */
     @Nonnull
-    private static <T extends SInstance> T fromXMLInterno(@Nonnull T novo, @Nullable MElement xml) {
+    private static <T extends SInstance> T fromXMLInterno(@Nonnull T newInstance, @Nullable MElement xml) {
         Integer lastId = 0;
         if (xml != null) {
             lastId = xml.getInteger("@" + ATRIBUTO_LAST_ID);
         }
 
         // Colocar em modo de não geraçao de IDs
-        novo.getDocument().initRestoreMode();
-        fromXML(novo, xml);
+        newInstance.getDocument().initRestoreMode();
+        fromXML(newInstance, xml);
 
-        int maxId = verificarIds(novo, new HashSet<>());
+        int maxId = verifyIds(newInstance, new HashSet<>());
         if (lastId == null) {
-            novo.getDocument().setLastId(maxId);
+            newInstance.getDocument().setLastId(maxId);
         } else {
-            novo.getDocument().setLastId(lastId);
+            newInstance.getDocument().setLastId(lastId);
         }
-        novo.getDocument().finishRestoreMode();
-        return novo;
+        newInstance.getDocument().finishRestoreMode();
+        return newInstance;
     }
 
-    private static int verificarIds(@Nonnull SInstance instancia, @Nonnull Set<Integer> ids) {
-        Integer id = instancia.getId();
+    private static int verifyIds(@Nonnull SInstance instance, @Nonnull Set<Integer> ids) {
+        Integer id = instance.getId();
         if (ids.contains(id)) {
-            throw new SingularFormException("A instance tem ID repetido (igual a outra instância) id=" + id, instancia);
+            throw new SingularFormException("A instance tem ID repetido (igual a outra instância) id=" + id, instance);
         }
-        if (instancia instanceof ICompositeInstance) {
+        if (instance instanceof ICompositeInstance) {
             int max = id;
-            for (SInstance filho : ((ICompositeInstance) instancia).getChildren()) {
-                max = Math.max(max, verificarIds(filho, ids));
+            for (SInstance child : ((ICompositeInstance) instance).getChildren()) {
+                max = Math.max(max, verifyIds(child, ids));
             }
             return max;
         }
@@ -147,7 +147,7 @@ public final class SFormXMLUtil {
         if (xml == null)
             return; // Não precisa fazer nada
         instance.clearInstance();
-        lerAtributos(instance, xml);
+        readAttributes(instance, xml);
         if (instance instanceof SISimple) {
             fromXMLSISImple((SISimple<?>) instance, xml);
         } else if (instance instanceof SIComposite) {
@@ -194,15 +194,15 @@ public final class SFormXMLUtil {
         }
     }
 
-    private static void lerAtributos(SInstance instancia, MElement xml) {
-        NamedNodeMap atributos = xml.getAttributes();
-        if (atributos != null) {
-            for (int i = 0; i < atributos.getLength(); i++) {
-                Attr at = (Attr) atributos.item(i);
+    private static void readAttributes(SInstance instance, MElement xml) {
+        NamedNodeMap attributes = xml.getAttributes();
+        if (attributes != null) {
+            for (int i = 0; i < attributes.getLength(); i++) {
+                Attr at = (Attr) attributes.item(i);
                 if (at.getName().equals(ATRIBUTO_ID)) {
-                    instancia.setId(Integer.valueOf(at.getValue()));
+                    instance.setId(Integer.valueOf(at.getValue()));
                 } else if (!at.getName().equals(ATRIBUTO_LAST_ID)) {
-                    InternalAccess.INTERNAL.setAttributeValueSavingForLatter(instancia, at.getName(), at.getValue());
+                    InternalAccess.INTERNAL.setAttributeValueSavingForLatter(instance, at.getName(), at.getValue());
                 }
             }
         }
@@ -237,8 +237,8 @@ public final class SFormXMLUtil {
      * @return Se a instância não conter nenhum valor, então retorna um resultado null no Optional
      */
     @Nonnull
-    public static Optional<MElement> toXML(@Nonnull SInstance instancia) {
-        return Optional.ofNullable(createDefaultBuilder().toXML(instancia));
+    public static Optional<MElement> toXML(@Nonnull SInstance instance) {
+        return Optional.ofNullable(createDefaultBuilder().toXML(instance));
     }
 
     /**
@@ -248,8 +248,8 @@ public final class SFormXMLUtil {
      * @return Se a instância não conter nenhum valor, então retorna um XML com apenas o nome do tipo da instância.
      */
     @Nonnull
-    public static MElement toXMLOrEmptyXML(@Nonnull SInstance instancia) {
-        return createDefaultBuilder().withReturnNullXML(false).toXML(instancia);
+    public static MElement toXMLOrEmptyXML(@Nonnull SInstance instance) {
+        return createDefaultBuilder().withReturnNullXML(false).toXML(instance);
     }
 
     /**
@@ -264,9 +264,9 @@ public final class SFormXMLUtil {
      * (provavelemnte temporariamente durante a tela de edição).
      */
     @Nonnull
-    public static MElement toXMLPreservingRuntimeEdition(@Nonnull SInstance instancia) {
+    public static MElement toXMLPreservingRuntimeEdition(@Nonnull SInstance instance) {
         return new PersistenceBuilderXML().withPersistNull(true).withPersistAttributes(true).withReturnNullXML(false)
-                .toXML(instancia);
+                .toXML(instance);
     }
 
     private static boolean hasKeepNodePredicatedInAnyChildren(@Nonnull SType<?> type) {
@@ -307,15 +307,15 @@ public final class SFormXMLUtil {
             xmlResult = conf.createMElement(instance);
         }
         if (parentName != null) {
-            MElement novo = xmlDocument.createMElement(parentName);
-            novo.addElement(xmlResult);
-            xmlResult = novo;
+            MElement newElement = xmlDocument.createMElement(parentName);
+            newElement.addElement(xmlResult);
+            xmlResult = newElement;
         }
         if (parent != null) {
             parent.addElement(xmlResult);
             return parent;
         }
-        xmlDocument.setRaiz(xmlResult);
+        xmlDocument.setRoot(xmlResult);
         if (builder.isPersistId()) {
             xmlResult.setAttribute(ATRIBUTO_LAST_ID, Integer.toString(instance.getDocument().getLastId()));
         }
@@ -430,8 +430,8 @@ public final class SFormXMLUtil {
             SISimple<?> iSimples = (SISimple<?>) instance;
             String sPersistence = iSimples.toStringPersistence();
             if (sPersistence != null) {
-                newElement = conf.createMElementComValor(instance, sPersistence);
-            } else if (conf.isPersistirNull() || instance.as(AtrXML::new).getKeepNodePredicate().test(instance)) {
+                newElement = conf.createMElementWithValue(instance, sPersistence);
+            } else if (conf.isPersistNull() || instance.as(AtrXML::new).getKeepNodePredicate().test(instance)) {
                 newElement = conf.createMElement(instance);
             }
         } else if (instance instanceof ICompositeInstance) {
@@ -497,32 +497,32 @@ public final class SFormXMLUtil {
             this.xmlDocument = xmlDocument;
         }
 
-        public boolean isPersistirNull() {
+        public boolean isPersistNull() {
             return builder.isPersistNull();
         }
 
-        public MElement createMElement(SInstance instancia) {
-            return complement(instancia, xmlDocument.createMElement(instancia.getType().getNameSimple()));
+        public MElement createMElement(SInstance instance) {
+            return complement(instance, xmlDocument.createMElement(instance.getType().getNameSimple()));
         }
 
-        public MElement createMElementComValor(SInstance instancia, String valorPersistencia) {
-            return complement(instancia, xmlDocument.createMElementComValor(instancia.getType().getNameSimple(), valorPersistencia));
+        public MElement createMElementWithValue(SInstance instance, String persistenceValue) {
+            return complement(instance, xmlDocument.createMElementWithValue(instance.getType().getNameSimple(), persistenceValue));
         }
 
-        private MElement complement(SInstance instancia, MElement element) {
-            Integer id = instancia.getId();
+        private MElement complement(SInstance instance, MElement element) {
+            Integer id = instance.getId();
             if (builder.isPersistId()) {
                 element.setAttribute(ATRIBUTO_ID, id.toString());
             }
             if (builder.isPersistAttributes()) {
-                for (SInstance atr : instancia.getAttributes()) {
+                for (SInstance atr : instance.getAttributes()) {
                     String name = atr.getAttributeInstanceInfo().getName();
                     if (atr instanceof SISimple) {
                         String sPersistence = ((SISimple<?>) atr).toStringPersistence();
                         element.setAttribute(name, sPersistence);
                     } else {
                         throw new SingularFormException("Não implementada a persitência de atributos compostos: " + name,
-                                instancia);
+                                instance);
                     }
                 }
             }

@@ -27,8 +27,6 @@ import org.opensingular.lib.commons.base.SingularUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @SInfoType(name = "DateTime", spackage = SPackageCore.class)
 public class STypeDateTime extends STypeSimple<SIDateTime, Date> {
@@ -39,8 +37,8 @@ public class STypeDateTime extends STypeSimple<SIDateTime, Date> {
         super(SIDateTime.class, Date.class);
     }
 
-    protected STypeDateTime(Class<? extends SIDateTime> classeInstancia) {
-        super(classeInstancia, Date.class);
+    protected STypeDateTime(Class<? extends SIDateTime> instanceClass) {
+        super(instanceClass, Date.class);
     }
 
     public Date fromString(String value) {

@@ -186,20 +186,20 @@ public abstract class SInstance implements SAttributeEnabled {
         return attributeInstanceInfo == null ? null : attributeInstanceInfo.getInstanceOwner();
     }
 
-    final void setParent(SInstance pai) {
+    final void setParent(SInstance parent) {
         /*
          * exceção adicionada por vinicius nunes, para adicionar uma instancia a
          * outra hierarquia deveria haver uma chamada para 'destacar' a
          * minstancia da sua hierarquia atual
          */
-        if (this.parent != null && pai != null) {
+        if (this.parent != null && parent != null) {
             throw new SingularFormException(String.format(" Não é possível adicionar uma MIstancia criada em uma hierarquia à outra."
                     + " MInstancia adicionada a um objeto do tipo %s já pertence à outra hierarquia de MInstancia."
                     + " O pai atual é do tipo %s. ", this.getClass().getName(), this.parent.getClass().getName()), this);
         }
-        this.parent = pai;
-        if (pai != null && pai.isAttribute()) {
-            attributeInstanceInfo = pai.attributeInstanceInfo;
+        this.parent = parent;
+        if (parent != null && parent.isAttribute()) {
+            attributeInstanceInfo = parent.attributeInstanceInfo;
         }
     }
 
@@ -650,9 +650,9 @@ public abstract class SInstance implements SAttributeEnabled {
         return (Optional<V>) nearest.map(it -> it.getValueWithDefault());
     }
 
-    public <V> Optional<V> findNearestValue(SType<?> targetType, Class<V> classeValor) {
+    public <V> Optional<V> findNearestValue(SType<?> targetType, Class<V> valueClass) {
         Optional<? extends SInstance> nearest = SInstances.findNearest(this, targetType);
-        return nearest.map(it -> classeValor.cast(it.getValueWithDefault(classeValor)));
+        return nearest.map(it -> valueClass.cast(it.getValueWithDefault(valueClass)));
     }
 
     public boolean isDescendantOf(SInstance ancestor) {

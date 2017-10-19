@@ -18,7 +18,7 @@ package org.opensingular.flow.persistence.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.opensingular.flow.core.SUser;
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityFlowInstance;
 import org.opensingular.flow.core.entity.IEntityRoleDefinition;
 import org.opensingular.flow.core.entity.IEntityRoleInstance;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
@@ -44,12 +44,12 @@ import java.util.Date;
  * <code>@GenericGenerator(name = AbstractRoleInstance.PK_GENERATOR_NAME, strategy = "org.hibernate.id.IdentityGenerator")</code>
  *
  * @param <USER>
- * @param <PROCESS_INSTANCE>
+ * @param <FLOW_INSTANCE>
  * @param <ROLE_DEF>
  */
 @MappedSuperclass
 @Table(name = "TB_INSTANCIA_PAPEL")
-public abstract class AbstractRoleInstanceEntity<USER extends SUser, PROCESS_INSTANCE extends IEntityProcessInstance, ROLE_DEF extends IEntityRoleDefinition> extends BaseEntity<Integer> implements IEntityRoleInstance {
+public abstract class AbstractRoleInstanceEntity<USER extends SUser, FLOW_INSTANCE extends IEntityFlowInstance, ROLE_DEF extends IEntityRoleDefinition> extends BaseEntity<Integer> implements IEntityRoleInstance {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_INSTANCIA_PAPEL";
 
@@ -60,7 +60,7 @@ public abstract class AbstractRoleInstanceEntity<USER extends SUser, PROCESS_INS
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_INSTANCIA_PROCESSO", nullable = false, updatable = false)
-    private PROCESS_INSTANCE processInstance;
+    private FLOW_INSTANCE flowInstance;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_DEFINICAO_PAPEL", nullable = false, updatable = false)
@@ -88,12 +88,12 @@ public abstract class AbstractRoleInstanceEntity<USER extends SUser, PROCESS_INS
     }
 
     @Override
-    public PROCESS_INSTANCE getProcessInstance() {
-        return processInstance;
+    public FLOW_INSTANCE getFlowInstance() {
+        return flowInstance;
     }
 
-    public void setProcessInstance(PROCESS_INSTANCE processInstance) {
-        this.processInstance = processInstance;
+    public void setFlowInstance(FLOW_INSTANCE flowInstance) {
+        this.flowInstance = flowInstance;
     }
 
     @Override

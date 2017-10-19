@@ -16,13 +16,12 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 import org.hibernate.annotations.GenericGenerator;
-
 import org.opensingular.lib.support.persistence.util.Constants;
 import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * The persistent class for the TB_INSTANCIA_PAPEL database table.
@@ -30,7 +29,7 @@ import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGen
 @Entity
 @GenericGenerator(name = AbstractRoleInstanceEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_INSTANCIA_PAPEL", schema = Constants.SCHEMA)
-public class RoleInstanceEntity extends AbstractRoleInstanceEntity<Actor, ProcessInstanceEntity, RoleDefinitionEntity> {
+public class RoleInstanceEntity extends AbstractRoleInstanceEntity<Actor, FlowInstanceEntity, RoleDefinitionEntity> {
     private static final long serialVersionUID = 1L;
 
 }

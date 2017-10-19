@@ -49,76 +49,76 @@ public class Value {
         this.instance = instance;
     }
 
-    private static SInstance getInstance(SInstance instancia, SType target) {
-        return (SInstance) instancia.findNearest(target).orElse(null);
+    private static SInstance getInstance(SInstance instance, SType target) {
+        return (SInstance) instance.findNearest(target).orElse(null);
     }
 
     /**
      * @param current instancia a partir da qual será buscada a instancia mais
      *                proxima do tipo simples tipo
-     * @param tipo    um tipo simples
+     * @param type    um tipo simples
      * @return false se o valor do tipo simples for nulo ou se o tipo não for
      * encontrado a partir da instancia current informada
      */
-    public static <T extends Serializable> boolean notNull(SInstance current, STypeSimple<? extends SISimple<T>, T> tipo) {
-        return Value.of(current, tipo) != null;
+    public static <T extends Serializable> boolean notNull(SInstance current, STypeSimple<? extends SISimple<T>, T> type) {
+        return Value.of(current, type) != null;
     }
 
-    public static boolean notNull(SInstance current, STypeComposite tipo) {
-        if (current != null && tipo != null) {
-            SIComposite targetInstance = (SIComposite) getInstance(current, tipo);
+    public static boolean notNull(SInstance current, STypeComposite type) {
+        if (current != null && type != null) {
+            SIComposite targetInstance = (SIComposite) getInstance(current, type);
             return Value.notNull(targetInstance);
         }
         return false;
     }
 
 
-    public static boolean notNull(SInstance current, STypeList tipo) {
-        if (current != null && tipo != null) {
-            SIList instanciaLista = (SIList) getInstance(current, tipo);
-            return Value.notNull(instanciaLista);
+    public static boolean notNull(SInstance current, STypeList type) {
+        if (current != null && type != null) {
+            SIList listInstance = (SIList) getInstance(current, type);
+            return Value.notNull(listInstance);
         }
         return false;
     }
 
-    public static boolean notNull(SIList instanciaLista) {
-        return instanciaLista != null && !instanciaLista.isEmpty();
+    public static boolean notNull(SIList listInstance) {
+        return listInstance != null && !listInstance.isEmpty();
     }
 
-    public static boolean notNull(SIComposite instanciaComposta) {
-        return instanciaComposta != null && !instanciaComposta.isEmptyOfData();
+    public static boolean notNull(SIComposite compositeInstance) {
+        return compositeInstance != null && !compositeInstance.isEmptyOfData();
     }
 
-    public static boolean notNull(SISimple instanciaSimples) {
-        return instanciaSimples != null && !instanciaSimples.isEmptyOfData();
+    public static boolean notNull(SISimple simpleInstance) {
+        return simpleInstance != null && !simpleInstance.isEmptyOfData();
     }
 
     /**
      * Retorna o valor de uma instancia simples
      */
-    public static <T> T of(SISimple<?> instanciaSimples) {
-        if (instanciaSimples != null) {
-            return (T) instanciaSimples.getValue();
+    public static <T> T of(SISimple<?> simpleInstance) {
+        if (simpleInstance != null) {
+            return (T) simpleInstance.getValue();
         }
         return null;
     }
 
-    public static <T> List<T> ofList(SIList<?> lista) {
-        if (lista != null) {
-            return (List<T>) lista.getValue();
+    public static <T> List<T> ofList(SIList<?> list) {
+        if (list != null) {
+            return (List<T>) list.getValue();
         }
         return null;
     }
 
-    public static boolean notNull(SInstance instancia) {
-        if (instancia instanceof SIComposite) {
-            return Value.notNull((SIComposite) instancia);
-        } else if (instancia instanceof SISimple) {
-            return Value.notNull((SISimple) instancia);
-        } else if (instancia instanceof SIList) {
-            return Value.notNull((SIList) instancia);
+    public static boolean notNull(SInstance instance) {
+        if (instance instanceof SIComposite) {
+            return Value.notNull((SIComposite) instance);
+        } else if (instance instanceof SISimple) {
+            return Value.notNull((SISimple) instance);
+        } else if (instance instanceof SIList) {
+            return Value.notNull((SIList) instance);
         } else {
-            throw new SingularFormException("Tipo de instancia não suportado", instancia);
+            throw new SingularFormException("Tipo de instancia não suportado", instance);
         }
     }
 
@@ -126,9 +126,9 @@ public class Value {
      * Passar a usar {@link SInstance#getValue(String)}.
      */
     @Deprecated
-    public static <T extends Serializable> T of(SInstance instanciaComposta, String...path) {
-        if (instanciaComposta instanceof SIComposite) {
-            SInstance campo = ((SIComposite) instanciaComposta).getField(Arrays.stream(path).collect(Collectors.joining(".")));
+    public static <T extends Serializable> T of(SInstance compositeInstance, String...path) {
+        if (compositeInstance instanceof SIComposite) {
+            SInstance campo = ((SIComposite) compositeInstance).getField(Arrays.stream(path).collect(Collectors.joining(".")));
             if (campo instanceof SISimple) {
                 return Value.of((SISimple<T>) campo);
             } else if (campo instanceof SIList) {
@@ -138,17 +138,17 @@ public class Value {
         return null;
     }
 
-    public static String stringValueOf(SInstance instanciaComposta, String path) {
-        Serializable s = of(instanciaComposta, path);
+    public static String stringValueOf(SInstance compositeInstance, String path) {
+        Serializable s = of(compositeInstance, path);
         if (s != null) {
             return String.valueOf(s);
         }
         return null;
     }
 
-    public static <T> List<T> ofList(SInstance instanciaComposta, String path) {
-        if (instanciaComposta instanceof SIComposite) {
-            SInstance campo = ((SIComposite) instanciaComposta).getField(path);
+    public static <T> List<T> ofList(SInstance compositeInstance, String path) {
+        if (compositeInstance instanceof SIComposite) {
+            SInstance campo = ((SIComposite) compositeInstance).getField(path);
             if (campo instanceof SIList) {
                 return Value.ofList((SIList<?>) campo);
             }
@@ -160,9 +160,9 @@ public class Value {
      * Retorna o valor de uma instancia de um tipo simples que pode ser
      * alcançada a partir do {@param instancia} fornecido
      */
-    public static <T extends Serializable> T of(SInstance instancia, STypeSimple<? extends SISimple<T>, T> tipo) {
-        if (instancia != null && tipo != null) {
-            SISimple targetInstance = (SISimple) getInstance(instancia, tipo);
+    public static <T extends Serializable> T of(SInstance instance, STypeSimple<? extends SISimple<T>, T> type) {
+        if (instance != null && type != null) {
+            SISimple targetInstance = (SISimple) getInstance(instance, type);
             if (targetInstance != null) {
                 return (T) Value.of(targetInstance);
             }
@@ -193,16 +193,16 @@ public class Value {
         }
     }
 
-    private static void fromMap(Map<String, Content> map, SIComposite instancia) {
+    private static void fromMap(Map<String, Content> map, SIComposite instance) {
         for (Map.Entry<String, Content> entry : map.entrySet()) {
-            hydrate(instancia.getField(entry.getKey()), entry.getValue());
+            hydrate(instance.getField(entry.getKey()), entry.getValue());
         }
     }
 
     private static void fromList(List<Content> list, SIList sList) {
         for (Content o : list) {
-            SInstance novo = sList.addNew();
-            hydrate(novo, o);
+            SInstance newInstance = sList.addNew();
+            hydrate(newInstance, o);
         }
     }
 
@@ -232,29 +232,29 @@ public class Value {
         return null;
     }
 
-    private static void toMap(Map<String, Content> value, SInstance instancia) {
-        if (instancia instanceof SIComposite) {
-            SIComposite item = (SIComposite) instancia;
+    private static void toMap(Map<String, Content> value, SInstance instance) {
+        if (instance instanceof SIComposite) {
+            SIComposite item = (SIComposite) instance;
             for (SInstance i : item.getAllChildren()) {
                 value.put(i.getName(), dehydrate(i));
             }
         }
     }
 
-    private static void toList(List<Content> value, SInstance instancia) {
-        if (instancia instanceof SIList<?>) {
-            for (SInstance i : ((SIList<?>) instancia).getValues()) {
+    private static void toList(List<Content> value, SInstance instance) {
+        if (instance instanceof SIList<?>) {
+            for (SInstance i : ((SIList<?>) instance).getValues()) {
                 value.add(dehydrate(i));
             }
         }
     }
 
-    public <T extends Serializable> T of(STypeSimple<? extends SISimple<T>, T> tipo) {
-        return Value.of(instance, tipo);
+    public <T extends Serializable> T of(STypeSimple<? extends SISimple<T>, T> type) {
+        return Value.of(instance, type);
     }
 
-    public <T extends Serializable> boolean notNull(STypeSimple<? extends SISimple<T>, T> tipo) {
-        return Value.notNull(instance, tipo);
+    public <T extends Serializable> boolean notNull(STypeSimple<? extends SISimple<T>, T> type) {
+        return Value.notNull(instance, type);
     }
 
     /** Copia os valores de um formulário para outro. Presupõem que os formulários são do mesmo tipo. */

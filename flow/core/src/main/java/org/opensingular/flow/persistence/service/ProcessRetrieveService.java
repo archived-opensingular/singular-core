@@ -17,7 +17,7 @@
 package org.opensingular.flow.persistence.service;
 
 import org.hibernate.Hibernate;
-import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
+import org.opensingular.flow.persistence.entity.FlowInstanceEntity;
 import org.opensingular.flow.persistence.entity.util.SessionLocator;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,8 +39,8 @@ public class ProcessRetrieveService extends AbstractHibernateService {
      */
     @Deprecated
     @Nonnull
-    public ProcessInstanceEntity retrieveProcessInstanceByCod(@Nonnull Integer cod) {
-        ProcessInstanceEntity pi =  getSession().retrieveOrException(ProcessInstanceEntity.class, cod);
+    public FlowInstanceEntity retrieveFlowInstanceByCod(@Nonnull Integer cod) {
+        FlowInstanceEntity pi =  getSession().retrieveOrException(FlowInstanceEntity.class, cod);
         pi.getTasks().forEach(t -> {
             Hibernate.initialize(t.getTaskVersion());
             Hibernate.initialize(t.getAllocatedUser());

@@ -42,9 +42,9 @@ public enum SimNao implements EnumId<SimNao, String> {
 
     @Override
     public SimNao valueOfEnum(String codigo) {
-        for (SimNao tipo : values()) {
-            if (tipo.getCodigo().equals(codigo)) {
-                return tipo;
+        for (SimNao type : values()) {
+            if (type.getCodigo().equals(codigo)) {
+                return type;
             }
         }
 

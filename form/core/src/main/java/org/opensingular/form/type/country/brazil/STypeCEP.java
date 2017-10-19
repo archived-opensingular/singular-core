@@ -16,10 +16,10 @@
 
 package org.opensingular.form.type.country.brazil;
 
-import org.opensingular.form.TypeBuilder;
-import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.SInfoType;
+import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.validation.validator.InstanceValidators;
 import org.opensingular.lib.commons.util.Loggable;
 
@@ -39,12 +39,12 @@ public class STypeCEP extends STypeString implements Loggable {
     }
 
     @Override
-    public String convert(Object valor) {
+    public String convert(Object value) {
         try {
-            return format(super.convert(valor));
+            return format(super.convert(value));
         } catch (Exception e) {
             getLogger().trace(e.getMessage(), e);
-            return String.valueOf(valor);
+            return String.valueOf(value);
         }
     }
 

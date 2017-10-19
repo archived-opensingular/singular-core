@@ -90,14 +90,14 @@ public class TableToolTreeTest {
 
     private TableOutputSimulated generateWithTreeData(TableTool table) {
         List<Integer> values = Lists.newArrayList(3, 210, 10);
-        table.setLeitorArvore(new LeitorArvore() {
+        table.setReaderByTree(new TreeLineReader() {
             @Override
-            public Object getRaizes() {
+            public Object getRoots() {
                 return values;
             }
 
             @Override
-            public Object getFilhos(Object item) {
+            public Object getChildren(Object item) {
                 int v = (Integer) item;
                 if (v > 9) {
                     List<Integer> list = new ArrayList<>();
@@ -111,10 +111,10 @@ public class TableToolTreeTest {
             }
 
             @Override
-            public void recuperarValores(LineReadContext ctx, Object current, InfoLinha line) {
-                line.get(0).setValor("P" + current);
-                line.get(1).setValor(current);
-                line.get(2).setValor(ctx.getLevel());
+            public void retrieveValues(LineReadContext ctx, Object current, LineInfo line) {
+                line.get(0).setValue("P" + current);
+                line.get(1).setValue(current);
+                line.get(2).setValue(ctx.getLevel());
             }
         });
         TableOutputSimulated output = new TableOutputSimulated();

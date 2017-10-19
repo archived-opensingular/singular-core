@@ -132,10 +132,10 @@ public abstract class TableToolSimpleBaseTest extends AbstractTestTempFileSuppor
     }
 
     private <T> void setSimpleData(TableTool table, Iterable<? extends T> values) {
-        table.setLeitorTabelaSimples(values, (ctx, current, line) -> {
-            line.get(0).setValor("P"+current);
-            line.get(1).setValor(current);
-            line.get(2).setValor(((Number) current).intValue() * 10);
+        table.setReaderByLine(values, (ctx, current, line) -> {
+            line.get(0).setValue("P"+current);
+            line.get(1).setValue(current);
+            line.get(2).setValue(((Number) current).intValue() * 10);
         });
     }
 

@@ -20,7 +20,7 @@ package org.opensingular.flow.core;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityFlowVersion;
 import org.opensingular.flow.test.support.TestFlowSupport;
 
 import static org.junit.Assert.assertNotNull;
@@ -36,9 +36,9 @@ public class SingularFlowConfigurationBeanTest extends TestFlowSupport {
 
 
     @Test
-    public void inexistentProcessVersionShouldReturnNull() throws Exception {
-        IEntityProcessVersion entityProcessVersion = mbpmBean.getPersistenceService().retrieveProcessVersionByCod(0);
+    public void inexistentFlowVersionShouldReturnNull() throws Exception {
+        IEntityFlowVersion entityFlowVersion = mbpmBean.getPersistenceService().retrieveFlowVersionByCod(0);
 
-        assertNull(entityProcessVersion);
+        assertNull(entityFlowVersion);
     }
 }

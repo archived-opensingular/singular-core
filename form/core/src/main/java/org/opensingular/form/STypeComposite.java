@@ -218,8 +218,8 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     public <I extends SIComposite> STypeList<STypeComposite<I>, I> addFieldListOfComposite(@Nonnull String fieldSimpleName,
             @Nonnull String simpleNameNewCompositeType) {
         checkNameNewField(fieldSimpleName);
-        STypeList<STypeComposite<I>, I> novo = createListOfNewTypeComposite(fieldSimpleName, simpleNameNewCompositeType);
-        return addInternal(fieldSimpleName, novo);
+        STypeList<STypeComposite<I>, I> newList = createListOfNewTypeComposite(fieldSimpleName, simpleNameNewCompositeType);
+        return addInternal(fieldSimpleName, newList);
     }
     
     /**
@@ -241,10 +241,10 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     @Nonnull
     public STypeAttachmentList addFieldListOfAttachment(@Nonnull String listName, @Nonnull String fieldName) {
         checkNameNewField(listName);
-        STypeAttachmentList novo = extendType(listName, STypeAttachmentList.class);
-        novo.setView(SViewAttachmentList::new);
-        novo.setElementsTypeFieldName(fieldName);
-        return addInternal(listName, novo);
+        STypeAttachmentList newList = extendType(listName, STypeAttachmentList.class);
+        newList.setView(SViewAttachmentList::new);
+        newList.setElementsTypeFieldName(fieldName);
+        return addInternal(listName, newList);
     }
 
     public SType<?> getField(String fieldSimpleName) {

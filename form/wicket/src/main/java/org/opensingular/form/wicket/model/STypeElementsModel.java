@@ -16,13 +16,13 @@
 
 package org.opensingular.form.wicket.model;
 
+import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeList;
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
-import org.apache.wicket.model.IDetachable;
-import org.apache.wicket.model.IModel;
 
 import java.io.Serializable;
 
@@ -37,17 +37,17 @@ public class STypeElementsModel
 
     @Override
     public SType<SInstance> getObject() {
-        return getTipoElementos(rootTarget);
+        return getElementsType(rootTarget);
     }
 
     @SuppressWarnings("unchecked")
-    public static SType<SInstance> getTipoElementos(Object obj) {
+    public static SType<SInstance> getElementsType(Object obj) {
         if (obj instanceof SIList<?>)
             return ((SIList<SInstance>) obj).getElementsType();
         if (obj instanceof STypeList<?, ?>)
             return ((STypeList<SType<SInstance>, SInstance>) obj).getElementsType();
         if (obj instanceof IModel<?>)
-            return getTipoElementos(((IModel<?>) obj).getObject());
+            return getElementsType(((IModel<?>) obj).getObject());
 
         throw new IllegalArgumentException();
     }

@@ -42,17 +42,17 @@ public class TestXMLToolkitWriter {
             PrintWriter writer = new PrintWriter(arquivoTemp);
 
             MDocument document = MDocument.newInstance();
-            MElement raiz = document.createRaiz("raiz");
-            raiz.setAttributeNS("uri", "name", "value");
+            MElement root = document.createRoot("raiz");
+            root.setAttributeNS("uri", "name", "value");
 
-            raiz.addInt("inteiro", "123").setAttributeNS("uri", "name", "value");
-            raiz.addElement("nome", "valor\n");
+            root.addInt("inteiro", "123").setAttributeNS("uri", "name", "value");
+            root.addElement("nome", "valor\n");
 
             document.createComment("comentario pra dar erro");
 
-            elementWriter.printDocument(writer, raiz, false, false);
-            elementWriter.printDocument(writer, raiz, false);
-            elementWriter.printDocumentIndentado(writer, raiz, false);
+            elementWriter.printDocument(writer, root, false, false);
+            elementWriter.printDocument(writer, root, false);
+            elementWriter.printDocumentIndentado(writer, root, false);
             writer.close();
         }
     }

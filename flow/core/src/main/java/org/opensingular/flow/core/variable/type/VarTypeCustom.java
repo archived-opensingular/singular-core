@@ -37,8 +37,8 @@ public class VarTypeCustom extends VarTypeBase {
     }
 
     @Override
-    public String toDisplayString(Object valor, VarDefinition varDefinition) {
-        return valor == null ? null : valor.toString();
+    public String toDisplayString(Object value, VarDefinition varDefinition) {
+        return value == null ? null : value.toString();
     }
 
     @Override

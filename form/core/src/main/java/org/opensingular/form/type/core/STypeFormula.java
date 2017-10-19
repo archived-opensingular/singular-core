@@ -22,8 +22,8 @@ import org.opensingular.form.STypeComposite;
 @SInfoType(name = "Formula", spackage = SPackageCore.class)
 public class STypeFormula extends STypeComposite<SIFormula> {
 
-    public static final String CAMPO_SCRIPT = "script";
-    public static final String CAMPO_TIPO_SCRIPT = "tipoScript";
+    public static final String FIELD_SCRIPT = "script";
+    public static final String FIELD_SCRIPT_TYPE = "scriptType";
 
     public STypeFormula() {
         super(SIFormula.class);
@@ -32,12 +32,12 @@ public class STypeFormula extends STypeComposite<SIFormula> {
     //For now this is not usefull
     //    @Override
     //    protected void onLoadType(TypeBuilder tb) {
-    //        addFieldString(CAMPO_SCRIPT);
-    //        STypeString tipo = addFieldString(CAMPO_TIPO_SCRIPT);
+    //        addFieldString(FIELD_SCRIPT);
+    //        STypeString tipo = addFieldString(FIELD_SCRIPT_TYPE);
     //        tipo.selectionOfEnum(TipoScript.class);
     //    }
 
-    public enum TipoScript {
+    public enum ScriptType {
         JS
     }
 }

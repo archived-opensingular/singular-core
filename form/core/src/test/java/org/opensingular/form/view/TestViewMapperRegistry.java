@@ -18,14 +18,8 @@
 
 package org.opensingular.form.view;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Before;
 import org.junit.Test;
-
-import org.opensingular.form.view.SView;
-import org.opensingular.form.view.ViewMapperRegistry;
-import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -37,6 +31,9 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.country.brazil.STypeCEP;
 import org.opensingular.form.type.country.brazil.STypeCNPJ;
 import org.opensingular.form.type.country.brazil.STypeCPF;
+import org.opensingular.lib.commons.base.SingularUtil;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestViewMapperRegistry {
 
@@ -156,8 +153,8 @@ public class TestViewMapperRegistry {
 
     private void assertResult(String expected, Class<? extends SType> type, Class<? extends SView> view) {
         try {
-            SDictionary dicionario = SDictionary.create();
-            assertResult(expected, dicionario.newInstance(type), view.newInstance());
+            SDictionary dictionary = SDictionary.create();
+            assertResult(expected, dictionary.newInstance(type), view.newInstance());
         } catch (InstantiationException | IllegalAccessException e) {
             throw SingularUtil.propagate(e);
         }

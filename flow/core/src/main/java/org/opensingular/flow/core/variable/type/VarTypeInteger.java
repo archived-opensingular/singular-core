@@ -28,8 +28,8 @@ public class VarTypeInteger extends VarTypeBase<Integer> {
     }
 
     @Override
-    public String toDisplayString(Object valor, VarDefinition varDefinition) {
-        return Integer.toString(convert(valor));
+    public String toDisplayString(Object value, VarDefinition varDefinition) {
+        return Integer.toString(convert(value));
     }
 
     @Override

@@ -27,9 +27,9 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.helpers.AssertionsXML;
-import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.internal.lib.commons.xml.MElement;
 
 @RunWith(Parameterized.class)
 public class TestFormXMLUtil extends TestCaseForm {
@@ -55,14 +55,14 @@ public class TestFormXMLUtil extends TestCaseForm {
         SIComposite instance = SFormXMLUtil.fromXML(bloco, xml);
         assertInstance(instance).isValueEquals("a", "1");
 
-        MElement novo = SFormXMLUtil.toXML(instance).get();
+        MElement newElement = SFormXMLUtil.toXML(instance).get();
 
-        assertEquals("bloco", novo.getTagName());
-        assertEquals("1", novo.getValor("a"));
-        assertEquals("2", novo.getValor("b[1]"));
-        assertEquals("9", novo.getValor("b[1]/@id"));
-        assertEquals("3", novo.getValor("b[2]"));
-        assertEquals("4", novo.getValor("c/d"));
+        assertEquals("bloco", newElement.getTagName());
+        assertEquals("1", newElement.getValue("a"));
+        assertEquals("2", newElement.getValue("b[1]"));
+        assertEquals("9", newElement.getValue("b[1]/@id"));
+        assertEquals("3", newElement.getValue("b[2]"));
+        assertEquals("4", newElement.getValue("c/d"));
     }
 
     @Test
@@ -87,14 +87,14 @@ public class TestFormXMLUtil extends TestCaseForm {
         assertInstance(instance).isValueEquals("[0].a","1");
         assertInstance(instance).isValueEquals("[1].a","5");
 
-        MElement novo = SFormXMLUtil.toXML(instance).get();
+        MElement newElement = SFormXMLUtil.toXML(instance).get();
 
-        assertEquals("itens", novo.getTagName());
-        assertEquals("1", novo.getValor("item[1]/a"));
-        assertEquals("5", novo.getValor("item[2]/a"));
-        assertEquals("2", novo.getValor("b[1]"));
-        assertEquals("3", novo.getValor("b[2]"));
-        assertEquals("4", novo.getValor("c/d"));
+        assertEquals("itens", newElement.getTagName());
+        assertEquals("1", newElement.getValue("item[1]/a"));
+        assertEquals("5", newElement.getValue("item[2]/a"));
+        assertEquals("2", newElement.getValue("b[1]"));
+        assertEquals("3", newElement.getValue("b[2]"));
+        assertEquals("4", newElement.getValue("c/d"));
     }
 
     @Test

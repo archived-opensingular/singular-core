@@ -16,10 +16,10 @@
 
 package org.opensingular.form.event;
 
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SIList;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
 
 import java.util.List;
 
@@ -31,9 +31,9 @@ public class SInstanceListeners {
         if (hasListenersFor(SInstanceEventType.VALUE_CHANGED))
             fireInstanceEvent(SInstanceEventType.VALUE_CHANGED, new SInstanceValueChangeEvent(instance, oldValue, newValue));
     }
-    public void fireInstanceAttributeChanged(SInstance instance, SInstance attributeInstance, Object oldValue, Object valor) {
+    public void fireInstanceAttributeChanged(SInstance instance, SInstance attributeInstance, Object oldValue, Object value) {
         if (hasListenersFor(SInstanceEventType.ATTRIBUTE_CHANGED))
-            fireInstanceEvent(SInstanceEventType.ATTRIBUTE_CHANGED, new SInstanceAttributeChangeEvent(instance, attributeInstance, oldValue, valor));
+            fireInstanceEvent(SInstanceEventType.ATTRIBUTE_CHANGED, new SInstanceAttributeChangeEvent(instance, attributeInstance, oldValue, value));
     }
     public void fireInstanceListElementAdded(SIList<?> listInstance, SInstance addedInstance, int index) {
         if (hasListenersFor(SInstanceEventType.LIST_ELEMENT_ADDED))

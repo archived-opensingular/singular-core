@@ -51,11 +51,11 @@ public class SPackageTesteContatos extends SPackage {
         sobrenome = identificacao.addFieldString("sobrenome");
 //        sobrenome.as(MPacoteBasic.aspect())
 //            .visible(i -> {
-//                boolean visible = i.findAncestor(contato).get().findDescendant(nome).get().getValor() == null;
+//                boolean visible = i.findAncestor(contato).get().findDescendant(nome).get().getValue() == null;
 //                System.out.println(">>> " + visible);
 //                return visible;
 //            })
-//            .enabled(i -> defaultString(i.findAncestor(contato).get().findDescendant(nome).get().getValor()).length() > 3);
+//            .enabled(i -> defaultString(i.findAncestor(contato).get().findDescendant(nome).get().getValue()).length() > 3);
 
         enderecos = contato.addFieldListOfComposite("enderecos", "endereco");
         endereco = enderecos.getElementsType();

@@ -17,9 +17,9 @@
 package org.opensingular.form.builder.selection;
 
 import org.opensingular.form.SInstance;
-import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.form.SType;
 import org.opensingular.form.provider.FreemarkerUtil;
+import org.opensingular.lib.commons.lambda.IFunction;
 
 import java.io.Serializable;
 
@@ -39,8 +39,8 @@ public class SelectionDisplayBuilder<TYPE extends Serializable, ROOT_TYPE extend
         return next();
     }
 
-    public ConverterBuilder<TYPE, ROOT_TYPE, ELEMENT_TYPE> display(IFunction<TYPE, String> valor) {
-        type.asAtrProvider().displayFunction(valor);
+    public ConverterBuilder<TYPE, ROOT_TYPE, ELEMENT_TYPE> display(IFunction<TYPE, String> value) {
+        type.asAtrProvider().displayFunction(value);
         return next();
     }
 

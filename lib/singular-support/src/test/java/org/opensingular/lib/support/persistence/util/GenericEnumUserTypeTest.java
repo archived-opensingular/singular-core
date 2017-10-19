@@ -102,14 +102,14 @@ public class GenericEnumUserTypeTest {
     @Test
     @Transactional
     public void testNullSafeGetAndSet() throws SQLException {
-        TestEntity novoObj = new TestEntity(20, "name", "field");
-        dao.save(novoObj);
+        TestEntity newObj = new TestEntity(20, "name", "field");
+        dao.save(newObj);
         TestEntity testEntities = dao.listAll().get(0);
 
-        dao.saveOrUpdate(novoObj);
+        dao.saveOrUpdate(newObj);
 
         testEntities.setSimNaoEnum(SimNao.SIM);
-        dao.saveOrUpdate(novoObj);
+        dao.saveOrUpdate(newObj);
 
         SimNao simNaoEnum = dao.find(20).get().getSimNaoEnum();
 

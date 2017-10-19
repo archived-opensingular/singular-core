@@ -23,6 +23,6 @@ import java.io.Serializable;
 @FunctionalInterface
 public interface IProcessCreationPageStrategy extends Serializable {
 
-    public Lnk getCreatePageFor(FlowDefinition<?> definicaoProcesso, SUser user);
+    public Lnk getCreatePageFor(FlowDefinition<?> flowDefinition, SUser user);
 
 }

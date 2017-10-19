@@ -80,17 +80,17 @@ public class TableOutputHtml extends TableOutput {
         return this;
     }
 
-    final TableOutputHtml printAtributo(String nomeAtributo, int value) {
-        return printAtributo(nomeAtributo, Integer.toString(value));
+    final TableOutputHtml printAttribute(String attributeName, int value) {
+        return printAttribute(attributeName, Integer.toString(value));
     }
 
-    final TableOutputHtml printAtributo(String nomeAtributo, String valor) {
-        if (valor != null) {
+    final TableOutputHtml printAttribute(String attributeName, String value) {
+        if (value != null) {
             PrintWriter out = getOut();
             out.print(' ');
-            out.print(nomeAtributo);
+            out.print(attributeName);
             out.print("=\"");
-            out.print(valor);
+            out.print(value);
             out.print('"');
         }
         return this;
@@ -101,13 +101,13 @@ public class TableOutputHtml extends TableOutput {
         println();
         print("<table id='"+tableid+"' cellpadding='0' cellspacing='0'");
         if (tableTool.isStrippedLines()) {
-            printAtributo("class", "T_t table table-bordered table-condensed table-hover table-striped");
+            printAttribute("class", "T_t table table-bordered table-condensed table-hover table-striped");
         } else {
-            printAtributo("class", "T_t table table-bordered table-condensed table-hover");
+            printAttribute("class", "T_t table table-bordered table-condensed table-hover");
         }
-        printAtributo("width", tableTool.getWidth());
-        printAtributo("align", tableTool.getAlign());
-        printAtributo("id", tableTool.getId());
+        printAttribute("width", tableTool.getWidth());
+        printAttribute("align", tableTool.getAlign());
+        printAttribute("id", tableTool.getId());
         decorate(tableTool.getDecorator());
         println(">");
     }
@@ -149,12 +149,12 @@ public class TableOutputHtml extends TableOutput {
     }
 
     @Override
-    public void generateLineSimpleStart(OutputTableContext ctx, InfoLinha line, int lineAlternation) {
+    public void generateLineSimpleStart(OutputTableContext ctx, LineInfo line, int lineAlternation) {
         if (lineAlternation != -1 ) {
-            line.getDecorador().setCssClass(lineAlternation == 0 ? "T_ls0" : "T_ls1");
+            line.getDecorator().setCssClass(lineAlternation == 0 ? "T_ls0" : "T_ls1");
         }
         print("  <tr");
-        decorate(line.getDecorador());
+        decorate(line.getDecorator());
         println(">");
     }
 
@@ -164,13 +164,13 @@ public class TableOutputHtml extends TableOutput {
     }
 
     @Override
-    public void generateLineTreeStart(OutputTableContext ctx, InfoLinha line, int nivel) {
-        if (ctx.getDecorador().getCssClass() == null) {
-            ctx.getDecorador().setCssClass(nivel <= 4 ? "T_R_" + nivel : "T_R_N");
+    public void generateLineTreeStart(OutputTableContext ctx, LineInfo line, int level) {
+        if (ctx.getDecorator().getCssClass() == null) {
+            ctx.getDecorator().setCssClass(level <= 4 ? "T_R_" + level : "T_R_N");
         }
 
         print("  <tr");
-        decorate(line.getDecorador());
+        decorate(line.getDecorator());
         println(">");
     }
 
@@ -205,10 +205,10 @@ public class TableOutputHtml extends TableOutput {
         PrintWriter out = getOut();
         out.print("   <th");
         if (column.getWidth() != null) {
-            printAtributo("width", column.getWidth());
+            printAttribute("width", column.getWidth());
         }
         if (rowSpan > 1) {
-            printAtributo("rowspan", Integer.toString(rowSpan));
+            printAttribute("rowspan", Integer.toString(rowSpan));
         }
         generateTitleCellClassAttribute(column, asSubTitle, columnWithSeparator, out);
         decorate(column.getDecoratorTitle());
@@ -284,7 +284,7 @@ public class TableOutputHtml extends TableOutput {
         PrintWriter out = getOut();
         out.print("   <th");
         if (colSpan > 1) {
-            printAtributo("colspan", colSpan);
+            printAttribute("colspan", colSpan);
         }
         printClass(out, "T_tit_super", cColumnWithSeparator);
         out.print(">");
@@ -303,7 +303,7 @@ public class TableOutputHtml extends TableOutput {
     }
 
     @Override
-    public void generateTotalLineStart(@Nonnull OutputTableContext ctx, @Nonnull InfoLinha totalLine,
+    public void generateTotalLineStart(@Nonnull OutputTableContext ctx, @Nonnull LineInfo totalLine,
             @Nonnull Decorator tempDecorator, int level) {
         if (level != -1) {
             if (level <= 2) {
@@ -372,7 +372,7 @@ public class TableOutputHtml extends TableOutput {
     @Override
     public void generateCell(@Nonnull OutputCellContext ctx) {
 
-        InfoCelula cell = ctx.getCell();
+        InfoCell cell = ctx.getCell();
         Column column = ctx.getColumn();
         DecoratorCell tempDecorator = ctx.getTempDecorator();
 
@@ -410,7 +410,7 @@ public class TableOutputHtml extends TableOutput {
         out.println("</td>");
     }
 
-    private void cellTagsOpen(@Nonnull OutputCellContext ctx, InfoCelula cell, Column column, PrintWriter out) {
+    private void cellTagsOpen(@Nonnull OutputCellContext ctx, InfoCell cell, Column column, PrintWriter out) {
         if (column.isSmall()) {
             out.print("<small>");
         }
@@ -425,7 +425,7 @@ public class TableOutputHtml extends TableOutput {
         }
     }
 
-    private void cellTagsClose(@Nonnull OutputCellContext ctx, InfoCelula cell, Column column, PrintWriter out) {
+    private void cellTagsClose(@Nonnull OutputCellContext ctx, InfoCell cell, Column column, PrintWriter out) {
         if (cell.getLink() != null) {
             out.print("</a>");
         }
@@ -440,7 +440,7 @@ public class TableOutputHtml extends TableOutput {
         }
     }
 
-    private void generateLink(InfoCelula cell, PrintWriter out) {
+    private void generateLink(InfoCell cell, PrintWriter out) {
         WebRef link = cell.getLink();
         out.print("<a href=\"");
         if (link.isJs()) {
@@ -462,10 +462,10 @@ public class TableOutputHtml extends TableOutput {
         }
         out.print('"');
         if (cell.getLinkTarget() != null) {
-            printAtributo("target", cell.getLinkTarget());
+            printAttribute("target", cell.getLinkTarget());
         }
         if (cell.getLinkTitle() != null) {
-            printAtributo("title", cell.getLinkTitle());
+            printAttribute("title", cell.getLinkTitle());
         }
         out.print('>');
     }
@@ -488,8 +488,8 @@ public class TableOutputHtml extends TableOutput {
         }
     }
 
-    private static String gerarAcoes(ViewOutputHtml out, InfoCelula cell) {
-        return cell.getAcoes().stream().filter(Predicates.notNull()).filter(WebRef::appliesToContext).map(
+    private static String gerarAcoes(ViewOutputHtml out, InfoCell cell) {
+        return cell.getActions().stream().filter(Predicates.notNull()).filter(WebRef::appliesToContext).map(
                 webActionEnabled -> webActionEnabled.generateHtml(out.getUrlApp())).filter(Predicates.notNull())
                 .collect(
                 Collectors.joining());
@@ -501,10 +501,10 @@ public class TableOutputHtml extends TableOutput {
      */
     final void decorateCell(@Nonnull DecoratorCell decorator) {
         if (decorator.getColSpan() > 1) {
-            printAtributo("colspan", decorator.getColSpan());
+            printAttribute("colspan", decorator.getColSpan());
         }
         if (decorator.getRowSpan() > 1) {
-            printAtributo("rowspan", decorator.getRowSpan());
+            printAttribute("rowspan", decorator.getRowSpan());
         }
         decorate(decorator);
     }
@@ -515,7 +515,7 @@ public class TableOutputHtml extends TableOutput {
      */
     final void decorate(@Nonnull Decorator decorator) {
         StringBuilder builder = new StringBuilder();
-        printAtributo("class", decorator.getCssClass());
+        printAttribute("class", decorator.getCssClass());
         if (!decorator.getStyles().isEmpty()) {
             addDecoratorStyles(decorator, builder);
         }

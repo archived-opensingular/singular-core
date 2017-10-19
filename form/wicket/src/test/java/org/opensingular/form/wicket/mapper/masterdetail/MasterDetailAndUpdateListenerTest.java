@@ -34,11 +34,11 @@ public class MasterDetailAndUpdateListenerTest {
 
         SingularDummyFormPageTester ctx = new SingularDummyFormPageTester();
         ctx.getDummyPage().setTypeBuilder(root ->  {
-            STypeList valores = root.addFieldListOfComposite("valores", "valor");
-            valores.withView(SViewListByMasterDetail::new);
+            STypeList values = root.addFieldListOfComposite("valores", "valor");
+            values.withView(SViewListByMasterDetail::new);
             STypeMonetary total = (STypeMonetary) root.addField("total", STypeMonetary.class);
             total.asAtr()
-                    .dependsOn(valores)
+                    .dependsOn(values)
                     .updateListener(i -> {
                         i.findNearest(total).ifPresent(ix -> ix.setValue("10"));
                     });

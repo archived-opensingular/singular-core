@@ -30,6 +30,6 @@ public interface IEntityRoleInstance extends IEntityByCod<Integer> {
 
     SUser getAllocatorUser();
 
-    IEntityProcessInstance getProcessInstance();
+    IEntityFlowInstance getFlowInstance();
 
 }

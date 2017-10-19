@@ -60,7 +60,7 @@ public class ReportPageTest extends WicketTestCase {
                 tableTool.addColumn(ColumnType.STRING, "nome");
                 tableTool.createSimpleTablePopulator()
                         .insertLine()
-                        .setValor(0, "Danilo");
+                        .setValue(0, "Danilo");
                 return tableTool;
             }
         };

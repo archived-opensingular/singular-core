@@ -56,7 +56,7 @@ public class TableOutputSimulated extends TableOutput {
     public void generateBodyBlockEnd(@Nonnull OutputTableContext ctx) {}
 
     @Override
-    public void generateLineSimpleStart(OutputTableContext ctx, InfoLinha line, int lineAlternation) {
+    public void generateLineSimpleStart(OutputTableContext ctx, LineInfo line, int lineAlternation) {
         table.addLine();
     }
 
@@ -64,7 +64,7 @@ public class TableOutputSimulated extends TableOutput {
     public void generateLineSimpleEnd(OutputTableContext ctx) { }
 
     @Override
-    public void generateLineTreeStart(OutputTableContext ctx, InfoLinha line, int nivel) {
+    public void generateLineTreeStart(OutputTableContext ctx, LineInfo line, int level) {
         table.addLine();
     }
 
@@ -123,7 +123,7 @@ public class TableOutputSimulated extends TableOutput {
     public void generateTotalBlockEnd(@Nonnull OutputTableContext ctx) {}
 
     @Override
-    public void generateTotalLineStart(@Nonnull OutputTableContext ctx, @Nonnull InfoLinha totalLine,
+    public void generateTotalLineStart(@Nonnull OutputTableContext ctx, @Nonnull LineInfo totalLine,
             @Nonnull Decorator tempDecorator, int level) {
         table.addLine();
     }

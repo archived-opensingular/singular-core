@@ -25,7 +25,7 @@ import org.junit.runners.MethodSorters;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.persistence.entity.ExecutionVariableEntity;
-import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
+import org.opensingular.flow.persistence.entity.FlowInstanceEntity;
 import org.opensingular.flow.persistence.entity.VariableInstanceEntity;
 import org.opensingular.flow.persistence.entity.VariableTypeInstance;
 import org.opensingular.flow.test.definicao.DefinicaoComVariaveis;
@@ -57,9 +57,9 @@ public class InstanciaDefinicaoComVariavelTest extends TestFlowSupport {
 
     @Test()
     public void teste2PersistenciaVariaveis() {
-        DefinicaoComVariaveis d = mbpmBean.getProcessDefinition(DefinicaoComVariaveis.class);
-        List<ProcessInstanceEntity> instances = testDAO.findAllProcessInstancesByDefinition(d.getEntityProcessVersion());
-        for (ProcessInstanceEntity p : instances) {
+        DefinicaoComVariaveis d = mbpmBean.getFlowDefinition(DefinicaoComVariaveis.class);
+        List<FlowInstanceEntity> instances = testDAO.findAllFlowInstancesByDefinition(d.getEntityFlowVersion());
+        for (FlowInstanceEntity p : instances) {
             List<VariableInstanceEntity> variables = testDAO.retrieveVariablesByInstance(p.getCod());
             assertEquals(2, variables.size());
             List<ExecutionVariableEntity> executionVariables = testDAO.retrieveExecutionVariablesByInstance(p.getCod());

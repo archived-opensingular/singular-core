@@ -27,7 +27,7 @@ public interface IEntityRoleDefinition extends IEntityByCod<Integer> {
 
     void setName(String name);
 
-    IEntityProcessDefinition getProcessDefinition();
+    IEntityFlowDefinition getFlowDefinition();
 
-    void setProcessDefinition(IEntityProcessDefinition processDefinition);
+    void setFlowDefinition(IEntityFlowDefinition flowDefinition);
 }

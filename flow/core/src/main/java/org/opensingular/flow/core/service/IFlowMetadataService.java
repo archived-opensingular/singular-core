@@ -16,19 +16,18 @@
 
 package org.opensingular.flow.core.service;
 
-import java.util.Set;
+import org.opensingular.flow.core.authorization.AccessLevel;
 
 import javax.validation.constraints.NotNull;
-
-import org.opensingular.flow.core.authorization.AccessLevel;
+import java.util.Set;
 
 public interface IFlowMetadataService {
 
-    Set<String> listProcessDefinitionsWithAccess(@NotNull String userCod, @NotNull AccessLevel accessLevel);
+    Set<String> listFlowDefinitionsWithAccess(@NotNull String userCod, @NotNull AccessLevel accessLevel);
 
-    boolean hasAccessToProcessDefinition(@NotNull String processDefinitionKey, @NotNull String userCod, @NotNull AccessLevel accessLevel);
+    boolean hasAccessToFlowDefinition(@NotNull String flowDefinitionKey, @NotNull String userCod, @NotNull AccessLevel accessLevel);
 
-    boolean hasAccessToProcessInstance(@NotNull String processInstanceFullId, @NotNull String userCod, @NotNull AccessLevel accessLevel);
+    boolean hasAccessToFlowInstance(@NotNull String flowInstanceFullId, @NotNull String userCod, @NotNull AccessLevel accessLevel);
 
-    byte[] processDefinitionDiagram(@NotNull String processDefinitionKey);
+    byte[] flowDefinitionDiagram(@NotNull String flowDefinitionKey);
 }

@@ -43,7 +43,7 @@ import static org.opensingular.internal.lib.commons.xml.XmlUtil.isNodeTypeElemen
 public class TestXPath {
 
     /** XML utilizado para os diversos teste de procurar e nome */
-    private MElement raiz_;
+    private MElement root_;
 
     /**
      * Method chamado pelo JUnit antes de cada método testXXXX para
@@ -51,7 +51,7 @@ public class TestXPath {
      */
     @Before
     public void setUp() throws Exception {
-        if (raiz_ != null) {
+        if (root_ != null) {
             return;
         }
         //@formatter:off
@@ -86,7 +86,7 @@ public class TestXPath {
                         + "";
         //@formatter:on
         InputStream in = new ByteArrayInputStream(xml.getBytes());
-        raiz_ = MParser.parse(in, false, false);
+        root_ = MParser.parse(in, false, false);
     }
 
     /**
@@ -96,20 +96,20 @@ public class TestXPath {
      */
     @Test
     public void testSingleFind() throws Exception {
-        Node cd = raiz_.getFirstChild();
+        Node cd = root_.getFirstChild();
         while (!isNodeTypeElement(cd)) {
             cd = cd.getNextSibling();
         }
 
-        MElementResult rsCd = new MElementResult(raiz_, "cd");
+        MElementResult rsCd = new MElementResult(root_, "cd");
         rsCd.next();
 
-        checkPath(true, raiz_, "cd/@cod", "1");
-        checkPath(true, raiz_, "cd/ano", "2002");
-        checkPath(true, raiz_, "/cd/ano", null);
+        checkPath(true, root_, "cd/@cod", "1");
+        checkPath(true, root_, "cd/ano", "2002");
+        checkPath(true, root_, "/cd/ano", null);
 
         // O first child é um nó de texto (quebra de linha)
-        checkPath(true, raiz_.getFirstChild(), "/pedido/cd/ano", "2002");
+        checkPath(true, root_.getFirstChild(), "/pedido/cd/ano", "2002");
 
         checkPath(true, cd, "/pedido/cd/ano", "2002");
         checkPath(true, cd, "/ano", null);
@@ -124,21 +124,21 @@ public class TestXPath {
         checkPath(true, rsCd, "@xpto", null);
 
 
-        checkPath(false, raiz_, "/pedido/cd[2]/nome", "9 Luas");
-        checkPath(false, raiz_, "/pedido[1]/cd[2]/nome", "9 Luas");
-        checkPath(false, raiz_, "/pedido/cd[2]/faixa[2]", "7 Luas");
-        checkPath(false, raiz_, "/pedido/cd[@cod=6]/nome", "Zooropa");
-        checkPath(false, raiz_, "/pedido/cd[@cod=6]/nome/../ano", "1997");
-        checkPath(false, raiz_, "/pedido/cd[ano=1997]/faixa[last()]", "Lemon");
-        checkPath(false, raiz_, "/pedido/cd[ano=1997]/faixa[last()]", "Lemon");
-        checkPath(false, raiz_, "cd[2]/nome", "9 Luas");
-        checkPath(false, raiz_, "cd[@cod=6]/nome", "Zooropa");
-        checkPath(false, raiz_, "cd[@cod=6]/nome/../ano", "1997");
-        checkPath(false, raiz_, "cd[ano=1997]/faixa[last()]", "Lemon");
-        checkPath(true, raiz_, "@cliente", "Paulo");
-        checkPath(false, raiz_, "cd[1]/@cod", "1");
-        checkPath(false, raiz_, "cd[2]/@cod", "4");
-        checkPath(false, raiz_, "cd[2]/@xpto", null);
+        checkPath(false, root_, "/pedido/cd[2]/nome", "9 Luas");
+        checkPath(false, root_, "/pedido[1]/cd[2]/nome", "9 Luas");
+        checkPath(false, root_, "/pedido/cd[2]/faixa[2]", "7 Luas");
+        checkPath(false, root_, "/pedido/cd[@cod=6]/nome", "Zooropa");
+        checkPath(false, root_, "/pedido/cd[@cod=6]/nome/../ano", "1997");
+        checkPath(false, root_, "/pedido/cd[ano=1997]/faixa[last()]", "Lemon");
+        checkPath(false, root_, "/pedido/cd[ano=1997]/faixa[last()]", "Lemon");
+        checkPath(false, root_, "cd[2]/nome", "9 Luas");
+        checkPath(false, root_, "cd[@cod=6]/nome", "Zooropa");
+        checkPath(false, root_, "cd[@cod=6]/nome/../ano", "1997");
+        checkPath(false, root_, "cd[ano=1997]/faixa[last()]", "Lemon");
+        checkPath(true, root_, "@cliente", "Paulo");
+        checkPath(false, root_, "cd[1]/@cod", "1");
+        checkPath(false, root_, "cd[2]/@cod", "4");
+        checkPath(false, root_, "cd[2]/@xpto", null);
     }
 
     /**
@@ -159,21 +159,21 @@ public class TestXPath {
 
         long inicio = System.currentTimeMillis();
         for (int rep = 0; rep < 1000; rep++) {
-            MElementResult rs = raiz_.selectElements(xPath);
+            MElementResult rs = root_.selectElements(xPath);
             assertEquals(rs.isBeforeFirst(), true);
-            assertEquals(rs.isAtualValido(), false);
+            assertEquals(rs.isCurrentValid(), false);
             assertEquals(rs.isAfterLast(), false);
 
             int qtd = 0;
             while (rs.next()) {
                 assertEquals(rs.isBeforeFirst(), false);
-                assertEquals(rs.isAtualValido(), true);
+                assertEquals(rs.isCurrentValid(), true);
                 assertEquals(rs.isAfterLast(), false);
                 qtd++;
                 rs.getTagName();
             }
             assertEquals(rs.isBeforeFirst(), false);
-            assertEquals(rs.isAtualValido(), false);
+            assertEquals(rs.isCurrentValid(), false);
             assertEquals(rs.isAfterLast(), true);
 
             assertEquals("Qtd de itens encontrados diferentes do lidos", qtdEsperado, qtd);
@@ -257,7 +257,7 @@ public class TestXPath {
      */
     private void checkFind(Node no, String xPath, String valor) throws TransformerException {
 //        Node resultAPI = XPathAPI.selectSingleNode(no, xPath);
-//        String vResultAPI = MElementWrapper.getValorTexto(resultAPI);
+//        String vResultAPI = MElementWrapper.getValueText(resultAPI);
 //        if (!isIgual(valor, vResultAPI)) {
 //            fail(
 //                    "xPath/valor errado: Utilizando API apache a pesquisa '"
@@ -272,7 +272,7 @@ public class TestXPath {
 //        }
 
         Node result = XPathToolkit.selectNode(no, xPath);
-        String vResult = MElementWrapper.getValorTexto(result);
+        String vResult = MElementWrapper.getValueText(result);
         if (!isIgual(valor, vResult)) {
             fail(
                     "XPathToolkit.selectNode errado: resultado da pesquisa "
@@ -301,7 +301,7 @@ public class TestXPath {
             String vResult2 = null;
             if (resultado2 != null) {
                 fullPath2 = XPathToolkit.getFullPath(resultado2);
-                vResult2 = MElementWrapper.getValorTexto(resultado2);
+                vResult2 = MElementWrapper.getValueText(resultado2);
             }
             fail(
                     "Ao aplicar fullPath do Elemento em uma pesquisa XPath, "
@@ -322,7 +322,7 @@ public class TestXPath {
             String vResult3 = null;
             if (resultado3 != null) {
                 fullPath3 = XPathToolkit.getFullPath(resultado3);
-                vResult3 = MElementWrapper.getValorTexto(resultado3);
+                vResult3 = MElementWrapper.getValueText(resultado3);
             }
             fail(
                     "Ao aplicar relativePath do Elemento em uma pesquisa XPath, "
@@ -350,21 +350,21 @@ public class TestXPath {
     }
 
     @Test
-    public void testGetNomeTipo(){
+    public void testGetNodeTypeName(){
         MDocument document = MDocument.newInstance();
-        MElement element = document.createRaiz("pai");
+        MElement element = document.createRoot("pai");
 
         Comment comment = document.createComment("comentario aqui");
         Text textNode = document.createTextNode("textNode");
         DocumentFragment documentFragment = document.createDocumentFragment();
 
-        Assert.assertEquals("Comment Node", XPathToolkit.getNomeTipo(comment));
-        Assert.assertEquals("Document Node", XPathToolkit.getNomeTipo(document));
-        Assert.assertEquals("Element Node", XPathToolkit.getNomeTipo(element));
-        Assert.assertEquals("Text Node", XPathToolkit.getNomeTipo(textNode));
-        Assert.assertEquals("Document Fragment Node", XPathToolkit.getNomeTipo(documentFragment));
+        Assert.assertEquals("Comment Node", XPathToolkit.getNodeTypeName(comment));
+        Assert.assertEquals("Document Node", XPathToolkit.getNodeTypeName(document));
+        Assert.assertEquals("Element Node", XPathToolkit.getNodeTypeName(element));
+        Assert.assertEquals("Text Node", XPathToolkit.getNodeTypeName(textNode));
+        Assert.assertEquals("Document Fragment Node", XPathToolkit.getNodeTypeName(documentFragment));
 
-        Assert.assertNull(XPathToolkit.getNomeTipo(null));
+        Assert.assertNull(XPathToolkit.getNodeTypeName(null));
     }
 
     @Test
@@ -388,18 +388,18 @@ public class TestXPath {
     @Test(expected = SingularException.class)
     public void testSelectNodeException(){
         MElement element = MElement.newInstance("pai");
-        MElement filho = element.addElement("filho", "filhoVal");
+        MElement child = element.addElement("filho", "filhoVal");
 
-        XPathToolkit.selectNode(filho, ".75481");
+        XPathToolkit.selectNode(child, ".75481");
     }
 
     @Test
     public void testSelectElements(){
         MDocument document = MDocument.newInstance();
-        MElement element = document.createRaiz("pai");
+        MElement element = document.createRoot("pai");
 
-        MElement filho = element.addElement("filho", "filhoVal");
-        MElementWrapper wrapper = new MElementWrapper(filho);
+        MElement child = element.addElement("filho", "filhoVal");
+        MElementWrapper wrapper = new MElementWrapper(child);
 
         Comment comment = document.createComment("comentario aqui");
 
@@ -418,7 +418,7 @@ public class TestXPath {
     @Test
     public void testSelectNodeIterator(){
         MDocument document = MDocument.newInstance();
-        MElement element = document.createRaiz("pai");
+        MElement element = document.createRoot("pai");
 
         element.addElement("filho", "filhoVal");
         MElementWrapper wrapper = new MElementWrapper(element);

@@ -113,8 +113,8 @@ public class TesteMPacoteAttachment extends TestCaseForm {
 
     private SIAttachment createEmptyAttachment() {
         PackageBuilder pb = createTestPackage();
-        STypeAttachment tipo = pb.createType("arquivo", STypeAttachment.class);
-        return configPersistence(tipo.newInstance());
+        STypeAttachment type = pb.createType("arquivo", STypeAttachment.class);
+        return configPersistence(type.newInstance());
     }
 
     private <T extends SInstance> T configPersistence(T instance) {

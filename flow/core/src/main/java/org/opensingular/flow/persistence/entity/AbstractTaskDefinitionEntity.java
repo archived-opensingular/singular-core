@@ -16,8 +16,13 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.hibernate.annotations.GenericGenerator;
+import org.opensingular.flow.core.entity.AccessStrategyType;
+import org.opensingular.flow.core.entity.IEntityFlowDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleTask;
+import org.opensingular.flow.core.entity.IEntityTaskDefinition;
+import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;
@@ -30,15 +35,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.hibernate.annotations.GenericGenerator;
-
-import org.opensingular.flow.core.entity.AccessStrategyType;
-import org.opensingular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.flow.core.entity.IEntityRoleTask;
-import org.opensingular.flow.core.entity.IEntityTaskDefinition;
-import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The base persistent class for the TB_DEFINICAO_TAREFA database table.
@@ -48,12 +46,12 @@ import org.opensingular.flow.core.entity.IEntityTaskVersion;
  * </p>
  * <code>@GenericGenerator(name = AbstractTaskDefinitionEntity.PK_GENERATOR_NAME, strategy = "org.hibernate.id.IdentityGenerator")</code>
  *
- * @param <PROCESS_DEF>
+ * @param <FLOW_DEFINITION>
  * @param <TASK_VERSION>
  */
 @MappedSuperclass
 @Table(name = "TB_DEFINICAO_TAREFA")
-public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityProcessDefinition, TASK_VERSION extends IEntityTaskVersion, ROLE_TASK extends IEntityRoleTask> extends BaseEntity<Integer> implements IEntityTaskDefinition {
+public abstract class AbstractTaskDefinitionEntity<FLOW_DEFINITION extends IEntityFlowDefinition, TASK_VERSION extends IEntityTaskVersion, ROLE_TASK extends IEntityRoleTask> extends BaseEntity<Integer> implements IEntityTaskDefinition {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_DEFINICAO_TAREFA";
 
@@ -64,7 +62,7 @@ public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityPr
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_DEFINICAO_PROCESSO", nullable = false)
-    private PROCESS_DEF processDefinition;
+    private FLOW_DEFINITION flowDefinition;
 
     @Column(name = "SG_TAREFA", length = 100, nullable = false)
     private String abbreviation;
@@ -89,12 +87,12 @@ public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityPr
     }
 
     @Override
-    public PROCESS_DEF getProcessDefinition() {
-        return processDefinition;
+    public FLOW_DEFINITION getFlowDefinition() {
+        return flowDefinition;
     }
 
-    public void setProcessDefinition(PROCESS_DEF processDefinition) {
-        this.processDefinition = processDefinition;
+    public void setFlowDefinition(FLOW_DEFINITION flowDefinition) {
+        this.flowDefinition = flowDefinition;
     }
 
     @Override

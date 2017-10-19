@@ -16,12 +16,12 @@
 
 package org.opensingular.form.type.core;
 
-import org.opensingular.form.STypeSimple;
-import org.opensingular.lib.commons.lambda.IConsumer;
+import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SInfoType;
+import org.opensingular.form.STypeSimple;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.view.SViewTextArea;
-import org.apache.commons.lang3.StringUtils;
+import org.opensingular.lib.commons.lambda.IConsumer;
 
 @SInfoType(name = "String", spackage = SPackageCore.class)
 public class STypeString extends STypeSimple<SIString, String> {
@@ -30,20 +30,20 @@ public class STypeString extends STypeSimple<SIString, String> {
         super(SIString.class, String.class);
     }
 
-    protected STypeString(Class<? extends SIString> classeInstancia) {
-        super(classeInstancia, String.class);
+    protected STypeString(Class<? extends SIString> instanceClass) {
+        super(instanceClass, String.class);
     }
 
-    public boolean getValorAtributoTrim() {
+    public boolean getValueAttributeTrim() {
         return Boolean.TRUE.equals(getAttributeValue(SPackageBasic.ATR_TRIM));
     }
 
-    public boolean getValorAtributoEmptyToNull() {
+    public boolean getValueAttributeEmptyToNull() {
         return Boolean.TRUE.equals(getAttributeValue(SPackageBasic.ATR_EMPTY_TO_NULL));
     }
 
-    public STypeString withValorAtributoTrim(boolean valor) {
-        return (STypeString) with(SPackageBasic.ATR_TRIM, valor);
+    public STypeString withValueAttributeTrim(boolean value) {
+        return (STypeString) with(SPackageBasic.ATR_TRIM, value);
     }
 
     /**
@@ -56,16 +56,16 @@ public class STypeString extends STypeSimple<SIString, String> {
     }
 
     @Override
-    public String convert(Object valor) {
-        String s = super.convert(valor);
+    public String convert(Object value) {
+        String s = super.convert(value);
         if (s != null) {
-            if (getValorAtributoEmptyToNull()) {
-                if (getValorAtributoTrim()) {
+            if (getValueAttributeEmptyToNull()) {
+                if (getValueAttributeTrim()) {
                     s = StringUtils.trimToNull(s);
                 } else if (StringUtils.isEmpty(s)) {
                     s = null;
                 }
-            } else if (getValorAtributoTrim()) {
+            } else if (getValueAttributeTrim()) {
                 s = StringUtils.trim(s);
             }
         }
@@ -73,8 +73,8 @@ public class STypeString extends STypeSimple<SIString, String> {
     }
 
     @Override
-    public String convertNotNativeNotString(Object valor) {
-        return valor.toString();
+    public String convertNotNativeNotString(Object value) {
+        return value.toString();
     }
 
 }

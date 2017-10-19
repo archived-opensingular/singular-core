@@ -111,11 +111,11 @@ public abstract class STypes {
         if (includeRoot)
             list.add(root);
 
-        SScope tipo = root.getParentScope();
-        while (tipo != null) {
-            if (tipo instanceof SType<?>)
-                list.add((SType<?>) tipo);
-            tipo = tipo.getParentScope();
+        SScope type = root.getParentScope();
+        while (type != null) {
+            if (type instanceof SType<?>)
+                list.add((SType<?>) type);
+            type = type.getParentScope();
         }
         return list;
     }
@@ -127,13 +127,13 @@ public abstract class STypes {
      * @return
      */
     public static Optional<SType<?>> findRootAscendant(SType<?> root) {
-        SScope   tipo      = root.getParentScope();
+        SScope   type      = root.getParentScope();
         SType<?> rootStype = null;
-        while (tipo != null) {
-            if (tipo instanceof SType<?>) {
-                rootStype = (SType<?>) tipo;
+        while (type != null) {
+            if (type instanceof SType<?>) {
+                rootStype = (SType<?>) type;
             }
-            tipo = tipo.getParentScope();
+            type = type.getParentScope();
         }
         return Optional.ofNullable(rootStype);
     }

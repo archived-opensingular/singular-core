@@ -23,7 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.FlowInstance;
-import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
+import org.opensingular.flow.persistence.entity.FlowInstanceEntity;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.flow.test.definicao.Peticao;
 import org.opensingular.flow.test.support.TestFlowSupport;
@@ -48,7 +48,7 @@ public class PersistenceTest extends TestFlowSupport {
         //Clear da sessão para evidenciar a consulta como única.
         sessionFactory.getCurrentSession().clear();
         Logger.getLogger(getClass().getSimpleName()).info("##LOAD BEGIN: Clear na sessão, recarregando process instance: ");
-        ProcessInstanceEntity pientity = (ProcessInstanceEntity) sessionFactory.getCurrentSession().load(ProcessInstanceEntity.class, cod);
+        FlowInstanceEntity pientity = (FlowInstanceEntity) sessionFactory.getCurrentSession().load(FlowInstanceEntity.class, cod);
         Assert.assertNotNull(pientity.getCurrentTask());
         Assert.assertEquals(pientity.getCurrentTask().getClass(), TaskInstanceEntity.class);
         Logger.getLogger(getClass().getSimpleName()).info("##LOAD END. ");

@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-
 import java.nio.charset.Charset;
 import java.util.Objects;
 
@@ -83,11 +82,9 @@ public class MElementWrapper extends MElement implements EWrapper {
 
     /**
      * Constroi um MElement raiz com o nome informado.
-     *
-     * @param nomeRaiz -
      */
-    MElementWrapper(String nomeRaiz) {
-        original = SupplierUtil.serializable(newRootElement(nomeRaiz));
+    MElementWrapper(String rootName) {
+        original = SupplierUtil.serializable(newRootElement(rootName));
     }
 
     /**
@@ -156,21 +153,21 @@ public class MElementWrapper extends MElement implements EWrapper {
     public static Element newRootElement(String namespaceURI, String qualifiedName) {
 
         Document d = newDocument();
-        Element novo = d.createElementNS(namespaceURI, qualifiedName);
+        Element newElement = d.createElementNS(namespaceURI, qualifiedName);
 
         //Verifica se precisa colocar um atributo por conta do Namespace
         if ((qualifiedName != null) && (qualifiedName.length() != 0)) {
             int posPrefixo = qualifiedName.indexOf(':');
             if ((posPrefixo == -1)) {
-                novo.setAttribute("xmlns", namespaceURI);
+                newElement.setAttribute("xmlns", namespaceURI);
             } else {
                 String prefixo = qualifiedName.substring(0, posPrefixo);
-                novo.setAttribute("xmlns:" + prefixo, namespaceURI);
+                newElement.setAttribute("xmlns:" + prefixo, namespaceURI);
             }
             //novo.setAttribute("xmlns:" + nome.getPrefix(), namespaceURI);
         }
-        d.appendChild(novo);
-        return novo;
+        d.appendChild(newElement);
+        return newElement;
     }
 
     /**
@@ -207,33 +204,33 @@ public class MElementWrapper extends MElement implements EWrapper {
      * colocados ao final da lista de elementos elemento <code>pai</code>
      * (append).
      *
-     * @param pai elemento que o conteúdo do outro elemento
-     * @param no elemento cujo conteúdo será colocado dentro do elemento pai
+     * @param parent elemento que o conteúdo do outro elemento
+     * @param node elemento cujo conteúdo será colocado dentro do elemento pai
      */
-    static void copyElement(Element pai, Element no) {
-        if ((pai == null) || (no == null)) {
+    static void copyElement(Element parent, Element node) {
+        if ((parent == null) || (node == null)) {
             throw new IllegalArgumentException("Null não permitido");
         }
 
-        Document doc = pai.getOwnerDocument();
+        Document doc = parent.getOwnerDocument();
 
-        Node atual = no.getFirstChild();
-        while (atual != null) {
-            switch (atual.getNodeType()) {
+        Node current = node.getFirstChild();
+        while (current != null) {
+            switch (current.getNodeType()) {
                 case (TEXT_NODE):
-                    pai.appendChild(doc.createTextNode(atual.getNodeValue()));
+                    parent.appendChild(doc.createTextNode(current.getNodeValue()));
                     break;
                 case (ELEMENT_NODE):
-                    Element novo = newElement(doc, (Element) atual);
-                    pai.appendChild(novo);
-                    copyElement(novo, (Element) atual);
+                    Element newElement = newElement(doc, (Element) current);
+                    parent.appendChild(newElement);
+                    copyElement(newElement, (Element) current);
                     break;
                 default:
                     throw new SingularException("O no do tipo "
-                            + atual.getNodeType()
+                            + current.getNodeType()
                             + " não é suportado");
             }
-            atual = atual.getNextSibling();
+            current = current.getNextSibling();
         }
     }
 
@@ -246,7 +243,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      * @return Sempre diferente de null
      */
     private static Element newElement(Document owner, Element original) {
-        Element novo = owner.createElementNS(original.getNamespaceURI(), original.getTagName());
+        Element newElement = owner.createElementNS(original.getNamespaceURI(), original.getTagName());
 
         if (original.hasAttributes()) {
             NamedNodeMap domAttributes = original.getAttributes();
@@ -255,15 +252,15 @@ public class MElementWrapper extends MElement implements EWrapper {
             for (int i = 0; i < noOfAttributes; i++) {
                 attr = (Attr) domAttributes.item(i);
                 if (attr.getNamespaceURI() == null) {
-                    novo.setAttribute(attr.getNodeName(), attr.getNodeValue());
+                    newElement.setAttribute(attr.getNodeName(), attr.getNodeValue());
                 } else {
-                    novo.setAttributeNS(attr.getNamespaceURI(), attr.getNodeName(), attr
+                    newElement.setAttributeNS(attr.getNamespaceURI(), attr.getNodeName(), attr
                             .getNodeValue());
                 }
             }
         }
 
-        return novo;
+        return newElement;
     }
 
     /**
@@ -272,33 +269,33 @@ public class MElementWrapper extends MElement implements EWrapper {
      * elemento sendo copiado. O elemento é copiado ao final da lista de
      * elementos (append) do elemento de destino.
      *
-     * @param pai elemento que receberá um novo elemento com o conteúdo do
+     * @param parent elemento que receberá um novo elemento com o conteúdo do
      * elemento <code>no</code>
      * @param no elemento cujo conteúdo será colocado dentro de um elemento de
      * nome <code>novoNome</code>, que será colocado dentro do
      * elemento <code>pai</code>
-     * @param novoNome nome do elemento que receberá o conteúdo do elemento
+     * @param newName nome do elemento que receberá o conteúdo do elemento
      * <code>no</code> e que será colocado dentro de <code>pai</code>;
      * se for <code>null</code>, é usado o nome do elemento
      * <code>no</code>
      * @return O novo no criado no novo pai
      */
-    static Element copyElement(Element pai, Element no, String novoNome) {
-        if ((pai == null) || (no == null)) {
+    static Element copyElement(Element parent, Element no, String newName) {
+        if ((parent == null) || (no == null)) {
             throw new IllegalArgumentException("Null não permitido");
         }
-        Document doc = pai.getOwnerDocument();
+        Document doc = parent.getOwnerDocument();
 
-        Element novo;
-        if (novoNome == null) {
-            novo = newElement(doc, no);
+        Element newElement;
+        if (newName == null) {
+            newElement = newElement(doc, no);
         } else {
-            novo = doc.createElement(novoNome);
+            newElement = doc.createElement(newName);
         }
-        pai.appendChild(novo);
-        copyElement(novo, no);
+        parent.appendChild(newElement);
+        copyElement(newElement, no);
 
-        return novo;
+        return newElement;
     }
 
     /**
@@ -417,64 +414,64 @@ public class MElementWrapper extends MElement implements EWrapper {
             resolvedQualifiedName = resolvedQualifiedName.substring(pos + 1);
             resolvedNamespaceURI = null;
         }
-        Element novo;
+        Element newElement;
         if (isVazio(resolvedNamespaceURI)) {
-            novo = addElementNSVazio(resolvedParent, d, resolvedQualifiedName);
+            newElement = addElementNSVazio(resolvedParent, d, resolvedQualifiedName);
         } else {
-            novo = addElementNSNaoVazio(resolvedParent, d, resolvedNamespaceURI, resolvedQualifiedName);
+            newElement = addElementNSNaoVazio(resolvedParent, d, resolvedNamespaceURI, resolvedQualifiedName);
         }
-        resolvedParent.appendChild(novo);
-        return novo;
+        resolvedParent.appendChild(newElement);
+        return newElement;
     }
 
     private static Element addElementNSNaoVazio(Node resolvedParent, Document d, String resolvedNamespaceURI, String resolvedQualifiedName) {
-        Element novo;
-        novo = d.createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
+        Element newElement;
+        newElement = d.createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
 
         if (!Objects.equals(resolvedNamespaceURI, resolvedParent.getNamespaceURI())) {
             int posPrefixo = resolvedQualifiedName.indexOf(':');
             if ((posPrefixo == -1)) {
-                novo.setAttribute("xmlns", resolvedNamespaceURI);
+                newElement.setAttribute("xmlns", resolvedNamespaceURI);
             } else {
                 String prefixo = resolvedQualifiedName.substring(0, posPrefixo);
-                novo.setAttribute("xmlns:" + prefixo, resolvedNamespaceURI);
+                newElement.setAttribute("xmlns:" + prefixo, resolvedNamespaceURI);
             }
             //novo.setAttribute("xmlns:" + nome.getPrefix(), namespaceURI);
         }
-        return novo;
+        return newElement;
     }
 
     private static Element addElementNSVazio(Node resolvedParent, Document d, String resolvedQualifiedName) {
         String  resolvedNamespaceURI;
-        Element novo;
+        Element newElement;
         if ((resolvedParent.getNamespaceURI() != null) && isVazio(resolvedParent.getPrefix())) {
             resolvedNamespaceURI = resolvedParent.getNamespaceURI();
         } else {
             resolvedNamespaceURI = null; //Podia ser String vazia
         }
-        novo = d.createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
-        return novo;
+        newElement = d.createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
+        return newElement;
     }
 
     /**
      * Adiciona um elemento com valor a um elemento pai. <br>
      *
-     * @param pai o elemento dentro do qual um elemento será inserido
+     * @param parent o elemento dentro do qual um elemento será inserido
      * @param name o nome do elemento que será inserido
      * @param value o valor <code>String</code> do elemento adicionado
      * @return o elemento que foi adicionado
      */
-    static Element addElement(Element pai, final String name, String value) {
+    static Element addElement(Element parent, final String name, String value) {
         if (value == null) {
             throw new IllegalArgumentException("O set do valor de "
-                    + XPathToolkit.getFullPath(pai)
+                    + XPathToolkit.getFullPath(parent)
                     + "/"
                     + name
                     + ": não é permitido valor null. Se for necessário um "
                     + "element empty, utilize addElement sem parâmetro valor");
         }
 
-        Element novo;
+        Element newElement;
         String elementName = name;
         int pos = elementName.lastIndexOf('@');
         if (pos != -1) {
@@ -484,26 +481,26 @@ public class MElementWrapper extends MElement implements EWrapper {
             }
             if (pos > 0) {
                 elementName = elementName.substring(0, pos);
-                novo = getElementCriando(pai.getOwnerDocument(), pai, null, elementName);
+                newElement = getElementCriando(parent.getOwnerDocument(), parent, null, elementName);
             } else {
-                novo = pai;
+                newElement = parent;
             }
 
             if (value.length() == 0) {
-                novo.removeAttribute(attributeName);
+                newElement.removeAttribute(attributeName);
             } else {
-                novo.setAttribute(attributeName, value);
+                newElement.setAttribute(attributeName, value);
             }
         } else {
-            novo = addElementNS(pai, null, elementName);
+            newElement = addElementNS(parent, null, elementName);
             if (value.length() != 0) {
-                Document d = pai.getOwnerDocument();
+                Document d = parent.getOwnerDocument();
                 Text txt = d.createTextNode(value);
-                novo.appendChild(txt);
+                newElement.appendChild(txt);
             }
         }
 
-        return novo;
+        return newElement;
     }
 
     private static Element getElementCriando(Document d, Node parent, final String namespaceURI,

@@ -16,6 +16,12 @@
 
 package org.opensingular.flow.persistence.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.opensingular.flow.core.entity.IEntityFlowInstance;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
+import org.opensingular.flow.core.entity.IEntityVariableType;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
+
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -26,13 +32,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.hibernate.annotations.GenericGenerator;
-
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.flow.core.entity.IEntityVariableInstance;
-import org.opensingular.flow.core.entity.IEntityVariableType;
-
 /**
  * The base persistent class for the TB_VARIAVEL database table.
  * <p>
@@ -41,12 +40,12 @@ import org.opensingular.flow.core.entity.IEntityVariableType;
  * </p>
  * <code>@GenericGenerator(name = AbstractVariableInstanceEntity.PK_GENERATOR_NAME, strategy = "org.hibernate.id.IdentityGenerator")</code>
  *
- * @param <PROCESS_INSTANCE>
+ * @param <FLOW_INSTANCE>
  * @param <VAR_TYPE>
  */
 @MappedSuperclass
 @Table(name = "TB_VARIAVEL")
-public abstract class AbstractVariableInstanceEntity<PROCESS_INSTANCE extends IEntityProcessInstance, VAR_TYPE extends IEntityVariableType> extends BaseEntity<Integer> implements IEntityVariableInstance {
+public abstract class AbstractVariableInstanceEntity<FLOW_INSTANCE extends IEntityFlowInstance, VAR_TYPE extends IEntityVariableType> extends BaseEntity<Integer> implements IEntityVariableInstance {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_VARIAVEL";
 
@@ -57,7 +56,7 @@ public abstract class AbstractVariableInstanceEntity<PROCESS_INSTANCE extends IE
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_INSTANCIA_PROCESSO", nullable = false)
-    private PROCESS_INSTANCE processInstance;
+    private FLOW_INSTANCE flowInstance;
 
     @Column(name = "NO_VARIAVEL", nullable = false)
     private String name;
@@ -80,12 +79,12 @@ public abstract class AbstractVariableInstanceEntity<PROCESS_INSTANCE extends IE
     }
 
     @Override
-    public PROCESS_INSTANCE getProcessInstance() {
-        return processInstance;
+    public FLOW_INSTANCE getFlowInstance() {
+        return flowInstance;
     }
 
-    public void setProcessInstance(PROCESS_INSTANCE processInstance) {
-        this.processInstance = processInstance;
+    public void setFlowInstance(FLOW_INSTANCE flowInstance) {
+        this.flowInstance = flowInstance;
     }
 
     @Override
