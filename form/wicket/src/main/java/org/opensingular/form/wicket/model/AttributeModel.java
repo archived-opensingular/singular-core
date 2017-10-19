@@ -25,19 +25,20 @@ import org.opensingular.lib.wicket.util.model.NullOrEmptyModel;
 public class AttributeModel<T> implements IReadOnlyModel<T> {
 
     private final IModel<?> model;
-    private final String    nomeCompletoAtributo;
-    private final Class<T>  classeValorAtributo;
+    private final String fullNameAttribute;
+    private final Class<T> attributeValueClass;
 
     public AttributeModel(IModel<?> model, AtrRef<?, ?, T> atrRef) {
         this.model = model;
-        this.nomeCompletoAtributo = atrRef.getNameFull();
-        this.classeValorAtributo = atrRef.getValueClass();
+        this.fullNameAttribute = atrRef.getNameFull();
+        this.attributeValueClass = atrRef.getValueClass();
     }
 
     @Override
     public T getObject() {
         if (model instanceof ISInstanceAwareModel<?>)
-            return ((ISInstanceAwareModel<?>) model).getSInstance().getAttributeValue(nomeCompletoAtributo, classeValorAtributo);
+            return ((ISInstanceAwareModel<?>) model).getSInstance().getAttributeValue(fullNameAttribute,
+                    attributeValueClass);
 
         return null;
     }

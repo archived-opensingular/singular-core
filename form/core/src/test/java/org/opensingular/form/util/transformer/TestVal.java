@@ -1,5 +1,26 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.form.util.transformer;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
@@ -11,13 +32,13 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.STypeSimple;
 import org.opensingular.form.type.core.STypeDate;
 import org.opensingular.form.type.core.STypeString;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.opensingular.form.util.transformer.Value;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TestVal {
 
@@ -27,7 +48,7 @@ public class TestVal {
     private static final Date   DT_1       = new Date();
     private static final Date   DT_2       = new Date();
     private static final Date   DT_3       = new Date();
-    private SDictionary                                         _dicionario;
+    private SDictionary dictionary;
     private STypeComposite<? extends SIComposite>               _raiz;
     private STypeString                                         _descricao;
     private STypeComposite<SIComposite>                         _periodo;
@@ -49,8 +70,8 @@ public class TestVal {
 
     @Before
     public void setUp() {
-        _dicionario = SDictionary.create();
-        PackageBuilder pb = _dicionario.createNewPackage("teste");
+        dictionary = SDictionary.create();
+        PackageBuilder pb = dictionary.createNewPackage("teste");
 
         _raiz = pb.createCompositeType("_raiz");
         _descricao = _raiz.addField("descricao", STypeString.class);
@@ -133,26 +154,26 @@ public class TestVal {
 
     @Test
     public void testHydrate() {
-        SIComposite novaInstancia = _raiz.newInstance();
+        SIComposite newInstance = _raiz.newInstance();
 
-        Value.hydrate(novaInstancia, new Value.Content((Serializable) valorEsperado, novaInstancia.getName()));
-        Assert.assertEquals(evento, novaInstancia);
+        Value.hydrate(newInstance, new Value.Content((Serializable) valorEsperado, newInstance.getName()));
+        Assert.assertEquals(evento, newInstance);
     }
 
     @Test
     public void testHydrateDehydrate() {
-        SIComposite novaInstancia = _raiz.newInstance();
-        Value.hydrate(novaInstancia, new Value.Content((Serializable) valorEsperado, novaInstancia.getName()));
-        Assert.assertEquals(valorEsperado, Value.dehydrate(novaInstancia).getRawContent());
+        SIComposite newInstance = _raiz.newInstance();
+        Value.hydrate(newInstance, new Value.Content((Serializable) valorEsperado, newInstance.getName()));
+        Assert.assertEquals(valorEsperado, Value.dehydrate(newInstance).getRawContent());
     }
 
 
     @Test
     public void testDehydrateHydrate() {
         Object    value         = Value.dehydrate(evento);
-        SInstance novaInstancia = _raiz.newInstance();
-        Value.hydrate(novaInstancia, new Value.Content((Serializable) valorEsperado, novaInstancia.getName()));
-        Assert.assertEquals(evento, novaInstancia);
+        SInstance newInstance = _raiz.newInstance();
+        Value.hydrate(newInstance, new Value.Content((Serializable) valorEsperado, newInstance.getName()));
+        Assert.assertEquals(evento, newInstance);
     }
 
     @Test

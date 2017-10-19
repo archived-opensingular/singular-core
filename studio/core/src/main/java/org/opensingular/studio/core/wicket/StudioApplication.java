@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.studio.core.wicket;
 
 import org.apache.wicket.MarkupContainer;
@@ -19,7 +37,7 @@ import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
 import org.opensingular.studio.core.config.StudioConfig;
 import org.opensingular.studio.core.view.StudioFooter;
 import org.opensingular.studio.core.view.StudioHeader;
-import org.opensingular.studio.core.view.StudioPortalPage;
+import org.opensingular.studio.core.view.StudioPage;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
 import java.nio.charset.StandardCharsets;
@@ -35,7 +53,7 @@ public class StudioApplication extends WebApplication implements SingularAdminAp
 
     @Override
     public Class<? extends Page> getHomePage() {
-        return StudioPortalPage.class;
+        return StudioPage.class;
     }
 
     @Override
@@ -56,6 +74,10 @@ public class StudioApplication extends WebApplication implements SingularAdminAp
         new AnnotatedMountScanner().scanPackage("org.opensingular.studio").mount(this);
         List<IStringResourceLoader> stringResourceLoaders = getResourceSettings().getStringResourceLoaders();
         stringResourceLoaders.add(0, new ClassStringResourceLoader(appConfig.getClass()));
+        getComponentOnConfigureListeners().add(component -> {
+            boolean outputId = !component.getRenderBodyOnly();
+            component.setOutputMarkupId(outputId).setOutputMarkupPlaceholderTag(outputId);
+        });
     }
 
     @Override

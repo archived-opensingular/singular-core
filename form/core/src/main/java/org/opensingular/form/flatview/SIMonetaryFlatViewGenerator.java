@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.form.flatview;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,20 +47,20 @@ public class SIMonetaryFlatViewGenerator extends AbstractFlatViewGenerator {
 
             final NumberFormat numberFormat = NumberFormat.getInstance(new Locale("pt", "BR"));
             final DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
-            final BigDecimal valor = (BigDecimal) instance.getValue();
-            final Integer digitos = getDecimalMaximo(instance);
+            final BigDecimal value = (BigDecimal) instance.getValue();
+            final Integer digits = getDecimalMaximo(instance);
             final StringBuilder pattern = new StringBuilder();
 
             pattern.append("R$ ###,###.");
 
-            for (int i = 0; i < digitos; i += 1) {
+            for (int i = 0; i < digits; i += 1) {
                 pattern.append('#');
             }
 
             decimalFormat.applyPattern(pattern.toString());
-            decimalFormat.setMinimumFractionDigits(digitos);
+            decimalFormat.setMinimumFractionDigits(digits);
 
-            return decimalFormat.format(valor);
+            return decimalFormat.format(value);
         }
 
         return StringUtils.EMPTY;

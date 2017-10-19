@@ -16,8 +16,14 @@
 
 package org.opensingular.flow.core;
 
+/**
+ * Represent a list o BPMN types of events. This information is used when rendering a diagram for a {@link
+ * FlowDefinition}.
+ * @see org.opensingular.flow.core.renderer.IFlowRenderer
+ */
 public enum EventType {
 
-    CONDITIONAL, TIMER, MESSAGE, SIGNAL, ERROR
+    PLAIN, MESSAGE, TIMER, ESCALATION, CONDITIONAL, LINK, ERROR, CANCEL, COMPENSATION, SIGNAL, MULTIPLE,
+    PARALLEL_MULTIPLE, TERMINATE;
 
 }

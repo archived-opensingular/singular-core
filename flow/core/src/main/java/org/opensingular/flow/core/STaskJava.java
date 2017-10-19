@@ -19,6 +19,7 @@ package org.opensingular.flow.core;
 import org.opensingular.flow.schedule.IScheduleData;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 
 @SuppressWarnings("unchecked")
@@ -31,12 +32,14 @@ public class STaskJava extends STask<STaskJava> {
     @SuppressWarnings("rawtypes")
     private TaskJavaBatchCall blockImpl;
 
+    private DisplayType displayType;
+
     public STaskJava(FlowMap mapa, String nome, String abbreviation) {
         super(mapa, nome, abbreviation);
     }
 
     @Override
-    public IEntityTaskType getTaskType() {
+    public TaskType getTaskType() {
         return TaskType.JAVA;
     }
 
@@ -79,22 +82,22 @@ public class STaskJava extends STask<STaskJava> {
     }
 
     @Override
-    public void execute(ExecutionContext execucaoTask) {
+    public void execute(ExecutionContext executionContext) {
         if (taskImpl == null) {
             throw new SingularFlowException(createErrorMsg("Chamada inválida. Se aplica apenas execução em bloco nesta tarefa."), this);
         }
-        taskImpl.call(execucaoTask);
+        taskImpl.call(executionContext);
     }
 
-    public Object executarByBloco(Collection<? extends FlowInstance> instancias) {
+    public Object executarByBloco(Collection<? extends FlowInstance> instances) {
         if (blockImpl == null) {
             throw new SingularFlowException(createErrorMsg("Chamada inválida. Não se aplica execução em bloco nesta tarefa."), this);
         }
-        String result = blockImpl.call(instancias);
+        String result = blockImpl.call(instances);
 
         if (result == null) {
-            long qtdAlterado = instancias.stream().filter(i -> !equals(i.getState().orElse(null))).count();
-            result = "De " + instancias.size() + " instancias no estado [" + getCompleteName() + "], " + qtdAlterado + " mudaram de estado";
+            long qtdAlterado = instances.stream().filter(i -> !equals(i.getState().orElse(null))).count();
+            result = "De " + instances.size() + " instancias no estado [" + getCompleteName() + "], " + qtdAlterado + " mudaram de estado";
         }
         return result;
     }
@@ -107,4 +110,22 @@ public class STaskJava extends STask<STaskJava> {
         }
     }
 
+    /**
+     * Defines, for the purpose of generating a diagram of the process, the type of BPMN node that will be used to
+     * render this task.
+     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     */
+    public void setDisplayType(@Nullable DisplayType displayType) {
+        this.displayType = displayType;
+    }
+
+    /**
+     * Defines, for the purpose of generating a diagram of the process, the type of BPMN node that will be used to
+     * render this task.
+     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     */
+    @Nullable
+    public DisplayType getDisplayType() {
+        return displayType;
+    }
 }

@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.lib.support.persistence.util;
 
 
@@ -84,14 +102,14 @@ public class GenericEnumUserTypeTest {
     @Test
     @Transactional
     public void testNullSafeGetAndSet() throws SQLException {
-        TestEntity novoObj = new TestEntity(20, "name", "field");
-        dao.save(novoObj);
+        TestEntity newObj = new TestEntity(20, "name", "field");
+        dao.save(newObj);
         TestEntity testEntities = dao.listAll().get(0);
 
-        dao.saveOrUpdate(novoObj);
+        dao.saveOrUpdate(newObj);
 
         testEntities.setSimNaoEnum(SimNao.SIM);
-        dao.saveOrUpdate(novoObj);
+        dao.saveOrUpdate(newObj);
 
         SimNao simNaoEnum = dao.find(20).get().getSimNaoEnum();
 

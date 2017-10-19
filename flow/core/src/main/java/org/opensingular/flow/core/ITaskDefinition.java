@@ -18,12 +18,54 @@ package org.opensingular.flow.core;
 
 import org.opensingular.lib.commons.base.SingularUtil;
 
+import javax.annotation.Nonnull;
+import java.util.Objects;
+
 @FunctionalInterface
 public interface ITaskDefinition {
 
+    @Nonnull
     String getName();
 
+    @Nonnull
     default String getKey() {
         return SingularUtil.convertToJavaIdentity(getName(), true).toUpperCase();
+    }
+
+    /** Creates a {@link ITaskDefinition} with the name informed and the key calculated based in the name. */
+    @Nonnull
+    public static ITaskDefinition of(@Nonnull String name) {
+        return of(name, SingularUtil.convertToJavaIdentity(name, true).toUpperCase());
+    }
+
+    /** Creates a {@link ITaskDefinition} with the name and key informed. */
+    @Nonnull
+    public static ITaskDefinition of(@Nonnull String name, @Nonnull String key) {
+        return new ITaskDefinition() {
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public String getKey() {
+                return key;
+            }
+
+            @Override
+            public int hashCode() {
+                return key.hashCode();
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (this == obj) {
+                    return true;
+                } else if (!(obj instanceof ITaskDefinition)) {
+                    return false;
+                }
+                return Objects.equals(key, ((ITaskDefinition) obj).getKey());
+            }
+        };
     }
 }

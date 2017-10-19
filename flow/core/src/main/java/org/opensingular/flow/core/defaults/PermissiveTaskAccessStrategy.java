@@ -39,17 +39,17 @@ public class PermissiveTaskAccessStrategy extends TaskAccessStrategy<FlowInstanc
     }
 
     @Override
-    public Set<Integer> getFirstLevelUsersCodWithAccess(FlowInstance instancia) {
+    public Set<Integer> getFirstLevelUsersCodWithAccess(FlowInstance instance) {
         return Collections.emptySet();
     }
 
     @Override
-    public List<? extends SUser> listAllocableUsers(FlowInstance instancia) {
+    public List<? extends SUser> listAllocableUsers(FlowInstance instance) {
         return Collections.emptyList();
     }
 
     @Override
-    public List<String> getExecuteRoleNames(FlowDefinition<?> definicao, STask<?> task) {
+    public List<String> getExecuteRoleNames(FlowDefinition<?> definition, STask<?> task) {
         return Collections.emptyList();
     }
 }

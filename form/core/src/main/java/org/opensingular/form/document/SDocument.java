@@ -19,7 +19,6 @@ package org.opensingular.form.document;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.SetMultimap;
-import org.opensingular.form.RefService;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SInstances;
@@ -27,8 +26,6 @@ import org.opensingular.form.SType;
 import org.opensingular.form.STypes;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.context.DelegatingLocalServiceRegistry;
-import org.opensingular.form.context.ServiceRegistry;
-import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.form.event.ISInstanceListener;
 import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.event.SInstanceListeners;
@@ -39,7 +36,9 @@ import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersistenceHandler;
 import org.opensingular.form.validation.ValidationError;
-import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.commons.context.RefService;
+import org.opensingular.lib.commons.context.ServiceRegistry;
+import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -213,16 +212,16 @@ public class SDocument {
 
     public final void setRoot(SInstance root) {
         if (this.root != null) {
-            throw new SingularFormException("Não é permitido altera o raiz depois que o mesmo for diferente de null");
+            throw new SingularFormException("Não é permitido alterar o raiz depois que o mesmo for diferente de null");
         }
         this.root = Objects.requireNonNull(root);
-        STypes.streamDescendants(getRoot().getType(), true).forEach(tipo -> {
+        STypes.streamDescendants(getRoot().getType(), true).forEach(type -> {
             // init dependencies
-            final Supplier<Collection<AtrBasic.DelayedDependsOnResolver>> func = tipo.getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION);
+            final Supplier<Collection<AtrBasic.DelayedDependsOnResolver>> func = type.getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION);
             if (func != null) {
                 for (AtrBasic.DelayedDependsOnResolver resolver : func.get()) {
-                    for (SType s : resolver.resolve(getRoot().getType(), tipo)){
-                        s.addDependentType(tipo);
+                    for (SType s : resolver.resolve(getRoot().getType(), type)){
+                        s.addDependentType(type);
                     }
                 }
             }

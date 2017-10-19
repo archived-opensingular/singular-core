@@ -43,7 +43,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
     private static final Set<IPoint> executedPoints = EnumSet.noneOf(IPoint.class);
 
     enum IPoint {
-        processDefinition, callStartListener, call1, call2, call3, call4, call5, call6, call7, call8, callBasic
+        flowDefinition, callStartListener, call1, call2, call3, call4, call5, call6, call7, call8, callBasic
     }
 
     static void assertBean(MyBean current, IPoint point) {
@@ -62,7 +62,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
     }
 
     @Test
-    public void injectionOnProcessDefinition() {
+    public void injectionOnFlowDefinition() {
         FlowDefinitionBeanInjection pd = new FlowDefinitionBeanInjection();
         assertBean(pd.myBean);
 
@@ -78,7 +78,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
     }
 
     @Test
-    public void injectionIntoProcessInstance() {
+    public void injectionIntoFlowInstance() {
         FlowDefinitionBeanInjection p = new FlowDefinitionBeanInjection();
         FlowInstanceBeanInjection i = p.prepareStartCall().createAndStart();
         assertBean(i.myBean);
@@ -100,7 +100,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         }
     }
 
-    @DefinitionInfo("ProcessoBeanInjection")
+    @DefinitionInfo("FlowBeanInjection")
     public static class FlowDefinitionBeanInjection extends FlowDefinition<FlowInstanceBeanInjection> {
 
         public enum StepsBI implements ITaskDefinition {
@@ -141,7 +141,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
 
             f.from(StepsBI.First).go(StepsBI.Call1).thenGo(StepsBI.Call2).thenGo(StepsBI.Call3).thenGo(StepsBI.Call4)
                     .thenGo(StepsBI.Call5).thenGo(StepsBI.Call6).thenGo(StepsBI.Call7).thenGo(StepsBI.Call8);
-            f.from(StepsBI.Call8).go(StepsBI.Second).setAsDefaultTransiton();
+            f.from(StepsBI.Call8).go(StepsBI.Second).setAsDefaultTransition();
 
             f.from(StepsBI.Second).go(StepsBI.Third).thenGo(StepsBI.End);
 
@@ -169,7 +169,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         public MyBean myBean;
 
         @Override
-        public void call(ExecutionContext execucaoTask) {
+        public void call(ExecutionContext executionContext) {
             assertBean(myBean, IPoint.callBasic);
 
         }
@@ -181,7 +181,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         public MyBean myBean;
 
         @Override
-        public void call(ExecutionContext execucaoTask) {
+        public void call(ExecutionContext executionContext) {
             assertBean(myBean, IPoint.call1);
 
         }
@@ -193,7 +193,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         public MyBean myBean;
 
         @Override
-        public void call(ExecutionContext execucaoTask) {
+        public void call(ExecutionContext executionContext) {
             assertBean(myBean, IPoint.call2);
 
         }
@@ -204,7 +204,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         public MyBean myBean;
 
         @Override
-        public void call(ExecutionContext execucaoTask) {
+        public void call(ExecutionContext executionContext) {
             assertBean(myBean, IPoint.call3);
 
         }
@@ -215,7 +215,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         public MyBean myBean;
 
         @Override
-        public void call(ExecutionContext execucaoTask) {
+        public void call(ExecutionContext executionContext) {
             assertBean(myBean, IPoint.call4);
 
         }
@@ -270,7 +270,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         public MyBean myBean;
 
         @Override
-        public void onTaskStart(TaskInstance taskInstance, ExecutionContext execucaoTask) {
+        public void onTaskStart(TaskInstance taskInstance, ExecutionContext executionContext) {
             assertBean(myBean, IPoint.callStartListener);
         }
     }
@@ -286,17 +286,17 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         }
 
         @Override
-        public Set<Integer> getFirstLevelUsersCodWithAccess(FlowInstance instancia) {
+        public Set<Integer> getFirstLevelUsersCodWithAccess(FlowInstance instance) {
             return null;
         }
 
         @Override
-        public List<? extends SUser> listAllocableUsers(FlowInstance instancia) {
+        public List<? extends SUser> listAllocableUsers(FlowInstance instance) {
             return null;
         }
 
         @Override
-        public List<String> getExecuteRoleNames(FlowDefinition definicao, STask task) {
+        public List<String> getExecuteRoleNames(FlowDefinition definition, STask task) {
             return Collections.emptyList();
         }
     }

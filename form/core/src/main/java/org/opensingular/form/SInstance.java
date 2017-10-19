@@ -60,10 +60,14 @@ public abstract class SInstance implements SAttributeEnabled {
 
     private Integer id;
 
-    /** Indica que a instância está no meio de uma exclusão. */
+    /**
+     * Indica que a instância está no meio de uma exclusão.
+     */
     private boolean removingInstance;
 
-    /** Se true, indica que o atributo é temporário e deve ser convertido para o tipo correto mais tarde. */
+    /**
+     * Se true, indica que o atributo é temporário e deve ser convertido para o tipo correto mais tarde.
+     */
     private boolean attributeShouldMigrate;
 
     /**
@@ -78,14 +82,18 @@ public abstract class SInstance implements SAttributeEnabled {
         return type;
     }
 
-    /** Retorna o documento ao qual pertence a instância atual. */
+    /**
+     * Retorna o documento ao qual pertence a instância atual.
+     */
     @Nonnull
     public SDocument getDocument() {
         return document;
     }
 
-    /** Retorna a instância raiz da instância atual.
-     *  @see SDocument#getRoot()
+    /**
+     * Retorna a instância raiz da instância atual.
+     *
+     * @see SDocument#getRoot()
      */
     @Nonnull
     public SInstance getRoot() {
@@ -178,20 +186,20 @@ public abstract class SInstance implements SAttributeEnabled {
         return attributeInstanceInfo == null ? null : attributeInstanceInfo.getInstanceOwner();
     }
 
-    final void setParent(SInstance pai) {
+    final void setParent(SInstance parent) {
         /*
          * exceção adicionada por vinicius nunes, para adicionar uma instancia a
          * outra hierarquia deveria haver uma chamada para 'destacar' a
          * minstancia da sua hierarquia atual
          */
-        if (this.parent != null && pai != null) {
+        if (this.parent != null && parent != null) {
             throw new SingularFormException(String.format(" Não é possível adicionar uma MIstancia criada em uma hierarquia à outra."
                     + " MInstancia adicionada a um objeto do tipo %s já pertence à outra hierarquia de MInstancia."
                     + " O pai atual é do tipo %s. ", this.getClass().getName(), this.parent.getClass().getName()), this);
         }
-        this.parent = pai;
-        if (pai != null && pai.isAttribute()) {
-            attributeInstanceInfo = pai.attributeInstanceInfo;
+        this.parent = parent;
+        if (parent != null && parent.isAttribute()) {
+            attributeInstanceInfo = parent.attributeInstanceInfo;
         }
     }
 
@@ -217,15 +225,16 @@ public abstract class SInstance implements SAttributeEnabled {
 
     /**
      * Resolves a field instance and sets its value.
-     * @param value new value
-     * @param rootTypeClass root type class
+     *
+     * @param value              new value
+     * @param rootTypeClass      root type class
      * @param targetTypeFunction function that receives the root type and returns the field type
-     * @param <RT> root type
-     * @param <RI> root instance
-     * @param <TT> target type
-     * @param <TI> target instance
-     * @param <VAL> value
-     * @throws ClassCastException if this instance type doesn't match rootTypeClass
+     * @param <RT>               root type
+     * @param <RI>               root instance
+     * @param <TT>               target type
+     * @param <TI>               target instance
+     * @param <VAL>              value
+     * @throws ClassCastException     if this instance type doesn't match rootTypeClass
      * @throws NoSuchElementException if type returned by the function doesn't match a descendant type
      */
     public <RT extends SType<RI>,
@@ -233,23 +242,24 @@ public abstract class SInstance implements SAttributeEnabled {
             TT extends STypeSimple<TI, VAL>,
             TI extends SISimple<VAL>,
             VAL extends Serializable> void setValue(
-                    VAL value,
-                    Class<RT> rootTypeClass,
-                    IFunction<RT, TT> targetTypeFunction) {
+            VAL value,
+            Class<RT> rootTypeClass,
+            IFunction<RT, TT> targetTypeFunction) {
 
         getField(rootTypeClass, targetTypeFunction).setValue(value);
     }
 
     /**
      * Resolves a field instance and returns its value, or null if empty.
-     * @param rootTypeClass root type class
+     *
+     * @param rootTypeClass      root type class
      * @param targetTypeFunction function that receives the root type and returns the field type
-     * @param <RT> root type
-     * @param <RI> root instance
-     * @param <TT> target type
-     * @param <TI> target instance
-     * @param <VAL> value
-     * @throws ClassCastException if this instance type doesn't match rootTypeClass
+     * @param <RT>               root type
+     * @param <RI>               root instance
+     * @param <TT>               target type
+     * @param <TI>               target instance
+     * @param <VAL>              value
+     * @throws ClassCastException     if this instance type doesn't match rootTypeClass
      * @throws NoSuchElementException if type returned by the function doesn't match a descendant type
      */
     public <RT extends SType<RI>,
@@ -257,8 +267,8 @@ public abstract class SInstance implements SAttributeEnabled {
             TT extends SType<TI>,
             TI extends SISimple<VAL>,
             VAL extends Serializable> VAL getValue(
-                    Class<RT> rootTypeClass,
-                    IFunction<RT, TT> targetTypeFunction) {
+            Class<RT> rootTypeClass,
+            IFunction<RT, TT> targetTypeFunction) {
 
         return findField(rootTypeClass, targetTypeFunction)
                 .map(SISimple::getValue)
@@ -267,14 +277,15 @@ public abstract class SInstance implements SAttributeEnabled {
 
     /**
      * Resolves a field instance and returns its optional value.
-     * @param rootTypeClass root type class
+     *
+     * @param rootTypeClass      root type class
      * @param targetTypeFunction function that receives the root type and returns the field type
-     * @param <RT> root type
-     * @param <RI> root instance
-     * @param <TT> target type
-     * @param <TI> target instance
-     * @param <VAL> value
-     * @throws ClassCastException if this instance type doesn't match rootTypeClass
+     * @param <RT>               root type
+     * @param <RI>               root instance
+     * @param <TT>               target type
+     * @param <TI>               target instance
+     * @param <VAL>              value
+     * @throws ClassCastException     if this instance type doesn't match rootTypeClass
      * @throws NoSuchElementException if type returned by the function doesn't match a descendant type
      */
     public <RT extends SType<RI>,
@@ -282,8 +293,8 @@ public abstract class SInstance implements SAttributeEnabled {
             TT extends SType<TI>,
             TI extends SISimple<VAL>,
             VAL extends Serializable> Optional<VAL> findValue(
-                    Class<RT> rootTypeClass,
-                    IFunction<RT, TT> targetTypeFunction) {
+            Class<RT> rootTypeClass,
+            IFunction<RT, TT> targetTypeFunction) {
 
         return findField(rootTypeClass, targetTypeFunction).map(f -> (VAL) f.getValue());
     }
@@ -291,42 +302,44 @@ public abstract class SInstance implements SAttributeEnabled {
 
     /**
      * Resolves a field instance and returns it, or null if empty.
-     * @param rootTypeClass root type class
+     *
+     * @param rootTypeClass      root type class
      * @param targetTypeFunction function that receives the root type and returns the field type
-     * @param <RT> root type
-     * @param <RI> root instance
-     * @param <TT> target type
-     * @param <TI> target instance
-     * @throws ClassCastException if this instance type doesn't match rootTypeClass
+     * @param <RT>               root type
+     * @param <RI>               root instance
+     * @param <TT>               target type
+     * @param <TI>               target instance
+     * @throws ClassCastException     if this instance type doesn't match rootTypeClass
      * @throws NoSuchElementException if type returned by the function doesn't match a descendant type
      */
     private <RT extends SType<RI>,
             RI extends SInstance,
             TT extends SType<TI>,
             TI extends SInstance> TI getField(
-                    Class<RT> rootTypeClass,
-                    IFunction<RT, TT> targetTypeFunction) {
+            Class<RT> rootTypeClass,
+            IFunction<RT, TT> targetTypeFunction) {
 
         return findField(rootTypeClass, targetTypeFunction).get();
     }
 
     /**
      * Resolves a field instance and returns it as an Optional (empty if type not found as a descendant).
-     * @param rootTypeClass root type class
+     *
+     * @param rootTypeClass      root type class
      * @param targetTypeFunction function that receives the root type and returns the field type
-     * @param <RT> root type
-     * @param <RI> root instance
-     * @param <TT> target type
-     * @param <TI> target instance
-     * @throws ClassCastException if this instance type doesn't match rootTypeClass
+     * @param <RT>               root type
+     * @param <RI>               root instance
+     * @param <TT>               target type
+     * @param <TI>               target instance
+     * @throws ClassCastException     if this instance type doesn't match rootTypeClass
      * @throws NoSuchElementException if type returned by the function doesn't match a descendant type
      */
-    public  <RT extends SType<RI>,
+    public <RT extends SType<RI>,
             RI extends SInstance,
             TT extends SType<TI>,
             TI extends SInstance> Optional<TI> findField(
-                    Class<RT> rootTypeClass,
-                    IFunction<RT, TT> targetTypeFunction) {
+            Class<RT> rootTypeClass,
+            IFunction<RT, TT> targetTypeFunction) {
 
         if (!rootTypeClass.isAssignableFrom(this.getType().getClass())) {
             throw new SingularInvalidTypeException(this, rootTypeClass);
@@ -430,7 +443,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     void setValue(PathReader pathReader, Object value) {
-        throw new SingularFormException(erroMsgMethodUnsupported(),this);
+        throw new SingularFormException(erroMsgMethodUnsupported(), this);
     }
 
     public SInstance getField(String path) {
@@ -520,17 +533,17 @@ public abstract class SInstance implements SAttributeEnabled {
 
     @Override
     public final <V> void setAttributeCalculation(@Nonnull AtrRef<?, ?, V> atr,
-            @Nullable SimpleValueCalculation<V> value) {
+                                                  @Nullable SimpleValueCalculation<V> value) {
         getAttributesMap().setAttributeCalculation(atr, value);
     }
 
     @Override
     public <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
-            @Nullable SimpleValueCalculation<V> valueCalculation) {
+                                            @Nullable SimpleValueCalculation<V> valueCalculation) {
         getAttributesMap().setAttributeCalculation(attributeFullName, subPath, valueCalculation);
     }
 
-    final void setAttributeValueSavingForLatter(@Nonnull String attributeName, @Nullable  String value) {
+    final void setAttributeValueSavingForLatter(@Nonnull String attributeName, @Nullable String value) {
         AttrInternalRef ref = getDictionary().getAttribureRefereceOrCreateLazy(attributeName);
         getAttributesMap().setAttributeValue(ref, null, value);
     }
@@ -637,9 +650,9 @@ public abstract class SInstance implements SAttributeEnabled {
         return (Optional<V>) nearest.map(it -> it.getValueWithDefault());
     }
 
-    public <V> Optional<V> findNearestValue(SType<?> targetType, Class<V> classeValor) {
+    public <V> Optional<V> findNearestValue(SType<?> targetType, Class<V> valueClass) {
         Optional<? extends SInstance> nearest = SInstances.findNearest(this, targetType);
-        return nearest.map(it -> classeValor.cast(it.getValueWithDefault(classeValor)));
+        return nearest.map(it -> valueClass.cast(it.getValueWithDefault(valueClass)));
     }
 
     public boolean isDescendantOf(SInstance ancestor) {
@@ -910,8 +923,19 @@ public abstract class SInstance implements SAttributeEnabled {
         return Collections.emptyList();
     }
 
-    public SInstance getDocumentRoot(){
+    public SInstance getDocumentRoot() {
         return document.getRoot();
+    }
+
+
+    /**
+     * Check if this types is child in any level of the candidate type class
+     * @param candidate the candidate
+     * @return if is descendant
+     */
+    public boolean isDescendantOf(Class<? extends SType<?>> candidate) {
+        List<SInstance> ascendants = SInstances.listAscendants(this);
+        return ascendants.stream().anyMatch(parent -> parent.getType().getClass().equals(candidate));
     }
 
 }

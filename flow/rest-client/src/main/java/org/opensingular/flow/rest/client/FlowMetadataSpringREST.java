@@ -52,7 +52,7 @@ class FlowMetadataSpringREST implements IFlowMetadataService, Loggable {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Set<String> listProcessDefinitionsWithAccess(String userCod, AccessLevel accessLevel) {
+    public Set<String> listFlowDefinitionsWithAccess(String userCod, AccessLevel accessLevel) {
         try {
             Set<String> result = new RestTemplate().getForObject(getConnectionURL(PATH_PROCESS_DEFINITION_WITH_ACCESS,
                 "userCod","accessLevel"), Set.class,  userCod, accessLevel.name());
@@ -64,11 +64,10 @@ class FlowMetadataSpringREST implements IFlowMetadataService, Loggable {
     }
 
     @Override
-    public boolean hasAccessToProcessDefinition(String processDefinitionKey, String userCod, AccessLevel accessLevel) {
+    public boolean hasAccessToFlowDefinition(String flowDefinitionKey, String userCod, AccessLevel accessLevel) {
         try {
             return new RestTemplate().getForObject(getConnectionURL(PATH_PROCESS_DEFINITION_HAS_ACCESS,
-                "processDefinitionKey","userCod","accessLevel"), Boolean.class, 
-                processDefinitionKey, userCod, accessLevel.name());
+                "flowDefinitionKey","userCod","accessLevel"), Boolean.class, flowDefinitionKey, userCod, accessLevel.name());
         } catch (Exception e) {
             getLogger().error("Erro ao acessar serviço: {}{}", connectionURL, PATH_PROCESS_DEFINITION_WITH_ACCESS, e);
             return false;
@@ -76,11 +75,10 @@ class FlowMetadataSpringREST implements IFlowMetadataService, Loggable {
     }
 
     @Override
-    public boolean hasAccessToProcessInstance(String processInstanceFullId, String userCod, AccessLevel accessLevel) {
+    public boolean hasAccessToFlowInstance(String flowInstanceFullId, String userCod, AccessLevel accessLevel) {
         try {
             return new RestTemplate().getForObject(getConnectionURL(PATH_PROCESS_INSTANCE_HAS_ACCESS,
-                "processInstanceFullId","userCod","accessLevel"), Boolean.class, 
-                processInstanceFullId, userCod, accessLevel.name());
+                "flowInstanceFullId","userCod","accessLevel"), Boolean.class, flowInstanceFullId, userCod, accessLevel.name());
         } catch (Exception e) {
             getLogger().error("Erro ao acessar serviço: {}{}",connectionURL, PATH_PROCESS_DEFINITION_WITH_ACCESS, e);
             return false;
@@ -88,7 +86,7 @@ class FlowMetadataSpringREST implements IFlowMetadataService, Loggable {
     }
     
     @Override
-    public byte[] processDefinitionDiagram(String processDefinitionKey) {
+    public byte[] flowDefinitionDiagram(String flowDefinitionKey) {
         try {
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());    
@@ -97,7 +95,7 @@ class FlowMetadataSpringREST implements IFlowMetadataService, Loggable {
             HttpEntity<String> entity = new HttpEntity<>(headers);
 
             ResponseEntity<byte[]> response = restTemplate.exchange(getConnectionURL(PATH_PROCESS_DEFINITION_DIAGRAM,
-                "processDefinitionKey"), HttpMethod.GET, entity, byte[].class, processDefinitionKey);
+                "flowDefinitionKey"), HttpMethod.GET, entity, byte[].class, flowDefinitionKey);
 
             if(response.getStatusCode() == HttpStatus.OK){
                 return response.getBody();

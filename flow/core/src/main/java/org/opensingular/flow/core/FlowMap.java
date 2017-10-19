@@ -19,8 +19,6 @@ package org.opensingular.flow.core;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
-import org.apache.commons.collections.CollectionUtils;
-import org.opensingular.flow.core.entity.TransitionType;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.variable.VarService;
 import org.opensingular.lib.commons.base.SingularException;
@@ -78,12 +76,12 @@ public class FlowMap {
      *
      * @param origin tarefa de origem.
      * @param name o nome da transição.
-     * @param destinarion a tarefa destino.
+     * @param destination a tarefa destino.
      * @param type o tipo de transição.
      * @return a nova transição criada.
      */
-    protected STransition newTransition(STask<?> origin, String name, STask<?> destinarion, TransitionType type) {
-        return new STransition(origin, name, destinarion, type);
+    protected STransition newTransition(STask<?> origin, String name, STask<?> destination) {
+        return new STransition(origin, name, destination);
     }
 
     /**
@@ -98,13 +96,16 @@ public class FlowMap {
     }
 
     /**
-     * <p>Retorna todas as tarefas definidas neste mapa.</p>
-     *
-     * @return todas as tarefas definidas.
+     * Returns all tasks defined, including the end nodes of the flow.
      */
     @Nonnull
     public Collection<STask<?>> getAllTasks() {
-        return CollectionUtils.union(getTasks(), getEndTasks());
+        Collection<STask<?>> tasks = getTasks();
+        Collection<STaskEnd> ends = getEndTasks();
+        ArrayList<STask<?>> all = new ArrayList<>(tasks.size() + ends.size());
+        all.addAll(tasks);
+        all.addAll(ends);
+        return all;
     }
 
     /**
@@ -482,7 +483,7 @@ public class FlowMap {
     }
 
     private void verifyTasksConsistency() {
-        tasksByAbbreviation.values().stream().forEach(STask::verifyConsistency);
+        tasksByAbbreviation.values().forEach(STask::verifyConsistency);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -518,7 +519,7 @@ public class FlowMap {
 
     @Override
     public String toString() {
-        return "FlowMap [processDefinition=" + flowDefinition.getName() + "]";
+        return "FlowMap [flowDefinition=" + flowDefinition.getName() + "]";
     }
 
     public void addDashboardView(DashboardView dashboardView) {

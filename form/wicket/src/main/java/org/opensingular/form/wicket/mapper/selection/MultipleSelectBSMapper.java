@@ -16,24 +16,23 @@
 
 package org.opensingular.form.wicket.mapper.selection;
 
-import org.opensingular.form.SInstance;
-import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.IModel;
+import org.opensingular.form.SInstance;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
+import java.io.Serializable;
 import java.util.List;
 
 @SuppressWarnings("serial")
 public class MultipleSelectBSMapper extends MultipleSelectMapper {
 
     @Override
-    @SuppressWarnings("rawtypes")
-    protected Component formGroupAppender(BSControls formGroup,
-                                          IModel<? extends SInstance> model,
-                                          final List<?> opcoesValue) {
-        final ListMultipleChoice choices = retrieveChoices(model, opcoesValue);
+    protected Component formGroupAppender(BSControls formGroup, IModel<? extends SInstance> model, IModel<List<Serializable>> valuesModel) {
+        final ListMultipleChoice choices = retrieveChoices(model, valuesModel);
         formGroup.appendSelect(choices.setMaxRows(5), true);
         return choices;
     }
+
 }

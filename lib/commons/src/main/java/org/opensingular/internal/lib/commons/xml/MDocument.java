@@ -70,34 +70,34 @@ public abstract class MDocument implements Document {
             resto = resolvedQualifiedName.substring(pos + 1);
             resolvedQualifiedName = resolvedQualifiedName.substring(0, pos);
         }
-        Element novo = createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
+        Element newElement = createElementNS(resolvedNamespaceURI, resolvedQualifiedName);
         if (resolvedNamespaceURI != null) {
             int posPrefixo = resolvedQualifiedName.indexOf(':');
             if ((posPrefixo == -1)) {
-                novo.setAttribute("xmlns", resolvedNamespaceURI);
+                newElement.setAttribute("xmlns", resolvedNamespaceURI);
             } else {
                 String prefixo = resolvedQualifiedName.substring(0, posPrefixo);
-                novo.setAttribute("xmlns:" + prefixo, resolvedNamespaceURI);
+                newElement.setAttribute("xmlns:" + prefixo, resolvedNamespaceURI);
             }
         }
         if (resto != null) {
-            MElement.toMElement(novo).addElement(resto);
+            MElement.toMElement(newElement).addElement(resto);
         }
-        return MElement.toMElement(novo);
+        return MElement.toMElement(newElement);
     }
 
-    public MElement createMElementComValor(String qualifiedName, String value) {
+    public MElement createMElementWithValue(String qualifiedName, String value) {
         MElement e = createMElement(qualifiedName);
         Text txt = createTextNode(value);
         e.appendChild(txt);
         return e;
     }
 
-    public MElement createRaiz(String qualifiedName) {
-        return setRaiz(createMElement(qualifiedName));
+    public MElement createRoot(String qualifiedName) {
+        return setRoot(createMElement(qualifiedName));
     }
 
-    public MElement setRaiz(MElement e) {
+    public MElement setRoot(MElement e) {
         appendChild(e.getOriginal());
         return e;
     }

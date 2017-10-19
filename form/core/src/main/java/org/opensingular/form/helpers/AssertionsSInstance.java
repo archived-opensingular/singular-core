@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.form.helpers;
 
 import org.fest.assertions.api.Assertions;
@@ -22,12 +40,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 /**
  * Classe de apoio a a escrita de assertivas referentes a um {@link SInstance}. Dispara {@link AssertionError} se uma
@@ -279,12 +291,12 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
     }
 
     public static void assertEqualsAtribute(SAttributeEnabled copy, SInstance atrOriginal) {
-        Optional<SInstance> atrNovoOpt = copy.getAttributeDirectly(atrOriginal.getAttributeInstanceInfo().getName());
+        Optional<SInstance> atrNewOpt = copy.getAttributeDirectly(atrOriginal.getAttributeInstanceInfo().getName());
         try {
-            if (atrNovoOpt.isPresent()) {
-                SInstance atrNovo = atrNovoOpt.get();
-                assertNotNull(atrNovo);
-                assertEquivalentInstance(atrOriginal, atrNovo, false);
+            if (atrNewOpt.isPresent()) {
+                SInstance atrNew = atrNewOpt.get();
+                assertNotNull(atrNew);
+                assertEquivalentInstance(atrOriginal, atrNew, false);
             } else {
                 fail();
             }

@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.form;
 
 import org.junit.Test;
@@ -14,9 +32,9 @@ public class TestMPacoteCoreTipoFormula extends TestCaseForm {
     @Test
     public void testEmpty() {}
     /*
-     * public void testCodeSimple() { MDicionario dicionario =
+     * public void testCodeSimple() { MDicionario dictionary =
      * createTestDictionary(); PacoteBuilder pb =
-     * dicionario.criarNovoPacote("teste");
+     * dictionary.criarNovoPacote("teste");
      *
      * MTipoComposto<?> tipoCampos = pb.createTipoComposto("campos");
      * MTipoInteger tipoQtd = tipoCampos.addCampoInteger("qtd"); MTipoCode
@@ -24,16 +42,16 @@ public class TestMPacoteCoreTipoFormula extends TestCaseForm {
      *
      * MIComposto campos = tipoCampos.novaInstancia();
      *
-     * assertNull(campos.getValor("calc"));
+     * assertNull(campos.getValue("calc"));
      *
-     * campos.setValor("calc", 10); assertNull(campos.getValor("calc"));
+     * campos.setValue("calc", 10); assertNull(campos.getValue("calc"));
      *
-     * campos.setValor("calc", (Supplier<Integer>) () -> 10);
-     * assertNotNull(campos.getValor("calc"));
-     * assertTrue(campos.getValor("calc") instanceof Supplier);
-     * assertEquals(campos.getValor("calc", Supplier.class).get(), 10); } public
-     * void testMetodoSimples() { MDicionario dicionario = MDicionario.create();
-     * PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+     * campos.setValue("calc", (Supplier<Integer>) () -> 10);
+     * assertNotNull(campos.getValue("calc"));
+     * assertTrue(campos.getValue("calc") instanceof Supplier);
+     * assertEquals(campos.getValue("calc", Supplier.class).get(), 10); } public
+     * void testMetodoSimples() { MDicionario dictionary = MDicionario.create();
+     * PacoteBuilder pb = dictionary.criarNovoPacote("teste");
      *
      * MTipoComposto<?> tipoCampos = pb.createTipoComposto("campos");
      * MTipoInteger tipoQtd = tipoCampos.addCampoInteger("qtd"); MTipoCode
@@ -42,17 +60,17 @@ public class TestMPacoteCoreTipoFormula extends TestCaseForm {
      *
      * MIComposto campos = tipoCampos.novaInstancia();
      *
-     * assertNull(campos.getValor("isNegativo"));
+     * assertNull(campos.getValue("isNegativo"));
      *
-     * campos.setValor("calc", 10); assertNull(campos.getValor("calc"));
+     * campos.setValue("calc", 10); assertNull(campos.getValue("calc"));
      *
-     * assertNotNull(campos.getValor("calc"));
-     * assertTrue(campos.getValor("calc") instanceof Supplier);
-     * assertEquals(campos.getValor("calc", Supplier.class).get(), 10); }
+     * assertNotNull(campos.getValue("calc"));
+     * assertTrue(campos.getValue("calc") instanceof Supplier);
+     * assertEquals(campos.getValue("calc", Supplier.class).get(), 10); }
      *
-     * public void testBasicFunction() { MDicionario dicionario =
+     * public void testBasicFunction() { MDicionario dictionary =
      * MDicionario.create(); PacoteBuilder pb =
-     * dicionario.criarNovoPacote("teste");
+     * dictionary.criarNovoPacote("teste");
      *
      * MTipoComposto<?> tipoCampos = pb.createTipoComposto("campos");
      * MTipoInteger tipoSimples = tipoCampos.addCampoInteger("simples");
@@ -65,6 +83,6 @@ public class TestMPacoteCoreTipoFormula extends TestCaseForm {
      * // tipoSimples.withValorInicial(valor)
      *
      * MIComposto campos = tipoCampos.novaInstancia(); campos.debug();
-     * assertEquals(2, campos.getValor("simples")); }
+     * assertEquals(2, campos.getValue("simples")); }
      */
 }

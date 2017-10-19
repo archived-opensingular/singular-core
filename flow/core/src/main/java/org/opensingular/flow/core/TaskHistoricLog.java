@@ -38,8 +38,8 @@ public final class TaskHistoricLog {
     }
 
     @Nonnull
-    public FlowInstance getProcessInstance() {
-        return Flow.getProcessInstance(history.getTaskInstance().getProcessInstance());
+    public FlowInstance getFlowInstance() {
+        return Flow.getFlowInstance(history.getTaskInstance().getFlowInstance());
     }
 
     public SUser getAllocatorUser() {

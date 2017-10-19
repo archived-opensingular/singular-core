@@ -117,7 +117,7 @@ public class SingularFlowException extends SingularException{
     /** Adiciona informações sobre a definição de processo relacionada a exception. */
     public SingularFlowException add(@Nullable FlowDefinition<?> flowDefinition) {
         if (flowDefinition != null) {
-            add("processDefinition", flowDefinition.getName() + " (" + flowDefinition.getClass() + ")");
+            add("flowDefinition", flowDefinition.getName() + " (" + flowDefinition.getClass() + ")");
         }
         return this;
     }
@@ -137,7 +137,7 @@ public class SingularFlowException extends SingularException{
     /** Adiciona as informações sobre a task na exception. */
     public SingularFlowException add(@Nullable FlowInstance flowInstance) {
         if (flowInstance != null) {
-            add("processInstance", () -> flowInstance.getFullId());
+            add("flowInstance", () -> flowInstance.getFullId());
         }
         return this;
     }

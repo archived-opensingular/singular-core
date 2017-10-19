@@ -27,35 +27,35 @@ public class STypeInteger extends STypeSimple<SIInteger, Integer> {
         super(SIInteger.class, Integer.class);
     }
 
-    protected STypeInteger(Class<? extends SIInteger> classeInstancia) {
-        super(classeInstancia, Integer.class);
+    protected STypeInteger(Class<? extends SIInteger> instanceClass) {
+        super(instanceClass, Integer.class);
     }
 
     @Override
-    protected Integer convertNotNativeNotString(Object valor) {
-        if (valor instanceof Number) {
-            long longValue = ((Number) valor).longValue();
+    protected Integer convertNotNativeNotString(Object value) {
+        if (value instanceof Number) {
+            long longValue = ((Number) value).longValue();
             if (longValue > Integer.MAX_VALUE) {
-                throw createConversionError(valor, Integer.class, " Valor muito grande.", null);
+                throw createConversionError(value, Integer.class, " Valor muito grande.", null);
             }
             if (longValue < Integer.MIN_VALUE) {
-                throw createConversionError(valor, Integer.class, " Valor muito pequeno.", null);
+                throw createConversionError(value, Integer.class, " Valor muito pequeno.", null);
             }
-            return ((Number) valor).intValue();
+            return ((Number) value).intValue();
         }
-        throw createConversionError(valor);
+        throw createConversionError(value);
     }
 
     @Override
-    public Integer fromString(String valor) {
-        String v = StringUtils.trimToNull(valor);
+    public Integer fromString(String value) {
+        String v = StringUtils.trimToNull(value);
         if (v == null) {
             return null;
         }
         try {
             return Integer.valueOf(v);
         } catch (Exception e) {
-            throw createConversionError(valor, Integer.class, null, e);
+            throw createConversionError(value, Integer.class, null, e);
         }
     }
 }

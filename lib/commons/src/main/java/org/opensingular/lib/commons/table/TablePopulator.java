@@ -23,79 +23,79 @@ public class TablePopulator {
 
     private final TableTool tableTool;
 
-    private final List<InfoCelula[]> celulas = new ArrayList<>();
+    private final List<InfoCell[]> cells = new ArrayList<>();
 
-    private InfoCelula ultima;
+    private InfoCell last;
 
     public TablePopulator(TableTool tableTool) {
         this.tableTool = tableTool;
     }
 
     public TablePopulator insertLine() {
-        celulas.add(new InfoCelula[tableTool.getColumns().size()]);
-        ultima = null;
+        cells.add(new InfoCell[tableTool.getColumns().size()]);
+        last = null;
         return this;
     }
 
-    public TablePopulator insertLine(Object... valores) {
+    public TablePopulator insertLine(Object... values) {
         insertLine();
-        setValores(valores);
+        setValues(values);
         return this;
     }
 
-    public InfoCelula ultima() {
-        return ultima;
+    public InfoCell last() {
+        return last;
     }
 
-    public InfoCelula setValor(int pos, Object valor) {
-        return setValor(celulas.get(celulas.size() - 1), pos, valor);
+    public InfoCell setValue(int pos, Object value) {
+        return setValue(cells.get(cells.size() - 1), pos, value);
     }
 
-    private InfoCelula setValor(InfoCelula[] linha, int pos, Object valor) {
-        if (linha[pos] == null) {
-            linha[pos] = new InfoCelula(tableTool.getColumn(pos));
+    private InfoCell setValue(InfoCell[] line, int pos, Object value) {
+        if (line[pos] == null) {
+            line[pos] = new InfoCell(tableTool.getColumn(pos));
         }
-        linha[pos].setValor(valor);
-        ultima = linha[pos];
-        return linha[pos];
+        line[pos].setValue(value);
+        last = line[pos];
+        return line[pos];
     }
 
-    public InfoCelula setValores(Object... valores) {
-        InfoCelula[] linha = celulas.get(celulas.size() - 1);
-        for (int i = 0; i < valores.length; i++) {
-            setValor(linha, i, valores[i]);
+    public InfoCell setValues(Object... values) {
+        InfoCell[] line = cells.get(cells.size() - 1);
+        for (int i = 0; i < values.length; i++) {
+            setValue(line, i, values[i]);
         }
-        return linha[valores.length - 1];
+        return line[values.length - 1];
     }
 
     public boolean isEmpty() {
-        return celulas.isEmpty();
+        return cells.isEmpty();
     }
 
     @SuppressWarnings("serial")
-    public LeitorArvore asLeitorArvore() {
-        return new LeitorArvore() {
+    public TreeLineReader asTreeLineReader() {
+        return new TreeLineReader() {
 
             @Override
-            public Object getRaizes() {
-                return celulas;
+            public Object getRoots() {
+                return cells;
             }
 
             @Override
-            public Object getFilhos(Object item) {
+            public Object getChildren(Object item) {
                 return null;
             }
 
             @Override
-            public void recuperarValores(LineReadContext ctx, Object current, InfoLinha line) {
-                InfoCelula[] linha = (InfoCelula[]) current;
-                if (linha != null) {
-                    for (int i = 0; i < linha.length; i++) {
-                        if (linha[i] != null) {
-                            line.setCell(i, linha[i]);
+            public void retrieveValues(LineReadContext ctx, Object current, LineInfo line) {
+                InfoCell[] info = (InfoCell[]) current;
+                if (info != null) {
+                    for (int i = 0; i < info.length; i++) {
+                        if (info[i] != null) {
+                            line.setCell(i, info[i]);
                             // Seta de novo o valor pois a coluna pode fazer
                             // algum tratamento sobre o valor
-                            line.get(i).setValor(linha[i].getValue());
+                            line.get(i).setValue(info[i].getValue());
                         }
                     }
                 }

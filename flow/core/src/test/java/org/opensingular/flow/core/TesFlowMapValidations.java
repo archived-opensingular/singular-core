@@ -32,7 +32,9 @@ import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Daniel C. Bordin on 18/03/2017.
@@ -43,17 +45,17 @@ public class TesFlowMapValidations {
     private static final MetaDataRef<Boolean> TAG = new MetaDataRef<>("tag", Boolean.class);
     private static final MetaDataRef<Boolean> FLAG = new MetaDataRef<>("flag", Boolean.class);
 
-    private static ValidationCondicions condicions = new ValidationCondicions();
+    private static ValidationConditions condicions = new ValidationConditions();
 
     @After
     @Before
     public void correctCondicions() {
-        condicions = new ValidationCondicions();
+        condicions = new ValidationConditions();
     }
 
     @Test
     public void basic() {
-        condicions = new ValidationCondicions();
+        condicions = new ValidationConditions();
         FlowWithFlowValidation definition = new FlowWithFlowValidation();
 
         assertException(() -> definition.getFlowMap().getTaskByAbbreviationOrException("wrong"), "not found");
@@ -72,32 +74,32 @@ public class TesFlowMapValidations {
 
     @Test
     public void dontSetStart() {
-        condicions = new ValidationCondicions();
+        condicions = new ValidationConditions();
         condicions.configStart = false;
         assertException(() -> new FlowWithFlowValidation().getFlowMap(), "There is no initial task set");
     }
 
     @Test
     public void dontConfigHumanTask() {
-        condicions = new ValidationCondicions();
+        condicions = new ValidationConditions();
         condicions.configPeopleAccessStrategy = false;
         assertException(() -> new FlowWithFlowValidation().getFlowMap(), "Não foi definida a estrategia de verificação de acesso da tarefa");
 
-        condicions = new ValidationCondicions();
+        condicions = new ValidationConditions();
         condicions.configPeopleExecutionPage = false;
         assertException(() -> new FlowWithFlowValidation().getFlowMap(), "Não foi definida a estratégia da página para execução da tarefa");
     }
 
     @Test
     public void taskWithoutPathToEnd() {
-        condicions = new ValidationCondicions();
+        condicions = new ValidationConditions();
         condicions.createTaskWithoutPathToEnd = true;
         assertException(() -> new FlowWithFlowValidation().getFlowMap(), "no way to reach the end");
     }
 
     @Test
     public void flowMetaData() {
-        condicions = new ValidationCondicions();
+        condicions = new ValidationConditions();
         FlowWithFlowValidation p = new FlowWithFlowValidation();
         p.getFlowMap().setMetaDataValue(TAG, Boolean.TRUE);
         assertTrue(p.getMetaDataValue(TAG));
@@ -107,14 +109,14 @@ public class TesFlowMapValidations {
 
     @Test
     public void taskJavaWithoutCall() {
-        condicions = new ValidationCondicions();
+        condicions = new ValidationConditions();
         condicions.javaTaskSetCode = false;
         assertException(() -> new FlowWithFlowValidation().getFlowMap(), "Não foi configurado o código de execução da tarefa");
     }
 
     @Test
     public void taskJavaWithBatchCall() {
-        condicions = new ValidationCondicions();
+        condicions = new ValidationConditions();
         condicions.javaTaskSetCode = false;
         condicions.javaTaskSetCodeByBlock = true;
         new FlowWithFlowValidation().getFlowMap();
@@ -196,7 +198,7 @@ public class TesFlowMapValidations {
         SingularTestUtil.assertException(code, SingularFlowException.class, expectedExceptionMsgPart, null);
     }
 
-    private static class ValidationCondicions {
+    private static class ValidationConditions {
         public boolean configStart = true;
         public boolean configPeopleExecutionPage = true;
         public boolean configPeopleAccessStrategy = true;
@@ -214,17 +216,17 @@ public class TesFlowMapValidations {
         }
 
         @Override
-        public Set<Integer> getFirstLevelUsersCodWithAccess(FlowInstance instancia) {
+        public Set<Integer> getFirstLevelUsersCodWithAccess(FlowInstance instance) {
             return null;
         }
 
         @Override
-        public List<? extends SUser> listAllocableUsers(FlowInstance instancia) {
+        public List<? extends SUser> listAllocableUsers(FlowInstance instance) {
             return null;
         }
 
         @Override
-        public List<String> getExecuteRoleNames(FlowDefinition<?> definicao, STask<?> task) {
+        public List<String> getExecuteRoleNames(FlowDefinition<?> definition, STask<?> task) {
             return null;
         }
     }

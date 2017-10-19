@@ -1,8 +1,25 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.internal.lib.commons.xml;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -27,7 +44,7 @@ public class TestMDocument {
     @Test(expected = SingularException.class)
     public void testToMDocumentByNode(){
         MDocument document = MDocument.newInstance();
-        MElement raiz = document.createRaiz("raiz");
+        MElement root = document.createRoot("raiz");
 
         MDocument documentCopyInstance = MDocument.toMDocument((Node) document);
         Assert.assertEquals(document, documentCopyInstance);
@@ -38,7 +55,7 @@ public class TestMDocument {
         Node node = null;
         Assert.assertNull(MDocument.toMDocument(node));
 
-        MDocument.toMDocument((Node) raiz); // generate document from nodeType diferent of documentNode
+        MDocument.toMDocument((Node) root); // generate document from nodeType diferent of documentNode
     }
 
     @Test
@@ -50,10 +67,10 @@ public class TestMDocument {
     }
 
     @Test
-    public void testCreateRaiz(){
+    public void testCreateRoot(){
         MDocument document = MDocument.newInstance();
 
-        String raizGeradaDocument = document.createRaiz("raiz").toString();
+        String raizGeradaDocument = document.createRoot("raiz").toString();
         String raizGeradaMElement = MElement.newInstance("raiz").toString();
 
         Assert.assertEquals(raizGeradaMElement, raizGeradaDocument);

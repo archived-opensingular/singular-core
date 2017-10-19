@@ -16,7 +16,7 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityFlowInstance;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.variable.VarInstance;
@@ -29,36 +29,35 @@ public class VarInstanceTableProcess extends VarInstanceMapImpl {
 
     private static final MetaDataRef<Integer> PROP_DB_COD = new MetaDataRef<>("persitence.dbCod", Integer.class);
 
-    // TODO transformar o valor abaixo em RefProcessInstance (igual a
-    // RefProcessDefinition)
-    private FlowInstance instancia;
+    // TODO transformar o valor abaixo em RefFlowInstance (igual a RefFlowDefinition)
+    private FlowInstance instance;
 
     public VarInstanceTableProcess(FlowDefinition<?> definition) {
         super(definition.getVariables());
     }
 
-    VarInstanceTableProcess(FlowInstance instancia) {
-        this(instancia.<FlowDefinition<?>>getProcessDefinition());
-        bind(instancia.getEntity());
-        this.instancia = instancia;
+    VarInstanceTableProcess(FlowInstance instance) {
+        this(instance.<FlowDefinition<?>>getFlowDefinition());
+        bind(instance.getEntity());
+        this.instance = instance;
     }
 
-    private void bind(IEntityProcessInstance iModelProcessInstance) {
-        List<? extends IEntityVariableInstance> variaveis_ = iModelProcessInstance.getVariables();
-        if (variaveis_ != null) {
-            for (IEntityVariableInstance dadosVariavel : variaveis_) {
-                VarInstance v = getVariable(dadosVariavel.getName());
+    private void bind(IEntityFlowInstance entityFlowInstance) {
+        List<? extends IEntityVariableInstance> variables = entityFlowInstance.getVariables();
+        if (variables != null) {
+            for (IEntityVariableInstance variableEntity : variables) {
+                VarInstance v = getVariable(variableEntity.getName());
                 if (v == null) {
-                    v = addDefinition(getVarService().newDefinitionString(dadosVariavel.getName(), dadosVariavel.getName(), null));
+                    v = addDefinition(getVarService().newDefinitionString(variableEntity.getName(), variableEntity.getName(), null));
                 }
-                v.setValueFromPersistence(dadosVariavel.getValue());
-                v.setMetaDataValue(PROP_DB_COD, dadosVariavel.getCod());
+                v.setValueFromPersistence(variableEntity.getValue());
+                v.setMetaDataValue(PROP_DB_COD, variableEntity.getCod());
             }
         }
     }
 
     boolean isBinded() {
-        return instancia != null;
+        return instance != null;
     }
 
     @Override
@@ -70,7 +69,7 @@ public class VarInstanceTableProcess extends VarInstanceMapImpl {
     public void onValueChanged(VarInstance changedVar) {
         if (isBinded()) {
             Integer dbCod = changedVar.getMetaDataValue(PROP_DB_COD);
-            Integer dbCod2 = instancia.getPersistenceService().updateVariableValue(instancia.getInternalEntity(), changedVar, dbCod);
+            Integer dbCod2 = instance.getPersistenceService().updateVariableValue(instance.getInternalEntity(), changedVar, dbCod);
             if (!Objects.equals(dbCod, dbCod2)) {
                 changedVar.setMetaDataValue(PROP_DB_COD, dbCod2);
             }

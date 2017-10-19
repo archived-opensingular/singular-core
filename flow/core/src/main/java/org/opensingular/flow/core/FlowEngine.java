@@ -17,9 +17,9 @@
 package org.opensingular.flow.core;
 
 import org.opensingular.flow.core.entity.IEntityCategory;
-import org.opensingular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityFlowDefinition;
+import org.opensingular.flow.core.entity.IEntityFlowInstance;
+import org.opensingular.flow.core.entity.IEntityFlowVersion;
 import org.opensingular.flow.core.entity.IEntityRoleDefinition;
 import org.opensingular.flow.core.entity.IEntityRoleInstance;
 import org.opensingular.flow.core.entity.IEntityTaskDefinition;
@@ -53,7 +53,7 @@ class FlowEngine {
         if (result.hasErros()) {
             throw new SingularFlowInvalidParametersException(startCall, result);
         }
-        I instance = startCall.getProcessDefinition().newPreStartInstance();
+        I instance = startCall.getFlowDefinition().newPreStartInstance();
         copyMarkedParametersToInstanceVariables(instance, startCall);
         if (start.getStartInitializer() != null) {
              start.getStartInitializer().startInstance(instance, (StartCall<FlowInstance>) startCall);
@@ -65,55 +65,55 @@ class FlowEngine {
 
     public static TaskInstance start(FlowInstance instance, VarInstanceMap<?,?> paramIn) {
         validateVariables(instance);
-        SStart start = instance.getProcessDefinition().getFlowMap().getStart();
+        SStart start = instance.getFlowDefinition().getFlowMap().getStart();
         return updateState(instance, null, null, start.getTask(), paramIn);
     }
 
     private static void validateVariables(FlowInstance instance) {
         ValidationResult result = instance.getVariables().validate();
         if (result.hasErros()) {
-            throw new SingularFlowInvalidParametersException(instance.getProcessDefinition(), result);
+            throw new SingularFlowInvalidParametersException(instance.getFlowDefinition(), result);
         }
     }
 
     @Nonnull
-    private static <P extends FlowInstance> TaskInstance updateState(final @Nonnull P processInstance,
+    private static <P extends FlowInstance> TaskInstance updateState(final @Nonnull P flowInstance,
             @Nullable TaskInstance originTaskInstance, @Nullable STransition transition, @Nonnull STask<?> destinyTask,
             @Nullable VarInstanceMap<?,?> paramIn) {
-        Objects.requireNonNull(processInstance);
+        Objects.requireNonNull(flowInstance);
         TaskInstance currentOrigin = originTaskInstance;
         STransition currentTransition = transition;
         STask<?> currentDestiny = Objects.requireNonNull(destinyTask);
         VarInstanceMap<?, ?> currentParam = paramIn;
         while (true) {
 
-            checkUpdateState(processInstance, currentOrigin, currentTransition);
+            checkUpdateState(flowInstance, currentOrigin, currentTransition);
 
             final Date         agora           = new Date();
-            final TaskInstance newTaskInstance = processInstance.updateState(currentOrigin, currentTransition, currentDestiny, agora);
+            final TaskInstance newTaskInstance = flowInstance.updateState(currentOrigin, currentTransition, currentDestiny, agora);
 
             if (currentParam != null) {
-                saveParam(processInstance, currentOrigin, currentParam, agora, newTaskInstance);
+                saveParam(flowInstance, currentOrigin, currentParam, agora, newTaskInstance);
             }
 
             getPersistenceService().flushSession();
 
             if (!currentDestiny.isImmediateExecution()) {
-                return executeImediate(processInstance, currentOrigin, currentTransition, currentDestiny, currentParam,
+                return executeImediate(flowInstance, currentOrigin, currentTransition, currentDestiny, currentParam,
                         newTaskInstance);
             }
 
-            final ExecutionContext execucaoTask = new ExecutionContext(processInstance, newTaskInstance, currentParam,
+            final ExecutionContext executionContext = new ExecutionContext(flowInstance, newTaskInstance, currentParam,
                     currentTransition);
-            newTaskInstance.getFlowTaskOrException().notifyTaskStart(newTaskInstance, execucaoTask);
+            newTaskInstance.getFlowTaskOrException().notifyTaskStart(newTaskInstance, executionContext);
 
-            processInstance.setExecutionContext(execucaoTask);
-            execucaoTask.setTransition(null);
+            flowInstance.setExecutionContext(executionContext);
+            executionContext.setTransition(null);
             try {
                 if (currentTransition != null) {
                     validarParametrosInput(currentOrigin, currentTransition, currentParam);
                 }
-                currentDestiny.execute(execucaoTask);
+                currentDestiny.execute(executionContext);
                 getPersistenceService().flushSession();
             } catch(Exception e) {
                 SingularFlowException e2 = new SingularFlowException(
@@ -121,32 +121,32 @@ class FlowEngine {
                 e2.add(currentDestiny);
                 throw e2;
             } finally {
-                processInstance.setExecutionContext(null);
+                flowInstance.setExecutionContext(null);
             }
 
-            currentTransition = resolveDefaultTransitionIfNecessary(newTaskInstance, execucaoTask.getTransition());
+            currentTransition = resolveDefaultTransitionIfNecessary(newTaskInstance, executionContext.getTransition());
             currentDestiny = currentTransition.getDestination();
             currentOrigin = newTaskInstance;
             currentParam = null;
         }
     }
 
-    private static <P extends FlowInstance> void saveParam(@Nonnull P processInstance, TaskInstance currentOrigin, VarInstanceMap<?, ?> currentParam, Date agora, TaskInstance newTaskInstance) {
-        copyMarkedParametersToInstanceVariables(processInstance, currentParam);
+    private static <P extends FlowInstance> void saveParam(@Nonnull P flowInstance, TaskInstance currentOrigin, VarInstanceMap<?, ?> currentParam, Date agora, TaskInstance newTaskInstance) {
+        copyMarkedParametersToInstanceVariables(flowInstance, currentParam);
         if (currentOrigin != null) {
             //TODO (Daniel) o If acima existe para não dar erro a iniciar processo com variáveis setadas no
             // start, mas deveria guardar no histórico da variavel originais do start (o que o if a cima
             // impede). O problema é uqe originTaskInstance é obrigatório
-            getPersistenceService().saveVariableHistoric(agora, processInstance.getEntity(), currentOrigin, newTaskInstance, currentParam);
+            getPersistenceService().saveVariableHistoric(agora, flowInstance.getEntity(), currentOrigin, newTaskInstance, currentParam);
         }
     }
 
-    private static <P extends FlowInstance> void checkUpdateState(@Nonnull P processInstance, TaskInstance currentOrigin, STransition currentTransition) {
+    private static <P extends FlowInstance> void checkUpdateState(@Nonnull P flowInstance, TaskInstance currentOrigin, STransition currentTransition) {
         if (isCurrentTransitionNotNullAndCurrentOriginNull(currentOrigin, currentTransition)) {
             throw new SingularFlowException(
                     "Não pode ser solicitada execução de uma transição específica (transition=" +
                             currentTransition.getName() +
-                            ") sem uma instancia de tarefa de origem (tarefaOrigem null)", processInstance);
+                            ") sem uma instancia de tarefa de origem (tarefaOrigem null)", flowInstance);
         } else if (isCurrentOriginNotNullAndIsntActive(currentOrigin)) {
             throw new SingularFlowException(
                     "Não pode ser executada uma transição a partir da task '" + currentOrigin.getName() +
@@ -162,33 +162,33 @@ class FlowEngine {
         return currentTransition != null && currentOrigin == null;
     }
 
-    private static <P extends FlowInstance> TaskInstance executeImediate(P processInstance, TaskInstance originTaskInstance,
+    private static <P extends FlowInstance> TaskInstance executeImediate(P flowInstance, TaskInstance originTaskInstance,
                                                                             STransition transition, STask<?> destinyTask, VarInstanceMap<?, ?> paramIn,
                                                                             TaskInstance newTaskInstance) {
-        initTask(processInstance, destinyTask, newTaskInstance);
+        initTask(flowInstance, destinyTask, newTaskInstance);
 
         if (transition != null && transition.hasAutomaticRoleUsersToSet()) {
-            automaticallySetBusinessRole(processInstance, newTaskInstance, transition);
+            automaticallySetBusinessRole(flowInstance, newTaskInstance, transition);
         }
 
         if (transition != null) {
             validarParametrosInput(originTaskInstance, transition, paramIn);
         }
-        ExecutionContext execucaoTask = new ExecutionContext(processInstance, newTaskInstance, paramIn, transition);
-        newTaskInstance.getFlowTaskOrException().notifyTaskStart(newTaskInstance, execucaoTask);
+        ExecutionContext executionContext = new ExecutionContext(flowInstance, newTaskInstance, paramIn, transition);
+        newTaskInstance.getFlowTaskOrException().notifyTaskStart(newTaskInstance, executionContext);
         return newTaskInstance;
     }
 
-    private static <P extends FlowInstance> void automaticallySetBusinessRole(P instancia, TaskInstance instanciaTarefa,
-                                                                              STransition transicaoOrigem) {
-        for (SBusinessRole papel : transicaoOrigem.getRolesToDefine()) {
+    private static <P extends FlowInstance> void automaticallySetBusinessRole(P instance, TaskInstance taskInstance,
+                                                                              STransition originTransition) {
+        for (SBusinessRole papel : originTransition.getRolesToDefine()) {
             if (papel.isAutomaticBusinessRoleAllocation()) {
-                SUser pessoa = papel.getBusinessRoleStrategy().getUserForRole(instancia,
-                        instanciaTarefa);
+                SUser pessoa = papel.getBusinessRoleStrategy().getUserForRole(instance,
+                        taskInstance);
                 Objects.requireNonNull(pessoa, "Não foi possível determinar a pessoa com o papel " + papel.getName()
-                        + " para " + instancia.getFullId() + " na transição " + transicaoOrigem.getName());
+                        + " para " + instance.getFullId() + " na transição " + originTransition.getName());
 
-                instancia.addOrReplaceUserRole(papel.getAbbreviation(), pessoa);
+                instance.addOrReplaceUserRole(papel.getAbbreviation(), pessoa);
             }
         }
     }
@@ -239,34 +239,34 @@ class FlowEngine {
     public static void executeScheduledTransition(@Nonnull STaskJava taskJava, @Nonnull FlowInstance instance) {
         Objects.requireNonNull(instance);
         Objects.requireNonNull(taskJava);
-        ExecutionContext execucaoTask = new ExecutionContext(instance, instance.getCurrentTaskOrException(), null);
-        instance.setExecutionContext(execucaoTask);
+        ExecutionContext executionContext = new ExecutionContext(instance, instance.getCurrentTaskOrException(), null);
+        instance.setExecutionContext(executionContext);
         try {
-            taskJava.execute(execucaoTask);
+            taskJava.execute(executionContext);
         } finally {
             instance.setExecutionContext(null);
         }
 
-        executeTransition(instance.getCurrentTaskOrException(), execucaoTask.getTransition(), null);
+        executeTransition(instance.getCurrentTaskOrException(), executionContext.getTransition(), null);
     }
 
     @Nonnull
-    static TaskInstance executeTransition(@Nonnull TaskInstance tarefaAtual, @Nullable STransition transition,
+    static TaskInstance executeTransition(@Nonnull TaskInstance currentTask, @Nullable STransition transition,
             @Nullable VarInstanceMap<?, ?> param) {
-        STransition trans = resolveDefaultTransitionIfNecessary(tarefaAtual, transition);
-        tarefaAtual.endLastAllocation();
-        return updateState(tarefaAtual.getFlowInstance(), tarefaAtual, trans, trans.getDestination(), param);
+        STransition trans = resolveDefaultTransitionIfNecessary(currentTask, transition);
+        currentTask.endLastAllocation();
+        return updateState(currentTask.getFlowInstance(), currentTask, trans, trans.getDestination(), param);
     }
 
 
     @Nonnull
-    private static STransition resolveDefaultTransitionIfNecessary(@Nonnull TaskInstance tarefaAtual,
+    private static STransition resolveDefaultTransitionIfNecessary(@Nonnull TaskInstance currentTask,
             @Nullable STransition transition) {
         if (transition != null) {
             return transition;
         }
         try {
-            return tarefaAtual.getFlowTaskOrException().resolveDefaultTransitionOrException();
+            return currentTask.getFlowTaskOrException().resolveDefaultTransitionOrException();
         } catch (SingularFlowTransactionNotFoundException e) {
             e.add("complement",
                     "A execução da task deve explicitamente definir qual transação deve ser seguida ou o fluxo dever " +
@@ -285,7 +285,7 @@ class FlowEngine {
         for (VarInstance variavel : paramIn) {
             if (variavel.getValue() != null && SParametersEnabled.isAutoBindedToProcessVariable(variavel)) {
                 String ref = variavel.getRef();
-                if (instance.getProcessDefinition().getVariables().contains(ref)) {
+                if (instance.getFlowDefinition().getVariables().contains(ref)) {
                     instance.setVariable(ref, variavel.getValue());
                 }
             }
@@ -293,8 +293,8 @@ class FlowEngine {
     }
 
     @SuppressWarnings("unchecked")
-    private static IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {
-        return (IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance>) Flow
+    private static IPersistenceService<IEntityCategory, IEntityFlowDefinition, IEntityFlowVersion, IEntityFlowInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {
+        return (IPersistenceService<IEntityCategory, IEntityFlowDefinition, IEntityFlowVersion, IEntityFlowInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance>) Flow
                 .getConfigBean().getPersistenceService();
     }
 

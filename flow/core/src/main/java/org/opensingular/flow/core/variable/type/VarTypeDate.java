@@ -35,8 +35,8 @@ public class VarTypeDate extends VarTypeBase<Date> {
     }
 
     @Override
-    public String toDisplayString(Object valor, VarDefinition varDefinition) {
-        Date date = convert(valor);
+    public String toDisplayString(Object value, VarDefinition varDefinition) {
+        Date date = convert(value);
         if ("00:00:00".equals(new SimpleDateFormat("hh:mm:ss").format(date))) {
             return formatter.format(date);
         } else {

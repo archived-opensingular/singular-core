@@ -20,7 +20,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.opensingular.internal.lib.commons.injection.SingularBeanNotFoundException;
+import org.opensingular.internal.lib.commons.injection.SingularInjectionBeanNotFoundException;
 import org.opensingular.internal.lib.commons.injection.SingularInjectionException;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
@@ -116,9 +116,9 @@ public class SingularInjectorBySpringTest {
 
     @Test
     public void missingBean() {
-        SingularTestUtil.assertException(() -> inject(new Basic2()), SingularBeanNotFoundException.class, "BeanX");
+        SingularTestUtil.assertException(() -> inject(new Basic2()), SingularInjectionBeanNotFoundException.class, "BeanX");
 
-        SingularTestUtil.assertException(() -> inject(new Basic3()), SingularBeanNotFoundException.class,
+        SingularTestUtil.assertException(() -> inject(new Basic3()), SingularInjectionBeanNotFoundException.class,
                 "MyMissingMockService");
     }
 

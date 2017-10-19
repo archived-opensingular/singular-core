@@ -18,11 +18,11 @@ package org.opensingular.flow.test.definicao;
 
 import org.opensingular.flow.core.DefinitionInfo;
 import org.opensingular.flow.core.ExecutionContext;
+import org.opensingular.flow.core.FlowDefinition;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.ITaskPredicate;
-import org.opensingular.flow.core.FlowDefinition;
-import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.TaskPredicates;
 import org.opensingular.flow.core.builder.BuilderBusinessRole;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
@@ -30,7 +30,14 @@ import org.opensingular.flow.core.defaults.PermissiveTaskAccessStrategy;
 
 import java.util.Calendar;
 
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.*;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_ANALISE;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_GERENTE;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.DEFERIDO;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.EM_EXIGENCIA;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.INDEFERIDO;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.NOTIFICAR_NOVA_INSTANCIA;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.PUBLICADO;
 
 @DefinitionInfo("Peticoes")
 public class Peticao extends FlowDefinition<FlowInstance> {
@@ -88,11 +95,11 @@ public class Peticao extends FlowDefinition<FlowInstance> {
         flow.addHumanTask(AGUARDANDO_ANALISE, papelAnalista);
         flow.addHumanTask(EM_EXIGENCIA, new PermissiveTaskAccessStrategy());
         flow.addHumanTask(AGUARDANDO_GERENTE, papelGerente)
-                .withTargetDate((processInstance, taskInstance) -> addDias(processInstance, 1).getTime());
+                .withTargetDate((flowInstance, taskInstance) -> addDias(flowInstance, 1).getTime());
         flow.addHumanTask(AGUARDANDO_PUBLICACAO, new PermissiveTaskAccessStrategy());
         flow.addEndTask(INDEFERIDO);
         flow.addEndTask(DEFERIDO);
-        flow.addEndTask(PUBLICADO).addStartedTaskListener((taskIntance, execucaoTask) -> System.out.println(taskIntance.getName() + " Iniciado"));
+        flow.addEndTask(PUBLICADO).addStartedTaskListener((taskInstance, executionContext) -> System.out.println(taskInstance.getName() + " Iniciado"));
         flow.setStartTask(NOTIFICAR_NOVA_INSTANCIA);
 
         flow.from(NOTIFICAR_NOVA_INSTANCIA).go(ENVIAR_PARA_ANALISE, AGUARDANDO_ANALISE);

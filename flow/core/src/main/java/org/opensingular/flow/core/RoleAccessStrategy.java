@@ -102,14 +102,14 @@ public class RoleAccessStrategy extends TaskAccessStrategy<FlowInstance> {
     }
 
     @Override
-    public List<String> getExecuteRoleNames(FlowDefinition<?> definicao, STask<?> task) {
+    public List<String> getExecuteRoleNames(FlowDefinition<?> definition, STask<?> task) {
         return Lists.newArrayList("Papel " + executionRole.getName());
     }
 
     @Override
-    public List<String> getVisualizeRoleNames(FlowDefinition<?> definicao, STask<?> task) {
+    public List<String> getVisualizeRoleNames(FlowDefinition<?> definition, STask<?> task) {
         if (visualizeRole == null) {
-            return getExecuteRoleNames(definicao, task);
+            return getExecuteRoleNames(definition, task);
         }
         return Lists.newArrayList("Papel " + visualizeRole.getName());
     }
@@ -120,8 +120,8 @@ public class RoleAccessStrategy extends TaskAccessStrategy<FlowInstance> {
     }
 
     @Override
-    public SUser getAutomaticAllocatedUser(FlowInstance instancia, TaskInstance tarefa) {
-        IEntityRoleInstance role = instancia.getRoleUserByAbbreviation(executionRole.getAbbreviation());
+    public SUser getAutomaticAllocatedUser(FlowInstance instance, TaskInstance task) {
+        IEntityRoleInstance role = instance.getRoleUserByAbbreviation(executionRole.getAbbreviation());
         return role != null ? role.getUser() : null;
     }
 }

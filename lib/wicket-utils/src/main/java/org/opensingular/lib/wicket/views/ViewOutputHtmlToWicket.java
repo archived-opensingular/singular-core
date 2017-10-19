@@ -54,7 +54,7 @@ public class ViewOutputHtmlToWicket extends ViewOutputHtml {
     }
 
     @Override
-    public void addImagem(String nome, byte[] dados) throws IOException {
+    public void addImage(String name, byte[] content) throws IOException {
         throw new SingularException("Nao implementado");
     }
 

@@ -16,6 +16,7 @@
 
 package org.opensingular.lib.commons.table;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -27,12 +28,12 @@ public final class OutputTableContext {
 
     private final TableOutput tableOutput;
 
-    private int indiceColunaAtual;
+    private int indexCurrentColumn;
 
-    private int indiceLinhaAtual;
+    private int indexCurrentLine;
 
-    private InfoLinha linha;
-    private List<Column> visibleColuns;
+    private LineInfo line;
+    private List<Column> visibleColumns;
 
     private LineReadContext lineReadContext;
 
@@ -49,24 +50,25 @@ public final class OutputTableContext {
         return tableOutput;
     }
 
-    public void limpar(int numNivel) {
-        linha = null;
-        setNivel(numNivel);
+    public void clean(int numLevel) {
+        line = null;
+        setLevel(numLevel);
     }
 
-    final InfoLinha getLinhaSeExistir() {
-        return linha;
+    @Nullable
+    final LineInfo getLineIfExists() {
+        return line;
     }
 
-    private InfoLinha getLinha() {
-        if (linha == null) {
-            linha = tableTool.newBlankLine();
+    private LineInfo getLine() {
+        if (line == null) {
+            line = tableTool.newBlankLine();
         }
-        return linha;
+        return line;
     }
 
-    final void setLinha(InfoLinha infoLinha) {
-        linha = infoLinha;
+    final void setLine(LineInfo lineInfo) {
+        line = lineInfo;
     }
 
     //TODO Verificar se ao final esse método fica
@@ -74,45 +76,45 @@ public final class OutputTableContext {
         return tableOutput.getUrlApp();
     }
 
-    public Decorator getDecorador() {
-        return getLinha().getDecorador();
+    public Decorator getDecorator() {
+        return getLine().getDecorator();
     }
 
-    final int getQtdColunaVisiveis() {
-        return visibleColuns.size();
+    final int getVisibleColumnsSize() {
+        return visibleColumns.size();
     }
 
-    final void setIndiceColunaAtual(int i) {
-        indiceColunaAtual = i;
+    final void setIndexCurrentColumn(int i) {
+        indexCurrentColumn = i;
     }
 
-    final int getIndiceColunaAtual() {
-        return indiceColunaAtual;
+    final int getIndexCurrentColumn() {
+        return indexCurrentColumn;
     }
 
-    public final int getIndiceLinhaAtual() {
-        return indiceLinhaAtual;
+    public final int getIndexCurrentLine() {
+        return indexCurrentLine;
     }
 
-    final void incIndiceLinhaAtual() {
-        indiceLinhaAtual++;
+    final void incIndexCurrentLine() {
+        indexCurrentLine++;
     }
 
-    public final void setNivel(int nivel) {
-        getLinha().setNivel(nivel);
+    public final void setLevel(int level) {
+        getLine().setLevel(level);
     }
 
-    public int getNivel() {
-        return getLinha().getNivel();
+    public int getLevel() {
+        return getLine().getLevel();
     }
 
-    final boolean isExibirLinha() {
-        return linha == null ? true : getLinha().isExibirLinha();
+    final boolean isShowLine() {
+        return line == null ? true : getLine().isShowLine();
     }
 
-    public void setExibirLinha(boolean exibirLinha) {
-        if (linha != null || !exibirLinha) {
-            getLinha().setExibirLinha(exibirLinha);
+    public void setShowLine(boolean showLine) {
+        if (line != null || !showLine) {
+            getLine().setShowLine(showLine);
         }
     }
 
@@ -125,13 +127,13 @@ public final class OutputTableContext {
     }
 
     /** Retorna a lista de coluna a serem exibidas (efetivamente geradas). */
-    public List<Column> getVisibleColuns() {
-        return visibleColuns;
+    public List<Column> getVisibleColumns() {
+        return visibleColumns;
     }
 
     /** Define as colunas a serem exibidas no resultado final. */
-    final void setVisibleColuns(List<Column> visibleColuns) {
-        this.visibleColuns = visibleColuns;
+    final void setVisibleColumns(List<Column> visibleColumns) {
+        this.visibleColumns = visibleColumns;
     }
 
     public LineReadContext getLineReadContext() {

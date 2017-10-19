@@ -89,8 +89,8 @@ public class TaskActions {
         }
 
         @Override
-        public void execute(TaskInstance instanciaTarefa) {
-            action.execute(instanciaTarefa);
+        public void execute(TaskInstance taskInstance) {
+            action.execute(taskInstance);
         }
 
         @Override

@@ -32,14 +32,14 @@ public class SInstanceValueModel<T>
     IObjectClassAwareModel<T>,
         ISInstanceAwareModel<T> {
 
-    private IModel<? extends SInstance> instanciaModel;
+    private IModel<? extends SInstance> instanceModel;
 
-    public SInstanceValueModel(IModel<? extends SInstance> instanciaModel) {
-        this.instanciaModel = instanciaModel;
+    public SInstanceValueModel(IModel<? extends SInstance> instanceModel) {
+        this.instanceModel = instanceModel;
     }
 
     public SInstance getTarget() {
-        return instanciaModel.getObject();
+        return instanceModel.getObject();
     }
 
     @Override
@@ -63,28 +63,28 @@ public class SInstanceValueModel<T>
     @Override
     @SuppressWarnings("unchecked")
     public Class<T> getObjectClass() {
-        SType<?> mtipo = getTarget().getType();
-        if (mtipo instanceof STypeSimple<?, ?>) {
-            return (Class<T>) ((STypeSimple<?, ?>) mtipo).getValueClass();
+        SType<?> type = getTarget().getType();
+        if (type instanceof STypeSimple<?, ?>) {
+            return (Class<T>) ((STypeSimple<?, ?>) type).getValueClass();
         }
-        return (Class<T>) mtipo.getInstanceClass();
+        return (Class<T>) type.getInstanceClass();
     }
 
     @Override
     public SInstance getSInstance() {
-        return instanciaModel.getObject();
+        return instanceModel.getObject();
     }
 
     @Override
     public void detach() {
-        this.instanciaModel.detach();
+        this.instanceModel.detach();
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((instanciaModel == null) ? 0 : instanciaModel.hashCode());
+        result = prime * result + ((instanceModel == null) ? 0 : instanceModel.hashCode());
         return result;
     }
 
@@ -97,10 +97,10 @@ public class SInstanceValueModel<T>
         if (getClass() != obj.getClass())
             return false;
         SInstanceValueModel<?> other = (SInstanceValueModel<?>) obj;
-        if (instanciaModel == null) {
-            if (other.instanciaModel != null)
+        if (instanceModel == null) {
+            if (other.instanceModel != null)
                 return false;
-        } else if (!instanciaModel.equals(other.instanciaModel))
+        } else if (!instanceModel.equals(other.instanceModel))
             return false;
         return true;
     }

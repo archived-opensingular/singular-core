@@ -39,12 +39,12 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
     }
 
     @Override
-    public String convert(Object valor) {
+    public String convert(Object value) {
         try {
-            return format(super.convert(valor));
+            return format(super.convert(value));
         } catch (Exception e) {
             getLogger().trace(e.getMessage(), e);
-            return String.valueOf(valor);
+            return String.valueOf(value);
         }
     }
 

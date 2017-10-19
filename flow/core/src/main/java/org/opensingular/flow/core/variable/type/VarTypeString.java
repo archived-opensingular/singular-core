@@ -28,8 +28,8 @@ public class VarTypeString extends VarTypeBase<String> {
     }
 
     @Override
-    public String toDisplayString(Object valor, VarDefinition varDefinition) {
-        return String.valueOf(valor);
+    public String toDisplayString(Object value, VarDefinition varDefinition) {
+        return String.valueOf(value);
     }
 
     @Override

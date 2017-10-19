@@ -51,9 +51,9 @@ public class TaskPredicates {
 
     /** Cria um predicado que retorna as tarefas com a mesma abreviação (sigla) da definição de task informada. */
     @Nonnull
-    public static Predicate<TaskInstance> simpleTaskType(@Nonnull STask<?> tipo) {
-        Objects.requireNonNull(tipo);
-        return simpleTaskType(tipo.getAbbreviation());
+    public static Predicate<TaskInstance> simpleTaskType(@Nonnull STask<?> type) {
+        Objects.requireNonNull(type);
+        return simpleTaskType(type.getAbbreviation());
     }
 
     @Nonnull
@@ -119,7 +119,7 @@ public class TaskPredicates {
         }
 
         @Override
-        public EventType getEventType() {
+        public EventType getDisplayEventType() {
             return eventType;
         }
 
@@ -150,7 +150,7 @@ public class TaskPredicates {
 
         @Override
         public String toString() {
-            return "TaskPredicateImpl [getName()=" + getName() + ", getEventType()=" + getEventType() + ", getFullDescription()=" + getFullDescription() + "]";
+            return "TaskPredicateImpl [getName()=" + getName() + ", getDisplayEventType()=" + getDisplayEventType() + ", getFullDescription()=" + getFullDescription() + "]";
         }
 
     }

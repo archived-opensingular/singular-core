@@ -1,13 +1,25 @@
-package org.opensingular.form.view;
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
 
-import static org.junit.Assert.assertEquals;
+package org.opensingular.form.view;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import org.opensingular.form.view.SView;
-import org.opensingular.form.view.ViewMapperRegistry;
-import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -19,6 +31,9 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.country.brazil.STypeCEP;
 import org.opensingular.form.type.country.brazil.STypeCNPJ;
 import org.opensingular.form.type.country.brazil.STypeCPF;
+import org.opensingular.lib.commons.base.SingularUtil;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestViewMapperRegistry {
 
@@ -138,8 +153,8 @@ public class TestViewMapperRegistry {
 
     private void assertResult(String expected, Class<? extends SType> type, Class<? extends SView> view) {
         try {
-            SDictionary dicionario = SDictionary.create();
-            assertResult(expected, dicionario.newInstance(type), view.newInstance());
+            SDictionary dictionary = SDictionary.create();
+            assertResult(expected, dictionary.newInstance(type), view.newInstance());
         } catch (InstantiationException | IllegalAccessException e) {
             throw SingularUtil.propagate(e);
         }

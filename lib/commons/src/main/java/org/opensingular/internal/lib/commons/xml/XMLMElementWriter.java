@@ -95,11 +95,11 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
             out.print(" ");
             out.print(a.getName());
             out.print("=\"");
-            String texto = a.getValue();
+            String text = a.getValue();
             if (htmlEncodeReserverdCharacters) {
-                printConverteCaracteresEspeciais(out, texto.toCharArray());
+                printConvertingSpecialCharacters(out, text.toCharArray());
             } else {
-                out.print(texto);
+                out.print(text);
             }
             out.print("\"");
         }
@@ -234,14 +234,14 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
         int      tam   = nList.getLength();
 
         if (tam != 0) {
-            boolean pulaLinha = (tam > 1) || !XmlUtil.isNodeTypeText(nList.item(0));
-            if (pulaLinha) {
+            boolean skipLine = (tam > 1) || !XmlUtil.isNodeTypeText(nList.item(0));
+            if (skipLine) {
                 out.println();
             }
             for (int i = 0; i < tam; i++) {
                 printNode(out, nList.item(i), level + 1);
             }
-            if (pulaLinha) {
+            if (skipLine) {
                 printSpace(out, level);
             }
         }
@@ -265,15 +265,15 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
         }
     }
 
-    private void printNode(PrintWriter out, Node node, boolean converteEspeciais) {
+    private void printNode(PrintWriter out, Node node, boolean convertSpecialsCharacters) {
         switch (node.getNodeType()) {
             case Node.ELEMENT_NODE:
-                printElement(out, (Element) node, converteEspeciais);
+                printElement(out, (Element) node, convertSpecialsCharacters);
                 break;
             case Node.TEXT_NODE:
-                String texto = node.getNodeValue();
-                if (converteEspeciais) {
-                    printConverteCaracteresEspeciais(out, texto.toCharArray());
+                String text = node.getNodeValue();
+                if (convertSpecialsCharacters) {
+                    printConvertingSpecialCharacters(out, text.toCharArray());
                 } else {
                     out.print(node.getNodeValue());
                 }
@@ -298,7 +298,7 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
                     out.print(txt);
                 } else {
                     out.println();
-                    printTexto(out, txt, level);
+                    printText(out, txt, level);
                     printSpace(out, level - 1);
                 }
                 break;
@@ -308,7 +308,7 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
         }
     }
 
-    private void printTexto(PrintWriter out, String txt, int level) {
+    private void printText(PrintWriter out, String txt, int level) {
         int     tam         = txt.length();
         int     posi        = 0;
         boolean consome     = false;

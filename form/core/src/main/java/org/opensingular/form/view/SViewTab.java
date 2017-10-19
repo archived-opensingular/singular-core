@@ -67,35 +67,35 @@ public class SViewTab extends SView {
     /**
      * Configura o tamanho geral da coluna de navegação das abas
      */
-    public SViewTab navColPreference(Integer valor) {
-        return navColLg(valor).navColMd(valor).navColSm(valor).navColXs(valor);
+    public SViewTab navColPreference(Integer value) {
+        return navColLg(value).navColMd(value).navColSm(value).navColXs(value);
     }
     /**
      * Configura o tamanho da coluna de navegação das abas em modo Smallest
      */
-    public SViewTab navColXs(Integer valor) {
-        this.navColXs = valor;
+    public SViewTab navColXs(Integer value) {
+        this.navColXs = value;
         return this;
     }
     /**
      * Configura o tamanho da coluna de navegação das abas em modo Small
      */
-    public SViewTab navColSm(Integer valor) {
-        this.navColSm = valor;
+    public SViewTab navColSm(Integer value) {
+        this.navColSm = value;
         return this;
     }
     /**
      * Configura o tamanho da coluna de navegação das abas em modo Medium
      */
-    public SViewTab navColMd(Integer valor) {
-        this.navColMd = valor;
+    public SViewTab navColMd(Integer value) {
+        this.navColMd = value;
         return this;
     }
     /**
      * Configura o tamanho da coluna de navegação das abas em modo Large
      */
-    public SViewTab navColLg(Integer valor) {
-        this.navColLg = valor;
+    public SViewTab navColLg(Integer value) {
+        this.navColLg = value;
         return this;
     }
     

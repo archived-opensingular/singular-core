@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 public class AtrFormula extends STranslatorForAttribute {
 
     public AtrFormula set(Supplier<Object> supplier) {
-        getTipo().setAttributeValue(SPackageBasic.ATR_FORMULA, null);
+        getType().setAttributeValue(SPackageBasic.ATR_FORMULA, null);
         return this;
     }
 

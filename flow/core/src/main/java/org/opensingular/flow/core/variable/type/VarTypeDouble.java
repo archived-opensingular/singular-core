@@ -28,8 +28,8 @@ public class VarTypeDouble extends VarTypeBase<Double> {
     }
 
     @Override
-    public String toDisplayString(Object valor, VarDefinition varDefinition) {
-        return String.format(new Locale("pt","BR"), "%1$,.2f", convert(valor));
+    public String toDisplayString(Object value, VarDefinition varDefinition) {
+        return String.format(new Locale("pt","BR"), "%1$,.2f", convert(value));
     }
 
     @Override

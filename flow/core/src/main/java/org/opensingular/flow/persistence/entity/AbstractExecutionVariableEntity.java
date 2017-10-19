@@ -16,7 +16,13 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import java.util.Date;
+import org.hibernate.annotations.GenericGenerator;
+import org.opensingular.flow.core.entity.IEntityExecutionVariable;
+import org.opensingular.flow.core.entity.IEntityFlowInstance;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
+import org.opensingular.flow.core.entity.IEntityVariableType;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.FetchType;
@@ -28,15 +34,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.hibernate.annotations.GenericGenerator;
-
-import org.opensingular.flow.core.entity.IEntityExecutionVariable;
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.flow.core.entity.IEntityTaskInstance;
-import org.opensingular.flow.core.entity.IEntityVariableInstance;
-import org.opensingular.flow.core.entity.IEntityVariableType;
+import java.util.Date;
 
 /**
  * The base persistent class for the TB_VARIAVEL_EXECUCAO_TRANSICAO database
@@ -47,14 +45,14 @@ import org.opensingular.flow.core.entity.IEntityVariableType;
  * </p>
  * <code>@GenericGenerator(name = AbstractExecutionVariableEntity.PK_GENERATOR_NAME, strategy = "org.hibernate.id.IdentityGenerator")</code>
  *
- * @param <PROCESS_INSTANCE>
+ * @param <FLOW_INSTANCE>
  * @param <TASK_INSTANCE>
  * @param <VAR_INSTANCE>
  * @param <VAR_TYPE>
  */
 @MappedSuperclass
 @Table(name = "TB_VARIAVEL_EXECUCAO_TRANSICAO")
-public abstract class AbstractExecutionVariableEntity<PROCESS_INSTANCE extends IEntityProcessInstance, TASK_INSTANCE extends IEntityTaskInstance, VAR_INSTANCE extends IEntityVariableInstance, VAR_TYPE extends IEntityVariableType> extends BaseEntity<Integer> implements IEntityExecutionVariable {
+public abstract class AbstractExecutionVariableEntity<FLOW_INSTANCE extends IEntityFlowInstance, TASK_INSTANCE extends IEntityTaskInstance, VAR_INSTANCE extends IEntityVariableInstance, VAR_TYPE extends IEntityVariableType> extends BaseEntity<Integer> implements IEntityExecutionVariable {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_VARIAVEL_EXECUCAO_TRANSICAO";
 
@@ -65,7 +63,7 @@ public abstract class AbstractExecutionVariableEntity<PROCESS_INSTANCE extends I
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_INSTANCIA_PROCESSO", nullable = false, updatable = false)
-    private PROCESS_INSTANCE processInstance;
+    private FLOW_INSTANCE flowInstance;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_VARIAVEL")
@@ -103,12 +101,12 @@ public abstract class AbstractExecutionVariableEntity<PROCESS_INSTANCE extends I
     }
 
     @Override
-    public PROCESS_INSTANCE getProcessInstance() {
-        return processInstance;
+    public FLOW_INSTANCE getFlowInstance() {
+        return flowInstance;
     }
 
-    public void setProcessInstance(PROCESS_INSTANCE processInstance) {
-        this.processInstance = processInstance;
+    public void setFlowInstance(FLOW_INSTANCE flowInstance) {
+        this.flowInstance = flowInstance;
     }
 
     public VAR_INSTANCE getVariable() {

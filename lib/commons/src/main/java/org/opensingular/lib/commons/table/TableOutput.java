@@ -50,7 +50,7 @@ public abstract class TableOutput {
      * @param lineAlternation Se -1, indica que as linhas não devem ter cores alternada. Caso contrário, esse valor
      *                        alternará entre 0 e 1
      */
-    public abstract void generateLineSimpleStart(@Nonnull OutputTableContext ctx, @Nonnull InfoLinha line,
+    public abstract void generateLineSimpleStart(@Nonnull OutputTableContext ctx, @Nonnull LineInfo line,
             int lineAlternation);
 
     /** Fecha a geração da linha simples. */
@@ -59,9 +59,9 @@ public abstract class TableOutput {
     /**
      * Gera o início de uma nova linha para uma tabela de dados em árvore.
      *
-     * @param nivel Indica o nível da linha dentro da tabela. O indicado começa em zero.
+     * @param level Indica o nível da linha dentro da tabela. O indicado começa em zero.
      */
-    public abstract void generateLineTreeStart(@Nonnull OutputTableContext ctx, @Nonnull InfoLinha line, int nivel);
+    public abstract void generateLineTreeStart(@Nonnull OutputTableContext ctx, @Nonnull LineInfo line, int level);
 
     /** Fecha a geração da linha de dados em árvore. */
     public abstract void generateLineTreeEnd(@Nonnull OutputTableContext ctx);
@@ -129,7 +129,7 @@ public abstract class TableOutput {
      * @param level           Indica o nível da linha dentro da tabela. O indicado começa em zero. Se -1, indica que a
      *                        linha não têm relação com nível.
      */
-    public abstract void generateTotalLineStart(@Nonnull OutputTableContext ctx, @Nonnull InfoLinha totalLine,
+    public abstract void generateTotalLineStart(@Nonnull OutputTableContext ctx, @Nonnull LineInfo totalLine,
             @Nonnull Decorator tempDecorator, int level);
 
     /** Fecha a geração de uma linha de totalização da tabela. */

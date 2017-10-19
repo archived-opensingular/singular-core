@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.form.wicket.model;
 
 import org.apache.wicket.model.AbstractReadOnlyModel;
@@ -7,7 +25,15 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.opensingular.form.*;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SISimple;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.converter.SInstanceConverter;
 import org.opensingular.form.provider.SimpleProvider;
 import org.opensingular.form.type.core.SIString;
@@ -23,7 +49,9 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -37,10 +65,10 @@ public class MultipleSelectSInstanceAwareModelTest {
         @Before
         public void setUp() throws Exception {
             PackageBuilder myPackage = SDictionary.create().createNewPackage("org.opensingular");
-            STypeComposite<SIComposite> compostoRaiz = myPackage.createCompositeType("compostoRaiz");
-            alphabet = compostoRaiz.addFieldListOf("alphabet", STypeString.class);
+            STypeComposite<SIComposite> rootComposite = myPackage.createCompositeType("compostoRaiz");
+            alphabet = rootComposite.addFieldListOf("alphabet", STypeString.class);
             alphabet.selectionOf(Arrays.asList("ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()).toArray());
-            root = compostoRaiz.newInstance();
+            root = rootComposite.newInstance();
         }
 
         @Test(expected = SingularFormException.class)

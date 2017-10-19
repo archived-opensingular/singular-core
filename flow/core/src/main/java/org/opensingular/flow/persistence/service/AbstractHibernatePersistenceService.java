@@ -32,9 +32,9 @@ import org.opensingular.flow.core.TaskType;
 import org.opensingular.flow.core.entity.IEntityByCod;
 import org.opensingular.flow.core.entity.IEntityCategory;
 import org.opensingular.flow.core.entity.IEntityExecutionVariable;
-import org.opensingular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityFlowDefinition;
+import org.opensingular.flow.core.entity.IEntityFlowInstance;
+import org.opensingular.flow.core.entity.IEntityFlowVersion;
 import org.opensingular.flow.core.entity.IEntityRoleDefinition;
 import org.opensingular.flow.core.entity.IEntityRoleInstance;
 import org.opensingular.flow.core.entity.IEntityTaskDefinition;
@@ -62,9 +62,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS_VERSION extends IEntityProcessVersion, PROCESS_INSTANCE extends IEntityProcessInstance, TASK_INSTANCE extends IEntityTaskInstance, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, VARIABLE_INSTANCE extends IEntityVariableInstance, PROCESS_ROLE extends IEntityRoleDefinition, ROLE_USER extends IEntityRoleInstance>
+public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY extends IEntityCategory, FLOW_DEFINITION extends IEntityFlowDefinition, FLOW_VERSION extends IEntityFlowVersion, FLOW_INSTANCE extends IEntityFlowInstance, TASK_INSTANCE extends IEntityTaskInstance, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, VARIABLE_INSTANCE extends IEntityVariableInstance, PROCESS_ROLE extends IEntityRoleDefinition, ROLE_USER extends IEntityRoleInstance>
         extends AbstractHibernateService implements
-        IPersistenceService<DEFINITION_CATEGORY, PROCESS_DEF, PROCESS_VERSION, PROCESS_INSTANCE, TASK_INSTANCE, TASK_DEF, TASK_VERSION, VARIABLE_INSTANCE, PROCESS_ROLE, ROLE_USER> {
+        IPersistenceService<DEFINITION_CATEGORY, FLOW_DEFINITION, FLOW_VERSION, FLOW_INSTANCE, TASK_INSTANCE, TASK_DEF, TASK_VERSION, VARIABLE_INSTANCE, PROCESS_ROLE, ROLE_USER> {
 
     public AbstractHibernatePersistenceService(SessionLocator sessionLocator) {
         super(sessionLocator);
@@ -76,41 +76,41 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     @Override
     @Nonnull
-    public Optional<PROCESS_INSTANCE> retrieveProcessInstanceByCod(@Nonnull Integer cod) {
+    public Optional<FLOW_INSTANCE> retrieveFlowInstanceByCod(@Nonnull Integer cod) {
         Objects.requireNonNull(cod);
-        return getSession().retrieve(getClassProcessInstance(), cod);
+        return getSession().retrieve(getClassFlowInstance(), cod);
     }
     
     /**
      * Cria uma intancia de ProcessIntance parcialmente preenchida. Apenas isola
      * a persistencia do tipo correto.
      */
-    protected abstract PROCESS_INSTANCE newProcessInstance(PROCESS_VERSION process);
+    protected abstract FLOW_INSTANCE newFlowInstance(FLOW_VERSION flowVersion);
 
     @Override
-    public PROCESS_INSTANCE createProcessInstance(PROCESS_VERSION process, TASK_VERSION initialState) {
-        PROCESS_INSTANCE processInstance = newProcessInstance(process);
-        processInstance.setBeginDate(new Date());
-        return processInstance;
+    public FLOW_INSTANCE createFlowInstance(FLOW_VERSION flowVersion, TASK_VERSION initialState) {
+        FLOW_INSTANCE flowInstance = newFlowInstance(flowVersion);
+        flowInstance.setBeginDate(new Date());
+        return flowInstance;
     }
 
     @Override
-    public PROCESS_INSTANCE saveProcessInstance(PROCESS_INSTANCE instancia) {
+    public FLOW_INSTANCE saveFlowInstance(FLOW_INSTANCE instance) {
         SessionWrapper sw = getSession();
-        sw.saveOrUpdate(instancia);
-        sw.refresh(instancia);
-        return instancia;
+        sw.saveOrUpdate(instance);
+        sw.refresh(instance);
+        return instance;
     }
 
     @Override
-    public void setProcessInstanceParent(PROCESS_INSTANCE instance, PROCESS_INSTANCE parentTask) {
+    public void setFlowInstanceParent(FLOW_INSTANCE instance, FLOW_INSTANCE parentTask) {
         throw new UnsupportedOperationException("Apenas o AlocPro tem suporte a instância pai.");
     }
 
-    protected abstract ROLE_USER newEntityRole(PROCESS_INSTANCE instance, PROCESS_ROLE role, SUser user, SUser allocator);
+    protected abstract ROLE_USER newEntityRole(FLOW_INSTANCE instance, PROCESS_ROLE role, SUser user, SUser allocator);
 
     @Override
-    public ROLE_USER setInstanceUserRole(PROCESS_INSTANCE instance, PROCESS_ROLE role, SUser user) {
+    public ROLE_USER setInstanceUserRole(FLOW_INSTANCE instance, PROCESS_ROLE role, SUser user) {
         SUser resolvedUser = saveUserIfNeeded(user);
 
         ROLE_USER entityRole = newEntityRole(instance, role, resolvedUser, Flow.getUserIfAvailable());
@@ -122,10 +122,10 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     }
 
     @Override
-    public void removeInstanceUserRole(PROCESS_INSTANCE processInstance, ROLE_USER roleInstance) {
+    public void removeInstanceUserRole(FLOW_INSTANCE flowInstance, ROLE_USER roleInstance) {
         SessionWrapper sw = getSession();
         sw.delete(roleInstance);
-        sw.refresh(processInstance);
+        sw.refresh(flowInstance);
     }
 
     public SUser saveUserIfNeeded(SUser sUser) {
@@ -138,7 +138,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
      * Cria uma nova taskInstance parcialmente preenchiada apenas com
      * processIntance e taskVersion.
      */
-    protected abstract TASK_INSTANCE newTaskInstance(PROCESS_INSTANCE processInstance, TASK_VERSION taskVersion);
+    protected abstract TASK_INSTANCE newTaskInstance(FLOW_INSTANCE flowInstance, TASK_VERSION taskVersion);
 
     @Override
     @Nonnull
@@ -149,28 +149,28 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     
     @Override
-    public TASK_INSTANCE addTask(PROCESS_INSTANCE processInstance, TASK_VERSION taskVersion) {
+    public TASK_INSTANCE addTask(FLOW_INSTANCE flowInstance, TASK_VERSION taskVersion) {
         Date agora = new Date();
-        TASK_INSTANCE taskInstance = newTaskInstance(processInstance, taskVersion);
+        TASK_INSTANCE taskInstance = newTaskInstance(flowInstance, taskVersion);
         taskInstance.setBeginDate(agora);
         if (taskVersion.isEnd()) {
-            processInstance.setEndDate(agora);
+            flowInstance.setEndDate(agora);
             taskInstance.setEndDate(agora);
         } else {
-            processInstance.setEndDate(null);
+            flowInstance.setEndDate(null);
         }
 
-        processInstance.addTask(taskInstance);
+        flowInstance.addTask(taskInstance);
         SessionWrapper sw = getSession();
 
         sw.save(taskInstance);
-        sw.update(processInstance);
-        sw.refresh(processInstance);
+        sw.update(flowInstance);
+        sw.refresh(flowInstance);
         return taskInstance;
     }
 
     @Override
-    public void setParentTask(PROCESS_INSTANCE childrenInstance, TASK_INSTANCE parentTask) {
+    public void setParentTask(FLOW_INSTANCE childrenInstance, TASK_INSTANCE parentTask) {
         childrenInstance.setParentTask(parentTask);
         getSession().update(childrenInstance);
     }
@@ -211,7 +211,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     @Override
     public IEntityTaskInstanceHistory saveTaskHistoricLog(TASK_INSTANCE task, String typeDescription, String detail, SUser allocatedUser,
-            SUser responsibleUser, Date dateHour, PROCESS_INSTANCE generatedProcessInstance) {
+            SUser responsibleUser, Date dateHour, FLOW_INSTANCE generatedFlowInstance) {
         IEntityTaskHistoricType taskHistoryType = retrieveOrCreateTaskHistoricType(typeDescription);
 
         SUser resolvedUser = saveUserIfNeeded(responsibleUser);
@@ -231,14 +231,14 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     protected final IEntityTaskHistoricType retrieveOrCreateTaskHistoricType(String typeDescription) {
         SessionWrapper sw = getSession();
-        Class<? extends IEntityTaskHistoricType> classe = getClassEntityTaskHistoricType();
+        Class<? extends IEntityTaskHistoricType> entityClass = getClassEntityTaskHistoricType();
 
-        IEntityTaskHistoricType variableType = sw.retrieveFirstFromCachedRetriveAll(classe,
+        IEntityTaskHistoricType variableType = sw.retrieveFirstFromCachedRetrieveAll(entityClass,
                 vt -> vt.getDescription().equals(typeDescription));
 
         if (variableType == null) {
             try {
-                variableType = classe.newInstance();
+                variableType = entityClass.newInstance();
             } catch (Exception e) {
                 throw Throwables.propagate(e);
             }
@@ -253,18 +253,19 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     // -------------------------------------------------------
 
     @Override
-    public PROCESS_VERSION saveProcessVersion(PROCESS_VERSION processVersion) {
+    public FLOW_VERSION saveFlowVersion(FLOW_VERSION flowVersion) {
         SessionWrapper sw = getSession();
-        sw.saveOrUpdate(processVersion.getProcessDefinition());
-        sw.saveOrUpdate(processVersion);
-        sw.saveOrUpdate(processVersion.getVersionTasks().stream().map(tv -> tv.getTaskDefinition()));
-        sw.saveOrUpdate(processVersion.getVersionTasks().stream().flatMap(tv -> tv.getTaskDefinition().getRolesTask() != null ? tv.getTaskDefinition().getRolesTask().stream() : Stream.empty()));
-        sw.saveOrUpdate(processVersion.getVersionTasks());
-        sw.saveOrUpdate(processVersion.getVersionTasks().stream().flatMap(tv -> tv.getTransitions().stream()));
+        sw.saveOrUpdate(flowVersion.getFlowDefinition());
+        sw.saveOrUpdate(flowVersion);
+        sw.saveOrUpdate(flowVersion.getVersionTasks().stream().map(tv -> tv.getTaskDefinition()));
+        sw.saveOrUpdate(flowVersion
+                .getVersionTasks().stream().flatMap(tv -> tv.getTaskDefinition().getRolesTask() != null ? tv.getTaskDefinition().getRolesTask().stream() : Stream.empty()));
+        sw.saveOrUpdate(flowVersion.getVersionTasks());
+        sw.saveOrUpdate(flowVersion.getVersionTasks().stream().flatMap(tv -> tv.getTransitions().stream()));
         
-        sw.refresh(processVersion.getProcessDefinition());
+        sw.refresh(flowVersion.getFlowDefinition());
         
-        return retrieveProcessVersionByCod(processVersion.getCod());
+        return retrieveFlowVersionByCod(flowVersion.getCod());
     }
 
     // -------------------------------------------------------
@@ -280,61 +281,61 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
                 () -> new SingularFlowException("Não foi encontrado a variável cod=" + cod));
     }
 
-    protected abstract VARIABLE_INSTANCE newVariableInstance(PROCESS_INSTANCE processInstance, String name);
+    protected abstract VARIABLE_INSTANCE newVariableInstance(FLOW_INSTANCE flowInstance, String name);
 
     @Override
     @Nullable
-    public Integer updateVariableValue(@Nonnull PROCESS_INSTANCE processInstance, @Nonnull VarInstance mVariavel, @Nullable Integer dbVariableCod) {
+    public Integer updateVariableValue(@Nonnull FLOW_INSTANCE flowInstance, @Nonnull VarInstance variable, @Nullable Integer dbVariableCod) {
         SessionWrapper ss = getSession();
-        Object valorAjustado = mVariavel.getValue();
-        VARIABLE_INSTANCE variavel = null;
+        Object adjustedValue = variable.getValue();
+        VARIABLE_INSTANCE eVariable = null;
         if (dbVariableCod != null) {
-            variavel = retrieveVariableInstanceByCodOrException(dbVariableCod);
+            eVariable = retrieveVariableInstanceByCodOrException(dbVariableCod);
         }
 
-        if (valorAjustado == null || isVazio(valorAjustado)) {
-            if (variavel != null) {
-                variavel.setValue(null);
-                ss.merge(variavel);
-                ss.refresh(processInstance);
+        if (adjustedValue == null || isVazio(adjustedValue)) {
+            if (eVariable != null) {
+                eVariable.setValue(null);
+                ss.merge(eVariable);
+                ss.refresh(flowInstance);
             } else {
                 return null;
             }
-        } else if (variavel == null) {
+        } else if (eVariable == null) {
             // Para não forçar carga
-            variavel = newVariableInstance(processInstance, mVariavel.getRef());
+            eVariable = newVariableInstance(flowInstance, variable.getRef());
 
-            String valorString = mVariavel.getPersistentString();
-            if (!Objects.equals(valorString, variavel.getValue())) {
-                variavel.setType(retrieveOrCreateEntityVariableType(mVariavel.getType()));
-                variavel.setValue(valorString);
+            String stringValue = variable.getPersistentString();
+            if (!Objects.equals(stringValue, eVariable.getValue())) {
+                eVariable.setType(retrieveOrCreateEntityVariableType(variable.getType()));
+                eVariable.setValue(stringValue);
             }
 
-            ss.save(variavel);
-            ss.refresh(processInstance);
+            ss.save(eVariable);
+            ss.refresh(flowInstance);
         } else {
-            String valorString = mVariavel.getPersistentString();
-            if (!Objects.equals(valorString, variavel.getValue())) {
-                variavel.setType(retrieveOrCreateEntityVariableType(mVariavel.getType()));
-                variavel.setValue(valorString);
-                ss.merge(variavel);
+            String stringValue = variable.getPersistentString();
+            if (!Objects.equals(stringValue, eVariable.getValue())) {
+                eVariable.setType(retrieveOrCreateEntityVariableType(variable.getType()));
+                eVariable.setValue(stringValue);
+                ss.merge(eVariable);
             }
         }
-        return variavel.getCod();
+        return eVariable.getCod();
     }
 
-    protected abstract IEntityExecutionVariable newExecutionVariable(PROCESS_INSTANCE instance, IEntityVariableInstance processInstanceVar,
+    protected abstract IEntityExecutionVariable newExecutionVariable(FLOW_INSTANCE instance, IEntityVariableInstance flowInstanceVar,
             TASK_INSTANCE originTask, TASK_INSTANCE destinationTask, IEntityVariableType type);
 
     @Override
-    public void saveVariableHistoric(Date dateHour, PROCESS_INSTANCE instance, TASK_INSTANCE originTask, TASK_INSTANCE destinationTask,
+    public void saveVariableHistoric(Date dateHour, FLOW_INSTANCE instance, TASK_INSTANCE originTask, TASK_INSTANCE destinationTask,
             VarInstanceMap<?,?> instanceMap) {
         if (instanceMap == null) {
             return;
         }
         SessionWrapper ss = getSession();
 
-        boolean salvou = false;
+        boolean saved = false;
         for (VarInstance variavel : instanceMap) {
             if (variavel.getValue() != null) {
                 try {
@@ -343,10 +344,10 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
                     throw SingularFlowException.rethrow(
                             "Erro ao salvar variável '" + variavel.getName() + "' no histórico", e);
                 }
-                salvou = true;
+                saved = true;
             }
         }
-        if (salvou) {
+        if (saved) {
             if (originTask != null) {
                 ss.refresh(originTask);
             }
@@ -356,17 +357,17 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         }
     }
 
-    private void saveOneVariable(SessionWrapper ss, PROCESS_INSTANCE instance, TASK_INSTANCE originTask,
-            TASK_INSTANCE destinationTask, VarInstance variavel, Date dateHour) {
-        boolean salvou;IEntityVariableType type = retrieveOrCreateEntityVariableType(variavel.getType());
-        String ref = variavel.getRef();
-        IEntityVariableInstance processInstanceVar = instance.getVariable(ref);
+    private void saveOneVariable(SessionWrapper ss, FLOW_INSTANCE instance, TASK_INSTANCE originTask,
+            TASK_INSTANCE destinationTask, VarInstance var, Date dateHour) {
+        IEntityVariableType type = retrieveOrCreateEntityVariableType(var.getType());
+        String ref = var.getRef();
+        IEntityVariableInstance flowInstanceVar = instance.getVariable(ref);
 
-        IEntityExecutionVariable novo = newExecutionVariable(instance, processInstanceVar, originTask, destinationTask, type);
-        novo.setName(ref);
-        novo.setValue(variavel.getPersistentString());
-        novo.setDate(dateHour);
-        ss.save(novo);
+        IEntityExecutionVariable entity = newExecutionVariable(instance, flowInstanceVar, originTask, destinationTask, type);
+        entity.setName(ref);
+        entity.setValue(var.getPersistentString());
+        entity.setDate(dateHour);
+        ss.save(entity);
     }
 
     protected abstract Class<? extends IEntityVariableType> getClassEntityVariableType();
@@ -374,14 +375,14 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     @Override
     public final IEntityVariableType retrieveOrCreateEntityVariableType(VarType varType) {
         SessionWrapper sw = getSession();
-        Class<? extends IEntityVariableType> classe = getClassEntityVariableType();
+        Class<? extends IEntityVariableType> entityClass = getClassEntityVariableType();
         String typeClassName = varType.getClass().getName();
 
-        IEntityVariableType variableType = sw.retrieveFirstFromCachedRetriveAll(classe, vt -> vt.getTypeClassName().equals(typeClassName));
+        IEntityVariableType variableType = sw.retrieveFirstFromCachedRetrieveAll(entityClass, vt -> vt.getTypeClassName().equals(typeClassName));
 
         if (variableType == null) {
             try {
-                variableType = classe.newInstance();
+                variableType = entityClass.newInstance();
             } catch (Exception e) {
                 throw Throwables.propagate(e);
             }
@@ -392,16 +393,16 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         return variableType;
     }
 
-    protected abstract Class<PROCESS_INSTANCE> getClassProcessInstance();
+    protected abstract Class<FLOW_INSTANCE> getClassFlowInstance();
     
-    public List<PROCESS_INSTANCE> retrieveProcessInstancesWith(PROCESS_DEF process, Date dataInicio, Date dataFim, java.util.Collection<? extends TASK_DEF> states) {
-        Objects.requireNonNull(process);
-        final Criteria c = getSession().createCriteria(getClassProcessInstance(), "PI");
-        c.createAlias("PI.processVersion", "DEF");
-        c.add(Restrictions.eq("DEF.processDefinition", process));
+    public List<FLOW_INSTANCE> retrieveFlowInstancesWith(FLOW_DEFINITION flowDefinition, Date startDate, Date endDate, java.util.Collection<? extends TASK_DEF> states) {
+        Objects.requireNonNull(flowDefinition);
+        final Criteria c = getSession().createCriteria(getClassFlowInstance(), "PI");
+        c.createAlias("PI.flowVersion", "DEF");
+        c.add(Restrictions.eq("DEF.flowDefinition", flowDefinition));
         if (states != null && !states.isEmpty()) {
             DetachedCriteria sub = DetachedCriteria.forClass(getClassTaskInstance(), "T");
-            sub.add(Restrictions.eqProperty("T.processInstance.cod", "PI.cod"));
+            sub.add(Restrictions.eqProperty("T.flowInstance.cod", "PI.cod"));
             sub.createAlias("T.task", "TV");
             sub.add(Restrictions.in("TV.taskDefinition", states));
             sub.add(Restrictions.isNull("T.endDate"));
@@ -409,34 +410,34 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
             
             c.add(Subqueries.exists(sub));
         }
-        if (dataInicio != null && dataFim != null) {
+        if (startDate != null && endDate != null) {
             c.add(Restrictions.or(
-                Restrictions.and(Restrictions.ge("PI.beginDate", dataInicio), Restrictions.lt("PI.beginDate", dataFim)),
-                Restrictions.and(Restrictions.ge("PI.endDate", dataInicio), Restrictions.lt("PI.endDate", dataFim)),
-                Restrictions.and(Restrictions.lt("PI.beginDate", dataInicio), Restrictions.ge("PI.endDate", dataInicio)),
-                Restrictions.and(Restrictions.isNull("PI.endDate"), Restrictions.lt("PI.beginDate", dataFim))));
-        } else if(dataInicio != null){
+                Restrictions.and(Restrictions.ge("PI.beginDate", startDate), Restrictions.lt("PI.beginDate", endDate)),
+                Restrictions.and(Restrictions.ge("PI.endDate", startDate), Restrictions.lt("PI.endDate", endDate)),
+                Restrictions.and(Restrictions.lt("PI.beginDate", startDate), Restrictions.ge("PI.endDate", startDate)),
+                Restrictions.and(Restrictions.isNull("PI.endDate"), Restrictions.lt("PI.beginDate", endDate))));
+        } else if(startDate != null){
             c.add(Restrictions.or(
-                Restrictions.ge("PI.beginDate", dataInicio), 
-                Restrictions.ge("PI.endDate", dataInicio),
-                Restrictions.and(Restrictions.lt("PI.beginDate", dataInicio), Restrictions.isNull("PI.endDate"))));
-        } else if (dataFim != null) {
-            c.add(Restrictions.or(Restrictions.le("PI.beginDate", dataFim), Restrictions.le("PI.endDate", dataFim)));
+                Restrictions.ge("PI.beginDate", startDate),
+                Restrictions.ge("PI.endDate", startDate),
+                Restrictions.and(Restrictions.lt("PI.beginDate", startDate), Restrictions.isNull("PI.endDate"))));
+        } else if (endDate != null) {
+            c.add(Restrictions.or(Restrictions.le("PI.beginDate", endDate), Restrictions.le("PI.endDate", endDate)));
         }
         c.addOrder(Order.desc("PI.beginDate"));
         return c.list();
     }
 
-    public List<PROCESS_INSTANCE> retrieveProcessInstancesWith(PROCESS_DEF process, SUser creatingUser, Boolean active) {
-        Objects.requireNonNull(process);
-        Criteria c = getSession().createCriteria(getClassProcessInstance(), "PI");
-        c.createAlias("PI.processVersion", "DEF");
-        c.add(Restrictions.eq("DEF.processDefinition", process));
+    public List<FLOW_INSTANCE> retrieveFlowInstancesWith(FLOW_DEFINITION flowDefinition, SUser creatingUser, Boolean active) {
+        Objects.requireNonNull(flowDefinition);
+        Criteria c = getSession().createCriteria(getClassFlowInstance(), "PI");
+        c.createAlias("PI.flowVersion", "DEF");
+        c.add(Restrictions.eq("DEF.flowDefinition", flowDefinition));
 
         if (active != null) {
             DetachedCriteria sub = DetachedCriteria.forClass(getClassTaskInstance(), "T");
             sub.createAlias("T.task", "TA");
-            sub.add(Restrictions.eqProperty("T.processInstance.cod", "PI.cod"));
+            sub.add(Restrictions.eqProperty("T.flowInstance.cod", "PI.cod"));
             sub.add(Restrictions.isNull("T.endDate"));
             if (active) {
                 sub.add(Restrictions.ne("TA.type", TaskType.END));

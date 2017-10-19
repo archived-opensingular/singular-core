@@ -16,6 +16,7 @@
 
 package org.opensingular.form.wicket.mapper.selection;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.wicket.Component;
@@ -32,18 +33,17 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 public class MultipleCheckMapper extends MultipleSelectMapper {
 
     @Override
-    protected ListMultipleChoice<?> retrieveChoices(IModel<? extends SInstance> model, List<?> opcoesValue) {
-        return new CheckBoxMultipleChoice(
-                model.getObject().getName(),
-                new MultipleSelectSInstanceAwareModel(model),
-                opcoesValue, renderer(model))
-                .setLabelPosition(AbstractChoice.LabelPosition.WRAP_AFTER);
+    protected ListMultipleChoice<?> retrieveChoices(IModel<? extends SInstance> model, IModel<List<Serializable>> valuesModel) {
+        MultipleSelectSInstanceAwareModel multiSelectModel = new MultipleSelectSInstanceAwareModel(model);
+        CheckBoxMultipleChoice<Serializable> formComp = new CheckBoxMultipleChoice<>(model.getObject().getName(), multiSelectModel, valuesModel, renderer(model));
+        formComp.setLabelPosition(AbstractChoice.LabelPosition.WRAP_AFTER);
+        return formComp;
     }
 
     @Override
-    protected Component formGroupAppender(BSControls formGroup, IModel<? extends SInstance> model, List<?> opcoesValue) {
-        final ListMultipleChoice choices = retrieveChoices(model, opcoesValue);
-        formGroup.appendCheckboxChoice( choices );
+    protected Component formGroupAppender(BSControls formGroup, IModel<? extends SInstance> model, IModel<List<Serializable>> valuesModel) {
+        final ListMultipleChoice choices = retrieveChoices(model, valuesModel);
+        formGroup.appendCheckboxChoice(choices);
         return choices;
     }
 

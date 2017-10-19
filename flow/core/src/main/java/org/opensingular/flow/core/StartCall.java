@@ -32,8 +32,8 @@ public final class StartCall<I extends FlowInstance> extends CallWithParameters<
 
     StartCall(FlowDefinition<I> flowDefinition, RefStart start) {
         this.start = start;
-        if (getProcessDefinition() != flowDefinition) {
-            throw new SingularFlowException("Erro interno: processDefinition diferentes").add(getProcessDefinition())
+        if (getFlowDefinition() != flowDefinition) {
+            throw new SingularFlowException("Erro interno: flowDefinition diferentes").add(getFlowDefinition())
                     .add(flowDefinition);
         }
     }
@@ -72,7 +72,7 @@ public final class StartCall<I extends FlowInstance> extends CallWithParameters<
     }
 
     /** Retorna a definição do processo que será inicializado. */
-    public FlowDefinition<I> getProcessDefinition() {
+    public FlowDefinition<I> getFlowDefinition() {
         return (FlowDefinition<I>) getStart().getFlowMap().getFlowDefinition();
     }
 }

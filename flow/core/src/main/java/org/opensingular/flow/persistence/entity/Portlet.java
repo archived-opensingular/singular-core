@@ -16,6 +16,11 @@
 
 package org.opensingular.flow.persistence.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.util.Constants;
+import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,12 +28,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.hibernate.annotations.GenericGenerator;
-
-import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
 
 @Entity
 @GenericGenerator(name = "GENERATED_CO_PORTLET", strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
@@ -44,7 +43,7 @@ public class Portlet extends BaseEntity<Long> {
     private String name;
 
     @Column(name = "NO_PROCESSO")
-    private String processAbbreviation;
+    private String flowDefinitionAbbreviation;
 
     @Column(name = "NU_ORDEM", nullable = false)
     private Long ordem;
@@ -76,12 +75,12 @@ public class Portlet extends BaseEntity<Long> {
         this.name = name;
     }
 
-    public String getProcessAbbreviation() {
-        return processAbbreviation;
+    public String getFlowDefinitionAbbreviation() {
+        return flowDefinitionAbbreviation;
     }
 
-    public void setProcessAbbreviation(String processAbbreviation) {
-        this.processAbbreviation = processAbbreviation;
+    public void setFlowDefinitionAbbreviation(String flowDefinitionAbbreviation) {
+        this.flowDefinitionAbbreviation = flowDefinitionAbbreviation;
     }
 
     public Long getOrdem() {

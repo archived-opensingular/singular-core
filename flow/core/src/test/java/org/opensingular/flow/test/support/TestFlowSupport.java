@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.flow.test.support;
 
 import org.apache.commons.lang3.RandomUtils;
@@ -11,12 +29,14 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.parameterized.BlockJUnit4ClassRunnerWithParameters;
 import org.junit.runners.parameterized.ParametersRunnerFactory;
 import org.junit.runners.parameterized.TestWithParameters;
-import org.opensingular.flow.core.ProcessDefinitionCache;
+import org.opensingular.flow.core.FlowDefinitionCache;
 import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.SingularFlowConfigurationBean;
 import org.opensingular.flow.core.TestProcessBeanInjection;
 import org.opensingular.flow.test.TestDAO;
 import org.opensingular.lib.commons.base.SingularPropertiesImpl;
+import org.opensingular.lib.commons.context.ServiceRegistryLocator;
+import org.opensingular.lib.commons.context.spring.SpringServiceRegistry;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
@@ -71,6 +91,7 @@ public abstract class TestFlowSupport {
     }
 
     public static void configApplicationContext(ApplicationContext applicationContext) {
+        ServiceRegistryLocator.setup(new SpringServiceRegistry());
         try {
             myBeanRef = applicationContext.getBean(TestProcessBeanInjection.MyBean.class);
         } catch (NoSuchBeanDefinitionException e) {
@@ -83,13 +104,13 @@ public abstract class TestFlowSupport {
         }
     }
 
-    protected static AssertionsProcessInstance assertions(FlowInstance target) {
-        return new AssertionsProcessInstance(target);
+    protected static AssertionsFlowInstance assertions(FlowInstance target) {
+        return new AssertionsFlowInstance(target);
     }
 
     @BeforeClass
     public static void invalidateCache(){
-        ProcessDefinitionCache.invalidateAll();
+        FlowDefinitionCache.invalidateAll();
     }
 
     @Parameterized.Parameters(name = "{index}: ({0})")

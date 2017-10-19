@@ -29,30 +29,30 @@ public class AtrProvider extends STranslatorForAttribute {
     public AtrProvider() {
     }
 
-    public AtrProvider(SAttributeEnabled alvo) {
-        super(alvo);
+    public AtrProvider(SAttributeEnabled target) {
+        super(target);
     }
 
-    public <T extends Serializable> AtrProvider filteredProvider(FilteredProvider<T> valor) {
-        return provider(valor);
+    public <T extends Serializable> AtrProvider filteredProvider(FilteredProvider<T> value) {
+        return provider(value);
     }
 
-    public <T extends Serializable, I extends SInstance> AtrProvider filteredOptionsProvider(TextQueryProvider<T, I> valor) {
-        return provider(valor);
+    public <T extends Serializable, I extends SInstance> AtrProvider filteredOptionsProvider(TextQueryProvider<T, I> value) {
+        return provider(value);
     }
 
-    public <T extends Serializable, I extends SInstance> AtrProvider provider(Provider<T, I> valor) {
-        setAttributeValue(SPackageProvider.PROVIDER, valor);
+    public <T extends Serializable, I extends SInstance> AtrProvider provider(Provider<T, I> value) {
+        setAttributeValue(SPackageProvider.PROVIDER, value);
         return this;
     }
 
-    public AtrProvider converter(SInstanceConverter valor) {
-        setAttributeValue(SPackageProvider.CONVERTER, valor);
+    public AtrProvider converter(SInstanceConverter value) {
+        setAttributeValue(SPackageProvider.CONVERTER, value);
         return this;
     }
 
-    public AtrProvider displayFunction(IFunction valor) {
-        setAttributeValue(SPackageProvider.DISPLAY_FUNCTION, valor);
+    public AtrProvider displayFunction(IFunction value) {
+        setAttributeValue(SPackageProvider.DISPLAY_FUNCTION, value);
         return this;
     }
 
@@ -60,8 +60,8 @@ public class AtrProvider extends STranslatorForAttribute {
         return getAttributeValue(SPackageProvider.DISPLAY_FUNCTION);
     }
 
-    public <T extends Serializable, X > AtrProvider idFunction(IFunction<T, X> valor) {
-        setAttributeValue(SPackageProvider.ID_FUNCTION, valor);
+    public <T extends Serializable, X > AtrProvider idFunction(IFunction<T, X> value) {
+        setAttributeValue(SPackageProvider.ID_FUNCTION, value);
         return this;
     }
 
@@ -73,7 +73,7 @@ public class AtrProvider extends STranslatorForAttribute {
         return (FilteredProvider) getProvider();
     }
 
-    public Provider getProvider() {
+    public <T extends Serializable, S extends SInstance> Provider<T, S> getProvider() {
         return getAttributeValue(SPackageProvider.PROVIDER);
     }
 

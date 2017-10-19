@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.form.view;
 
 import org.junit.Test;
@@ -48,8 +66,8 @@ public class TestViewResolver {
 
     @SuppressWarnings("unchecked")
     private static void assertView(Class<?> expectedView, Class<?> type) {
-        SDictionary dicionario = SDictionary.create();
-        assertView(expectedView, dicionario.getType((Class<SType<?>>) type));
+        SDictionary dictionary = SDictionary.create();
+        assertView(expectedView, dictionary.getType((Class<SType<?>>) type));
     }
 
     private static void assertView(Class<?> expectedView, SType<?> newInstance) {
@@ -65,8 +83,8 @@ public class TestViewResolver {
     }
 
     private static void assertViewForListOf(Class<?> expectedView, Class<?> type) {
-        SDictionary dicionario = SDictionary.create();
-        SIList<?> list = dicionario.getType((Class<SType<?>>) type).newList();
+        SDictionary dictionary = SDictionary.create();
+        SIList<?> list = dictionary.getType((Class<SType<?>>) type).newList();
         assertView(expectedView, list);
     }
 
@@ -83,8 +101,8 @@ public class TestViewResolver {
 
     @Test
     public void testTipoSimplesSelectOf() {
-        SDictionary       dicionario      = SDictionary.create();
-        PackageBuilder    pb              = dicionario.createNewPackage("teste");
+        SDictionary       dictionary      = SDictionary.create();
+        PackageBuilder    pb              = dictionary.createNewPackage("teste");
         STypeSimple<?, ?> tipoInteger     = pb.createType("Integer", STypeInteger.class).selectionOf(repeate(i -> i, 2).toArray(new Integer[]{}));
         STypeSimple<?, ?> tipoDate        = pb.createType("Date", STypeDate.class).selectionOf(repeate(i -> new Date(new Date().getTime() + 10000 * i), 2).toArray(new Date[]{}));
         STypeSimple<?, ?> tipoString      = pb.createType("String", STypeString.class).selectionOf(repeate(textoTeste::substring, 2).toArray(new String[]{}));
@@ -108,8 +126,8 @@ public class TestViewResolver {
 
     @Test
     public void testListTipoSimplesSelectOf() {
-        SDictionary                        dicionario    = SDictionary.create();
-        PackageBuilder                     pb            = dicionario.createNewPackage("teste");
+        SDictionary                        dictionary    = SDictionary.create();
+        PackageBuilder                     pb            = dictionary.createNewPackage("teste");
         STypeList<STypeInteger, SIInteger> listInteger3  = createSimpleList(pb, "Integer3", STypeInteger.class, 3, i -> 100 + i);
         STypeList<STypeInteger, SIInteger> listInteger10 = createSimpleList(pb, "Integer10", STypeInteger.class, 10, i -> 100 + i);
         STypeList<STypeInteger, SIInteger> listInteger20 = createSimpleList(pb, "Integer20", STypeInteger.class, 20, i -> 100 + i);

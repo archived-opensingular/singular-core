@@ -36,27 +36,27 @@ public abstract class TaskAccessStrategy<K extends FlowInstance> {
         return canExecute((K) instance.getFlowInstance(), user);
     }
 
-    public boolean canVisualize(K instancia, SUser user) {
-        return canExecute(instancia, user);
+    public boolean canVisualize(K instance, SUser user) {
+        return canExecute(instance, user);
     }
 
-    public abstract Set<Integer> getFirstLevelUsersCodWithAccess(K instancia);
+    public abstract Set<Integer> getFirstLevelUsersCodWithAccess(K instance);
 
-    public abstract List<? extends SUser> listAllocableUsers(K instancia);
-
-    @Nonnull
-    public abstract List<String> getExecuteRoleNames(FlowDefinition<?> definicao, STask<?> task);
+    public abstract List<? extends SUser> listAllocableUsers(K instance);
 
     @Nonnull
-    public List<String> getVisualizeRoleNames(FlowDefinition<?> definicao, STask<?> task) {
-        return getExecuteRoleNames(definicao, task);
+    public abstract List<String> getExecuteRoleNames(FlowDefinition<?> definition, STask<?> task);
+
+    @Nonnull
+    public List<String> getVisualizeRoleNames(FlowDefinition<?> definition, STask<?> task) {
+        return getExecuteRoleNames(definition, task);
     }
 
-    public SUser getAutomaticAllocatedUser(K instancia, TaskInstance tarefa) {
+    public SUser getAutomaticAllocatedUser(K instance, TaskInstance task) {
         return null;
     }
 
-    public boolean isNotifyAutomaticAllocation(K instancia, TaskInstance tarefa) {
+    public boolean isNotifyAutomaticAllocation(K instance, TaskInstance task) {
         return true;
     }
 
@@ -104,37 +104,37 @@ public abstract class TaskAccessStrategy<K extends FlowInstance> {
         }
 
         @Override
-        public boolean canExecute(K instancia, SUser user) {
-            return disjunction.stream().anyMatch(e -> e.canExecute(instancia, user));
+        public boolean canExecute(K instance, SUser user) {
+            return disjunction.stream().anyMatch(e -> e.canExecute(instance, user));
         }
 
         @Override
-        public boolean canVisualize(K instancia, SUser user) {
-            return disjunction.stream().anyMatch(e -> e.canVisualize(instancia, user));
+        public boolean canVisualize(K instance, SUser user) {
+            return disjunction.stream().anyMatch(e -> e.canVisualize(instance, user));
         }
 
         @Override
-        public Set<Integer> getFirstLevelUsersCodWithAccess(K instancia) {
+        public Set<Integer> getFirstLevelUsersCodWithAccess(K instance) {
             Set<Integer> cods = new HashSet<>();
             for (TaskAccessStrategy<K> taskAccessStrategy : disjunction) {
-                cods.addAll(taskAccessStrategy.getFirstLevelUsersCodWithAccess(instancia));
+                cods.addAll(taskAccessStrategy.getFirstLevelUsersCodWithAccess(instance));
             }
             return cods;
         }
 
         @Override
-        public List<SUser> listAllocableUsers(K instancia) {
+        public List<SUser> listAllocableUsers(K instance) {
             Set<SUser> users = new LinkedHashSet<>();
             for (TaskAccessStrategy<K> taskAccessStrategy : disjunction) {
-                users.addAll(taskAccessStrategy.listAllocableUsers(instancia));
+                users.addAll(taskAccessStrategy.listAllocableUsers(instance));
             }
             return new ArrayList<>(users);
         }
 
         @Override
-        public SUser getAutomaticAllocatedUser(K instancia, TaskInstance tarefa) {
+        public SUser getAutomaticAllocatedUser(K instance, TaskInstance task) {
             for (TaskAccessStrategy<K> taskAccessStrategy : disjunction) {
-                SUser alocadoAutomatico = taskAccessStrategy.getAutomaticAllocatedUser(instancia, tarefa);
+                SUser alocadoAutomatico = taskAccessStrategy.getAutomaticAllocatedUser(instance, task);
                 if (alocadoAutomatico != null) {
                     return alocadoAutomatico;
                 }
@@ -143,13 +143,13 @@ public abstract class TaskAccessStrategy<K extends FlowInstance> {
         }
 
         @Override
-        public List<String> getExecuteRoleNames(FlowDefinition<?> definicao, STask<?> task) {
-            return disjunction.stream().flatMap(p -> p.getExecuteRoleNames(definicao, task).stream()).collect(Collectors.toList());
+        public List<String> getExecuteRoleNames(FlowDefinition<?> definition, STask<?> task) {
+            return disjunction.stream().flatMap(p -> p.getExecuteRoleNames(definition, task).stream()).collect(Collectors.toList());
         }
 
         @Override
-        public List<String> getVisualizeRoleNames(FlowDefinition<?> definicao, STask<?> task) {
-            return disjunction.stream().flatMap(p -> p.getVisualizeRoleNames(definicao, task).stream()).collect(Collectors.toList());
+        public List<String> getVisualizeRoleNames(FlowDefinition<?> definition, STask<?> task) {
+            return disjunction.stream().flatMap(p -> p.getVisualizeRoleNames(definition, task).stream()).collect(Collectors.toList());
         }
     }
 
@@ -162,33 +162,33 @@ public abstract class TaskAccessStrategy<K extends FlowInstance> {
         }
 
         @Override
-        public boolean canExecute(K instancia, SUser user) {
+        public boolean canExecute(K instance, SUser user) {
             return false;
         }
 
         @Override
-        public boolean canVisualize(K instancia, SUser user) {
-            return original.canVisualize(instancia, user);
+        public boolean canVisualize(K instance, SUser user) {
+            return original.canVisualize(instance, user);
         }
 
         @Override
-        public Set<Integer> getFirstLevelUsersCodWithAccess(K instancia) {
+        public Set<Integer> getFirstLevelUsersCodWithAccess(K instance) {
             return Collections.emptySet();
         }
 
         @Override
-        public List<SUser> listAllocableUsers(K instancia) {
+        public List<SUser> listAllocableUsers(K instance) {
             return Collections.emptyList();
         }
 
         @Override
-        public List<String> getExecuteRoleNames(FlowDefinition<?> definicao, STask<?> task) {
+        public List<String> getExecuteRoleNames(FlowDefinition<?> definition, STask<?> task) {
             return Collections.emptyList();
         }
 
         @Override
-        public List<String> getVisualizeRoleNames(FlowDefinition<?> definicao, STask<?> task) {
-            return original.getVisualizeRoleNames(definicao, task);
+        public List<String> getVisualizeRoleNames(FlowDefinition<?> definition, STask<?> task) {
+            return original.getVisualizeRoleNames(definition, task);
         }
 
         @Override

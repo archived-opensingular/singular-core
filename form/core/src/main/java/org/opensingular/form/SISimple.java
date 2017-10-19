@@ -71,11 +71,11 @@ public class SISimple<NATIVE_TYPE extends Serializable> extends SInstance {
     }
 
     @Override
-    final <T> T getValueWithDefaultIfNull(PathReader leitor, Class<T> classeDestino) {
-        if (!leitor.isEmpty()) {
+    final <T> T getValueWithDefaultIfNull(PathReader reader, Class<T> destinyClass) {
+        if (!reader.isEmpty()) {
             throw new SingularFormException("Não ser aplica path a um tipo simples", this);
         }
-        return getValueWithDefault(classeDestino);
+        return getValueWithDefault(destinyClass);
     }
 
     /** Indica que o valor da instância atual é null. */
@@ -91,13 +91,13 @@ public class SISimple<NATIVE_TYPE extends Serializable> extends SInstance {
 
     @SuppressWarnings("unchecked")
     @Override
-    public final void setValue(Object valor) {
+    public final void setValue(Object value) {
         NATIVE_TYPE       oldValue = this.getValue();
         final NATIVE_TYPE newValue;
-        if (valor instanceof SISimple<?>){
-            newValue = ((SISimple<NATIVE_TYPE>)valor).getValue();
+        if (value instanceof SISimple<?>){
+            newValue = ((SISimple<NATIVE_TYPE>)value).getValue();
         } else {
-            newValue = getType().convert(valor);
+            newValue = getType().convert(value);
         }
         this.value = onSetValue(oldValue, newValue);
         if (!Objects.equals(oldValue, newValue)) {

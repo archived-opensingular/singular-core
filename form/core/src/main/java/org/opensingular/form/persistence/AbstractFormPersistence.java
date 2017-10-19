@@ -87,9 +87,6 @@ public abstract class AbstractFormPersistence<TYPE extends SType<INSTANCE>, INST
     @Override
     @Nonnull
     public FormKey insert(@Nonnull INSTANCE instance, Integer inclusionActor) {
-        if (instance == null) {
-            throw addInfo(new SingularFormPersistenceException("O parâmetro instance está null")).add(this);
-        }
         return insertImpl(instance, inclusionActor);
     }
 

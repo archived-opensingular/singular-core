@@ -17,7 +17,6 @@
 package org.opensingular.form.wicket.util;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
@@ -29,40 +28,27 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.Visits;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SInstances;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeList;
+import org.opensingular.form.*;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.event.ISInstanceListener.EventCollector;
 import org.opensingular.form.validation.InstanceValidationContext;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.util.Loggable;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /*
- * TODO: depois, acho que esta classe tem que deixar de ter métodos estáticos, e se tornar algo plugável e estendível,
+ * TODO: depois, acho que esta classe tem que deixar de ter métodos estáticos, e se tornar algo plugável e extensível,
  *  análogo ao RequestCycle do Wicket.
  * @author ronaldtm
  */
-public class WicketFormProcessing implements Loggable {
+public class WicketFormProcessing extends SingularFormProcessing implements Loggable {
 
     public final static MetaDataKey<Boolean> MDK_SKIP_VALIDATION_ON_REQUEST = new MetaDataKey<Boolean>() {
     };
@@ -84,15 +70,32 @@ public class WicketFormProcessing implements Loggable {
         });
     }
 
+    public static boolean onFormSubmit(MarkupContainer container,
+                                       AjaxRequestTarget target,
+                                       IModel<? extends SInstance> baseInstance,
+                                       boolean validate,
+                                       boolean clearProcessedMetadata) {
+        return processAndPrepareForm(container, target, baseInstance, validate, clearProcessedMetadata);
+    }
+
+
     public static boolean onFormSubmit(MarkupContainer container, AjaxRequestTarget target, IModel<? extends SInstance> baseInstance, boolean validate) {
-        return processAndPrepareForm(container, target, baseInstance, validate);
+        return onFormSubmit(container, target, baseInstance, validate, false);
     }
 
     public static boolean onFormPrepare(MarkupContainer container, IModel<? extends SInstance> baseInstance, boolean validate) {
-        return processAndPrepareForm(container, null, baseInstance, validate);
+        return processAndPrepareForm(container, null, baseInstance, validate, false);
     }
 
-    private static boolean processAndPrepareForm(MarkupContainer container, AjaxRequestTarget target, IModel<? extends SInstance> baseInstanceModel, boolean validate) {
+    private static boolean processAndPrepareForm(MarkupContainer container,
+                                                 AjaxRequestTarget target,
+                                                 IModel<? extends SInstance> baseInstanceModel,
+                                                 boolean validate,
+                                                 boolean clearProcessedMetadata) {
+
+        if (clearProcessedMetadata) {
+            RequestCycle.get().setMetaData(MDK_PROCESSED, null);
+        }
 
         final Function<Boolean, Boolean> setAndReturn = (value) -> {
             RequestCycle.get().setMetaData(MDK_PROCESSED, value);
@@ -132,26 +135,6 @@ public class WicketFormProcessing implements Loggable {
         return setAndReturn.apply(Boolean.TRUE);
     }
 
-    /**
-     * Forma uma chava apartir dos indexes de lista
-     *
-     * @param path da instancia
-     * @return chaves concatenadas
-     */
-    private static String getIndexesKey(String path) {
-
-        final Pattern indexFinder = Pattern.compile("(\\[\\d\\])");
-        final Pattern bracketsFinder = Pattern.compile("[\\[\\]]");
-
-        final Matcher matcher = indexFinder.matcher(path);
-        final StringBuilder key = new StringBuilder();
-
-        while (matcher.find()) {
-            key.append(bracketsFinder.matcher(matcher.group()).replaceAll(StringUtils.EMPTY));
-        }
-
-        return key.toString();
-    }
 
     public static void onFieldValidate(FormComponent<?> formComponent, AjaxRequestTarget target, IModel<? extends SInstance> fieldInstance) {
 
@@ -168,50 +151,7 @@ public class WicketFormProcessing implements Loggable {
                 .ifPresent(it -> it.updateValidationMessages(target));
     }
 
-    /**
-     * Executa o update listener dos tipos depentens da instancia informada, sendo chamada recursivamente para os tipos
-     * que foram atualizados.
-     * <p>
-     * Motivação: Tendo um tipo composto com tres tipos filhos (a,b e c),
-     * onde "b" é dependente de "a" e "c" é dependente de "b", "b" possui update listener que modifica o seu valor,
-     * e "c" será visivel se o valor de "b" não for nulo.  Ao atualizar "a" é necessario executar o listener dos seus
-     * tipos dependentes("b") e também dos tipos dependentes do seu dependente("c") para que a avaliação de visibilidade
-     * seja avaliada corretamente.
-     *
-     * @param i instancia a ser avaliada
-     * @see <a href="https://www.pivotaltracker.com/story/show/131103577">[#131103577]</a>
-     */
-    private static Set<SInstance> evaluateUpdateListenersAndCollect(SInstance i) {
-        return SInstances
-                .streamDescendants(i.getRoot(), true)
-                .filter(isDependantOf(i))
-                .filter(WicketFormProcessing::isNotOrphan)
-                .filter(dependant -> isNotInListOrIsBothInSameList(i, dependant))
-                .map(dependant -> {
-                    List<SInstance> instances = new ArrayList<>();
-                    IConsumer<SInstance> updateListener = dependant.asAtr().getUpdateListener();
-                    if (updateListener != null) {
-                        updateListener.accept(dependant);
-                    }
-                    instances.add(dependant);
-                    instances.addAll(WicketFormProcessing.evaluateUpdateListenersAndCollect(dependant));
-                    return instances;
-                })
-                .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
-    }
 
-    private static Predicate<SInstance> isDependantOf(SInstance i) {
-        return (x) -> i.getType().getDependentTypes().contains(x.getType());
-    }
-
-    private static boolean isOrphan(SInstance i) {
-        return !(i instanceof SIComposite) && i.getParent() == null;
-    }
-
-    private static boolean isNotOrphan(SInstance i) {
-        return !isOrphan(i);
-    }
 
     /**
      * Busca todas as instancias dependentes da instancia informada e executa o update listener.
@@ -223,7 +163,7 @@ public class WicketFormProcessing implements Loggable {
      * @param instance a instancia
      */
     public static void processDependentTypes(Page page, AjaxRequestTarget target, SInstance instance) {
-        updateBoundComponents(page, target, new HashSet<>(evaluateUpdateListenersAndCollect(instance)));
+        updateBoundComponents(page, target, new HashSet<>(evaluateUpdateListeners(instance)));
     }
 
     /**
@@ -243,7 +183,7 @@ public class WicketFormProcessing implements Loggable {
 
         validate(component, target, instance);
 
-        Set<SInstance> updatedInstances = evaluateUpdateListenersAndCollect(instance);
+        Set<SInstance> updatedInstances = evaluateUpdateListeners(instance);
 
         EventCollector eventCollector = new EventCollector();
 
@@ -255,19 +195,6 @@ public class WicketFormProcessing implements Loggable {
         instancesToUpdateComponents.addAll(updatedInstances);
 
         updateBoundComponents(component.getPage(), target, instancesToUpdateComponents);
-    }
-
-    private static boolean isNotInListOrIsBothInSameList(SInstance a, SInstance b) {
-        final String pathA = pathFromList(a);
-        final String pathB = pathFromList(b);
-        return !(pathA != null && pathB != null && Objects.equals(pathA, pathB)) || Objects.equals(getIndexesKey(b.getPathFull()), getIndexesKey(a.getPathFull()));
-    }
-
-    private static String pathFromList(SInstance i) {
-        return SInstances
-                .findAncestor(i, STypeList.class)
-                .map(SInstance::getPathFull)
-                .orElse(null);
     }
 
 
@@ -315,9 +242,8 @@ public class WicketFormProcessing implements Loggable {
     public static void refreshComponentOrCellContainer(AjaxRequestTarget target, Component component) {
         if (target != null && component != null) {
             component.getRequestCycle().setMetaData(MDK_FIELD_UPDATED, Boolean.TRUE);
-            target.add(WicketFormUtils.resolveRefreshingComponent(
-                    ObjectUtils.defaultIfNull(
-                            WicketFormUtils.getCellContainer(component), component)));
+            Component compToBeUpdated = ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component);
+            target.add(WicketFormUtils.findUpdatableComponentInHierarchy(compToBeUpdated));
         }
     }
 

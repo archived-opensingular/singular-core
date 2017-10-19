@@ -96,7 +96,7 @@ public class MoneyMapper extends AbstractControlsFieldComponentMapper {
 
             final NumberFormat numberFormat = NumberFormat.getInstance(new Locale("pt", "BR"));
             final DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
-            final BigDecimal valor = (BigDecimal) mi.getValue();
+            final BigDecimal value = (BigDecimal) mi.getValue();
             final Map<String, Object> options = withOptionsOf(model);
             final Integer digitos = (Integer) options.get(PRECISION);
             final StringBuilder pattern = new StringBuilder();
@@ -110,7 +110,7 @@ public class MoneyMapper extends AbstractControlsFieldComponentMapper {
             decimalFormat.applyPattern(pattern.toString());
             decimalFormat.setMinimumFractionDigits(digitos);
 
-            return decimalFormat.format(valor);
+            return decimalFormat.format(value);
         }
 
         return StringUtils.EMPTY;

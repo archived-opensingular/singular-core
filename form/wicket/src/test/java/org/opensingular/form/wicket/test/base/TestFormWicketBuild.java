@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.form.wicket.test.base;
 
 import org.apache.wicket.Component;
@@ -60,14 +78,14 @@ public class TestFormWicketBuild  {
         BSGrid    rootContainer = new BSGrid("teste");
         TestPanel testPanel     = buildTestPanel(rootContainer);
 
-        SIString instancia = (SIString) createIntance(() -> {
+        SIString intance = (SIString) createIntance(() -> {
             PackageBuilder pb = dictionary.createNewPackage("teste");
             STypeString tipoCidade = pb.createType("cidade", STypeString.class);
             tipoCidade.asAtr().label("Cidade")/*.editSize(30)*/;
             return tipoCidade;
         });
 
-        IModel<SIString> mCidade = new SInstanceRootModel<SIString>(instancia);
+        IModel<SIString> mCidade = new SInstanceRootModel<SIString>(intance);
         mCidade.getObject().setValue("Brasilia");
         WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCidade);
         ctx.build(ViewMode.EDIT);
@@ -87,12 +105,12 @@ public class TestFormWicketBuild  {
         BSGrid rootContainer = new BSGrid("teste");
         TestPanel testPanel = buildTestPanel(rootContainer);
 
-        SIComposite instancia = (SIComposite) createIntance(() -> {
+        SIComposite intance = (SIComposite) createIntance(() -> {
             dictionary.loadPackage(SPackageCurriculo.class);
             return dictionary.getType(SPackageCurriculo.TIPO_CURRICULO);
         });
 
-        IModel<SIComposite> mCurriculo = new SInstanceRootModel<SIComposite>(instancia);
+        IModel<SIComposite> mCurriculo = new SInstanceRootModel<SIComposite>(intance);
         WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCurriculo);
 //        UIBuilderWicket.buildForEdit(ctx, mCurriculo);
 

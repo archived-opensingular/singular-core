@@ -20,8 +20,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.form.context.ServiceRegistry;
-import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.processor.ClassInspectionCache;
 import org.opensingular.form.processor.ClassInspectionCache.CacheKey;
@@ -30,6 +28,8 @@ import org.opensingular.form.type.core.SPackagePersistence;
 import org.opensingular.form.type.country.brazil.SPackageCountryBrazil;
 import org.opensingular.form.type.util.SPackageUtil;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
+import org.opensingular.lib.commons.context.ServiceRegistry;
+import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
 import javax.annotation.Nonnull;
@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -53,6 +54,25 @@ public final class SFormUtil {
     private static Supplier<Map<String, Class<? extends SPackage>>> singularPackages;
 
     private SFormUtil() {
+    }
+
+    /**
+     * Executa o update listener dos tipos depentens da instancia informada, sendo chamada recursivamente para os tipos
+     * que foram atualizados.
+     * <p>
+     * Motivação: Tendo um tipo composto com tres tipos filhos (a,b e c),
+     * onde "b" é dependente de "a" e "c" é dependente de "b", "b" possui update listener que modifica o seu valor,
+     * e "c" será visivel se o valor de "b" não for nulo.  Ao atualizar "a" é necessario executar o listener dos seus
+     * tipos dependentes("b") e também dos tipos dependentes do seu dependente("c") para que a avaliação de visibilidade
+     * seja avaliada corretamente.
+     *
+     * @param
+     *  i the instance from which all dependents types must be notified
+     * @return
+     *  List of dependants SInstances
+     */
+    public static Set<SInstance> evaluateUpdateListeners(SInstance i) {
+        return SingularFormProcessing.evaluateUpdateListeners(i);
     }
 
     private static boolean isNotValidSimpleName(@Nonnull String name) {
@@ -127,7 +147,7 @@ public final class SFormUtil {
     }
 
     static SType<?> resolveFieldType(SType<?> type, PathReader pathReader) {
-        SType<?>   currentType       = type;
+        SType<?> currentType = type;
         PathReader currentPathReader = pathReader;
         while (!currentPathReader.isEmpty()) {
             currentType = resolveFieldTypeInternal(currentType, currentPathReader);
@@ -164,7 +184,7 @@ public final class SFormUtil {
      * a condicão de parada informada.
      */
     public static String generatePath(SInstance instance, Predicate<SInstance> stopCondition) {
-        SInstance       current   = instance;
+        SInstance current = instance;
         List<SInstance> sequencia = null;
         while (!stopCondition.test(current)) {
             if (sequencia == null) {
@@ -196,8 +216,8 @@ public final class SFormUtil {
     }
 
     public static String generateUserFriendlyName(String simpleName) {
-        final Pattern              lowerUpper            = Pattern.compile("(.*?[a-z])([A-Z].*?)");
-        final Pattern              prefixoSigla          = Pattern.compile("([A-Z]+)([A-Z][a-z])");
+        final Pattern lowerUpper = Pattern.compile("(.*?[a-z])([A-Z].*?)");
+        final Pattern prefixoSigla = Pattern.compile("([A-Z]+)([A-Z][a-z])");
         final ImmutableSet<String> upperCaseSpecialCases = ImmutableSet.of("id", "url");
 
         return StringUtils.capitalize(Stream.of(simpleName).map(s -> lowerUpper.matcher(s).replaceAll(
@@ -212,7 +232,7 @@ public final class SFormUtil {
 
     public static String generateUserFriendlyPath(SInstance instance, SInstance parentContext) {
         LinkedList<String> labels = new LinkedList<>();
-        SInstance          child  = null;
+        SInstance child = null;
         for (SInstance node = instance; node != null && !node.equals(parentContext); child = node, node = node.getParent()) {
 
             final String labelNode = node.asAtr().getLabel();
@@ -258,7 +278,7 @@ public final class SFormUtil {
 
     private static SimpleName getTypeSimpleNameInternal(Class<?> typeClass) {
         SInfoType infoType = getInfoType((Class<? extends SType<?>>) typeClass);
-        String  typeName = infoType.name();
+        String typeName = infoType.name();
         if (StringUtils.isBlank(typeName)) {
             typeName = typeClass.getSimpleName();
         }
@@ -275,12 +295,12 @@ public final class SFormUtil {
 
     @Nonnull
     static SInfoType getInfoType(Class<? extends SType<?>> typeClass) {
-        SInfoType mFormTipo = typeClass.getAnnotation(SInfoType.class);
-        if (mFormTipo == null) {
+        SInfoType infoType = typeClass.getAnnotation(SInfoType.class);
+        if (infoType == null) {
             throw new SingularFormException(
                     "O tipo '" + typeClass.getName() + " não possui a anotação @" + SInfoType.class.getSimpleName() + " em sua definição.");
         }
-        return mFormTipo;
+        return infoType;
     }
 
     @Nonnull
@@ -361,7 +381,7 @@ public final class SFormUtil {
             return null;
         }
         Map<String, Class<? extends SPackage>> packages = getSingularPackages();
-        String                                 selected = null;
+        String selected = null;
         for (String candidate : packages.keySet()) {
             if (pathFullName.startsWith(candidate) && pathFullName.charAt(candidate.length()) == '.'
                     && (selected == null || selected.length() < candidate.length())) {

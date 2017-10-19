@@ -16,6 +16,14 @@
 
 package org.opensingular.form.util.transformer;
 
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.SingularFormException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -28,14 +36,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.SingularFormException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TransformPojoUtil {
 
@@ -75,8 +75,8 @@ public class TransformPojoUtil {
 
         fieldsTST.put(System.identityHashCode(objectToConvert), new HashMap<>());
 
-        Map<String, Object> mapObjRaiz = new HashMap<>();
-        fieldsTST.put(System.identityHashCode(objectToConvert), mapObjRaiz);
+        Map<String, Object> mapRootObj = new HashMap<>();
+        fieldsTST.put(System.identityHashCode(objectToConvert), mapRootObj);
 
         Arrays.asList(objectToConvert.getClass().getDeclaredFields())
                 .forEach(f -> convertObjectToMap(fieldsTST, f, objectToConvert));
@@ -139,9 +139,9 @@ public class TransformPojoUtil {
                 map.put(field.getName(), "codRef=" + System.identityHashCode(obj));
             } else {
                 // senao, gera-se o dados necessarios
-                Map<String, Object> mapItemFilho = new HashMap<>(); // cria o mapa do obj filho
-                mapMain.put(System.identityHashCode(obj), mapItemFilho); // add no mapa de referencia
-                map.put(field.getName(), mapItemFilho); // add no obj pai
+                Map<String, Object> mapChildItem = new HashMap<>(); // cria o mapa do obj filho
+                mapMain.put(System.identityHashCode(obj), mapChildItem); // add no mapa de referencia
+                map.put(field.getName(), mapChildItem); // add no obj pai
 
                 Arrays.asList(type.getDeclaredFields()).forEach(f -> {
                     try {
@@ -180,8 +180,8 @@ public class TransformPojoUtil {
                 // maneira feita para garantir o tipo primitivo de ser colocado, e de se ter uma lista dele no SInstance
                 Map<String, Object> itemMap = new HashMap<>();
 
-                String[] valor = item.getClass().getName().split("\\.");
-                itemMap.put(valor[valor.length - 1], item);
+                String[] value = item.getClass().getName().split("\\.");
+                itemMap.put(value[value.length - 1], item);
 
                 colecao.add(itemMap);
             } else {
@@ -246,7 +246,7 @@ public class TransformPojoUtil {
             Object object = pojoDataMap.get(child.getType().getNameSimple());
             // pega o objeto ou mapa que é referenciado
 
-            Map<String, Object> mapNovo = new HashMap<>();
+            Map<String, Object> mapNew = new HashMap<>();
             if (child.getType().isComposite()) {
                 /*Caso ele tenha uma referencia já colocada, ela estará no pojoReferenceDataMap
                  * essa referencia terá atributos repetidos, mas por causa do strict mode, só colocará os que forem
@@ -254,17 +254,17 @@ public class TransformPojoUtil {
                 // TODO verificar quando tiver referencia circular
                 if (object instanceof String && ((String) object).contains("codRef=")) {
                     String[] split = ((String) object).split("=");
-                    mapNovo = pojoReferenceDataMap.get(Integer.valueOf(split[split.length - 1]));
+                    mapNew = pojoReferenceDataMap.get(Integer.valueOf(split[split.length - 1]));
                 } else {
-                    mapNovo = (Map<String, Object>) object;
+                    mapNew = (Map<String, Object>) object;
                 }
             } else {
                 // mapa criado pra garantir que teremos a referencia do objeto salva(key)
-                mapNovo.put(child.getType().getNameSimple(), object);
+                mapNew.put(child.getType().getNameSimple(), object);
             }
 
 
-            realMapToSInstance(pojoReferenceDataMap, mapNovo, child, strictMode);
+            realMapToSInstance(pojoReferenceDataMap, mapNew, child, strictMode);
         }
     }
 

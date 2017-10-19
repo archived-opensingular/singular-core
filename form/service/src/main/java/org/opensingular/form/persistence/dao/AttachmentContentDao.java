@@ -40,8 +40,8 @@ public class AttachmentContentDao<T extends AttachmentContentEntity> extends Bas
         super((Class<T>) AttachmentContentEntity.class);
     }
 
-    protected AttachmentContentDao(Class<T> tipo) {
-        super(tipo);
+    protected AttachmentContentDao(Class<T> entityClass) {
+        super(entityClass);
     }
 
     public T insert(T o) {
@@ -93,7 +93,7 @@ public class AttachmentContentDao<T extends AttachmentContentEntity> extends Bas
 
     protected T createInstance() {
         try {
-            return tipo.newInstance();
+            return entityClass.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             throw SingularException.rethrow(e);
         }

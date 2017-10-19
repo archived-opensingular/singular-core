@@ -18,9 +18,9 @@ package org.opensingular.flow.core;
 
 import com.google.common.collect.Lists;
 import org.opensingular.flow.core.entity.IEntityCategory;
-import org.opensingular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityFlowDefinition;
+import org.opensingular.flow.core.entity.IEntityFlowInstance;
+import org.opensingular.flow.core.entity.IEntityFlowVersion;
 import org.opensingular.flow.core.entity.IEntityRoleDefinition;
 import org.opensingular.flow.core.entity.IEntityRoleInstance;
 import org.opensingular.flow.core.entity.IEntityTaskDefinition;
@@ -60,58 +60,58 @@ public class ProcessDataServiceImpl<I extends FlowInstance> implements IProcessD
     @Override
     @Nonnull
     public final Optional<I> retrieveInstanceOpt(@Nonnull Integer entityCod) {
-        return getPersistenceService().retrieveProcessInstanceByCod(entityCod)
-                .map(i -> flowDefinition.convertToProcessInstance(i));
+        return getPersistenceService().retrieveFlowInstanceByCod(entityCod)
+                .map(i -> flowDefinition.convertToFlowInstance(i));
     }
 
     @Override
-    public final List<I> retrieveActiveInstancesCreatedBy(SUser pessoa) {
-        Objects.requireNonNull(pessoa);
-        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), pessoa, Boolean.TRUE));
+    public final List<I> retrieveActiveInstancesCreatedBy(SUser user) {
+        Objects.requireNonNull(user);
+        return convertToFlowInstance(getPersistenceService().retrieveFlowInstancesWith(getEntityFlowDefinition(), user, Boolean.TRUE));
     }
 
     @Override
     public final List<I> retrieveEndedInstances() {
-        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), null, Boolean.FALSE));
+        return convertToFlowInstance(getPersistenceService().retrieveFlowInstancesWith(getEntityFlowDefinition(), null, Boolean.FALSE));
     }
 
     @Override
-    public final List<I> retrieveEndedInstancesCreatedBy(SUser pessoa) {
-        Objects.requireNonNull(pessoa);
-        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), pessoa, Boolean.FALSE));
+    public final List<I> retrieveEndedInstancesCreatedBy(SUser user) {
+        Objects.requireNonNull(user);
+        return convertToFlowInstance(getPersistenceService().retrieveFlowInstancesWith(getEntityFlowDefinition(), user, Boolean.FALSE));
     }
 
     @Override
     public final List<I> retrieveAllInstancesIn(STask<?> task) {
-        IEntityTaskDefinition obterSituacaoPara = getEntityTask(task);
-        return retrieveAllInstancesIn(obterSituacaoPara != null ? Lists.newArrayList(obterSituacaoPara) : null);
+        IEntityTaskDefinition targetTaskDefinition = getEntityTask(task);
+        return retrieveAllInstancesIn(targetTaskDefinition != null ? Lists.newArrayList(targetTaskDefinition) : null);
     }
 
     @Override
-    public final List<I> retrieveAllInstancesIn(Date dataInicio, Date maxDataInicio, boolean exibirEncerradas,
-                                                ITaskDefinition... situacoesAlvo) {
-        return retrieveAllInstancesIn(dataInicio, maxDataInicio, exibirEncerradas, convertToEntityTask(situacoesAlvo));
+    public final List<I> retrieveAllInstancesIn(Date startDate, Date endDate, boolean showEnded,
+                                                ITaskDefinition... targetStates) {
+        return retrieveAllInstancesIn(startDate, endDate, showEnded, convertToEntityTask(targetStates));
     }
 
     @Override
-    public final List<I> retrieveAllInstancesIn(Date dataInicio, Date dataFim, boolean exibirEncerradas,
-            IEntityTaskDefinition... situacoesAlvo) {
-        if (situacoesAlvo == null || situacoesAlvo.length == 0 || (situacoesAlvo.length == 1 && situacoesAlvo[0] == null)) {
-            return retrieveAllInstancesIn(dataInicio, dataFim, exibirEncerradas, (Collection<IEntityTaskDefinition>) null);
+    public final List<I> retrieveAllInstancesIn(Date startDate, Date endDate, boolean showEnded,
+            IEntityTaskDefinition... targetStates) {
+        if (targetStates == null || targetStates.length == 0 || (targetStates.length == 1 && targetStates[0] == null)) {
+            return retrieveAllInstancesIn(startDate, endDate, showEnded, (Collection<IEntityTaskDefinition>) null);
         }
-        return retrieveAllInstancesIn(dataInicio, dataFim, exibirEncerradas, Arrays.asList(situacoesAlvo));
+        return retrieveAllInstancesIn(startDate, endDate, showEnded, Arrays.asList(targetStates));
     }
 
-    private List<I> retrieveAllInstancesIn(Date dataInicio, Date dataFim, boolean exibirEncerradas,
+    private List<I> retrieveAllInstancesIn(Date startDate, Date endDate, boolean showEnded,
             Collection<IEntityTaskDefinition> targetSituations) {
         Collection<IEntityTaskDefinition> resolvedSituations = targetSituations;
-        if (!exibirEncerradas && (resolvedSituations == null || resolvedSituations.isEmpty())) {
-            resolvedSituations = getEntityProcessDefinition().getTaskDefinitions().stream().filter(
+        if (!showEnded && (resolvedSituations == null || resolvedSituations.isEmpty())) {
+            resolvedSituations = getEntityFlowDefinition().getTaskDefinitions().stream().filter(
                     t -> !t.getLastVersion().isEnd())
                     .collect(Collectors.toList());
         }
-        return convertToProcessInstance(getPersistenceService()
-                .retrieveProcessInstancesWith(getEntityProcessDefinition(), dataInicio, dataFim, resolvedSituations));
+        return convertToFlowInstance(getPersistenceService()
+                .retrieveFlowInstancesWith(getEntityFlowDefinition(), startDate, endDate, resolvedSituations));
     }
 
     @Override
@@ -120,9 +120,9 @@ public class ProcessDataServiceImpl<I extends FlowInstance> implements IProcessD
     }
 
     @Override
-    public final List<I> retrieveAllInstancesIn(Collection<? extends IEntityTaskDefinition> situacoesAlvo) {
-        return convertToProcessInstance(
-                getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), null, null, situacoesAlvo));
+    public final List<I> retrieveAllInstancesIn(Collection<? extends IEntityTaskDefinition> targetStates) {
+        return convertToFlowInstance(
+                getPersistenceService().retrieveFlowInstancesWith(getEntityFlowDefinition(), null, null, targetStates));
     }
 
 
@@ -137,13 +137,13 @@ public class ProcessDataServiceImpl<I extends FlowInstance> implements IProcessD
     }
 
     @Override
-    public final List<I> retrieveAllInstances(boolean exibirEncerradas) {
+    public final List<I> retrieveAllInstances(boolean showEnded) {
         FlowMap flowMap = getFlowMap();
-        if (exibirEncerradas) {
-            Set<IEntityTaskDefinition> estadosAlvo = new HashSet<>();
-            estadosAlvo.addAll(convertToEntityTask(flowMap.getTasks()));
-            estadosAlvo.addAll(convertToEntityTask(flowMap.getEndTasks()));
-            return retrieveAllInstancesIn(estadosAlvo);
+        if (showEnded) {
+            Set<IEntityTaskDefinition> targetStates = new HashSet<>();
+            targetStates.addAll(convertToEntityTask(flowMap.getTasks()));
+            targetStates.addAll(convertToEntityTask(flowMap.getEndTasks()));
+            return retrieveAllInstancesIn(targetStates);
         } else {
             return retrieveAllInstancesIn(convertToEntityTask(flowMap.getTasks()));
         }
@@ -154,8 +154,8 @@ public class ProcessDataServiceImpl<I extends FlowInstance> implements IProcessD
         return retrieveAllInstancesIn(convertToEntityTask(getFlowMap().getTasks().stream().filter(STask::isPeople)));
     }
 
-    protected final IEntityProcessDefinition getEntityProcessDefinition() {
-        return flowDefinition.getEntityProcessDefinition();
+    protected final IEntityFlowDefinition getEntityFlowDefinition() {
+        return flowDefinition.getEntityFlowDefinition();
 
     }
 
@@ -179,11 +179,11 @@ public class ProcessDataServiceImpl<I extends FlowInstance> implements IProcessD
         return flowDefinition.getEntityTaskDefinition(tasks);
     }
 
-    protected final List<I> convertToProcessInstance(List<? extends IEntityProcessInstance> entities) {
-        return (List<I>) flowDefinition.convertToProcessInstance(entities);
+    protected final List<I> convertToFlowInstance(List<? extends IEntityFlowInstance> entities) {
+        return (List<I>) flowDefinition.convertToFlowInstance(entities);
     }
 
-    private IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance,
+    private IPersistenceService<IEntityCategory, IEntityFlowDefinition, IEntityFlowVersion, IEntityFlowInstance, IEntityTaskInstance,
             IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition,
             IEntityRoleInstance> getPersistenceService() {
         return flowDefinition.getPersistenceService();

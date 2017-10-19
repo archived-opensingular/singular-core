@@ -36,13 +36,13 @@ import java.util.Map;
  */
 public abstract class ViewOutputHtml implements ViewOutput<Writer> {
 
-    private String pathAnexo_;
+    private String pathAttachment;
 
     private String urlApp_;
 
     private PrintWriter pOut_;
 
-    private Map<String, Object> atributos;
+    private Map<String, Object> attributes;
 
     private HtmlCode htmlCode;
 
@@ -51,26 +51,26 @@ public abstract class ViewOutputHtml implements ViewOutput<Writer> {
         return ViewOutputFormat.HTML;
     }
 
-    public void copiarConfig(ViewOutputHtml vOut) {
-        pathAnexo_ = vOut.pathAnexo_;
+    public void copyConfig(ViewOutputHtml vOut) {
+        pathAttachment = vOut.pathAttachment;
         urlApp_ = vOut.urlApp_;
-        if (vOut.atributos != null) {
-            atributos = new HashMap<>(vOut.atributos);
+        if (vOut.attributes != null) {
+            attributes = new HashMap<>(vOut.attributes);
         }
     }
 
     public abstract boolean isStaticContent();
 
     /**
-     * Informa qual o caminho onde est�o os arquivos referenciados pelo conteudo
+     * Informa qual o caminho onde esto os arquivos referenciados pelo conteudo
      * gerado.
      */
-    public void setPathAnexo(String caminho) {
-        pathAnexo_ = caminho;
+    public void setPathAttachment(String path) {
+        pathAttachment = path;
     }
 
-    public String getPathAnexo() {
-        return pathAnexo_;
+    public String getPathAttachment() {
+        return pathAttachment;
     }
 
     public void setUrlApp(String url) {
@@ -106,44 +106,44 @@ public abstract class ViewOutputHtml implements ViewOutput<Writer> {
         try {
             getOutput().flush();
         } catch (IOException e) {
-            throw SingularException.rethrow("Falha ao descarregar conte�do: " + e.getMessage(), e);
+            throw SingularException.rethrow("Falha ao descarregar contedo: " + e.getMessage(), e);
         }
     }
 
     /**
-     * Adiciona uma imagem que � utilizada pelo conte�do gerado.
+     * Adiciona uma imagem que  utilizada pelo contedo gerado.
      *
-     * @param nome Nome usado para refer�nciar a imagem.
-     * @param dados Conte�do bin�rio da imagem.
+     * @param name Nome usado para refernciar a imagem.
+     * @param content Contedo binrio da imagem.
      */
-    public abstract void addImagem(String nome, byte[] dados) throws IOException;
+    public abstract void addImage(String name, byte[] content) throws IOException;
 
     /*
-     * Adiciona uma imagem utilizada pelo conte�do gerado, utiliza um DataSource
+     * Adiciona uma imagem utilizada pelo contedo gerado, utiliza um DataSource
      *
      * @param nome Nome usado para referenciar a imagem
-     * @param dataSource conte�do da imagem
+     * @param dataSource contedo da imagem
      *
-     * public abstract void addImagem(String nome, DataSourceComTamanho dataSource);
+     * public abstract void addImage(String nome, DataSourceComTamanho dataSource);
      */
 
-    public void setAtributo(String nome, Object valor) {
-        if (atributos == null) {
-            if (valor == null) {
+    public void setAttribute(String name, Object value) {
+        if (attributes == null) {
+            if (value == null) {
                 return;
             }
-            atributos = new HashMap<>();
+            attributes = new HashMap<>();
         }
-        atributos.put(nome, valor);
+        attributes.put(name, value);
     }
 
-    public <T> T getAtributo(String nome) {
-        return (atributos != null) ? (T) atributos.get(nome) : null;
+    public <T> T getAttribute(String name) {
+        return (attributes != null) ? (T) attributes.get(name) : null;
     }
 
-    public <T> T getAtributo(String nome, T valorDefault) {
-        T v = getAtributo(nome);
-        return (v != null) ? v : valorDefault;
+    public <T> T getAttribute(String name, T defaultValue) {
+        T v = getAttribute(name);
+        return (v != null) ? v : defaultValue;
     }
 
     public HtmlCode html() {
@@ -159,13 +159,13 @@ public abstract class ViewOutputHtml implements ViewOutput<Writer> {
             return this;
         }
 
-        public HtmlCode tag(String tag, String texto) {
-            return tag(tag, texto, "");
+        public HtmlCode tag(String tag, String text) {
+            return tag(tag, text, "");
         }
 
-        public HtmlCode tag(String tag, String texto, String atributtes) {
-            openTag(tag, atributtes);
-            getPrintWriter().print(StringUtils.trimToEmpty(texto));
+        public HtmlCode tag(String tag, String text, String attributes) {
+            openTag(tag, attributes);
+            getPrintWriter().print(StringUtils.trimToEmpty(text));
             return closeTag(tag);
         }
 
@@ -173,8 +173,8 @@ public abstract class ViewOutputHtml implements ViewOutput<Writer> {
             return openTag(tag, "");
         }
 
-        public HtmlCode openTag(String tag, String atributtes) {
-            getPrintWriter().print("<" + tag + " " + atributtes + ">");
+        public HtmlCode openTag(String tag, String attributes) {
+            getPrintWriter().print("<" + tag + " " + attributes + ">");
             return this;
         }
 
@@ -183,30 +183,30 @@ public abstract class ViewOutputHtml implements ViewOutput<Writer> {
             return this;
         }
 
-        public HtmlCode div(String texto, String atributtes) {
-            return tag("div", texto, atributtes);
+        public HtmlCode div(String text, String attributes) {
+            return tag("div", text, attributes);
         }
 
-        public HtmlCode div(String texto) {
-            return div(texto, "");
+        public HtmlCode div(String text) {
+            return div(text, "");
         }
 
         public HtmlCode script(String script) {
             return tag("script", script, "type=\"text/javascript\"");
         }
 
-        public HtmlCode span(String texto, String atributtes) {
-            return tag("span", texto, atributtes);
+        public HtmlCode span(String text, String attributes) {
+            return tag("span", text, attributes);
         }
 
-        public HtmlCode span(String texto) {
-            return span(texto, "");
+        public HtmlCode span(String text) {
+            return span(text, "");
         }
 
-        public HtmlCode separadorTituloInternoRelatorio(String titulo) {
+        public HtmlCode internalTitleReporterSeprator(String title) {
             PrintWriter out = getPrintWriter();
             out.println("\n<hr width='100%' style='clear: both;'>");
-            out.println("<b>" + titulo + "</b>");
+            out.println("<b>" + title + "</b>");
             out.println("<br/>");
             return this;
         }

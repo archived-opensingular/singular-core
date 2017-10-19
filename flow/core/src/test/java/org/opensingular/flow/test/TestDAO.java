@@ -16,25 +16,23 @@
 
 package org.opensingular.flow.test;
 
-import java.io.Serializable;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
-import org.springframework.transaction.annotation.Transactional;
-
-import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityFlowVersion;
 import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.flow.persistence.entity.ExecutionVariableEntity;
-import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
+import org.opensingular.flow.persistence.entity.FlowInstanceEntity;
 import org.opensingular.flow.persistence.entity.TaskInstanceHistoryEntity;
 import org.opensingular.flow.persistence.entity.VariableInstanceEntity;
 import org.opensingular.flow.persistence.entity.VariableTypeInstance;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.util.List;
 
 @Named
 @Transactional
@@ -73,30 +71,30 @@ public class TestDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ProcessInstanceEntity> findAllProcessInstancesByDefinition(IEntityProcessVersion entity) {
+    public List<FlowInstanceEntity> findAllFlowInstancesByDefinition(IEntityFlowVersion entity) {
         return getSession().createQuery(
-                "select pi from "+ProcessInstanceEntity.class.getSimpleName()+" pi inner join pi.processVersion p where p.cod = :id"
+                "select pi from "+FlowInstanceEntity.class.getSimpleName()+" pi inner join pi.flowVersion p where p.cod = :id"
         ).setParameter("id", entity.getCod()).list();
     }
 
     @SuppressWarnings("unchecked")
     public List<VariableInstanceEntity> retrieveVariablesByInstance(Integer id) {
         return getSession().createQuery(
-                "select v from "+VariableInstanceEntity.class.getSimpleName()+" v inner join v.processInstance pi where pi.cod = :id"
+                "select v from "+VariableInstanceEntity.class.getSimpleName()+" v inner join v.flowInstance pi where pi.cod = :id"
         ).setParameter("id", id).list();
     }
 
     @SuppressWarnings("unchecked")
     public List<ExecutionVariableEntity> retrieveExecutionVariablesByInstance(Integer id) {
         return getSession().createQuery(
-                "select v from "+ExecutionVariableEntity.class.getSimpleName()+" v inner join v.processInstance pi where pi.cod = :id"
+                "select v from "+ExecutionVariableEntity.class.getSimpleName()+" v inner join v.flowInstance pi where pi.cod = :id"
         ).setParameter("id", id).list();
     }
 
     @SuppressWarnings("unchecked")
     public List<VariableTypeInstance> retrieveVariablesTypesByInstance(Integer id) {
         return getSession().createQuery(
-                "select distinct vt from "+VariableInstanceEntity.class.getSimpleName()+" v inner join v.type vt inner join v.processInstance pi where pi.cod = :id"
+                "select distinct vt from "+VariableInstanceEntity.class.getSimpleName()+" v inner join v.type vt inner join v.flowInstance pi where pi.cod = :id"
         ).setParameter("id", id).list();
     }
 

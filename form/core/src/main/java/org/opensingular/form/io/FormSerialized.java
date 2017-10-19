@@ -17,11 +17,11 @@
 package org.opensingular.form.io;
 
 
-import org.opensingular.form.context.ServiceRegistry;
 import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.validation.ValidationError;
 import org.opensingular.internal.lib.commons.xml.MElement;
+import org.opensingular.lib.commons.context.ServiceRegistry;
 
 import java.io.Serializable;
 import java.util.ArrayList;

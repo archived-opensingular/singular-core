@@ -31,7 +31,10 @@ import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponse
 import java.io.InputStream;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FileUploadProcessorTest {
@@ -55,7 +58,7 @@ public class FileUploadProcessorTest {
         List<UploadResponseInfo> response = processor.process(fileItem, uploadInfo, manager);
 
         Assert.assertEquals(1L, response.size());
-        Assert.assertEquals(UploadResponseInfo.ARQUIVO_NAO_PODE_SER_DE_TAMANHO_0_ZERO, response.get(0).getErrorMessage());
+        Assert.assertEquals(UploadResponseInfo.FILE_MUST_NOT_HAVE_LENGTH_ZERO, response.get(0).getErrorMessage());
     }
 
     @Test
@@ -65,7 +68,7 @@ public class FileUploadProcessorTest {
         List<UploadResponseInfo> response = processor.process(fileItem, uploadInfo, manager);
 
         Assert.assertEquals(1L, response.size());
-        Assert.assertEquals(UploadResponseInfo.TIPO_DE_ARQUIVO_NAO_PERMITIDO, response.get(0).getErrorMessage());
+        Assert.assertEquals(UploadResponseInfo.FILE_TYPE_NOT_ALLOWED, response.get(0).getErrorMessage());
     }
 
     @Test

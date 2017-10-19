@@ -41,18 +41,18 @@ final class ErrorHandlerMElement implements ErrorHandler {
      * exceção e se houver uma outra exceção encadeada, o que nesse caso provoca
      * um disparado da exceção recebida.
      *
-     * @param tipo Nome do nível da exception.
+     * @param type Nome do nível da exception.
      * @param ex Dados do erro.
      * @throws SAXParseException Redisparo de "ex" se essa conter outra
      * exception.
      */
-    private void addToBuffer(String tipo, SAXParseException ex) throws SAXParseException {
+    private void addToBuffer(String type, SAXParseException ex) throws SAXParseException {
         if (buf_ == null) {
             buf_ = new StringBuilder(1024);
             buf_.append("Erro(s) efetuando parse");
         }
         buf_.append('\n');
-        buf_.append(tipo).append(':');
+        buf_.append(type).append(':');
         if (ex.getLineNumber() > -1) {
             buf_.append(" Line=").append(ex.getLineNumber());
         }

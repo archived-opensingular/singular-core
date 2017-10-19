@@ -85,9 +85,6 @@ public class FormKeyManager<KEY extends FormKey> {
      */
     @Nonnull
     public KEY keyFromString(@Nonnull String persistenceString) {
-        if (persistenceString == null) {
-            throw addInfo(new SingularFormPersistenceException("Erro criando FormKey. String recebida null"));
-        }
         try {
             return keyConstructor.newInstance(persistenceString);
         } catch (Exception e) {
@@ -103,10 +100,7 @@ public class FormKeyManager<KEY extends FormKey> {
      */
     @Nonnull
     public KEY keyFromObject(@Nonnull Object objectValueToBeConverted) {
-        if (objectValueToBeConverted == null) {
-            throw addInfo(new SingularFormPersistenceException("O objeto a ser convertido não pode ser null")
-                    .add("valor sendo convertido", objectValueToBeConverted));
-        } else if (keyClass.isInstance(objectValueToBeConverted)) {
+        if (keyClass.isInstance(objectValueToBeConverted)) {
             return keyClass.cast(objectValueToBeConverted);
         }
         Object result;
@@ -179,9 +173,6 @@ public class FormKeyManager<KEY extends FormKey> {
      */
     @Nonnull
     public Optional<KEY> readFormKeyOptional(@Nonnull SInstance instance) {
-        if (instance == null) {
-            throw addInfo(new SingularFormPersistenceException("O parâmetro instance está null"));
-        }
         Optional<FormKey> key = FormKey.fromOpt(instance);
         if (key.isPresent()) {
             return Optional.of(validKeyOrException(key.get(), instance, null));

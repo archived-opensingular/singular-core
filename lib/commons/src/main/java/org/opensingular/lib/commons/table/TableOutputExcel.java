@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.lib.commons.table;
 
 import org.apache.commons.lang3.StringUtils;
@@ -71,8 +89,8 @@ public class TableOutputExcel extends TableOutput implements Loggable {
     }
 
     @Override
-    public void generateLineSimpleStart(@Nonnull OutputTableContext ctx, @Nonnull InfoLinha line, int lineAlternation) {
-        if (line.isExibirLinha()) {
+    public void generateLineSimpleStart(@Nonnull OutputTableContext ctx, @Nonnull LineInfo line, int lineAlternation) {
+        if (line.isShowLine()) {
             newRow();
         }
     }
@@ -82,7 +100,7 @@ public class TableOutputExcel extends TableOutput implements Loggable {
     }
 
     @Override
-    public void generateLineTreeStart(@Nonnull OutputTableContext ctx, @Nonnull InfoLinha line, int nivel) {
+    public void generateLineTreeStart(@Nonnull OutputTableContext ctx, @Nonnull LineInfo line, int level) {
     }
 
     @Override
@@ -92,7 +110,7 @@ public class TableOutputExcel extends TableOutput implements Loggable {
     @Override
     public void generateCell(@Nonnull OutputCellContext ctx) {
         XSSFCell cell = incrementColumnAndCreateNewCell();
-        configurarAlinhamento(cell.getCellStyle(), ctx.getColumn().getAlignment());
+        configAlignment(cell.getCellStyle(), ctx.getColumn().getAlignment());
         if (ctx.getValue() == null) {
             return;
         }
@@ -112,8 +130,8 @@ public class TableOutputExcel extends TableOutput implements Loggable {
         viewOutputExcel.getOutput().autoSizeColumn(cell.getColumnIndex());
     }
 
-    private void configurarAlinhamento(XSSFCellStyle cellStyle, Column.Alignment alinhamento) {
-        switch (alinhamento) {
+    private void configAlignment(XSSFCellStyle cellStyle, Column.Alignment alignment) {
+        switch (alignment) {
             case CENTER:
                 cellStyle.setAlignment(HorizontalAlignment.CENTER);
                 break;
@@ -197,8 +215,8 @@ public class TableOutputExcel extends TableOutput implements Loggable {
     }
 
     @Override
-    public void generateTotalLineStart(@Nonnull OutputTableContext ctx, @Nonnull InfoLinha totalLine, @Nonnull Decorator tempDecorator, int level) {
-        if (totalLine.isExibirLinha()) {
+    public void generateTotalLineStart(@Nonnull OutputTableContext ctx, @Nonnull LineInfo totalLine, @Nonnull Decorator tempDecorator, int level) {
+        if (totalLine.isShowLine()) {
             newRow();
         }
     }

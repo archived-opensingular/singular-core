@@ -20,7 +20,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OrderBy;
 import org.opensingular.flow.core.SUser;
 import org.opensingular.flow.core.entity.IEntityExecutionVariable;
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
+import org.opensingular.flow.core.entity.IEntityFlowInstance;
 import org.opensingular.flow.core.entity.IEntityTaskInstance;
 import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
 import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
@@ -50,7 +50,7 @@ import java.util.List;
  * <code>@GenericGenerator(name = AbstractTaskInstanceEntity.PK_GENERATOR_NAME, strategy = "org.hibernate.id.IdentityGenerator")</code>
  *
  * @param <USER>
- * @param <PROCESS_INSTANCE>
+ * @param <FLOW_INSTANCE>
  * @param <TASK_VERSION>
  * @param <TASK_TRANSITION_VERSION>
  * @param <EXECUTION_VARIABLE>
@@ -58,7 +58,7 @@ import java.util.List;
  */
 @MappedSuperclass
 @Table(name = "TB_INSTANCIA_TAREFA")
-public abstract class AbstractTaskInstanceEntity<USER extends SUser, PROCESS_INSTANCE extends IEntityProcessInstance, TASK_VERSION extends IEntityTaskVersion, TASK_TRANSITION_VERSION extends IEntityTaskTransitionVersion, EXECUTION_VARIABLE extends IEntityExecutionVariable, TASK_HISTORY extends IEntityTaskInstanceHistory> extends BaseEntity<Integer> implements IEntityTaskInstance {
+public abstract class AbstractTaskInstanceEntity<USER extends SUser, FLOW_INSTANCE extends IEntityFlowInstance, TASK_VERSION extends IEntityTaskVersion, TASK_TRANSITION_VERSION extends IEntityTaskTransitionVersion, EXECUTION_VARIABLE extends IEntityExecutionVariable, TASK_HISTORY extends IEntityTaskInstanceHistory> extends BaseEntity<Integer> implements IEntityTaskInstance {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_INSTANCIA_TAREFA";
 
@@ -69,7 +69,7 @@ public abstract class AbstractTaskInstanceEntity<USER extends SUser, PROCESS_INS
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_INSTANCIA_PROCESSO", nullable = false)
-    private PROCESS_INSTANCE processInstance;
+    private FLOW_INSTANCE flowInstance;
 
     @Column(name = "DT_INICIO", nullable = false, updatable = false)
     private Date beginDate;
@@ -113,7 +113,7 @@ public abstract class AbstractTaskInstanceEntity<USER extends SUser, PROCESS_INS
     private List<EXECUTION_VARIABLE> outputVariables = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentTask", cascade = CascadeType.REMOVE)
-    private List<PROCESS_INSTANCE> childProcesses = new ArrayList<>();
+    private List<FLOW_INSTANCE> childProcesses = new ArrayList<>();
 
     @Override
     public Integer getCod() {
@@ -125,12 +125,12 @@ public abstract class AbstractTaskInstanceEntity<USER extends SUser, PROCESS_INS
     }
 
     @Override
-    public PROCESS_INSTANCE getProcessInstance() {
-        return processInstance;
+    public FLOW_INSTANCE getFlowInstance() {
+        return flowInstance;
     }
 
-    public void setProcessInstance(PROCESS_INSTANCE processInstance) {
-        this.processInstance = processInstance;
+    public void setFlowInstance(FLOW_INSTANCE flowInstance) {
+        this.flowInstance = flowInstance;
     }
 
     @Override
@@ -230,11 +230,11 @@ public abstract class AbstractTaskInstanceEntity<USER extends SUser, PROCESS_INS
     }
 
     @Override
-    public List<PROCESS_INSTANCE> getChildProcesses() {
+    public List<FLOW_INSTANCE> getChildProcesses() {
         return childProcesses;
     }
 
-    public void setChildProcesses(List<PROCESS_INSTANCE> childProcesses) {
+    public void setChildProcesses(List<FLOW_INSTANCE> childProcesses) {
         this.childProcesses = childProcesses;
     }
 

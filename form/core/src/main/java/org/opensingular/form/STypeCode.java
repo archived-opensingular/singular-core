@@ -35,7 +35,7 @@ public class STypeCode<I extends SICode<V>, V> extends SType<I> {
     }
     @SuppressWarnings("unchecked")
     @Override
-    public <C> C convert(Object valor, Class<C> classeDestino) {
-        return (C) valor;
+    public <C> C convert(Object value, Class<C> resultClass) {
+        return (C) value;
     }
 }

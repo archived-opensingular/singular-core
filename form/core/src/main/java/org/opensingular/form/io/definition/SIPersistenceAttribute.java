@@ -16,8 +16,47 @@
 
 package org.opensingular.form.io.definition;
 
+
+import org.apache.commons.lang3.ClassUtils;
 import org.opensingular.form.SIComposite;
 
+import static org.opensingular.form.io.definition.SIPersistenceAttribute.Value.LAMBDA_VALUE;
+
 public class SIPersistenceAttribute extends SIComposite {
+
+    public boolean isLambdaValue() {
+        return LAMBDA_VALUE.name().equals(getAttrValue());
+    }
+
+    public enum Value {
+        LAMBDA_VALUE
+    }
+
+    private STypePersistenceAttribute getSType() {
+        return (STypePersistenceAttribute) super.getType();
+    }
+
+    public String getAttrValue() {
+        return this.getField(getSType().attrValue).getValue();
+    }
+
+
+    public String getAttrType() {
+        return this.getField(getSType().attrType).getValue();
+    }
+
+    public void setAttrValue(Object value) {
+        Object newValue = value;
+        if (newValue != null && (ClassUtils.isPrimitiveOrWrapper(newValue.getClass()) || newValue instanceof String)) {
+            newValue = String.valueOf(newValue);
+        } else if (newValue != null) {
+            newValue = LAMBDA_VALUE;//NOSONAR
+        }
+        this.setValue(getSType().attrValue, newValue);
+    }
+
+    public void setAttrType(String type) {
+        this.setValue(getSType().attrType, type);
+    }
 
 }

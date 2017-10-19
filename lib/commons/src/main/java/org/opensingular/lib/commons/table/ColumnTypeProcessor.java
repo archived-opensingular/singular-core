@@ -50,7 +50,7 @@ public interface ColumnTypeProcessor {
     /**
      * Verifica se a celula em questão possui algum valor para ser exibido de acordo com as definições do procesador.
      */
-    public default boolean isNullContent(InfoCelula cell) {
+    public default boolean isNullContent(InfoCell cell) {
         return cell == null || cell.getValue() == null;
     }
 
@@ -112,8 +112,8 @@ public interface ColumnTypeProcessor {
     static class ColumnTypeProcessorTypeAction implements ColumnTypeProcessor {
 
         @Override
-        public boolean isNullContent(InfoCelula cell) {
-            return cell == null || cell.isAcaoEmpty();
+        public boolean isNullContent(InfoCell cell) {
+            return cell == null || cell.isActionsEmpty();
         }
 
         @Override
@@ -247,7 +247,7 @@ public interface ColumnTypeProcessor {
          * procesador.
          */
         @Override
-        public boolean isNullContent(InfoCelula cell) {
+        public boolean isNullContent(InfoCell cell) {
             if (cell == null || cell.getValue() == null) {
                 return true;
             } else if (cell.getValue() instanceof Number) {
@@ -315,7 +315,7 @@ public interface ColumnTypeProcessor {
     static class ColumnTypeProcessorTypeHour extends ColumnTypeProcessorTypeNumber {
         @Override
         protected void generatePrintValue(@Nonnull PrintResult result, @Nonnull Column column, @Nonnull Number value) {
-            result.setContent(AlocproToolkit.toHora(value, null));
+            result.setContent(AlocproToolkit.toHour(value, null));
         }
     }
 }

@@ -253,12 +253,12 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
      * @return true se o tipo atual for do tipo informado.
      */
     public boolean isTypeOf(SType<?> parentTypeCandidate) {
-        SType<I> atual = this;
-        while (atual != null) {
-            if (atual == parentTypeCandidate) {
+        SType<I> current = this;
+        while (current != null) {
+            if (current == parentTypeCandidate) {
                 return true;
             }
-            atual = atual.superType;
+            current = current.superType;
         }
         return false;
     }

@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.internal.lib.commons.xml;
 
 import net.vidageek.mirror.dsl.Mirror;
@@ -24,17 +42,17 @@ public class TestXMLToolkitWriter {
             PrintWriter writer = new PrintWriter(arquivoTemp);
 
             MDocument document = MDocument.newInstance();
-            MElement raiz = document.createRaiz("raiz");
-            raiz.setAttributeNS("uri", "name", "value");
+            MElement root = document.createRoot("raiz");
+            root.setAttributeNS("uri", "name", "value");
 
-            raiz.addInt("inteiro", "123").setAttributeNS("uri", "name", "value");
-            raiz.addElement("nome", "valor\n");
+            root.addInt("inteiro", "123").setAttributeNS("uri", "name", "value");
+            root.addElement("nome", "valor\n");
 
             document.createComment("comentario pra dar erro");
 
-            elementWriter.printDocument(writer, raiz, false, false);
-            elementWriter.printDocument(writer, raiz, false);
-            elementWriter.printDocumentIndentado(writer, raiz, false);
+            elementWriter.printDocument(writer, root, false, false);
+            elementWriter.printDocument(writer, root, false);
+            elementWriter.printDocumentIndentado(writer, root, false);
             writer.close();
         }
     }

@@ -97,9 +97,6 @@ public class SDictionary {
      */
     @Nonnull
     public <T extends SPackage> T loadPackage(@Nonnull Class<T> packageClass) {
-        if (packageClass == null){
-            throw new SingularFormException("Classe pacote não pode ser nula");
-        }
         T newPackage = packages.get(packageClass);
         if (newPackage == null) {
             try {
@@ -126,10 +123,10 @@ public class SDictionary {
 
     public PackageBuilder createNewPackage(String nome) {
         packages.verifyMustNotBePresent(nome, this);
-        SPackage novo = new SPackage(nome);
-        novo.setDictionary(this);
-        packages.add(novo);
-        return new PackageBuilder(novo);
+        SPackage newPackage = new SPackage(nome);
+        newPackage.setDictionary(this);
+        packages.add(newPackage);
+        return new PackageBuilder(newPackage);
     }
 
     /**
@@ -204,21 +201,21 @@ public class SDictionary {
         return Optional.empty();
     }
 
-    public <I extends SInstance, T extends SType<I>> I newInstance(Class<T> classeTipo) {
-        return getType(classeTipo).newInstance();
+    public <I extends SInstance, T extends SType<I>> I newInstance(Class<T> typeClass) {
+        return getType(typeClass).newInstance();
     }
 
     @SuppressWarnings("unchecked")
     final <T extends SType<?>> void registerType(@Nonnull SScope scope, @Nonnull T newType,
             @Nullable Class<T> classForRegister) {
         if (classForRegister != null) {
-            Class<? extends SPackage> classePacoteAnotado = SFormUtil.getTypePackage(classForRegister);
-            SPackage pacoteAnotado = packages.getOrNewInstance(classePacoteAnotado);
-            SPackage pacoteDestino = scope.getPackage();
-            if (!pacoteDestino.getName().equals(pacoteAnotado.getName())) {
+            Class<? extends SPackage> packageClass = SFormUtil.getTypePackage(classForRegister);
+            SPackage packageAnnotation = packages.getOrNewInstance(packageClass);
+            SPackage packageDestiny = scope.getPackage();
+            if (!packageDestiny.getName().equals(packageAnnotation.getName())) {
                 throw new SingularFormException(
                         "Tentativa de carregar o tipo '" + newType.getNameSimple() + "' anotado para o pacote '" +
-                                pacoteAnotado.getName() + "' como sendo do pacote '" + pacoteDestino.getName() + "'",
+                                packageAnnotation.getName() + "' como sendo do pacote '" + packageDestiny.getName() + "'",
                         newType);
             }
         }

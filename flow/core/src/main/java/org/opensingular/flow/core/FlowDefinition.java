@@ -19,9 +19,9 @@ package org.opensingular.flow.core;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.flow.core.entity.IEntityCategory;
-import org.opensingular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityFlowDefinition;
+import org.opensingular.flow.core.entity.IEntityFlowInstance;
+import org.opensingular.flow.core.entity.IEntityFlowVersion;
 import org.opensingular.flow.core.entity.IEntityRoleDefinition;
 import org.opensingular.flow.core.entity.IEntityRoleInstance;
 import org.opensingular.flow.core.entity.IEntityTaskDefinition;
@@ -30,19 +30,21 @@ import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.property.MetaData;
 import org.opensingular.flow.core.property.MetaDataEnabled;
+import org.opensingular.flow.core.service.IFlowDefinitionEntityService;
 import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.service.IProcessDataService;
-import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
 import org.opensingular.flow.core.variable.VarDefinitionMap;
 import org.opensingular.flow.core.variable.VarService;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.internal.lib.support.spring.injection.SingularSpringInjector;
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.net.Lnk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Collection;
@@ -71,7 +73,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
 
     static final Logger logger = LoggerFactory.getLogger(FlowDefinition.class);
 
-    private final Class<I> processInstanceClass;
+    private final Class<I> flowInstanceClass;
 
     private final String key;
 
@@ -95,7 +97,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
 
     private final Map<String, ProcessScheduledJob> scheduledJobsByName = new HashMap<>();
 
-    private transient RefProcessDefinition serializableReference;
+    private transient RefFlowDefinition serializableReference;
     private transient SingularInjector     injector;
 
 
@@ -110,7 +112,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
      *            o tipo da instância da definição a ser instanciada.
      */
     protected FlowDefinition(Class<I> instanceClass) {
-        this(instanceClass, VarService.basic());
+        this(instanceClass, VarService.basic(), null);
     }
 
     /**
@@ -118,28 +120,36 @@ public abstract class FlowDefinition<I extends FlowInstance>
      * Instancia uma nova definição de processo do tipo informado.
      * </p>
      *
-     * @param processInstanceClass
+     * @param flowInstanceClass
      *            o tipo da instância da definição a ser instanciada.
      * @param varService
      *            o serviço de consulta das definições de variáveis.
      */
-    protected FlowDefinition(Class<I> processInstanceClass, VarService varService) {
-        if (!this.getClass().isAnnotationPresent(DefinitionInfo.class)) {
+    protected FlowDefinition(Class<I> flowInstanceClass, VarService varService, @Nullable String flowKey) {
+        this.key = resolveFlowKey(flowKey);
+        this.flowInstanceClass = Objects.requireNonNull(flowInstanceClass, "flowInstanceClass");
+        this.variableService = varService;
+        inject(this);
+    }
+
+    @Nonnull
+    private String resolveFlowKey(@Nullable String flowKey) {
+        String key = flowKey;
+        if (key == null) {
+            if (this.getClass().isAnnotationPresent(DefinitionInfo.class)) {
+                key = this.getClass().getAnnotation(DefinitionInfo.class).value();
+            }
+        }
+        key = StringUtils.trimToNull(key);
+        if (key == null) {
             throw new SingularFlowException(
                     "A definição de fluxo (classe " + getClass().getName() + ") deve ser anotada com " +
                             DefinitionInfo.class.getName(), this);
-        }
-        String flowKey = this.getClass().getAnnotation(DefinitionInfo.class).value();
-        Objects.requireNonNull(flowKey, "key");
-        Objects.requireNonNull(processInstanceClass, "processInstanceClass");
-        if (getClass().getSimpleName().equalsIgnoreCase(flowKey)) {
+        } else if (getClass().getSimpleName().equalsIgnoreCase(key)) {
             throw new SingularFlowException("O nome simples da classe do processo(" + getClass().getSimpleName() +
                     ") não pode ser igual a chave definida em @DefinitionInfo.", this);
         }
-        this.key = flowKey;
-        this.processInstanceClass = processInstanceClass;
-        this.variableService = varService;
-        inject(this);
+        return key;
     }
 
     /**
@@ -149,8 +159,8 @@ public abstract class FlowDefinition<I extends FlowInstance>
      *
      * @return o tipo das instâncias.
      */
-    public final Class<I> getProcessInstanceClass() {
-        return processInstanceClass;
+    public final Class<I> getFlowInstanceClass() {
+        return flowInstanceClass;
     }
 
 
@@ -166,14 +176,14 @@ public abstract class FlowDefinition<I extends FlowInstance>
     @Nonnull
     public synchronized final FlowMap getFlowMap() {
         if (flowMap == null) {
-            FlowMap novo = createFlowMap();
-            Objects.requireNonNull(novo);
-            if (novo.getFlowDefinition() != this) {
+            FlowMap newFlow = createFlowMap();
+            Objects.requireNonNull(newFlow);
+            if (newFlow.getFlowDefinition() != this) {
                 throw new SingularFlowException("Mapa com definiçao trocada", this);
             }
-            novo.verifyConsistency();
-            SFlowUtil.calculateTaskOrder(novo);
-            flowMap = novo;
+            newFlow.verifyConsistency();
+            SFlowUtil.calculateTaskOrder(newFlow);
+            flowMap = newFlow;
         }
         return flowMap;
     }
@@ -290,16 +300,16 @@ public abstract class FlowDefinition<I extends FlowInstance>
      *
      * @return a entidade persistente.
      */
-    public synchronized final IEntityProcessVersion getEntityProcessVersion() {
+    public synchronized final IEntityFlowVersion getEntityFlowVersion() {
         if (entityVersionCod == null) {
             try {
-                IProcessDefinitionEntityService<?, ?, ?, ?, ?, ?, ?, ?> processEntityService = Flow.getConfigBean().getProcessEntityService();
-                IEntityProcessVersion newVersion = processEntityService.generateEntityFor(this);
+                IFlowDefinitionEntityService<?, ?, ?, ?, ?, ?, ?, ?> flowEntityService = Flow.getConfigBean().getFlowEntityService();
+                IEntityFlowVersion newVersion = flowEntityService.generateEntityFor(this);
 
-                IEntityProcessVersion oldVersion = newVersion.getProcessDefinition().getLastVersion();
-                if (processEntityService.isDifferentVersion(oldVersion, newVersion)) {
+                IEntityFlowVersion oldVersion = newVersion.getFlowDefinition().getLastVersion();
+                if (flowEntityService.isDifferentVersion(oldVersion, newVersion)) {
 
-                    entityVersionCod = getPersistenceService().saveProcessVersion(newVersion).getCod();
+                    entityVersionCod = getPersistenceService().saveFlowVersion(newVersion).getCod();
                 } else {
                     entityVersionCod = oldVersion.getCod();
                 }
@@ -308,7 +318,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
             }
         }
 
-        IEntityProcessVersion version = getPersistenceService().retrieveProcessVersionByCod(entityVersionCod);
+        IEntityFlowVersion version = getPersistenceService().retrieveFlowVersionByCod(entityVersionCod);
         if (version == null) {
             entityVersionCod = null;
             throw new SingularFlowException(
@@ -318,8 +328,8 @@ public abstract class FlowDefinition<I extends FlowInstance>
         return version;
     }
 
-    public final IEntityProcessDefinition getEntityProcessDefinition() {
-        return getEntityProcessVersion().getProcessDefinition();
+    public final IEntityFlowDefinition getEntityFlowDefinition() {
+        return getEntityFlowVersion().getFlowDefinition();
     }
 
     /**
@@ -339,12 +349,12 @@ public abstract class FlowDefinition<I extends FlowInstance>
     }
 
     public final Set<IEntityTaskDefinition> getEntityTasksDefinitionNotJava() {
-        return getEntityProcessDefinition().getTaskDefinitions().stream().filter(t -> !t.getLastVersion().isJava()).collect(Collectors.toSet());
+        return getEntityFlowDefinition().getTaskDefinitions().stream().filter(t -> !t.getLastVersion().isJava()).collect(Collectors.toSet());
     }
 
     final @Nonnull IEntityTaskVersion getEntityTaskVersion(@Nonnull STask<?> task) {
         Objects.requireNonNull(task);
-        IEntityTaskVersion version = getEntityProcessVersion().getTaskVersion(task.getAbbreviation());
+        IEntityTaskVersion version = getEntityFlowVersion().getTaskVersion(task.getAbbreviation());
         if (version == null) {
             throw new SingularFlowException(createErrorMsg("Dados inconsistentes com o BD"), this);
         }
@@ -417,7 +427,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
      * @return a entidade persistente; ou {@code null} caso não a encontre.
      */
     public final IEntityTaskDefinition getEntityTaskDefinition(String taskAbbreviation) {
-        return (taskAbbreviation == null) ? null : getEntityProcessDefinition().getTaskDefinition(taskAbbreviation);
+        return (taskAbbreviation == null) ? null : getEntityFlowDefinition().getTaskDefinition(taskAbbreviation);
     }
 
     /**
@@ -461,13 +471,11 @@ public abstract class FlowDefinition<I extends FlowInstance>
      * @see #getName()
      */
     protected final String createErrorMsg(String msg) {
-        return "Processo MBPM '" + getName() + "': " + msg;
+        return "Processo '" + getName() + "': " + msg;
     }
 
     /**
      * <p>Retorna o nome deste processo.</p>
-     *
-     * @return o nome deste processo.
      */
     public final String getName() {
         if (name == null) {
@@ -479,8 +487,6 @@ public abstract class FlowDefinition<I extends FlowInstance>
 
     /**
      * <p>Retorna a chave deste processo.</p>
-     * 
-     * @return a chave deste processo.
      */
     public final String getKey() {
         return key;
@@ -607,30 +613,30 @@ public abstract class FlowDefinition<I extends FlowInstance>
      * Retorna uma lista de instâncias correspondentes às entidades fornecidas.
      * </p>
      *
-     * @param demandas
+     * @param entities
      *            as entidades fornecidas.
      * @return a lista de instâncias.
      */
-    protected final List<I> convertToProcessInstance(List<? extends IEntityProcessInstance> demandas) {
-        return demandas.stream().map(e -> convertToProcessInstance(e)).collect(Collectors.toList());
+    protected final List<I> convertToFlowInstance(List<? extends IEntityFlowInstance> entities) {
+        return entities.stream().map(e -> convertToFlowInstance(e)).collect(Collectors.toList());
     }
 
     /**
      * Retorna a instância correspondente à entidade fornecida.
      */
     @Nonnull
-    protected final I convertToProcessInstance(@Nonnull IEntityProcessInstance dadosInstancia) {
-        Objects.requireNonNull(dadosInstancia);
-        checkIfKeysAreCompatible(this, dadosInstancia);
+    protected final I convertToFlowInstance(@Nonnull IEntityFlowInstance entityFlowInstance) {
+        Objects.requireNonNull(entityFlowInstance);
+        checkIfKeysAreCompatible(this, entityFlowInstance);
 
-        I novo = newUnbindedInstance();
-        novo.setInternalEntity(dadosInstancia);
-        return novo;
+        I newInstance = newUnbindedInstance();
+        newInstance.setInternalEntity(entityFlowInstance);
+        return newInstance;
     }
 
     /** Verifica se a entidade da instancia de processo pertence a definição de processo. Senão dispara Exception. */
-    private static void checkIfKeysAreCompatible(FlowDefinition<?> definition, IEntityProcessInstance instance) {
-        if(! instance.getProcessVersion().getProcessDefinition().getKey().equalsIgnoreCase(definition.getKey())){
+    private static void checkIfKeysAreCompatible(FlowDefinition<?> definition, IEntityFlowInstance instance) {
+        if(! instance.getFlowVersion().getFlowDefinition().getKey().equalsIgnoreCase(definition.getKey())){
             throw new SingularFlowException(
                     "A instancia de processo com id " + instance.getCod() + " não pertence a definição de processo " +
                             definition.getName(), definition);
@@ -640,10 +646,10 @@ public abstract class FlowDefinition<I extends FlowInstance>
     /** Verifica se a instancia de processo pertence a definição de processo. Senão dispara Exception. */
     final void checkIfCompatible(FlowInstance instance) {
         checkIfKeysAreCompatible(this, instance.getEntity());
-        if (!processInstanceClass.isInstance(instance)) {
+        if (!flowInstanceClass.isInstance(instance)) {
             throw new SingularFlowException(
                     "A instancia de processo com id=" + instance.getFullId() + " deveria ser da classe " +
-                            processInstanceClass.getName() + " mas na verdade é da classe " +
+                            flowInstanceClass.getName() + " mas na verdade é da classe " +
                             instance.getClass().getName(), instance);
         }
     }
@@ -654,9 +660,9 @@ public abstract class FlowDefinition<I extends FlowInstance>
      */
     @Nonnull
     public I newPreStartInstance() {
-        I novo = newUnbindedInstance();
-        novo.setInternalEntity(createProcessInstance());
-        return novo;
+        I newInstance = newUnbindedInstance();
+        newInstance.setInternalEntity(createFlowInstance());
+        return newInstance;
     }
 
     public StartCall<I> prepareStartCall() {
@@ -666,30 +672,30 @@ public abstract class FlowDefinition<I extends FlowInstance>
 
     @Nonnull
     private I newUnbindedInstance() {
-        I novo;
+        I newInstance;
         try {
-            for (Constructor<?> c : getProcessInstanceClass().getDeclaredConstructors()) {
+            for (Constructor<?> c : getFlowInstanceClass().getDeclaredConstructors()) {
                 if (c.getParameters().length == 0) {
                     c.setAccessible(true);
-                    novo = (I) c.newInstance();
-                    novo.setProcessDefinition(this);
-                    return novo;
+                    newInstance = (I) c.newInstance();
+                    newInstance.setFlowDefinition(this);
+                    return newInstance;
                 }
             }
         } catch (Exception e) {
             throw new SingularFlowException(e.getMessage(), e);
         }
         throw new SingularFlowException(createErrorMsg(
-                "Construtor sem parametros ausente: " + getProcessInstanceClass().getSimpleName() + "()"), this);
+                "Construtor sem parametros ausente: " + getFlowInstanceClass().getSimpleName() + "()"), this);
     }
 
-    final IEntityProcessInstance createProcessInstance() {
+    final IEntityFlowInstance createFlowInstance() {
         IEntityTaskVersion initialState =  getEntityTaskVersion(getFlowMap().getStart().getTask());
-        return getPersistenceService().createProcessInstance(getEntityProcessVersion(), initialState);
+        return getPersistenceService().createFlowInstance(getEntityFlowVersion(), initialState);
     }
 
-    final IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {
-        return (IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance>) Flow
+    final IPersistenceService<IEntityCategory, IEntityFlowDefinition, IEntityFlowVersion, IEntityFlowInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {
+        return (IPersistenceService<IEntityCategory, IEntityFlowDefinition, IEntityFlowVersion, IEntityFlowInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance>) Flow
                 .getConfigBean().getPersistenceService();
     }
 
@@ -699,7 +705,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
      *
      * @return referência serializável.
      */
-    protected RefProcessDefinition getSerializableReference() {
+    protected RefFlowDefinition getSerializableReference() {
         if (serializableReference == null) {
             serializableReference = createStaticReference(getClass());
         }
@@ -709,20 +715,21 @@ public abstract class FlowDefinition<I extends FlowInstance>
     @Nonnull
     final <V> V inject(@Nonnull V target) {
         if (injector == null) {
-            injector = SingularSpringInjector.get();
+            Optional<SingularInjector> result = ServiceRegistryLocator.locate().lookupSingularInjectorOpt();
+            injector = result.orElseGet(() -> SingularSpringInjector.get());
         }
         injector.inject(Objects.requireNonNull(target));
         return target;
     }
 
-    private static RefProcessDefinition createStaticReference(final Class<? extends FlowDefinition> processDefinitionClass) {
+    private static RefFlowDefinition createStaticReference(final Class<? extends FlowDefinition> flowDefinitionClass) {
         // A criação da classe tem que ficar em um método estático de modo que
         // classe anômina não tenha uma referência implicita a
-        // ProcessDefinition, o que atrapalharia a serialização
-        return new RefProcessDefinition() {
+        // FlowDefinition, o que atrapalharia a serialização
+        return new RefFlowDefinition() {
             @Override
             protected FlowDefinition<?> reload() {
-                return ProcessDefinitionCache.getDefinition(processDefinitionClass);
+                return FlowDefinitionCache.getDefinition(flowDefinitionClass);
             }
         };
     }

@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.flow.test;
 
 import org.junit.Test;
@@ -5,12 +23,12 @@ import org.opensingular.flow.core.TaskType;
 import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.flow.persistence.entity.CategoryEntity;
 import org.opensingular.flow.persistence.entity.ExecutionVariableEntity;
-import org.opensingular.flow.persistence.entity.ProcessDefinitionEntity;
+import org.opensingular.flow.persistence.entity.FlowDefinitionEntity;
+import org.opensingular.flow.persistence.entity.FlowInstanceEntity;
+import org.opensingular.flow.persistence.entity.FlowRight;
+import org.opensingular.flow.persistence.entity.FlowRightPK;
+import org.opensingular.flow.persistence.entity.FlowVersionEntity;
 import org.opensingular.flow.persistence.entity.ModuleEntity;
-import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
-import org.opensingular.flow.persistence.entity.ProcessRight;
-import org.opensingular.flow.persistence.entity.ProcessRightPK;
-import org.opensingular.flow.persistence.entity.ProcessVersionEntity;
 import org.opensingular.flow.persistence.entity.RoleDefinitionEntity;
 import org.opensingular.flow.persistence.entity.RoleInstanceEntity;
 import org.opensingular.flow.persistence.entity.TaskDefinitionEntity;
@@ -41,12 +59,12 @@ public class SetupTest extends TestFlowSupport {
         listaAllFor(Actor.class);
         listaAllFor(CategoryEntity.class);
         listaAllFor(ExecutionVariableEntity.class);
-        listaAllFor(ProcessVersionEntity.class);
-        listaAllFor(ProcessDefinitionEntity.class);
+        listaAllFor(FlowVersionEntity.class);
+        listaAllFor(FlowDefinitionEntity.class);
         listaAllFor(ModuleEntity.class);
-        listaAllFor(ProcessInstanceEntity.class);
-        listaAllFor(ProcessRight.class);
-        listaAllFor(ProcessRightPK.class);
+        listaAllFor(FlowInstanceEntity.class);
+        listaAllFor(FlowRight.class);
+        listaAllFor(FlowRightPK.class);
         listaAllFor(RoleDefinitionEntity.class);
         listaAllFor(RoleInstanceEntity.class);
         listaAllFor(TaskVersionEntity.class);

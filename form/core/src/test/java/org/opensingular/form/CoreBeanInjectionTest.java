@@ -22,13 +22,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.opensingular.form.context.ServiceRegistryLocator;
 import org.opensingular.form.document.MockServiceRegistry;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.io.TestFormSerializationUtil;
-import org.opensingular.internal.lib.commons.injection.SingularBeanNotFoundException;
-import org.opensingular.internal.lib.commons.injection.SingularInjectionNotConfiguredException;
+import org.opensingular.internal.lib.commons.injection.SingularInjectionBeanNotFoundException;
+import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -56,13 +55,13 @@ public class CoreBeanInjectionTest extends TestCaseForm {
         ServiceRegistryLocator.setup(new ServiceRegistryLocator());
     }
 
-    @Test(expected = SingularBeanNotFoundException.class)
+    @Test(expected = SingularInjectionBeanNotFoundException.class)
     public void injectionWithoutConfiguration1() {
         ServiceRegistryLocator.setup(new MockServiceRegistry());
         createTestDictionary().getType(TypeWithInjectionTest.class);
     }
 
-    @Test(expected = SingularBeanNotFoundException.class)
+    @Test(expected = SingularInjectionBeanNotFoundException.class)
     public void injectionWithoutConfiguration2() {
         ServiceRegistryLocator.setup(new MockServiceRegistry());
         TypeWithInjectionTest2 type = createTestDictionary().getType(TypeWithInjectionTest2.class);

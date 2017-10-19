@@ -150,8 +150,8 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE extends Serializable> 
         return createConversionError(value, null, null, null);
     }
 
-    protected final RuntimeException createConversionError(Object valor, Class<?> resultClass) {
-        return createConversionError(valor, resultClass, null, null);
+    protected final RuntimeException createConversionError(Object value, Class<?> resultClass) {
+        return createConversionError(value, resultClass, null, null);
     }
 
     protected final RuntimeException createConversionError(Object value, Class<?> resultClass, String complement, Exception e) {

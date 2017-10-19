@@ -16,14 +16,18 @@
 
 package org.opensingular.flow.core;
 
-import java.io.Serializable;
 import java.util.function.Predicate;
 
 public interface ITaskPredicate extends Predicate<TaskInstance> {
 
     String getName();
 
-    EventType getEventType();
+    /**
+     * Return the BPMN type of event that triggers the execution of this transition for use when generating a diagram
+     * of the process.
+     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     */
+    EventType getDisplayEventType();
 
     default String getFullDescription() {
         return getName();

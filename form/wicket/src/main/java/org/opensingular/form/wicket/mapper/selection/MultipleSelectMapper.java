@@ -31,6 +31,7 @@ import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import org.opensingular.form.wicket.model.MultipleSelectSInstanceAwareModel;
 import org.opensingular.form.wicket.renderer.SingularChoiceRenderer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -43,41 +44,43 @@ public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {
     @SuppressWarnings("rawtypes")
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
-        final List<Serializable> opcoesValue = new ArrayList<>();
 
-        if (model.getObject().getType().isList()) {
-            final Provider provider = model.getObject().asAtrProvider().getProvider();
-            if (provider != null) {
-                opcoesValue.addAll(provider.load(ProviderContext.of(ctx.getCurrentInstance())));
-            }
-        }
-
-        //Dangling values
-        if (!model.getObject().isEmptyOfData()) {
-            final SIList list = (SIList) model.getObject();
-            for (int i = 0; i < list.size(); i += 1) {
-                SInstance ins = list.get(i);
-                final SInstanceConverter converter = list.asAtrProvider().getConverter();
-                final Serializable converterted = converter.toObject(ins);
-                if (!opcoesValue.contains(converterted)) {
-                    opcoesValue.add(i, converterted);
+        final IModel<List<Serializable>> valuesModel = new IReadOnlyModel<List<Serializable>>() {
+            @Override
+            public List<Serializable> getObject() {
+                final List<Serializable> values = new ArrayList<>();
+                if (model.getObject().getType().isList()) {
+                    final Provider provider = model.getObject().asAtrProvider().getProvider();
+                    if (provider != null) {
+                        values.addAll(provider.load(ProviderContext.of(ctx.getCurrentInstance())));
+                    }
                 }
+                //Dangling values
+                if (!model.getObject().isEmptyOfData()) {
+                    final SIList list = (SIList) model.getObject();
+                    for (int i = 0; i < list.size(); i += 1) {
+                        SInstance ins = list.get(i);
+                        final SInstanceConverter converter = list.asAtrProvider().getConverter();
+                        final Serializable converterted = converter.toObject(ins);
+                        if (!values.contains(converterted)) {
+                            values.add(i, converterted);
+                        }
+                    }
+                }
+                return values;
             }
-        }
+        };
 
-        return formGroupAppender(formGroup, model, opcoesValue);
-
+        return formGroupAppender(formGroup, model, valuesModel);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected ListMultipleChoice<?> retrieveChoices(IModel<? extends SInstance> model, final List<?> opcoesValue) {
-        return new SListMultipleChoice(model.getObject().getName(), new MultipleSelectSInstanceAwareModel(model), opcoesValue, renderer(model));
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected ListMultipleChoice<?> retrieveChoices(IModel<? extends SInstance> model, final IModel<List<Serializable>> valuesModel) {
+        return new SListMultipleChoice(model.getObject().getName(), new MultipleSelectSInstanceAwareModel(model), valuesModel, renderer(model));
     }
 
-    protected Component formGroupAppender(BSControls formGroup,
-                                          IModel<? extends SInstance> model,
-                                          final List<?> opcoesValue) {
-        final ListMultipleChoice<?> choices = retrieveChoices(model, opcoesValue);
+    protected Component formGroupAppender(BSControls formGroup, IModel<? extends SInstance> model, final IModel<List<Serializable>> valuesModel) {
+        final ListMultipleChoice<?> choices = retrieveChoices(model, valuesModel);
         formGroup.appendSelect(choices.setMaxRows(5), true, false);
         return choices;
     }
@@ -89,29 +92,36 @@ public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {
     @Override
     public String getReadOnlyFormattedText(WicketBuildContext ctx, IModel<? extends SInstance> model) {
         SInstance mi = model.getObject();
-        if (! (mi instanceof SIList)) {
+        if (!(mi instanceof SIList)) {
             return "";
         }
         StringBuilder output = new StringBuilder();
         boolean first = true;
         for (SInstance val : ((SIList<?>) mi).getChildren()) {
             Serializable converted = mi.asAtrProvider().getConverter().toObject(val);
-            String label = mi.asAtrProvider().getDisplayFunction().apply(converted);
-            if (first) {
-                output.append(label);
-                first = false;
-            } else {
-                //TODO implementar logica de auto detecção
-                PhraseBreak phraseBreak = mi.asAtr().phraseBreak();
-                if (phraseBreak == PhraseBreak.BREAK_LINE) {
-                    output.append('\n');
-                } else if (phraseBreak == PhraseBreak.COMMA) {
-                    output.append(", ");
+            if (converted != null) {
+                String label = mi.asAtrProvider().getDisplayFunction().apply(converted);
+                if (first) {
+                    output.append(label);
+                    first = false;
+                } else {
+                    //TODO implementar logica de auto detecção
+                    output.append(processPhraseBreak(mi));
+                    output.append(label);
                 }
-                output.append(label);
             }
         }
         return output.toString();
+    }
+
+    private String processPhraseBreak(SInstance mi) {
+        PhraseBreak phraseBreak = mi.asAtr().phraseBreak();
+        if (phraseBreak == PhraseBreak.BREAK_LINE) {
+            return "\n";
+        } else if (phraseBreak == PhraseBreak.COMMA) {
+            return ", ";
+        }
+        return "";
     }
 
 }

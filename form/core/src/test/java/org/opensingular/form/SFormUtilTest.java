@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.form;
 
 import org.junit.Assert;
@@ -72,7 +90,7 @@ public class SFormUtilTest extends TestCaseForm {
     @Test
     public void testResolverTipoCampo() {
         PackageBuilder pb = createTestPackage();
-        SDictionary    dicionario = pb.getDictionary();
+        SDictionary    dictionary = pb.getDictionary();
 
         STypeComposite<SIComposite>      tipoBloco = pb.createCompositeType("bloco");
         STypeInteger integer1 = tipoBloco.addFieldInteger("integer1");
@@ -87,10 +105,10 @@ public class SFormUtilTest extends TestCaseForm {
         STypeInteger tipoQtd = listaSubBloco2.getElementsType().addFieldInteger("qtd");
 
         assertTipoResultante(tipoBloco, "integer1", integer1);
-        assertTipoResultante(tipoBloco, "integer1", dicionario.getType("teste.bloco.integer1"));
-        assertTipoResultante(tipoBloco, "integer1", dicionario.getType(STypeInteger.class));
+        assertTipoResultante(tipoBloco, "integer1", dictionary.getType("teste.bloco.integer1"));
+        assertTipoResultante(tipoBloco, "integer1", dictionary.getType(STypeInteger.class));
         assertTipoResultante(tipoBloco, "integer1", string1, false);
-        assertTipoResultante(tipoBloco, "integer1", dicionario.getType("teste.bloco.string1"), false);
+        assertTipoResultante(tipoBloco, "integer1", dictionary.getType("teste.bloco.string1"), false);
         assertTipoResultante(tipoBloco, "integer1", integer2, false);
         assertTipoResultante(tipoBloco, "integer1", tipoQtd, false);
         assertTipoResultante(tipoBloco, "string1", string1);
@@ -102,30 +120,30 @@ public class SFormUtilTest extends TestCaseForm {
         assertTipoResultanteException(integer1, "[0]", "Não se aplica um path a um tipo simples");
 
         assertTipoResultante(tipoBloco, "subBloco", tipoSubBloco);
-        assertTipoResultante(tipoBloco, "subBloco", dicionario.getType(STypeComposite.class));
+        assertTipoResultante(tipoBloco, "subBloco", dictionary.getType(STypeComposite.class));
         assertTipoResultante(tipoBloco, "subBloco.integer2", integer2);
 
         assertTipoResultanteException(tipoBloco, "integerX", "Não existe o campo 'integerX'");
         assertTipoResultanteException(tipoBloco, "[0]", "Índice de lista não se aplica a um tipo composto");
 
         assertTipoResultante(tipoBloco, "enderecos", tipoListaString2);
-        assertTipoResultante(tipoBloco, "enderecos", dicionario.getType(STypeList.class));
+        assertTipoResultante(tipoBloco, "enderecos", dictionary.getType(STypeList.class));
         assertTipoResultante(tipoBloco, "enderecos[1]", tipoString2);
-        assertTipoResultante(tipoBloco, "enderecos[4]", dicionario.getType(STypeString.class));
+        assertTipoResultante(tipoBloco, "enderecos[4]", dictionary.getType(STypeString.class));
         assertTipoResultante(tipoBloco, "nomes", tipoListaString3);
-        assertTipoResultante(tipoBloco, "nomes", dicionario.getType(STypeList.class));
-        assertTipoResultante(tipoBloco, "nomes[20]", dicionario.getType(STypeString.class));
-        assertTipoResultante(tipoBloco, "nomes[20]", dicionario.getType(STypeInteger.class), false);
+        assertTipoResultante(tipoBloco, "nomes", dictionary.getType(STypeList.class));
+        assertTipoResultante(tipoBloco, "nomes[20]", dictionary.getType(STypeString.class));
+        assertTipoResultante(tipoBloco, "nomes[20]", dictionary.getType(STypeInteger.class), false);
         assertTipoResultante(tipoBloco, "nomes[60]", tipoListaString3.getElementsType());
 
         assertTipoResultante(tipoBloco, "listaSubBloco2", listaSubBloco2);
-        assertTipoResultante(tipoBloco, "listaSubBloco2", dicionario.getType(STypeList.class));
+        assertTipoResultante(tipoBloco, "listaSubBloco2", dictionary.getType(STypeList.class));
         assertTipoResultante(tipoBloco, "listaSubBloco2[1]", listaSubBloco2.getElementsType());
         assertTipoResultante(tipoBloco, "listaSubBloco2[1].qtd", tipoQtd);
-        assertTipoResultante(tipoBloco, "listaSubBloco2[1].qtd", dicionario.getType(STypeInteger.class));
+        assertTipoResultante(tipoBloco, "listaSubBloco2[1].qtd", dictionary.getType(STypeInteger.class));
 
         assertTipoResultante(listaSubBloco2, "[1].qtd", tipoQtd);
-        assertTipoResultante(tipoListaString2, "[1]", dicionario.getType(STypeString.class));
+        assertTipoResultante(tipoListaString2, "[1]", dictionary.getType(STypeString.class));
 
         assertTipoResultanteException(tipoBloco, "listaSubBloco2.a", "Não se aplica a um tipo lista");
         assertTipoResultanteException(listaSubBloco2, "a", "Não se aplica a um tipo lista");
