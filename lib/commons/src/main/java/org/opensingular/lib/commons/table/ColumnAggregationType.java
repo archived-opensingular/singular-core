@@ -122,7 +122,7 @@ public enum ColumnAggregationType {
             return data.stream().filter(Objects::nonNull).count();
         }
     },
-    COUNT_DISTINCT("Qtd. �nica") {
+    COUNT_DISTINCT("Qtd. Única") {
         @Override
         public boolean isApplicable(Class<?> dataClass) {
             return true;

@@ -66,7 +66,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
     private List<GenerationModifier> modifiers = new ArrayList<>();
 
     /**
-     * configura��o a respeito de gerar ou n�o uma linha com o total das colunas
+     * configurao a respeito de gerar ou no uma linha com o total das colunas
      * no final da tabela
      */
     private boolean showTotalLine;
@@ -91,13 +91,13 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
     }
 
     /**
-     * Adiciona uma nova coluna no relat�rio segundo o t�tulo e type informado
-     * (opcional). Considera a primeira coluna como sendo a respons�vel pela
-     * identa��o.
+     * Adiciona uma nova coluna no relatrio segundo o ttulo e type informado
+     * (opcional). Considera a primeira coluna como sendo a responsvel pela
+     * identao.
      *
      * @param type  Tipo da classe a ser condiserada ao formatar a coluna.
      * @param title Texto para aparecer na primeira linha.
-     * @return Coluna criada, para eventual modifica��o de formata��o.
+     * @return Coluna criada, para eventual modificao de formatao.
      */
     @Nonnull
     public Column addColumn(@Nonnull ColumnType type, @Nullable String title) {
@@ -114,11 +114,11 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
     }
 
     /**
-     * Adiciona um linha superior ao t�tulo normais. Com isso � poss�vel ter
-     * duas um t�tulo superior sobre v�rias colunas.
+     * Adiciona um linha superior ao ttulo normais. Com isso  possvel ter
+     * duas um ttulo superior sobre vrias colunas.
      *
-     * @param startColumn Primeira coluna a qual se aplica o super t�tulo
-     * @param endColumn    �ltima coluna a qual se aplica o super t�tulo
+     * @param startColumn Primeira coluna a qual se aplica o super ttulo
+     * @param endColumn    ltima coluna a qual se aplica o super ttulo
      * @param superTitle  Texto para fica centralizado sobre todas as colunas
      */
     public void addSuperTitle(int startColumn, int endColumn, String superTitle) {

@@ -55,7 +55,7 @@ final class DataReaderByIterator extends DataReader {
 
     private void next() {
         if (original == null) {
-            throw new SingularException("N�o existe nada para ler");
+            throw new SingularException("No existe nada para ler");
         }
         while (original.hasNext()) {
             Object v = original.next();
@@ -74,7 +74,7 @@ final class DataReaderByIterator extends DataReader {
             return dataLines.iterator();
         }
         if (read) {
-            throw new SingularException("N�o pode ser chamado iterator() duas vezes");
+            throw new SingularException("No pode ser chamado iterator() duas vezes");
         }
         read = true;
 

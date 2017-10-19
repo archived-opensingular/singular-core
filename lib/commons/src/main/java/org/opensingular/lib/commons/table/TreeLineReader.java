@@ -17,12 +17,12 @@
 package org.opensingular.lib.commons.table;
 
 /**
- * Model apra obter a estrutura da �rvore bem como os valores de cada coluna.
+ * Model apra obter a estrutura da rvore bem como os valores de cada coluna.
  */
 public interface TreeLineReader extends LineReader<Object> {
 
     /**
-     * Retorna os elementos do primeiro n�vel da �rvore.
+     * Retorna os elementos do primeiro nvel da rvore.
      */
     public Object getRoots();
 
@@ -30,9 +30,9 @@ public interface TreeLineReader extends LineReader<Object> {
      * Recupera os filhos a serem exibidos.
      *
      * @param item para o qual se deseja obter os filhos.
-     * @return Pode retornar qualquer objeto iter�vel, ou um Array ou mesmo um
+     * @return Pode retornar qualquer objeto itervel, ou um Array ou mesmo um
      * objeto simples se houver apenas um filho. Pode retornar null para
-     * indicar a aus�ncia de filhos ou uma lista de tamanho zero.
+     * indicar a ausncia de filhos ou uma lista de tamanho zero.
      */
     public Object getChildren(Object item);
 

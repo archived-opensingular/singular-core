@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 /**
- * Respons�vel por adicionar uma linha no fim da tabela contendo as informa��es agregadas da coluna conforme configurado
+ * Responsvel por adicionar uma linha no fim da tabela contendo as informaes agregadas da coluna conforme configurado
  */
 public class GenerationModifierAggregate extends GenerationModifier {
 

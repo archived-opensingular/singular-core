@@ -62,7 +62,7 @@ public abstract class ViewOutputHtml implements ViewOutput<Writer> {
     public abstract boolean isStaticContent();
 
     /**
-     * Informa qual o caminho onde est�o os arquivos referenciados pelo conteudo
+     * Informa qual o caminho onde esto os arquivos referenciados pelo conteudo
      * gerado.
      */
     public void setPathAttachment(String path) {
@@ -106,23 +106,23 @@ public abstract class ViewOutputHtml implements ViewOutput<Writer> {
         try {
             getOutput().flush();
         } catch (IOException e) {
-            throw SingularException.rethrow("Falha ao descarregar conte�do: " + e.getMessage(), e);
+            throw SingularException.rethrow("Falha ao descarregar contedo: " + e.getMessage(), e);
         }
     }
 
     /**
-     * Adiciona uma imagem que � utilizada pelo conte�do gerado.
+     * Adiciona uma imagem que  utilizada pelo contedo gerado.
      *
-     * @param name Nome usado para refer�nciar a imagem.
-     * @param content Conte�do bin�rio da imagem.
+     * @param name Nome usado para refernciar a imagem.
+     * @param content Contedo binrio da imagem.
      */
     public abstract void addImage(String name, byte[] content) throws IOException;
 
     /*
-     * Adiciona uma imagem utilizada pelo conte�do gerado, utiliza um DataSource
+     * Adiciona uma imagem utilizada pelo contedo gerado, utiliza um DataSource
      *
      * @param nome Nome usado para referenciar a imagem
-     * @param dataSource conte�do da imagem
+     * @param dataSource contedo da imagem
      *
      * public abstract void addImage(String nome, DataSourceComTamanho dataSource);
      */

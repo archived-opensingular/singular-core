@@ -238,14 +238,14 @@ public class Column implements Serializable {
     }
 
     /**
-     * Indica se o valor a ser exibido � um percentual do valor raiz da coluna.
+     * Indica se o valor a ser exibido  um percentual do valor raiz da coluna.
      */
     public final boolean isShowAsPercentageOfParent() {
         return showAsPercentageOfParent;
     }
 
     /**
-     * Indica se o valor a ser exibido � um percentual do valor raiz da coluna.
+     * Indica se o valor a ser exibido  um percentual do valor raiz da coluna.
      */
     public final Column setShowAsPercentageOfParent(boolean showAsPercentageOfParent) {
         this.showAsPercentageOfParent = showAsPercentageOfParent;

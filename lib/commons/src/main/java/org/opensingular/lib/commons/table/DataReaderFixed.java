@@ -64,7 +64,7 @@ public final class DataReaderFixed extends DataReader {
 
     @Override
     public LineInfo retrieveValues(LineReadContext ctx, LineData lineData) {
-        throw new SingularException("Nunca deveria ter chamado essa linha. Pois tudo est� em memoria");
+        throw new SingularException("Nunca deveria ter chamado essa linha. Pois tudo est em memoria");
     }
 
     @Override

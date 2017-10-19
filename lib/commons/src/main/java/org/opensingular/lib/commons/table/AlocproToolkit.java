@@ -72,10 +72,10 @@ final class AlocproToolkit {
     }
 
     /**
-     * Serve para transformar em formato 'hhmm' (24h) um hor�rio que esteja em minutos. Exemplo: 480 vira 0800.
+     * Serve para transformar em formato 'hhmm' (24h) um horrio que esteja em minutos. Exemplo: 480 vira 0800.
      *
      * @param hoursWithTwoDigits se false, 480 vira 800; se true, vira 0800. Default false.
-     * @return String de 3 ou 4 posi��es representando os minutos em horas e minutos.
+     * @return String de 3 ou 4 posies representando os minutos em horas e minutos.
      */
     public static String toHour(int minutes, boolean hoursWithTwoDigits) {
         int h = minutes / 60;
@@ -130,7 +130,7 @@ final class AlocproToolkit {
         if (value == null) {
             return 0.0;
         }
-        // Usa BigDecimal, pois algumas dizimas d�o problemas se fizer a conta
+        // Usa BigDecimal, pois algumas dizimas do problemas se fizer a conta
         // com double
         try {
             BigDecimal v = BigDecimal.valueOf(value);

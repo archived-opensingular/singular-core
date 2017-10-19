@@ -27,7 +27,7 @@ import java.io.Serializable;
 public interface LineReader<K extends Object> extends Serializable {
 
     /**
-     * M�todo chamado para que seja preenchido os valores das colunas para o
+     * Mtodo chamado para que seja preenchido os valores das colunas para o
      * objeto atual.
      */
     public void retrieveValues(LineReadContext ctx, K current, LineInfo line);

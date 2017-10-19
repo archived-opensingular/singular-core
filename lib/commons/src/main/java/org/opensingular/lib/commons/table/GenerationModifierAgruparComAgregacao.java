@@ -62,7 +62,7 @@ class GenerationModifierAgruparComAgregacao extends GenerationModifier {
         
         LinkedListMultimap<LineData, LineData> map = LinkedListMultimap.create();
         if(!lines.isEmpty()){
-            // Usa o comparador para determinar as quebras de grupo. Como j� houve a
+            // Usa o comparador para determinar as quebras de grupo. Como j houve a
             // ordenaçãoo prévia, quando o valor da
             // comparaçãoo for diferente de zero, sinaliza quebra de grupo
             LineData[] piloto = new LineData[] { lines.get(0) };
