@@ -34,8 +34,8 @@ public class STaskJava extends STask<STaskJava> {
 
     private DisplayType displayType;
 
-    public STaskJava(FlowMap mapa, String nome, String abbreviation) {
-        super(mapa, nome, abbreviation);
+    public STaskJava(FlowMap flowMap, String name, String abbreviation) {
+        super(flowMap, name, abbreviation);
     }
 
     @Override

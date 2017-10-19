@@ -43,9 +43,9 @@ import java.util.Set;
 
 public class TaskInstance implements Serializable {
 
-    public static final String ALOCACAO = "Alocação";
-    public static final String DESALOCACAO = "Desalocação";
-    public static final String LEITURA_DA_TAREFA = "Leitura da tarefa";
+    public static final String ALLOCATE = "Alocação";
+    public static final String DEALLOCATE = "Desalocação";
+    public static final String TASK_VISUALIZATION = "Leitura da tarefa";
 
     private final Integer taskCod;
 
@@ -266,11 +266,11 @@ public class TaskInstance implements Serializable {
 
         String trimmedRelocationCause = StringUtils.trimToNull(relocationCause);
 
-        String acao = (user == null) ? DESALOCACAO : ALOCACAO;
+        String action = (user == null) ? DEALLOCATE : ALLOCATE;
         if (author == null) {
-            log(acao + " Automática", trimmedRelocationCause, user, null, new Date());
+            log(action + " Automática", trimmedRelocationCause, user, null, new Date());
         } else {
-            log(acao, trimmedRelocationCause, user, author, new Date());
+            log(action, trimmedRelocationCause, user, author, new Date());
         }
 
         if (notify) {

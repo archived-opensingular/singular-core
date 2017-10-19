@@ -361,22 +361,21 @@ public final class XPathToolkit {
      * @return Sempre not null. Se não encontrar nada retorna vazio.
      */
     public static List<String> getValues(Node contextNode, String xPath) {
-        List<String> lista = null;
+        List<String> resultList = null;
         if (isSelectSimples(xPath)) {
             MElementResult rs = new MElementResult((Element) contextNode, xPath);
             while (rs.next()) {
-                lista = addToList(lista, rs.getValue());
+                resultList = addToList(resultList, rs.getValue());
             }
         } else {
-            NodeList list = selectNodeList(contextNode, xPath);
-            int tam = list.getLength();
+            NodeList nodesList = selectNodeList(contextNode, xPath);
+            int tam = nodesList.getLength();
             for (int i = 0; i < tam; i++) {
-                lista = addToList(lista, MElement.getValueText(list.item(i)));
+                resultList = addToList(resultList, MElement.getValueText(nodesList.item(i)));
             }
         }
-        return lista == null ? Collections.emptyList() : lista;
+        return resultList == null ? Collections.emptyList() : resultList;
     }
-
     private static List<String> addToList(List<String> list, String value) {
         List<String> nova = list;
         if (value != null) {

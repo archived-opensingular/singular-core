@@ -21,7 +21,7 @@ import org.opensingular.form.SInstance;
 import java.io.Serializable;
 
 public class SInstanceListItemModel<I extends SInstance>
-    extends AbstractSInstanceItemListaModel<I>
+    extends AbstractSInstanceItemListModel<I>
 {
 
     private int index;

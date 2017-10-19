@@ -148,16 +148,16 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
         return thenGo(getFlowMap().getTask(destination));
     }
 
-    public STransition thenGo(String acao, ITaskDefinition destination) {
-        return thenGo(acao, getFlowMap().getTask(destination));
+    public STransition thenGo(String actionName, ITaskDefinition destination) {
+        return thenGo(actionName, getFlowMap().getTask(destination));
     }
 
     public STransition thenGo(STask<?> destination) {
         return this.destination.addTransition(destination);
     }
 
-    public STransition thenGo(String acao, STask<?> destination) {
-        return this.destination.addTransition(acao, destination);
+    public STransition thenGo(String actionName, STask<?> destination) {
+        return this.destination.addTransition(actionName, destination);
     }
 
     @Nonnull

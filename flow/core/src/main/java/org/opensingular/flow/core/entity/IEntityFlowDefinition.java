@@ -52,22 +52,22 @@ public interface IEntityFlowDefinition extends IEntityByCod<Integer> {
         return getVersions().stream().collect(Collectors.maxBy(Comparator.comparing(IEntityFlowVersion::getVersionDate))).orElse(null);
     }
 
-    default IEntityTaskDefinition getTaskDefinition(String sigla) {
+    default IEntityTaskDefinition getTaskDefinition(String abbreviation) {
         // TODO Daniel - esse método e os demais são muito ineficiente.
         // Particularmente esse é muito usando. A solução para isso seria uma
         // classe derivada que fizesse cache em uma Map.
-        for (IEntityTaskDefinition situacao : getTaskDefinitions()) {
-            if (situacao.getAbbreviation().equalsIgnoreCase(sigla)) {
-                return situacao;
+        for (IEntityTaskDefinition taskDefinition : getTaskDefinitions()) {
+            if (taskDefinition.getAbbreviation().equalsIgnoreCase(abbreviation)) {
+                return taskDefinition;
             }
         }
         return null;
     }
     @SuppressWarnings("unchecked")
     default <X extends IEntityRoleDefinition> X getRole(String abbreviation) {
-        for (IEntityRoleDefinition papel : getRoles()) {
-            if (papel.getAbbreviation().equalsIgnoreCase(abbreviation)) {
-                return (X) papel;
+        for (IEntityRoleDefinition role : getRoles()) {
+            if (role.getAbbreviation().equalsIgnoreCase(abbreviation)) {
+                return (X) role;
             }
         }
         return null;

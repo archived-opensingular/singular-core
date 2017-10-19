@@ -238,10 +238,10 @@ public final class SFormUtil {
             final String labelNode = node.asAtr().getLabel();
 
             if (node instanceof SIList<?>) {
-                SIList<?> lista = (SIList<?>) node;
-                String labelLista = lista.asAtr().getLabel();
-                int index = lista.indexOf(child) + 1;
-                labels.add(labelLista + ((index > 0) ? " [" + (index) + ']' : ""));
+                SIList<?> list = (SIList<?>) node;
+                String listLabel = list.asAtr().getLabel();
+                int index = list.indexOf(child) + 1;
+                labels.add(listLabel + ((index > 0) ? " [" + (index) + ']' : ""));
             } else {
                 if (StringUtils.isNotBlank(labelNode)) {
                     labels.add(labelNode);

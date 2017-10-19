@@ -50,7 +50,7 @@ public class TestDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T restrieveById(Class<T> clazz, Serializable cod) {
+    public <T> T retrieveById(Class<T> clazz, Serializable cod) {
         return (T) getSession().load(clazz, cod);
     }
 
@@ -58,7 +58,7 @@ public class TestDAO {
         getSession().refresh(entity);
     }
 
-    public Integer countHistoty() {
+    public Integer countHistory() {
         return ((Number) getSession()
                 .createCriteria(TaskInstanceHistoryEntity.class).setProjection(Projections.count("cod"))
                 .uniqueResult()).intValue();

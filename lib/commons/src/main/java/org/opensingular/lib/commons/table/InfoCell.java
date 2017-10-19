@@ -70,7 +70,7 @@ public final class InfoCell implements Serializable {
         this.valueReal = valueReal;
     }
 
-    public void addAcao(WebRef action) {
+    public void addAction(WebRef action) {
         if (actions == null) {
             actions = new ArrayList<>(4);
         }

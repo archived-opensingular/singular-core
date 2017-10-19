@@ -240,22 +240,22 @@ public class PeticaoTest extends TestFlowSupport {
     public void verificarHistoricoAlocacaoTarefa() {
         Actor user1 = testDAO.getSomeUser(1);
         Actor user2 = testDAO.getSomeUser(2);
-        Integer counterHistory = testDAO.countHistoty();
+        Integer counterHistory = testDAO.countHistory();
         assertNotNull(counterHistory);
 
         FlowInstance ip = startInstance();
         ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, user1);
-        assertEquals(++counterHistory, testDAO.countHistoty());
+        assertEquals(++counterHistory, testDAO.countHistory());
 
         ip.getCurrentTaskOrException().relocateTask(null, user2, false, "Testando...");
-        assertEquals(++counterHistory, testDAO.countHistoty());
+        assertEquals(++counterHistory, testDAO.countHistory());
 
         ip.prepareTransition(Peticao.APROVAR_TECNICO).go();
         ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, user1);
-        assertEquals(++counterHistory, testDAO.countHistoty());
+        assertEquals(++counterHistory, testDAO.countHistory());
 
         ip.getCurrentTaskOrException().relocateTask(Flow.getUserIfAvailable(), user1, false, "Testando...");
-        assertEquals(++counterHistory, testDAO.countHistoty());
+        assertEquals(++counterHistory, testDAO.countHistory());
 
         List<TaskInstanceHistoryEntity> lastHistories = testDAO.retrieveLastHistories(4);
         assertEquals(Flow.getUserIfAvailable(), lastHistories.get(0).getAllocatorUser());
@@ -297,7 +297,7 @@ public class PeticaoTest extends TestFlowSupport {
 
     @Test
     public void verificarHistoricoTransicaoAutomatica() {
-        Integer counterHistory = testDAO.countHistoty();
+        Integer counterHistory = testDAO.countHistory();
         assertNotNull(counterHistory);
 
         FlowInstance ip = startInstance();
@@ -307,7 +307,7 @@ public class PeticaoTest extends TestFlowSupport {
         addDaysToTaskTargetDate(currentTask, -3);
         testDAO.update(currentTask);
         new ExecuteWaitingTasksJob(null).run();
-        assertEquals(++counterHistory, testDAO.countHistoty());
+        assertEquals(++counterHistory, testDAO.countHistory());
 
         List<TaskInstanceHistoryEntity> lastHistories = testDAO.retrieveLastHistories(1);
         assertEquals("Transição Automática", lastHistories.get(0).getType().getDescription());

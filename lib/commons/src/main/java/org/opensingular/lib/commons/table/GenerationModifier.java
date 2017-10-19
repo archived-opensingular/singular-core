@@ -33,7 +33,7 @@ public abstract class GenerationModifier implements Serializable {
         return table;
     }
 
-    protected List<Column> getColunas() {
+    protected List<Column> getColumns() {
         return table.getColumns();
     }
 
@@ -44,11 +44,11 @@ public abstract class GenerationModifier implements Serializable {
         return dataReader;
     }
 
-    public List<Column> adjustTitles(List<Column> visiveis) {
+    public List<Column> adjustTitles(List<Column> visibleColumns) {
         if (next != null) {
-            return next.adjustTitles(visiveis);
+            return next.adjustTitles(visibleColumns);
         }
-        return visiveis;
+        return visibleColumns;
     }
 
     public void addFimCadeia(GenerationModifier newModifier) {
@@ -60,7 +60,7 @@ public abstract class GenerationModifier implements Serializable {
         }
     }
 
-    public GenerationModifier getProximoModificador() {
+    public GenerationModifier getNextModifier() {
         return next;
     }
 

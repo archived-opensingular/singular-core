@@ -28,15 +28,15 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SInstanceViewState;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 
-public final class ConfigureByMInstanceAttributesBehavior extends Behavior {
+public final class ConfigureBySInstanceAttributesBehavior extends Behavior {
 
-    private static final ConfigureByMInstanceAttributesBehavior INSTANCE = new ConfigureByMInstanceAttributesBehavior();
+    private static final ConfigureBySInstanceAttributesBehavior INSTANCE = new ConfigureBySInstanceAttributesBehavior();
 
-    public static ConfigureByMInstanceAttributesBehavior getInstance() {
+    public static ConfigureBySInstanceAttributesBehavior getInstance() {
         return INSTANCE;
     }
 
-    private ConfigureByMInstanceAttributesBehavior() {
+    private ConfigureBySInstanceAttributesBehavior() {
     }
 
     @Override

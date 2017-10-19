@@ -30,7 +30,7 @@ public final class DataReaderModifier extends DataReader {
         this.nextModifier = nextModifier;
     }
 
-    private DataReader getLeitorModificado() {
+    private DataReader getReaderModifier() {
         if (nextModifier != null) {
             original = nextModifier.apply(original);
             nextModifier = null;
@@ -40,31 +40,31 @@ public final class DataReaderModifier extends DataReader {
 
     @Override
     public Iterator<LineData> iterator() {
-        return getLeitorModificado().iterator();
+        return getReaderModifier().iterator();
     }
 
     @Override
     public boolean isEmpty() {
-        return getLeitorModificado().isEmpty();
+        return getReaderModifier().isEmpty();
     }
 
     @Override
     public List<LineData> preLoadData() {
-        return getLeitorModificado().preLoadData();
+        return getReaderModifier().preLoadData();
     }
 
     @Override
     public DataReader getChildren(LineData lineData) {
-        return getLeitorModificado().getChildren(lineData);
+        return getReaderModifier().getChildren(lineData);
     }
 
     @Override
     public LineInfo retrieveValues(LineReadContext ctx, LineData lineData) {
-        return getLeitorModificado().retrieveValues(ctx, lineData);
+        return getReaderModifier().retrieveValues(ctx, lineData);
     }
 
     @Override
     public List<LineData> preLoadDataAndCells(TableTool tableTool) {
-        return getLeitorModificado().preLoadDataAndCells(tableTool);
+        return getReaderModifier().preLoadDataAndCells(tableTool);
     }
 }

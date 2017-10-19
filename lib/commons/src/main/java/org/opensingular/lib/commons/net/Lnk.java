@@ -108,11 +108,11 @@ public class Lnk implements Serializable {
             return this;
         }
         try {
-            char separador = '&';
+            char separator = '&';
             if (url_.indexOf('?') == -1) {
-                separador = '?';
+                separator = '?';
             }
-            return new Lnk(url_ + separador + parameter + "=" + URLEncoder.encode(value, StandardCharsets.UTF_8.name()), urlAppMissing);
+            return new Lnk(url_ + separator + parameter + "=" + URLEncoder.encode(value, StandardCharsets.UTF_8.name()), urlAppMissing);
         } catch (UnsupportedEncodingException e) {
             throw SingularException.rethrow(e);
         }

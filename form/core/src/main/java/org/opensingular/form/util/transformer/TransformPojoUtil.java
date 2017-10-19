@@ -233,11 +233,11 @@ public class TransformPojoUtil {
 
         if (strictMode) {
             // verifica se os valores existem em ambos os lugares
-            List<String> nomesAtributos = new ArrayList<>();
-            composite.getAllChildren().forEach(inst -> nomesAtributos.add(inst.getType().getNameSimple()));
+            List<String> attributeNames = new ArrayList<>();
+            composite.getAllChildren().forEach(inst -> attributeNames.add(inst.getType().getNameSimple()));
             Set<String> keySet = pojoDataMap.keySet();
             for (String string : keySet) {
-                if (!nomesAtributos.contains(string)) {
+                if (!attributeNames.contains(string)) {
                     throw new SingularFormException("Valor existente no mapa não encontrado no SInstance.");
                 }
             }

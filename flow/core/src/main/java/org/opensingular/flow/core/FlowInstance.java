@@ -245,11 +245,11 @@ public class FlowInstance implements Serializable {
      * definida para o processo correspondente a esta instância.
      * </p>
      *
-     * @param nomeTarefa o nome da tarefa humana a ser inspecionada.
+     * @param taskName o nome da tarefa humana a ser inspecionada.
      * @return os códigos de usuários com direitos de execução.
      */
-    public Set<Integer> getFirstLevelUsersCodWithAccess(String nomeTarefa) {
-        return getFlowDefinition().getFlowMap().getHumanTaskByAbbreviationOrException(nomeTarefa).getAccessStrategy()
+    public Set<Integer> getFirstLevelUsersCodWithAccess(String taskName) {
+        return getFlowDefinition().getFlowMap().getHumanTaskByAbbreviationOrException(taskName).getAccessStrategy()
             .getFirstLevelUsersCodWithAccess(this);
     }
 
@@ -450,17 +450,17 @@ public class FlowInstance implements Serializable {
      */
     public final void forceStateUpdate(@Nonnull STask<?> task) {
         Objects.requireNonNull(task);
-        final TaskInstance tarefaOrigem      = getLastTaskOrException();
-        List<SUser>        pessoasAnteriores = getDirectlyResponsibles();
-        final Date         agora             = new Date();
-        TaskInstance       tarefaNova        = updateState(tarefaOrigem, null, task, agora);
-        tarefaOrigem.log("Alteração Manual de Estado", "de '" + tarefaOrigem.getName() + "' para '" + task.getName() + "'",
-            null, Flow.getUserIfAvailable(), agora).sendEmail(pessoasAnteriores);
-        FlowEngine.initTask(this, task, tarefaNova);
-        ExecutionContext execucaoMTask = new ExecutionContext(this, tarefaNova, null);
+        final TaskInstance originTask      = getLastTaskOrException();
+        List<SUser> previousUsers = getDirectlyResponsibles();
+        final Date         now             = new Date();
+        TaskInstance       newTask        = updateState(originTask, null, task, now);
+        originTask.log("Alteração Manual de Estado", "de '" + originTask.getName() + "' para '" + task.getName() + "'",
+            null, Flow.getUserIfAvailable(), now).sendEmail(previousUsers);
+        FlowEngine.initTask(this, task, newTask);
+        ExecutionContext executionContext = new ExecutionContext(this, newTask, null);
 
         TaskInstance taskNew2 = getTaskNewer(task).orElseThrow(() -> new SingularFlowException("Erro Interno", this));
-        task.notifyTaskStart(taskNew2, execucaoMTask);
+        task.notifyTaskStart(taskNew2, executionContext);
         if (task.isImmediateExecution()) {
             prepareTransition().go();
         }
@@ -489,15 +489,15 @@ public class FlowInstance implements Serializable {
                 }
                 getPersistenceService().completeTask(originTaskInstance.getEntityTaskInstance(), transitionName, Flow.getUserIfAvailable());
             }
-            IEntityTaskVersion situacaoNova = getFlowDefinition().getEntityTaskVersion(task);
+            IEntityTaskVersion newState = getFlowDefinition().getEntityTaskVersion(task);
 
-            IEntityTaskInstance tarefa = getPersistenceService().addTask(getEntity(), situacaoNova);
+            IEntityTaskInstance newTaskEntity = getPersistenceService().addTask(getEntity(), newState);
 
-            TaskInstance tarefaNova = getTaskInstance(tarefa);
+            TaskInstance newTask = getTaskInstance(newTaskEntity);
             currentState = task;
 
             Flow.notifyListeners(n -> n.notifyStateUpdate(FlowInstance.this));
-            return tarefaNova;
+            return newTask;
         }
     }
 
@@ -851,15 +851,14 @@ public class FlowInstance implements Serializable {
 
     /**
      * Retorna a mais nova tarefa que atende a condição informada.
-     * @param condicao a condição informada.
      */
     @Nonnull
-    public Optional<TaskInstance> getTaskNewer(@Nonnull Predicate<TaskInstance> condicao) {
-        Objects.requireNonNull(condicao);
-        List<? extends IEntityTaskInstance> lista = getEntity().getTasks();
-        for (int i = lista.size() - 1; i != -1; i--) {
-            TaskInstance task = getTaskInstance(lista.get(i));
-            if (condicao.test(task)) {
+    public Optional<TaskInstance> getTaskNewer(@Nonnull Predicate<TaskInstance> predicate) {
+        Objects.requireNonNull(predicate);
+        List<? extends IEntityTaskInstance> list = getEntity().getTasks();
+        for (int i = list.size() - 1; i != -1; i--) {
+            TaskInstance task = getTaskInstance(list.get(i));
+            if (predicate.test(task)) {
                 return Optional.of(task);
             }
         }

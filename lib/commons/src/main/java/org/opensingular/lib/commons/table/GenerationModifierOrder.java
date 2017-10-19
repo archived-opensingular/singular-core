@@ -29,11 +29,11 @@ class GenerationModifierOrder extends GenerationModifier {
 
     public GenerationModifierOrder(TableTool table, Column c, boolean descending) {
         super(table);
-        addColuna(c);
+        addColumn(c);
         this.descending = descending;
     }
 
-    public void addColuna(Column column) {
+    public void addColumn(Column column) {
         columnsOrder.add(column);
     }
 

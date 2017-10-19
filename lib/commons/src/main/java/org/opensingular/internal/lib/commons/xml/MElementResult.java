@@ -227,12 +227,12 @@ public final class MElementResult extends MElement implements EWrapper {
      * @return Semrpe retorna diferente de zero, mesmo que seja um arry de
      * tamanho zero.
      */
-    public final MElement[] getTodos() {
-        List<MElement> lista = new ArrayList<>();
+    public final MElement[] getAll() {
+        List<MElement> list = new ArrayList<>();
         while (next()) {
-            lista.add(getCurrent());
+            list.add(getCurrent());
         }
-        return lista.toArray(new MElement[lista.size()]);
+        return list.toArray(new MElement[list.size()]);
     }
 
     /**

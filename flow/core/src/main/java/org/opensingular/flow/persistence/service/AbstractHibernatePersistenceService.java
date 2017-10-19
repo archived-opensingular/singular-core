@@ -463,7 +463,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         List<? extends IEntityTaskInstanceHistory> histories = entityTaskInstance.getTaskHistory();
         for (ListIterator<? extends IEntityTaskInstanceHistory> it = histories.listIterator(histories.size()); it.hasPrevious(); ) {
             IEntityTaskInstanceHistory history = it.previous();
-            if (history.getType().getDescription().toLowerCase().contains(TaskInstance.ALOCACAO.toLowerCase())) {
+            if (history.getType().getDescription().toLowerCase().contains(TaskInstance.ALLOCATE.toLowerCase())) {
                 history.setAllocationEndDate(new Date());
                 getSession().saveOrUpdate(history);
             }

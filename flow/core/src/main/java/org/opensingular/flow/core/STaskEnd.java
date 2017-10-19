@@ -23,8 +23,8 @@ public class STaskEnd extends STask<STaskEnd> {
 
     private EventType eventType;
 
-    public STaskEnd(FlowMap map, String nome, String abbreviation) {
-        super(map, nome, abbreviation);
+    public STaskEnd(FlowMap map, String name, String abbreviation) {
+        super(map, name, abbreviation);
     }
 
     @Override

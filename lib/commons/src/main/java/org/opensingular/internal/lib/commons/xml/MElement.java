@@ -352,11 +352,11 @@ public abstract class MElement implements Element, Serializable {
     /**
      * Adiciona um element com o nome informado e devolve a referência.
      *
-     * @param nome do novo element filho
+     * @param name do novo element filho
      * @return Elemento criado
      */
-    public final MElement addElement(String nome) {
-        return addElementNS(null, nome);
+    public final MElement addElement(String name) {
+        return addElementNS(null, name);
     }
 
     /**
@@ -386,16 +386,16 @@ public abstract class MElement implements Element, Serializable {
      * default na ausencia do primeiro. Se o default também for null, então o no
      * não é adicionado
      *
-     * @param nome     do MElement a ser criado
+     * @param name     do MElement a ser criado
      * @param value    -
      * @param defaultV a ser utilizado se valor==null
      * @return O MElement resultado.
      */
-    public final MElement addElement(String nome, String value, String defaultV) {
+    public final MElement addElement(String name, String value, String defaultV) {
         if (value != null) {
-            return addElement(nome, value);
+            return addElement(name, value);
         } else if (defaultV != null) {
-            return addElement(nome, defaultV);
+            return addElement(name, defaultV);
         }
         return null;
     }
@@ -405,33 +405,33 @@ public abstract class MElement implements Element, Serializable {
      * converções se necessário. Trata os seguintes objetos de forma especial:
      * Integer, Long, Double, java.util.Date.
      *
-     * @param nome do elemento a ser criado
+     * @param name do elemento a ser criado
      * @param o    Objeto a ser convertido para texto
      * @return MElement criado
      */
-    public final MElement addElement(String nome, Object o) {
+    public final MElement addElement(String name, Object o) {
         if (o == null) {
-            return addElement(nome, (String) null);
+            return addElement(name, (String) null);
         } else if (o instanceof String) {
             //Apenas para não ter que sempre passar por todos os if
             //em geral será String
-            return addElement(nome, (String) o);
+            return addElement(name, (String) o);
         } else if (o instanceof Integer) {
-            return addElement(nome, ((Integer) o).intValue());
+            return addElement(name, ((Integer) o).intValue());
         } else if (o instanceof Long) {
-            return addElement(nome, ((Long) o).longValue());
+            return addElement(name, ((Long) o).longValue());
         } else if (o instanceof Double) {
-            return addElement(nome, ((Double) o).doubleValue());
+            return addElement(name, ((Double) o).doubleValue());
         } else if (o instanceof java.util.Date) {
-            return addElement(nome, (java.util.Date) o);
+            return addElement(name, (java.util.Date) o);
         } else if (o instanceof Calendar) {
-            return addElement(nome, (Calendar) o);
+            return addElement(name, (Calendar) o);
         } else if (o instanceof InputStream) {
-            return addElement(nome, (InputStream) o);
+            return addElement(name, (InputStream) o);
         } else if (o instanceof byte[]) {
-            return addElement(nome, (byte[]) o);
+            return addElement(name, (byte[]) o);
         } else {
-            return addElement(nome, o.toString());
+            return addElement(name, o.toString());
         }
     }
 
@@ -440,16 +440,16 @@ public abstract class MElement implements Element, Serializable {
      * converções se necessário. Se o valor null, utiliza o valor default. Se o
      * default também for null, então o no não é adicionado.
      *
-     * @param nome     do elemento a ser criado
+     * @param name     do elemento a ser criado
      * @param value    Objeto a ser convertido para texto
      * @param defaultV a ser utilizado se valor==null
      * @return MElement criado
      */
-    public final MElement addElement(String nome, Object value, Object defaultV) {
+    public final MElement addElement(String name, Object value, Object defaultV) {
         if (value != null) {
-            return addElement(nome, value);
+            return addElement(name, value);
         } else if (defaultV != null) {
-            return addElement(nome, defaultV);
+            return addElement(name, defaultV);
         }
         return null;
     }
@@ -458,50 +458,50 @@ public abstract class MElement implements Element, Serializable {
      * Cria um no indicado pelo nome com o texto resultado da converção do
      * double.
      *
-     * @param nome  do element ou atributo a ser criado
+     * @param name  do element ou atributo a ser criado
      * @param value a ser atribuito
      * @return MElement criado ou dono do atributo criado
      */
-    public final MElement addElement(String nome, double value) {
-        return addElement(nome, Double.toString(value));
+    public final MElement addElement(String name, double value) {
+        return addElement(name, Double.toString(value));
     }
 
     /**
      * Cria um no indicado pelo nome com o texto resultado da converção do
      * double segundo a precisão desejada.
      *
-     * @param nome     do element ou atributo a ser criado
+     * @param name     do element ou atributo a ser criado
      * @param value    a ser atribuito
      * @param precision Informa quantas casas depois d virgula deseja-se manter.
      *                 Se for negativo arredonta os digitos antes da virgula.
      * @return MElement criado ou dono do atributo criado
      */
-    public final MElement addElement(String nome, double value, int precision) {
+    public final MElement addElement(String name, double value, int precision) {
         double m      = Math.pow(10, precision);
         String sValue = Double.toString(Math.rint(Math.round(value * m)) / m);
-        return addElement(nome, sValue);
+        return addElement(name, sValue);
     }
 
     /**
      * Cria um no indicado pelo nome com o texto resultado da converção do int.
      *
-     * @param nome  do element ou atributo a ser criado
+     * @param name  do element ou atributo a ser criado
      * @param value a ser atribuito
      * @return MElement criado ou dono do atributo criado
      */
-    public final MElement addElement(String nome, int value) {
-        return addElement(nome, Integer.toString(value));
+    public final MElement addElement(String name, int value) {
+        return addElement(name, Integer.toString(value));
     }
 
     /**
      * Cria um no indicado pelo nome com o texto resultado da converção do long.
      *
-     * @param nome  do element ou atributo a ser criado
+     * @param name  do element ou atributo a ser criado
      * @param value a ser atribuito
      * @return MElement criado ou dono do atributo criado
      */
-    public final MElement addElement(String nome, long value) {
-        return addElement(nome, Long.toString(value));
+    public final MElement addElement(String name, long value) {
+        return addElement(name, Long.toString(value));
     }
 
     /**
@@ -513,13 +513,13 @@ public abstract class MElement implements Element, Serializable {
      * memória e de custo de conversão de binário para string e string para
      * binário ao se decidir pelo uso deste formato.
      *
-     * @param nome  o nome do elemento que será inserido
+     * @param name  o nome do elemento que será inserido
      * @param value o array binário do elemento adicionado (a ser convertido p/
      *              BASE64)
      * @return o elemento que foi adicionado
      */
-    public final MElement addElement(String nome, byte[] value) {
-        return addElement(nome, MElementWrapper.toBASE64(value));
+    public final MElement addElement(String name, byte[] value) {
+        return addElement(name, MElementWrapper.toBASE64(value));
     }
 
     /**
@@ -532,26 +532,26 @@ public abstract class MElement implements Element, Serializable {
      * binário para string e string para binário ao se decidir pelo uso deste
      * formato.
      *
-     * @param nome o nome do elemento que será inserido
+     * @param name o nome do elemento que será inserido
      * @param in   Stream com os dados a serem convertidos p/ BASE64.
      * @return o elemento que foi adicionado
      */
-    public final MElement addElement(String nome, InputStream in) {
-        return addElement(nome, MElementWrapper.toBASE64(in, getWriterFactory().getCharset()));
+    public final MElement addElement(String name, InputStream in) {
+        return addElement(name, MElementWrapper.toBASE64(in, getWriterFactory().getCharset()));
     }
 
     /**
      * Adiciona o no com o nome indicado com o valor boolean informado.
      *
-     * @param nome  do MElement a ser criado
+     * @param name  do MElement a ser criado
      * @param value -
      * @return O MElement criado (a menos que nome aponte para um atributo).
      */
-    public final MElement addBoolean(String nome, boolean value) {
+    public final MElement addBoolean(String name, boolean value) {
         if (value) {
-            return addElement(nome, Boolean.TRUE.toString());
+            return addElement(name, Boolean.TRUE.toString());
         } else {
-            return addElement(nome, Boolean.FALSE.toString());
+            return addElement(name, Boolean.FALSE.toString());
         }
     }
 
@@ -582,17 +582,17 @@ public abstract class MElement implements Element, Serializable {
      * conversão. Caso o defaultValue também seja null ou em braco, então não é
      * adiciona o nó.
      *
-     * @param nome         do MELement a ser criado
+     * @param name         do MELement a ser criado
      * @param value        -
      * @param defaultValue a ser utilizado se valor for null ou vazio
      * @return O MElement criado (a menos que nome aponte para um atributo).
      */
-    public final MElement addInt(String nome, String value, Object defaultValue) {
+    public final MElement addInt(String name, String value, Object defaultValue) {
         if (value != null) {
             String v = value.trim();
             if (v.length() > 0) {
                 Integer.parseInt(v); //NOSONAR Testa se é um inteiro
-                return addElement(nome, v);
+                return addElement(name, v);
             }
         }
         if (defaultValue != null) {
@@ -600,10 +600,10 @@ public abstract class MElement implements Element, Serializable {
                 String v = ((String) defaultValue).trim();
                 if (v.length() > 0) {
                     Integer.parseInt(v); //NOSONAR Testa se é um inteiro
-                    return addElement(nome, v);
+                    return addElement(name, v);
                 }
             } else if (defaultValue instanceof Integer) {
-                return addElement(nome, defaultValue);
+                return addElement(name, defaultValue);
             } else {
                 throw new SingularException("Tipo default inválido ("
                         + defaultValue.getClass().getName()
@@ -620,35 +620,35 @@ public abstract class MElement implements Element, Serializable {
      * conversão. Caso o defaultValue também seja null ou em braco, então não é
      * adiciona o nó.
      *
-     * @param nome         do MELement a ser criado
+     * @param name         do MELement a ser criado
      * @param value        -
      * @param defaultValue a ser utilizado se valor for null ou vazio
      * @return O MElement criado (a menos que nome aponte para um atributo).
      */
-    public final MElement addInt(String nome, String value, int defaultValue) {
+    public final MElement addInt(String name, String value, int defaultValue) {
         if (value != null) {
             String v = value.trim();
             if (v.length() > 0) {
                 Integer.parseInt(v); //NOSONAR Testa se é um inteiro
-                return addElement(nome, v);
+                return addElement(name, v);
             }
         }
-        return addElement(nome, defaultValue);
+        return addElement(name, defaultValue);
     }
 
     /**
      * Adiciona o no com o nome indicado considerando o valor como sendo uma
      * data a qual será convertida para o formato ISO8601.
      *
-     * @param nome  do MELement a ser criado
+     * @param name  do MELement a ser criado
      * @param value Se for null, uma exception é disparada.
      * @return O MElement criado (a menos que nome aponte para um atributo).
      */
-    public final MElement addDate(String nome, String value) {
+    public final MElement addDate(String name, String value) {
         if (value == null) {
-            return addElement(nome, (String) null);
+            return addElement(name, (String) null);
         } else {
-            return addElement(nome, ConversorToolkit.getDateFromData(value));
+            return addElement(name, ConversorToolkit.getDateFromData(value));
         }
     }
 
@@ -659,18 +659,18 @@ public abstract class MElement implements Element, Serializable {
      * conversão. Caso o defaultValue também seja null ou em braco, então não é
      * adiciona o nó.
      *
-     * @param nome         do MELement a ser criado
+     * @param name         do MELement a ser criado
      * @param value        -
      * @param defaultValue a ser utilizado se valor for null ou vazio
      * @return O MElement criado (a menos que nome aponte para um atributo).
      */
-    public final MElement addDate(String nome, String value, String defaultValue) {
+    public final MElement addDate(String name, String value, String defaultValue) {
         String trim = StringUtils.trimToNull(value);
         if (trim == null) {
             trim = StringUtils.trimToNull(defaultValue);
         }
         if (trim != null) {
-            return addElement(nome, ConversorToolkit.getDateFromData(trim));
+            return addElement(name, ConversorToolkit.getDateFromData(trim));
         }
         return null;
     }
@@ -678,33 +678,33 @@ public abstract class MElement implements Element, Serializable {
     /**
      * Adiciona um element como o nome e a data informada no formato ISO 8601.
      *
-     * @param nome  do MElement a ser criado
+     * @param name  do MElement a ser criado
      * @param value Se for null, um exception é disparada.
      * @return O MElement resultado.
      */
-    public final MElement addElement(String nome, java.util.Date value) {
+    public final MElement addElement(String name, java.util.Date value) {
         if (value == null) {
-            return addElement(nome, (String) null);
+            return addElement(name, (String) null);
         } else {
-            return addElement(nome, ConversorDataISO8601.format(value));
+            return addElement(name, ConversorDataISO8601.format(value));
         }
     }
 
     /**
-     * Adiciona um no como o nome informado e com o valor informado ou com o
+     * Adiciona um no como o name informado e com o valor informado ou com o
      * default na ausencia do primeiro. Se o default também for null, então o no
      * não é adicionado.
      *
-     * @param nome         do MElement a ser criado
+     * @param name         do MElement a ser criado
      * @param value        -
      * @param defaultValue a ser utilizado se valor==null
      * @return O MElement resultado.
      */
-    public final MElement addElement(String nome, java.util.Date value, java.util.Date defaultValue) {
+    public final MElement addElement(String name, java.util.Date value, java.util.Date defaultValue) {
         if (value != null) {
-            return addElement(nome, ConversorDataISO8601.format(value));
+            return addElement(name, ConversorDataISO8601.format(value));
         } else if (defaultValue != null) {
-            return addElement(nome, ConversorDataISO8601.format(defaultValue));
+            return addElement(name, ConversorDataISO8601.format(defaultValue));
         }
         return null;
     }
@@ -713,15 +713,15 @@ public abstract class MElement implements Element, Serializable {
      * Adiciona um element como o nome e o Calendar informada no formato ISO
      * 8601.
      *
-     * @param nome  do MElement a ser criado
+     * @param name  do MElement a ser criado
      * @param value Se for null, um exception é disparada.
      * @return O MElement resultado.
      */
-    public final MElement addElement(String nome, Calendar value) {
+    public final MElement addElement(String name, Calendar value) {
         if (value == null) {
-            return addElement(nome, (String) null);
+            return addElement(name, (String) null);
         } else {
-            return addElement(nome, ConversorDataISO8601.format(value));
+            return addElement(name, ConversorDataISO8601.format(value));
         }
     }
 
@@ -824,14 +824,14 @@ public abstract class MElement implements Element, Serializable {
      * Conta o número de ocorrências de Elements filhos do no com o nome
      * especificado.
      *
-     * @param nome do elemento a ser procurado. Se for null conta todos.
+     * @param name do elemento a ser procurado. Se for null conta todos.
      * @return o número de ocorrências
      */
-    public final int count(String nome) {
+    public final int count(String name) {
         int  qtd  = 0;
         Node node = getFirstChild();
         while (node != null) {
-            if (XmlUtil.isNodeTypeElement(node, nome)) {
+            if (XmlUtil.isNodeTypeElement(node, name)) {
                 qtd++;
             }
             node = node.getNextSibling();
@@ -1328,7 +1328,7 @@ public abstract class MElement implements Element, Serializable {
      */
     @Nonnull
     public final MElement[] getElements(@Nullable String xPath) {
-        return selectElements(xPath).getTodos();
+        return selectElements(xPath).getAll();
     }
 
     /**
@@ -1455,7 +1455,7 @@ public abstract class MElement implements Element, Serializable {
      * @return null se o atual já for o primeiro Element da lista.
      */
     public final MElement getIrmaoAnterior() {
-        return procurarElementAnterior(getPreviousSibling(), null);
+        return findPreviousElement(getPreviousSibling(), null);
     }
 
     /**
@@ -1465,7 +1465,7 @@ public abstract class MElement implements Element, Serializable {
      * @return null se o atual já for o primeiro Element da lista com o nome.
      */
     public final MElement getGemeoAnterior() {
-        return procurarElementAnterior(getPreviousSibling(), getNodeName());
+        return findPreviousElement(getPreviousSibling(), getNodeName());
     }
 
     /**
@@ -1500,14 +1500,14 @@ public abstract class MElement implements Element, Serializable {
     /**
      * Retorna o primeiro Element filho do atual com um nome específico.
      *
-     * @param nome do Element filho a ser encontrado.
+     * @param name do Element filho a ser encontrado.
      * @return null se não houve nenhum nó filho do tipo Element
      */
-    public final MElement getPrimeiroFilho(String nome) {
-        if (nome == null) {
+    public final MElement getPrimeiroFilho(String name) {
+        if (name == null) {
             throw new IllegalArgumentException("O nome não pode ser null");
         }
-        return procurarProximoElement(getFirstChild(), nome);
+        return procurarProximoElement(getFirstChild(), name);
     }
 
     /**
@@ -1516,20 +1516,20 @@ public abstract class MElement implements Element, Serializable {
      * @return null se não houve nenhum nó filho do tipo Element
      */
     public final MElement getUltimoFilho() {
-        return procurarElementAnterior(getLastChild(), null);
+        return findPreviousElement(getLastChild(), null);
     }
 
     /**
      * Procura pelo node do tipo Element anterior (incluindo o nó informado).
      *
      * @param no2  Ponto de partida da pesquisa
-     * @param nome Nome do Element a ser retornado. Se for null retorna o
+     * @param name Nome do Element a ser retornado. Se for null retorna o
      *             primeiro a ser encontrado.
      * @return Um Element ou null se não encontrar.
      */
-    private MElement procurarElementAnterior(Node no2, String nome) {
+    private MElement findPreviousElement(Node no2, String name) {
         for (Node current = no2; current != null; current = current.getPreviousSibling()) {
-            if (XmlUtil.isNodeTypeElement(current, nome)) {
+            if (XmlUtil.isNodeTypeElement(current, name)) {
                 return toMElement(current);
             }
         }
@@ -1540,12 +1540,12 @@ public abstract class MElement implements Element, Serializable {
      * Procura pelo proximo node do tipo Element (incluindo o nó informado).
      *
      * @param no   Ponto de partida da pesquisa
-     * @param nome Nome do Element a ser retornado. Se for null retorna o
+     * @param name Nome do Element a ser retornado. Se for null retorna o
      *             primeiro a ser encontrado.
      * @return Um Element ou null se não encontrar.
      */
-    private MElement procurarProximoElement(Node no, String nome) {
-        return toMElement(XmlUtil.nextSiblingOfTypeElement(no, nome));
+    private MElement procurarProximoElement(Node no, String name) {
+        return toMElement(XmlUtil.nextSiblingOfTypeElement(no, name));
     }
 
     /**

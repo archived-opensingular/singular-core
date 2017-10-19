@@ -75,9 +75,9 @@ public class SFormUtilTest extends TestCaseForm {
         SFormUtil.validateSimpleName("_A1");
     }
 
-    private static void assertInvalidName(String nome) {
+    private static void assertInvalidName(String name) {
         try {
-            SFormUtil.validateSimpleName(nome);
+            SFormUtil.validateSimpleName(name);
             Assert.fail("O nome deveria ser invalido");
         } catch (RuntimeException e) {
             if (!e.getMessage().contains("válido") || !(e.getMessage().charAt(0) == '\'')) {

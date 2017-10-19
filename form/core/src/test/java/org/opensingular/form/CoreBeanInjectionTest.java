@@ -108,7 +108,7 @@ public class CoreBeanInjectionTest extends TestCaseForm {
         assertNotNull(((TypeWithInjectionTest) instance.getType()).myBean);
         assertNotNull(instance.myBean);
 
-        SInstanceWithInjection instance2 = (SInstanceWithInjection) TestFormSerializationUtil.serializarEDeserializar(instance);
+        SInstanceWithInjection instance2 = (SInstanceWithInjection) TestFormSerializationUtil.serializeAndDeserialize(instance);
         assertNotNull(((TypeWithInjectionTest) instance2.getType()).myBean);
         assertNotNull(instance2.myBean);
         assertEquals(instance.myBean.getV(), instance2.myBean.getV());
@@ -116,7 +116,7 @@ public class CoreBeanInjectionTest extends TestCaseForm {
 
     private void assertSerialization(SInstanceWithInjection2 instance) {
         assertNotNull(instance.myBean);
-        SInstanceWithInjection2 instance2 = (SInstanceWithInjection2) TestFormSerializationUtil.serializarEDeserializar(instance);
+        SInstanceWithInjection2 instance2 = (SInstanceWithInjection2) TestFormSerializationUtil.serializeAndDeserialize(instance);
         assertNotNull(instance2.myBean);
         assertEquals(instance.myBean.getV(), instance2.myBean.getV());
     }

@@ -229,21 +229,21 @@ final class AlocproToolkit {
     }
 
     @SuppressWarnings({"unchecked"})
-    public static <T> T selectRandom(Collection<T> lista) {
-        if (lista.isEmpty()) {
+    public static <T> T selectRandom(Collection<T> list) {
+        if (list.isEmpty()) {
             return null;
         }
         int pos;
-        if (lista.size() == 1) {
+        if (list.size() == 1) {
             pos = 0;
         } else {
-            pos = RANDOM.nextInt(lista.size());
+            pos = RANDOM.nextInt(list.size());
         }
-        if (lista instanceof ArrayList) {
-            return (T) ((ArrayList<?>) lista).get(pos);
+        if (list instanceof ArrayList) {
+            return (T) ((ArrayList<?>) list).get(pos);
         }
         int i = 0;
-        for (T obj : lista) {
+        for (T obj : list) {
             if (i == pos) {
                 return obj;
             }

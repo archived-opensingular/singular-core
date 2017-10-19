@@ -37,16 +37,16 @@ public class RoleAccessStrategy extends TaskAccessStrategy<FlowInstance> {
 
     private final SBusinessRole executionRole;
 
-    private final SBusinessRole visualizeRole;
+    private final SBusinessRole visualizationRole;
 
-    protected RoleAccessStrategy(SBusinessRole mPapelExecucao) {
-        this(mPapelExecucao, null);
+    protected RoleAccessStrategy(SBusinessRole executionRole) {
+        this(executionRole, null);
     }
 
-    protected RoleAccessStrategy(SBusinessRole mPapelExecucao, SBusinessRole mPapelVisualizacao) {
+    protected RoleAccessStrategy(SBusinessRole executionRole, SBusinessRole visualizationRole) {
         super();
-        this.executionRole = mPapelExecucao;
-        this.visualizeRole = mPapelVisualizacao;
+        this.executionRole = executionRole;
+        this.visualizationRole = visualizationRole;
     }
 
     public SBusinessRole getPapelExecucao() {
@@ -65,9 +65,9 @@ public class RoleAccessStrategy extends TaskAccessStrategy<FlowInstance> {
 
     @Override
     public boolean canVisualize(FlowInstance instance, SUser user) {
-        if (visualizeRole != null) {
+        if (visualizationRole != null) {
             for (IEntityRoleInstance entityRole : instance.getUserRoles()) {
-                if (isSameRole(visualizeRole, entityRole) && user.is(entityRole.getUser())) {
+                if (isSameRole(visualizationRole, entityRole) && user.is(entityRole.getUser())) {
                     return true;
                 }
             }
@@ -108,10 +108,10 @@ public class RoleAccessStrategy extends TaskAccessStrategy<FlowInstance> {
 
     @Override
     public List<String> getVisualizeRoleNames(FlowDefinition<?> definition, STask<?> task) {
-        if (visualizeRole == null) {
+        if (visualizationRole == null) {
             return getExecuteRoleNames(definition, task);
         }
-        return Lists.newArrayList("Papel " + visualizeRole.getName());
+        return Lists.newArrayList("Papel " + visualizationRole.getName());
     }
 
     @Override

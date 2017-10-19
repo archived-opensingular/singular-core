@@ -39,7 +39,7 @@ public final class ConversorDataISO8601 {
     /**
      * Separador entre a data e as informações de hora
      */
-    private static final char SEPARADOR_DATA_HORA = 'T';
+    private static final char DATE_TIME_SEPARATOR = 'T';
 
     private static final byte ANO     = 1;
     private static final byte MES     = 2;
@@ -170,7 +170,7 @@ public final class ConversorDataISO8601 {
 
         public void readDateTimeSeparator() {
             char c = readCharacter();
-            if (!((c == SEPARADOR_DATA_HORA) || (c == ' '))) {
+            if (!((c == DATE_TIME_SEPARATOR) || (c == ' '))) {
                 throw errorFormat();
             }
         }
@@ -267,7 +267,7 @@ public final class ConversorDataISO8601 {
             return buffer.toString();
         }
 
-        buffer.append(SEPARADOR_DATA_HORA);
+        buffer.append(DATE_TIME_SEPARATOR);
         format2(buffer, hour);
         buffer.append(':');
         format2(buffer, minute);

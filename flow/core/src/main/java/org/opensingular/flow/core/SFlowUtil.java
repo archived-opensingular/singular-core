@@ -61,9 +61,9 @@ public class SFlowUtil {
         return s1.getName().compareTo(s2.getName());
     }
 
-    public static <T> void sortByDistanceFromBeginning(List<? extends T> lista,
+    public static <T> void sortByDistanceFromBeginning(List<? extends T> list,
             Function<T, IEntityTaskVersion> converter, FlowDefinition<?> definition) {
-        lista.sort(getDistanceFromBeginningComparator(converter, definition));
+        list.sort(getDistanceFromBeginningComparator(converter, definition));
     }
 
     private static <T> Comparator<T> getDistanceFromBeginningComparator(Function<T, IEntityTaskVersion> converter,

@@ -61,7 +61,7 @@ public abstract class MDocument implements Document {
         String resolvedNamespaceURI = StringUtils.trimToNull(namespaceURI2);
         String resolvedQualifiedName = qualifiedName;
 
-        int pos = resolvedQualifiedName.lastIndexOf(MElementWrapper.SEPARADOR_ELEMENT);
+        int pos = resolvedQualifiedName.lastIndexOf(MElementWrapper.ELEMENT_PATH_SEPARATOR);
         String resto = null;
         if (pos != -1) {
             if (pos == 0) {

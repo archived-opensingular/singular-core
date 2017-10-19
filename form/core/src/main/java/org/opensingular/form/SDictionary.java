@@ -121,9 +121,9 @@ public class SDictionary {
         return loadPackage(atr.getPackageClass());
     }
 
-    public PackageBuilder createNewPackage(String nome) {
-        packages.verifyMustNotBePresent(nome, this);
-        SPackage newPackage = new SPackage(nome);
+    public PackageBuilder createNewPackage(String name) {
+        packages.verifyMustNotBePresent(name, this);
+        SPackage newPackage = new SPackage(name);
         newPackage.setDictionary(this);
         packages.add(newPackage);
         return new PackageBuilder(newPackage);

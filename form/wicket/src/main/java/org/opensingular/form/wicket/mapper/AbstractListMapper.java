@@ -57,9 +57,9 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public abstract class AbstractListMapper implements IWicketComponentMapper {
 
-    protected static AddButton appendAddButton(final IModel<SIList<SInstance>> mLista, final Form<?> form,
+    protected static AddButton appendAddButton(final IModel<SIList<SInstance>> mList, final Form<?> form,
                                                final BSContainer<?> cell, boolean footer) {
-        AddButton btn = new AddButton("_add", form, mLista);
+        AddButton btn = new AddButton("_add", form, mList);
         cell.newTemplateTag(t -> ""
                 + "<button"
                 + " wicket:id='_add'"
@@ -335,24 +335,24 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
     }
 
     protected static final class AddButton extends ActionAjaxButton {
-        private final IModel<SIList<SInstance>> modelLista;
+        private final IModel<SIList<SInstance>> listModel;
 
-        public AddButton(String id, Form<?> form, IModel<SIList<SInstance>> mLista) {
+        public AddButton(String id, Form<?> form, IModel<SIList<SInstance>> mList) {
             super(id, form);
             this.setDefaultFormProcessing(false);
-            modelLista = mLista;
+            listModel = mList;
             add($b.attr("title", "Adicionar Linha"));
         }
 
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
-            final SIList<SInstance> lista = modelLista.getObject();
-            if (lista.getType().getMaximumSize() != null && lista.getType().getMaximumSize() == lista.size()) {
+            final SIList<SInstance> list = listModel.getObject();
+            if (list.getType().getMaximumSize() != null && list.getType().getMaximumSize() == list.size()) {
                 target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
                 target.appendJavaScript(Scripts.multipleModalBackDrop());
             }
             else {
-                lista.addNew();
+                list.addNew();
                 target.add(form);
                 target.focusComponent(this);
             }

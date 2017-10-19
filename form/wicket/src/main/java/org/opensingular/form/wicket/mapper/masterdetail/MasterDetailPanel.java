@@ -87,7 +87,7 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 public class MasterDetailPanel extends Panel {
 
     private final WicketBuildContext        ctx;
-    private final IModel<SIList<SInstance>> lista;
+    private final IModel<SIList<SInstance>> list;
     private final MasterDetailModal         modal;
     private final SViewListByMasterDetail   view;
     private final SInstanceActionsProviders instanceActionsProviders;
@@ -103,10 +103,10 @@ public class MasterDetailPanel extends Panel {
     private Label                           addButtonLabel;
     private SValidationFeedbackCompactPanel feedback;
 
-    public MasterDetailPanel(String id, WicketBuildContext ctx, IModel<SIList<SInstance>> lista, MasterDetailModal modal, SViewListByMasterDetail view, SInstanceActionsProviders instanceActionsProviders) {
+    public MasterDetailPanel(String id, WicketBuildContext ctx, IModel<SIList<SInstance>> list, MasterDetailModal modal, SViewListByMasterDetail view, SInstanceActionsProviders instanceActionsProviders) {
         super(id);
         this.ctx = ctx;
-        this.lista = lista;
+        this.list = list;
         this.modal = modal;
         this.view = view;
         this.instanceActionsProviders = instanceActionsProviders;
@@ -169,7 +169,7 @@ public class MasterDetailPanel extends Panel {
         final BSDataTableBuilder<SInstance, ?, ?> builder = new MasterDetailBSDataTableBuilder<>(newDataProvider()).withNoRecordsToolbar();
         final BSDataTable<SInstance, ?> dataTable;
 
-        configureColumns(view.getColumns(), builder, lista, modal, ctx, ctx.getViewMode(), view);
+        configureColumns(view.getColumns(), builder, list, modal, ctx, ctx.getViewMode(), view);
         dataTable = builder.build(id);
 
         dataTable.setOnNewRowItem((IConsumer<Item<SInstance>>) rowItem -> {
@@ -189,7 +189,7 @@ public class MasterDetailPanel extends Panel {
 
     private Label newHeadLabel() {
 
-        final AtrBasic attr = lista.getObject().asAtr();
+        final AtrBasic attr = list.getObject().asAtr();
         final IModel<String> labelModel = $m.ofValue(trimToEmpty(attr.getLabel()));
 
         ctx.configureContainer(labelModel);
@@ -424,18 +424,18 @@ public class MasterDetailPanel extends Panel {
     }
 
     private BaseDataProvider<SInstance, ?> newDataProvider() {
-        return new SIListDataProvider(lista);
+        return new SIListDataProvider(list);
     }
 
     static class SIListDataProvider extends BaseDataProvider<SInstance, Object> {
-        private final IModel<SIList<SInstance>> lista;
-        public SIListDataProvider(IModel<SIList<SInstance>> lista) {
-            this.lista = lista;
+        private final IModel<SIList<SInstance>> list;
+        public SIListDataProvider(IModel<SIList<SInstance>> list) {
+            this.list = list;
         }
 
         @Override
         public Iterator<SInstance> iterator(int first, int count, Object sortProperty, boolean ascending) {
-            final SIList<SInstance> siList = lista.getObject();
+            final SIList<SInstance> siList = list.getObject();
             final List<SInstance> list = new ArrayList<>();
             for (int i = 0; (i < count) && (i + first < siList.size()); i++)
                 list.add(siList.get(i + first));
@@ -444,12 +444,12 @@ public class MasterDetailPanel extends Panel {
 
         @Override
         public long size() {
-            return lista.getObject().size();
+            return list.getObject().size();
         }
 
         @Override
         public IModel<SInstance> model(SInstance object) {
-            return new SInstanceListItemModel<>(lista, lista.getObject().indexOf(object));
+            return new SInstanceListItemModel<>(list, list.getObject().indexOf(object));
         }
     }
 }

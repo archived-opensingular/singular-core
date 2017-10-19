@@ -50,8 +50,8 @@ public class GenerationModifierAggregate extends GenerationModifier {
         List<LineData> lines = original.preLoadDataAndCells(getTable());
 
         LineData aggregator = new LineData(getTable().newBlankLine());
-        if(!aggregationTypeByColumn.containsKey(getColunas().get(0))){
-            aggregator.getInfoCell(getColunas().get(0))
+        if(!aggregationTypeByColumn.containsKey(getColumns().get(0))){
+            aggregator.getInfoCell(getColumns().get(0))
                 .setValue("Resultado").getDecorator().addTitle("Agregado").setBold(true);
         }
         doAggregation(lines, aggregator);
