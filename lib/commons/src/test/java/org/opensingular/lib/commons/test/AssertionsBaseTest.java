@@ -61,32 +61,32 @@ public class AssertionsBaseTest {
 
     @Test
     public void testIsSameAs(){
-        String raiz = new String("valor");
-        AssertionsTest assertion = new AssertionsTest(raiz);
-        assertion.isSameAs(raiz);
+        String root = new String("valor");
+        AssertionsTest assertion = new AssertionsTest(root);
+        assertion.isSameAs(root);
     }
 
     @Test(expected = AssertionError.class)
     public void testIsSameAsException(){
-        String raiz = new String("valor");
-        String raiz2 = new String("valor");
-        AssertionsTest assertion = new AssertionsTest(raiz);
-        assertion.isSameAs(raiz2);
+        String root = new String("valor");
+        String root2 = new String("valor");
+        AssertionsTest assertion = new AssertionsTest(root);
+        assertion.isSameAs(root2);
     }
 
     @Test
     public void testIsNotSameAs(){
-        String raiz = new String("valor");
-        String raiz2 = new String("valor");
-        AssertionsTest assertion = new AssertionsTest(raiz);
-        assertion.isNotSameAs(raiz2);
+        String root = new String("valor");
+        String root2 = new String("valor");
+        AssertionsTest assertion = new AssertionsTest(root);
+        assertion.isNotSameAs(root2);
     }
 
     @Test(expected = AssertionError.class)
     public void testIsNotSameAsException(){
-        String raiz = new String("valor");
-        AssertionsTest assertion = new AssertionsTest(raiz);
-        assertion.isNotSameAs(raiz);
+        String root = new String("valor");
+        AssertionsTest assertion = new AssertionsTest(root);
+        assertion.isNotSameAs(root);
     }
 
 

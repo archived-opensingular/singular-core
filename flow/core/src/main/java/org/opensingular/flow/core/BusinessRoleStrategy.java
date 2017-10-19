@@ -23,10 +23,10 @@ import java.util.Optional;
 @SuppressWarnings("serial")
 public abstract class BusinessRoleStrategy<K extends FlowInstance> implements Serializable {
 
-    public abstract List<? extends SUser> listAllocableUsers(K instancia);
+    public abstract List<? extends SUser> listAllocableUsers(K instance);
 
-    public SUser getUserForRole(K instancia, TaskInstance tarefa) {
-        Optional<TaskInstance> instanceOptional = instancia.getLastFinishedTask();
+    public SUser getUserForRole(K instance, TaskInstance task) {
+        Optional<TaskInstance> instanceOptional = instance.getLastFinishedTask();
         if (instanceOptional.isPresent()) {
             return instanceOptional.get().getResponsibleUser();
         }

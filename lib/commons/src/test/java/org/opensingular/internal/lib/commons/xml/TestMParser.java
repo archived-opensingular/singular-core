@@ -37,11 +37,11 @@ public class TestMParser extends TestCase {
         externo.addElement("conteudo", original.toStringExato());
 
         System.out.println(externo.toStringExato());
-        MElement externoNovo = MParser.parse(externo.toStringExato());
+        MElement newExternal = MParser.parse(externo.toStringExato());
 
-        assertEquals(externo.toStringExato(), externoNovo.toStringExato());
+        assertEquals(externo.toStringExato(), newExternal.toStringExato());
 
-        assertEquals(externoNovo.getValor("conteudo"), original.toStringExato());
+        assertEquals(newExternal.getValue("conteudo"), original.toStringExato());
     }
 
     @Test(expected = SingularException.class)
@@ -57,12 +57,12 @@ public class TestMParser extends TestCase {
     @Test(expected = SingularException.class)
     public void testParseComResolver() {
         MDocument document = MDocument.newInstance();
-        MElement raiz = document.createRaiz("raiz");
-        raiz.addElement("filho", "filhoVal");
+        MElement root = document.createRoot("raiz");
+        root.addElement("filho", "filhoVal");
 
         MParser parser = new MParser();
         try {
-            parser.parseComResolver(raiz.toString());
+            parser.parseComResolver(root.toString());
         } catch (Exception e) {
             SingularException.rethrow(e);
         }

@@ -108,8 +108,8 @@ public class SPackageTest extends TestCaseForm {
 
         assertNull(tipoS.findAttributeInstance(SPackageBasic.ATR_EMPTY_TO_NULL));
         assertEquals(tipoS.getAttributeValue(SPackageBasic.ATR_EMPTY_TO_NULL), Boolean.TRUE);
-        assertTrue(tipoS.getValorAtributoEmptyToNull());
-        assertTrue(tipoS.getValorAtributoTrim());
+        assertTrue(tipoS.getValueAttributeEmptyToNull());
+        assertTrue(tipoS.getValueAttributeTrim());
 
         testarAtribuicao(tipoS, true, null, null);
         testarAtribuicao(tipoS, true, true, "true");
@@ -124,20 +124,20 @@ public class SPackageTest extends TestCaseForm {
     }
 
     private static void testarAtribuicao(STypeSimple<?, ?> tipo, boolean valorValido, Object valor, Object valorFinalEsperado) {
-        SISimple<?> instancia = tipo.newInstance();
+        SISimple<?> instance = tipo.newInstance();
         if (valorValido) {
-            instancia.setValue(valor);
-            Object resultado = instancia.getValue();
+            instance.setValue(valor);
+            Object resultado = instance.getValue();
             Assert.assertEquals(valorFinalEsperado, resultado);
 
-            Object resultado2 = instancia.getType().convert(valor, instancia.getType().getValueClass());
+            Object resultado2 = instance.getType().convert(valor, instance.getType().getValueClass());
             Assert.assertEquals(resultado, resultado2);
         } else {
-            assertException(() -> instancia.setValue(valor), "não consegue converter", "Deveria dar erro de conversão");
+            assertException(() -> instance.setValue(valor), "não consegue converter", "Deveria dar erro de conversão");
 
-            Assert.assertEquals(valorFinalEsperado, instancia.getValue());
+            Assert.assertEquals(valorFinalEsperado, instance.getValue());
 
-            assertException(() -> instancia.getType().convert(valor, instancia.getType().getValueClass()),
+            assertException(() -> instance.getType().convert(valor, instance.getType().getValueClass()),
                     "não consegue converter", "Deveria dar erro de conversão");
         }
     }
@@ -333,9 +333,9 @@ public class SPackageTest extends TestCaseForm {
         SIString    is         = dictionary.newInstance(STypeString.class);
         assertNotNull(is);
 
-        SIInteger instancia = dictionary.newInstance(TestTipoA.class);
-        instancia.setValue(10);
-        assertEquals((Integer) 10, instancia.getValue());
+        SIInteger instance = dictionary.newInstance(TestTipoA.class);
+        instance.setValue(10);
+        assertEquals((Integer) 10, instance.getValue());
         assertCargaPacoteA(dictionary, true);
     }
 

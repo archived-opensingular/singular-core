@@ -117,7 +117,7 @@ public class TableToolColumTypeTest {
         populatorCode.accept(p);
 
         TableOutputSimulated output = new TableOutputSimulated();
-        table.setLeitorArvore(p.asLeitorArvore());
+        table.setReaderByTree(p.asTreeLineReader());
         table.generate(output);
         return output;
     }

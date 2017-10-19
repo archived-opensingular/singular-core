@@ -1,15 +1,14 @@
 package org.opensingular.form;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
 import org.opensingular.form.type.core.SIString;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @RunWith(Parameterized.class)
 public class TestMInstanciaDescendants extends TestCaseForm {
@@ -98,7 +97,7 @@ public class TestMInstanciaDescendants extends TestCaseForm {
     public void testStream() {
         SPackageTesteContatos pacote = createTestDictionary().loadPackage(SPackageTesteContatos.class);
 
-        Set<SType<?>> tipos = new HashSet<>(Arrays.asList(
+        Set<SType<?>> types = new HashSet<>(Arrays.asList(
             pacote.contato,
             pacote.identificacao,
             pacote.nome,
@@ -121,10 +120,10 @@ public class TestMInstanciaDescendants extends TestCaseForm {
         contato.getDescendant(pacote.emails).addNew();
 
         contato.streamDescendants(true)
-            .forEachOrdered(instancia -> Assert.assertTrue(
-"Tipo não encontrado: " + instancia.getType(),
-                tipos.remove(instancia.getType())));
+            .forEachOrdered(instance -> Assert.assertTrue(
+"Tipo não encontrado: " + instance.getType(),
+                types.remove(instance.getType())));
 
-        Assert.assertTrue("Não percorreu o(s) tipo(s) " + tipos, tipos.isEmpty());
+        Assert.assertTrue("Não percorreu o(s) tipo(s) " + types, types.isEmpty());
     }
 }

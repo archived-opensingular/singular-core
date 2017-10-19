@@ -16,7 +16,11 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import java.util.List;
+import org.hibernate.annotations.GenericGenerator;
+import org.opensingular.flow.core.entity.IEntityFlowDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleTask;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -28,13 +32,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.hibernate.annotations.GenericGenerator;
-
-import org.opensingular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.flow.core.entity.IEntityRoleDefinition;
-import org.opensingular.flow.core.entity.IEntityRoleTask;
+import java.util.List;
 
 /**
  * The base persistent class for the TB_DEFINICAO_PAPEL database table.
@@ -44,11 +42,11 @@ import org.opensingular.flow.core.entity.IEntityRoleTask;
  * </p>
  * <code>@GenericGenerator(name = AbstractRoleDefinitionEntity.PK_GENERATOR_NAME, strategy = "org.hibernate.id.IdentityGenerator")</code>
  *
- * @param <PROCESS_DEF>
+ * @param <FLOW_DEFINITION>
  */
 @MappedSuperclass
 @Table(name = "TB_DEFINICAO_PAPEL")
-public abstract class AbstractRoleDefinitionEntity<PROCESS_DEF extends IEntityProcessDefinition, ROLE_TASK extends IEntityRoleTask> extends BaseEntity<Integer> implements IEntityRoleDefinition {
+public abstract class AbstractRoleDefinitionEntity<FLOW_DEFINITION extends IEntityFlowDefinition, ROLE_TASK extends IEntityRoleTask> extends BaseEntity<Integer> implements IEntityRoleDefinition {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_DEFINICAO_PAPEL";
 
@@ -59,7 +57,7 @@ public abstract class AbstractRoleDefinitionEntity<PROCESS_DEF extends IEntityPr
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_DEFINICAO_PROCESSO", nullable = false)
-    private PROCESS_DEF processDefinition;
+    private FLOW_DEFINITION flowDefinition;
 
     @Column(name = "NO_PAPEL", length = 100, nullable = false)
     private String name;
@@ -80,13 +78,12 @@ public abstract class AbstractRoleDefinitionEntity<PROCESS_DEF extends IEntityPr
     }
 
     @Override
-    public PROCESS_DEF getProcessDefinition() {
-        return processDefinition;
+    public FLOW_DEFINITION getFlowDefinition() {
+        return flowDefinition;
     }
 
-    @Override
-    public void setProcessDefinition(IEntityProcessDefinition processDefinition) {
-        this.processDefinition = (PROCESS_DEF) processDefinition;
+    public void setFlowDefinition(IEntityFlowDefinition flowDefinition) {
+        this.flowDefinition = (FLOW_DEFINITION) flowDefinition;
     }
 
     @Override

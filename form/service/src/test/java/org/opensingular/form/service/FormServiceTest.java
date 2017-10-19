@@ -41,7 +41,7 @@ public abstract class FormServiceTest {
     @Inject
     protected FormService       formService;
 
-    protected SInstance         instancia;
+    protected SInstance         instance;
     protected STypeComposite<?> tipoPessoa;
     protected STypeInteger      idade;
     protected STypeString       nome;

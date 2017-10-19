@@ -16,10 +16,10 @@
 
 package org.opensingular.form.type.basic;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.opensingular.form.SAttributeEnabled;
 import org.opensingular.form.STranslatorForAttribute;
 import org.opensingular.form.type.core.SPackageBootstrap;
-import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.function.Function;
 
@@ -28,8 +28,8 @@ public class AtrBootstrap extends STranslatorForAttribute {
     public AtrBootstrap() {
     }
 
-    public AtrBootstrap(SAttributeEnabled alvo) {
-        super(alvo);
+    public AtrBootstrap(SAttributeEnabled target) {
+        super(target);
     }
 
     public static <A extends SAttributeEnabled> Function<A, AtrBootstrap> factory() {
@@ -43,28 +43,28 @@ public class AtrBootstrap extends STranslatorForAttribute {
         return this;
     }
 
-    public AtrBootstrap colPreference(Integer valor) {
-        setAttributeValue(SPackageBootstrap.ATR_COL_PREFERENCE, valor);
+    public AtrBootstrap colPreference(Integer value) {
+        setAttributeValue(SPackageBootstrap.ATR_COL_PREFERENCE, value);
         return this;
     }
 
-    public AtrBootstrap colXs(Integer valor) {
-        setAttributeValue(SPackageBootstrap.ATR_COL_XS_PREFERENCE, valor);
+    public AtrBootstrap colXs(Integer value) {
+        setAttributeValue(SPackageBootstrap.ATR_COL_XS_PREFERENCE, value);
         return this;
     }
 
-    public AtrBootstrap colSm(Integer valor) {
-        setAttributeValue(SPackageBootstrap.ATR_COL_SM_PREFERENCE, valor);
+    public AtrBootstrap colSm(Integer value) {
+        setAttributeValue(SPackageBootstrap.ATR_COL_SM_PREFERENCE, value);
         return this;
     }
 
-    public AtrBootstrap colMd(Integer valor) {
-        setAttributeValue(SPackageBootstrap.ATR_COL_MD_PREFERENCE, valor);
+    public AtrBootstrap colMd(Integer value) {
+        setAttributeValue(SPackageBootstrap.ATR_COL_MD_PREFERENCE, value);
         return this;
     }
 
-    public AtrBootstrap colLg(Integer valor) {
-        setAttributeValue(SPackageBootstrap.ATR_COL_LG_PREFERENCE, valor);
+    public AtrBootstrap colLg(Integer value) {
+        setAttributeValue(SPackageBootstrap.ATR_COL_LG_PREFERENCE, value);
         return this;
     }
 

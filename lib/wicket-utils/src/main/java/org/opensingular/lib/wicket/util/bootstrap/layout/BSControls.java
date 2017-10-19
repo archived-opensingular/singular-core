@@ -16,12 +16,6 @@
 
 package org.opensingular.lib.wicket.util.bootstrap.layout;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
-
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
@@ -42,6 +36,12 @@ import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstan
 import org.opensingular.lib.wicket.util.feedback.BSFeedbackPanel;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BSControls> {
 
@@ -160,8 +160,8 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         return super.appendTag("p", true, "class='form-control-static'", text);
     }
 
-    public BSControls appendTextarea(Component textarea, Integer linhas) {
-        return super.appendTag("textarea", true, "class='form-control' rows='" + linhas + "'", textarea);
+    public BSControls appendTextarea(Component textarea, Integer lines) {
+        return super.appendTag("textarea", true, "class='form-control' rows='" + lines + "'", textarea);
     }
 
     public BSControls appendHeading(Component text, int level) {

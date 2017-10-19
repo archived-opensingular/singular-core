@@ -20,7 +20,7 @@ import java.util.Date;
 
 public interface IEntityExecutionVariable extends IEntityByCod<Integer> {
 
-    IEntityProcessInstance getProcessInstance();
+    IEntityFlowInstance getFlowInstance();
 
     String getName();
 

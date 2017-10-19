@@ -20,7 +20,6 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
-import org.opensingular.form.document.SDocument;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -77,27 +76,27 @@ public class SCompositeListBuilder {
     public static class SCompositeValueSetter {
 
         private final SCompositeListBuilder _lb;
-        private final SIComposite           instancia;
+        private final SIComposite instance;
 
-        SCompositeValueSetter(SIComposite instancia, SCompositeListBuilder lb) {
+        SCompositeValueSetter(SIComposite instance, SCompositeListBuilder lb) {
             this._lb = lb;
-            this.instancia = instancia;
+            this.instance = instance;
         }
 
-        public SCompositeValueSetter set(SType<?> tipo, Object value) {
+        public SCompositeValueSetter set(SType<?> type, Object value) {
             if (value != null) {
-                instancia.setValue(tipo, value);
+                instance.setValue(type, value);
             } else {
-                Optional.ofNullable(instancia.getField(tipo)).ifPresent(SInstance::clearInstance);
+                Optional.ofNullable(instance.getField(type)).ifPresent(SInstance::clearInstance);
             }
             return this;
         }
 
         public SCompositeValueSetter set(String path, Object value) {
             if (value != null) {
-                instancia.setValue(path, value);
+                instance.setValue(path, value);
             } else {
-                Optional.ofNullable(instancia.getField(path)).ifPresent(SInstance::clearInstance);
+                Optional.ofNullable(instance.getField(path)).ifPresent(SInstance::clearInstance);
             }
             return this;
         }
@@ -107,7 +106,7 @@ public class SCompositeListBuilder {
         }
 
         public SIComposite get() {
-            return instancia;
+            return instance;
         }
 
         public List<SIComposite> getList() {

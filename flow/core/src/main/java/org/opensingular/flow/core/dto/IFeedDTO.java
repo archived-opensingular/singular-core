@@ -20,19 +20,19 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public interface IFeedDTO extends Serializable {
-    String getDescricaoInstancia();
+    String getInstanceDescription();
 
-    void setDescricaoInstancia(String descricaoInstancia);
+    void setInstanceDescription(String description);
 
-    String getNomeProcesso();
+    String getFlowName();
 
-    void setNomeProcesso(String nomeProcesso);
+    void setFlowName(String name);
 
-    BigDecimal getTempoDecorrido();
+    BigDecimal getDelayTime();
 
-    void setTempoAtraso(BigDecimal tempoAtraso);
+    void setDelayTime(BigDecimal delayTime);
 
-    BigDecimal getMedia();
+    BigDecimal getMean();
 
-    void setMedia(BigDecimal media);
+    void setMean(BigDecimal mean);
 }

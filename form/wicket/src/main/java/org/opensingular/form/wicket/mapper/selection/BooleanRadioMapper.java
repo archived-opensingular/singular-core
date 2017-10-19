@@ -16,20 +16,20 @@
 
 package org.opensingular.form.wicket.mapper.selection;
 
-import org.opensingular.form.SInstance;
-import org.opensingular.form.view.SViewBooleanByRadio;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.model.IModel;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.view.SViewBooleanByRadio;
 import org.opensingular.form.wicket.WicketBuildContext;
 
 public class BooleanRadioMapper extends RadioMapper {
 
     public String getReadOnlyFormattedText(WicketBuildContext ctx, IModel<? extends SInstance> model) {
         final SInstance mi = model.getObject();
-        Boolean valor = mi.getValue(Boolean.class);
-        if (valor != null) {
+        Boolean value = mi.getValue(Boolean.class);
+        if (value != null) {
             SViewBooleanByRadio booleanRadioView = (SViewBooleanByRadio) ctx.getView();
-            if (valor) {
+            if (value) {
                 return booleanRadioView.labelTrue();
             } else {
                 return booleanRadioView.labelFalse();

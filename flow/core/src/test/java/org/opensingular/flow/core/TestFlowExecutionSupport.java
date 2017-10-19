@@ -51,7 +51,7 @@ public abstract class TestFlowExecutionSupport extends TestFlowSupport {
         Session session = sessionFactory.getCurrentSession();
         session.flush();
         session.clear();
-        return mbpmBean.getProcessInstance(pi.getFullId());
+        return mbpmBean.getFlowInstance(pi.getFullId());
     }
 
 }

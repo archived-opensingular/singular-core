@@ -29,35 +29,35 @@ public class STypeLong extends STypeSimple<SILong, Long> {
         super(SILong.class, Long.class);
     }
 
-    protected STypeLong(Class<? extends SILong> classeInstancia) {
-        super(classeInstancia, Long.class);
+    protected STypeLong(Class<? extends SILong> instanceClass) {
+        super(instanceClass, Long.class);
     }
 
     @Override
-    protected Long convertNotNativeNotString(Object valor) {
-        if (valor instanceof Number) {
-            BigInteger bigIntegerValue = new BigInteger(String.valueOf(valor));
+    protected Long convertNotNativeNotString(Object value) {
+        if (value instanceof Number) {
+            BigInteger bigIntegerValue = new BigInteger(String.valueOf(value));
             if (bigIntegerValue.compareTo(new BigInteger(String.valueOf(Long.MAX_VALUE))) > 0) {
-                throw createConversionError(valor, Long.class, " Valor muito grande.", null);
+                throw createConversionError(value, Long.class, " Valor muito grande.", null);
             }
             if (bigIntegerValue.compareTo(new BigInteger(String.valueOf(Long.MIN_VALUE))) < 0) {
-                throw createConversionError(valor, Long.class, " Valor muito pequeno.", null);
+                throw createConversionError(value, Long.class, " Valor muito pequeno.", null);
             }
             return bigIntegerValue.longValue();
         }
-        throw createConversionError(valor);
+        throw createConversionError(value);
     }
 
     @Override
-    public Long fromString(String valor) {
-        String v = StringUtils.trimToNull(valor);
+    public Long fromString(String value) {
+        String v = StringUtils.trimToNull(value);
         if (v == null) {
             return null;
         }
         try {
             return Long.valueOf(v);
         } catch (Exception e) {
-            throw createConversionError(valor, Long.class, null, e);
+            throw createConversionError(value, Long.class, null, e);
         }
     }
 }

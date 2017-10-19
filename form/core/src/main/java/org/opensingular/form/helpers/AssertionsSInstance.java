@@ -273,12 +273,12 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
     }
 
     public static void assertEqualsAtribute(SAttributeEnabled copy, SInstance atrOriginal) {
-        Optional<SInstance> atrNovoOpt = copy.getAttributeDirectly(atrOriginal.getAttributeInstanceInfo().getName());
+        Optional<SInstance> atrNewOpt = copy.getAttributeDirectly(atrOriginal.getAttributeInstanceInfo().getName());
         try {
-            if (atrNovoOpt.isPresent()) {
-                SInstance atrNovo = atrNovoOpt.get();
-                assertNotNull(atrNovo);
-                assertEquivalentInstance(atrOriginal, atrNovo, false);
+            if (atrNewOpt.isPresent()) {
+                SInstance atrNew = atrNewOpt.get();
+                assertNotNull(atrNew);
+                assertEquivalentInstance(atrOriginal, atrNew, false);
             } else {
                 fail();
             }

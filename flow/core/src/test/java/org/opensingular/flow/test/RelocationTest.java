@@ -4,17 +4,22 @@ import org.hamcrest.Matchers;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.StaleObjectStateException;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.opensingular.flow.core.DefinitionInfo;
 import org.opensingular.flow.core.ExecutionContext;
 import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.FlowDefinition;
+import org.opensingular.flow.core.FlowDefinitionCache;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.ITaskDefinition;
-import org.opensingular.flow.core.FlowDefinition;
-import org.opensingular.flow.core.ProcessDefinitionCache;
-import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.defaults.PermissiveTaskAccessStrategy;
@@ -79,7 +84,7 @@ public class RelocationTest {
 
     @After
     public void tearDown() {
-        ProcessDefinitionCache.invalidateAll();
+        FlowDefinitionCache.invalidateAll();
         session.close();
     }
 
@@ -194,7 +199,7 @@ public class RelocationTest {
         TaskInstanceEntity t = id.getCurrentTaskOrException().getEntityTaskInstance();
         TaskInstanceEntity o = new TaskInstanceEntity();
         o.setTask((TaskVersionEntity) t.getTaskVersion());
-        o.setProcessInstance(t.getProcessInstance());
+        o.setFlowInstance(t.getFlowInstance());
         o.setBeginDate(new Date());
         return o;
     }

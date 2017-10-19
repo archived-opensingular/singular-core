@@ -7,7 +7,15 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.opensingular.form.*;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SISimple;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.converter.SInstanceConverter;
 import org.opensingular.form.provider.SimpleProvider;
 import org.opensingular.form.type.core.SIString;
@@ -23,7 +31,9 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -37,10 +47,10 @@ public class MultipleSelectSInstanceAwareModelTest {
         @Before
         public void setUp() throws Exception {
             PackageBuilder myPackage = SDictionary.create().createNewPackage("org.opensingular");
-            STypeComposite<SIComposite> compostoRaiz = myPackage.createCompositeType("compostoRaiz");
-            alphabet = compostoRaiz.addFieldListOf("alphabet", STypeString.class);
+            STypeComposite<SIComposite> rootComposite = myPackage.createCompositeType("compostoRaiz");
+            alphabet = rootComposite.addFieldListOf("alphabet", STypeString.class);
             alphabet.selectionOf(Arrays.asList("ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()).toArray());
-            root = compostoRaiz.newInstance();
+            root = rootComposite.newInstance();
         }
 
         @Test(expected = SingularFormException.class)

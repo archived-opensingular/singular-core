@@ -20,8 +20,8 @@ public class FormAttachmentDAO extends BaseDAO<FormAttachmentEntity, FormAttachm
     }
 
     @Override
-    public void saveOrUpdate(FormAttachmentEntity novoObj) {
-        super.saveOrUpdate(novoObj);
+    public void saveOrUpdate(FormAttachmentEntity newEntity) {
+        super.saveOrUpdate(newEntity);
         getSession().flush();//faz com que o proximo get em formversionetity recupere a relacional
     }
 

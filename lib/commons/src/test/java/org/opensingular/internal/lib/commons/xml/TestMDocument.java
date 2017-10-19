@@ -3,7 +3,6 @@ package org.opensingular.internal.lib.commons.xml;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -27,7 +26,7 @@ public class TestMDocument {
     @Test(expected = SingularException.class)
     public void testToMDocumentByNode(){
         MDocument document = MDocument.newInstance();
-        MElement raiz = document.createRaiz("raiz");
+        MElement root = document.createRoot("raiz");
 
         MDocument documentCopyInstance = MDocument.toMDocument((Node) document);
         Assert.assertEquals(document, documentCopyInstance);
@@ -38,7 +37,7 @@ public class TestMDocument {
         Node node = null;
         Assert.assertNull(MDocument.toMDocument(node));
 
-        MDocument.toMDocument((Node) raiz); // generate document from nodeType diferent of documentNode
+        MDocument.toMDocument((Node) root); // generate document from nodeType diferent of documentNode
     }
 
     @Test
@@ -50,10 +49,10 @@ public class TestMDocument {
     }
 
     @Test
-    public void testCreateRaiz(){
+    public void testCreateRoot(){
         MDocument document = MDocument.newInstance();
 
-        String raizGeradaDocument = document.createRaiz("raiz").toString();
+        String raizGeradaDocument = document.createRoot("raiz").toString();
         String raizGeradaMElement = MElement.newInstance("raiz").toString();
 
         Assert.assertEquals(raizGeradaMElement, raizGeradaDocument);

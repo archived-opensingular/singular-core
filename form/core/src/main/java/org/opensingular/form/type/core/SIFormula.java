@@ -20,24 +20,24 @@ import org.opensingular.form.SIComposite;
 
 public class SIFormula extends SIComposite {
 
-    public void setScipt(String valor) {
-        setValue(STypeFormula.CAMPO_SCRIPT, valor);
+    public void setScript(String value) {
+        setValue(STypeFormula.FIELD_SCRIPT, value);
     }
 
-    public void setSciptJS(String valor) {
-        setScipt(valor);
-        setTipoScript(STypeFormula.TipoScript.JS);
+    public void setScriptJS(String value) {
+        setScript(value);
+        setScriptType(STypeFormula.ScriptType.JS);
     }
 
-    private void setTipoScript(STypeFormula.TipoScript t) {
-        setValue(STypeFormula.CAMPO_TIPO_SCRIPT, t);
+    private void setScriptType(STypeFormula.ScriptType t) {
+        setValue(STypeFormula.FIELD_SCRIPT_TYPE, t);
     }
 
-    public String getTipoScript() {
-        return getValueString(STypeFormula.CAMPO_TIPO_SCRIPT);
+    public String getScriptType() {
+        return getValueString(STypeFormula.FIELD_SCRIPT_TYPE);
     }
 
-    public STypeFormula.TipoScript getTipoScriptEnum() {
-        return getValueEnum(STypeFormula.CAMPO_TIPO_SCRIPT, STypeFormula.TipoScript.class);
+    public STypeFormula.ScriptType getTipoScriptEnum() {
+        return getValueEnum(STypeFormula.FIELD_SCRIPT_TYPE, STypeFormula.ScriptType.class);
     }
 }

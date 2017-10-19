@@ -40,8 +40,8 @@ public class SICode<T> extends SInstance {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setValue(Object valor) {
-        this.code = (T) valor;
+    public void setValue(Object value) {
+        this.code = (T) value;
     }
 
     @Override

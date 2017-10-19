@@ -29,21 +29,21 @@ public class STypeDecimal extends STypeSimple<SIBigDecimal, BigDecimal> {
         super(SIBigDecimal.class, BigDecimal.class);
     }
 
-    protected STypeDecimal(Class<? extends SIBigDecimal> classeInstancia) {
-        super(classeInstancia, BigDecimal.class);
+    protected STypeDecimal(Class<? extends SIBigDecimal> instanceClass) {
+        super(instanceClass, BigDecimal.class);
     }
 
     @Override
-    protected BigDecimal convertNotNativeNotString(Object valor) {
-        if (valor instanceof Number) {
-            return new BigDecimal(valor.toString());
+    protected BigDecimal convertNotNativeNotString(Object value) {
+        if (value instanceof Number) {
+            return new BigDecimal(value.toString());
         }
-        throw createConversionError(valor);
+        throw createConversionError(value);
     }
 
     @Override
-    public BigDecimal fromString(String valor) {
-        String v = StringUtils.trimToNull(valor);
+    public BigDecimal fromString(String value) {
+        String v = StringUtils.trimToNull(value);
         if (v == null) {
             return null;
         }
@@ -51,13 +51,13 @@ public class STypeDecimal extends STypeSimple<SIBigDecimal, BigDecimal> {
         try {
             return new BigDecimal(v.replaceAll("\\.", "").replaceAll(",", "."));
         } catch (Exception e) {
-            throw createConversionError(valor, BigDecimal.class, null, e);
+            throw createConversionError(value, BigDecimal.class, null, e);
         }
     }
 
     @Override
-    public BigDecimal fromStringPersistence(String valor) {
-        String v = StringUtils.trimToNull(valor);
+    public BigDecimal fromStringPersistence(String value) {
+        String v = StringUtils.trimToNull(value);
         if (v == null) {
             return null;
         }
@@ -65,7 +65,7 @@ public class STypeDecimal extends STypeSimple<SIBigDecimal, BigDecimal> {
         try {
             return new BigDecimal(v);
         } catch (Exception e) {
-            throw createConversionError(valor, BigDecimal.class, null, e);
+            throw createConversionError(value, BigDecimal.class, null, e);
         }
     }
 }

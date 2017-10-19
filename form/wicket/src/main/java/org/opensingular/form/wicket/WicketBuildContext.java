@@ -30,7 +30,7 @@ import org.opensingular.form.document.SDocument;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.ViewResolver;
 import org.opensingular.form.wicket.IWicketComponentMapper.HintKey;
-import org.opensingular.form.wicket.behavior.ConfigureByMInstanciaAttributesBehavior;
+import org.opensingular.form.wicket.behavior.ConfigureByMInstanceAttributesBehavior;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.AbstractSValidationFeedbackPanel;
@@ -120,7 +120,7 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
         this.externalContainer = externalContainer;
         this.model = model;
         WicketFormUtils.markAsCellContainer(container);
-        container.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
+        container.add(ConfigureByMInstanceAttributesBehavior.getInstance());
         container.setMetaData(METADATA_KEY, this);
     }
 
@@ -191,7 +191,7 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
         final IModel<?> defaultModel = formComponent.getDefaultModel();
         if (defaultModel != null && ISInstanceAwareModel.class.isAssignableFrom(defaultModel.getClass())) {
             WicketFormUtils.setCellContainer(formComponent, getContainer());
-            formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
+            formComponent.add(ConfigureByMInstanceAttributesBehavior.getInstance());
             if (formComponent.getLabel() == null) {
                 // formComponent.setDescription(IReadOnlyModel.of(() -> resolveSimpleLabel(formComponent)));
                 formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
@@ -253,8 +253,8 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
     protected static String resolveSimpleLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
         if (model instanceof ISInstanceAwareModel<?>) {
-            SInstance instancia = ((ISInstanceAwareModel<?>) model).getSInstance();
-            return instancia.asAtr().getLabel();
+            SInstance instance = ((ISInstanceAwareModel<?>) model).getSInstance();
+            return instance.asAtr().getLabel();
         }
         return "[" + formComponent.getId() + "]";
     }
@@ -267,11 +267,11 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
     protected static String resolveFullPathLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
         if (model instanceof ISInstanceAwareModel<?>) {
-            SInstance instancia = ((ISInstanceAwareModel<?>) model).getSInstance();
+            SInstance instance = ((ISInstanceAwareModel<?>) model).getSInstance();
             List<String> labels = new ArrayList<>();
-            while (instancia != null) {
-                labels.add(instancia.asAtr().getLabel());
-                instancia = instancia.getParent();
+            while (instance != null) {
+                labels.add(instance.asAtr().getLabel());
+                instance = instance.getParent();
             }
             labels.removeIf(it -> Strings.defaultIfEmpty(it, "").trim().isEmpty());
             Collections.reverse(labels);

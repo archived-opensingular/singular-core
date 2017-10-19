@@ -16,10 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.masterdetail;
 
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
-
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
@@ -33,6 +29,11 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 @SuppressWarnings("serial")
 public class ListMasterDetailMapper implements IWicketComponentMapper, ISInstanceActionCapable {
@@ -61,15 +62,15 @@ public class ListMasterDetailMapper implements IWicketComponentMapper, ISInstanc
 
         final SViewListByMasterDetail view          = (SViewListByMasterDetail) ctx.getView();
         final ViewMode                viewMode      = ctx.getViewMode();
-        final BSContainer<?>          externalAtual = new BSContainer<>("externalContainerAtual");
-        final BSContainer<?>          externalIrmao = new BSContainer<>("externalContainerIrmao");
+        final BSContainer<?>          currentExternal = new BSContainer<>("externalContainerAtual");
+        final BSContainer<?>          currentSibling = new BSContainer<>("externalContainerIrmao");
 
-        ctx.getExternalContainer().appendTag("div", true, null, externalAtual);
-        ctx.getExternalContainer().appendTag("div", true, null, externalIrmao);
+        ctx.getExternalContainer().appendTag("div", true, null, currentExternal);
+        ctx.getExternalContainer().appendTag("div", true, null, currentSibling);
 
-        final MasterDetailModal modal = new MasterDetailModal("mods", model, newItemLabelModel(model), ctx, viewMode, view, externalIrmao);
+        final MasterDetailModal modal = new MasterDetailModal("mods", model, newItemLabelModel(model), ctx, viewMode, view, currentSibling);
 
-        externalAtual.appendTag("div", true, null, modal);
+        currentExternal.appendTag("div", true, null, modal);
 
         ctx.getContainer().appendTag("div", true, null, new MasterDetailPanel("panel", ctx, model, modal, view, instanceActionsProviders));
 

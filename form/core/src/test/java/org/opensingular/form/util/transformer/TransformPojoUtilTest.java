@@ -1,13 +1,5 @@
 package org.opensingular.form.util.transformer;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +11,14 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.type.core.STypeString;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 @SuppressWarnings("unchecked")
 public class TransformPojoUtilTest {
@@ -53,41 +53,41 @@ public class TransformPojoUtilTest {
 	
 	@Test
 	public void testAppendedObjectVal(){
-		PojoTransformTestSuperClass paiObject = new PojoTransformTestSuperClass();
-		PojoTransformTestSubClass filhoObject = new PojoTransformTestSubClass();
+		PojoTransformTestSuperClass parentObject = new PojoTransformTestSuperClass();
+		PojoTransformTestSubClass childObject = new PojoTransformTestSubClass();
 		
-		filhoObject.setNome("filho");
-		filhoObject.setCpf("123456789");
+		childObject.setNome("filho");
+		childObject.setCpf("123456789");
 		
-		paiObject.setSubClass(filhoObject);
+		parentObject.setSubClass(childObject);
 		
-		Map<String, Object> map = getMapObject(paiObject);
+		Map<String, Object> map = getMapObject(parentObject);
 		
 		Map<String, Object> dadosRecuperados = (Map<String, Object>) map.get("subClass");
 		
-		Assert.assertEquals(filhoObject.getNome(), dadosRecuperados.get("nome"));
-		Assert.assertEquals(filhoObject.getCpf(), dadosRecuperados.get("cpf"));
+		Assert.assertEquals(childObject.getNome(), dadosRecuperados.get("nome"));
+		Assert.assertEquals(childObject.getCpf(), dadosRecuperados.get("cpf"));
 	}
 	
 	@Test
 	public void testTwoSidedReference(){
-		PojoTransformTestSuperClass paiObject = new PojoTransformTestSuperClass();
-		PojoTransformTestSubClass filhoObject = new PojoTransformTestSubClass();
+		PojoTransformTestSuperClass parentObject = new PojoTransformTestSuperClass();
+		PojoTransformTestSubClass childObject = new PojoTransformTestSubClass();
 		
-		filhoObject.setNome("filho");
-		filhoObject.setCpf("123456789");
-		filhoObject.setPai(paiObject);
+		childObject.setNome("filho");
+		childObject.setCpf("123456789");
+		childObject.setPai(parentObject);
 		
-		paiObject.setSubClass(filhoObject);
-		paiObject.setIdadeBig(40);
+		parentObject.setSubClass(childObject);
+		parentObject.setIdadeBig(40);
 		
-		Map<Integer, Map<String, Object>> mappedAll = TransformPojoUtil.pojoToMap(paiObject);
+		Map<Integer, Map<String, Object>> mappedAll = TransformPojoUtil.pojoToMap(parentObject);
 		
-		Map<String, Object> dadosRecuperados = (Map<String, Object>) mappedAll.get(System.identityHashCode(filhoObject));
+		Map<String, Object> dadosRecuperados = (Map<String, Object>) mappedAll.get(System.identityHashCode(childObject));
 		
-		Assert.assertEquals("codRef="+System.identityHashCode(paiObject), dadosRecuperados.get("pai"));
-		Assert.assertEquals((Integer) 40, mappedAll.get(System.identityHashCode(paiObject)).get("idadeBig"));
-		Assert.assertEquals("filho", ((Map<String, Object>)mappedAll.get(System.identityHashCode(paiObject)).get("subClass")).get("nome") );
+		Assert.assertEquals("codRef="+System.identityHashCode(parentObject), dadosRecuperados.get("pai"));
+		Assert.assertEquals((Integer) 40, mappedAll.get(System.identityHashCode(parentObject)).get("idadeBig"));
+		Assert.assertEquals("filho", ((Map<String, Object>)mappedAll.get(System.identityHashCode(parentObject)).get("subClass")).get("nome") );
 	}
 	
 	@Test
@@ -152,24 +152,24 @@ public class TransformPojoUtilTest {
 	
 	@Test
 	public void testCollectionsObjects(){
-		PojoTransformTestSuperClass paiObject = new PojoTransformTestSuperClass();
-		PojoTransformTestSubClass filhoObject = new PojoTransformTestSubClass();
+		PojoTransformTestSuperClass parentObject = new PojoTransformTestSuperClass();
+		PojoTransformTestSubClass childObject = new PojoTransformTestSubClass();
 		
-		filhoObject.setNome("filho");
-		filhoObject.setCpf("123456789");
-		filhoObject.setPai(paiObject);
+		childObject.setNome("filho");
+		childObject.setCpf("123456789");
+		childObject.setPai(parentObject);
 		
-		PojoTransformTestSubClass filho2Object = new PojoTransformTestSubClass();
-		filho2Object.setNome("filho2");
+		PojoTransformTestSubClass childObject2 = new PojoTransformTestSubClass();
+		childObject2.setNome("filho2");
 		
-		List<PojoTransformTestSubClass> filhos = new ArrayList<>();
-		filhos.add(filhoObject);
-		filhos.add(filho2Object);
-		filhos.add(new PojoTransformTestSubClass());
+		List<PojoTransformTestSubClass> children = new ArrayList<>();
+		children.add(childObject);
+		children.add(childObject2);
+		children.add(new PojoTransformTestSubClass());
 		
-		paiObject.setComplexCollection(filhos);
+		parentObject.setComplexCollection(children);
 		
-		Map<String, Object> map = getMapObject(paiObject);
+		Map<String, Object> map = getMapObject(parentObject);
 		
 		List<Map<String, Object>> object = (List<Map<String, Object>>) map.get("complexCollection");
 		
@@ -185,13 +185,13 @@ public class TransformPojoUtilTest {
 		return mappedAll.get(System.identityHashCode(object));
 	}
 	
-	private SDictionary _dicionario;
+	private SDictionary dictionary;
 	private PackageBuilder pb;
 	
 	@Before
 	public void setUp(){
-		_dicionario = SDictionary.create();
-		pb = _dicionario.createNewPackage("teste");
+		dictionary = SDictionary.create();
+		pb = dictionary.createNewPackage("teste");
 	}
 	
 	@Test

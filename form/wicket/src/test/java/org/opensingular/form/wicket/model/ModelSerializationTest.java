@@ -27,9 +27,9 @@ public class ModelSerializationTest {
 
     private static SIComposite newInstance() {
         RefType ref = RefType.of(() -> {
-            SDictionary dicionario = SDictionary.create();
-            dicionario.loadPackage(SPackageCurriculo.class);
-            return dicionario.getType(SPackageCurriculo.TIPO_CURRICULO);
+            SDictionary dictionary = SDictionary.create();
+            dictionary.loadPackage(SPackageCurriculo.class);
+            return dictionary.getType(SPackageCurriculo.TIPO_CURRICULO);
         });
         return (SIComposite) SDocumentFactory.empty().createInstance(ref);
     }

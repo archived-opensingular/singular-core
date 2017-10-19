@@ -144,9 +144,9 @@ public final class PathReader {
     }
 
     /** Monta uma mensagem de erro referente ao path atual e a instância informada. */
-    public String getErrorMsg(SInstance instanciaContexto, String msg) {
-        return getErrorMsg("Na instancia '" + instanciaContexto.getPathFull() + "' do tipo '" +
-                instanciaContexto.getType().getName() + "'", msg);
+    public String getErrorMsg(SInstance contextInstance, String msg) {
+        return getErrorMsg("Na instancia '" + contextInstance.getPathFull() + "' do tipo '" +
+                contextInstance.getType().getName() + "'", msg);
     }
 
     /** Monta uma mensagem de erro referente ao path atual e ao escopo informado. */

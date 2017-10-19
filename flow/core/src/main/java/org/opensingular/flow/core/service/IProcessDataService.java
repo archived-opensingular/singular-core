@@ -16,8 +16,8 @@
 
 package org.opensingular.flow.core.service;
 
-import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.FlowInstance;
+import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.SUser;
 import org.opensingular.flow.core.entity.IEntityTaskDefinition;
@@ -59,7 +59,7 @@ public interface IProcessDataService<I extends FlowInstance> {
 
     List<I> retrieveAllInstancesIn(STask<?> task);
 
-    List<I> retrieveAllInstancesIn(Date beginDate, Date endDate, boolean showEnded, ITaskDefinition... tasksNames);
+    List<I> retrieveAllInstancesIn(Date startDate, Date endDate, boolean showEnded, ITaskDefinition... tasksNames);
 
-    List<I> retrieveAllInstancesIn(Date beginDate, Date endDate, boolean showEnded, IEntityTaskDefinition... entityTasks);
+    List<I> retrieveAllInstancesIn(Date startDate, Date endDate, boolean showEnded, IEntityTaskDefinition... entityTasks);
 }

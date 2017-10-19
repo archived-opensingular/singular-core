@@ -35,60 +35,60 @@ final class AlocproToolkit {
     private AlocproToolkit() {
     }
 
-    public static String toHora(int minutos) {
-        return toHora(minutos, false);
+    public static String toHour(int minutes) {
+        return toHour(minutes, false);
     }
 
-    public static String toHora(Integer min) {
-        return toHora(min, "");
+    public static String toHour(Integer min) {
+        return toHour(min, "");
     }
 
-    public static String toHora(Integer min, String valorDefault) {
+    public static String toHour(Integer min, String defaultValue) {
         if (min == null) {
-            return valorDefault;
+            return defaultValue;
         }
-        return toHora(min, false);
+        return toHour(min, false);
     }
 
-    public static String toHora(Number min, String valorDefault) {
-        return toHora(min, valorDefault, false);
+    public static String toHour(Number min, String defaultValue) {
+        return toHour(min, defaultValue, false);
     }
 
     /**
-     * Vide toHora(int, boolean).
+     * Vide toHour(int, boolean).
      *
-     * @param valorDefault se os minutos forem 'null', retorna esse valor.
-     * @return vide toHora(int, boolean).
+     * @param defaultValue se os minutos forem 'null', retorna esse valor.
+     * @return vide toHour(int, boolean).
      */
-    public static String toHora(Number min, String valorDefault, boolean horasComDuasCasas) {
+    public static String toHour(Number min, String defaultValue, boolean hoursWithTwoDigits) {
         if (min == null) {
-            return valorDefault;
+            return defaultValue;
         }
-        return toHora(arredondar(min, 0).intValue(), horasComDuasCasas);
+        return toHour(round(min, 0).intValue(), hoursWithTwoDigits);
     }
 
-    public static String toHora(Double minutos) {
-        return toHora(arredondar(minutos, 0).intValue(), false);
+    public static String toHour(Double minutes) {
+        return toHour(round(minutes, 0).intValue(), false);
     }
 
     /**
      * Serve para transformar em formato 'hhmm' (24h) um hor�rio que esteja em minutos. Exemplo: 480 vira 0800.
      *
-     * @param horasComDuasCasas se false, 480 vira 800; se true, vira 0800. Default false.
+     * @param hoursWithTwoDigits se false, 480 vira 800; se true, vira 0800. Default false.
      * @return String de 3 ou 4 posi��es representando os minutos em horas e minutos.
      */
-    public static String toHora(int minutos, boolean horasComDuasCasas) {
-        int h = minutos / 60;
-        int m = minutos % 60;
+    public static String toHour(int minutes, boolean hoursWithTwoDigits) {
+        int h = minutes / 60;
+        int m = minutes % 60;
 
         StringBuilder buffer = new StringBuilder(10);
-        if (minutos < 0) {
+        if (minutes < 0) {
             buffer.append('-');
-            h = (-minutos) / 60;
-            m = (-minutos) % 60;
+            h = (-minutes) / 60;
+            m = (-minutes) % 60;
         }
 
-        if (horasComDuasCasas && h < 10) {
+        if (hoursWithTwoDigits && h < 10) {
             buffer.append('0');
         }
         buffer.append(h).append(':');
@@ -99,34 +99,34 @@ final class AlocproToolkit {
         return buffer.toString();
     }
 
-    public static Number arredondar(Number value, int decimals) {
+    public static Number round(Number value, int decimals) {
         if (value == null) {
             return null;
         } else if (value instanceof Integer || value instanceof Long || value instanceof BigInteger) {
             return value;
         } else if (value instanceof BigDecimal) {
-            return arredondar((BigDecimal) value, decimals);
+            return round((BigDecimal) value, decimals);
         }
-        return arredondar(value.doubleValue(), decimals);
+        return round(value.doubleValue(), decimals);
     }
 
-    private static BigDecimal arredondar(BigDecimal value, int decimals) {
+    private static BigDecimal round(BigDecimal value, int decimals) {
         return value.round(new MathContext(decimals));
     }
 
-    public static Double arredondar(Double value, int decimais) {
+    public static Double round(Double value, int decimals) {
         if (value == null) {
             return 0.0;
         }
-        return (double) arredondar(value.doubleValue(), decimais);
+        return (double) round(value.doubleValue(), decimals);
     }
 
-    public static long arredondar(double value, int decimais) {
-        long p = (long) Math.pow(10, decimais);
+    public static long round(double value, int decimals) {
+        long p = (long) Math.pow(10, decimals);
         return Math.round(value * p) / p;
     }
 
-    public static Double arredondarTruncado(Double value, int decimais) {
+    public static Double truncate(Double value, int decimals) {
         if (value == null) {
             return 0.0;
         }
@@ -134,7 +134,7 @@ final class AlocproToolkit {
         // com double
         try {
             BigDecimal v = BigDecimal.valueOf(value);
-            v = v.scaleByPowerOfTen(decimais).divideToIntegralValue(BigDecimal.ONE).scaleByPowerOfTen(-decimais);
+            v = v.scaleByPowerOfTen(decimals).divideToIntegralValue(BigDecimal.ONE).scaleByPowerOfTen(-decimals);
             return v.doubleValue();
         } catch (Exception e) {
             throw new AlocproToolkitException("Valor: " + value, e);

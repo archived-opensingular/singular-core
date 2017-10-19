@@ -282,8 +282,8 @@ public class Column implements Serializable {
         return showZero;
     }
 
-    public void setDataLevel(int valor) {
-        dataLevel = valor;
+    public void setDataLevel(int value) {
+        dataLevel = value;
     }
 
     public final int getDataLevel() {
@@ -298,9 +298,9 @@ public class Column implements Serializable {
         this.index = index;
     }
 
-    public int compare(InfoCelula infoCelula1, InfoCelula infoCelula2) {
-        Object v1 = normalizeToNull(infoCelula1);
-        Object v2 = normalizeToNull(infoCelula2);
+    public int compare(InfoCell infoCell1, InfoCell infoCell2) {
+        Object v1 = normalizeToNull(infoCell1);
+        Object v2 = normalizeToNull(infoCell2);
         if (v1 == v2) {
             return 0;
         } else if (v1 == null) {
@@ -311,7 +311,7 @@ public class Column implements Serializable {
         return getProcessor().compare(v1, v2);
     }
 
-    private Object normalizeToNull(InfoCelula c) {
-        return c == null ? null : c.getValorReal() != null ? c.getValorReal() : c.getValue();
+    private Object normalizeToNull(InfoCell c) {
+        return c == null ? null : c.getValueReal() != null ? c.getValueReal() : c.getValue();
     }
 }

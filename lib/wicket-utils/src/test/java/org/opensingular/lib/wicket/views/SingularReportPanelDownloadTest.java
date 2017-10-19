@@ -18,7 +18,6 @@ import org.opensingular.lib.commons.views.ViewOutputFormat;
 import org.opensingular.lib.commons.views.ViewOutputFormatExportable;
 
 import javax.annotation.Nonnull;
-import java.io.File;
 import java.io.IOException;
 
 public class SingularReportPanelDownloadTest extends WicketTestCase {
@@ -79,8 +78,8 @@ public class SingularReportPanelDownloadTest extends WicketTestCase {
                 tt.addColumn(ColumnType.INTEGER, "idade");
                 TablePopulator populator = tt.createSimpleTablePopulator();
                 populator.insertLine();
-                populator.setValor(0, "John");
-                populator.setValor(1, 25);
+                populator.setValue(0, "John");
+                populator.setValue(1, 25);
                 return tt;
             }
 

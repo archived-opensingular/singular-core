@@ -26,7 +26,7 @@ public interface VarType<TYPE> extends Serializable {
 
     public String toDisplayString(VarInstance varInstance);
 
-    public String toDisplayString(Object valor, VarDefinition varDefinition);
+    public String toDisplayString(Object value, VarDefinition varDefinition);
 
     public String toPersistenceString(VarInstance varInstance);
 

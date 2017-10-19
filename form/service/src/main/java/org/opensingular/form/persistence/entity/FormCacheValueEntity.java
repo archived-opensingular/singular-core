@@ -120,11 +120,11 @@ public class FormCacheValueEntity extends BaseEntity<Long> {
     }
 
     private boolean setStringValue(SInstance instance) {
-        String valor = instance.getValue().toString();
-        if (valor.length() >= 2048) {
-            valor = instance.getValue().toString().substring(0, 2047);
+        String value = instance.getValue().toString();
+        if (value.length() >= 2048) {
+            value = instance.getValue().toString().substring(0, 2047);
         }
-        stringValue = valor;
+        stringValue = value;
         return true;
     }
 
@@ -146,14 +146,14 @@ public class FormCacheValueEntity extends BaseEntity<Long> {
         STypeSimple typeSimple = (STypeSimple) type;
 
         if (type instanceof STypeInteger) {
-            Integer valor = (Integer) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
-            numberValue = new BigDecimal(valor);
+            Integer value = (Integer) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
+            numberValue = new BigDecimal(value);
             return true;
         }
 
         if (type instanceof STypeLong) {
-            Long valor = (Long) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
-            numberValue = new BigDecimal(valor);
+            Long value = (Long) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
+            numberValue = new BigDecimal(value);
             return true;
         }
 

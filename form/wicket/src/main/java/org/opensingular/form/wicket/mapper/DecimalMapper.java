@@ -95,8 +95,8 @@ public class DecimalMapper extends StringMapper {
 
         if ((mi != null) && (mi.getValue() != null)) {
 
-            final BigDecimal valor = (BigDecimal) mi.getValue();
-            return formatDecimal(valor, true);
+            final BigDecimal value = (BigDecimal) mi.getValue();
+            return formatDecimal(value, true);
         }
 
         return StringUtils.EMPTY;

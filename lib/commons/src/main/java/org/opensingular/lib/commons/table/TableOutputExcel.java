@@ -71,8 +71,8 @@ public class TableOutputExcel extends TableOutput implements Loggable {
     }
 
     @Override
-    public void generateLineSimpleStart(@Nonnull OutputTableContext ctx, @Nonnull InfoLinha line, int lineAlternation) {
-        if (line.isExibirLinha()) {
+    public void generateLineSimpleStart(@Nonnull OutputTableContext ctx, @Nonnull LineInfo line, int lineAlternation) {
+        if (line.isShowLine()) {
             newRow();
         }
     }
@@ -82,7 +82,7 @@ public class TableOutputExcel extends TableOutput implements Loggable {
     }
 
     @Override
-    public void generateLineTreeStart(@Nonnull OutputTableContext ctx, @Nonnull InfoLinha line, int nivel) {
+    public void generateLineTreeStart(@Nonnull OutputTableContext ctx, @Nonnull LineInfo line, int level) {
     }
 
     @Override
@@ -92,7 +92,7 @@ public class TableOutputExcel extends TableOutput implements Loggable {
     @Override
     public void generateCell(@Nonnull OutputCellContext ctx) {
         XSSFCell cell = incrementColumnAndCreateNewCell();
-        configurarAlinhamento(cell.getCellStyle(), ctx.getColumn().getAlignment());
+        configAlignment(cell.getCellStyle(), ctx.getColumn().getAlignment());
         if (ctx.getValue() == null) {
             return;
         }
@@ -112,8 +112,8 @@ public class TableOutputExcel extends TableOutput implements Loggable {
         viewOutputExcel.getOutput().autoSizeColumn(cell.getColumnIndex());
     }
 
-    private void configurarAlinhamento(XSSFCellStyle cellStyle, Column.Alignment alinhamento) {
-        switch (alinhamento) {
+    private void configAlignment(XSSFCellStyle cellStyle, Column.Alignment alignment) {
+        switch (alignment) {
             case CENTER:
                 cellStyle.setAlignment(HorizontalAlignment.CENTER);
                 break;
@@ -197,8 +197,8 @@ public class TableOutputExcel extends TableOutput implements Loggable {
     }
 
     @Override
-    public void generateTotalLineStart(@Nonnull OutputTableContext ctx, @Nonnull InfoLinha totalLine, @Nonnull Decorator tempDecorator, int level) {
-        if (totalLine.isExibirLinha()) {
+    public void generateTotalLineStart(@Nonnull OutputTableContext ctx, @Nonnull LineInfo totalLine, @Nonnull Decorator tempDecorator, int level) {
+        if (totalLine.isShowLine()) {
             newRow();
         }
     }

@@ -91,9 +91,9 @@ public class TestProcessWithFlowDecisionAsFirstStep extends TestFlowExecutionSup
             return f.build();
         }
 
-        Object decideNextTask(ExecutionContext execucaoTask) {
+        Object decideNextTask(ExecutionContext executionContext) {
             if (action != null) {
-                execucaoTask.setTransition(action.getKey());
+                executionContext.setTransition(action.getKey());
             }
             return null;
         }

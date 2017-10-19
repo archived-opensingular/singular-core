@@ -3,7 +3,6 @@ package org.opensingular.internal.lib.commons.xml;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.lib.commons.base.SingularException;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -182,10 +181,10 @@ public class TestConversorToolkit {
     }
 
     @Test
-    public void testQuebrarLinhasHtml(){
+    public void testBreakHtmlLines(){
         final String msgToHtml = "Bom dia,\n estou aqui testando a quebra de linha.\n Muito obrigado pelo apoio.\n Até.";
 
-        String stringConvertida = ConversorToolkit.quebrarLinhasHTML(msgToHtml);
+        String stringConvertida = ConversorToolkit.breakHtmlLines(msgToHtml);
 
         Assert.assertFalse(stringConvertida.contains("\n"));
     }

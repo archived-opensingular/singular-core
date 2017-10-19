@@ -16,6 +16,17 @@
 
 package org.opensingular.flow.persistence.entity.util;
 
+import org.hibernate.Criteria;
+import org.hibernate.ObjectNotFoundException;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.internal.SessionImpl;
+import org.hibernate.jdbc.Work;
+import org.opensingular.flow.core.SingularFlowException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -27,18 +38,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
-
-import org.hibernate.Criteria;
-import org.hibernate.ObjectNotFoundException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.internal.SessionImpl;
-import org.hibernate.jdbc.Work;
-import org.opensingular.flow.core.SingularFlowException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unchecked")
 public class SessionWrapper {
@@ -84,29 +83,29 @@ public class SessionWrapper {
     public void validar(Object obj) {
     }
 
-    public Serializable save(Object novoObj) {
-        validar(novoObj);
-        Serializable pk = getSession().save(novoObj);
+    public Serializable save(Object newEntity) {
+        validar(newEntity);
+        Serializable pk = getSession().save(newEntity);
         flush();
         return pk;
     }
 
-    public void saveOrUpdate(Object obj) {
-        validar(obj);
-        getSession().saveOrUpdate(obj);
+    public void saveOrUpdate(Object entity) {
+        validar(entity);
+        getSession().saveOrUpdate(entity);
         flush();
     }
 
-    public void saveOrUpdate(Stream<? extends Serializable> objs) {
-        objs.forEach(o -> {
+    public void saveOrUpdate(Stream<? extends Serializable> entities) {
+        entities.forEach(o -> {
             validar(o);
             getSession().saveOrUpdate(o);
         });
         flush();
     }
 
-    public void saveOrUpdate(Serializable... objs) {
-        for (Object t : objs) {
+    public void saveOrUpdate(Serializable... entities) {
+        for (Object t : entities) {
             validar(t);
             getSession().saveOrUpdate(t);
         }
@@ -128,11 +127,11 @@ public class SessionWrapper {
      *            Identificadores das entidades a serem removidas da base de
      *            dados
      */
-    public void deleteByPk(Class<? extends Serializable> tipo, Serializable... ids) {
+    public void deleteByPk(Class<? extends Serializable> entityClass, Serializable... ids) {
         if (ids != null && ids.length > 0) {
             for (Serializable id : ids) {
                 if (id != null) {
-                    Optional<? extends Serializable> obj = retrieve(tipo, id);
+                    Optional<? extends Serializable> obj = retrieve(entityClass, id);
                     obj.ifPresent(getSession()::delete);
                 }
             }
@@ -140,8 +139,8 @@ public class SessionWrapper {
         flush();
     }
 
-    public void deleteByPk(Class<? extends Serializable> tipo, Serializable id) {
-        Optional<? extends Serializable> obj = retrieve(tipo, id);
+    public void deleteByPk(Class<? extends Serializable> entityClass, Serializable id) {
+        Optional<? extends Serializable> obj = retrieve(entityClass, id);
         if (obj.isPresent()) {
             delete(obj.get());
         }
@@ -205,10 +204,10 @@ public class SessionWrapper {
      * @return Objeto referente ao identificador informado
      */
     @Nonnull
-    public <T> Optional<T> retrieve(@Nonnull Class<T> classe, @Nonnull Serializable id) {
+    public <T> Optional<T> retrieve(@Nonnull Class<T> entityClass, @Nonnull Serializable id) {
         try {
-            Object o = getSession().get(Objects.requireNonNull(classe), Objects.requireNonNull(id));
-            return Optional.of(classe.cast(o));
+            Object o = getSession().get(Objects.requireNonNull(entityClass), Objects.requireNonNull(id));
+            return Optional.of(entityClass.cast(o));
         } catch (ObjectNotFoundException e) {
             LOGGER.error("", e);
             return Optional.empty();
@@ -216,18 +215,18 @@ public class SessionWrapper {
     }
 
     @Nonnull
-    public <T> T retrieveOrException(@Nonnull Class<T> classe, @Nonnull Serializable id) {
-        return retrieve(classe, id).orElseThrow(
-                () -> new SingularFlowException("Não foi encontrado " + classe.getName() + " de pk=" + id));
+    public <T> T retrieveOrException(@Nonnull Class<T> entityClass, @Nonnull Serializable id) {
+        return retrieve(entityClass, id).orElseThrow(
+                () -> new SingularFlowException("Não foi encontrado " + entityClass.getName() + " de pk=" + id));
     }
 
-    public <T> List<T> retrieve(Class<T> classe, Collection<? extends Serializable> ids) {
+    public <T> List<T> retrieve(Class<T> entityClass, Collection<? extends Serializable> ids) {
         if (ids.isEmpty()) {
             return Collections.emptyList();
         }
         List<T> lista = new ArrayList<>(ids.size());
         for (Serializable id : ids) {
-            T t = retrieveOrException(classe, id);
+            T t = retrieveOrException(entityClass, id);
             lista.add(t);
         }
         return lista;
@@ -239,8 +238,8 @@ public class SessionWrapper {
      *
      * @return Null senão encontrada
      */
-    public <T> T retrieveFirstFromCachedRetriveAll(Class<T> classe, Predicate<T> filtro) {
-        return retrieveAll(classe, true).stream().filter(filtro).findFirst().orElse(null);
+    public <T> T retrieveFirstFromCachedRetrieveAll(Class<T> entityClass, Predicate<T> filter) {
+        return retrieveAll(entityClass, true).stream().filter(filter).findFirst().orElse(null);
     }
 
     /**
@@ -249,8 +248,8 @@ public class SessionWrapper {
      *
      * @return NUll senão encontrada.
      */
-    public <T> T retrieveByUniqueProperty(Class<T> classe, String prop, Object value) {
-        return classe.cast(createCriteria(classe, false).add(Restrictions.eq(prop, value)).uniqueResult());
+    public <T> T retrieveByUniqueProperty(Class<T> entityClass, String prop, Object value) {
+        return entityClass.cast(createCriteria(entityClass, false).add(Restrictions.eq(prop, value)).uniqueResult());
     }
 
     /**
@@ -258,8 +257,8 @@ public class SessionWrapper {
      *
      * @return Nunca null
      */
-    public <T> List<T> retrieveAll(Class<T> classe) {
-        return createCriteria(classe).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+    public <T> List<T> retrieveAll(Class<T> entityClass) {
+        return createCriteria(entityClass).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
     /**
@@ -267,44 +266,44 @@ public class SessionWrapper {
      *
      * @return Nunca null
      */
-    public <T> List<T> retrieveAll(Class<T> classe, boolean cacheResult) {
-        return createCriteria(classe, cacheResult).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).setCacheable(cacheResult).list();
+    public <T> List<T> retrieveAll(Class<T> typeCriteria, boolean cacheResult) {
+        return createCriteria(typeCriteria, cacheResult).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).setCacheable(cacheResult).list();
     }
 
-    public Criteria createCriteria(Class<?> tipoCriteria) {
-        return getSession().createCriteria(tipoCriteria);
+    public Criteria createCriteria(Class<?> typeCriteria) {
+        return getSession().createCriteria(typeCriteria);
     }
 
-    public Criteria createCriteria(Class<?> tipoCriteria, String alias) {
-        return getSession().createCriteria(tipoCriteria, alias);
+    public Criteria createCriteria(Class<?> typeCriteria, String alias) {
+        return getSession().createCriteria(typeCriteria, alias);
     }
 
-    public Criteria createCriteria(Class<?> tipoCriteria, boolean fazerCache) {
-        return getSession().createCriteria(tipoCriteria).setCacheable(fazerCache);
+    public Criteria createCriteria(Class<?> typeCriteria, boolean cacheResult) {
+        return getSession().createCriteria(typeCriteria).setCacheable(cacheResult);
     }
 
     /**
      * Metodo Responsavel por fazer o merge com um objeto na base de dados, a
      * escolha
      */
-    public <T> T merge(T novoObj) {
-        return (T) getSession().merge(novoObj);
+    public <T> T merge(T newEntity) {
+        return (T) getSession().merge(newEntity);
     }
 
     /**
      * Metodo responsavel por sincronizar um objeto da sessao com o atual no
      * banco.
      */
-    public void refresh(Object obj) {
-        getSession().refresh(obj);
+    public void refresh(Object entity) {
+        getSession().refresh(entity);
     }
 
-    public <T> T refreshByPk(Class<T> classe, Serializable id) {
-        Object o = getSession().get(classe, id);
+    public <T> T refreshByPk(Class<T> entityClass, Serializable id) {
+        Object o = getSession().get(entityClass, id);
         if (o != null) {
             getSession().refresh(o);
         }
-        return classe.cast(o);
+        return entityClass.cast(o);
     }
 
     /**
@@ -317,14 +316,14 @@ public class SessionWrapper {
         getSession().evict(obj);
     }
 
-    public void evict(List<Object> lista) {
-        for (Object t : lista) {
+    public void evict(List<Object> entityList) {
+        for (Object t : entityList) {
             evict(t);
         }
     }
 
-    public void evictByPk(Class<?> classe, Serializable id) {
-        Object o = getSession().get(classe, id);
+    public void evictByPk(Class<?> entityClass, Serializable id) {
+        Object o = getSession().get(entityClass, id);
         if (o != null) {
             getSession().evict(o);
         }

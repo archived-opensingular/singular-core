@@ -41,9 +41,9 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
 
     private final List<Column> columns = new ArrayList<>();
 
-    private LeitorArvore leitor;
+    private TreeLineReader reader;
 
-    private boolean tabelaPorNivel;
+    private boolean tableByLevel;
 
     private boolean simpleTable;
 
@@ -57,13 +57,13 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
 
     private boolean showTitles = true;
 
-    private int nivelInicial;
+    private int initialLevel;
 
-    private int colunaIndentada;
+    private int indentedColumn;
 
     private boolean strippedLines = true;
 
-    private List<ModificadorGerador> modificadores = new ArrayList<>();
+    private List<GenerationModifier> modifiers = new ArrayList<>();
 
     /**
      * configura��o a respeito de gerar ou n�o uma linha com o total das colunas
@@ -74,9 +74,9 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
     /**
      * Indica qual nivel deve ser utilizado para totalizar
      */
-    private Integer nivelTotalizar = 0;
+    private Integer totalLevel = 0;
 
-    private transient InfoLinha totalLine;
+    private transient LineInfo totalLine;
 
     private String id;
 
@@ -136,67 +136,67 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         }
     }
 
-    public TableTool addAgrupamentoPor(String tituloColuna) {
-        addOrdenamentoPor(tituloColuna);
-        Column c = getColumn(tituloColuna);
-        addModificador(new ModificadorGeradorAgrupar(this, c));
+    public TableTool addGroupBy(String columnTitle) {
+        addOrderBy(columnTitle);
+        Column c = getColumn(columnTitle);
+        addModifier(new GenerationModifierAgrupar(this, c));
         return this;
     }
 
-    public TableTool addOrdenamentoPor(String tituloColuna) {
-        return addOrdenamentoPor(tituloColuna, false);
+    public TableTool addOrderBy(String columnTitle) {
+        return addOrderBy(columnTitle, false);
     }
 
-    public TableTool addOrdenamentoPor(String tituloColuna, boolean descending) {
-        return addOrdenamentoPor(getColumn(tituloColuna), descending);
+    public TableTool addOrderBy(String columnTitle, boolean descending) {
+        return addOrderBy(getColumn(columnTitle), descending);
     }
 
-    public TableTool addOrdenamentoPor(int indiceColuna) {
-        return addOrdenamentoPor(indiceColuna, false);
+    public TableTool addOrderBy(int columnIndex) {
+        return addOrderBy(columnIndex, false);
     }
 
-    public TableTool addOrdenamentoPor(int indiceColuna, boolean descending) {
-        return addOrdenamentoPor(getColumn(indiceColuna), descending);
+    public TableTool addOrderBy(int columnIndex, boolean descending) {
+        return addOrderBy(getColumn(columnIndex), descending);
     }
 
-    public TableTool addOrdenamentoPor(Column column, boolean descending) {
-        Optional<ModificadorGerador> ordenar = modificadores.stream().filter(
-                Predicates.instanceOf(ModificadorGeradorOrdenar.class)).findFirst();
-        if (ordenar.isPresent()) {
-            ((ModificadorGeradorOrdenar) ordenar.get()).addColuna(column);
+    public TableTool addOrderBy(Column column, boolean descending) {
+        Optional<GenerationModifier> order = modifiers.stream().filter(
+                Predicates.instanceOf(GenerationModifierOrder.class)).findFirst();
+        if (order.isPresent()) {
+            ((GenerationModifierOrder) order.get()).addColuna(column);
         } else {
-            addModificador(new ModificadorGeradorOrdenar(this, column, descending));
+            addModifier(new GenerationModifierOrder(this, column, descending));
         }
         return this;
     }
 
-    public TableTool addAgregacao(Column column, TipoAgregacaoCampo tipoAgregacaoCampo) {
-        achaOuAdicionaModificador(ModificadorGeradorAgregar.class, () -> new ModificadorGeradorAgregar(this)).addColuna(
-                column, tipoAgregacaoCampo);
+    public TableTool addAggregation(Column column, ColumnAggregationType columnAggregationType) {
+        findOrAddModifier(GenerationModifierAggregate.class, () -> new GenerationModifierAggregate(this)).addColumn(
+                column, columnAggregationType);
         return this;
     }
 
-    public TableTool addAgregacao(Column column, Object valor) {
-        achaOuAdicionaModificador(ModificadorGeradorAgregar.class, () -> new ModificadorGeradorAgregar(this))
-                .setValorCalculoExterno(column, valor);
+    public TableTool addAggregation(Column column, Object value) {
+        findOrAddModifier(GenerationModifierAggregate.class, () -> new GenerationModifierAggregate(this))
+                .setColumnExternalResult(column, value);
         return this;
     }
 
-    public TableTool addFiltro(Column column, Predicate<InfoCelula> filtro) {
-        achaOuAdicionaModificador(ModificadorGeradorFiltrar.class, () -> new ModificadorGeradorFiltrar(this)).addColuna(
-                column, filtro);
+    public TableTool addFilter(Column column, Predicate<InfoCell> filter) {
+        findOrAddModifier(GenerationModifierFilter.class, () -> new GenerationModifierFilter(this)).addColuna(
+                column, filter);
         return this;
     }
 
-    public TableTool configuraAgrupamentoComAgregacao(Map<Column, TipoAgregacaoCampo> configuracaoAgregacao) {
-        achaOuAdicionaModificador(ModificadorGeradorAgruparComAgregacao.class,
-                () -> new ModificadorGeradorAgruparComAgregacao(this, configuracaoAgregacao));
+    public TableTool configAggregation(Map<Column, ColumnAggregationType> aggregationConfig) {
+        findOrAddModifier(GenerationModifierAgruparComAgregacao.class,
+                () -> new GenerationModifierAgruparComAgregacao(this, aggregationConfig));
         return this;
     }
 
     public TableTool addAgrupamentoComAgregacao(Column column) {
-        achaOuAdicionaModificador(ModificadorGeradorAgruparComAgregacao.class,
-                () -> new ModificadorGeradorAgruparComAgregacao(this)).addColuna(column);
+        findOrAddModifier(GenerationModifierAgruparComAgregacao.class,
+                () -> new GenerationModifierAgruparComAgregacao(this)).addColuna(column);
         return this;
     }
 
@@ -204,18 +204,17 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         return decorator;
     }
 
-    public <T extends ModificadorGerador> T achaOuAdicionaModificador(Class<T> modificador,
-                                                                      Supplier<T> novoModificador) {
-        @SuppressWarnings("unchecked") Optional<T> find = (Optional<T>) modificadores.stream().filter(
-                Predicates.instanceOf(modificador)).findFirst();
-        return find.orElseGet(() -> addModificador(novoModificador.get()));
+    public <T extends GenerationModifier> T findOrAddModifier(Class<T> modifier, Supplier<T> newModifier) {
+        @SuppressWarnings("unchecked") Optional<T> find = (Optional<T>) modifiers.stream().filter(
+                Predicates.instanceOf(modifier)).findFirst();
+        return find.orElseGet(() -> addModifier(newModifier.get()));
     }
 
-    public <T extends ModificadorGerador> T addModificador(T m) {
-        if (!modificadores.isEmpty()) {
-            modificadores.get(0).addFimCadeia(m);
+    public <T extends GenerationModifier> T addModifier(T m) {
+        if (!modifiers.isEmpty()) {
+            modifiers.get(0).addFimCadeia(m);
         }
-        modificadores.add(m);
+        modifiers.add(m);
         return m;
     }
 
@@ -266,8 +265,8 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
     /**
      * Indica qual nivel deve ser utilizado para totalizar
      */
-    public void setTotalizarNivel(Integer nivelTotalizar) {
-        this.nivelTotalizar = nivelTotalizar;
+    public void setTotalLevel(Integer totalLevel) {
+        this.totalLevel = totalLevel;
     }
 
     public boolean isStrippedLines() {
@@ -292,7 +291,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
     }
 
     public void setInitialLevel(int initialLevel) {
-        this.nivelInicial = initialLevel;
+        this.initialLevel = initialLevel;
     }
 
     private List<Column> calculateVisibleColumns(OutputTableContext ctx) {
@@ -337,29 +336,29 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
 
     public TablePopulator createSimpleTablePopulator() {
         TablePopulator populator = new TablePopulator(this);
-        leitor = populator.asLeitorArvore();
+        reader = populator.asTreeLineReader();
         simpleTable = true;
         return populator;
     }
 
     @SuppressWarnings("unchecked")
-    public <T> void setLeitorTabelaSimples(Iterable<? extends T> lista, LeitorLinha<T> leitor) {
-        this.leitor = GeradorUtil.toLeitorArvore((Object) lista, (LeitorLinha<Object>) leitor);
+    public <T> void setReaderByLine(Iterable<? extends T> lista, LineReader<T> reader) {
+        this.reader = GeneratorUtil.toLeitorArvore((Object) lista, (LineReader<Object>) reader);
         simpleTable = true;
     }
 
-    public void setLeitorArvore(LeitorArvore leitor) {
-        this.leitor = leitor;
+    public void setReaderByTree(TreeLineReader reader) {
+        this.reader = reader;
         simpleTable = false;
     }
 
-    public void setLeitorPorNivel(LeitorArvore leitor) {
-        this.leitor = leitor;
-        tabelaPorNivel = true;
+    public void setReaderByLevel(TreeLineReader reader) {
+        this.reader = reader;
+        tableByLevel = true;
     }
 
-    public void setColunaIndentada(int colunaIndentada) {
-        this.colunaIndentada = colunaIndentada;
+    public void setIndentedColumn(int indentedColumn) {
+        this.indentedColumn = indentedColumn;
     }
 
     public String getId() {
@@ -376,24 +375,24 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         }
         totalLine = newBlankLine();
 
-        DadoLeitor dadoLeitor = new DadoLeitorPorInterador(leitor, leitor.getRaizes(), 0);
-        if (!isShowTitles() && dadoLeitor.isEmpty()) {
+        DataReader dataReader = new DataReaderByIterator(reader, reader.getRoots(), 0);
+        if (!isShowTitles() && dataReader.isEmpty()) {
             return;
         }
 
         OutputTableContext ctx = new OutputTableContext(this, tableOutput);
-        ctx.setVisibleColuns(calculateVisibleColumns(ctx));
+        ctx.setVisibleColumns(calculateVisibleColumns(ctx));
 
         ctx.getOutput().generateTableStart(ctx, this);
 
-        if (!modificadores.isEmpty()) {
-            ctx.setVisibleColuns(modificadores.get(0).adjustTitles(ctx.getVisibleColuns()));
+        if (!modifiers.isEmpty()) {
+            ctx.setVisibleColumns(modifiers.get(0).adjustTitles(ctx.getVisibleColumns()));
             generateTitles(ctx);
-            dadoLeitor = modificadores.get(0).aplicar(dadoLeitor);
+            dataReader = modifiers.get(0).apply(dataReader);
         } else {
             generateTitles(ctx);
         }
-        gerarFilhos(dadoLeitor, ctx, nivelInicial);
+        generateChildren(dataReader, ctx, initialLevel);
         if (showTotalLine) {
             generateTotalLine(ctx);
         }
@@ -415,7 +414,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
     }
 
     private void generateNormalTitles(OutputTableContext ctx) {
-        List<Column> visible = ctx.getVisibleColuns();
+        List<Column> visible = ctx.getVisibleColumns();
         ctx.getOutput().generateTitleLineStart(ctx, false);
         boolean nextColumnWithSeparator = false;
         for (Column column : visible) {
@@ -430,7 +429,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
     }
 
     private void generateSuperTitles(OutputTableContext ctx) {
-        List<Column> visible = ctx.getVisibleColuns();
+        List<Column> visible = ctx.getVisibleColumns();
         ctx.getOutput().generateTitleLineStart(ctx, true);
         boolean nextColumnWithSeparator = false;
         for (int i = 0; i < visible.size(); i++) {
@@ -454,88 +453,88 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         ctx.getOutput().generateTitleLineEnd(ctx, true);
     }
 
-    final InfoLinha newBlankLine() {
-        return new InfoLinha(this);
+    final LineInfo newBlankLine() {
+        return new LineInfo(this);
     }
 
-    private void gerarFilhos(DadoLeitor filhos, OutputTableContext ctx, int nivel) {
-        if (filhos == null || filhos.isEmpty()) {
+    private void generateChildren(DataReader children, OutputTableContext ctx, int level) {
+        if (children == null || children.isEmpty()) {
             return;
         }
         ctx.getOutput().generateBodyBlockStart(ctx);
-        if (tabelaPorNivel || columns.stream().anyMatch(c -> c.getDataLevel() > 0)) {
-            int qtdNiveis = columns.stream().mapToInt(c -> c.getDataLevel()).max().getAsInt() + 1;
-            int[] contadorLinha = new int[qtdNiveis];
-            for (DadoLinha dado : filhos) {
-                for (DadoLinha[] linha : dado.normalizarNiveis(qtdNiveis)) {
-                    gerarTabelaPorNivel(linha, ctx, contadorLinha);
+        if (tableByLevel || columns.stream().anyMatch(c -> c.getDataLevel() > 0)) {
+            int qtdLevel = columns.stream().mapToInt(c -> c.getDataLevel()).max().getAsInt() + 1;
+            int[] lineCount = new int[qtdLevel];
+            for (LineData dado : children) {
+                for (LineData[] line : dado.normalizeLevels(qtdLevel)) {
+                    generateTableByLevel(line, ctx, lineCount);
                 }
             }
         } else {
-            for (DadoLinha dado : filhos) {
+            for (LineData lineData : children) {
                 if (simpleTable) {
-                    gerarTabelaSimples(dado, ctx);
+                    generateSimpleTable(lineData, ctx);
                 } else {
-                    gerarLinhaArvore(dado, ctx, nivel);
+                    generateTreeLine(lineData, ctx, level);
                 }
             }
         }
         ctx.getOutput().generateBodyBlockEnd(ctx);
     }
 
-    private void gerarTabelaPorNivel(DadoLinha[] linha, OutputTableContext ctx, int[] contadorLinha) {
-        int nivelLinha = -1;
-        int linhaCor = 0;
-        InfoLinha line = null;
-        for (int i = 0; i < linha.length; i++) {
-            if (linha[i] == null) {
+    private void generateTableByLevel(LineData[] lineData, OutputTableContext ctx, int[] lineCounter) {
+        int lineLevel = -1;
+        int lineColor = 0;
+        LineInfo lineInfo = null;
+        for (int i = 0; i < lineData.length; i++) {
+            if (lineData[i] == null) {
                 continue;
             }
-            if (nivelLinha == -1) {
-                nivelLinha = i;
-                contadorLinha[i]++;
-                for (int j = i + 1; j < contadorLinha.length; j++) {
-                    contadorLinha[j] = contadorLinha[i];
+            if (lineLevel == -1) {
+                lineLevel = i;
+                lineCounter[i]++;
+                for (int j = i + 1; j < lineCounter.length; j++) {
+                    lineCounter[j] = lineCounter[i];
                 }
-                linhaCor = contadorLinha[i];
+                lineColor = lineCounter[i];
             }
-            ctx.getLineReadContext().setLevel(nivelLinha);
-            line = linha[i].recuperarValores(ctx.getLineReadContext(), i, nivelLinha == i, false);
+            ctx.getLineReadContext().setLevel(lineLevel);
+            lineInfo = lineData[i].retrieveValues(ctx.getLineReadContext(), i, lineLevel == i, false);
         }
-        if (line == null) {
+        if (lineInfo == null) {
             throw new SingularException("Invalid State");
         }
-        if (ctx.isExibirLinha()) {
-            generateTableByLevelLine(linha, ctx, line, nivelLinha, linhaCor);
+        if (ctx.isShowLine()) {
+            generateTableByLevelLine(lineData, ctx, lineInfo, lineLevel, lineColor);
         }
     }
 
-    private void generateTableByLevelLine(DadoLinha[] linha, OutputTableContext ctx, InfoLinha line, int nivelLinha,
-            int linhaCor) {
-        int lineAlternation = isStrippedLines() ? linhaCor : -1;
+    private void generateTableByLevelLine(LineData[] lineData, OutputTableContext ctx, LineInfo line, int lineLevel,
+            int lineColor) {
+        int lineAlternation = isStrippedLines() ? lineColor : -1;
         ctx.getOutput().generateLineSimpleStart(ctx, line, lineAlternation);
 
         int columnIndex = 0;
         boolean nextColumnWithSeparator = false;
-        while (columnIndex < ctx.getVisibleColuns().size()) {
-            Column c = ctx.getVisibleColuns().get(columnIndex);
-            ctx.setIndiceColunaAtual(columnIndex);
+        while (columnIndex < ctx.getVisibleColumns().size()) {
+            Column c = ctx.getVisibleColumns().get(columnIndex);
+            ctx.setIndexCurrentColumn(columnIndex);
             int qtdSpan = 1;
             if (c == null) {
-                if (linha[0] != null) {
+                if (lineData[0] != null) {
                     nextColumnWithSeparator = true;
                 }
-            } else if (c.getDataLevel() >= nivelLinha) {
+            } else if (c.getDataLevel() >= lineLevel) {
                 int level = c.getDataLevel();
-                InfoCelula cell = line.get(c);
+                InfoCell cell = line.get(c);
                 OutputCellContext ctxCell = createCellContext(ctx, cell, nextColumnWithSeparator);
                 nextColumnWithSeparator = false;
-                if (linha[level] != null) {
-                    int rowSpan = linha[level].getLinhas();
+                if (lineData[level] != null) {
+                    int rowSpan = lineData[level].getLines();
                     ctxCell.getTempDecorator().setRowSpan(rowSpan);
                 }
                 if (ctxCell.getTempDecorator().getRowSpan() != 0) {
-                    ctxCell.setLevel(colunaIndentada == columnIndex ? level : -1);
+                    ctxCell.setLevel(indentedColumn == columnIndex ? level : -1);
                     ctx.getOutput().generateCell(ctxCell);
                 }
 
@@ -546,78 +545,78 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         }
         ctx.getOutput().generateLineSimpleEnd(ctx);
 
-        ctx.incIndiceLinhaAtual();
+        ctx.incIndexCurrentLine();
     }
 
-    private Decorator resolverDecorator(OutputTableContext ctx, InfoLinha line) {
+    private Decorator resolverDecorator(OutputTableContext ctx, LineInfo line) {
         return line.createTempDecorator();
     }
 
-    private void gerarLinhaArvore(DadoLinha dado, OutputTableContext ctx, int nivel) {
-        if ((levelLimit > 0) && (nivel + 1 > levelLimit)) {
+    private void generateTreeLine(LineData lineData, OutputTableContext ctx, int level) {
+        if ((levelLimit > 0) && (level + 1 > levelLimit)) {
             return;
         }
-        ctx.getLineReadContext().setLevel(nivel);
-        InfoLinha line = dado.recuperarValores(ctx.getLineReadContext(), nivel, true, false);
+        ctx.getLineReadContext().setLevel(level);
+        LineInfo line = lineData.retrieveValues(ctx.getLineReadContext(), level, true, false);
 
-        if (!ctx.isExibirLinha()) {
-            gerarFilhos(dado.getLeitorFilhos(), ctx, nivel);
+        if (!ctx.isShowLine()) {
+            generateChildren(lineData.getChildrenReader(), ctx, level);
             return;
         }
-        //nivel = ctx.getNivel();
-        ctx.getOutput().generateLineTreeStart(ctx, line, nivel);
+        //nivel = ctx.getLevel();
+        ctx.getOutput().generateLineTreeStart(ctx, line, level);
 
-        int idxColuna = 0;
+        int columnIndex = 0;
         boolean nextColumnWithSeparator = false;
-        while (idxColuna < ctx.getVisibleColuns().size()) {
-            Column c = ctx.getVisibleColuns().get(idxColuna);
-            ctx.setIndiceColunaAtual(idxColuna);
+        while (columnIndex < ctx.getVisibleColumns().size()) {
+            Column c = ctx.getVisibleColumns().get(columnIndex);
+            ctx.setIndexCurrentColumn(columnIndex);
             if (c == null) {
                 nextColumnWithSeparator = true;
-                idxColuna++;
+                columnIndex++;
             } else {
-                InfoCelula cell = line.get(c);
-                if ((nivel == 0) && c.isShowAsPercentageOfParent()) {
+                InfoCell cell = line.get(c);
+                if ((level == 0) && c.isShowAsPercentageOfParent()) {
                     c.setValueForPercentageCalculation(cell.getValueAsNumberOrNull());
                 }
                 OutputCellContext ctxCell = createCellContext(ctx, cell, nextColumnWithSeparator);
                 nextColumnWithSeparator = false;
-                ctxCell.setLevel(colunaIndentada == idxColuna ? nivel : -1);
+                ctxCell.setLevel(indentedColumn == columnIndex ? level : -1);
                 if (ctxCell.getTempDecorator().getRowSpan() != 0) {
                     ctx.getOutput().generateCell(ctxCell);
                 }
 
-                addToTotal(c, cell, nivel);
-                idxColuna += ctxCell.getTempDecorator().getColSpan();
+                addToTotal(c, cell, level);
+                columnIndex += ctxCell.getTempDecorator().getColSpan();
             }
         }
         ctx.getOutput().generateLineTreeEnd(ctx);
 
-        ctx.incIndiceLinhaAtual();
+        ctx.incIndexCurrentLine();
 
-        gerarFilhos(dado.getLeitorFilhos(), ctx, nivel + 1);
+        generateChildren(lineData.getChildrenReader(), ctx, level + 1);
     }
 
-    private void gerarTabelaSimples(DadoLinha dado, OutputTableContext ctx) {
+    private void generateSimpleTable(LineData dado, OutputTableContext ctx) {
 
-        InfoLinha line = dado.recuperarValores(ctx.getLineReadContext(), 0, true, false);
-        if (! ctx.isExibirLinha()) {
+        LineInfo line = dado.retrieveValues(ctx.getLineReadContext(), 0, true, false);
+        if (! ctx.isShowLine()) {
             return;
         }
 
-        int lineAlternation = isStrippedLines() ? ctx.getIndiceLinhaAtual() % 2 : -1;
+        int lineAlternation = isStrippedLines() ? ctx.getIndexCurrentLine() % 2 : -1;
         ctx.getOutput().generateLineSimpleStart(ctx, line, lineAlternation);
 
-        int idxColuna = 0;
+        int columnIndex = 0;
         boolean nextColumnWithSeparator = false;
-        while (idxColuna < ctx.getVisibleColuns().size()) {
-            Column c = ctx.getVisibleColuns().get(idxColuna);
-            ctx.setIndiceColunaAtual(idxColuna);
+        while (columnIndex < ctx.getVisibleColumns().size()) {
+            Column c = ctx.getVisibleColumns().get(columnIndex);
+            ctx.setIndexCurrentColumn(columnIndex);
             if (c == null) {
                 nextColumnWithSeparator = true;
-                idxColuna++;
+                columnIndex++;
             } else {
-                InfoCelula cell = line.get(c);
+                InfoCell cell = line.get(c);
                 if (c.isShowAsPercentageOfParent()) {
                     c.setValueForPercentageCalculation(cell.getValueAsNumberOrNull());
                 }
@@ -629,19 +628,19 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
                 }
 
                 addToTotal(c, cell, 0);
-                idxColuna += ctxCell.getTempDecorator().getColSpan();
+                columnIndex += ctxCell.getTempDecorator().getColSpan();
             }
         }
         ctx.getOutput().generateLineSimpleEnd(ctx);
 
-        ctx.incIndiceLinhaAtual();
+        ctx.incIndexCurrentLine();
     }
 
     @Nonnull
-    private OutputCellContext createCellContext(OutputTableContext ctx, InfoCelula cell, boolean columnWithSeparator) {
+    private OutputCellContext createCellContext(OutputTableContext ctx, InfoCell cell, boolean columnWithSeparator) {
         DecoratorCell decorator = cell.createTempDecorator();
         if (decorator.isColSpanAll()) {
-            decorator.setColSpan(ctx.getQtdColunaVisiveis() - ctx.getIndiceColunaAtual());
+            decorator.setColSpan(ctx.getVisibleColumnsSize() - ctx.getIndexCurrentColumn());
         }
         OutputCellContext ctxCell = new OutputCellContext(ctx, cell, decorator);
 
@@ -658,16 +657,16 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         return ctxCell;
     }
 
-    private void addToTotal(Column c, InfoCelula cell, int nivel) {
-        if (showTotalLine && c.isTotalize() && (nivelTotalizar == null || nivel == nivelTotalizar)) {
-            InfoCelula total = totalLine.get(c);
+    private void addToTotal(Column c, InfoCell cell, int level) {
+        if (showTotalLine && c.isTotalize() && (totalLevel == null || level == totalLevel)) {
+            InfoCell total = totalLine.get(c);
             Number value = null;
             if (cell.getValue() instanceof Number) {
                 value = (Number) cell.getValue();
-            } else if (cell.getValorReal() instanceof Number) {
-                value = (Number) cell.getValorReal();
+            } else if (cell.getValueReal() instanceof Number) {
+                value = (Number) cell.getValueReal();
             }
-            total.setValor(AlocproToolkit.add(total.getValueAsNumberOrNull(), value));
+            total.setValue(AlocproToolkit.add(total.getValueAsNumberOrNull(), value));
         }
     }
 
@@ -679,29 +678,29 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         if (ctx.getTableTool().isSimpleTable()) {
             ctx.getOutput().generateTotalLineStart(ctx, totalLine, tmpDecorator, -1);
         } else {
-            ctx.getOutput().generateTotalLineStart(ctx, totalLine, tmpDecorator, nivelInicial);
+            ctx.getOutput().generateTotalLineStart(ctx, totalLine, tmpDecorator, initialLevel);
         }
 
-        int indiceColuna = 0;
+        int columnIndex = 0;
         boolean nextColumnWithSeparator = false;
-        for (Column c : ctx.getVisibleColuns()) {
+        for (Column c : ctx.getVisibleColumns()) {
             if (c == null) {
                 nextColumnWithSeparator = true;
             } else if (!c.isTotalize()) {
                 ctx.getOutput().generateTotalCellSkip(ctx, c, nextColumnWithSeparator);
                 nextColumnWithSeparator = false;
-            } else if (indiceColuna == 0) {
+            } else if (columnIndex == 0) {
                 DecoratorCell tmpDecoratorCell = new DecoratorCell(c.getDecoratorValues());
-                ctx.getOutput().generateTotalLabel(ctx, c, "Total", tmpDecoratorCell, nivelInicial);
+                ctx.getOutput().generateTotalLabel(ctx, c, "Total", tmpDecoratorCell, initialLevel);
             } else {
-                InfoCelula cell = totalLine.get(c);
+                InfoCell cell = totalLine.get(c);
                 OutputCellContext ctxCell = new OutputCellContext(ctx, cell, cell.createTempDecorator()).setLevel(-1);
                 ctxCell.setColumnWithSeparator(nextColumnWithSeparator);
                 Number value = cell.getValueAsNumberOrNull();
                 ctx.getOutput().generateTotalCell(ctxCell, value);
                 nextColumnWithSeparator = false;
             }
-            indiceColuna++;
+            columnIndex++;
         }
 
         ctx.getOutput().generateTotalLineEnd(ctx);

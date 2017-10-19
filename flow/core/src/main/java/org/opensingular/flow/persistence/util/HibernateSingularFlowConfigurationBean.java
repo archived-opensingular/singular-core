@@ -16,14 +16,14 @@
 
 package org.opensingular.flow.persistence.util;
 
+import org.hibernate.SessionFactory;
 import org.opensingular.flow.core.SingularFlowConfigurationBean;
+import org.opensingular.flow.core.service.IFlowDefinitionEntityService;
 import org.opensingular.flow.core.service.IPersistenceService;
-import org.opensingular.flow.core.service.IProcessDefinitionEntityService;
 import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.flow.persistence.entity.util.SessionLocator;
-import org.opensingular.flow.persistence.service.DefaultHibernateProcessDefinitionService;
+import org.opensingular.flow.persistence.service.DefaultHibernateFlowDefinitionService;
 import org.opensingular.flow.persistence.service.DefaultHibernatePersistenceService;
-import org.hibernate.SessionFactory;
 import org.springframework.util.Assert;
 
 import javax.inject.Inject;
@@ -78,8 +78,8 @@ public class HibernateSingularFlowConfigurationBean extends SingularFlowConfigur
     }
 
     @Override
-    protected IProcessDefinitionEntityService<?, ?, ?, ?, ?, ?, ?, ?> getProcessEntityService() {
-        return new DefaultHibernateProcessDefinitionService(getSessionLocator());
+    protected IFlowDefinitionEntityService<?, ?, ?, ?, ?, ?, ?, ?> getFlowEntityService() {
+        return new DefaultHibernateFlowDefinitionService(getSessionLocator());
     }
 
     public SessionLocator getSessionLocator() {

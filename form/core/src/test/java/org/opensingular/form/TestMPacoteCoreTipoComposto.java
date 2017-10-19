@@ -52,7 +52,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertException(() -> tipoEndereco.getLocalType("classificacao.prioridade.x.y"), "Não foi encontrado o tipo");
 
         SIComposite endereco = tipoEndereco.newInstance();
-        assertFilhos(endereco, 0);
+        assertChildren(endereco, 0);
 
         assertNull(endereco.getValue("rua"));
         assertNull(endereco.getValue("bairro"));
@@ -60,7 +60,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertNull(endereco.getValue("classificacao"));
         assertNull(endereco.getValue("classificacao.prioridade"));
         assertNull(endereco.getValue("classificacao.descricao"));
-        assertFilhos(endereco, 0);
+        assertChildren(endereco, 0);
 
         assertException(() -> endereco.setValue(100), "SIComposite só suporta valores de mesmo tipo");
 
@@ -86,10 +86,10 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertException(() -> endereco.setValue("classificacao", "X"), "SIComposite só suporta valores de mesmo tipo");
     }
 
-    private static void assertTipo(SType<?> tipo, String nomeEsperado, Class<?> classeEsperadaDoTipo) {
+    private static void assertTipo(SType<?> tipo, String nomeEsperado, Class<?> typeExpectedClass) {
         assertNotNull(tipo);
         assertEquals(nomeEsperado, tipo.getNameSimple());
-        assertEquals(classeEsperadaDoTipo, tipo.getClass());
+        assertEquals(typeExpectedClass, tipo.getClass());
     }
 
     @Test
@@ -299,12 +299,12 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         PackageBuilder pb = createTestPackage();
         TestTipoCompositeComCargaInterna tipo = pb.createType("derivado", TestTipoCompositeComCargaInterna.class);
 
-        TestTipoCompositeComCargaInterna tipoPai = pb.getDictionary().getType(TestTipoCompositeComCargaInterna.class);
-        assertType(tipo).isExtensionCorrect(tipoPai);
+        TestTipoCompositeComCargaInterna parentType = pb.getDictionary().getType(TestTipoCompositeComCargaInterna.class);
+        assertType(tipo).isExtensionCorrect(parentType);
 
-        assertEquals("xxx", tipoPai.asAtr().getLabel());
-        assertNotNull(tipoPai.getField("nome"));
-        assertEquals((Boolean) true, tipoPai.isRequired());
+        assertEquals("xxx", parentType.asAtr().getLabel());
+        assertNotNull(parentType.getField("nome"));
+        assertEquals((Boolean) true, parentType.isRequired());
 
         assertEquals("xxx", tipo.asAtr().getLabel());
         assertNotNull(tipo.getField("nome"));

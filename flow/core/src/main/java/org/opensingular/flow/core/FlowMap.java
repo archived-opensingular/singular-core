@@ -519,7 +519,7 @@ public class FlowMap {
 
     @Override
     public String toString() {
-        return "FlowMap [processDefinition=" + flowDefinition.getName() + "]";
+        return "FlowMap [flowDefinition=" + flowDefinition.getName() + "]";
     }
 
     public void addDashboardView(DashboardView dashboardView) {

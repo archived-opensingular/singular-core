@@ -16,16 +16,16 @@
 
 package org.opensingular.flow.core;
 
-import java.util.Objects;
-import java.util.function.Supplier;
-
 import org.opensingular.flow.schedule.IScheduleData;
 import org.opensingular.flow.schedule.IScheduledJob;
 import org.opensingular.flow.schedule.ScheduleDataBuilder;
 
+import java.util.Objects;
+import java.util.function.Supplier;
+
 public class ProcessScheduledJob implements IScheduledJob {
 
-    private final Class<? extends FlowDefinition<?>> processDefinition;
+    private final Class<? extends FlowDefinition<?>> flowDefinition;
 
     private final String name;
 
@@ -36,7 +36,7 @@ public class ProcessScheduledJob implements IScheduledJob {
     @SuppressWarnings("unchecked")
     ProcessScheduledJob(FlowDefinition<?> flowDefinition, String name) {
         Objects.requireNonNull(name);
-        this.processDefinition = (Class<? extends FlowDefinition<?>>) flowDefinition.getClass();
+        this.flowDefinition = (Class<? extends FlowDefinition<?>>) flowDefinition.getClass();
         this.name = name;
     }
 
@@ -74,7 +74,7 @@ public class ProcessScheduledJob implements IScheduledJob {
     }
 
     public String getId() {
-        return Flow.getProcessDefinition(processDefinition).getKey() + "::" + getName() + "()";
+        return Flow.getFlowDefinition(flowDefinition).getKey() + "::" + getName() + "()";
     }
 
     public IScheduleData getScheduleData() {

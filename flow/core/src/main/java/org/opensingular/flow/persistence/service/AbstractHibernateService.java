@@ -16,11 +16,11 @@
 
 package org.opensingular.flow.persistence.service;
 
-import java.util.Objects;
-
+import org.opensingular.flow.persistence.entity.util.SessionLocator;
 import org.opensingular.flow.persistence.entity.util.SessionWrapper;
 import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.flow.persistence.entity.util.SessionLocator;
+
+import java.util.Objects;
 
 public abstract class AbstractHibernateService {
 
@@ -42,11 +42,11 @@ public abstract class AbstractHibernateService {
         return new SessionWrapper(getSessionLocator().getCurrentSession());
     }
 
-    protected static <T> T newInstanceOf(Class<T> classe) {
+    protected static <T> T newInstanceOf(Class<T> targetClass) {
         try {
-            return classe.newInstance();
+            return targetClass.newInstance();
         } catch (Exception e) {
-            throw SingularException.rethrow("Erro instanciando entidade " + classe.getName(), e);
+            throw SingularException.rethrow("Erro instanciando entidade " + targetClass.getName(), e);
         }
     }
 }

@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 public interface IEntityTaskDefinition extends IEntityByCod<Integer> {
 
-    IEntityProcessDefinition getProcessDefinition();
+    IEntityFlowDefinition getFlowDefinition();
 
     String getAbbreviation();
 

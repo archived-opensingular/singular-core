@@ -29,20 +29,20 @@ public class SIMonetaryFlatViewGenerator extends AbstractFlatViewGenerator {
 
             final NumberFormat numberFormat = NumberFormat.getInstance(new Locale("pt", "BR"));
             final DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
-            final BigDecimal valor = (BigDecimal) instance.getValue();
-            final Integer digitos = getDecimalMaximo(instance);
+            final BigDecimal value = (BigDecimal) instance.getValue();
+            final Integer digits = getDecimalMaximo(instance);
             final StringBuilder pattern = new StringBuilder();
 
             pattern.append("R$ ###,###.");
 
-            for (int i = 0; i < digitos; i += 1) {
+            for (int i = 0; i < digits; i += 1) {
                 pattern.append('#');
             }
 
             decimalFormat.applyPattern(pattern.toString());
-            decimalFormat.setMinimumFractionDigits(digitos);
+            decimalFormat.setMinimumFractionDigits(digits);
 
-            return decimalFormat.format(valor);
+            return decimalFormat.format(value);
         }
 
         return StringUtils.EMPTY;

@@ -19,9 +19,9 @@ package org.opensingular.flow.core;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.flow.core.entity.IEntityCategory;
-import org.opensingular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityFlowDefinition;
+import org.opensingular.flow.core.entity.IEntityFlowInstance;
+import org.opensingular.flow.core.entity.IEntityFlowVersion;
 import org.opensingular.flow.core.entity.IEntityRoleDefinition;
 import org.opensingular.flow.core.entity.IEntityRoleInstance;
 import org.opensingular.flow.core.entity.IEntityTaskDefinition;
@@ -58,7 +58,7 @@ public class TaskInstance implements Serializable {
     TaskInstance(@Nonnull FlowInstance flowInstance, @Nonnull IEntityTaskInstance task) {
         this(task);
         Objects.requireNonNull(flowInstance);
-        if (!flowInstance.getEntity().equals(task.getProcessInstance())) {
+        if (!flowInstance.getEntity().equals(task.getFlowInstance())) {
             throw new SingularFlowException(flowInstance.createErrorMsg(
                     "O objeto " + task.getClass().getSimpleName() + " " + task + " não é uma tarefa filha do objeto " +
                             flowInstance.getClass().getSimpleName() + " em questão"), flowInstance);
@@ -75,7 +75,7 @@ public class TaskInstance implements Serializable {
     @Nonnull
     public <X extends FlowInstance> X getFlowInstance() {
         if (flowInstance == null) {
-            flowInstance = Flow.getProcessInstance(getEntity().getProcessInstance());
+            flowInstance = Flow.getFlowInstance(getEntity().getFlowInstance());
         }
         return (X) flowInstance;
     }
@@ -91,7 +91,7 @@ public class TaskInstance implements Serializable {
     @Nonnull
     public Optional<STask<?>> getFlowTask() {
         if (flowTask == null) {
-            flowTask = getFlowInstance().getProcessDefinition().getFlowMap().getTaskByAbbreviation(getTaskVersion().getAbbreviation()).orElse(null);
+            flowTask = getFlowInstance().getFlowDefinition().getFlowMap().getTaskByAbbreviation(getTaskVersion().getAbbreviation()).orElse(null);
         }
         return Optional.ofNullable(flowTask);
     }
@@ -293,12 +293,12 @@ public class TaskInstance implements Serializable {
 
     public void createSubTask(String historyType, FlowInstance childFlowInstance) {
 
-        IEntityProcessInstance childProcessInstanceEntity = childFlowInstance.getEntity();
+        IEntityFlowInstance childFlowInstanceEntity = childFlowInstance.getEntity();
 
-        getPersistenceService().setParentTask(childProcessInstanceEntity, getEntity());
+        getPersistenceService().setParentTask(childFlowInstanceEntity, getEntity());
 
         if (historyType != null) {
-            log(historyType, childProcessInstanceEntity.getDescription(),
+            log(historyType, childFlowInstanceEntity.getDescription(),
                     childFlowInstance.getCurrentTaskOrException().getAllocatedUser()).sendEmail();
         }
 
@@ -314,46 +314,45 @@ public class TaskInstance implements Serializable {
      */
     @Nonnull
     public List<FlowInstance> getChildProcesses() {
-        return Flow.getProcessInstances(getEntity().getChildProcesses());
+        return Flow.getFlowInstances(getEntity().getChildProcesses());
     }
 
     private void notifyStateUpdate() {
         Flow.notifyListeners(n -> n.notifyStateUpdate(getFlowInstance()));
     }
 
-    public TaskHistoricLog log(String tipoHistorico, String detalhamento) {
-        return log(tipoHistorico, detalhamento, null, Flow.getUserIfAvailable(), null);
+    public TaskHistoricLog log(String logType, String description) {
+        return log(logType, description, null, Flow.getUserIfAvailable(), null);
     }
 
-    public TaskHistoricLog log(String tipoHistorico, String detalhamento, SUser alocada) {
-        return log(tipoHistorico, detalhamento, alocada, Flow.getUserIfAvailable(), null);
+    public TaskHistoricLog log(String logType, String description, SUser allocatedUser) {
+        return log(logType, description, allocatedUser, Flow.getUserIfAvailable(), null);
     }
 
-    public TaskHistoricLog log(String tipoHistorico, String detalhamento, SUser alocada, SUser autor, Date dataHora) {
-        return log(tipoHistorico, detalhamento, alocada, autor, dataHora, null);
+    public TaskHistoricLog log(String logType, String description, SUser allocatedUser, SUser author, Date dateTime) {
+        return log(logType, description, allocatedUser, author, dateTime, null);
     }
 
-    public TaskHistoricLog log(String tipoHistorico, String detalhamento, SUser alocada, SUser autor, Date dataHora,
-            IEntityProcessInstance demandaFilha) {
-        IEntityTaskInstanceHistory historico = getPersistenceService().saveTaskHistoricLog(getEntity(), tipoHistorico,
-                detalhamento, alocada, autor, dataHora, demandaFilha);
-        return new TaskHistoricLog(historico);
+    public TaskHistoricLog log(String logType, String description, SUser allocatedUser, SUser author, Date dateTime,
+            IEntityFlowInstance childInstance) {
+        IEntityTaskInstanceHistory history = getPersistenceService().saveTaskHistoricLog(getEntity(), logType,
+                description, allocatedUser, author, dateTime, childInstance);
+        return new TaskHistoricLog(history);
     }
 
-    private IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion,
-            IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion,
+    private IPersistenceService<IEntityCategory, IEntityFlowDefinition, IEntityFlowVersion, IEntityFlowInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion,
             IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {
-        return getFlowInstance().getProcessDefinition().getPersistenceService();
+        return getFlowInstance().getFlowDefinition().getPersistenceService();
     }
 
-    public StringBuilder getDescricaoExtendida(boolean adicionarAlocado) {
+    public StringBuilder getExtendedDescription(boolean addAllocated) {
         StringBuilder sb = new StringBuilder(250);
         sb.append(getFlowInstance().getProcessName()).append(" - ").append(getName());
-        String descricao = getFlowInstance().getDescription();
-        if (descricao != null) {
-            sb.append(" - ").append(descricao);
+        String description = getFlowInstance().getDescription();
+        if (description != null) {
+            sb.append(" - ").append(description);
         }
-        if (adicionarAlocado) {
+        if (addAllocated) {
             SUser p = getAllocatedUser();
             if (p != null) {
                 sb.append(" (").append(p.getSimpleName()).append(')');
@@ -369,7 +368,7 @@ public class TaskInstance implements Serializable {
      */
     @SuppressWarnings("unchecked")
     @Nonnull
-    public List<SUser> getDirectlyResponsibles() {
+    public List<SUser> getDirectlyResponsible() {
         SUser allocatedUser = getAllocatedUser();
         if (allocatedUser != null) {
             return ImmutableList.of(allocatedUser);
@@ -387,7 +386,7 @@ public class TaskInstance implements Serializable {
         String abbreviation = taskVersion.getAbbreviation();
         FlowInstance                     flowInstance   = getFlowInstance();
 
-        Objects.requireNonNull(flowTask, "Task com a sigla " + abbreviation + " não encontrada na definição " + flowInstance.getProcessDefinition().getName());
+        Objects.requireNonNull(flowTask, "Task com a sigla " + abbreviation + " não encontrada na definição " + flowInstance.getFlowDefinition().getName());
         Objects.requireNonNull(accessStrategy,"Estratégia de acesso da task " + abbreviation + " não foi definida");
 
         return accessStrategy.getFirstLevelUsersCodWithAccess(flowInstance);

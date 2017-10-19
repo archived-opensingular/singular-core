@@ -29,7 +29,7 @@ public class BaseSingularRest {
     public static final String RELOCATE_TASK = "/relocateTask";
 
     public static final String PROCESS_ABBREVIATION = "processAbbreviation";
-    public static final String COD_PROCESS_INSTANCE = "codProcessInstance";
+    public static final String COD_PROCESS_INSTANCE = "codFlowInstance";
     public static final String USERNAME = "username";
     public static final String LAST_VERSION = "lastVersion";
 
@@ -37,40 +37,40 @@ public class BaseSingularRest {
         return "pong";
     }
 
-    public Long startInstance(String processAbbreviation) {
-        FlowDefinition processo = Flow.getProcessDefinition(processAbbreviation);
-        FlowInstance flowInstance = processo.prepareStartCall().createAndStart();
+    public Long startInstance(String flowDefinitionAbbreviation) {
+        FlowDefinition definition = Flow.getFlowDefinition(flowDefinitionAbbreviation);
+        FlowInstance flowInstance = definition.prepareStartCall().createAndStart();
         return flowInstance.getEntityCod().longValue();
     }
 
-    public void executeDefaultTransition(String processAbbreviation,
-                                         Long codProcessInstance,
+    public void executeDefaultTransition(String flowDefinitionAbbreviation,
+                                         Long codFlowInstance,
                                           String username) {
-        FlowInstance flowInstance = getProcessInstance(processAbbreviation, codProcessInstance);
+        FlowInstance flowInstance = getFlowInstance(flowDefinitionAbbreviation, codFlowInstance);
         flowInstance.prepareTransition().go();
     }
 
-    public void executeTransition(String processAbbreviation,
-                                  Long codProcessInstance,
+    public void executeTransition(String flowDefinitionAbbreviation,
+                                  Long codFlowInstance,
                                   String transitionName,
                                   String username) {
-        FlowInstance flowInstance = getProcessInstance(processAbbreviation, codProcessInstance);
+        FlowInstance flowInstance = getFlowInstance(flowDefinitionAbbreviation, codFlowInstance);
         flowInstance.prepareTransition(transitionName).go();
     }
 
-    public void relocateTask(String processAbbreviation,
-                             Long codProcessInstance,
+    public void relocateTask(String flowDefinitionAbbreviation,
+                             Long codFlowInstance,
                              String username,
                              Integer lastVersion) {
-        FlowInstance flowInstance = getProcessInstance(processAbbreviation, codProcessInstance);
+        FlowInstance flowInstance = getFlowInstance(flowDefinitionAbbreviation, codFlowInstance);
         SUser user = Flow.getConfigBean().getUserService().saveUserIfNeededOrException(username);
         Integer lastVersion2 = (lastVersion == null) ? Integer.valueOf(0) : lastVersion;
         flowInstance.getCurrentTaskOrException().relocateTask(user, user, false, "", lastVersion2);
     }
 
-    private FlowInstance getProcessInstance(String processAbbreviation, Long codProcessInstance) {
-        FlowDefinition<FlowInstance> flowDefinition = Flow.getProcessDefinition(processAbbreviation);
-        return Flow.getProcessInstance(flowDefinition, (Integer) codProcessInstance.intValue());
+    private FlowInstance getFlowInstance(String flowDefinitionAbbreviation, Long codFlowInstance) {
+        FlowDefinition<FlowInstance> flowDefinition = Flow.getFlowDefinition(flowDefinitionAbbreviation);
+        return Flow.getFlowInstance(flowDefinition, (Integer) codFlowInstance.intValue());
     }
     
 }

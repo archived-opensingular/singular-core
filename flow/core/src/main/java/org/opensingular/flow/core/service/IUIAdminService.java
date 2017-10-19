@@ -16,36 +16,35 @@
 
 package org.opensingular.flow.core.service;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.opensingular.flow.core.dto.IDefinitionDTO;
+import org.opensingular.flow.core.dto.IFeedDTO;
+import org.opensingular.flow.core.dto.IInstanceDTO;
+import org.opensingular.flow.core.dto.IMenuItemDTO;
+import org.opensingular.flow.core.dto.IMetaDataDTO;
+import org.opensingular.flow.core.dto.IStatusDTO;
+
 import java.time.Period;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.tuple.Pair;
-
-import org.opensingular.flow.core.dto.IFeedDTO;
-import org.opensingular.flow.core.dto.IInstanceDTO;
-import org.opensingular.flow.core.dto.IMetaDataDTO;
-import org.opensingular.flow.core.dto.IStatusDTO;
-import org.opensingular.flow.core.dto.IDefinitionDTO;
-import org.opensingular.flow.core.dto.IMenuItemDTO;
-
 public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE extends IInstanceDTO,
         METADATA extends IMetaDataDTO, STATUS extends IStatusDTO, FEED extends IFeedDTO, MENU extends IMenuItemDTO> {
 
-    DEFINITION retrieveDefinitionById(Integer processDefinitionCod);
+    DEFINITION retrieveDefinitionById(Integer flowDefinitionCod);
     
-    DEFINITION retrieveDefinitionByKey(String processDefinitionKey);
+    DEFINITION retrieveDefinitionByKey(String flowDefinitionKey);
 
     List<DEFINITION> retrieveAllDefinition(int first, int size, String orderByProperty, boolean asc, Set<String> processCodeWithAccess);
 
     int countAllDefinition(Set<String> processCodeWithAccess);
 
-    List<INSTANCE> retrieveAllInstance(int first, int size, String orderByProperty, boolean asc, Integer processDefinitionCod);
+    List<INSTANCE> retrieveAllInstance(int first, int size, String orderByProperty, boolean asc, Integer flowDefinitionCod);
 
-    int countAllInstance(Integer processDefinitionCod);
+    int countAllInstance(Integer flowDefinitionCod);
 
-    List<METADATA> retrieveMetaData(Integer processDefinitionCod);
+    List<METADATA> retrieveMetaData(Integer flowDefinitionCod);
 
     List<Map<String, String>> retrieveMeanTimeByProcess(Period period, String processCode, Set<String> processCodeWithAccess);
 
@@ -55,7 +54,7 @@ public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE ext
 
     List<Map<String, String>> retrieveMeanTimeByTask(Period period, String processCode);
 
-    List<Map<String, String>> retrieveStatsByActiveTask(String processDefinitionCode);
+    List<Map<String, String>> retrieveStatsByActiveTask(String flowDefinitionCode);
 
     STATUS retrieveActiveInstanceStatus(String processCode, Set<String> processCodeWithAccess);
 
@@ -67,9 +66,9 @@ public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE ext
 
     List<Map<String, String>> retrieveCounterActiveInstances(String processCode, Set<String> processCodeWithAccess);
 
-    String retrieveProcessDefinitionName(String processCode);
+    String retrieveFlowDefinitionName(String flowDefinitionCode);
 
-    String retrieveProcessDefinitionId(String processDefinitionCode);
+    String retrieveFlowDefinitionId(String flowDefinitionCode);
 
     List<FEED> retrieveAllFeed(String processCode, Set<String> processCodeWithAccess);
 

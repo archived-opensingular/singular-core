@@ -25,8 +25,8 @@ public class CoreAttributesXmlBasicTest {
                       + "<attr field=\"field1\" name=\"singular.form.basic.label\">SubNome1</attr>"
                       + "</attrs>";
         MElement xml = parser.parse(xmlStr);
-        NodeList raiz = xml.getMDocument().getElementsByTagName("attrs");
-        NodeList elements = raiz.item(0).getChildNodes();
+        NodeList root = xml.getMDocument().getElementsByTagName("attrs");
+        NodeList elements = root.item(0).getChildNodes();
 
        
         Node n0 = elements.item(0);

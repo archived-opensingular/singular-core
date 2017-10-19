@@ -86,8 +86,8 @@ public class InitListenerTest extends TestCaseForm {
         assertInstance(nome.newInstance()).isValueEquals("banana");
 
         //Tipo extendido deve manter a inicialização
-        STypeString nomeFilho = pb.createType("nomeFilho", nome);
-        assertInstance(nomeFilho.newInstance()).isValueEquals("banana");
+        STypeString childName = pb.createType("nomeFilho", nome);
+        assertInstance(childName.newInstance()).isValueEquals("banana");
     }
 
     @Test
@@ -105,8 +105,8 @@ public class InitListenerTest extends TestCaseForm {
                 .isValueEquals("origem", "desconhecida");
 
         //Tipo extendido deve manter a inicialização original
-        STypeComposite<SIComposite> filho = pb.createType("Filho", root);
-        assertInstance(filho.newInstance())
+        STypeComposite<SIComposite> child = pb.createType("Filho", root);
+        assertInstance(child.newInstance())
                 .isValueEquals("nome", "banana")
                 .isValueEquals("origem", "desconhecida");
     }

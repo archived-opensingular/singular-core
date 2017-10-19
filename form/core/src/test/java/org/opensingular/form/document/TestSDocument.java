@@ -23,14 +23,14 @@ public class TestSDocument extends TestCaseForm {
 
     @Test
     public void testCriacaoImplicitaPacoteCore() {
-        SDictionary dicionario = createTestDictionary();
-        SIString    instancia1 = dicionario.newInstance(STypeString.class);
-        assertFilhos(instancia1, 0);
+        SDictionary dictionary = createTestDictionary();
+        SIString    instance1 = dictionary.newInstance(STypeString.class);
+        assertChildren(instance1, 0);
 
-        SIString instancia2 = dicionario.newInstance(STypeString.class);
-        assertFilhos(instancia2, 0);
+        SIString instance2 = dictionary.newInstance(STypeString.class);
+        assertChildren(instance2, 0);
 
-        assertNotSame(instancia1.getDocument(), instancia2.getDocument());
+        assertNotSame(instance1.getDocument(), instance2.getDocument());
     }
 
     @Test
@@ -38,13 +38,13 @@ public class TestSDocument extends TestCaseForm {
         PackageBuilder    pb         = createTestPackage();
         STypeComposite<?> tipo       = pb.createType("nome", STypeComposite.class);
 
-        SInstance instancia1 = tipo.newInstance();
-        assertFilhos(instancia1, 0);
+        SInstance instance1 = tipo.newInstance();
+        assertChildren(instance1, 0);
 
-        SInstance instancia2 = tipo.newInstance();
-        assertFilhos(instancia2, 0);
+        SInstance instance2 = tipo.newInstance();
+        assertChildren(instance2, 0);
 
-        assertNotSame(instancia1.getDocument(), instancia2.getDocument());
+        assertNotSame(instance1.getDocument(), instance2.getDocument());
     }
 
     @Test
@@ -56,17 +56,17 @@ public class TestSDocument extends TestCaseForm {
         tipoComposto.addFieldListOf("dependentes", STypeString.class);
 
         SIList<SIComposite> pessoas = tipoLista.newInstance(SIComposite.class);
-        assertFilhos(pessoas, 0);
+        assertChildren(pessoas, 0);
 
         SIComposite pessoa = pessoas.addNew();
-        assertFilhos(pessoa, 0);
+        assertChildren(pessoa, 0);
 
         pessoa.setValue("nome", "Daniel");
-        assertFilhos(pessoa.getField("nome"), 0);
+        assertChildren(pessoa.getField("nome"), 0);
 
         SIString campo = pessoa.getFieldList("dependentes", SIString.class).addValue("Lara");
-        assertFilhos(campo, 0);
-        assertFilhos(pessoas, 4);
+        assertChildren(campo, 0);
+        assertChildren(pessoas, 4);
     }
     
 }

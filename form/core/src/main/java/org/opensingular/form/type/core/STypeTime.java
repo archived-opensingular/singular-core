@@ -38,8 +38,8 @@ public class STypeTime extends STypeSimple<SITime, Date> {
         super(SITime.class, Date.class);
     }
 
-    protected STypeTime(Class<? extends SITime> classeInstancia) {
-        super(classeInstancia, Date.class);
+    protected STypeTime(Class<? extends SITime> instanceClass) {
+        super(instanceClass, Date.class);
     }
 
     @Override

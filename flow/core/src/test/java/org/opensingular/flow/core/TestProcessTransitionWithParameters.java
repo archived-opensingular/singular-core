@@ -154,22 +154,22 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
                 });
     }
 
-    private void runTransition(Supplier<FlowInstance> processInstanceSupplier, String transitionName,
+    private void runTransition(Supplier<FlowInstance> flowInstanceSupplier, String transitionName,
             Consumer<TransitionCall> callConfiguration, Consumer<FlowInstance> assertionsCode) {
-        runTransition(processInstanceSupplier, transitionName, callConfiguration, null, null, assertionsCode);
+        runTransition(flowInstanceSupplier, transitionName, callConfiguration, null, null, assertionsCode);
     }
 
-    private void runTransition(Supplier<FlowInstance> processInstanceSupplier, String transitionName,
+    private void runTransition(Supplier<FlowInstance> flowInstanceSupplier, String transitionName,
             Consumer<TransitionCall> callConfiguration, Class<? extends Exception> expectedException,
             String expectedExceptionMsgPart, Consumer<FlowInstance> assertionsCode) {
-        FlowInstance pi = processInstanceSupplier.get();
+        FlowInstance pi = flowInstanceSupplier.get();
         TransitionCall transitionCall = createTrasaction(transitionName, pi);
         callConfiguration.accept(transitionCall);
         callTransition(transitionCall, expectedException, expectedExceptionMsgPart);
         assertReloadAssert(pi, assertionsCode);
 
         //Now again but with a lot of serializations
-        pi = processInstanceSupplier.get();
+        pi = flowInstanceSupplier.get();
         pi = SingularIOUtils.serializeAndDeserialize(pi, true);
         transitionCall = createTrasaction(transitionName, pi);
         transitionCall = SingularIOUtils.serializeAndDeserialize(transitionCall, true);

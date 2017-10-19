@@ -24,7 +24,7 @@ public class FormCacheFieldDAO extends BaseDAO<FormCacheFieldEntity, Long> {
     }
 
     public List<String> findPathsByName(List<String> paths) {
-        Criteria criteria = getSession().createCriteria(tipo);
+        Criteria criteria = getSession().createCriteria(entityClass);
         criteria.setProjection(Projections.projectionList().add(Projections.property("path")));
         criteria.add(Restrictions.in("path", paths));
         return criteria.list();

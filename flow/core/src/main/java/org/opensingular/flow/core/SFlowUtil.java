@@ -17,6 +17,9 @@
 package org.opensingular.flow.core;
 
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.flow.core.view.IViewLocator;
+import org.opensingular.lib.commons.net.Lnk;
+import org.opensingular.lib.commons.net.WebRef;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayDeque;
@@ -41,42 +44,45 @@ public class SFlowUtil {
 
     private SFlowUtil() {}
 
-    public static void sortInstancesByDistanceFromBeginning(List<? extends FlowInstance> instancias, FlowDefinition<?> definicao) {
-        instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getLastTaskOrException().getEntityTaskInstance().getTaskVersion(),
-                s2.getLastTaskOrException().getEntityTaskInstance().getTaskVersion(), definicao));
+    public static void sortInstancesByDistanceFromBeginning(List<? extends FlowInstance> instances,
+            FlowDefinition<?> definition) {
+        instances.sort((s1, s2) -> compareByDistanceFromBeginning(
+                s1.getLastTaskOrException().getEntityTaskInstance().getTaskVersion(),
+                s2.getLastTaskOrException().getEntityTaskInstance().getTaskVersion(), definition));
     }
 
-    private static int compareByDistanceFromBeginning(IEntityTaskVersion s1, IEntityTaskVersion s2, FlowDefinition<?> definicao) {
-        int ordem1 = calculateTaskOrder(s1, definicao);
-        int ordem2 = calculateTaskOrder(s2, definicao);
+    private static int compareByDistanceFromBeginning(IEntityTaskVersion s1, IEntityTaskVersion s2,
+            FlowDefinition<?> definition) {
+        int ordem1 = calculateTaskOrder(s1, definition);
+        int ordem2 = calculateTaskOrder(s2, definition);
         if (ordem1 != ordem2) {
             return ordem1 - ordem2;
         }
         return s1.getName().compareTo(s2.getName());
     }
 
-    public static <T> void sortByDistanceFromBeginning(List<? extends T> lista, Function<T, IEntityTaskVersion> conversor,
-                                                       FlowDefinition<?> definicao) {
-        lista.sort(getDistanceFromBeginningComparator(conversor, definicao));
+    public static <T> void sortByDistanceFromBeginning(List<? extends T> lista,
+            Function<T, IEntityTaskVersion> converter, FlowDefinition<?> definition) {
+        lista.sort(getDistanceFromBeginningComparator(converter, definition));
     }
 
-    private static <T> Comparator<T> getDistanceFromBeginningComparator(Function<T, IEntityTaskVersion> conversor,
-                                                                        FlowDefinition<?> definicao) {
-        return (o1, o2) -> compareByDistanceFromBeginning(conversor.apply(o1), conversor.apply(o2), definicao);
+    private static <T> Comparator<T> getDistanceFromBeginningComparator(Function<T, IEntityTaskVersion> converter,
+            FlowDefinition<?> definition) {
+        return (o1, o2) -> compareByDistanceFromBeginning(converter.apply(o1), converter.apply(o2), definition);
     }
 
-    public static <X extends IEntityTaskVersion> List<X> getSortedByDistanceFromBeginning(List<X> situacoes,
-            FlowDefinition<?> definicao) {
-        List<X> novo = new ArrayList<>(situacoes);
-        novo.sort((s1, s2) -> compareByDistanceFromBeginning(s1, s2, definicao));
-        return novo;
+    public static <X extends IEntityTaskVersion> List<X> getSortedByDistanceFromBeginning(List<X> situations,
+            FlowDefinition<?> definition) {
+        List<X> list = new ArrayList<>(situations);
+        list.sort((s1, s2) -> compareByDistanceFromBeginning(s1, s2, definition));
+        return list;
     }
 
-    public static List<STask<?>> getSortedTasksByDistanceFromBeginning(FlowDefinition<?> definicao) {
-        FlowMap flowMap = definicao.getFlowMap();
+    public static List<STask<?>> getSortedTasksByDistanceFromBeginning(FlowDefinition<?> definition) {
+        FlowMap flowMap = definition.getFlowMap();
         calculateTaskOrder(flowMap);
-        List<STask<?>> novo = new ArrayList<>(flowMap.getTasks());
-        novo.sort((t1, t2) -> {
+        List<STask<?>> list = new ArrayList<>(flowMap.getTasks());
+        list.sort((t1, t2) -> {
             int order1 = t1.getOrder();
             int order2 = t2.getOrder();
             if (order1 != order2) {
@@ -84,7 +90,7 @@ public class SFlowUtil {
             }
             return t1.getName().compareTo(t2.getName());
         });
-        return novo;
+        return list;
     }
 
     static void calculateTaskOrder(FlowMap flowMap) {
@@ -98,16 +104,16 @@ public class SFlowUtil {
     }
 
     private static void orderedVisit(int previousValue, STask<?> task, Deque<STask<?>> deque) {
-        int valor = previousValue + calculateWeight(task);
+        int value = previousValue + calculateWeight(task);
         int order = task.getOrder();
-        if (order == 0 || (order < valor && !deque.contains(task))) {
-            task.setOrder(valor);
+        if (order == 0 || (order < value && !deque.contains(task))) {
+            task.setOrder(value);
             deque.add(task);
             for (STransition transicao : task.getTransitions()) {
                 if (task.getDefaultTransition() == transicao) {
-                    orderedVisit(valor, transicao.getDestination(), deque);
+                    orderedVisit(value, transicao.getDestination(), deque);
                 } else {
-                    orderedVisit(valor + 1, transicao.getDestination(), deque);
+                    orderedVisit(value + 1, transicao.getDestination(), deque);
                 }
             }
             deque.removeLast();
@@ -115,8 +121,8 @@ public class SFlowUtil {
     }
 
     private static int calculateTaskOrder(IEntityTaskVersion entityTaskDefinition, FlowDefinition<?> flowDefinition) {
-        if (!flowDefinition.getEntityProcessDefinition()
-                .equals(entityTaskDefinition.getProcessVersion().getProcessDefinition())) {
+        if (!flowDefinition.getEntityFlowDefinition().equals(
+                entityTaskDefinition.getFlowVersion().getFlowDefinition())) {
             throw new SingularFlowException("Mistura de situações de definições diferrentes");
         }
         Optional<STask<?>> task = flowDefinition.getFlowMap().getTaskByAbbreviation(entityTaskDefinition.getAbbreviation());
@@ -181,7 +187,6 @@ public class SFlowUtil {
     }
 
     private static class DummyTaskAccessStrategy extends TaskAccessStrategy {
-
         @Override
         public boolean canExecute(FlowInstance instance, SUser user) {
             return false;
@@ -204,4 +209,66 @@ public class SFlowUtil {
         }
     }
 
-}
+    /** Creates a {@link ProcessNotifier} that doesn't do nothing. Useful mainly for implementing tests. */
+    @Nonnull
+    public static ProcessNotifier dummyProcessNotifier() { return new NullNotifier(); }
+
+    private static class NullNotifier implements ProcessNotifier {
+        @Override
+        public void notifyUserTaskRelocation(TaskInstance taskInstance, SUser responsibleUser, SUser userToNotify,
+                SUser allocatedUser, SUser removedUser) {}
+
+        @Override
+        public void notifyUserTaskAllocation(TaskInstance taskInstance, SUser responsibleUser, SUser userToNotify,
+                SUser allocatedUser, SUser removedUser, String justification) {}
+
+        @Override
+        public void notifyStartToResponsibleUser(TaskInstance taskInstance, ExecutionContext executionContext) {}
+
+        @Override
+        public void notifyStartToInterestedUser(TaskInstance taskInstance, ExecutionContext executionContext) {}
+
+        @Override
+        public <X extends SUser> void notifyLogToUsers(TaskHistoricLog taskHistoricLog, List<X> usersToNotify) {}
+
+        @Override
+        public void notifyStateUpdate(FlowInstance instance) {}
+    }
+
+    /** Creates a {@link ITaskPageStrategy} that doesn't do nothing. Useful mainly for implementing tests. */
+    @Nonnull
+    public static ITaskPageStrategy dummyITaskPageStrategy() { return new NullPageStrategy(); }
+
+    private static class NullPageStrategy implements ITaskPageStrategy {
+        @Override
+        public WebRef getPageFor(TaskInstance taskInstance, SUser user) {
+            return null;
+        }
+    }
+
+    /** Creates a {@link IViewLocator} that doesn't do nothing. Useful mainly for implementing tests. */
+    @Nonnull
+    public static IViewLocator dummyIViewLocator() { return new NullViewLocator(); }
+
+    private static class NullViewLocator implements IViewLocator {
+        @Override
+        public Lnk getDefaultHrefFor(FlowInstance flowInstance) {
+            return null;
+        }
+
+        @Override
+        public Lnk getDefaultHrefFor(TaskInstance taskInstance) {
+            return null;
+        }
+    }
+
+    /** Creates a {@link BusinessRoleStrategy} that doesn't do nothing. Useful mainly for implementing tests. */
+    @Nonnull
+    public static BusinessRoleStrategy<FlowInstance> dummyBusinessRoleStrategy() { return new EmptyBusinessRoleStrategy(); }
+
+    private static class EmptyBusinessRoleStrategy extends BusinessRoleStrategy<FlowInstance> {
+        @Override
+        public List<? extends SUser> listAllocableUsers(FlowInstance instance) {
+            return Collections.emptyList();
+        }
+    }}

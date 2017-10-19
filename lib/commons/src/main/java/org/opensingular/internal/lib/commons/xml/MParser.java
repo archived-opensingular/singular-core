@@ -16,22 +16,21 @@
 
 package org.opensingular.internal.lib.commons.xml;
 
+import org.opensingular.lib.commons.base.SingularException;
+import org.w3c.dom.Element;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.opensingular.lib.commons.base.SingularException;
-import org.w3c.dom.Element;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  * Faz o parse de um XML, já validando contra um dtd. Para os casos mais
@@ -105,11 +104,11 @@ public final class MParser {
      *
      * @param systemId Nome do recurso (no XML a ser lido) quer será
      * interceptado.
-     * @param valor a ser utilizado toda vez que pedir o recurso.
+     * @param value a ser utilizado toda vez que pedir o recurso.
      */
-    public void addInputSource(String systemId, String valor) {
+    public void addInputSource(String systemId, String value) {
         InputSource is = new InputSource(systemId);
-        is.setCharacterStream(new StringReader(valor));
+        is.setCharacterStream(new StringReader(value));
         addInputSource(systemId, is);
     }
 
@@ -119,11 +118,11 @@ public final class MParser {
      *
      * @param systemId Nome do recurso (no XML a ser lido) quer será
      * interceptado.
-     * @param valor a ser utilizado toda vez que pedir o recurso.
+     * @param value a ser utilizado toda vez que pedir o recurso.
      */
-    public void addInputSource(String systemId, InputStream valor) {
+    public void addInputSource(String systemId, InputStream value) {
         InputSource is = new InputSource(systemId);
-        is.setByteStream(valor);
+        is.setByteStream(value);
         addInputSource(systemId, is);
     }
 

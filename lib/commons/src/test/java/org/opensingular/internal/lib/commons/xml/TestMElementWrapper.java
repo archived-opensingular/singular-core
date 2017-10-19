@@ -32,9 +32,9 @@ public class TestMElementWrapper {
     @Test
     public void testCopyElementWithNewNameNullException(){
         MElement element = MElement.newInstance("raiz");
-        MElement filho  = element.addElement("filho", "filhoVal");
-        Element novoNome = MElementWrapper.copyElement(element, filho, "novoNome");
-        Assert.assertEquals("novoNome", novoNome.getNodeName());
+        MElement child  = element.addElement("filho", "filhoVal");
+        Element newName = MElementWrapper.copyElement(element, child, "novoNome");
+        Assert.assertEquals("novoNome", newName.getNodeName());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -52,12 +52,12 @@ public class TestMElementWrapper {
     @Test(expected = DOMException.class)
     public void testAddElementNS(){
         MElement element = MElement.newInstance("raiz");
-        MElement filho = element.addElement("filho", "filhoVal");
+        MElement child = element.addElement("filho", "filhoVal");
 
-        Element option2 = MElementWrapper.addElementNS(filho, "notEmpty", "notEmpty");
+        Element option2 = MElementWrapper.addElementNS(child, "notEmpty", "notEmpty");
         Assert.assertEquals("notEmpty", option2.getNodeName());
 
-        MElementWrapper.addElementNS(filho, "notEmpty", "/notEmpty");
+        MElementWrapper.addElementNS(child, "notEmpty", "/notEmpty");
     }
 
     @Test
@@ -135,9 +135,9 @@ public class TestMElementWrapper {
     @Test(expected = DOMException.class)
     public void testSomeMethods(){
         MElement element = MElement.newInstance("raiz");
-        MElement filho = element.addElement("filho", "filhoVal");
+        MElement child = element.addElement("filho", "filhoVal");
 
-        MElementWrapper wrapper = new MElementWrapper(filho);
+        MElementWrapper wrapper = new MElementWrapper(child);
         Assert.assertFalse(wrapper.isSupported("feature", "1.0"));
 
         Assert.assertNull(wrapper.getBaseURI());

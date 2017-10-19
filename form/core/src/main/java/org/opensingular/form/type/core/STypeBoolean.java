@@ -34,21 +34,21 @@ public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
         super(SIBoolean.class, Boolean.class);
     }
 
-    protected STypeBoolean(Class<? extends SIBoolean> classeInstancia) {
-        super(classeInstancia, Boolean.class);
+    protected STypeBoolean(Class<? extends SIBoolean> instanceClass) {
+        super(instanceClass, Boolean.class);
     }
 
     @Override
-    protected Boolean convertNotNativeNotString(Object valor) {
-        if (valor instanceof Number) {
-            int v = ((Number) valor).intValue();
+    protected Boolean convertNotNativeNotString(Object value) {
+        if (value instanceof Number) {
+            int v = ((Number) value).intValue();
             if (v == 0) {
                 return Boolean.FALSE;
             } else if (v == 1) {
                 return Boolean.TRUE;
             }
         }
-        throw createConversionError(valor);
+        throw createConversionError(value);
     }
 
     @Override
@@ -99,10 +99,10 @@ public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
     }
 
     @Override
-    public String toStringDisplayDefault(Boolean valor) {
-        if (valor == null) {
+    public String toStringDisplayDefault(Boolean value) {
+        if (value == null) {
             return null;
-        } else if (valor) {
+        } else if (value) {
             return YES_LABEL;
         } else {
             return NO_LABEL;

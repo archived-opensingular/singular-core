@@ -22,10 +22,10 @@ import org.opensingular.flow.core.STaskHuman;
 public interface BuilderHuman<SELF extends BuilderHuman<SELF>> extends BuilderUserExecutable<SELF, STaskHuman> {
 
     public default SELF notifyStartToResponsibleUser() {
-        return addStartedTaskListener((instanciaTarefa, execucaoTask) -> Flow.notifyListeners(n -> n.notifyStartToResponsibleUser(instanciaTarefa, execucaoTask)));
+        return addStartedTaskListener((taskInstance, executionContext) -> Flow.notifyListeners(n -> n.notifyStartToResponsibleUser(taskInstance, executionContext)));
     }
 
     public default SELF notifyStartToInterestedUser() {
-        return addStartedTaskListener((instanciaTarefa, execucaoTask) -> Flow.notifyListeners(n -> n.notifyStartToInterestedUser(instanciaTarefa, execucaoTask)));
+        return addStartedTaskListener((taskInstance, executionContext) -> Flow.notifyListeners(n -> n.notifyStartToInterestedUser(taskInstance, executionContext)));
     }
 }

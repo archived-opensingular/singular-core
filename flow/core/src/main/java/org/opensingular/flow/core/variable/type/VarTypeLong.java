@@ -29,8 +29,8 @@ public class VarTypeLong extends VarTypeBase<Long> {
     }
 
     @Override
-    public String toDisplayString(Object valor, VarDefinition varDefinition) {
-        return Long.toString(convert(valor));
+    public String toDisplayString(Object value, VarDefinition varDefinition) {
+        return Long.toString(convert(value));
     }
 
     @Override

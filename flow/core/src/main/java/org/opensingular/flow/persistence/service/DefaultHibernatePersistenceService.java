@@ -25,9 +25,9 @@ import org.opensingular.flow.core.entity.IEntityVariableType;
 import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.flow.persistence.entity.CategoryEntity;
 import org.opensingular.flow.persistence.entity.ExecutionVariableEntity;
-import org.opensingular.flow.persistence.entity.ProcessDefinitionEntity;
-import org.opensingular.flow.persistence.entity.ProcessInstanceEntity;
-import org.opensingular.flow.persistence.entity.ProcessVersionEntity;
+import org.opensingular.flow.persistence.entity.FlowDefinitionEntity;
+import org.opensingular.flow.persistence.entity.FlowInstanceEntity;
+import org.opensingular.flow.persistence.entity.FlowVersionEntity;
 import org.opensingular.flow.persistence.entity.RoleDefinitionEntity;
 import org.opensingular.flow.persistence.entity.RoleInstanceEntity;
 import org.opensingular.flow.persistence.entity.TaskDefinitionEntity;
@@ -49,9 +49,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class DefaultHibernatePersistenceService extends
-        AbstractHibernatePersistenceService<CategoryEntity, ProcessDefinitionEntity,
-                ProcessVersionEntity,
-                ProcessInstanceEntity,
+        AbstractHibernatePersistenceService<CategoryEntity, FlowDefinitionEntity, FlowVersionEntity, FlowInstanceEntity,
                 TaskInstanceEntity,
                 TaskDefinitionEntity,
                 TaskVersionEntity,
@@ -68,18 +66,18 @@ public class DefaultHibernatePersistenceService extends
     // -------------------------------------------------------
 
     @Override
-    protected ProcessInstanceEntity newProcessInstance(ProcessVersionEntity processVersion) {
-        ProcessInstanceEntity processInstance = new ProcessInstanceEntity();
-        processInstance.setProcessVersion(processVersion);
-        processInstance.setRoles(new ArrayList<>());
-        return processInstance;
+    protected FlowInstanceEntity newFlowInstance(FlowVersionEntity flowVersion) {
+        FlowInstanceEntity flowInstance = new FlowInstanceEntity();
+        flowInstance.setFlowVersion(flowVersion);
+        flowInstance.setRoles(new ArrayList<>());
+        return flowInstance;
     }
 
     @Override
-    protected RoleInstanceEntity newEntityRole(ProcessInstanceEntity instance, RoleDefinitionEntity role, SUser user, SUser allocator) {
+    protected RoleInstanceEntity newEntityRole(FlowInstanceEntity instance, RoleDefinitionEntity role, SUser user, SUser allocator) {
         SUser resolvedUser = saveUserIfNeeded(user);
         final RoleInstanceEntity entityRole = new RoleInstanceEntity();
-        entityRole.setProcessInstance(instance);
+        entityRole.setFlowInstance(instance);
         entityRole.setUser((Actor) resolvedUser);
         entityRole.setRole(role);
         entityRole.setAllocatorUser((Actor) allocator);
@@ -97,9 +95,9 @@ public class DefaultHibernatePersistenceService extends
     }
 
     @Override
-    protected TaskInstanceEntity newTaskInstance(ProcessInstanceEntity processInstance, TaskVersionEntity taskVersion) {
+    protected TaskInstanceEntity newTaskInstance(FlowInstanceEntity flowInstance, TaskVersionEntity taskVersion) {
         TaskInstanceEntity taskInstance = new TaskInstanceEntity();
-        taskInstance.setProcessInstance(processInstance);
+        taskInstance.setFlowInstance(flowInstance);
         taskInstance.setTask(taskVersion);
         return taskInstance;
     }
@@ -126,8 +124,8 @@ public class DefaultHibernatePersistenceService extends
     // -------------------------------------------------------
 
     @Override
-    public ProcessVersionEntity retrieveProcessVersionByCod(Integer cod) {
-        return getSession().refreshByPk(ProcessVersionEntity.class, cod);
+    public FlowVersionEntity retrieveFlowVersionByCod(Integer cod) {
+        return getSession().refreshByPk(FlowVersionEntity.class, cod);
     }
 
     // -------------------------------------------------------
@@ -141,24 +139,24 @@ public class DefaultHibernatePersistenceService extends
     }
 
     @Override
-    protected VariableInstanceEntity newVariableInstance(ProcessInstanceEntity processInstance, String name) {
+    protected VariableInstanceEntity newVariableInstance(FlowInstanceEntity flowInstance, String name) {
         VariableInstanceEntity variable = new VariableInstanceEntity();
-        variable.setProcessInstance(processInstance);
+        variable.setFlowInstance(flowInstance);
         variable.setName(name);
         return variable;
     }
 
 
     @Override
-    protected IEntityExecutionVariable newExecutionVariable(ProcessInstanceEntity instance, IEntityVariableInstance processInstanceVar,
+    protected IEntityExecutionVariable newExecutionVariable(FlowInstanceEntity instance, IEntityVariableInstance flowInstanceVar,
             TaskInstanceEntity originTask, TaskInstanceEntity destinationTask, IEntityVariableType type) {
-        ExecutionVariableEntity novo = new ExecutionVariableEntity();
-        novo.setVariable((VariableInstanceEntity) processInstanceVar);
-        novo.setProcessInstance(instance);
-        novo.setOriginTask(originTask);
-        novo.setDestinationTask(destinationTask);
-        novo.setType((VariableTypeInstance) type);
-        return novo;
+        ExecutionVariableEntity newEntity = new ExecutionVariableEntity();
+        newEntity.setVariable((VariableInstanceEntity) flowInstanceVar);
+        newEntity.setFlowInstance(instance);
+        newEntity.setOriginTask(originTask);
+        newEntity.setDestinationTask(destinationTask);
+        newEntity.setType((VariableTypeInstance) type);
+        return newEntity;
     }
 
     @Override
@@ -167,8 +165,8 @@ public class DefaultHibernatePersistenceService extends
     }
 
     @Override
-    protected Class<ProcessInstanceEntity> getClassProcessInstance() {
-        return ProcessInstanceEntity.class;
+    protected Class<FlowInstanceEntity> getClassFlowInstance() {
+        return FlowInstanceEntity.class;
     }
     
     // -------------------------------------------------------

@@ -54,8 +54,8 @@ public final class ConversorToolkit {
         super();
     }
 
-    private static void checarNull(Object valor) throws ParseException {
-        if (valor == null) {
+    private static void verifyNull(Object value) throws ParseException {
+        if (value == null) {
             throw new ParseException("Valor nulo", 0);
         }
     }
@@ -85,23 +85,23 @@ public final class ConversorToolkit {
         }
 
         try {
-            checarNull(data);
-            byte[] novo = data.getBytes(StandardCharsets.UTF_8);
-            for (int i = 0; i < novo.length; i++) {
-                switch (novo[i]) {
+            verifyNull(data);
+            byte[] newBytes = data.getBytes(StandardCharsets.UTF_8);
+            for (int i = 0; i < newBytes.length; i++) {
+                switch (newBytes[i]) {
                     case '\\':
                     case '-':
                     case '.':
                     case ' ':
-                        novo[i] = (byte) '/';
+                        newBytes[i] = (byte) '/';
                         break;
                     default:
                 }
             }
             if (data.length() > 8) {
-                return getDateFormat().parse(new String(novo, StandardCharsets.UTF_8));
+                return getDateFormat().parse(new String(newBytes, StandardCharsets.UTF_8));
             } else {
-                return getDateFormat("dd/MM/yy").parse(new String(novo, StandardCharsets.UTF_8));
+                return getDateFormat("dd/MM/yy").parse(new String(newBytes, StandardCharsets.UTF_8));
             }
         } catch (ParseException e) {
             throw SingularException.rethrow(
@@ -109,40 +109,40 @@ public final class ConversorToolkit {
         }
     }
 
-    public static double getDouble(String valor) throws NumberFormatException {
-        if (valor == null) {
+    public static double getDouble(String value) throws NumberFormatException {
+        if (value == null) {
             throw new NumberFormatException("Valor null");
         }
-        if ("-".equals(valor)) {
+        if ("-".equals(value)) {
             return 0;
         }
         try {
-            String v = valor;
+            String v = value;
             if (v.contains(",")) {
-                v = removeCaracterFromString(v.trim(), '.');
+                v = removeCharacterFromString(v.trim(), '.');
             }
             return Double.parseDouble(v.replace(',', '.'));
         } catch (Exception e) {
-            throw SingularException.rethrow("Valor inválido (" + valor + ")!", e);
+            throw SingularException.rethrow("Valor inválido (" + value + ")!", e);
         }
     }
 
-    public static int getInt(String valor) throws NumberFormatException {
-        if (valor == null) {
+    public static int getInt(String value) throws NumberFormatException {
+        if (value == null) {
             throw new NumberFormatException("Valor null");
         }
         try {
-            return Integer.parseInt(removeCaracterFromString(valor.trim(), '.'));
+            return Integer.parseInt(removeCharacterFromString(value.trim(), '.'));
         } catch (NumberFormatException e) {
-            throw SingularException.rethrow("Valor inválido (" + valor + ")!", e);
+            throw SingularException.rethrow("Valor inválido (" + value + ")!", e);
         }
     }
 
-    public static Integer getInt(Object valor) throws NumberFormatException {
-        if (valor instanceof Number) {
-            return ((Number) valor).intValue();
-        } else if (valor instanceof String) {
-            return getInt(valor.toString());
+    public static Integer getInt(Object value) throws NumberFormatException {
+        if (value instanceof Number) {
+            return ((Number) value).intValue();
+        } else if (value instanceof String) {
+            return getInt(value.toString());
         }
         return null;
     }
@@ -274,44 +274,44 @@ public final class ConversorToolkit {
         return nf.format(bigDecimal);
     }
     
-    public static String printNumber(Double valor) {
-        if (valor == null) {
+    public static String printNumber(Double value) {
+        if (value == null) {
             return null;
         }
-        return getNumberFormat(2).format(valor);
+        return getNumberFormat(2).format(value);
     }
 
-    public static String printNumber(double valor) {
-        return getNumberFormat(2).format(valor);
+    public static String printNumber(double value) {
+        return getNumberFormat(2).format(value);
     }
 
-    public static String printNumber(Double valor, int nrCasasDecimais) {
-        if (valor == null) {
+    public static String printNumber(Double value, int qtdDecimals) {
+        if (value == null) {
             return "";
         }
-        return printNumber(valor.doubleValue(), nrCasasDecimais);
+        return printNumber(value.doubleValue(), qtdDecimals);
     }
 
-    public static String printNumber(double valor, int nrCasasDecimais) {
-        return getNumberFormat(nrCasasDecimais).format(valor);
+    public static String printNumber(double value, int qtdDecimals) {
+        return getNumberFormat(qtdDecimals).format(value);
     }
 
-    public static String printNumber(double valor, int nrCasasDecimais, boolean printZero) {
-        if (!printZero && Double.doubleToRawLongBits(valor) == 0) {
+    public static String printNumber(double value, int qtdDecimals, boolean printZero) {
+        if (!printZero && Double.doubleToRawLongBits(value) == 0) {
             return "";
         }
-        return getNumberFormat(nrCasasDecimais).format(valor);
+        return getNumberFormat(qtdDecimals).format(value);
     }
 
-    public static String quebrarLinhasHTML(String texto) {
-        return texto.replace("\n", "<br/>");
+    public static String breakHtmlLines(String text) {
+        return text.replace("\n", "<br/>");
     }
 
-    private static String removeCaracterFromString(String valor, char dado) {
-        String valorTemp = valor;
-        for (int i = valorTemp.indexOf(dado); i != -1; i = valorTemp.indexOf(dado, i)) {
-            valorTemp = valorTemp.substring(0, i) + valorTemp.substring(i + 1);
+    private static String removeCharacterFromString(String value, char dado) {
+        String tempValue = value;
+        for (int i = tempValue.indexOf(dado); i != -1; i = tempValue.indexOf(dado, i)) {
+            tempValue = tempValue.substring(0, i) + tempValue.substring(i + 1);
         }
-        return valorTemp;
+        return tempValue;
     }
 }

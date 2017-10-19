@@ -105,24 +105,24 @@ public final class ConversorDataISO8601 {
     /**
      * Classe de apoio para o parse da Data no formato ISO8601
      */
-    private static class LeitorString {
-        private final String texto_;
-        private       int    pos_;
+    private static class StringReader {
+        private final String text;
+        private       int pos;
 
-        public LeitorString(String texto) {
-            texto_ = texto;
+        public StringReader(String text) {
+            this.text = text;
         }
 
         public boolean isNotEnd() {
-            return pos_ != texto_.length();
+            return pos != text.length();
         }
 
-        public int lerNumero(int digitosMinimos, int digitosMaximos, boolean shiftMaximo) {
+        public int readNumber(int minimumDigits, int maximumDigits, boolean maxShift) {
             int  p = 0;
             int  n = 0;
             char c;
-            while (pos_ < texto_.length()) {
-                c = texto_.charAt(pos_);
+            while (pos < text.length()) {
+                c = text.charAt(pos);
                 if (Character.isDigit(c)) {
                     if (p == 0) {
                         n = (c - '0');
@@ -131,74 +131,74 @@ public final class ConversorDataISO8601 {
                     }
                 } else {
                     if (p == 0) {
-                        throw erroFormato();
+                        throw errorFormat();
                     } else {
                         break;
                     }
                 }
-                pos_++;
+                pos++;
                 p++;
             }
-            validar(digitosMinimos, digitosMaximos, p);
-            n = letShiftMaximo(digitosMaximos, shiftMaximo, p, n);
+            validate(minimumDigits, maximumDigits, p);
+            n = letShiftMaximo(maximumDigits, maxShift, p, n);
             return n;
         }
 
-        protected void validar(int digitosMinimos, int digitosMaximos, int p) {
-            if ((p < digitosMinimos) || (p > digitosMaximos)) {
-                throw erroFormato();
+        protected void validate(int minimumDigits, int maximumDigits, int p) {
+            if ((p < minimumDigits) || (p > maximumDigits)) {
+                throw errorFormat();
             }
         }
 
-        protected int letShiftMaximo(int digitosMaximos, boolean shiftMaximo, int p, int n) {
+        protected int letShiftMaximo(int maximumDigits, boolean maxShift, int p, int n) {
             int _p = p;
             int _n = n;
-            if (shiftMaximo) {
-                for (; _p < digitosMaximos; _p++) {
+            if (maxShift) {
+                for (; _p < maximumDigits; _p++) {
                     _n *= 10;
                 }
             }
             return _n;
         }
 
-        public void lerSeparadorData() {
-            char c = lerCaracter();
+        public void readDateSeparator() {
+            char c = readCharacter();
             if (!((c == '-') || (c == '.') || (c == '/'))) {
-                throw erroFormato();
+                throw errorFormat();
             }
         }
 
-        public void lerSeparadorDataHora() {
-            char c = lerCaracter();
+        public void readDateTimeSeparator() {
+            char c = readCharacter();
             if (!((c == SEPARADOR_DATA_HORA) || (c == ' '))) {
-                throw erroFormato();
+                throw errorFormat();
             }
         }
 
         public boolean hasChar(char c) {
-            if ((pos_ != texto_.length()) && (c == texto_.charAt(pos_))) {
-                pos_++;
+            if ((pos != text.length()) && (c == text.charAt(pos))) {
+                pos++;
                 return true;
             }
             return false;
         }
 
-        public void lerCaracter(char c) {
-            if (c != lerCaracter()) {
-                throw erroFormato();
+        public void readCharacter(char c) {
+            if (c != readCharacter()) {
+                throw errorFormat();
             }
         }
 
-        public char lerCaracter() {
-            if (pos_ == texto_.length()) {
-                throw erroFormato();
+        public char readCharacter() {
+            if (pos == text.length()) {
+                throw errorFormat();
             }
-            return texto_.charAt(pos_++);
+            return text.charAt(pos++);
         }
 
-        public RuntimeException erroFormato() {
+        public RuntimeException errorFormat() {
             throw new IllegalArgumentException(
-                    "A string '" + texto_ + "' deveria estar no formato yyyy-mm-dd hh:mm:ss.fffffffff");
+                    "A string '" + text + "' deveria estar no formato yyyy-mm-dd hh:mm:ss.fffffffff");
         }
 
     }
@@ -208,42 +208,42 @@ public final class ConversorDataISO8601 {
         if (s == null) {
             throw new java.lang.IllegalArgumentException("string null");
         }
-        LeitorString leitor = new LeitorString(s);
+        StringReader reader = new StringReader(s);
 
         int[] t = new int[NANO + 1];
 
-        t[ANO] = leitor.lerNumero(4, 10, false);
-        leitor.lerSeparadorData();
-        t[MES] = leitor.lerNumero(1, 2, false);
-        leitor.lerSeparadorData();
-        t[DIA] = leitor.lerNumero(1, 2, false);
+        t[ANO] = reader.readNumber(4, 10, false);
+        reader.readDateSeparator();
+        t[MES] = reader.readNumber(1, 2, false);
+        reader.readDateSeparator();
+        t[DIA] = reader.readNumber(1, 2, false);
 
         // hora opcional
-        if (leitor.isNotEnd()) {
-            leitor.lerSeparadorDataHora();
-            t[HORA] = leitor.lerNumero(1, 2, false);
-            leitor.lerCaracter(':');
-            t[MINUTO] = leitor.lerNumero(1, 2, false);
+        if (reader.isNotEnd()) {
+            reader.readDateTimeSeparator();
+            t[HORA] = reader.readNumber(1, 2, false);
+            reader.readCharacter(':');
+            t[MINUTO] = reader.readNumber(1, 2, false);
             //segundos opcionais
-            if (leitor.isNotEnd()) {
-                leitor.lerCaracter(':');
-                t[SEGUNDO] = leitor.lerNumero(1, 2, false);
+            if (reader.isNotEnd()) {
+                reader.readCharacter(':');
+                t[SEGUNDO] = reader.readNumber(1, 2, false);
                 // nanos/milis opcionais
-                if (leitor.hasChar('.')) {
-                    t[NANO] = leitor.lerNumero(1, 9, true);
+                if (reader.hasChar('.')) {
+                    t[NANO] = reader.readNumber(1, 9, true);
                 }
             }
             //indicador diferença GMT em miliseconds
             //if (leitor.hasChar('-')) {
-            //   int hGMT = leitor.lerNumero(1, 2, false);
-            //    leitor.lerCaracter(':');
-            //    int mGMT = leitor.lerNumero(1, 2, false);
+            //   int hGMT = leitor.readNumber(1, 2, false);
+            //    leitor.readCharacter(':');
+            //    int mGMT = leitor.readNumber(1, 2, false);
             //    gmtMili = (hGMT * 60 + mGMT) * 60 * 1000;
             //}
         }
 
-        if (leitor.isNotEnd()) {
-            throw leitor.erroFormato();
+        if (reader.isNotEnd()) {
+            throw reader.errorFormat();
         }
 
         return t;
@@ -275,11 +275,11 @@ public final class ConversorDataISO8601 {
         format2(buffer, second);
 
         if (nano == 0) {
-            formatMiliIfNecessary(buffer, milli, precision);
+            formatMilliIfNecessary(buffer, milli, precision);
         } else if (milli != 0) {
             throw new IllegalArgumentException("Não se pode para mili e nanosegundos");
         } else {
-            formatMiliAndNanoIfNecessary(buffer, nano, precision);
+            formatMilliAndNanoIfNecessary(buffer, nano, precision);
         }
 
         return buffer.toString();
@@ -309,16 +309,16 @@ public final class ConversorDataISO8601 {
         format2(buffer, day);
     }
 
-    private static void formatMiliAndNanoIfNecessary(StringBuilder buffer, int nano, byte prescisao) {
-        int mili;
+    private static void formatMilliAndNanoIfNecessary(StringBuilder buffer, int nano, byte prescisao) {
+        int milli;
         if ((nano < 0) || (nano > 999999999)) {
             throw new IllegalArgumentException("Nanos <0 ou >999999999");
         }
         // Geralmente so tem precisão de mili segundos
         // Se forem apenas milisegundos fica .999
         // Se realm
-        mili = nano / 1000000;
-        formatMiliIfNecessary(buffer, mili, prescisao);
+        milli = nano / 1000000;
+        formatMilliIfNecessary(buffer, milli, prescisao);
         if (prescisao == NANO) {
             int onlyNano = nano % 1000000;
             if (onlyNano != 0) {
@@ -338,55 +338,55 @@ public final class ConversorDataISO8601 {
         }
     }
 
-    private static void format2(StringBuilder buffer, int valor) {
-        if (valor < 0) {
+    private static void format2(StringBuilder buffer, int value) {
+        if (value < 0) {
             throw new IllegalArgumentException("valor negativo");
-        } else if (valor < 10) {
+        } else if (value < 10) {
             buffer.append('0');
-        } else if (valor > 99) {
+        } else if (value > 99) {
             throw new IllegalArgumentException("valor > 99");
         }
-        buffer.append(valor);
+        buffer.append(value);
     }
 
-    private static void formatMiliIfNecessary(StringBuilder buffer, int mili, byte prescisao) {
-        if (mili < 0) {
+    private static void formatMilliIfNecessary(StringBuilder buffer, int milli, byte precision) {
+        if (milli < 0) {
             throw new IllegalArgumentException("Milisegundos <0");
-        } else if (mili > 999) {
+        } else if (milli > 999) {
             throw new IllegalArgumentException("Milisegundos >999");
         }
-        if ((prescisao == MILI) || (prescisao == NANO)) {
+        if ((precision == MILI) || (precision == NANO)) {
             buffer.append('.');
-            if (mili < 10) {
+            if (milli < 10) {
                 buffer.append("00");
-            } else if (mili < 100) {
+            } else if (milli < 100) {
                 buffer.append('0');
             }
-            buffer.append(mili);
+            buffer.append(milli);
         }
     }
 
     /**
      * Verifica se a string fornecida esta no formato ISO8601.
      *
-     * @param valor a ser verificado
+     * @param value a ser verificado
      * @return true se atender ao formato
      */
-    public static boolean isISO8601(String valor) {
+    public static boolean isISO8601(String value) {
         //                01234567890123456789012345678
         //                1999-05-31T13:20:00.000-05:00
-        String mascara = "????-??-??T??:??:??.???-??:??";
-        if ((valor == null) || valor.length() < 10 || valor.length() > mascara.length()) {
+        String mask = "????-??-??T??:??:??.???-??:??";
+        if ((value == null) || value.length() < 10 || value.length() > mask.length()) {
             return false;
         }
-        int tam = valor.length();
+        int tam = value.length();
         for (int i = 0; i < tam; i++) {
-            char m = mascara.charAt(i);
+            char m = mask.charAt(i);
             if (m == '?') {
-                if (!Character.isDigit(valor.charAt(i))) {
+                if (!Character.isDigit(value.charAt(i))) {
                     return false;
                 }
-            } else if (m != valor.charAt(i) && (i != 10 || valor.charAt(i) != ' ')) {
+            } else if (m != value.charAt(i) && (i != 10 || value.charAt(i) != ' ')) {
                 return false;
             }
         }

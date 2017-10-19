@@ -1,9 +1,9 @@
 package org.opensingular.form;
 
-import org.opensingular.form.type.util.SPackageUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.opensingular.form.type.util.SPackageUtil;
 
 @RunWith(Parameterized.class)
 public class TestMPacoteUtil extends TestCaseForm {
@@ -16,6 +16,6 @@ public class TestMPacoteUtil extends TestCaseForm {
     public void testCargaSimples() {
         createTestDictionary().loadPackage(SPackageUtil.class);
 
-//        dicionario.debug();
+//        dictionary.debug();
     }
 }

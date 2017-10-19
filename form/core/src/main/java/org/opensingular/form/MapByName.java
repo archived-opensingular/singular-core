@@ -44,22 +44,22 @@ class MapByName<K> implements Iterable<K> {
     }
 
     @SuppressWarnings("unchecked")
-    public void add(K novo) {
-        add(novo, (Class<K>) novo.getClass());
+    public void add(@Nonnull K obj) {
+        add(obj, (Class<K>) obj.getClass());
     }
 
-    public void add(K novo, Class<K> classeDeRegistro) {
-        String nome = getNome(novo);
-        byName.put(nome, novo);
-        if (classeDeRegistro != null) {
-            byClass.put(classeDeRegistro, novo);
+    public void add(@Nonnull K obj, @Nullable Class<K> classToBeRegisterBy) {
+        String nome = getNome(obj);
+        byName.put(nome, obj);
+        if (classToBeRegisterBy != null) {
+            byClass.put(classToBeRegisterBy, obj);
         }
     }
 
     @Nullable
-    public <T extends K> T get(@Nonnull Class<T> classeAlvo) {
-        K valor = byClass.get(classeAlvo);
-        return classeAlvo.cast(valor);
+    public <T extends K> T get(@Nonnull Class<T> targetClass) {
+        K value = byClass.get(targetClass);
+        return targetClass.cast(value);
     }
 
     @SuppressWarnings("unchecked")
@@ -73,25 +73,25 @@ class MapByName<K> implements Iterable<K> {
 
     @Nonnull
     final <T extends K> T getOrNewInstance(@Nonnull Class<T> targetClass) {
-        T valor = get(targetClass);
-        if (valor == null) {
+        T value = get(targetClass);
+        if (value == null) {
             try {
                 return targetClass.newInstance();
             } catch (InstantiationException | IllegalAccessException e) {
                 throw new SingularFormException("Erro instanciando " + targetClass.getName(), e);
             }
         }
-        return valor;
+        return value;
     }
 
-    final <T extends K> void verifyMustNotBePresent(Class<T> classeAlvo, Object owner) {
-        T valor = get(classeAlvo);
-        if (valor != null) {
-            throw new SingularFormException(errorMsg("A definição '" + getNome(valor) + "' já está carregada", owner));
+    final <T extends K> void verifyMustNotBePresent(Class<T> targetClass, Object owner) {
+        T value = get(targetClass);
+        if (value != null) {
+            throw new SingularFormException(errorMsg("A definição '" + getNome(value) + "' já está carregada", owner));
         }
     }
 
-    final void verifyMustNotBePresent(K newMember, Object owner) {
+    final void verifyMustNotBePresent(@Nonnull K newMember, Object owner) {
         verifyMustNotBePresent(getNome(newMember), owner);
     }
 
@@ -108,7 +108,8 @@ class MapByName<K> implements Iterable<K> {
         return msg + " em " + owner;
     }
 
-    private String getNome(K val) {
+    @Nonnull
+    private String getNome(@Nonnull K val) {
         return nameMapper.apply(val);
     }
 

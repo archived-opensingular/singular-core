@@ -28,6 +28,6 @@ public interface IEntityVariableInstance extends IEntityByCod<Integer> {
 
     void setValue(String value);
 
-    IEntityProcessInstance getProcessInstance();
+    IEntityFlowInstance getFlowInstance();
 
 }
