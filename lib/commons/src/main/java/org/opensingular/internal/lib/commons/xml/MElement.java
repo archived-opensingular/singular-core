@@ -1258,7 +1258,7 @@ public abstract class MElement implements Element, Serializable {
      */
     public final String formatHour(String xPath) {
         java.util.Date d = getDate(xPath);
-        return (d == null) ? "" : ConversorToolkit.printHora(d);
+        return (d == null) ? "" : ConversorToolkit.printHour(d);
     }
 
     /**

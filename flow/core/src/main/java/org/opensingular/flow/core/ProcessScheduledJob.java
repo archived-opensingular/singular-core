@@ -61,8 +61,8 @@ public class ProcessScheduledJob implements IScheduledJob {
         return withSchedule(ScheduleDataBuilder.buildMonthly(dayOfMonth, hours, minutes, months));
     }
 
-    public ProcessScheduledJob withDailySchedule(int hora, int minuto) {
-        return withSchedule(ScheduleDataBuilder.buildDaily(hora, minuto));
+    public ProcessScheduledJob withDailySchedule(int hour, int minute) {
+        return withSchedule(ScheduleDataBuilder.buildDaily(hour, minute));
     }
 
     public ProcessScheduledJob withSchedule(IScheduleData scheduleData) {

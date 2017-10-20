@@ -100,7 +100,7 @@ public class TaskInstance implements Serializable {
     public STask<?> getFlowTaskOrException() {
         return getFlowTask().orElseThrow(() -> new SingularFlowException(
                 "Era esperado encontra a definição para a entidade de tarefa, mas não há correspondente entre o BD e " +
-                        "a definição do processo",
+                        "a definição do fluxo",
                 this));
     }
 
@@ -166,7 +166,7 @@ public class TaskInstance implements Serializable {
         return getName();
     }
 
-    public String getDescricao() {
+    public String getDescription() {
         return getFlowInstance().getDescription();
     }
 
@@ -253,8 +253,8 @@ public class TaskInstance implements Serializable {
             throw new SingularFlowException(
                     "A tarefa '" + getName() + "' não pode ser realocada, pois não é do tipo pessoa", this);
         }
-        SUser pessoaAlocadaAntes = getAllocatedUser();
-        if (Objects.equals(user, pessoaAlocadaAntes)) {
+        SUser userAllocatedBefore = getAllocatedUser();
+        if (Objects.equals(user, userAllocatedBefore)) {
             return;
         }
 
@@ -274,8 +274,8 @@ public class TaskInstance implements Serializable {
         }
 
         if (notify) {
-            Flow.notifyListeners(n -> n.notifyUserTaskRelocation(this, author, pessoaAlocadaAntes, user, pessoaAlocadaAntes));
-            Flow.notifyListeners(n -> n.notifyUserTaskAllocation(this, author, user, user, pessoaAlocadaAntes, trimmedRelocationCause));
+            Flow.notifyListeners(n -> n.notifyUserTaskRelocation(this, author, userAllocatedBefore, user, userAllocatedBefore));
+            Flow.notifyListeners(n -> n.notifyUserTaskAllocation(this, author, user, user, userAllocatedBefore, trimmedRelocationCause));
         }
 
         notifyStateUpdate();
@@ -306,9 +306,9 @@ public class TaskInstance implements Serializable {
     }
 
     /**
-     * Retorna todos os processo filhos associados a essa tarefa. Podem ser
-     * processo disparados em conjunto a tarefa atual ou mesmo um processo filho
-     * que consiste no subProcesso da tarefa.
+     * Retorna todos os fluxos filhos associados a essa tarefa. Podem ser
+     * fluxo disparados em conjunto a tarefa atual ou mesmo um fluxo filho
+     * que consiste no sub fluxo da tarefa.
      *
      * @return sempre diferente de null, mas pode ser lista vazia.
      */

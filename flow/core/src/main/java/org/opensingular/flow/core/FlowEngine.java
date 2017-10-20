@@ -134,7 +134,7 @@ class FlowEngine {
     private static <P extends FlowInstance> void saveParam(@Nonnull P flowInstance, TaskInstance currentOrigin, VarInstanceMap<?, ?> currentParam, Date agora, TaskInstance newTaskInstance) {
         copyMarkedParametersToInstanceVariables(flowInstance, currentParam);
         if (currentOrigin != null) {
-            //TODO (Daniel) o If acima existe para não dar erro a iniciar processo com variáveis setadas no
+            //TODO (Daniel) o If acima existe para não dar erro a iniciar fluxo com variáveis setadas no
             // start, mas deveria guardar no histórico da variavel originais do start (o que o if a cima
             // impede). O problema é uqe originTaskInstance é obrigatório
             getPersistenceService().saveVariableHistoric(agora, flowInstance.getEntity(), currentOrigin, newTaskInstance, currentParam);
@@ -181,14 +181,13 @@ class FlowEngine {
 
     private static <P extends FlowInstance> void automaticallySetBusinessRole(P instance, TaskInstance taskInstance,
                                                                               STransition originTransition) {
-        for (SBusinessRole papel : originTransition.getRolesToDefine()) {
-            if (papel.isAutomaticBusinessRoleAllocation()) {
-                SUser pessoa = papel.getBusinessRoleStrategy().getUserForRole(instance,
-                        taskInstance);
-                Objects.requireNonNull(pessoa, "Não foi possível determinar a pessoa com o papel " + papel.getName()
+        for (SBusinessRole role : originTransition.getRolesToDefine()) {
+            if (role.isAutomaticBusinessRoleAllocation()) {
+                SUser user = role.getBusinessRoleStrategy().getUserForRole(instance, taskInstance);
+                Objects.requireNonNull(user, "Não foi possível determinar a pessoa com o papel " + role.getName()
                         + " para " + instance.getFullId() + " na transição " + originTransition.getName());
 
-                instance.addOrReplaceUserRole(papel.getAbbreviation(), pessoa);
+                instance.addOrReplaceUserRole(role.getAbbreviation(), user);
             }
         }
     }

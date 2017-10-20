@@ -114,26 +114,26 @@ public abstract class AbstractHibernateFlowDefinitionService<CATEGORY extends IE
     protected abstract TRANSITION createEntityTaskTransition(TASK_VERSION originTask, TASK_VERSION destinationTask);
 
 
-    private final FLOW_DEFINITION retrieveOrcreateEntityFlowDefinitionFor(FlowDefinition<?> definicao) {
+    private final FLOW_DEFINITION retrieveOrcreateEntityFlowDefinitionFor(FlowDefinition<?> definition) {
         SessionWrapper sw = getSession();
-        requireNonNull(definicao);
-        String key = definicao.getKey();
+        requireNonNull(definition);
+        String key = definition.getKey();
         FLOW_DEFINITION def = sw.retrieveFirstFromCachedRetrieveAll(getClassFlowDefinition(),
                 pd -> pd.getKey().equals(key));
         if (def == null) {
             def = sw.retrieveFirstFromCachedRetrieveAll(getClassFlowDefinition(),
-                pd -> pd.getDefinitionClassName().equals(definicao.getClass().getName()));
+                pd -> pd.getDefinitionClassName().equals(definition.getClass().getName()));
         }
         IEntityModule module = retrieveModule();
-        String        name         = definicao.getName();
-        String        category     = definicao.getCategory();
+        String        name         = definition.getName();
+        String        category     = definition.getCategory();
         if (def == null) {
             def = newInstanceOf(getClassFlowDefinition());
             def.setCategory(retrieveOrCreateCategoryWith(category));
             def.setModule(module);
             def.setName(name);
             def.setKey(key);
-            def.setDefinitionClassName(definicao.getClass().getName());
+            def.setDefinitionClassName(definition.getClass().getName());
 
             sw.save(def);
             sw.refresh(def);
@@ -155,8 +155,8 @@ public abstract class AbstractHibernateFlowDefinitionService<CATEGORY extends IE
                 def.setCategory(retrieveOrCreateCategoryWith(category));
                 mudou = true;
             }
-            if (!Objects.equals(def.getDefinitionClassName(), definicao.getClass().getName())) {
-                def.setDefinitionClassName(definicao.getClass().getName());
+            if (!Objects.equals(def.getDefinitionClassName(), definition.getClass().getName())) {
+                def.setDefinitionClassName(definition.getClass().getName());
                 mudou = true;
             }
             if (mudou) {
@@ -202,12 +202,12 @@ public abstract class AbstractHibernateFlowDefinitionService<CATEGORY extends IE
             }
         }
 
-        for (SBusinessRole mPapel : flowDefinition.getFlowMap().getRoles()) {
-            if (!abbreviations.contains(mPapel.getAbbreviation())) {
+        for (SBusinessRole bRole : flowDefinition.getFlowMap().getRoles()) {
+            if (!abbreviations.contains(bRole.getAbbreviation())) {
                 PROCESS_ROLE_DEF role = newInstanceOf(getClassProcessRoleDef());
                 role.setFlowDefinition(entityFlowDefinition);
-                role.setName(mPapel.getName());
-                role.setAbbreviation(mPapel.getAbbreviation());
+                role.setName(bRole.getName());
+                role.setAbbreviation(bRole.getAbbreviation());
                 sw.save(role);
             }
         }

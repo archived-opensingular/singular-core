@@ -93,12 +93,12 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
         return false;
     }
 
-    public STransition defineBusinessRoleInTransition(SBusinessRole papel) {
-        if (origin.isPeople() || papel.isAutomaticBusinessRoleAllocation()) {
+    public STransition defineBusinessRoleInTransition(SBusinessRole role) {
+        if (origin.isPeople() || role.isAutomaticBusinessRoleAllocation()) {
             if (this.rolesToDefineUser == null) {
                 this.rolesToDefineUser = new ArrayList<>();
             }
-            this.rolesToDefineUser.add(papel);
+            this.rolesToDefineUser.add(role);
             return this;
         } else {
             throw new SingularFlowException(
@@ -144,7 +144,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
         return destination;
     }
 
-    public STransition thenGo(ITaskDefinition destination) {
+    public STransition thenGo(@Nonnull ITaskDefinition destination) {
         return thenGo(getFlowMap().getTask(destination));
     }
 
@@ -152,7 +152,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
         return thenGo(actionName, getFlowMap().getTask(destination));
     }
 
-    public STransition thenGo(STask<?> destination) {
+    public STransition thenGo(@Nonnull STask<?> destination) {
         return this.destination.addTransition(destination);
     }
 

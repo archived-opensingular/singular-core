@@ -257,9 +257,9 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
             throw SingularException.rethrow("O ID da instância não pode ser nulo ou vazio");
         }
         String parts[] = instanceID.split("\\.");
-        String sigla = parts[parts.length - 2];
+        String abbreviation = parts[parts.length - 2];
         String id = parts[parts.length - 1];
-        return new MappingId(sigla, Integer.parseInt(id));
+        return new MappingId(abbreviation, Integer.parseInt(id));
     }
 
     // TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse

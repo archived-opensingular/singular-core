@@ -201,23 +201,23 @@ public final class ConversorToolkit {
         return timeFormat__;
     }
 
-    /* Gera no formado dd/mm/aaaa-hh:mm:ss */
-    public static String printDataHora(java.util.Date data) {
-        return printDate(data) + " " + printHora(data);
+    /** Gera no formado dd/mm/aaaa-hh:mm:ss */
+    public static String printDateTime(java.util.Date data) {
+        return printDate(data) + " " + printHour(data);
     }
 
     /* Gera no formado dd/mm/aa hh:mm */
-    public static String printDataHoraShortAbreviada(java.util.Date data) {
+    public static String printDateTimeShortAbbreviated(java.util.Date data) {
         Calendar cal = new GregorianCalendar();
         cal.setTime(data);
         if (cal.get(Calendar.HOUR_OF_DAY) == 0 && cal.get(Calendar.MINUTE) == 0) {
             return printDateShort(data);
         } else {
-            return printDataHoraShort(data);
+            return printDateTimeShort(data);
         }
     }
 
-    public static synchronized String printDataHoraShort(java.util.Date data) {
+    public static synchronized String printDateTimeShort(java.util.Date data) {
         if (data == null) {
             return null;
         }
@@ -261,7 +261,7 @@ public final class ConversorToolkit {
         return getDateFormat().format(data);
     }
 
-    public static String printHora(java.util.Date data) {
+    public static String printHour(java.util.Date data) {
         return getTimeFormat().format(data);
     }
 
@@ -307,9 +307,9 @@ public final class ConversorToolkit {
         return text.replace("\n", "<br/>");
     }
 
-    private static String removeCharacterFromString(String value, char dado) {
+    private static String removeCharacterFromString(String value, char targetChar) {
         String tempValue = value;
-        for (int i = tempValue.indexOf(dado); i != -1; i = tempValue.indexOf(dado, i)) {
+        for (int i = tempValue.indexOf(targetChar); i != -1; i = tempValue.indexOf(targetChar, i)) {
             tempValue = tempValue.substring(0, i) + tempValue.substring(i + 1);
         }
         return tempValue;

@@ -21,7 +21,7 @@ import org.opensingular.form.SInstance;
 import java.io.Serializable;
 
 public class SInstanceFieldModel<I extends SInstance>
-    extends AbstractSInstanceCampoModel<I> {
+    extends AbstractSInstanceFieldModel<I> {
 
     private String propertyExpression;
 

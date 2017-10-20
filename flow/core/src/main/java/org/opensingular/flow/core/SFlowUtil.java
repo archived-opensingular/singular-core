@@ -37,10 +37,10 @@ import java.util.function.Function;
 
 public class SFlowUtil {
 
-    private static final int PESO_TASK_JAVA = 100;
-    private static final int PESO_TASK_WAIT = 300;
-    private static final int PESO_TASK_PESSOA = 1000;
-    private static final int PESO_TASK_FIM = 100000;
+    private static final int WEIGHT_PESO_TASK_JAVA = 100;
+    private static final int WEIGHT_TASK_WAIT = 300;
+    private static final int WEIGHT_TASK_HUMAN = 1000;
+    private static final int WEIGHT_TASK_FIM = 100000;
 
     private SFlowUtil() {}
 
@@ -109,11 +109,11 @@ public class SFlowUtil {
         if (order == 0 || (order < value && !deque.contains(task))) {
             task.setOrder(value);
             deque.add(task);
-            for (STransition transicao : task.getTransitions()) {
-                if (task.getDefaultTransition() == transicao) {
-                    orderedVisit(value, transicao.getDestination(), deque);
+            for (STransition transition : task.getTransitions()) {
+                if (task.getDefaultTransition() == transition) {
+                    orderedVisit(value, transition.getDestination(), deque);
                 } else {
-                    orderedVisit(value + 1, transicao.getDestination(), deque);
+                    orderedVisit(value + 1, transition.getDestination(), deque);
                 }
             }
             deque.removeLast();
@@ -130,26 +130,26 @@ public class SFlowUtil {
             return task.get().getOrder();
         }
         if (entityTaskDefinition.isPeople()) {
-            return 10000000 + PESO_TASK_PESSOA;
+            return 10000000 + WEIGHT_TASK_HUMAN;
         } else if (entityTaskDefinition.isWait()) {
-            return 10000000 + PESO_TASK_WAIT;
+            return 10000000 + WEIGHT_TASK_WAIT;
         } else if (entityTaskDefinition.isEnd()) {
-            return 10000000 + PESO_TASK_FIM;
+            return 10000000 + WEIGHT_TASK_FIM;
         } else {
-            return 10000000 + PESO_TASK_JAVA;
+            return 10000000 + WEIGHT_PESO_TASK_JAVA;
         }
     }
 
     private static int calculateWeight(STask<?> task) {
         IEntityTaskType tt = task.getTaskType();
         if (tt.isHuman()) {
-            return PESO_TASK_PESSOA;
+            return WEIGHT_TASK_HUMAN;
         } else if (tt.isJava()) {
-            return PESO_TASK_JAVA;
+            return WEIGHT_PESO_TASK_JAVA;
         } else if (tt.isWait()) {
-            return PESO_TASK_WAIT;
+            return WEIGHT_TASK_WAIT;
         } else if (tt.isEnd()) {
-            return PESO_TASK_FIM;
+            return WEIGHT_TASK_FIM;
         }
         throw new SingularFlowException(task.getTaskType() + " não tratado", task);
     }

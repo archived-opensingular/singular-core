@@ -41,13 +41,13 @@ public final class ConversorDataISO8601 {
      */
     private static final char DATE_TIME_SEPARATOR = 'T';
 
-    private static final byte ANO     = 1;
-    private static final byte MES     = 2;
-    private static final byte DIA     = 3;
-    private static final byte HORA    = 4;
-    private static final byte MINUTO  = 5;
-    private static final byte SEGUNDO = 6;
-    private static final byte MILI    = 7;
+    private static final byte YEAR = 1;
+    private static final byte MONTH = 2;
+    private static final byte DAY = 3;
+    private static final byte HOUR = 4;
+    private static final byte MINUTE = 5;
+    private static final byte SECONDS = 6;
+    private static final byte MILLI = 7;
     private static final byte NANO    = 8;
 
     private ConversorDataISO8601() {
@@ -58,9 +58,9 @@ public final class ConversorDataISO8601 {
         gc.setTime(d);
 
         int  mili      = gc.get(Calendar.MILLISECOND);
-        byte prescisao = SEGUNDO;
+        byte precision = SECONDS;
         if (mili != 0) {
-            prescisao = MILI;
+            precision = MILLI;
         }
 
         return format(
@@ -72,7 +72,7 @@ public final class ConversorDataISO8601 {
                 gc.get(Calendar.SECOND),
                 mili,
                 0,
-                prescisao);
+                precision);
     }
 
     public static java.util.Date getDate(String s) {
@@ -88,14 +88,13 @@ public final class ConversorDataISO8601 {
                 gc.get(Calendar.MINUTE),
                 gc.get(Calendar.SECOND),
                 gc.get(Calendar.MILLISECOND),
-                0,
-                MILI);
+                0, MILLI);
     }
 
     public static GregorianCalendar getCalendar(String s) {
         int[] t = valueOf(s);
         GregorianCalendar gc =
-                new GregorianCalendar(t[ANO], t[MES] - 1, t[DIA], t[HORA], t[MINUTO], t[SEGUNDO]);
+                new GregorianCalendar(t[YEAR], t[MONTH] - 1, t[DAY], t[HOUR], t[MINUTE], t[SECONDS]);
         if (t[NANO] != 0) {
             gc.set(Calendar.MILLISECOND, t[NANO] / 1000000);
         }
@@ -212,22 +211,22 @@ public final class ConversorDataISO8601 {
 
         int[] t = new int[NANO + 1];
 
-        t[ANO] = reader.readNumber(4, 10, false);
+        t[YEAR] = reader.readNumber(4, 10, false);
         reader.readDateSeparator();
-        t[MES] = reader.readNumber(1, 2, false);
+        t[MONTH] = reader.readNumber(1, 2, false);
         reader.readDateSeparator();
-        t[DIA] = reader.readNumber(1, 2, false);
+        t[DAY] = reader.readNumber(1, 2, false);
 
-        // hora opcional
+        // hour optional
         if (reader.isNotEnd()) {
             reader.readDateTimeSeparator();
-            t[HORA] = reader.readNumber(1, 2, false);
+            t[HOUR] = reader.readNumber(1, 2, false);
             reader.readCharacter(':');
-            t[MINUTO] = reader.readNumber(1, 2, false);
+            t[MINUTE] = reader.readNumber(1, 2, false);
             //segundos opcionais
             if (reader.isNotEnd()) {
                 reader.readCharacter(':');
-                t[SEGUNDO] = reader.readNumber(1, 2, false);
+                t[SECONDS] = reader.readNumber(1, 2, false);
                 // nanos/milis opcionais
                 if (reader.hasChar('.')) {
                     t[NANO] = reader.readNumber(1, 9, true);
@@ -263,7 +262,7 @@ public final class ConversorDataISO8601 {
 
         formatYearMonthDay(buffer, year, month, day);
 
-        if ((precision == DIA) || isTimeZero(hour, minute, second, milli, nano)) {
+        if ((precision == DAY) || isTimeZero(hour, minute, second, milli, nano)) {
             return buffer.toString();
         }
 
@@ -355,7 +354,7 @@ public final class ConversorDataISO8601 {
         } else if (milli > 999) {
             throw new IllegalArgumentException("Milisegundos >999");
         }
-        if ((precision == MILI) || (precision == NANO)) {
+        if ((precision == MILLI) || (precision == NANO)) {
             buffer.append('.');
             if (milli < 10) {
                 buffer.append("00");

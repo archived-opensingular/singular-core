@@ -63,11 +63,11 @@ class GenerationModifierGroupingWithAggregation extends GenerationModifier {
         LinkedListMultimap<LineData, LineData> map = LinkedListMultimap.create();
         if(!lines.isEmpty()){
             // Usa o comparador para determinar as quebras de grupo. Como j houve a
-            // ordenaçãoo prévia, quando o valor da
+            // ordenação prévia, quando o valor da
             // comparaçãoo for diferente de zero, sinaliza quebra de grupo
-            LineData[] piloto = new LineData[] { lines.get(0) };
-            lines.stream().sorted(sortComparator).forEach(dado ->
-                    map.put(piloto[0] = (sortComparator.compare(dado, piloto[0]) != 0) ? dado : piloto[0], dado));
+            LineData[] pilot = new LineData[] { lines.get(0) };
+            lines.stream().sorted(sortComparator).forEach(line ->
+                    map.put(pilot[0] = (sortComparator.compare(line, pilot[0]) != 0) ? line : pilot[0], line));
         }
         
         List<LineData> result = map.asMap().values().stream()
@@ -104,27 +104,27 @@ class GenerationModifierGroupingWithAggregation extends GenerationModifier {
         return newLineData;
     }
     
-    private void copyCellValues(InfoCell dado, InfoCell reference) {
-        dado.setValue(reference.getValue());
-        dado.setValueReal(reference.getValueReal());
+    private void copyCellValues(InfoCell cell, InfoCell reference) {
+        cell.setValue(reference.getValue());
+        cell.setValueReal(reference.getValueReal());
     }
 
-    public void doAggregation(Collection<LineData> lines, LineData agregador) {
+    public void doAggregation(Collection<LineData> lines, LineData lineData) {
         for (Entry<Column, ColumnAggregationType> entry : aggregationTypeByColumn.entrySet()) {
             ColumnAggregationType aggregationType = entry.getValue();
             Column column = entry.getKey();
 
             if (groupingColumns.contains(column)) { continue; } // As colunas agrupadas não são agregadas //NOSONAR
             
-            setValue(agregador.getInfoCell(column), aggregationType.calculate(retrieveColumnData(lines, column)))
+            setValue(lineData.getInfoCell(column), aggregationType.calculate(retrieveColumnData(lines, column)))
                 .getDecorator().addStyle("cursor", "pointer")
                                .addTitle(aggregationType.getName());
         }
     }
 
     private static List<Object> retrieveColumnData(Collection<LineData> lines, Column column) {
-        return lines.stream().map(dado -> dado.getInfoCell(column))
-            .map(dado -> dado == null ? null : (Object)(dado.getValueReal() != null ? dado.getValueReal() : dado.getValue()))
+        return lines.stream().map(line -> line.getInfoCell(column))
+            .map(cell -> cell == null ? null : (Object)(cell.getValueReal() != null ? cell.getValueReal() : cell.getValue()))
             .collect(Collectors.toList());
     }
     

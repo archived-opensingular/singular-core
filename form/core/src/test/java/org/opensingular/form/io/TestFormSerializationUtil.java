@@ -324,10 +324,10 @@ public class TestFormSerializationUtil extends TestCaseForm {
     }
 
     @Test
-    public void testSerializacaoAtributos() {
-        SIComposite instance = (SIComposite) createSerializableTestInstance("teste.endereco", pacote -> {
-            pacote.loadPackage(SPackageBasic.class);
-            STypeComposite<?> tipoEndereco = pacote.createCompositeType("endereco");
+    public void testAttributeSerealization() {
+        SIComposite instance = (SIComposite) createSerializableTestInstance("teste.endereco", pkg -> {
+            pkg.loadPackage(SPackageBasic.class);
+            STypeComposite<?> tipoEndereco = pkg.createCompositeType("endereco");
             tipoEndereco.addFieldString("rua");
             tipoEndereco.addFieldString("cidade");
         });

@@ -155,8 +155,8 @@ public final class Flow {
         getConfigBean().notifyListeners(operation);
     }
 
-    static boolean canBeAllocated(SUser pessoa) {
-        return getConfigBean().getUserService().canBeAllocated(pessoa);
+    static boolean canBeAllocated(SUser user) {
+        return getConfigBean().getUserService().canBeAllocated(user);
     }
 
     public static Lnk getDefaultHrefFor(FlowInstance flowInstance) {

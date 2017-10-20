@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The base persistent class for the TB_DEFINICAO_PROCESSO database table.
+ * The base persistent class for the flow definition database table.
  * <p>
  * Must declare a {@link GenericGenerator} with name {@link AbstractFlowDefinitionEntity#PK_GENERATOR_NAME}.
  * </p>

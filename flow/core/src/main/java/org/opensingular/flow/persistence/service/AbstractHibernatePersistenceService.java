@@ -176,8 +176,8 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     }
 
     @Override
-    public void updateTask(TASK_INSTANCE tarefa) {
-        getSession().update(tarefa);
+    public void updateTask(TASK_INSTANCE taskInstance) {
+        getSession().update(taskInstance);
     }
 
     @Override

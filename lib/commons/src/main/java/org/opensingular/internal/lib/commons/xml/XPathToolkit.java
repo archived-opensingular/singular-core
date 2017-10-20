@@ -179,7 +179,7 @@ public final class XPathToolkit {
             switch (no.getNodeType()) {
                 case Node.ELEMENT_NODE:
                     buffer.append(no.getNodeName());
-                    getIndiceElemento(buffer, no);
+                    addElementIndex(buffer, no);
                     break;
                 case Node.ATTRIBUTE_NODE:
                     buffer.append('@');
@@ -199,7 +199,7 @@ public final class XPathToolkit {
      * @param buffer Destino do texto
      * @param e Node a ser pesquisado o nível
      */
-    private static void getIndiceElemento(StringBuilder buffer, Node e) {
+    private static void addElementIndex(StringBuilder buffer, Node e) {
         int pos = -1;
         // Verifica se possui no com mesmo nome antes
         Node cursor = e.getPreviousSibling();
@@ -377,14 +377,14 @@ public final class XPathToolkit {
         return resultList == null ? Collections.emptyList() : resultList;
     }
     private static List<String> addToList(List<String> list, String value) {
-        List<String> nova = list;
+        List<String> newList = list;
         if (value != null) {
             if (list == null) {
-                nova = new ArrayList<>();
+                newList = new ArrayList<>();
             }
-            nova.add(value);
+            newList.add(value);
         }
-        return nova;
+        return newList;
     }
 
     /**

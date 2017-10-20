@@ -66,7 +66,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
     private String singularKeyMaps = SingularProperties.get().getProperty(SINGULAR_GOOGLEMAPS_JS_KEY);
     private String singularKeyMapStatic = SingularProperties.get().getProperty(SINGULAR_GOOGLEMAPS_STATIC_KEY);
 
-    private final IModel<String> metadadosModel = new Model<>();
+    private final IModel<String> metaDataModel = new Model<>();
     private final IModel<Boolean> readOnly = $m.ofValue(Boolean.FALSE);
 
     private IModel<SInstance> latitudeModel;
@@ -81,7 +81,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
     private final ExternalLink verNoMaps;
     private final ImgMap mapStatic;
     private final WebMarkupContainer map = new WebMarkupContainer(MAP_ID);
-    private final HiddenField<String> metadados = new HiddenField<>("metadados", metadadosModel);
+    private final HiddenField<String> metaData = new HiddenField<>("metadados", metaDataModel);
 
     @Override
     public void renderHead(IHeaderResponse response) {
@@ -89,7 +89,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
 
         response.render(JavaScriptReferenceHeaderItem.forReference(customJS));
         if(StringUtils.isNotBlank(singularKeyMapStatic) && StringUtils.isNotBlank(singularKeyMaps)) {
-            response.render(OnDomReadyHeaderItem.forScript("createSingularMap(" + stringfyId(metadados) + ", '" + singularKeyMaps + "');"));
+            response.render(OnDomReadyHeaderItem.forScript("createSingularMap(" + stringfyId(metaData) + ", '" + singularKeyMaps + "');"));
         }
         super.renderHead(response);
     }
@@ -107,8 +107,8 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
 
         LoadableDetachableModel<String> googleMapsLinkModel = $m.loadable(()->{
             if(latitudeModel.getObject() != null && longitudeModel.getObject() != null){
-                String coordenadas = latitudeModel.getObject()+","+longitudeModel.getObject()+"/@"+latitudeModel.getObject()+","+longitudeModel.getObject();
-                return "https://www.google.com.br/maps/place/"+coordenadas+","+zoomModel.getObject()+"z";
+                String localization = latitudeModel.getObject()+","+longitudeModel.getObject()+"/@"+latitudeModel.getObject()+","+longitudeModel.getObject();
+                return "https://www.google.com.br/maps/place/"+localization+","+zoomModel.getObject()+"z";
             }else {
                 return "https://www.google.com.br/maps/search/-15.7481632,-47.8872134,15";
             }
@@ -142,7 +142,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         }));
     }
 
-    private void popularMetadados() {
+    private void populateMataData() {
         final Map<String, Object> properties = new HashMap<>();
         try (final PackageTextTemplate metadataJSON = new PackageTextTemplate(getClass(), METADATA_JSON)){
             properties.put("idButton", cleanButton.getMarkupId(true));
@@ -152,7 +152,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
             properties.put("idZoom", zoomFieldId);
             properties.put("readOnly", isReadOnly());
             metadataJSON.interpolate(properties);
-            metadadosModel.setObject(metadataJSON.getString());
+            metaDataModel.setObject(metadataJSON.getString());
             metadataJSON.close();
         } catch (IOException e) {
             LOGGER.error("Erro ao fechar stream", e);
@@ -162,7 +162,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        popularMetadados();
+        populateMataData();
 
         TemplatePanel panelErrorMsg = newTemplateTag(tt -> {
             final StringBuilder templateBuilder = new StringBuilder();
@@ -189,7 +189,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         Component errorMapJS = new Label("errorMapJS", "Não foi encontrada a Key do Google Maps JS no arquivo singular.properties").setVisible(false);
 
         panelErrorMsg.add(errorMapJS, errorMapStatic);
-        templatePanel.add(verNoMaps, cleanButton, map, metadados, mapStatic);
+        templatePanel.add(verNoMaps, cleanButton, map, metaData, mapStatic);
 
         if(StringUtils.isBlank(singularKeyMapStatic)){
             templatePanel.setVisible(false);

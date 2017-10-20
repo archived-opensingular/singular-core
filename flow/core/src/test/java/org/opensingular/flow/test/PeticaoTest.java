@@ -237,7 +237,7 @@ public class PeticaoTest extends TestFlowSupport {
     }
 
     @Test
-    public void verificarHistoricoAlocacaoTarefa() {
+    public void verifyTaskAlocationHistory() {
         Actor user1 = testDAO.getSomeUser(1);
         Actor user2 = testDAO.getSomeUser(2);
         Integer counterHistory = testDAO.countHistory();
@@ -296,7 +296,7 @@ public class PeticaoTest extends TestFlowSupport {
     }
 
     @Test
-    public void verificarHistoricoTransicaoAutomatica() {
+    public void verifyAutomaticTransitionHistory() {
         Integer counterHistory = testDAO.countHistory();
         assertNotNull(counterHistory);
 

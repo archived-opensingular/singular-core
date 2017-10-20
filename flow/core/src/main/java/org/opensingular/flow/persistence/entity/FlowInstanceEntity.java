@@ -30,7 +30,7 @@ import javax.persistence.Table;
 import java.util.List;
 
 /**
- * The persistent class for the TB_INSTANCIA_PROCESSO database table.
+ * The persistent class for the flow instance database table.
  */
 @Entity
 @GenericGenerator(name = AbstractFlowInstanceEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)

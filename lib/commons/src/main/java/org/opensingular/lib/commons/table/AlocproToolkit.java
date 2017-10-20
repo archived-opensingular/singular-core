@@ -220,9 +220,9 @@ final class AlocproToolkit {
         }
     }
 
-    public static String gerarSenha(final int tamanho) {
-        final char[] result = new char[tamanho];
-        for (int i = 0; i < tamanho; i++) {
+    public static String generateRandomPassword(int length) {
+        char[] result = new char[length];
+        for (int i = 0; i < length; i++) {
             result[i] = ALL_CHARS[RANDOM.nextInt(ALL_CHARS.length)];
         }
         return String.valueOf(result);

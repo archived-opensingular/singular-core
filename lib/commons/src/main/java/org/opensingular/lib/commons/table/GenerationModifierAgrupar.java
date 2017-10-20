@@ -58,18 +58,18 @@ class GenerationModifierAgrupar extends GenerationModifier {
     public List<Column> adjustTitles(List<Column> visibleColumns) {
         int posColumn = visibleColumns.indexOf(column);
         if (posColumn != -1) {
-            int posNova = posColumn;
+            int posNew = posColumn;
             for (int i = posColumn - 1; i >= 0; i--) {
                 Column c = visibleColumns.get(i);
                 if (c.getDataLevel() > column.getDataLevel()) {
-                    posNova = i;
+                    posNew = i;
                 }
             }
-            if (posNova != posColumn) {
-                for (int i = posColumn; i > posNova; i--) {
+            if (posNew != posColumn) {
+                for (int i = posColumn; i > posNew; i--) {
                     visibleColumns.set(i, visibleColumns.get(i - 1));
                 }
-                visibleColumns.set(posNova, column);
+                visibleColumns.set(posNew, column);
             }
         }
         return super.adjustTitles(visibleColumns);

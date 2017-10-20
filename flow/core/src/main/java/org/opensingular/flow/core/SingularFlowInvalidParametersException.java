@@ -21,7 +21,7 @@ import org.opensingular.flow.core.variable.ValidationResult;
 import javax.annotation.Nonnull;
 
 /**
- * Exception referente a passagem incorreta de parâmentros, em geral em um start de processo ou execução de transição.
+ * Exception referente a passagem incorreta de parâmentros, em geral em um start de fluxo ou execução de transição.
  *
  * @author Daniel C. Bordin on 21/03/2017.
  */

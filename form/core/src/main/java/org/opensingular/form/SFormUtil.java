@@ -162,11 +162,11 @@ public final class SFormUtil {
                 throw new SingularFormException(pathReader.getErrorMsg(type, "Índice de lista não se aplica a um tipo composto"), type);
             }
             String token = pathReader.getToken();
-            SType<?> campo = ((STypeComposite<?>) type).getField(token);
-            if (campo == null) {
+            SType<?> field = ((STypeComposite<?>) type).getField(token);
+            if (field == null) {
                 throw new SingularFormException(pathReader.getErrorMsg(type, "Não existe o campo '" + token + '\''), type);
             }
-            return campo;
+            return field;
         } else if (type.isList()) {
             if (pathReader.isIndex()) {
                 return ((STypeList<?, ?>) type).getElementsType();
@@ -217,11 +217,11 @@ public final class SFormUtil {
 
     public static String generateUserFriendlyName(String simpleName) {
         final Pattern lowerUpper = Pattern.compile("(.*?[a-z])([A-Z].*?)");
-        final Pattern prefixoSigla = Pattern.compile("([A-Z]+)([A-Z][a-z])");
+        final Pattern abbreviationPrefix = Pattern.compile("([A-Z]+)([A-Z][a-z])");
         final ImmutableSet<String> upperCaseSpecialCases = ImmutableSet.of("id", "url");
 
         return StringUtils.capitalize(Stream.of(simpleName).map(s -> lowerUpper.matcher(s).replaceAll(
-                "$1-$2")).map(s -> prefixoSigla.matcher(s).replaceAll("$1-$2")).flatMap(s -> Stream.of(s.split(
+                "$1-$2")).map(s -> abbreviationPrefix.matcher(s).replaceAll("$1-$2")).flatMap(s -> Stream.of(s.split(
                 "[-_]+"))).map(s -> (StringUtils.isAllUpperCase(s) ? s : StringUtils.uncapitalize(s))).map(
                 s -> upperCaseSpecialCases.contains(s) ? StringUtils.capitalize(s) : s).collect(joining(" ")));
     }

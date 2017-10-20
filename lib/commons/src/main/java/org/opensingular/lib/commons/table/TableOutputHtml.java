@@ -399,7 +399,7 @@ public class TableOutputHtml extends TableOutput {
         }
         cellTagsOpen(ctx, cell, column, out);
         if (ctx.isActionCell()) {
-            out.print(gerarAcoes(getVOut(), ctx.getCell()));
+            out.print(generateActions(getVOut(), ctx.getCell()));
         } else {
             String s = ctx.generateFormatDisplayString();
             if (s != null) {
@@ -488,7 +488,7 @@ public class TableOutputHtml extends TableOutput {
         }
     }
 
-    private static String gerarAcoes(ViewOutputHtml out, InfoCell cell) {
+    private static String generateActions(ViewOutputHtml out, InfoCell cell) {
         return cell.getActions().stream().filter(Predicates.notNull()).filter(WebRef::appliesToContext).map(
                 webActionEnabled -> webActionEnabled.generateHtml(out.getUrlApp())).filter(Predicates.notNull())
                 .collect(

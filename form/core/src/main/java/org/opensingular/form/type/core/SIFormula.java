@@ -37,7 +37,7 @@ public class SIFormula extends SIComposite {
         return getValueString(STypeFormula.FIELD_SCRIPT_TYPE);
     }
 
-    public STypeFormula.ScriptType getTipoScriptEnum() {
+    public STypeFormula.ScriptType getScriptTypeAsEnum() {
         return getValueEnum(STypeFormula.FIELD_SCRIPT_TYPE, STypeFormula.ScriptType.class);
     }
 }

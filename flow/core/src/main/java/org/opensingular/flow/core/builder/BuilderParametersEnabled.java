@@ -41,7 +41,7 @@ public interface BuilderParametersEnabled<SELF extends BuilderParametersEnabled<
     public abstract SParametersEnabled getParametersEnabled();
 
     /**
-     * Adiciona um parâmetro que automaticamente atualiza a variável do processo. O parâmetro têm as mesmas
+     * Adiciona um parâmetro que automaticamente atualiza a variável do fluxo. O parâmetro têm as mesmas
      * definições da variável.
      */
     public default SELF addParamBindedToProcessVariable(String ref, boolean required) {

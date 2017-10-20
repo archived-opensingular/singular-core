@@ -465,8 +465,8 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         if (tableByLevel || columns.stream().anyMatch(c -> c.getDataLevel() > 0)) {
             int qtdLevel = columns.stream().mapToInt(c -> c.getDataLevel()).max().getAsInt() + 1;
             int[] lineCount = new int[qtdLevel];
-            for (LineData dado : children) {
-                for (LineData[] line : dado.normalizeLevels(qtdLevel)) {
+            for (LineData child : children) {
+                for (LineData[] line : child.normalizeLevels(qtdLevel)) {
                     generateTableByLevel(line, ctx, lineCount);
                 }
             }
@@ -597,9 +597,9 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         generateChildren(lineData.getChildrenReader(), ctx, level + 1);
     }
 
-    private void generateSimpleTable(LineData dado, OutputTableContext ctx) {
+    private void generateSimpleTable(LineData lineData, OutputTableContext ctx) {
 
-        LineInfo line = dado.retrieveValues(ctx.getLineReadContext(), 0, true, false);
+        LineInfo line = lineData.retrieveValues(ctx.getLineReadContext(), 0, true, false);
         if (! ctx.isShowLine()) {
             return;
         }

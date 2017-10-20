@@ -49,7 +49,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<FlowInstance> {
         this.visualizationRole = visualizationRole;
     }
 
-    public SBusinessRole getPapelExecucao() {
+    public SBusinessRole getExecutionRole() {
         return executionRole;
     }
 

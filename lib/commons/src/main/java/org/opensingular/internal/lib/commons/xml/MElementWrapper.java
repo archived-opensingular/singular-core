@@ -188,14 +188,14 @@ public class MElementWrapper extends MElement implements EWrapper {
         // tentar lozalizar um implementação de factory.
         // Daniel (08/05/2003)
 
-        int indice = (namespaceAware ? 1 : 0) + (validating ? 2 : 0);
-        if (buiderFactory__[indice] == null) {
+        int index = (namespaceAware ? 1 : 0) + (validating ? 2 : 0);
+        if (buiderFactory__[index] == null) {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(namespaceAware);
             factory.setValidating(validating);
-            buiderFactory__[indice] = factory;
+            buiderFactory__[index] = factory;
         }
-        return buiderFactory__[indice];
+        return buiderFactory__[index];
     }
 
     /**

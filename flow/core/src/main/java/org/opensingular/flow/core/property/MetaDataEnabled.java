@@ -47,7 +47,7 @@ public interface MetaDataEnabled {
      *            o metadado especificado.
      * @param value
      *            o valor do metadado a ser configurado.
-     * @return esta definição de processo já com o metadado definido.
+     * @return esta definição de fluxo já com o metadado definido.
      */
     default <T extends Serializable> void setMetaDataValue(@Nonnull MetaDataRef<T> propRef, T value) {
         getMetaData().set(propRef, value);

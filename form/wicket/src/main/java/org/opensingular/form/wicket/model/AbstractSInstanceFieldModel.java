@@ -16,21 +16,21 @@
 
 package org.opensingular.form.wicket.model;
 
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SInstance;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
 
 import java.io.Serializable;
 
-public abstract class AbstractSInstanceCampoModel<I extends SInstance>
+public abstract class AbstractSInstanceFieldModel<I extends SInstance>
     extends AbstractSInstanceModel<I>
     implements IChainingModel<I> {
 
     private Serializable rootTarget;
 
-    public AbstractSInstanceCampoModel(Serializable rootTarget) {
+    public AbstractSInstanceFieldModel(Serializable rootTarget) {
         this.rootTarget = rootTarget;
     }
 
@@ -88,7 +88,7 @@ public abstract class AbstractSInstanceCampoModel<I extends SInstance>
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AbstractSInstanceCampoModel<?> other = (AbstractSInstanceCampoModel<?>) obj;
+        AbstractSInstanceFieldModel<?> other = (AbstractSInstanceFieldModel<?>) obj;
         if (rootTarget == null) {
             if (other.rootTarget != null)
                 return false;

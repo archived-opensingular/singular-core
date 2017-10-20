@@ -347,7 +347,7 @@ public class TestMElement {
      * Testa a adição de atributos no XML
      */
     @Test
-    public void testSetAtributo() {
+    public void testSetAttribute() {
         MElement root = MElement.newInstance("pedido");
 
         root.addElement("cd/@cod", "1");
@@ -420,7 +420,7 @@ public class TestMElement {
      * Testa os métodos de leitura de null.
      */
     @Test
-    public void testGetFormatado() {
+    public void testGetWithFormat() {
         GregorianCalendar agoraGc = new GregorianCalendar(2001, 2, 31, 23, 59, 49);
         agoraGc.set(GregorianCalendar.MILLISECOND, 123);
         //java.util.Date agoraDate = new

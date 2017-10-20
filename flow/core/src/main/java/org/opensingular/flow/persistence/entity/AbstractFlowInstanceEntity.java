@@ -44,7 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * The base persistent class for the TB_INSTANCIA_PROCESSO database table.
+ * The base persistent class for the flow instance database table.
  * <p>
  * Must declare a {@link GenericGenerator} with name {@link AbstractFlowInstanceEntity#PK_GENERATOR_NAME}.
  * </p>
@@ -54,13 +54,13 @@ import java.util.List;
  * @param <FLOW_VERSION>
  * @param <TASK_INSTANCE>
  * @param <VARIABLE_INSTANCE>
- * @param <ROLE_USER>
+ * @param <USER_ROLE>
  * @param <EXECUTION_VAR>
  */
 @MappedSuperclass
 @SuppressWarnings("unchecked")
 @Table(name = "TB_INSTANCIA_PROCESSO")
-public abstract class AbstractFlowInstanceEntity<USER extends SUser, FLOW_VERSION extends IEntityFlowVersion, TASK_INSTANCE extends IEntityTaskInstance, VARIABLE_INSTANCE extends IEntityVariableInstance, ROLE_USER extends IEntityRoleInstance, EXECUTION_VAR extends IEntityExecutionVariable> extends BaseEntity<Integer> implements
+public abstract class AbstractFlowInstanceEntity<USER extends SUser, FLOW_VERSION extends IEntityFlowVersion, TASK_INSTANCE extends IEntityTaskInstance, VARIABLE_INSTANCE extends IEntityVariableInstance, USER_ROLE extends IEntityRoleInstance, EXECUTION_VAR extends IEntityExecutionVariable> extends BaseEntity<Integer> implements
         IEntityFlowInstance {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_INSTANCIA_PROCESSO";
@@ -97,7 +97,7 @@ public abstract class AbstractFlowInstanceEntity<USER extends SUser, FLOW_VERSIO
     private List<VARIABLE_INSTANCE> variables;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "flowInstance", cascade = CascadeType.REMOVE)
-    private List<ROLE_USER> roles;
+    private List<USER_ROLE> roles;
 
     @OrderBy(clause = "CO_INSTANCIA_TAREFA, DT_INICIO asc")
     @OneToMany(mappedBy = "flowInstance", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
@@ -108,8 +108,8 @@ public abstract class AbstractFlowInstanceEntity<USER extends SUser, FLOW_VERSIO
     private List<EXECUTION_VAR> historicalVariables;
 
     @Override
-    public ROLE_USER getRoleUserByAbbreviation(String siglaPapel) {
-        return (ROLE_USER) IEntityFlowInstance.super.getRoleUserByAbbreviation(siglaPapel);
+    public USER_ROLE getRoleUserByAbbreviation(String roleAbbreviation) {
+        return (USER_ROLE) IEntityFlowInstance.super.getRoleUserByAbbreviation(roleAbbreviation);
     }
 
     @Override
@@ -198,11 +198,11 @@ public abstract class AbstractFlowInstanceEntity<USER extends SUser, FLOW_VERSIO
     }
 
     @Override
-    public List<ROLE_USER> getRoles() {
+    public List<USER_ROLE> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<ROLE_USER> roles) {
+    public void setRoles(List<USER_ROLE> roles) {
         this.roles = roles;
     }
 
