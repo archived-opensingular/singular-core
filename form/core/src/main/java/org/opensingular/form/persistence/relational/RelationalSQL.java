@@ -34,6 +34,7 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy;
 
@@ -74,7 +75,12 @@ public abstract class RelationalSQL {
 	}
 
 	public static String table(SType<?> field) {
-		return aspectRelationalMap(field).table(field);
+		return tableOpt(field).orElseThrow(() -> new SingularFormException(
+				"Relational mapping should provide table name for the type '" + field.getName() + "'."));
+	}
+
+	public static Optional<String> tableOpt(SType<?> field) {
+		return Optional.ofNullable(aspectRelationalMap(field).table(field));
 	}
 
 	public static List<String> tablePK(SType<?> type) {

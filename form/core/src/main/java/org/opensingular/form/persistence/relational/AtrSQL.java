@@ -46,6 +46,10 @@ public class AtrSQL extends STranslatorForAttribute {
 		super(target);
 	}
 
+	public AtrSQL table() {
+		return table(getType().getNameSimple());
+	}
+
 	public AtrSQL table(String table) {
 		setAttributeValue(ATR_TABLE, table);
 		return this;
@@ -91,7 +95,7 @@ public class AtrSQL extends STranslatorForAttribute {
 	}
 
 	public AtrSQL foreignColumn(String column, String keyColumns, Class<? extends SType<?>> typeClass) {
-		String tableName = RelationalSQL.table(RelationalSQL.tableContext(getType()));
+		String tableName = RelationalSQL.tableOpt(RelationalSQL.tableContext(getType())).orElse(null);
 		RelationalFK foreignKey = new RelationalFK(tableName, keyColumns, getDictionary().getType(typeClass));
 		return foreignColumn(column, foreignKey);
 	}

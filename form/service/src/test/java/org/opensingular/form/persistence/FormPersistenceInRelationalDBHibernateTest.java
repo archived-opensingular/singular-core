@@ -193,7 +193,7 @@ public class FormPersistenceInRelationalDBHibernateTest {
 				name = addFieldString("name");
 				details = addFieldListOf("details", Detail.class);
 				// relational mapping
-				asSQL().tablePK("ID");
+				asSQL().table().tablePK("ID");
 				name.asSQL().column();
 			}
 		}
@@ -209,7 +209,7 @@ public class FormPersistenceInRelationalDBHibernateTest {
 				masterDisplay = addField("masterDisplay", STypeString.class);
 				asAtr().label("Detail entity");
 				// relational mapping
-				asSQL().tablePK("ID");
+				asSQL().table().tablePK("ID");
 				asSQL().addTableFK("MASTER", Master.class);
 				item.asSQL().column();
 				masterDisplay.asSQL().foreignColumn("name", "MASTER", Master.class);

@@ -47,7 +47,7 @@ public class RelationalSQLQuery extends RelationalSQL {
 	private List<RelationalColumn> targetColumns;
 	private Map<String, SType<?>> mapColumnToField;
 	private List<RelationalColumn> orderingColumns = new ArrayList<>();
-	private STypeComposite<?> keyFormType;
+	private String keyFormTable;
 	private Map<String, Object> keyFormColumnMap;
 	private List<RelationalColumn> keyFormColumns;
 	private Long limitOffset;
@@ -78,10 +78,10 @@ public class RelationalSQLQuery extends RelationalSQL {
 	}
 
 	public RelationalSQLQuery where(STypeComposite<?> type, FormKey formKey) {
-		keyFormType = type;
+		keyFormTable = RelationalSQL.table(type);
 		keyFormColumnMap = ((FormKeyRelational) formKey).getValue();
 		keyFormColumns = new ArrayList<>();
-		collectKeyColumns(keyFormType, keyFormColumns);
+		collectKeyColumns(type, keyFormColumns);
 		return this;
 	}
 
@@ -101,8 +101,8 @@ public class RelationalSQLQuery extends RelationalSQL {
 		reorderTargetTables(joinMap);
 		List<Object> params = new ArrayList<>();
 		String wherePart = "";
-		if (keyFormType != null) {
-			wherePart += " where " + where(RelationalSQL.table(keyFormType), keyFormColumns, keyFormColumnMap, params);
+		if (keyFormTable != null) {
+			wherePart += " where " + where(keyFormTable, keyFormColumns, keyFormColumnMap, params);
 		}
 		String orderPart = "";
 		if (!orderingColumns.isEmpty()) {

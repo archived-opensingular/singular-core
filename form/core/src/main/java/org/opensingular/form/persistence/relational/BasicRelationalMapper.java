@@ -30,18 +30,14 @@ import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy
 public class BasicRelationalMapper implements RelationalMapper {
 	public SType<?> tableContext(SType<?> type) {
 		SType<?> result = type;
-		while (table(result) == null && hasParentType(result)) {
-			result = getParentType(result);
+		while (table(result) == null && !result.getParentScope().equals(result.getPackage())) {
+			result = result.getDictionary().getType(result.getParentScope().getName());
 		}
 		return result;
 	}
 
 	public String table(SType<?> type) {
-		String result = type.asSQL().getTable();
-		if (result == null && !hasParentType(type)) {
-			result = type.getNameSimple();
-		}
-		return result;
+		return type.asSQL().getTable();
 	}
 
 	public List<String> tablePK(SType<?> type) {
@@ -78,13 +74,5 @@ public class BasicRelationalMapper implements RelationalMapper {
 			}
 		}
 		return result;
-	}
-
-	protected boolean hasParentType(SType<?> type) {
-		return !type.getParentScope().equals(type.getPackage()) && !getParentType(type).isList();
-	}
-
-	protected SType<?> getParentType(SType<?> type) {
-		return type.getDictionary().getType(type.getParentScope().getName());
 	}
 }

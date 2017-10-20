@@ -287,7 +287,7 @@ public class RelationalSQLTest extends TestCaseForm {
 				file = addField("file", STypeAttachment.class);
 				items = addFieldListOf("items", ItemEntity.class);
 				// relational mapping
-				asSQL().tablePK("id");
+				asSQL().table().tablePK("id");
 				asSQL().addTableFK("category", CategoryEntity.class);
 				name.asSQL().column();
 				observation.asSQL().column("obs");
@@ -327,7 +327,7 @@ public class RelationalSQLTest extends TestCaseForm {
 				asAtr().label("Item Detail entity");
 				title = addFieldString("title");
 				// relational mapping
-				asSQL().tablePK("id");
+				asSQL().table().tablePK("id");
 				asSQL().addTableFK("itemID", ItemEntity.class);
 				title.asSQL().column();
 			}
