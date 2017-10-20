@@ -65,7 +65,7 @@ public class AtrSQL extends STranslatorForAttribute {
 	}
 
 	public AtrSQL addTableFK(String keyColumns, Class<? extends SType<?>> typeClass) {
-		String tableName = RelationalSQL.table(RelationalSQL.tableContext(getTipo()));
+		String tableName = RelationalSQL.table(RelationalSQL.tableContext(getType()));
 		return addTableFK(new RelationalFK(tableName, keyColumns, getDictionary().getType(typeClass)));
 	}
 
@@ -91,7 +91,7 @@ public class AtrSQL extends STranslatorForAttribute {
 	}
 
 	public AtrSQL foreignColumn(String column, String keyColumns, Class<? extends SType<?>> typeClass) {
-		String tableName = RelationalSQL.table(RelationalSQL.tableContext(getTipo()));
+		String tableName = RelationalSQL.table(RelationalSQL.tableContext(getType()));
 		RelationalFK foreignKey = new RelationalFK(tableName, keyColumns, getDictionary().getType(typeClass));
 		return foreignColumn(column, foreignKey);
 	}
@@ -110,7 +110,7 @@ public class AtrSQL extends STranslatorForAttribute {
 	}
 
 	public AtrSQL column() {
-		return column(getTipo().getNameSimple());
+		return column(getType().getNameSimple());
 	}
 
 	public AtrSQL column(String column) {
@@ -123,7 +123,7 @@ public class AtrSQL extends STranslatorForAttribute {
 	}
 
 	public AtrSQL columnConverter(Supplier<RelationalColumnConverter> converter) {
-		getTipo().setAspect(ASPECT_RELATIONAL_CONV, converter);
+		getType().setAspect(ASPECT_RELATIONAL_CONV, converter);
 		return this;
 	}
 }
