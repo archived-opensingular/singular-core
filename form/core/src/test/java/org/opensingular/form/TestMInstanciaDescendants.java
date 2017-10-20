@@ -1,15 +1,32 @@
-package org.opensingular.form;
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+package org.opensingular.form;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
 import org.opensingular.form.type.core.SIString;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @RunWith(Parameterized.class)
 public class TestMInstanciaDescendants extends TestCaseForm {
@@ -98,7 +115,7 @@ public class TestMInstanciaDescendants extends TestCaseForm {
     public void testStream() {
         SPackageTesteContatos pacote = createTestDictionary().loadPackage(SPackageTesteContatos.class);
 
-        Set<SType<?>> tipos = new HashSet<>(Arrays.asList(
+        Set<SType<?>> types = new HashSet<>(Arrays.asList(
             pacote.contato,
             pacote.identificacao,
             pacote.nome,
@@ -121,10 +138,10 @@ public class TestMInstanciaDescendants extends TestCaseForm {
         contato.getDescendant(pacote.emails).addNew();
 
         contato.streamDescendants(true)
-            .forEachOrdered(instancia -> Assert.assertTrue(
-"Tipo não encontrado: " + instancia.getType(),
-                tipos.remove(instancia.getType())));
+            .forEachOrdered(instance -> Assert.assertTrue(
+"Tipo não encontrado: " + instance.getType(),
+                types.remove(instance.getType())));
 
-        Assert.assertTrue("Não percorreu o(s) tipo(s) " + tipos, tipos.isEmpty());
+        Assert.assertTrue("Não percorreu o(s) tipo(s) " + types, types.isEmpty());
     }
 }

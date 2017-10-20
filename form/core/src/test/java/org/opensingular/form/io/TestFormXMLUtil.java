@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.form.io;
 
 import org.junit.Test;
@@ -9,9 +27,9 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.helpers.AssertionsXML;
-import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.internal.lib.commons.xml.MElement;
 
 @RunWith(Parameterized.class)
 public class TestFormXMLUtil extends TestCaseForm {
@@ -37,14 +55,14 @@ public class TestFormXMLUtil extends TestCaseForm {
         SIComposite instance = SFormXMLUtil.fromXML(bloco, xml);
         assertInstance(instance).isValueEquals("a", "1");
 
-        MElement novo = SFormXMLUtil.toXML(instance).get();
+        MElement newElement = SFormXMLUtil.toXML(instance).get();
 
-        assertEquals("bloco", novo.getTagName());
-        assertEquals("1", novo.getValor("a"));
-        assertEquals("2", novo.getValor("b[1]"));
-        assertEquals("9", novo.getValor("b[1]/@id"));
-        assertEquals("3", novo.getValor("b[2]"));
-        assertEquals("4", novo.getValor("c/d"));
+        assertEquals("bloco", newElement.getTagName());
+        assertEquals("1", newElement.getValue("a"));
+        assertEquals("2", newElement.getValue("b[1]"));
+        assertEquals("9", newElement.getValue("b[1]/@id"));
+        assertEquals("3", newElement.getValue("b[2]"));
+        assertEquals("4", newElement.getValue("c/d"));
     }
 
     @Test
@@ -69,14 +87,14 @@ public class TestFormXMLUtil extends TestCaseForm {
         assertInstance(instance).isValueEquals("[0].a","1");
         assertInstance(instance).isValueEquals("[1].a","5");
 
-        MElement novo = SFormXMLUtil.toXML(instance).get();
+        MElement newElement = SFormXMLUtil.toXML(instance).get();
 
-        assertEquals("itens", novo.getTagName());
-        assertEquals("1", novo.getValor("item[1]/a"));
-        assertEquals("5", novo.getValor("item[2]/a"));
-        assertEquals("2", novo.getValor("b[1]"));
-        assertEquals("3", novo.getValor("b[2]"));
-        assertEquals("4", novo.getValor("c/d"));
+        assertEquals("itens", newElement.getTagName());
+        assertEquals("1", newElement.getValue("item[1]/a"));
+        assertEquals("5", newElement.getValue("item[2]/a"));
+        assertEquals("2", newElement.getValue("b[1]"));
+        assertEquals("3", newElement.getValue("b[2]"));
+        assertEquals("4", newElement.getValue("c/d"));
     }
 
     @Test

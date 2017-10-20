@@ -109,7 +109,7 @@ public class AssertionsXML extends AssertionsBase<MElement, AssertionsXML> imple
 
     /** Verifica se o valor texto do elemento é o esperado. */
     public AssertionsXML isValue(String expectedValue) {
-        String currentValue = getTarget().getValor();
+        String currentValue = getTarget().getValue();
         if (!Objects.equals(expectedValue, currentValue)) {
             throw new AssertionError(
                     errorMsg("O valor do elemento e diferente do esperado", expectedValue, currentValue));

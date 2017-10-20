@@ -19,9 +19,9 @@ package org.opensingular.flow.core;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.flow.core.entity.IEntityCategory;
-import org.opensingular.flow.core.entity.IEntityProcessDefinition;
-import org.opensingular.flow.core.entity.IEntityProcessInstance;
-import org.opensingular.flow.core.entity.IEntityProcessVersion;
+import org.opensingular.flow.core.entity.IEntityFlowDefinition;
+import org.opensingular.flow.core.entity.IEntityFlowInstance;
+import org.opensingular.flow.core.entity.IEntityFlowVersion;
 import org.opensingular.flow.core.entity.IEntityRoleDefinition;
 import org.opensingular.flow.core.entity.IEntityRoleInstance;
 import org.opensingular.flow.core.entity.IEntityTaskDefinition;
@@ -57,24 +57,24 @@ import java.util.stream.Stream;
 @SuppressWarnings({ "serial", "unchecked" })
 public class FlowInstance implements Serializable {
 
-    private RefProcessDefinition processDefinitionRef;
+    private RefFlowDefinition flowDefinitionRef;
 
     private Integer codEntity;
 
-    private transient IEntityProcessInstance entity;
+    private transient IEntityFlowInstance entity;
 
-    private transient STask<?> estadoAtual;
+    private transient STask<?> currentState;
 
     private transient ExecutionContext executionContext;
 
     private transient VarInstanceMap<?,?> variables;
 
-    final void setProcessDefinition(FlowDefinition<?> flowDefinition) {
-        if (processDefinitionRef != null) {
+    final void setFlowDefinition(FlowDefinition<?> flowDefinition) {
+        if (flowDefinitionRef != null) {
             throw SingularException.rethrow("Erro Interno");
         }
-        processDefinitionRef = RefProcessDefinition.of(flowDefinition);
-        processDefinitionRef.get().inject(this);
+        flowDefinitionRef = RefFlowDefinition.of(flowDefinition);
+        flowDefinitionRef.get().inject(this);
     }
 
     /**
@@ -86,12 +86,12 @@ public class FlowInstance implements Serializable {
      * @return a definição de processo desta instância.
      */
     @Nonnull
-    public <K extends FlowDefinition<?>> K getProcessDefinition() {
-        if (processDefinitionRef == null) {
+    public <K extends FlowDefinition<?>> K getFlowDefinition() {
+        if (flowDefinitionRef == null) {
             throw SingularException.rethrow(
-                    "A instância não foi inicializada corretamente, pois não tem uma referência a ProcessDefinition! Tente chamar o método newPreStartInstance() a partir da definição do processo.");
+                    "A instância não foi inicializada corretamente, pois não tem uma referência a FlowDefinition! Tente chamar o método newPreStartInstance() a partir da definição do processo.");
         }
-        return (K) processDefinitionRef.get();
+        return (K) flowDefinitionRef.get();
     }
 
     /**
@@ -126,19 +126,20 @@ public class FlowInstance implements Serializable {
         return getCurrentTaskOrException().prepareTransition(transitionName);
     }
 
-    final @Nonnull IEntityProcessInstance getInternalEntity() {
+    final @Nonnull
+    IEntityFlowInstance getInternalEntity() {
         if (entity == null) {
             if(codEntity != null) {
-                IEntityProcessInstance newfromDB = getPersistenceService().retrieveProcessInstanceByCodOrException(codEntity);
-                IEntityProcessDefinition entityProcessDefinition = getProcessDefinition().getEntityProcessDefinition();
-                if (!entityProcessDefinition.equals(newfromDB.getProcessVersion().getProcessDefinition())) {
-                    throw SingularException.rethrow(getProcessDefinition().getName() + " id=" + codEntity +
+                IEntityFlowInstance newFromDB = getPersistenceService().retrieveFlowInstanceByCodOrException(codEntity);
+                IEntityFlowDefinition entityFlowDefinition = getFlowDefinition().getEntityFlowDefinition();
+                if (!entityFlowDefinition.equals(newFromDB.getFlowVersion().getFlowDefinition())) {
+                    throw SingularException.rethrow(getFlowDefinition().getName() + " id=" + codEntity +
                             " se refere a definição de processo " +
-                            newfromDB.getProcessVersion().getProcessDefinition().getKey() +
+                            newFromDB.getFlowVersion().getFlowDefinition().getKey() +
                             " mas era esperado que referenciasse " +
-                            entityProcessDefinition);
+                            entityFlowDefinition);
                 }
-                entity = newfromDB;
+                entity = newFromDB;
             }
             if (entity == null) {
                 throw SingularException.rethrow(
@@ -148,30 +149,18 @@ public class FlowInstance implements Serializable {
         return entity;
     }
 
-    final void setInternalEntity(IEntityProcessInstance entity) {
+    final void setInternalEntity(IEntityFlowInstance entity) {
         Objects.requireNonNull(entity);
         this.entity = entity;
         this.codEntity = entity.getCod();
     }
 
-    /**
-     * <p>
-     * Configura a instância "pai" desta instância de processo.
-     * </p>
-     *
-     * @param pai a instância "pai".
-     */
-    public void setParent(FlowInstance pai) {
-        getPersistenceService().setProcessInstanceParent(getInternalEntity(), pai.getInternalEntity());
+    /** Configura a instância "pai" desta instância de processo. */
+    public void setParent(FlowInstance parent) {
+        getPersistenceService().setFlowInstanceParent(getInternalEntity(), parent.getInternalEntity());
     }
 
-    /**
-     * <p>
-     * Retorna a tarefa "pai" desta instância de processo.
-     * </p>
-     *
-     * @return a tarefa "pai".
-     */
+    /** Retorna a tarefa "pai" desta instância de processo. */
     public TaskInstance getParentTask() {
         IEntityTaskInstance dbTaskInstance = getInternalEntity().getParentTask();
         return dbTaskInstance == null ? null : Flow.getTaskInstance(dbTaskInstance);
@@ -182,14 +171,14 @@ public class FlowInstance implements Serializable {
      * tiver correspondência com o fluxo do processo em memória (tarefa legada).
      */
     public Optional<STask<?>> getState() {
-        if (estadoAtual == null) {
+        if (currentState == null) {
             Optional<TaskInstance> current = getCurrentTask();
             if (current.isPresent()) {
-                estadoAtual = getProcessDefinition().getFlowMap().getTaskByAbbreviation(current.get().getAbbreviation()).orElse(null);
+                currentState = getFlowDefinition().getFlowMap().getTaskByAbbreviation(current.get().getAbbreviation()).orElse(null);
             } else if (isFinished()) {
                 current = getTaskNewer();
                 if (current.isPresent()&& current.get().isFinished()) {
-                    estadoAtual = getProcessDefinition().getFlowMap().getTaskByAbbreviation(current.get().getAbbreviation()).orElse(null);
+                    currentState = getFlowDefinition().getFlowMap().getTaskByAbbreviation(current.get().getAbbreviation()).orElse(null);
                 } else {
                     throw new SingularFlowException(createErrorMsg(
                             "incossitencia: o estado final está null, mas deveria ter um estado do tipo final por " +
@@ -199,7 +188,7 @@ public class FlowInstance implements Serializable {
                 throw new SingularFlowException(createErrorMsg("getState() não pode ser invocado para essa instância"), this);
             }
         }
-        return Optional.ofNullable(estadoAtual);
+        return Optional.ofNullable(currentState);
     }
 
     /**
@@ -222,7 +211,7 @@ public class FlowInstance implements Serializable {
      * @return o nome da definição de processo.
      */
     public String getProcessName() {
-        return getProcessDefinition().getName();
+        return getFlowDefinition().getName();
     }
 
     /**
@@ -260,7 +249,7 @@ public class FlowInstance implements Serializable {
      * @return os códigos de usuários com direitos de execução.
      */
     public Set<Integer> getFirstLevelUsersCodWithAccess(String nomeTarefa) {
-        return getProcessDefinition().getFlowMap().getHumanTaskByAbbreviationOrException(nomeTarefa).getAccessStrategy()
+        return getFlowDefinition().getFlowMap().getHumanTaskByAbbreviationOrException(nomeTarefa).getAccessStrategy()
             .getFirstLevelUsersCodWithAccess(this);
     }
 
@@ -370,11 +359,11 @@ public class FlowInstance implements Serializable {
      * Recupera a entidade persistente correspondente a esta instância de
      * processo.
      */
-    public final IEntityProcessInstance getEntity() {
+    public final IEntityFlowInstance getEntity() {
         if (codEntity == null && getInternalEntity().getCod() == null) {
             return saveEntity();
         }
-        entity = getPersistenceService().retrieveProcessInstanceByCodOrException(codEntity);
+        entity = getPersistenceService().retrieveFlowInstanceByCodOrException(codEntity);
         return entity;
     }
 
@@ -449,8 +438,8 @@ public class FlowInstance implements Serializable {
      * @param <K> o tipo da entidade desta instância.
      * @return a entidade persistida.
      */
-    public final <K extends IEntityProcessInstance> K saveEntity() {
-        setInternalEntity(getPersistenceService().saveProcessInstance(getInternalEntity()));
+    public final <K extends IEntityFlowInstance> K saveEntity() {
+        setInternalEntity(getPersistenceService().saveFlowInstance(getInternalEntity()));
         return (K) getInternalEntity();
     }
 
@@ -500,12 +489,12 @@ public class FlowInstance implements Serializable {
                 }
                 getPersistenceService().completeTask(originTaskInstance.getEntityTaskInstance(), transitionName, Flow.getUserIfAvailable());
             }
-            IEntityTaskVersion situacaoNova = getProcessDefinition().getEntityTaskVersion(task);
+            IEntityTaskVersion situacaoNova = getFlowDefinition().getEntityTaskVersion(task);
 
             IEntityTaskInstance tarefa = getPersistenceService().addTask(getEntity(), situacaoNova);
 
             TaskInstance tarefaNova = getTaskInstance(tarefa);
-            estadoAtual = task;
+            currentState = task;
 
             Flow.notifyListeners(n -> n.notifyStateUpdate(FlowInstance.this));
             return tarefaNova;
@@ -582,10 +571,7 @@ public class FlowInstance implements Serializable {
     }
 
     /**
-     * <p>
      * Retorna o nome do processo seguido da descrição completa.
-     *
-     * @return o nome do processo seguido da descrição completa.
      */
     public final String getExtendedDescription() {
         String descricao = getDescription();
@@ -665,13 +651,13 @@ public class FlowInstance implements Serializable {
      */
     @Nonnull
     public List<SUser> getDirectlyResponsibles() {
-        return getCurrentTask().map(TaskInstance::getDirectlyResponsibles).orElse(Collections.emptyList());
+        return getCurrentTask().map(TaskInstance::getDirectlyResponsible).orElse(Collections.emptyList());
     }
 
     private void addUserRole(SBusinessRole sBusinessRole, SUser user) {
         if (getUserWithRole(sBusinessRole.getAbbreviation()) == null) {
             getPersistenceService().setInstanceUserRole(getEntity(),
-                getProcessDefinition().getEntityProcessDefinition().getRole(sBusinessRole.getAbbreviation()), user);
+                getFlowDefinition().getEntityFlowDefinition().getRole(sBusinessRole.getAbbreviation()), user);
         }
     }
 
@@ -684,7 +670,7 @@ public class FlowInstance implements Serializable {
      * @param newUser o novo usuário atribuído ao papel.
      */
     public final void addOrReplaceUserRole(final String roleAbbreviation, SUser newUser) {
-        SBusinessRole sBusinessRole = getProcessDefinition().getFlowMap().getRoleWithAbbreviation(roleAbbreviation);
+        SBusinessRole sBusinessRole = getFlowDefinition().getFlowMap().getRoleWithAbbreviation(roleAbbreviation);
         if (sBusinessRole == null) {
             throw new SingularFlowException("Não foi possível encontrar a role: " + roleAbbreviation, this);
         }
@@ -697,12 +683,12 @@ public class FlowInstance implements Serializable {
     }
 
     private void addOrReplaceUserRoleForPreviousUser(SUser newUser, SBusinessRole sBusinessRole, SUser previousUser) {
-        IEntityProcessInstance entityTmp = getEntity();
+        IEntityFlowInstance entityTmp = getEntity();
         getPersistenceService().removeInstanceUserRole(entityTmp, entityTmp.getRoleUserByAbbreviation(sBusinessRole.getAbbreviation()));
         if (Objects.nonNull(newUser)) {
             addUserRole(sBusinessRole, newUser);
         }
-        getProcessDefinition().getFlowMap().notifyRoleChange(this, sBusinessRole, previousUser, newUser);
+        getFlowDefinition().getFlowMap().notifyRoleChange(this, sBusinessRole, previousUser, newUser);
         Optional<TaskInstance> latestTask = getTaskNewer();
         if (latestTask.isPresent()) {
             if (Objects.nonNull(newUser)) {
@@ -716,7 +702,7 @@ public class FlowInstance implements Serializable {
     private void addOrReplaceUserRoleForNewUser(SUser newUser, SBusinessRole sBusinessRole) {
         if (Objects.nonNull(newUser)) {
             addUserRole(sBusinessRole, newUser);
-            getProcessDefinition().getFlowMap().notifyRoleChange(this, sBusinessRole, null, newUser);
+            getFlowDefinition().getFlowMap().notifyRoleChange(this, sBusinessRole, null, newUser);
             Optional<TaskInstance> latestTask = getTaskNewer();
             latestTask.ifPresent(taskInstance -> taskInstance.log("Papel definido", String.format("%s: %s", sBusinessRole.getName(), newUser.getSimpleName())));
         }
@@ -845,14 +831,14 @@ public class FlowInstance implements Serializable {
     /** Retorna a lista de todas as tarefas ordenadas da mais antiga para a mais nova. */
     @Nonnull
     public Stream<TaskInstance> getTasksOlderFirstAsStream() {
-        IEntityProcessInstance demanda = getEntity();
-        return demanda.getTasks().stream().map(this::getTaskInstance);
+        IEntityFlowInstance instance = getEntity();
+        return instance.getTasks().stream().map(this::getTaskInstance);
     }
 
     /** Retorna a lista de todas as tarefas ordenadas da mais nova para a mais antiga. */
     public Stream<TaskInstance> getTasksNewerFirstAsStream() {
-        IEntityProcessInstance demanda = getEntity();
-        return Lists.reverse(demanda.getTasks()).stream().map(this::getTaskInstance);
+        IEntityFlowInstance instance = getEntity();
+        return Lists.reverse(instance.getTasks()).stream().map(this::getTaskInstance);
     }
 
     public Stream<TaskInstance> getTasksNewerFirstAsStream(ITaskDefinition... tasksTypes) {
@@ -922,11 +908,11 @@ public class FlowInstance implements Serializable {
 
     /**
      * Encontra a mais nova tarefa encerrada ou ativa do tipo informado.
-     * @param tipo o tipo informado.
+     * @param type o tipo informado.
      */
     @Nonnull
-    public Optional<TaskInstance> getTaskNewer(@Nonnull STask<?> tipo) {
-        return getTaskNewer(TaskPredicates.simpleTaskType(tipo));
+    public Optional<TaskInstance> getTaskNewer(@Nonnull STask<?> type) {
+        return getTaskNewer(TaskPredicates.simpleTaskType(type));
     }
 
     /**
@@ -940,27 +926,27 @@ public class FlowInstance implements Serializable {
 
     /**
      * Encontra a mais nova tarefa encerrada e com a mesma sigla do tipo.
-     * @param tipo o tipo.
+     * @param type o tipo.
      */
     @Nonnull
-    public Optional<TaskInstance> getFinishedTask(@Nonnull STask<?> tipo) {
-        return getTaskNewer(TaskPredicates.finished().and(TaskPredicates.simpleTaskType(tipo)));
+    public Optional<TaskInstance> getFinishedTask(@Nonnull STask<?> type) {
+        return getTaskNewer(TaskPredicates.finished().and(TaskPredicates.simpleTaskType(type)));
     }
 
-    protected IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {
-        return getProcessDefinition().getPersistenceService();
+    protected IPersistenceService<IEntityCategory, IEntityFlowDefinition, IEntityFlowVersion, IEntityFlowInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {
+        return getFlowDefinition().getPersistenceService();
     }
 
     /**
      * Configura o contexto de execução.
-     * @param execucaoTask o novo contexto de execução.
+     * @param executionContext o novo contexto de execução.
      */
-    final void setExecutionContext(@Nullable ExecutionContext execucaoTask) {
-        if (this.executionContext != null && execucaoTask != null) {
+    final void setExecutionContext(@Nullable ExecutionContext executionContext) {
+        if (this.executionContext != null && executionContext != null) {
             throw new SingularFlowException(createErrorMsg("A instancia já está com um tarefa em processo de execução"),
                     this);
         }
-        this.executionContext = execucaoTask;
+        this.executionContext = executionContext;
     }
 
     /**

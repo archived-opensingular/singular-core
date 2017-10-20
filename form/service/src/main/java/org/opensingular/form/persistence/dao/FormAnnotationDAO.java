@@ -33,8 +33,8 @@ public class FormAnnotationDAO extends BaseDAO<FormAnnotationEntity, FormAnnotat
     }
 
     @Override
-    public void saveOrUpdate(FormAnnotationEntity novoObj) {
-        super.saveOrUpdate(novoObj);
+    public void saveOrUpdate(FormAnnotationEntity newEntity) {
+        super.saveOrUpdate(newEntity);
         getSession().flush();
 
     }

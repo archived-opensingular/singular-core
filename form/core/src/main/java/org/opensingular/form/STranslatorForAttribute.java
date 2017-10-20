@@ -64,7 +64,7 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
         return target;
     }
 
-    public SType<?> getTipo() {
+    public SType<?> getType() {
         SAttributeEnabled t = getTarget();
         if (t instanceof SType) {
             return (SType<?>) t;

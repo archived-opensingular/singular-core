@@ -16,14 +16,14 @@
 
 package org.opensingular.flow.core.entity;
 
+import org.opensingular.flow.core.IEntityTaskType;
+
 import java.util.Date;
 import java.util.List;
 
-import org.opensingular.flow.core.IEntityTaskType;
-
 public interface IEntityTaskVersion extends IEntityByCod<Integer> {
 
-    IEntityProcessVersion getProcessVersion();
+    IEntityFlowVersion getFlowVersion();
 
     String getName();
 
@@ -36,7 +36,7 @@ public interface IEntityTaskVersion extends IEntityByCod<Integer> {
     List<? extends IEntityTaskTransitionVersion> getTransitions();
 
     default Date getVersionDate(){
-        return getProcessVersion().getVersionDate();
+        return getFlowVersion().getVersionDate();
     }
 
     default IEntityTaskTransitionVersion getTransition(String abbreviation) {

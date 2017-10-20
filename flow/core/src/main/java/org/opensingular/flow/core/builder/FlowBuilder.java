@@ -16,42 +16,41 @@
 
 package org.opensingular.flow.core.builder;
 
+import org.opensingular.flow.core.BusinessRoleStrategy;
 import org.opensingular.flow.core.DashboardView;
+import org.opensingular.flow.core.FlowDefinition;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.IExecutionDateStrategy;
 import org.opensingular.flow.core.IRoleChangeListener;
 import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.ITaskPredicate;
-import org.opensingular.flow.core.FlowDefinition;
-import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.RoleAccessStrategy;
 import org.opensingular.flow.core.SBusinessRole;
+import org.opensingular.flow.core.SFlowUtil;
 import org.opensingular.flow.core.SStart;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.STaskEnd;
-import org.opensingular.flow.core.STaskJava;
 import org.opensingular.flow.core.STaskHuman;
+import org.opensingular.flow.core.STaskJava;
 import org.opensingular.flow.core.STaskWait;
 import org.opensingular.flow.core.STransition;
 import org.opensingular.flow.core.SingularFlowException;
 import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.flow.core.TaskAccessStrategy;
-import org.opensingular.flow.core.BusinessRoleStrategy;
-import org.opensingular.flow.core.defaults.EmptyBusinessRoleStrategy;
-import org.opensingular.flow.core.defaults.NullPageStrategy;
 import org.opensingular.lib.commons.base.SingularUtil;
 
 import java.util.function.Consumer;
 
-public abstract class FlowBuilder<DEF extends FlowDefinition<?>, MAPA extends FlowMap, BUILDER_TASK extends BuilderTask, BUILDER_JAVA extends BuilderJava<?>, BUILDER_PEOPLE extends BuilderHuman<?>, BUILDER_WAIT extends BuilderWait<?>, BUILDER_END extends BuilderEnd<?>, BUILDER_START extends BuilderStart<?>, BUILDER_TRANSITION extends BuilderTransition<?>, BUILDER_PAPEL extends BuilderBusinessRole<?>, TASK_DEF extends ITaskDefinition> {
+public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extends FlowMap, BUILDER_TASK extends BuilderTask, BUILDER_JAVA extends BuilderJava<?>, BUILDER_PEOPLE extends BuilderHuman<?>, BUILDER_WAIT extends BuilderWait<?>, BUILDER_END extends BuilderEnd<?>, BUILDER_START extends BuilderStart<?>, BUILDER_TRANSITION extends BuilderTransition<?>, BUILDER_PAPEL extends BuilderBusinessRole<?>, TASK_DEF extends ITaskDefinition> {
 
-    private final MAPA flowMap;
+    private final FLOW_MAP flowMap;
 
-    public FlowBuilder(DEF processDefinition) {
-        flowMap = newFlowMap(processDefinition);
+    public FlowBuilder(DEF flowDefinition) {
+        flowMap = newFlowMap(flowDefinition);
     }
 
-    protected abstract MAPA newFlowMap(DEF processDefinition);
+    protected abstract FLOW_MAP newFlowMap(DEF flowDefinition);
 
     protected abstract BUILDER_TASK newTask(STask<?> task);
 
@@ -69,16 +68,16 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, MAPA extends Fl
 
     protected abstract BUILDER_PAPEL newProcessRole(SBusinessRole transicao);
 
-    protected final MAPA getFlowMap() {
+    protected final FLOW_MAP getFlowMap() {
         return flowMap;
     }
 
-    public MAPA build() {
+    public FLOW_MAP build() {
         return flowMap;
     }
 
     public BUILDER_START setStartTask(TASK_DEF taskDefinition) {
-        MAPA flowMap = getFlowMap();
+        FLOW_MAP flowMap = getFlowMap();
         return newStartTask(flowMap.setStart(taskDefinition));
     }
 
@@ -117,11 +116,11 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, MAPA extends Fl
 
     public BUILDER_PAPEL addRoleDefinition(String description, String abbreviation,
                                            boolean automaticUserAllocation) {
-        return newProcessRole(getFlowMap().addRoleDefinition(description, abbreviation, new EmptyBusinessRoleStrategy(), automaticUserAllocation));
+        return newProcessRole(getFlowMap().addRoleDefinition(description, abbreviation, SFlowUtil.dummyBusinessRoleStrategy(), automaticUserAllocation));
     }
 
     public BUILDER_PAPEL addRoleDefinition(String description, boolean automaticUserAllocation) {
-        return newProcessRole(getFlowMap().addRoleDefinition(description,  SingularUtil.convertToJavaIdentity(description, true), new EmptyBusinessRoleStrategy(), automaticUserAllocation));
+        return newProcessRole(getFlowMap().addRoleDefinition(description,  SingularUtil.convertToJavaIdentity(description, true),  SFlowUtil.dummyBusinessRoleStrategy(), automaticUserAllocation));
     }
 
     public BUILDER_JAVA addJavaTask(TASK_DEF taskDefinition) {
@@ -137,7 +136,7 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, MAPA extends Fl
         if (accessStrategy != null) {
             task.uiAccess(accessStrategy);
         }
-        task.withExecutionPage(new NullPageStrategy());
+        task.withExecutionPage(SFlowUtil.dummyITaskPageStrategy());
         return task;
     }
 
@@ -195,11 +194,11 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, MAPA extends Fl
     }
     
     public BUILDER_TRANSITION addAutomaticTransition(TASK_DEF origin, ITaskPredicate condition, TASK_DEF destination) {
-        MAPA flowMap = getFlowMap();
+        FLOW_MAP flowMap = getFlowMap();
         return newTransition(flowMap.getTask(origin).addAutomaticTransition(condition, flowMap.getTask(destination)));
     }
 
-    public FlowBuilder<DEF, MAPA, BUILDER_TASK, BUILDER_JAVA, BUILDER_PEOPLE, BUILDER_WAIT, BUILDER_END, BUILDER_START, BUILDER_TRANSITION, BUILDER_PAPEL, TASK_DEF> addDashboardView(DashboardView dashboardView) {
+    public FlowBuilder<DEF, FLOW_MAP, BUILDER_TASK, BUILDER_JAVA, BUILDER_PEOPLE, BUILDER_WAIT, BUILDER_END, BUILDER_START, BUILDER_TRANSITION, BUILDER_PAPEL, TASK_DEF> addDashboardView(DashboardView dashboardView) {
         getFlowMap().addDashboardView(dashboardView);
         return this;
     }

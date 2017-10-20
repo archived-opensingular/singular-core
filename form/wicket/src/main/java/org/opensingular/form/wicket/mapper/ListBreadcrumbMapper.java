@@ -312,15 +312,15 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
             List<ColumnType> columnTypes = new ArrayList<>();
 
             if (mapColumns.isEmpty()) {
-                SType<?> tipo = ((SIList<?>) model.getObject()).getElementsType();
-                if (tipo instanceof STypeSimple) {
-                    columnTypes.add(new ColumnType(tipo.getName(), null));
-                } else if (tipo.isComposite()) {
-                    ((STypeComposite<?>) tipo)
+                SType<?> type = ((SIList<?>) model.getObject()).getElementsType();
+                if (type instanceof STypeSimple) {
+                    columnTypes.add(new ColumnType(type.getName(), null));
+                } else if (type.isComposite()) {
+                    ((STypeComposite<?>) type)
                             .getFields()
                             .stream()
-                            .filter(mtipo -> mtipo instanceof STypeSimple)
-                            .forEach(mtipo -> columnTypes.add(new ColumnType(mtipo.getName(), null)));
+                            .filter(sType -> sType instanceof STypeSimple)
+                            .forEach(sType -> columnTypes.add(new ColumnType(sType.getName(), null)));
 
                 }
             } else {
@@ -421,10 +421,10 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
                                             IModel<String> labelModel, IModel<String> sTypeNameModel,
                                             IFunction<SInstance, String> displayValueFunction) {
             builder.appendPropertyColumn(labelModel, o -> {
-                SIComposite composto = (SIComposite) o;
-                SType<?> mtipo = composto.getDictionary().getType(sTypeNameModel.getObject());
-                SInstance instancia = composto.findDescendant(mtipo).get();
-                return displayValueFunction.apply(instancia);
+                SIComposite composite = (SIComposite) o;
+                SType<?> type = composite.getDictionary().getType(sTypeNameModel.getObject());
+                SInstance instance = composite.findDescendant(type).get();
+                return displayValueFunction.apply(instance);
             });
         }
 

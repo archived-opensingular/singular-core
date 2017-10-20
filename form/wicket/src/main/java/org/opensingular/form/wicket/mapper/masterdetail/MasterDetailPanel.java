@@ -16,17 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.masterdetail;
 
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -82,6 +71,18 @@ import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class MasterDetailPanel extends Panel {
 
@@ -232,15 +233,15 @@ public class MasterDetailPanel extends Panel {
         final List<ColumnType> columnTypes = new ArrayList<>();
 
         if (mapColumns.isEmpty()) {
-            final SType<?> tipo = ((SIList<?>) model.getObject()).getElementsType();
-            if (tipo instanceof STypeSimple) {
-                columnTypes.add(new ColumnType(tipo.getName(), null));
-            } else if (tipo.isComposite()) {
-                ((STypeComposite<?>) tipo)
+            final SType<?> type = ((SIList<?>) model.getObject()).getElementsType();
+            if (type instanceof STypeSimple) {
+                columnTypes.add(new ColumnType(type.getName(), null));
+            } else if (type.isComposite()) {
+                ((STypeComposite<?>) type)
                     .getFields()
                     .stream()
-                    .filter(mtipo -> mtipo instanceof STypeSimple)
-                    .forEach(mtipo -> columnTypes.add(new ColumnType(mtipo.getName(), null)));
+                    .filter(sType -> sType instanceof STypeSimple)
+                    .forEach(sType -> columnTypes.add(new ColumnType(sType.getName(), null)));
             }
         } else {
             mapColumns.forEach((col) -> columnTypes.add(

@@ -24,7 +24,6 @@ import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.processor.ClassInspectionCache;
 import org.opensingular.form.processor.ClassInspectionCache.CacheKey;
 import org.opensingular.form.type.core.SPackageBootstrap;
-import org.opensingular.form.type.core.SPackageDocumentation;
 import org.opensingular.form.type.core.SPackagePersistence;
 import org.opensingular.form.type.country.brazil.SPackageCountryBrazil;
 import org.opensingular.form.type.util.SPackageUtil;
@@ -35,7 +34,14 @@ import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -289,12 +295,12 @@ public final class SFormUtil {
 
     @Nonnull
     static SInfoType getInfoType(Class<? extends SType<?>> typeClass) {
-        SInfoType mFormTipo = typeClass.getAnnotation(SInfoType.class);
-        if (mFormTipo == null) {
+        SInfoType infoType = typeClass.getAnnotation(SInfoType.class);
+        if (infoType == null) {
             throw new SingularFormException(
                     "O tipo '" + typeClass.getName() + " não possui a anotação @" + SInfoType.class.getSimpleName() + " em sua definição.");
         }
-        return mFormTipo;
+        return infoType;
     }
 
     @Nonnull

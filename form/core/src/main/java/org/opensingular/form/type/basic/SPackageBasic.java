@@ -198,7 +198,7 @@ public class SPackageBasic extends SPackage {
         pb.getAttribute(ATR_ENABLED).asAtr().label("Enabled");
         pb.getAttribute(ATR_ENABLED_FUNCTION).asAtr().label("Enabled (function)");
         pb.getAttribute(ATR_DEPENDS_ON_FUNCTION).asAtr().label("Depends on (function)");
-        //pb.getAtributo(ATR_ONCHANGE_BEHAVIOR        ).asAtr().label("On change (behavior)"      );
+        //pb.getAttribute(ATR_ONCHANGE_BEHAVIOR        ).asAtr().label("On change (behavior)"      );
         pb.getAttribute(ATR_DISPLAY_ORDER).asAtr().label("Display order");
         pb.getAttribute(ATR_ITEM_LABEL).asAtr().label("Item label")/*.editSize(30)*/.maxLength(50);
         //@formatter:on

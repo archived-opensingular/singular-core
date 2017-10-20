@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.flow.test;
 
 
@@ -10,7 +28,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runners.MethodSorters;
 import org.opensingular.flow.core.ExecuteWaitingTasksJob;
 import org.opensingular.flow.core.Flow;
-import org.opensingular.flow.core.ProcessDefinitionCache;
+import org.opensingular.flow.core.FlowDefinitionCache;
 import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.SingularFlowException;
 import org.opensingular.flow.core.entity.IEntityRoleInstance;
@@ -24,8 +42,15 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.DEFERIDO;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.INDEFERIDO;
+import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.PUBLICADO;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PeticaoTest extends TestFlowSupport {
@@ -40,7 +65,7 @@ public class PeticaoTest extends TestFlowSupport {
 
     @After
     public void tearDown() {
-        ProcessDefinitionCache.invalidateAll();
+        FlowDefinitionCache.invalidateAll();
     }
 
 //    @Test
@@ -54,7 +79,7 @@ public class PeticaoTest extends TestFlowSupport {
     @Test
     public void testeCriarInstanciaPeticao() {
         FlowInstance id = startInstance();
-        FlowInstance id2 = Flow.getProcessInstance(id.getFullId());
+        FlowInstance id2 = Flow.getFlowInstance(id.getFullId());
 
         assertEqualsInstance(id, id2);
     }
@@ -63,8 +88,8 @@ public class PeticaoTest extends TestFlowSupport {
     public void executeTransitionWithoutTransitionName() {
         thrown.expect(SingularFlowException.class);
 
-        FlowInstance instanciaPeticao = startInstance();
-        instanciaPeticao.prepareTransition().go();
+        FlowInstance instance = startInstance();
+        instance.prepareTransition().go();
     }
 
     @Test
@@ -121,7 +146,7 @@ public class PeticaoTest extends TestFlowSupport {
 //    @Test
 //    public void testeComUsuarioCriador() {
 //        Peticao p = new Peticao();
-//        ProcessInstance ip = p.newPreStartInstance();
+//        FlowInstance ip = p.newPreStartInstance();
 //        p
 //        ip.executeTransition(Peticao.APROVAR_TECNICO);
 //
@@ -303,10 +328,10 @@ public class PeticaoTest extends TestFlowSupport {
         assertEquals("As instâncias de processo são diferentes", cod1, cod2);
     }
 
-    private void assertLatestTaskName(String expectedCurrentTaskName, FlowInstance instanciaPeticao) {
+    private void assertLatestTaskName(String expectedCurrentTaskName, FlowInstance instance) {
         assertEquals("Situação diferente do esperado",
                 expectedCurrentTaskName,
-                instanciaPeticao.getLastTaskOrException().getName());
+                instance.getLastTaskOrException().getName());
     }
 
     private void addDaysToTaskTargetDate(TaskInstanceEntity taskInstance, int days) {

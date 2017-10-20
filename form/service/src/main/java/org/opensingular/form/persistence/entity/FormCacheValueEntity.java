@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.form.persistence.entity;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -120,11 +138,11 @@ public class FormCacheValueEntity extends BaseEntity<Long> {
     }
 
     private boolean setStringValue(SInstance instance) {
-        String valor = instance.getValue().toString();
-        if (valor.length() >= 2048) {
-            valor = instance.getValue().toString().substring(0, 2047);
+        String value = instance.getValue().toString();
+        if (value.length() >= 2048) {
+            value = instance.getValue().toString().substring(0, 2047);
         }
-        stringValue = valor;
+        stringValue = value;
         return true;
     }
 
@@ -146,14 +164,14 @@ public class FormCacheValueEntity extends BaseEntity<Long> {
         STypeSimple typeSimple = (STypeSimple) type;
 
         if (type instanceof STypeInteger) {
-            Integer valor = (Integer) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
-            numberValue = new BigDecimal(valor);
+            Integer value = (Integer) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
+            numberValue = new BigDecimal(value);
             return true;
         }
 
         if (type instanceof STypeLong) {
-            Long valor = (Long) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
-            numberValue = new BigDecimal(valor);
+            Long value = (Long) typeSimple.convert(instance.getValue(), typeSimple.getValueClass());
+            numberValue = new BigDecimal(value);
             return true;
         }
 

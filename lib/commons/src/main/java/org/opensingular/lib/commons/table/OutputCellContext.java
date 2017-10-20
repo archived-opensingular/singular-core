@@ -28,7 +28,7 @@ public class OutputCellContext {
 
     private final OutputTableContext outputTableContext;
 
-    private final InfoCelula cell;
+    private final InfoCell cell;
 
     private Object value;
 
@@ -40,7 +40,7 @@ public class OutputCellContext {
 
     private boolean columnWithSeparator;
 
-    OutputCellContext(@Nonnull OutputTableContext outputTableContext, @Nonnull InfoCelula cell,
+    OutputCellContext(@Nonnull OutputTableContext outputTableContext, @Nonnull InfoCell cell,
             @Nonnull DecoratorCell tempDecorator) {
         this.outputTableContext = outputTableContext;
         this.cell = cell;
@@ -55,7 +55,7 @@ public class OutputCellContext {
     }
 
     @Nonnull
-    public InfoCelula getCell() {
+    public InfoCell getCell() {
         return cell;
     }
 

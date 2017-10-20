@@ -65,8 +65,8 @@ public interface VarInstanceMap<K extends VarInstance, SELF extends VarInstanceM
     }
 
     /** Set o valor na variável ou lança exception se a variável for desconhecida (não definida). */
-    default SELF setValue(String ref, Object valor) {
-        getVariableOrException(ref).setValue(valor);
+    default SELF setValue(String ref, Object value) {
+        getVariableOrException(ref).setValue(value);
         return self();
     }
 

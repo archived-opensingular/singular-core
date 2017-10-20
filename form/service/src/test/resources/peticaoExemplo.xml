@@ -4,7 +4,7 @@
         <id id="16">FORMULADO_EQUIVALENTE</id>
         <nome id="17">Produto formulado com base em produto técnico equivalente (PFE)</nome>
     </tipoPeticao>
-    <nivel id="5">III</nivel>
+    <level id="5">III</level>
     <codigoAssunto id="2">5117</codigoAssunto>
     <dadosGerais id="6">
         <numeroProcessoPeticaoMatriz id="18">1</numeroProcessoPeticaoMatriz>

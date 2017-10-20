@@ -30,17 +30,17 @@ public class VarTypeDecimal extends VarTypeBase<BigDecimal> {
     }
 
     @Override
-    public String toDisplayString(Object valor, VarDefinition varDefinition) {
-        return convert(valor).toPlainString();
+    public String toDisplayString(Object value, VarDefinition varDefinition) {
+        return convert(value).toPlainString();
     }
 
     @Override
     public String toPersistenceString(VarInstance varInstance) {
-        BigDecimal  valor = convert(varInstance.getValue());
-        if (valor == null){
+        BigDecimal  value = convert(varInstance.getValue());
+        if (value == null){
             return null;
         }
-        return valor.toPlainString();
+        return value.toPlainString();
     }
 
     @Override

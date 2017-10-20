@@ -215,13 +215,13 @@ public class SDocument {
             throw new SingularFormException("Não é permitido alterar o raiz depois que o mesmo for diferente de null");
         }
         this.root = Objects.requireNonNull(root);
-        STypes.streamDescendants(getRoot().getType(), true).forEach(tipo -> {
+        STypes.streamDescendants(getRoot().getType(), true).forEach(type -> {
             // init dependencies
-            final Supplier<Collection<AtrBasic.DelayedDependsOnResolver>> func = tipo.getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION);
+            final Supplier<Collection<AtrBasic.DelayedDependsOnResolver>> func = type.getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION);
             if (func != null) {
                 for (AtrBasic.DelayedDependsOnResolver resolver : func.get()) {
-                    for (SType s : resolver.resolve(getRoot().getType(), tipo)){
-                        s.addDependentType(tipo);
+                    for (SType s : resolver.resolve(getRoot().getType(), type)){
+                        s.addDependentType(type);
                     }
                 }
             }

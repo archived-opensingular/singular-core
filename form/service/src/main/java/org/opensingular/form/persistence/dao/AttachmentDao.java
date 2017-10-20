@@ -44,8 +44,8 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
         super((Class<T>) AttachmentEntity.class);
     }
 
-    public AttachmentDao(Class<T> tipo) {
-        super(tipo);
+    public AttachmentDao(Class<T> entityClass) {
+        super(entityClass);
     }
 
     public T insert(T o) {
@@ -69,7 +69,7 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
     }
 
     public List<T> list() {
-        Criteria crit = getSession().createCriteria(tipo);
+        Criteria crit = getSession().createCriteria(entityClass);
         return crit.list();
     }
 
@@ -87,7 +87,7 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
 
     protected T createInstance() {
         try {
-            return tipo.newInstance();
+            return entityClass.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             throw SingularException.rethrow(e);
         }

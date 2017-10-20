@@ -68,8 +68,8 @@ public class PersistenceBuilderXML {
      */
     public boolean isReturnNullXML() { return returnNullXML; }
 
-    public MElement toXML(SInstance instancia) {
-        return SFormXMLUtil.toXML(null, null, instancia, this);
+    public MElement toXML(SInstance instance) {
+        return SFormXMLUtil.toXML(null, null, instance, this);
     }
 
 }

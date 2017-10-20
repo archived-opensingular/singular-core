@@ -25,7 +25,7 @@ import java.io.Serializable;
 //TODO marcar a variável quando esta for utilizada. Essa interface deve obrigar a implementacao de um metodo para essa verificacao
 public interface VarInstance extends Serializable, MetaDataEnabled {
 
-    VarInstance setValue(Object valor);
+    VarInstance setValue(Object value);
 
     default void setValueFromPersistence(@Nullable String persistenceValue) {
         if (persistenceValue == null) {

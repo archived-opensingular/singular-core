@@ -16,22 +16,8 @@
 
 package org.opensingular.form.wicket.util;
 
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -45,18 +31,26 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$L;
 
 public abstract class WicketFormUtils {
-    private static final MetaDataKey<Integer> KEY_INSTANCE_ID = new MetaDataKey<Integer>() {
-    };
-    private static final MetaDataKey<Boolean> KEY_IS_CELL_CONTAINER = new MetaDataKey<Boolean>() {
-    };
-    private static final MetaDataKey<MarkupContainer> KEY_CELL_CONTAINER = new MetaDataKey<MarkupContainer>() {
-    };
-    private static final MetaDataKey<MarkupContainer> KEY_ROOT_CONTAINER = new MetaDataKey<MarkupContainer>() {
-    };
+    private static final MetaDataKey<Integer> KEY_INSTANCE_ID = new MetaDataKey<Integer>() {};
+    private static final MetaDataKey<Boolean> KEY_IS_CELL_CONTAINER = new MetaDataKey<Boolean>() {};
+    private static final MetaDataKey<MarkupContainer> KEY_CELL_CONTAINER = new MetaDataKey<MarkupContainer>() {};
+    private static final MetaDataKey<MarkupContainer> KEY_ROOT_CONTAINER = new MetaDataKey<MarkupContainer>() {};
 
     private WicketFormUtils() {
     }
@@ -135,15 +129,14 @@ public abstract class WicketFormUtils {
     }
 
     public static Stream<Component> streamChildrenByInstance(Component root, SInstance instance) {
-        Predicate<? super Component> sameInstanceFilter = c -> instanciaIfAware(c.getDefaultModel())
-                .filter(it -> Objects.equal(it.getName(), instance.getName()))
-                .filter(it -> Objects.equal(it.getId(), instance.getId()))
-                .isPresent();
+        Predicate<? super Component> sameInstanceFilter = c -> getInstanceIfAware(c.getDefaultModel())
+            .filter(it -> Objects.equal(it.getName(), instance.getName()))
+            .filter(it -> Objects.equal(it.getId(), instance.getId()))
+            .isPresent();
         return streamDescendants(root)
                 .filter(sameInstanceFilter);
     }
-
-    private static Optional<SInstance> instanciaIfAware(IModel<?> model) {
+    private static Optional<SInstance> getInstanceIfAware(IModel<?> model) {
         return (model instanceof ISInstanceAwareModel<?>)
                 ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getSInstance())
                 : Optional.ofNullable(model)
@@ -174,9 +167,9 @@ public abstract class WicketFormUtils {
     }
 
     public static String generateTitlePath(Component parentContainer,
-                                           SInstance parentContext,
-                                           Component childComponent,
-                                           SInstance childInstance) {
+        SInstance parentContext,
+        Component childComponent,
+        SInstance childInstance) {
 
         List<Component> components = Lists.newArrayList(childComponent);
         WicketUtils.appendListOfParents(components, childComponent, parentContainer);
@@ -186,7 +179,7 @@ public abstract class WicketFormUtils {
         String lastTitle = null;
         for (Component comp : components) {
 
-            SInstance instance = WicketFormUtils.instanciaIfAware(comp.getDefaultModel()).orElse(null);
+            SInstance instance = WicketFormUtils.getInstanceIfAware(comp.getDefaultModel()).orElse(null);
 
             String title = findTitle(comp);
             if (title != null && !Objects.equal(title, lastTitle)) {
@@ -225,14 +218,13 @@ public abstract class WicketFormUtils {
         return -1;
     }
 
-    private static @Nullable
-    String findTitle(Component comp) {
+    @Nullable
+    private static String findTitle(Component comp) {
         WicketBuildContext wbc = WicketBuildContext.find(comp).orElse(null);
         if (wbc != null) {
             return wbc.resolveContainerTitle().map(it -> StringUtils.trimToNull(it.getObject())).orElse(null);
         }
         return null;
-
     }
 
     /**

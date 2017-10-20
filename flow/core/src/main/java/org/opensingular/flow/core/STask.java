@@ -110,11 +110,11 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
     }
 
     public IEntityTaskType getEffectiveTaskType() {
-        IEntityTaskType tipo = getTaskType();
-        if (tipo != TaskType.WAIT && (this instanceof STaskJava) && ((STaskJava) this).getScheduleData() != null) {
-            tipo = TaskType.WAIT;
+        IEntityTaskType type = getTaskType();
+        if (type != TaskType.WAIT && (this instanceof STaskJava) && ((STaskJava) this).getScheduleData() != null) {
+            type = TaskType.WAIT;
         }
-        return tipo;
+        return type;
     }
 
     public boolean isExecutable() {
@@ -198,7 +198,7 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
         return automaticActions;
     }
 
-    public void execute(ExecutionContext execucaoTask) {
+    public void execute(ExecutionContext executionContext) {
         throw new SingularFlowException("Operation not supported", this);
     }
 
@@ -247,11 +247,11 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
         return Optional.ofNullable(transitionsByName.get(transitionName.toLowerCase()));
     }
 
-    public void notifyTaskStart(TaskInstance taskInstance, ExecutionContext execucaoTask) {
+    public void notifyTaskStart(TaskInstance taskInstance, ExecutionContext executionContext) {
         if (startedTaskListeners != null) {
             for (StartedTaskListener listener : startedTaskListeners) {
                 inject(listener);
-                listener.onTaskStart(taskInstance, execucaoTask);
+                listener.onTaskStart(taskInstance, executionContext);
             }
         }
     }

@@ -16,8 +16,13 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.hibernate.annotations.GenericGenerator;
+import org.opensingular.flow.core.IEntityTaskType;
+import org.opensingular.flow.core.entity.IEntityFlowVersion;
+import org.opensingular.flow.core.entity.IEntityTaskDefinition;
+import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
+import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -29,15 +34,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.hibernate.annotations.GenericGenerator;
-
-import org.opensingular.flow.core.IEntityTaskType;
-import org.opensingular.flow.core.entity.IEntityProcessVersion;
-import org.opensingular.flow.core.entity.IEntityTaskDefinition;
-import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
-import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The base persistent class for the TB_VERSAO_TAREFA database table.
@@ -47,13 +45,13 @@ import org.opensingular.flow.core.entity.IEntityTaskVersion;
  * </p>
  * <code>@GenericGenerator(name = AbstractEntityTaskVersion.PK_GENERATOR_NAME, strategy = "org.hibernate.id.IdentityGenerator")</code>
  *
- * @param <PROCESS_VERSION>
+ * @param <FLOW_VERSION>
  * @param <TASK_DEF>
  * @param <TASK_TRANSITION_VERSION>
  */
 @MappedSuperclass
 @Table(name = "TB_VERSAO_TAREFA")
-public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityProcessVersion, TASK_DEF extends IEntityTaskDefinition, TASK_TRANSITION_VERSION extends IEntityTaskTransitionVersion, TASK_TYPE extends Enum<?> & IEntityTaskType> extends BaseEntity<Integer> implements IEntityTaskVersion {
+public abstract class AbstractEntityTaskVersion<FLOW_VERSION extends IEntityFlowVersion, TASK_DEF extends IEntityTaskDefinition, TASK_TRANSITION_VERSION extends IEntityTaskTransitionVersion, TASK_TYPE extends Enum<?> & IEntityTaskType> extends BaseEntity<Integer> implements IEntityTaskVersion {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_VERSAO_TAREFA";
 
@@ -64,7 +62,7 @@ public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityP
 
     @ManyToOne
     @JoinColumn(name = "CO_VERSAO_PROCESSO", nullable = false)
-    private PROCESS_VERSION processVersion;
+    private FLOW_VERSION flowVersion;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "CO_DEFINICAO_TAREFA", nullable = false)
@@ -89,12 +87,12 @@ public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityP
     }
 
     @Override
-    public PROCESS_VERSION getProcessVersion() {
-        return processVersion;
+    public FLOW_VERSION getFlowVersion() {
+        return flowVersion;
     }
 
-    public void setProcessVersion(PROCESS_VERSION processVersion) {
-        this.processVersion = processVersion;
+    public void setFlowVersion(FLOW_VERSION flowVersion) {
+        this.flowVersion = flowVersion;
     }
 
     @Override

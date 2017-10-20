@@ -115,8 +115,8 @@ public class Decorator implements Serializable {
 
     /** Define o valor do atributo 'title' para o elemento atual. */
     @Nonnull
-    public Decorator addTitle(@Nullable String valor) {
-        return addAttribute("title", valor);
+    public Decorator addTitle(@Nullable String value) {
+        return addAttribute("title", value);
     }
 
     /** Define o valor de um atributo para o elemento atual. */

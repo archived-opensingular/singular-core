@@ -28,8 +28,8 @@ import javax.annotation.Nonnull;
 public class SingularFlowInvalidParametersException extends SingularFlowException {
 
     SingularFlowInvalidParametersException(StartCall<?> startCall, ValidationResult result) {
-        this(startCall.getProcessDefinition(), result, "Erro nos parâmetros passados para inicialização do processo '" +
-                startCall.getProcessDefinition().getName() + "'");
+        this(startCall.getFlowDefinition(), result, "Erro nos parâmetros passados para inicialização do processo '" +
+                startCall.getFlowDefinition().getName() + "'");
     }
 
     SingularFlowInvalidParametersException(FlowDefinition<?> flowDefinition, ValidationResult result) {
@@ -37,7 +37,7 @@ public class SingularFlowInvalidParametersException extends SingularFlowExceptio
     }
 
     SingularFlowInvalidParametersException(@Nonnull TaskInstance taskInstance, @Nonnull STransition transition, ValidationResult result) {
-        this(taskInstance.getFlowInstance().getProcessDefinition(), result,
+        this(taskInstance.getFlowInstance().getFlowDefinition(), result,
                 "Erro ao validar os parametros da transição '" + transition.getName() + "' a partir da tarefa '" +
                         taskInstance.getName() + "'");
         add(taskInstance);

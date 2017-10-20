@@ -30,7 +30,6 @@ import org.opensingular.form.enums.PhraseBreak;
 import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
-import org.opensingular.lib.commons.lambda.ISupplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -178,9 +177,9 @@ public class AtrBasic extends STranslatorForAttribute {
         return ObjectUtils.defaultIfNull(getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION), Collections::emptySet);
     }
 
-    public AtrBasic dependsOn(SType<?>... tipos) {
-        assertNoNull(DEPENDSON_NULL_PARAM_MSG, tipos);
-        return dependsOn(() -> Arrays.asList(tipos).stream().map((SType<?> t) -> (DelayedDependsOnResolver) (root, current) -> Lists.newArrayList(t)).collect(Collectors.toList()));
+    public AtrBasic dependsOn(SType<?>... types) {
+        assertNoNull(DEPENDSON_NULL_PARAM_MSG, types);
+        return dependsOn(() -> Arrays.asList(types).stream().map((SType<?> t) -> (DelayedDependsOnResolver) (root, current) -> Lists.newArrayList(t)).collect(Collectors.toList()));
     }
 
     private void assertNoNull(String msg, Object ...o){

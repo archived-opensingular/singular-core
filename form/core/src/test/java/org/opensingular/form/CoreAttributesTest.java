@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.form;
 
 import org.junit.Test;
@@ -52,17 +70,17 @@ public class CoreAttributesTest extends TestCaseForm {
     }
 
     public void testValorDefaultEInicialDeAtributos() {
-        SDictionary dicionario = SDictionary.create();
-        dicionario.loadPackage(TestPacoteAA.class);
+        SDictionary dictionary = SDictionary.create();
+        dictionary.loadPackage(TestPacoteAA.class);
 
         // Teste no tipo
-        assertLeituraAtributo(dicionario.getType(STypeInteger.class), 15, 15);
-        assertLeituraAtributo(dicionario.getType(STypeString.class), 17, 17);
+        assertLeituraAtributo(dictionary.getType(STypeInteger.class), 15, 15);
+        assertLeituraAtributo(dictionary.getType(STypeString.class), 17, 17);
         // Os tipos a seguir extends MTipoString
-        assertLeituraAtributo(dicionario.getType(STypeEMail.class), 17, 17);
-        assertLeituraAtributo(dicionario.getType(STypeCPF.class), 19, 19);
-        assertLeituraAtributo(dicionario.getType(STypeCEP.class), 21, 21);
-        assertLeituraAtributo(dicionario.getType(STypeCNPJ.class), 23, 23);
+        assertLeituraAtributo(dictionary.getType(STypeEMail.class), 17, 17);
+        assertLeituraAtributo(dictionary.getType(STypeCPF.class), 19, 19);
+        assertLeituraAtributo(dictionary.getType(STypeCEP.class), 21, 21);
+        assertLeituraAtributo(dictionary.getType(STypeCNPJ.class), 23, 23);
     }
 
     private static void assertLeituraAtributo(SType<?> alvo, Object esperadoGetValor, Object esperadoGetValorWithDefault) {
@@ -70,26 +88,26 @@ public class CoreAttributesTest extends TestCaseForm {
         assertEquals(esperadoGetValor, alvo.getAttributeValue(TestPacoteAA.ATR_YY));
         assertEquals(esperadoGetValor, alvo.getAttributeValue(TestPacoteAA.ATR_YY, Integer.class));
 
-        SInstance instancia = alvo.newInstance();
-        assertEquals(esperadoGetValor, instancia.getAttributeValue(TestPacoteAA.ATR_YY));
-        assertEquals(esperadoGetValor, instancia.getAttributeValue(TestPacoteAA.ATR_YY, Integer.class));
+        SInstance instance = alvo.newInstance();
+        assertEquals(esperadoGetValor, instance.getAttributeValue(TestPacoteAA.ATR_YY));
+        assertEquals(esperadoGetValor, instance.getAttributeValue(TestPacoteAA.ATR_YY, Integer.class));
 
-        Integer novoValor = 1024;
-        instancia.setAttributeValue(TestPacoteAA.ATR_YY, novoValor);
-        assertEquals(novoValor, instancia.getAttributeValue(TestPacoteAA.ATR_YY));
-        assertEquals(novoValor, instancia.getAttributeValue(TestPacoteAA.ATR_YY, Integer.class));
+        Integer newValue = 1024;
+        instance.setAttributeValue(TestPacoteAA.ATR_YY, newValue);
+        assertEquals(newValue, instance.getAttributeValue(TestPacoteAA.ATR_YY));
+        assertEquals(newValue, instance.getAttributeValue(TestPacoteAA.ATR_YY, Integer.class));
     }
 
     @Test
     public void testAdicionarAtributoEmOutroPacote() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        SDictionary dictionary = SDictionary.create();
+        PackageBuilder pb = dictionary.createNewPackage("teste");
         pb.addAttribute(STypeString.class, TestPacoteAA.ATR_XX, 17);
 
-        STypeString tipo = dicionario.getType(STypeString.class);
+        STypeString tipo = dictionary.getType(STypeString.class);
         assertEquals(tipo.getAttributeValue(TestPacoteAA.ATR_XX), (Object) 17);
-        SIString instancia = tipo.newInstance();
-        assertEquals(instancia.getAttributeValue(TestPacoteAA.ATR_XX), (Object) 17);
+        SIString instance = tipo.newInstance();
+        assertEquals(instance.getAttributeValue(TestPacoteAA.ATR_XX), (Object) 17);
     }
 
     private static boolean exceptionAtCorrentPoint = false;
@@ -137,11 +155,11 @@ public class CoreAttributesTest extends TestCaseForm {
 
     @Test
     public void testAtributoValorInicial() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        SDictionary dictionary = SDictionary.create();
+        PackageBuilder pb = dictionary.createNewPackage("teste");
 
         STypeSimple<SIString, String> tipo = (STypeSimple<SIString, String>) pb.createType("local", STypeString.class).setInitialValue("aqui");
-        STypeString tipoString = dicionario.getType(STypeString.class);
+        STypeString tipoString = dictionary.getType(STypeString.class);
 
 
         SIString i1 = tipo.newInstance();
@@ -168,8 +186,8 @@ public class CoreAttributesTest extends TestCaseForm {
 
     @Test
     public void testCriarDoisAtributosComMesmoNome() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        SDictionary dictionary = SDictionary.create();
+        PackageBuilder pb = dictionary.createNewPackage("teste");
 
         STypeString tipo = pb.createType("X", STypeString.class);
         pb.createAttributeIntoType(tipo, "a", STypeInteger.class);
@@ -179,16 +197,16 @@ public class CoreAttributesTest extends TestCaseForm {
 
     @Test
     public void testCriarDoisAtributosDePacotesDiferentesComMesmoNome() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb1 = dicionario.createNewPackage("teste1");
+        SDictionary dictionary = SDictionary.create();
+        PackageBuilder pb1 = dictionary.createNewPackage("teste1");
 
         STypeSimple<?, ?> tipo = pb1.createType("X", STypeSimple.class);
         STypeInteger at1 = pb1.createAttributeIntoType(tipo, "a", STypeInteger.class);
 
-        PackageBuilder pb2 = dicionario.createNewPackage("teste2");
+        PackageBuilder pb2 = dictionary.createNewPackage("teste2");
         STypeInteger at2 = pb2.createAttributeIntoType(tipo, "a", STypeInteger.class);
 
-        assertException(() -> pb2.createAttributeIntoType(dicionario.getType(STypeSimple.class), "a", STypeInteger.class), "já está criada");
+        assertException(() -> pb2.createAttributeIntoType(dictionary.getType(STypeSimple.class), "a", STypeInteger.class), "já está criada");
 
         assertEquals("teste1.X.a", at1.getName());
         assertEquals("teste2.a", at2.getName());
@@ -206,12 +224,12 @@ public class CoreAttributesTest extends TestCaseForm {
 
     @Test
     public void testCriacaoNovosAtributosNosPacotesCerto() {
-        SDictionary dicionario = SDictionary.create();
-        dicionario.loadPackage(SPackageTest.TestPacoteB.class);
+        SDictionary dictionary = SDictionary.create();
+        dictionary.loadPackage(SPackageTest.TestPacoteB.class);
 
         assertEquals("teste.pacoteB.yy", SPackageTest.TestPacoteB.ATR_LABEL_Y.getNameFull());
 
-        SType<?> tipoAtributo = dicionario.getType(SPackageTest.TestPacoteB.ATR_LABEL_Y.getNameFull());
+        SType<?> tipoAtributo = dictionary.getType(SPackageTest.TestPacoteB.ATR_LABEL_Y.getNameFull());
         assertNotNull(tipoAtributo);
         assertEquals("teste.pacoteB.yy", tipoAtributo.getName());
         assertEquals("teste.pacoteB", tipoAtributo.getPackage().getName());
@@ -223,11 +241,11 @@ public class CoreAttributesTest extends TestCaseForm {
         // Também testa se dá problema um tipo extendendo outro e ambos com
         // onLoadType()
 
-        SDictionary dicionario = SDictionary.create();
-        TestPacoteCAI pkg = dicionario.loadPackage(TestPacoteCAI.class);
+        SDictionary dictionary = SDictionary.create();
+        TestPacoteCAI pkg = dictionary.loadPackage(TestPacoteCAI.class);
 
-        TipoComAtributoInterno1 tipo1 = dicionario.getType(TipoComAtributoInterno1.class);
-        TipoComAtributoInterno2 tipo2 = dicionario.getType(TipoComAtributoInterno2.class);
+        TipoComAtributoInterno1 tipo1 = dictionary.getType(TipoComAtributoInterno1.class);
+        TipoComAtributoInterno2 tipo2 = dictionary.getType(TipoComAtributoInterno2.class);
         TipoComAtributoInterno1 fieldOfTipo1 = pkg.fieldOfTipoComAtributoInterno1;
 
         assertNull(tipo1.getAttributeValue(TestPacoteCAI.ATR_REF_ID1));
@@ -259,26 +277,26 @@ public class CoreAttributesTest extends TestCaseForm {
         assertEquals("B2", tipo2.getAttributeValue(TestPacoteCAI.ATR_REF_ID2));
         assertEquals("B3", tipo2.getAttributeValue(TestPacoteCAI.ATR_REF_ID3));
 
-        SIComposite instancia1 = dicionario.newInstance(TipoComAtributoInterno1.class);
-        SIComposite instancia2 = dicionario.newInstance(TipoComAtributoInterno2.class);
+        SIComposite instance1 = dictionary.newInstance(TipoComAtributoInterno1.class);
+        SIComposite instance2 = dictionary.newInstance(TipoComAtributoInterno2.class);
 
-        assertEquals("A1", instancia1.getAttributeValue(TestPacoteCAI.ATR_REF_ID1));
-        assertEquals("A3", instancia1.getAttributeValue(TestPacoteCAI.ATR_REF_ID3));
-        assertEquals("B1", instancia2.getAttributeValue(TestPacoteCAI.ATR_REF_ID1));
-        assertEquals("B2", instancia2.getAttributeValue(TestPacoteCAI.ATR_REF_ID2));
-        assertEquals("B3", instancia2.getAttributeValue(TestPacoteCAI.ATR_REF_ID3));
+        assertEquals("A1", instance1.getAttributeValue(TestPacoteCAI.ATR_REF_ID1));
+        assertEquals("A3", instance1.getAttributeValue(TestPacoteCAI.ATR_REF_ID3));
+        assertEquals("B1", instance2.getAttributeValue(TestPacoteCAI.ATR_REF_ID1));
+        assertEquals("B2", instance2.getAttributeValue(TestPacoteCAI.ATR_REF_ID2));
+        assertEquals("B3", instance2.getAttributeValue(TestPacoteCAI.ATR_REF_ID3));
 
-        instancia1.setAttributeValue(TestPacoteCAI.ATR_REF_ID1, "AI1");
-        instancia1.setAttributeValue(TestPacoteCAI.ATR_REF_ID3, "AI3");
-        instancia2.setAttributeValue(TestPacoteCAI.ATR_REF_ID1, "BI1");
-        instancia2.setAttributeValue(TestPacoteCAI.ATR_REF_ID2, "BI2");
-        instancia2.setAttributeValue(TestPacoteCAI.ATR_REF_ID3, "BI3");
+        instance1.setAttributeValue(TestPacoteCAI.ATR_REF_ID1, "AI1");
+        instance1.setAttributeValue(TestPacoteCAI.ATR_REF_ID3, "AI3");
+        instance2.setAttributeValue(TestPacoteCAI.ATR_REF_ID1, "BI1");
+        instance2.setAttributeValue(TestPacoteCAI.ATR_REF_ID2, "BI2");
+        instance2.setAttributeValue(TestPacoteCAI.ATR_REF_ID3, "BI3");
 
-        assertEquals("AI1", instancia1.getAttributeValue(TestPacoteCAI.ATR_REF_ID1));
-        assertEquals("AI3", instancia1.getAttributeValue(TestPacoteCAI.ATR_REF_ID3));
-        assertEquals("BI1", instancia2.getAttributeValue(TestPacoteCAI.ATR_REF_ID1));
-        assertEquals("BI2", instancia2.getAttributeValue(TestPacoteCAI.ATR_REF_ID2));
-        assertEquals("BI3", instancia2.getAttributeValue(TestPacoteCAI.ATR_REF_ID3));
+        assertEquals("AI1", instance1.getAttributeValue(TestPacoteCAI.ATR_REF_ID1));
+        assertEquals("AI3", instance1.getAttributeValue(TestPacoteCAI.ATR_REF_ID3));
+        assertEquals("BI1", instance2.getAttributeValue(TestPacoteCAI.ATR_REF_ID1));
+        assertEquals("BI2", instance2.getAttributeValue(TestPacoteCAI.ATR_REF_ID2));
+        assertEquals("BI3", instance2.getAttributeValue(TestPacoteCAI.ATR_REF_ID3));
 
         assertEquals("A1", tipo1.getAttributeValue(TestPacoteCAI.ATR_REF_ID1));
         assertEquals("A3", tipo1.getAttributeValue(TestPacoteCAI.ATR_REF_ID3));
@@ -298,8 +316,8 @@ public class CoreAttributesTest extends TestCaseForm {
 
     @Test
     public void testAtribuicaoDeValoresDeAtributosPorString() {
-        SDictionary dicionario = SDictionary.create();
-        TestPacoteCAI pkg = dicionario.loadPackage(TestPacoteCAI.class);
+        SDictionary dictionary = SDictionary.create();
+        TestPacoteCAI pkg = dictionary.loadPackage(TestPacoteCAI.class);
 
         TipoComAtributoInterno1 fieldOfTipo1 = pkg.fieldOfTipoComAtributoInterno1;
         
@@ -366,8 +384,8 @@ public class CoreAttributesTest extends TestCaseForm {
 
     @Test
     public void testIsAttributeETestAtributoComposto() {
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb1 = dicionario.createNewPackage("teste1");
+        SDictionary dictionary = SDictionary.create();
+        PackageBuilder pb1 = dictionary.createNewPackage("teste1");
 
         STypeComposite<?> tipoPosicao = pb1.createCompositeType("posicao");
         tipoPosicao.addFieldString("cor");
@@ -386,20 +404,20 @@ public class CoreAttributesTest extends TestCaseForm {
         assertAttribute(((ICompositeInstance) tipo.findAttributeInstance(at2.getName())).getField("cor"), null);
         assertAttribute(((ICompositeInstance) tipo.findAttributeInstance(at2.getName())).getField("linha"), null);
 
-        SIString instancia = (SIString) tipo.newInstance();
-        assertEquals(false, instancia.isAttribute());
-        assertEquals(0, instancia.getAttributes().size());
+        SIString instance = (SIString) tipo.newInstance();
+        assertEquals(false, instance.isAttribute());
+        assertEquals(0, instance.getAttributes().size());
 
-        instancia.setAttributeValue(at1.getName(), "a2");
-        instancia.setAttributeValue(at2.getName(), "cor", "b2");
-        instancia.setAttributeValue(at2.getName(), "linha", 2);
+        instance.setAttributeValue(at1.getName(), "a2");
+        instance.setAttributeValue(at2.getName(), "cor", "b2");
+        instance.setAttributeValue(at2.getName(), "linha", 2);
 
-        assertEquals(2, instancia.getAttributes().size());
-        assertAttribute(instancia.getAttributeDirectly(at1.getName()).get(), instancia);
-        assertAttribute(instancia.getAttributeDirectly(at2.getName()).get(), instancia);
-        assertAttribute(((ICompositeInstance) instancia.getAttributeDirectly(at2.getName()).get()).getField("cor"), instancia);
-        assertAttribute(((ICompositeInstance) instancia.getAttributeDirectly(at2.getName()).get()).getField("linha"), instancia);
-        instancia.getAttributes().stream().forEach(a -> assertAttribute(a, instancia));
+        assertEquals(2, instance.getAttributes().size());
+        assertAttribute(instance.getAttributeDirectly(at1.getName()).get(), instance);
+        assertAttribute(instance.getAttributeDirectly(at2.getName()).get(), instance);
+        assertAttribute(((ICompositeInstance) instance.getAttributeDirectly(at2.getName()).get()).getField("cor"), instance);
+        assertAttribute(((ICompositeInstance) instance.getAttributeDirectly(at2.getName()).get()).getField("linha"), instance);
+        instance.getAttributes().stream().forEach(a -> assertAttribute(a, instance));
     }
 
     private static void assertAttribute(SInstance instance, SInstance expectedOwner) {
@@ -419,8 +437,8 @@ public class CoreAttributesTest extends TestCaseForm {
 
     private static <T extends STypeSimple<X, V>, X extends SISimple<V>, V extends Serializable>  void testInicialEDefault(Class<T> tipo, Object valorInicial, Object valorIfNull) {
         assertTrue(!valorInicial.equals(valorIfNull));
-        SDictionary dicionario = SDictionary.create();
-        PackageBuilder pb = dicionario.createNewPackage("teste");
+        SDictionary dictionary = SDictionary.create();
+        PackageBuilder pb = dictionary.createNewPackage("teste");
         T tx = (T) pb.createType("x", tipo).setInitialValue(valorInicial);
         T ty = (T) pb.createType("y", tipo).withDefaultValueIfNull(valorIfNull);
         T tz = (T) pb.createType("z", tipo).setInitialValue(valorInicial).withDefaultValueIfNull(valorIfNull);

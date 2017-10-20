@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  *  you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  * http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.opensingular.form.document;
 
 import org.junit.Test;
@@ -23,14 +41,14 @@ public class TestSDocument extends TestCaseForm {
 
     @Test
     public void testCriacaoImplicitaPacoteCore() {
-        SDictionary dicionario = createTestDictionary();
-        SIString    instancia1 = dicionario.newInstance(STypeString.class);
-        assertFilhos(instancia1, 0);
+        SDictionary dictionary = createTestDictionary();
+        SIString    instance1 = dictionary.newInstance(STypeString.class);
+        assertChildren(instance1, 0);
 
-        SIString instancia2 = dicionario.newInstance(STypeString.class);
-        assertFilhos(instancia2, 0);
+        SIString instance2 = dictionary.newInstance(STypeString.class);
+        assertChildren(instance2, 0);
 
-        assertNotSame(instancia1.getDocument(), instancia2.getDocument());
+        assertNotSame(instance1.getDocument(), instance2.getDocument());
     }
 
     @Test
@@ -38,13 +56,13 @@ public class TestSDocument extends TestCaseForm {
         PackageBuilder    pb         = createTestPackage();
         STypeComposite<?> tipo       = pb.createType("nome", STypeComposite.class);
 
-        SInstance instancia1 = tipo.newInstance();
-        assertFilhos(instancia1, 0);
+        SInstance instance1 = tipo.newInstance();
+        assertChildren(instance1, 0);
 
-        SInstance instancia2 = tipo.newInstance();
-        assertFilhos(instancia2, 0);
+        SInstance instance2 = tipo.newInstance();
+        assertChildren(instance2, 0);
 
-        assertNotSame(instancia1.getDocument(), instancia2.getDocument());
+        assertNotSame(instance1.getDocument(), instance2.getDocument());
     }
 
     @Test
@@ -56,17 +74,17 @@ public class TestSDocument extends TestCaseForm {
         tipoComposto.addFieldListOf("dependentes", STypeString.class);
 
         SIList<SIComposite> pessoas = tipoLista.newInstance(SIComposite.class);
-        assertFilhos(pessoas, 0);
+        assertChildren(pessoas, 0);
 
         SIComposite pessoa = pessoas.addNew();
-        assertFilhos(pessoa, 0);
+        assertChildren(pessoa, 0);
 
         pessoa.setValue("nome", "Daniel");
-        assertFilhos(pessoa.getField("nome"), 0);
+        assertChildren(pessoa.getField("nome"), 0);
 
         SIString campo = pessoa.getFieldList("dependentes", SIString.class).addValue("Lara");
-        assertFilhos(campo, 0);
-        assertFilhos(pessoas, 4);
+        assertChildren(campo, 0);
+        assertChildren(pessoas, 4);
     }
     
 }

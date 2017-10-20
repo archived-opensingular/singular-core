@@ -51,9 +51,9 @@ public class YearMonthMapper extends AbstractControlsFieldComponentMapper {
     @Override
     public String getReadOnlyFormattedText(WicketBuildContext ctx, IModel<? extends SInstance> model) {
         if ((model != null) && (model.getObject() != null)) {
-            SInstance instancia = model.getObject();
-            if (instancia.getValue() instanceof YearMonth) {
-                YearMonth ym = (YearMonth) instancia.getValue();
+            SInstance instance = model.getObject();
+            if (instance.getValue() instanceof YearMonth) {
+                YearMonth ym = (YearMonth) instance.getValue();
                 return String.format("%02d/%04d", ym.getMonthValue(), ym.getYear());
             }
         }

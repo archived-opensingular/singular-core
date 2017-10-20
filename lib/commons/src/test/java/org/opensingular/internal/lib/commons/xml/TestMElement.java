@@ -57,7 +57,7 @@ public class TestMElement {
     /**
      * XML de base para teste de percorrimento e leitura.
      */
-    private MElement raiz_;
+    private MElement root_;
 
     /**
      * Verifica se ambos os nos são iguais fazendo uma comparação em
@@ -78,7 +78,7 @@ public class TestMElement {
         isIgual(n1, n2, "Prefix", n1.getPrefix(), n2.getPrefix());
         isIgual(n1, n2, "LocalName", n1.getLocalName(), n2.getLocalName());
 
-        if (isMesmaClasse(Element.class, n1, n2)) {
+        if (isSameClass(Element.class, n1, n2)) {
             Element e1 = (Element) n1;
             Element e2 = (Element) n2;
             //Verifica se possuem os mesmos atributos
@@ -93,28 +93,28 @@ public class TestMElement {
             }
 
             //Verifica se possuem os mesmos filhos
-            Node filho1 = e1.getFirstChild();
-            Node filho2 = e2.getFirstChild();
+            Node child1 = e1.getFirstChild();
+            Node child2 = e2.getFirstChild();
             int count = 0;
-            while ((filho1 != null) && (filho2 != null)) {
-                isIgual(filho1, filho2);
-                filho1 = filho1.getNextSibling();
-                filho2 = filho2.getNextSibling();
+            while ((child1 != null) && (child2 != null)) {
+                isIgual(child1, child2);
+                child1 = child1.getNextSibling();
+                child2 = child2.getNextSibling();
                 count++;
             }
-            if (filho1 != null) {
-                fail("Há mais node [" + count + "] " + XPathToolkit.getNomeTipo(filho1) + " (" +
-                        XPathToolkit.getFullPath(filho1) + ") em n1:" + XPathToolkit.getFullPath(n1));
+            if (child1 != null) {
+                fail("Há mais node [" + count + "] " + XPathToolkit.getNodeTypeName(child1) + " (" +
+                        XPathToolkit.getFullPath(child1) + ") em n1:" + XPathToolkit.getFullPath(n1));
             }
-            if (filho2 != null) {
-                fail("Há mais node [" + count + "] " + XPathToolkit.getNomeTipo(filho2) + " (" +
-                        XPathToolkit.getFullPath(filho2) + ") em n2:" + XPathToolkit.getFullPath(n2));
+            if (child2 != null) {
+                fail("Há mais node [" + count + "] " + XPathToolkit.getNodeTypeName(child2) + " (" +
+                        XPathToolkit.getFullPath(child2) + ") em n2:" + XPathToolkit.getFullPath(n2));
             }
 
-        } else if (isMesmaClasse(Attr.class, n1, n2)) {
+        } else if (isSameClass(Attr.class, n1, n2)) {
             //Ok
 
-        } else if (isMesmaClasse(Text.class, n1, n2)) {
+        } else if (isSameClass(Text.class, n1, n2)) {
             //Ok
 
         } else {
@@ -155,19 +155,19 @@ public class TestMElement {
      *
      * @param c        Classe a ser verificada
      * @param original instância 1
-     * @param novo     instância 2
+     * @param newNode     instância 2
      * @return true Se ambos forem instância de c
      */
-    private static boolean isMesmaClasse(Class c, Node original, Node novo) {
+    private static boolean isSameClass(Class<?> c, Node original, Node newNode) {
         if (c.isInstance(original)) {
-            if (c.isInstance(novo)) {
+            if (c.isInstance(newNode)) {
                 return true;
             } else {
                 fail(XPathToolkit.getFullPath(original) + " não é da mesma classe que " +
-                        XPathToolkit.getFullPath(novo));
+                        XPathToolkit.getFullPath(newNode));
             }
-        } else if (c.isInstance(novo)) {
-            fail(XPathToolkit.getFullPath(original) + " não é da mesma classe que " + XPathToolkit.getFullPath(novo));
+        } else if (c.isInstance(newNode)) {
+            fail(XPathToolkit.getFullPath(original) + " não é da mesma classe que " + XPathToolkit.getFullPath(newNode));
         }
         return false;
     }
@@ -244,7 +244,7 @@ public class TestMElement {
                 + "</pedido>                           \n"
                 + "";
         //@formatter:on
-        raiz_ = MParser.parse(xml);
+        root_ = MParser.parse(xml);
 
     }
 
@@ -253,37 +253,37 @@ public class TestMElement {
      */
     @Test
     public void testGetElements() {
-        assertEquals(3, raiz_.getElements("cd").length);
-        assertEquals(3, raiz_.getElements(null).length);
-        assertEquals(1, raiz_.getElement("cd").getElements("presente").length);
-        assertEquals(3, raiz_.getElement("cd").getElements("faixa").length);
+        assertEquals(3, root_.getElements("cd").length);
+        assertEquals(3, root_.getElements(null).length);
+        assertEquals(1, root_.getElement("cd").getElements("presente").length);
+        assertEquals(3, root_.getElement("cd").getElements("faixa").length);
     }
 
     /**
-     * Verifica método MElement.getValores()
+     * Verifica método MElement.getValues()
      */
     @Test
     public void testGetValores() {
-        assertEquals(3, raiz_.getValores("cd").size());
-        assertEquals(0, raiz_.getValores("none").size());
-        assertEquals(0, raiz_.getValores("cd/none").size());
-        assertEquals(9, raiz_.getValores("cd/faixa").size());
-        assertEquals(3, raiz_.getValores("cd/@cod").size());
-        assertEquals(3, raiz_.getValores("cd[2]/faixa").size());
-        assertEquals(3, raiz_.getElement("cd").getValores("faixa").size());
-        assertEquals(7, raiz_.getElement("cd").getValores(null).size());
-        assertEquals(3, raiz_.getValores("cd/grupo").size());
-        assertEquals(0, raiz_.getValores("cd/presente").size());
+        assertEquals(3, root_.getValues("cd").size());
+        assertEquals(0, root_.getValues("none").size());
+        assertEquals(0, root_.getValues("cd/none").size());
+        assertEquals(9, root_.getValues("cd/faixa").size());
+        assertEquals(3, root_.getValues("cd/@cod").size());
+        assertEquals(3, root_.getValues("cd[2]/faixa").size());
+        assertEquals(3, root_.getElement("cd").getValues("faixa").size());
+        assertEquals(7, root_.getElement("cd").getValues(null).size());
+        assertEquals(3, root_.getValues("cd/grupo").size());
+        assertEquals(0, root_.getValues("cd/presente").size());
     }
 
     @Test
     public void testFormatNumber() {
-        assertEquals("10,12", raiz_.formatNumber("cd[1]/preco", false));
-        assertEquals("10,1", raiz_.formatNumber("cd[1]/preco", 1, false));
-        assertEquals("10,1", raiz_.formatNumber("cd[2]/preco", false));
-        assertEquals("10", raiz_.formatNumber("cd[3]/preco", false));
-        assertEquals("10", raiz_.formatNumber("cd[3]/preco", -1, false));
-        assertEquals("", raiz_.formatNumber("cd[4]/preco", false));
+        assertEquals("10,12", root_.formatNumber("cd[1]/preco", false));
+        assertEquals("10,1", root_.formatNumber("cd[1]/preco", 1, false));
+        assertEquals("10,1", root_.formatNumber("cd[2]/preco", false));
+        assertEquals("10", root_.formatNumber("cd[3]/preco", false));
+        assertEquals("10", root_.formatNumber("cd[3]/preco", -1, false));
+        assertEquals("", root_.formatNumber("cd[4]/preco", false));
     }
 
     /**
@@ -292,19 +292,19 @@ public class TestMElement {
     @Test
     public void testCopy() throws Exception {
         //Testa a copia sem namespace
-        MElement raiz2 = MElement.newInstance("http://acme.com", "lista");
-        MElement novo2 = raiz2.copy(raiz_.getElement("cd"), null);
+        MElement root2 = MElement.newInstance("http://acme.com", "lista");
+        MElement new2 = root2.copy(root_.getElement("cd"), null);
 
-        raiz_.print(System.err);
-        novo2.print(System.err);
-        isIgual(raiz_.getElement("cd"), novo2);
+        root_.print(System.err);
+        new2.print(System.err);
+        isIgual(root_.getElement("cd"), new2);
 
         //Testa a copia com namespace
-        MElement raiz3 = MElement.newInstance("Pai-simples");
-        MElement novo3 = raiz3.copy(raiz2, null);
+        MElement root3 = MElement.newInstance("Pai-simples");
+        MElement new3 = root3.copy(root2, null);
         //raiz2.print(System.err);
         //novo3.print(System.err);
-        isIgual(raiz2, novo3);
+        isIgual(root2, new3);
 
     }
 
@@ -313,14 +313,14 @@ public class TestMElement {
      */
     @Test
     public void testAddNull() {
-        assertNull(raiz_.addElement("x", (String) null, null));
-        assertNull(raiz_.addElement("x", (Object) null, null));
-        assertTrue(raiz_.isNull("x"));
-        assertTrue(!raiz_.possuiNode("x"));
-        assertEquals("a", raiz_.addElement("x", null, "a").getValor());
-        assertEquals("a", raiz_.getValor("x"));
-        assertEquals("b", raiz_.addElement("x", "b", "a").getValor());
-        assertEquals(1.1, raiz_.addElement("x", null, new Double(1.1)).getDouble(), 0);
+        assertNull(root_.addElement("x", (String) null, null));
+        assertNull(root_.addElement("x", (Object) null, null));
+        assertTrue(root_.isNull("x"));
+        assertTrue(!root_.possuiNode("x"));
+        assertEquals("a", root_.addElement("x", null, "a").getValue());
+        assertEquals("a", root_.getValue("x"));
+        assertEquals("b", root_.addElement("x", "b", "a").getValue());
+        assertEquals(1.1, root_.addElement("x", null, new Double(1.1)).getDouble(), 0);
     }
 
     /**
@@ -328,18 +328,18 @@ public class TestMElement {
      */
     @Test
     public void testLeituraValorXPath() {
-        assertEquals(raiz_.getInt("cd/@cod"), 1);
-        assertEquals(raiz_.getValor("cd/@cod"), "1");
-        assertEquals(raiz_.getValor("/pedido/cd[2]/nome"), "9 Luas");
-        assertEquals(raiz_.getValor("/cd/ano"), null);
+        assertEquals(root_.getInt("cd/@cod"), 1);
+        assertEquals(root_.getValue("cd/@cod"), "1");
+        assertEquals(root_.getValue("/pedido/cd[2]/nome"), "9 Luas");
+        assertEquals(root_.getValue("/cd/ano"), null);
 
-        MElement cd = raiz_.getElement("cd");
-        assertEquals(cd.getValor("/pedido/cd/ano"), "2002");
+        MElement cd = root_.getElement("cd");
+        assertEquals(cd.getValue("/pedido/cd/ano"), "2002");
         assertEquals(cd.getLong("/pedido/cd/ano"), 2002);
-        assertEquals(cd.getValor("/ano"), null);
-        assertEquals(cd.getValor("ano"), "2002");
-        assertEquals(cd.getValor("@cod"), "1");
-        assertEquals(cd.getValor("@xpto"), null);
+        assertEquals(cd.getValue("/ano"), null);
+        assertEquals(cd.getValue("ano"), "2002");
+        assertEquals(cd.getValue("@cod"), "1");
+        assertEquals(cd.getValue("@xpto"), null);
 
     }
 
@@ -348,36 +348,36 @@ public class TestMElement {
      */
     @Test
     public void testSetAtributo() {
-        MElement raiz = MElement.newInstance("pedido");
+        MElement root = MElement.newInstance("pedido");
 
-        raiz.addElement("cd/@cod", "1");
-        assertEquals(raiz.getValorNotNull("cd/@cod"), "1");
+        root.addElement("cd/@cod", "1");
+        assertEquals(root.getValueNotNull("cd/@cod"), "1");
 
-        raiz.addElement("cd/@id", "XF19");
-        assertEquals(raiz.getValorNotNull("cd/@id"), "XF19");
+        root.addElement("cd/@id", "XF19");
+        assertEquals(root.getValueNotNull("cd/@id"), "XF19");
 
         //Escreve por cima
-        raiz.addElement("cd/@cod", "2");
-        assertEquals(raiz.getValorNotNull("cd/@cod"), "2");
+        root.addElement("cd/@cod", "2");
+        assertEquals(root.getValueNotNull("cd/@cod"), "2");
 
-        raiz.addElement("cd/grupo/@ativo", "sim");
-        assertEquals(raiz.getValorNotNull("cd/grupo/@ativo"), "sim");
+        root.addElement("cd/grupo/@ativo", "sim");
+        assertEquals(root.getValueNotNull("cd/grupo/@ativo"), "sim");
 
-        raiz.addElement("/pedido/entrega/cep", "700");
-        assertEquals(raiz.getValorNotNull("/pedido/entrega/cep"), "700");
+        root.addElement("/pedido/entrega/cep", "700");
+        assertEquals(root.getValueNotNull("/pedido/entrega/cep"), "700");
 
-        raiz.addElement("/pedido/entrega/@urgente", "sim");
-        assertEquals(raiz.getValorNotNull("/pedido/entrega/@urgente"), "sim");
+        root.addElement("/pedido/entrega/@urgente", "sim");
+        assertEquals(root.getValueNotNull("/pedido/entrega/@urgente"), "sim");
 
-        raiz.addElement("@cliente", "Paulo");
-        assertEquals(raiz.getValorNotNull("@cliente"), "Paulo");
+        root.addElement("@cliente", "Paulo");
+        assertEquals(root.getValueNotNull("@cliente"), "Paulo");
 
-        raiz.addElement("/pedido/@prioridade", "1");
-        assertEquals(raiz.getValorNotNull("/pedido/@prioridade"), "1");
+        root.addElement("/pedido/@prioridade", "1");
+        assertEquals(root.getValueNotNull("/pedido/@prioridade"), "1");
 
-        MElement entrega = raiz.getElement("entrega");
+        MElement entrega = root.getElement("entrega");
         entrega.addElement("/pedido/transportadora/@cod", "20");
-        assertEquals(raiz.getValorNotNull("/pedido/transportadora/@cod"), "20");
+        assertEquals(root.getValueNotNull("/pedido/transportadora/@cod"), "20");
     }
 
     /**
@@ -395,19 +395,19 @@ public class TestMElement {
         xml = MElement.newInstance("T");
         xml.addElement("V2", agoraGc);
 
-        assertEquals("string calendar errada", xml.getValor("V2"), "2001-03-31T23:59:49.123");
+        assertEquals("string calendar errada", xml.getValue("V2"), "2001-03-31T23:59:49.123");
         assertEquals("Calendar gravado lido", xml.getCalendar("V2"), agoraGc);
 
         //Teste ler e escrever java.util.Date
         xml = MElement.newInstance("T");
         xml.addElement("V", agoraDate);
 
-        assertEquals("string util.date errada", xml.getValor("V"), "2001-03-31T23:59:49.123");
+        assertEquals("string util.date errada", xml.getValue("V"), "2001-03-31T23:59:49.123");
         assertEquals("util.date gravado lido", xml.getDate("V"), agoraDate);
 
         //Testa adicionar data como string
         xml.addDate("V3", "08/01/2003");
-        assertEquals("data errada", xml.getValor("V3"), "2003-01-08");
+        assertEquals("data errada", xml.getValue("V3"), "2003-01-08");
 
         //Testa formatação
         assertEquals("formatação errada", xml.formatDate("V3"), "08/01/2003");
@@ -450,39 +450,39 @@ public class TestMElement {
      */
     @Test
     public void testGetValorNull() {
-        assertNull(raiz_.getValor("carro"));
+        assertNull(root_.getValue("carro"));
 
         try {
-            raiz_.getValorNotNull("carro");
+            root_.getValueNotNull("carro");
             fail("Deveria ter ocorrido erro ao ler um campo que não existe");
         } catch (NullPointerException e) {
             //ok
         }
         try {
-            raiz_.getValorNotNull("cd/@prioridade");
+            root_.getValueNotNull("cd/@prioridade");
             fail("Deveria ter ocorrido erro ao ler um campo que não existe");
         } catch (NullPointerException e) {
             //ok
         }
         try {
-            raiz_.getValorNotNull("cd/presente");
+            root_.getValueNotNull("cd/presente");
             fail("Deveria ter ocorrido erro ao ler um campo vazio");
         } catch (NullPointerException e) {
             //ok
         }
         try {
-            raiz_.getLong("cep");
+            root_.getLong("cep");
             fail("Deveria ter ocorrido erro ao ler um campo que não existe");
         } catch (NullPointerException e) {
             //ok
         }
         try {
-            raiz_.getInt("cep");
+            root_.getInt("cep");
             fail("Deveria ter ocorrido erro ao ler um campo que não existe");
         } catch (NullPointerException e) {
             //ok
         }
-        MElement presente = raiz_.getElement("cd/presente");
+        MElement presente = root_.getElement("cd/presente");
         try {
             presente.getInt();
             fail("Deveria ter ocorrido erro ao ler um campo vazio");
@@ -502,15 +502,15 @@ public class TestMElement {
      */
     @Test
     public void testAddValorNull() {
-        MElement raiz = MElement.newInstance("xxx");
+        MElement root = MElement.newInstance("xxx");
         try {
-            raiz.addElement("campo", (Date) null);
+            root.addElement("campo", (Date) null);
             fail("Deveria ter ocorrido um erro em campo com valor null");
         } catch (IllegalArgumentException e) {
             //ok
         }
         try {
-            raiz.addElement("campo", (String) null);
+            root.addElement("campo", (String) null);
             fail("Deveria ter ocorrido um erro em campo com valor null");
         } catch (IllegalArgumentException e) {
             //ok
@@ -522,11 +522,11 @@ public class TestMElement {
      */
     @Test
     public void testCount() {
-        assertEquals(3, raiz_.countFilhos());
-        assertEquals(3, raiz_.count(null));
-        assertEquals(3, raiz_.count("cd"));
-        assertEquals(0, raiz_.count("xpto"));
-        assertEquals(3, raiz_.getElement("cd").count("faixa"));
+        assertEquals(3, root_.countFilhos());
+        assertEquals(3, root_.count(null));
+        assertEquals(3, root_.count("cd"));
+        assertEquals(0, root_.count("xpto"));
+        assertEquals(3, root_.getElement("cd").count("faixa"));
     }
 
     /**
@@ -534,22 +534,22 @@ public class TestMElement {
      */
     @Test
     public void testPossuiNodeElement() {
-        assertEquals(true, raiz_.possuiElement("cd"));
-        assertEquals(true, raiz_.possuiElement("cd/faixa"));
-        assertEquals(false, raiz_.possuiElement("cd/xpto"));
-        assertEquals(false, raiz_.possuiElement("xpto"));
+        assertEquals(true, root_.possuiElement("cd"));
+        assertEquals(true, root_.possuiElement("cd/faixa"));
+        assertEquals(false, root_.possuiElement("cd/xpto"));
+        assertEquals(false, root_.possuiElement("xpto"));
         try {
-            assertEquals(false, raiz_.possuiElement("@cliente"));
+            assertEquals(false, root_.possuiElement("@cliente"));
             fail("Deveria ter ocorrido um erro, pois @cliente é um atributo");
         } catch (RuntimeException e) {
             //ok
         }
-        assertEquals(true, raiz_.possuiNode("cd"));
-        assertEquals(true, raiz_.possuiNode("cd/faixa"));
-        assertEquals(false, raiz_.possuiNode("cd/xpto"));
-        assertEquals(false, raiz_.possuiNode("xpto"));
-        assertEquals(true, raiz_.possuiNode("@cliente"));
-        assertEquals(true, raiz_.possuiNode("cd/@cod"));
+        assertEquals(true, root_.possuiNode("cd"));
+        assertEquals(true, root_.possuiNode("cd/faixa"));
+        assertEquals(false, root_.possuiNode("cd/xpto"));
+        assertEquals(false, root_.possuiNode("xpto"));
+        assertEquals(true, root_.possuiNode("@cliente"));
+        assertEquals(true, root_.possuiNode("cd/@cod"));
     }
 
     /**
@@ -558,12 +558,12 @@ public class TestMElement {
      */
     @Test
     public void testXMLtoStringtoXMLsemNamespace() throws Exception {
-        MElement raiz = MElement.newInstance("requisicao-tempo-atendimento");
+        MElement root = MElement.newInstance("requisicao-tempo-atendimento");
 
-        raiz.addElement("Filtro/operadoras/id-operadora", 2);
-        raiz.addElement("grupo/usuario-grupo");
-        raiz.addElement("orderby").addElement("loja");
-        toStringToXML(raiz);
+        root.addElement("Filtro/operadoras/id-operadora", 2);
+        root.addElement("grupo/usuario-grupo");
+        root.addElement("orderby").addElement("loja");
+        toStringToXML(root);
     }
 
     /**
@@ -571,10 +571,10 @@ public class TestMElement {
      */
     @Ignore("Verificar por que não funciona")
     public void testXMLtoStringtoXMLAcento() throws Exception {
-        MElement raiz = MElement.newInstance("requisicao-tempo-atendimento");
+        MElement root = MElement.newInstance("requisicao-tempo-atendimento");
 
-        raiz.addElement("texto", "ÁÃÀÄÉËÈÊ");
-        toStringToXML(raiz);
+        root.addElement("texto", "ÁÃÀÄÉËÈÊ");
+        toStringToXML(root);
     }
 
     /**
@@ -583,15 +583,15 @@ public class TestMElement {
      */
     @Test
     public void testXMLtoStringtoXMLComNamespaceComPrefixo() throws Exception {
-        MElement raiz = MElement.newInstance("http://www.br/gerencia/Tempo", "x:req-tempo");
+        MElement root = MElement.newInstance("http://www.br/gerencia/Tempo", "x:req-tempo");
 
-        raiz.addElement("Filtro/operadoras/id-operadora", 2);
-        raiz.addElement("Filtro/operadoras/loja/id-loja", 8802);
-        raiz.addElement("ordem/usuario-ordem");
-        raiz.addElement("grupo/usuario-grupo");
-        raiz.addElement("orderby").addElement("loja");
+        root.addElement("Filtro/operadoras/id-operadora", 2);
+        root.addElement("Filtro/operadoras/loja/id-loja", 8802);
+        root.addElement("ordem/usuario-ordem");
+        root.addElement("grupo/usuario-grupo");
+        root.addElement("orderby").addElement("loja");
 
-        toStringToXML(raiz);
+        toStringToXML(root);
     }
 
     /**
@@ -600,15 +600,15 @@ public class TestMElement {
      */
     @Test
     public void testXMLtoStringtoXMLComNamespaceSemPrefixo() throws Exception {
-        MElement raiz = MElement.newInstance("http://www.br/gerencia/Tempo", "req-tempo");
+        MElement root = MElement.newInstance("http://www.br/gerencia/Tempo", "req-tempo");
 
-        raiz.addElement("Filtro/operadoras/id-operadora", 2);
-        raiz.addElement("Filtro/operadoras/loja/id-loja", 8802);
-        raiz.addElement("ordem/usuario-ordem");
-        raiz.addElement("grupo/usuario-grupo");
-        raiz.addElement("orderby").addElement("loja");
+        root.addElement("Filtro/operadoras/id-operadora", 2);
+        root.addElement("Filtro/operadoras/loja/id-loja", 8802);
+        root.addElement("ordem/usuario-ordem");
+        root.addElement("grupo/usuario-grupo");
+        root.addElement("orderby").addElement("loja");
 
-        toStringToXML(raiz);
+        toStringToXML(root);
     }
 
     /**
@@ -714,7 +714,7 @@ public class TestMElement {
      * classe.
      */
     @Test
-    public void testParseValidatDTDFromClasse() throws Exception {
+    public void testParseValidateDTDFromClass() throws Exception {
         String sXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<!DOCTYPE raiz SYSTEM \"http://eee/teste-dtd-existe.dtd\">\n" + "<raiz><filho/></raiz>";
 
@@ -726,54 +726,54 @@ public class TestMElement {
     /**
      * Verifica se o método de copia funciona para o elemento informado.
      *
-     * @param raiz Elemento a ser copiado
+     * @param root Elemento a ser copiado
      */
-    private void testCopy(MElement raiz) throws Exception {
-        MElement paiNovo = MElement.newInstance("pai-a");
-        MElement novo    = paiNovo.copy(raiz, null);
-        isIgual(raiz, novo);
+    private void testCopy(MElement root) throws Exception {
+        MElement newParent = MElement.newInstance("pai-a");
+        MElement newElement    = newParent.copy(root, null);
+        isIgual(root, newElement);
 
-        MElement paiNovo2 = MElement.newInstance("http://www.opensingular.com", "pai-b");
-        MElement novo2    = paiNovo2.copy(raiz, null);
-        isIgual(raiz, novo2);
+        MElement newParent2 = MElement.newInstance("http://www.opensingular.com", "pai-b");
+        MElement newElement2 = newParent2.copy(root, null);
+        isIgual(root, newElement2);
 
-        MElement paiNovo3 = MElement.newInstance("http://www.opensingular.com", "p:pai-c");
-        MElement novo3    = paiNovo3.copy(raiz, null);
-        isIgual(raiz, novo3);
+        MElement newParent3 = MElement.newInstance("http://www.opensingular.com", "p:pai-c");
+        MElement newElement3 = newParent3.copy(root, null);
+        isIgual(root, newElement3);
     }
 
     /**
      * Converte para String depois para XML e verifica se o resultado é igual.
      *
-     * @param raiz XML original
+     * @param root XML original
      * @return Retorna o MElement resultante da conversão de ida e volta
      * @throws Exception -
      */
-    private MElement toStringToXML(MElement raiz) throws Exception {
+    private MElement toStringToXML(MElement root) throws Exception {
         //Gera String a partir do XML
         //Faz o parse da String
-        testCopy(raiz);
+        testCopy(root);
 
-        String space = raiz.getNamespaceURI();
-        String local = raiz.getLocalName();
+        String space = root.getNamespaceURI();
+        String local = root.getLocalName();
 
-        String   sXML = raiz.toStringExato();
+        String   sXML = root.toStringExato();
         MElement lido = MParser.parse(sXML);
 
-        if ((space != null) && !space.equals(raiz.getNamespaceURI())) {
+        if ((space != null) && !space.equals(root.getNamespaceURI())) {
             fail("Erro bizarro: o namespace do elemento mudou depois do parse");
         }
-        if ((local != null) && !local.equals(raiz.getLocalName())) {
+        if ((local != null) && !local.equals(root.getLocalName())) {
             fail("Erro bizarro: o localName do elemento mudou depois do parse");
         }
 
         //Verifica igualdade
-        isIgual(raiz, lido);
+        isIgual(root, lido);
 
         testCopy(lido);
 
-        MElement lido2 = MParser.parse(new ByteArrayInputStream(raiz.toByteArray()), true, false);
-        isIgual(raiz, lido2);
+        MElement lido2 = MParser.parse(new ByteArrayInputStream(root.toByteArray()), true, false);
+        isIgual(root, lido2);
 
         return lido;
     }
@@ -848,125 +848,125 @@ public class TestMElement {
     public void addDiferentTypesOfElements() {
         Calendar calendar = ConversorToolkit.getCalendar("01/01/2017");
 
-        MElement raiz = MElement.newInstance("raiz");
+        MElement root = MElement.newInstance("root");
 
-        raiz.addElement("bytesOfString", "valor".getBytes());
-        raiz.addElement("calendar", calendar);
-        raiz.addElement("date", calendar.getTime());
-        raiz.addElement("longValue", (long) 123);
-        raiz.addElement("doubles", 123.45);
-        raiz.addElement("simpleString", "valores");
-        raiz.addElement("outraString", "valor", "val");
-        raiz.addElement("doublePrecision", 123456.700, 1);
+        root.addElement("bytesOfString", "valor".getBytes());
+        root.addElement("calendar", calendar);
+        root.addElement("date", calendar.getTime());
+        root.addElement("longValue", (long) 123);
+        root.addElement("doubles", 123.45);
+        root.addElement("simpleString", "valores");
+        root.addElement("outraString", "valor", "val");
+        root.addElement("doublePrecision", 123456.700, 1);
 
-        GregorianCalendar calendarMElement = raiz.getCalendar("calendar");
+        GregorianCalendar calendarMElement = root.getCalendar("calendar");
         Assert.assertEquals(0, calendar.compareTo(calendarMElement));
 
-        Date date = raiz.getDate("date");
+        Date date = root.getDate("date");
         Assert.assertEquals(0, date.compareTo(calendar.getTime()));
 
-        long longValue = raiz.getLong("longValue");
+        long longValue = root.getLong("longValue");
         Assert.assertEquals(longValue, (long) 123);
 
-        double doubles = raiz.getDouble("doubles");
+        double doubles = root.getDouble("doubles");
         Assert.assertEquals(doubles, 123.45, 0);
 
-        String simpleString = raiz.getValor("simpleString");
+        String simpleString = root.getValue("simpleString");
         Assert.assertEquals(simpleString, "valores");
 
-        String outraString = raiz.getValor("outraString");
+        String outraString = root.getValue("outraString");
         Assert.assertEquals(outraString, "valor");
 
-        double doublePrecision = raiz.getDouble("doublePrecision");
+        double doublePrecision = root.getDouble("doublePrecision");
         Assert.assertEquals(doublePrecision, 123456.7, 0);
 
 
-        raiz.addElement("dateIgnoringDefault", calendar.getTime(), calendar.getTime());
-        Date dateIgnoringDefault = raiz.getDate("dateIgnoringDefault");
+        root.addElement("dateIgnoringDefault", calendar.getTime(), calendar.getTime());
+        Date dateIgnoringDefault = root.getDate("dateIgnoringDefault");
         Assert.assertEquals(0, dateIgnoringDefault.compareTo(calendar.getTime()));
 
-        raiz.addElement("dateUsingDefault", null, calendar.getTime());
-        Date dateUsingDefault = raiz.getDate("dateUsingDefault");
+        root.addElement("dateUsingDefault", null, calendar.getTime());
+        Date dateUsingDefault = root.getDate("dateUsingDefault");
         Assert.assertEquals(0, dateUsingDefault.compareTo(calendar.getTime()));
 
         Date dataNull = null;
-        raiz.addElement("dateUsingDefaultWithAllNull", null, dataNull);
-        Date dateUsingDefaultWithAllNull = raiz.getDate("dateUsingDefaultWithAllNull");
+        root.addElement("dateUsingDefaultWithAllNull", null, dataNull);
+        Date dateUsingDefaultWithAllNull = root.getDate("dateUsingDefaultWithAllNull");
         Assert.assertNull(dateUsingDefaultWithAllNull);
     }
 
     @Test
     public void testAddElementObjects() {
         Calendar calendar = ConversorToolkit.getCalendar("01/01/2017");
-        MElement raiz     = MElement.newInstance("raiz");
+        MElement root     = MElement.newInstance("raiz");
 
         Object longObj = new Long(123456);
-        raiz.addElement("longObj", longObj);
-        Assert.assertEquals(raiz.getLong("longObj"), 123456);
+        root.addElement("longObj", longObj);
+        Assert.assertEquals(root.getLong("longObj"), 123456);
 
         Object calendarObj = calendar;
-        raiz.addElement("calendarObj", calendarObj);
-        Assert.assertEquals(0, raiz.getCalendar("calendarObj").compareTo(calendar));
+        root.addElement("calendarObj", calendarObj);
+        Assert.assertEquals(0, root.getCalendar("calendarObj").compareTo(calendar));
 
         Object dateObj = calendar.getTime();
-        raiz.addElement("dateObj", dateObj);
-        Assert.assertEquals(0, raiz.getDate("dateObj").compareTo((Date) dateObj));
+        root.addElement("dateObj", dateObj);
+        Assert.assertEquals(0, root.getDate("dateObj").compareTo((Date) dateObj));
 
         Object   stringObj        = "testValue";
-        MElement stringObjElement = raiz.addElement("stringObj", stringObj);
-        Assert.assertEquals(raiz.getValor("stringObj"), stringObj);
+        MElement stringObjElement = root.addElement("stringObj", stringObj);
+        Assert.assertEquals(root.getValue("stringObj"), stringObj);
 
-        MElement newStringObjDefault = raiz.addElement("stringObjDefault", stringObj, "testValue2");
-        Assert.assertEquals(raiz.getValor("stringObjDefault"), stringObj);
+        MElement newStringObjDefault = root.addElement("stringObjDefault", stringObj, "testValue2");
+        Assert.assertEquals(root.getValue("stringObjDefault"), stringObj);
 
         newStringObjDefault.addElement(stringObjElement);
         Assert.assertEquals("stringObj", newStringObjDefault.getNode("stringObj").getNodeName());
 
-        raiz.addElement("bytes", (Object) "valores".getBytes());
-        Assert.assertNotNull(raiz.getElement("bytes"));
+        root.addElement("bytes", (Object) "valores".getBytes());
+        Assert.assertNotNull(root.getElement("bytes"));
     }
 
     @Test(expected = SingularException.class)
     public void testGetValorTextException() {
         MDocument document = MDocument.newInstance();
-        MElement.getValorTexto(document);
+        MElement.getValueText(document);
     }
 
     @Test
     public void addBoolean() {
-        MElement raiz = MElement.newInstance("raiz");
-        raiz.addBoolean("booleanTrue", true);
-        raiz.addBoolean("booleanFalse", false);
+        MElement root = MElement.newInstance("raiz");
+        root.addBoolean("booleanTrue", true);
+        root.addBoolean("booleanFalse", false);
 
-        Assert.assertTrue(raiz.getBoolean("booleanTrue"));
-        Assert.assertFalse(raiz.getBoolean("booleanFalse"));
+        Assert.assertTrue(root.getBoolean("booleanTrue"));
+        Assert.assertFalse(root.getBoolean("booleanFalse"));
 
-        Assert.assertTrue(raiz.getBoolean("booleanTrue", true));
-        Assert.assertFalse(raiz.getBoolean("booleanFalse", false));
-        Assert.assertFalse(raiz.getBoolean("bool", false));
+        Assert.assertTrue(root.getBoolean("booleanTrue", true));
+        Assert.assertFalse(root.getBoolean("booleanFalse", false));
+        Assert.assertFalse(root.getBoolean("bool", false));
     }
 
     @Test
     public void addInt() {
-        MElement raiz = MElement.newInstance("raiz");
-        raiz.addInt("inteiro", "123");
-        raiz.addInt("intDefault", "456", "789");
-        raiz.addInt("intDefaultNull", null, "852");
-        raiz.addInt("intWithObject", "789", new Integer(741));
-        raiz.addInt("intWithObjectNull", null, new Integer(741));
-        raiz.addInt("intWithDefaultPrimitive", "123", 741);
-        raiz.addInt("intWithDefaultNullPrimitive", null, 741);
+        MElement root = MElement.newInstance("raiz");
+        root.addInt("inteiro", "123");
+        root.addInt("intDefault", "456", "789");
+        root.addInt("intDefaultNull", null, "852");
+        root.addInt("intWithObject", "789", new Integer(741));
+        root.addInt("intWithObjectNull", null, new Integer(741));
+        root.addInt("intWithDefaultPrimitive", "123", 741);
+        root.addInt("intWithDefaultNullPrimitive", null, 741);
 
 
-        int inteiro                     = raiz.getInt("inteiro");
-        int intDefault                  = raiz.getInt("intDefault");
-        int intDefaultNull              = raiz.getInt("intDefaultNull");
-        int intWithObject               = raiz.getInt("intWithObject");
-        int intWithObjectNull           = raiz.getInt("intWithObjectNull");
-        int intWithDefaultPrimitive     = raiz.getInt("intWithDefaultPrimitive");
-        int intWithDefaultNullPrimitive = raiz.getInt("intWithDefaultNullPrimitive");
+        int integer                     = root.getInt("inteiro");
+        int intDefault                  = root.getInt("intDefault");
+        int intDefaultNull              = root.getInt("intDefaultNull");
+        int intWithObject               = root.getInt("intWithObject");
+        int intWithObjectNull           = root.getInt("intWithObjectNull");
+        int intWithDefaultPrimitive     = root.getInt("intWithDefaultPrimitive");
+        int intWithDefaultNullPrimitive = root.getInt("intWithDefaultNullPrimitive");
 
-        Assert.assertEquals(inteiro, 123);
+        Assert.assertEquals(integer, 123);
         Assert.assertEquals(intDefault, 456);
         Assert.assertEquals(intDefaultNull, 852);
         Assert.assertEquals(intWithObject, 789);
@@ -981,14 +981,14 @@ public class TestMElement {
         Calendar calendarDay2 = ConversorToolkit.getCalendar("02/01/2017");
         Calendar calendarDay3 = ConversorToolkit.getCalendar("03/01/2017");
 
-        MElement raiz = MElement.newInstance("raiz");
-        raiz.addDate("dataSimple", "01/01/2017");
-        raiz.addDate("dataWithDefaultOption", "02/01/2017", "03/01/2017");
-        raiz.addDate("dataWithNullOption", null, "03/01/2017");
+        MElement root = MElement.newInstance("raiz");
+        root.addDate("dataSimple", "01/01/2017");
+        root.addDate("dataWithDefaultOption", "02/01/2017", "03/01/2017");
+        root.addDate("dataWithNullOption", null, "03/01/2017");
 
-        Date dataSimple            = raiz.getDate("dataSimple");
-        Date dataWithDefaultOption = raiz.getDate("dataWithDefaultOption");
-        Date dataWithNullOption    = raiz.getDate("dataWithNullOption");
+        Date dataSimple            = root.getDate("dataSimple");
+        Date dataWithDefaultOption = root.getDate("dataWithDefaultOption");
+        Date dataWithNullOption    = root.getDate("dataWithNullOption");
 
         Assert.assertEquals(0, dataSimple.compareTo(calendarDay1.getTime()));
         Assert.assertEquals(0, dataWithDefaultOption.compareTo(calendarDay2.getTime()));
@@ -998,19 +998,19 @@ public class TestMElement {
 
     @Test
     public void testGetWithDefaultValue() {
-        MElement raiz = MElement.newInstance("raiz");
+        MElement root = MElement.newInstance("raiz");
 
-        raiz.addInt("inteiro", "123");
-        Assert.assertEquals(123, raiz.getInt("inteiro", 456));
-        Assert.assertEquals(456, raiz.getInt("inteiroNotExist", 456));
+        root.addInt("inteiro", "123");
+        Assert.assertEquals(123, root.getInt("inteiro", 456));
+        Assert.assertEquals(456, root.getInt("inteiroNotExist", 456));
 
-        raiz.addElement("longValue", (long) 123);
-        Assert.assertEquals((long) 123, raiz.getLong("longValue", 456));
-        Assert.assertEquals((long) 456, raiz.getLong("longValueNotExist", 456));
+        root.addElement("longValue", (long) 123);
+        Assert.assertEquals((long) 123, root.getLong("longValue", 456));
+        Assert.assertEquals((long) 456, root.getLong("longValueNotExist", 456));
 
-        raiz.addElement("doubleVal", new Double(123.45));
-        Assert.assertEquals(new Double(123.45), raiz.getDouble("doubleVal"), 0);
-        Assert.assertNull(raiz.getDoubleObject("pathNotExistent"));
+        root.addElement("doubleVal", new Double(123.45));
+        Assert.assertEquals(new Double(123.45), root.getDouble("doubleVal"), 0);
+        Assert.assertNull(root.getDoubleObject("pathNotExistent"));
     }
 
     @Test
@@ -1066,162 +1066,162 @@ public class TestMElement {
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddIntWithNullValue() {
-        MElement raiz = MElement.newInstance("raiz");
-        raiz.addInt("inteiro", null);
+        MElement root = MElement.newInstance("raiz");
+        root.addInt("inteiro", null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddIntWithEmptyValue() {
-        MElement raiz = MElement.newInstance("raiz");
-        raiz.addInt("inteiro", "");
+        MElement root = MElement.newInstance("raiz");
+        root.addInt("inteiro", "");
     }
 
     @Test(expected = SingularException.class)
     public void testAddIntWithDefaultValueNull() {
-        MElement raiz = MElement.newInstance("raiz");
-        Assert.assertNull(raiz.addInt("inteiro", null, null));
+        MElement root = MElement.newInstance("raiz");
+        Assert.assertNull(root.addInt("inteiro", null, null));
 
-        Assert.assertNull(raiz.addInt("inteiro", null, ""));
+        Assert.assertNull(root.addInt("inteiro", null, ""));
 
-        raiz.addInt("inteiro", null, 123.45); // throws exception
+        root.addInt("inteiro", null, 123.45); // throws exception
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddDateNull() {
-        MElement raiz = MElement.newInstance("raiz");
-        raiz.addDate("date", null);
+        MElement root = MElement.newInstance("raiz");
+        root.addDate("date", null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddDateWithDefaultOptionAndValueNull() {
-        MElement raiz = MElement.newInstance("raiz");
-        Assert.assertNull(raiz.addDate("date", null, null));
+        MElement root = MElement.newInstance("raiz");
+        Assert.assertNull(root.addDate("date", null, null));
 
         Date date = null;
-        raiz.addElement("date", date);
+        root.addElement("date", date);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddCalendarWithValueNull() {
-        MElement raiz = MElement.newInstance("raiz");
+        MElement root = MElement.newInstance("root");
 
         Calendar calendar = null;
-        raiz.addElement("calendar", calendar);
+        root.addElement("calendar", calendar);
     }
 
     @Test
     public void testIsNull() {
-        MElement raiz = MElement.newInstance("raiz");
-        raiz.addElement("elemento", "valor");
+        MElement root = MElement.newInstance("raiz");
+        root.addElement("elemento", "valor");
 
-        Assert.assertFalse(raiz.isNull("elemento"));
-        Assert.assertTrue(raiz.isNull("elem"));
+        Assert.assertFalse(root.isNull("elemento"));
+        Assert.assertTrue(root.isNull("elem"));
     }
 
     @Test(expected = NullPointerException.class)
     public void testGets() {
-        MElement raiz = MElement.newInstance("raiz");
+        MElement root = MElement.newInstance("raiz");
 
-        MElement inteiro = raiz.addInt("inteiro", "100");
+        MElement inteiro = root.addInt("inteiro", "100");
         Assert.assertEquals(100, inteiro.getInt());
 
-        MElement longValue = raiz.addInt("longValue", "100");
+        MElement longValue = root.addInt("longValue", "100");
         Assert.assertEquals(100, longValue.getLong());
 
-        Assert.assertEquals("100", raiz.getValor("inteiro", "50"));
-        Assert.assertEquals("50", raiz.getValor("int", "50"));
+        Assert.assertEquals("100", root.getValue("inteiro", "50"));
+        Assert.assertEquals("50", root.getValue("int", "50"));
 
-        raiz.addElement("doubleObj", "100.5");
-        Assert.assertEquals(new Double("100.5"), raiz.getDoubleObject("doubleObj"));
+        root.addElement("doubleObj", "100.5");
+        Assert.assertEquals(new Double("100.5"), root.getDoubleObject("doubleObj"));
 
-        Assert.assertEquals("100,5", raiz.formatNumber("doubleObj"));
+        Assert.assertEquals("100,5", root.formatNumber("doubleObj"));
 
-        Assert.assertNull(raiz.getCalendar("caminhoInvalido"));
+        Assert.assertNull(root.getCalendar("caminhoInvalido"));
 
-        MElement doubleNull = raiz.addElement("doubleNull");
+        MElement doubleNull = root.addElement("doubleNull");
         doubleNull.getDouble(); // throws exception
     }
 
     @Test(expected = SingularException.class)
     public void testGetBooleanMethods() {
-        MElement raiz = MElement.newInstance("raiz");
-        raiz.addInt("inteiro", "100");
-        raiz.addBoolean("bool", true);
+        MElement root = MElement.newInstance("raiz");
+        root.addInt("inteiro", "100");
+        root.addBoolean("bool", true);
 
-        Assert.assertTrue(raiz.is("inteiro"));
+        Assert.assertTrue(root.is("inteiro"));
 
-        raiz.is("inteiro");
+        root.is("inteiro");
     }
 
     @Test(expected = SingularException.class)
     public void testGetBooleanMethodsWithDefaultOption() {
-        MElement raiz = MElement.newInstance("raiz");
-        raiz.addInt("inteiro", "100");
-        raiz.addBoolean("bool", true);
+        MElement root = MElement.newInstance("raiz");
+        root.addInt("inteiro", "100");
+        root.addBoolean("bool", true);
 
-        Assert.assertTrue(raiz.is("inteiro", false));
+        Assert.assertTrue(root.is("inteiro", false));
 
-        raiz.is("inteiro", false);
+        root.is("inteiro", false);
     }
 
     @Test
     public void testFromBase64OutPutStream() throws IOException {
         TempFileProvider.create(this, tmpProvider -> {
-            MElement raiz = MElement.newInstance("raiz");
-            raiz.addElement("string", Base64.getEncoder().encodeToString("stringVal".getBytes()));
+            MElement root = MElement.newInstance("raiz");
+            root.addElement("string", Base64.getEncoder().encodeToString("stringVal".getBytes()));
 
             File arquivoTemporario = tmpProvider.createTempFile(Long.toString(System.currentTimeMillis()) + ".txt");
 
             FileOutputStream outputStream = new FileOutputStream(arquivoTemporario);
-            raiz.getByteBASE64("string", outputStream);
+            root.getByteBASE64("string", outputStream);
             outputStream.close();
         });
     }
 
     @Test
     public void testFormat() {
-        MElement raiz = MElement.newInstance("raiz");
+        MElement root = MElement.newInstance("raiz");
 
-        Assert.assertEquals("", raiz.formatDate("caminhoInvalido"));
-        Assert.assertEquals("", raiz.formatDate("caminhoInvalido", ""));
+        Assert.assertEquals("", root.formatDate("caminhoInvalido"));
+        Assert.assertEquals("", root.formatDate("caminhoInvalido", ""));
 
-        Assert.assertEquals("", raiz.formatHour("caminhoInvalido"));
+        Assert.assertEquals("", root.formatHour("caminhoInvalido"));
 
-        raiz.addDate("dateHour", "01/01/2017");
-        Assert.assertEquals("00:00:00", raiz.formatHour("dateHour"));
+        root.addDate("dateHour", "01/01/2017");
+        Assert.assertEquals("00:00:00", root.formatHour("dateHour"));
     }
 
     @Test
     public void testToJSONString() {
-        MElement raiz = MElement.newInstance("raiz");
-        Assert.assertEquals("{}", raiz.toJSONString());
+        MElement root = MElement.newInstance("raiz");
+        Assert.assertEquals("{}", root.toJSONString());
     }
 
     @Test
     public void testGetBrothers() {
-        MElement raiz       = MElement.newInstance("raiz");
-        MElement filho1     = raiz.addElement("filho1", "123");
-        MElement filho2     = raiz.addElement("filho2", "123456");
-        MElement filho2Copy = raiz.addElement("filho2", "0");
+        MElement root       = MElement.newInstance("raiz");
+        MElement child1     = root.addElement("filho1", "123");
+        MElement child2     = root.addElement("filho2", "123456");
+        MElement child2Copy = root.addElement("filho2", "0");
 
-        Assert.assertEquals(filho2.getNodeName(), filho1.getProximoIrmao().getNodeName());
-        Assert.assertEquals(filho1.getNodeName(), filho2.getIrmaoAnterior().getNodeName());
+        Assert.assertEquals(child2.getNodeName(), child1.getProximoIrmao().getNodeName());
+        Assert.assertEquals(child1.getNodeName(), child2.getIrmaoAnterior().getNodeName());
 
-        Assert.assertEquals(filho2.getValor(), filho2Copy.getGemeoAnterior().getValor());
-        Assert.assertEquals(filho2Copy.getValor(), filho2.getProximoGemeo().getValor());
+        Assert.assertEquals(child2.getValue(), child2Copy.getGemeoAnterior().getValue());
+        Assert.assertEquals(child2Copy.getValue(), child2.getProximoGemeo().getValue());
 
-        Assert.assertEquals(filho2Copy.getValor(), raiz.getUltimoFilho().getValor());
+        Assert.assertEquals(child2Copy.getValue(), root.getUltimoFilho().getValue());
 
-        Assert.assertEquals(filho1.getValor(), raiz.getPrimeiroFilho("filho1").getValor());
+        Assert.assertEquals(child1.getValue(), root.getPrimeiroFilho("filho1").getValue());
 
 
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddElementObjectNull() {
-        MElement raiz = MElement.newInstance("raiz");
+        MElement root = MElement.newInstance("raiz");
 
-        raiz.addElement("elemento", (Object) null);
+        root.addElement("elemento", (Object) null);
     }
     // TODO terminar testes MElement
 }

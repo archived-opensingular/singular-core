@@ -82,22 +82,22 @@ public class STaskJava extends STask<STaskJava> {
     }
 
     @Override
-    public void execute(ExecutionContext execucaoTask) {
+    public void execute(ExecutionContext executionContext) {
         if (taskImpl == null) {
             throw new SingularFlowException(createErrorMsg("Chamada inválida. Se aplica apenas execução em bloco nesta tarefa."), this);
         }
-        taskImpl.call(execucaoTask);
+        taskImpl.call(executionContext);
     }
 
-    public Object executarByBloco(Collection<? extends FlowInstance> instancias) {
+    public Object executarByBloco(Collection<? extends FlowInstance> instances) {
         if (blockImpl == null) {
             throw new SingularFlowException(createErrorMsg("Chamada inválida. Não se aplica execução em bloco nesta tarefa."), this);
         }
-        String result = blockImpl.call(instancias);
+        String result = blockImpl.call(instances);
 
         if (result == null) {
-            long qtdAlterado = instancias.stream().filter(i -> !equals(i.getState().orElse(null))).count();
-            result = "De " + instancias.size() + " instancias no estado [" + getCompleteName() + "], " + qtdAlterado + " mudaram de estado";
+            long qtdAlterado = instances.stream().filter(i -> !equals(i.getState().orElse(null))).count();
+            result = "De " + instances.size() + " instancias no estado [" + getCompleteName() + "], " + qtdAlterado + " mudaram de estado";
         }
         return result;
     }

@@ -97,9 +97,9 @@ public class SIAnnotation extends SIComposite {
     }
 
     @Override
-    public void setValue(Object valor) {
-        if (valor instanceof SIAnnotation) {
-            SIAnnotation other = (SIAnnotation) valor;
+    public void setValue(Object value) {
+        if (value instanceof SIAnnotation) {
+            SIAnnotation other = (SIAnnotation) value;
             this.setText(other.getText());
             this.setTargetId(other.getTargetId());
             this.setTargetPath(other.getTargetPath());

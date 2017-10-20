@@ -16,13 +16,13 @@
 
 package org.opensingular.flow.core.service;
 
-import java.time.LocalDate;
-import java.util.Set;
-
-import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.SingularFlowException;
 import org.opensingular.flow.core.authorization.AccessLevel;
+import org.opensingular.lib.commons.base.SingularUtil;
+
+import java.time.LocalDate;
+import java.util.Set;
 
 public interface IFlowMetadataREST {
 
@@ -42,38 +42,38 @@ public interface IFlowMetadataREST {
      * @param accessLevel - request
      * @return set of process definition key with accessLevel required
      */
-    Set<String> listProcessDefinitionsWithAccess(String groupToken, String userCod, AccessLevel accessLevel);
+    Set<String> listFlowDefinitionsWithAccess(String groupToken, String userCod, AccessLevel accessLevel);
 
     /**
      * REST path: {@link IFlowMetadataREST#PATH_PROCESS_DEFINITION_HAS_ACCESS}
      * 
      * @param groupToken - request
-     * @param processDefinitionKey - request
+     * @param flowDefinitionKey - request
      * @param userCod - request
      * @param accessLevel - request
      * @return true if has the accessLevel required
      */
-    boolean hasAccessToProcessDefinition(String groupToken, String processDefinitionKey, String userCod, AccessLevel accessLevel);
+    boolean hasAccessToFlowDefinition(String groupToken, String flowDefinitionKey, String userCod, AccessLevel accessLevel);
 
     /**
      * REST path: {@link IFlowMetadataREST#PATH_PROCESS_INSTANCE_HAS_ACCESS}
      * 
      * @param groupToken - request
-     * @param processInstanceFullId - request
+     * @param flowInstanceFullId - request
      * @param userCod - request
      * @param accessLevel - request
      * @return true if has the accessLevel required
      */
-    boolean hasAccessToProcessInstance(String groupToken, String processInstanceFullId, String userCod, AccessLevel accessLevel);
+    boolean hasAccessToFlowInstance(String groupToken, String flowInstanceFullId, String userCod, AccessLevel accessLevel);
 
     /**
      * REST path {@link IFlowMetadataREST#PATH_PROCESS_DEFINITION_DIAGRAM}
      * 
      * @param groupToken - request
-     * @param processDefinitionKey - request
+     * @param flowDefinitionKey - request
      * @return
      */
-    byte[] processDefinitionDiagram(String groupToken, String processDefinitionKey);
+    byte[] flowDefinitionDiagram(String groupToken, String flowDefinitionKey);
     
     static String generateGroupToken(String groupCod){
         return SingularUtil.toSHA1(groupCod+LocalDate.now().toEpochDay());

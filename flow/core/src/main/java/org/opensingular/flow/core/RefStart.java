@@ -28,19 +28,19 @@ import java.util.function.Supplier;
  */
 final class RefStart implements Serializable, Supplier<SStart> {
 
-    private final RefProcessDefinition refProcessDefinition;
+    private final RefFlowDefinition refFlowDefinition;
     private transient SStart start;
 
     RefStart(@Nonnull SStart start) {
         this.start = Objects.requireNonNull(start);
-        this.refProcessDefinition = Objects.requireNonNull(
+        this.refFlowDefinition = Objects.requireNonNull(
                 start.getFlowMap().getFlowDefinition().getSerializableReference());
     }
 
     @Override
     public SStart get() {
         if (start == null) {
-            start = refProcessDefinition.get().getFlowMap().getStart();
+            start = refFlowDefinition.get().getFlowMap().getStart();
             Objects.requireNonNull(start);
         }
         return start;

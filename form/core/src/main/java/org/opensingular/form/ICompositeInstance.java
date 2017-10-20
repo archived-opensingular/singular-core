@@ -32,7 +32,7 @@ public interface ICompositeInstance {
 
     public Stream<? extends SInstance> stream();
 
-    public void setValue(String pathCampo, Object valor);
+    public void setValue(String pathCampo, Object value);
 
     public abstract <T> T getValue(@Nonnull String fieldPath);
 
@@ -146,9 +146,9 @@ public interface ICompositeInstance {
 
     public default <T extends Enum<T>> T getValueEnum(String fieldPath, Class<T> enumType) {
         // TODO (de Daniel) Esse metodo precisa ser repensado
-        String valor = getValueString(fieldPath);
-        if (valor != null) {
-            return Enum.valueOf(enumType, valor);
+        String value = getValueString(fieldPath);
+        if (value != null) {
+            return Enum.valueOf(enumType, value);
         }
         return null;
     }

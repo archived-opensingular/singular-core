@@ -16,7 +16,10 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import java.util.List;
+import org.hibernate.annotations.GenericGenerator;
+import org.opensingular.flow.core.entity.IEntityCategory;
+import org.opensingular.flow.core.entity.IEntityFlowDefinition;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.FetchType;
@@ -25,12 +28,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.hibernate.annotations.GenericGenerator;
-
-import org.opensingular.flow.core.entity.IEntityCategory;
-import org.opensingular.flow.core.entity.IEntityProcessDefinition;
+import java.util.List;
 
 /**
  * The base persistent class for the TB_CATEGORIA database table.
@@ -40,11 +38,11 @@ import org.opensingular.flow.core.entity.IEntityProcessDefinition;
  * </p>
  * <code>@GenericGenerator(name = AbstractCategoryEntity.PK_GENERATOR_NAME, strategy = "org.hibernate.id.IdentityGenerator")</code>
  *
- * @param <PROCESS_DEF>
+ * @param <FLOW_DEFINITION>
  */
 @MappedSuperclass
 @Table(name = "TB_CATEGORIA")
-public abstract class AbstractCategoryEntity<PROCESS_DEF extends IEntityProcessDefinition> extends BaseEntity<Integer> implements IEntityCategory {
+public abstract class AbstractCategoryEntity<FLOW_DEFINITION extends IEntityFlowDefinition> extends BaseEntity<Integer> implements IEntityCategory {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_CATEGORIA";
     
@@ -57,7 +55,7 @@ public abstract class AbstractCategoryEntity<PROCESS_DEF extends IEntityProcessD
     private String name;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
-    private List<PROCESS_DEF> processDefinitions;
+    private List<FLOW_DEFINITION> flowDefinitions;
 
     @Override
     public Integer getCod() {
@@ -78,12 +76,12 @@ public abstract class AbstractCategoryEntity<PROCESS_DEF extends IEntityProcessD
         this.name = name;
     }
 
-    public List<PROCESS_DEF> getProcessDefinitions() {
-        return processDefinitions;
+    public List<FLOW_DEFINITION> getFlowDefinitions() {
+        return flowDefinitions;
     }
 
-    public void setProcessDefinitions(List<PROCESS_DEF> processDefinitions) {
-        this.processDefinitions = processDefinitions;
+    public void setFlowDefinitions(List<FLOW_DEFINITION> flowDefinitions) {
+        this.flowDefinitions = flowDefinitions;
     }
 
 }

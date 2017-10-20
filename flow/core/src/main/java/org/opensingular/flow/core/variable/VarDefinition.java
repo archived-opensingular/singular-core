@@ -42,8 +42,8 @@ public interface VarDefinition extends Serializable, MetaDataEnabled {
         return getType().toDisplayString(varInstance);
     }
 
-    public default String toDisplayString(Object valor) {
-        return getType().toDisplayString(valor, this);
+    public default String toDisplayString(Object value) {
+        return getType().toDisplayString(value, this);
     }
 
     public default String toPersistenceString(VarInstance varInstance) {

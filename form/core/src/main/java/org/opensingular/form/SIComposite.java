@@ -143,8 +143,8 @@ public class SIComposite extends SInstance implements ICompositeInstance, Iterab
     }
 
     @Override
-    public final void setValue(String pathCampo, Object valor) {
-        setValue(new PathReader(pathCampo), valor);
+    public final void setValue(String pathCampo, Object value) {
+        setValue(new PathReader(pathCampo), value);
     }
 
     /**
@@ -154,13 +154,13 @@ public class SIComposite extends SInstance implements ICompositeInstance, Iterab
      * O Mtipo informado já precisa estar previamente configurado nesse
      * MtipoComposto
      *
-     * @param campo
+     * @param field
      *            Referencia ao mtipo filho do composto
-     * @param valor
+     * @param value
      *            Valor para o mtipo referenciado.
      */
-    public final void setValue(SType<?> campo, Object valor) {
-        setValue(new PathReader(campo.getNameSimple()), valor);
+    public final void setValue(SType<?> field, Object value) {
+        setValue(new PathReader(field.getNameSimple()), value);
     }
 
     /**
@@ -176,12 +176,12 @@ public class SIComposite extends SInstance implements ICompositeInstance, Iterab
     @Override
     void setValue(PathReader pathReader, Object value) {
         int fieldIndex = findFieldIndex(pathReader);
-        SInstance instancia = (fields == null) ? null : fields.getByIndex(fieldIndex);
-        if (instancia == null) {
+        SInstance instance = (fields == null) ? null : fields.getByIndex(fieldIndex);
+        if (instance == null) {
             if (value == null) {
                 return;
             }
-            instancia = createField(fieldIndex);
+            instance = createField(fieldIndex);
         }
         if (pathReader.isLast()) {
             if (value == null) {
@@ -191,10 +191,10 @@ public class SIComposite extends SInstance implements ICompositeInstance, Iterab
                     fields.remove(fieldIndex);
                 }
             } else {
-                instancia.setValue(value);
+                instance.setValue(value);
             }
         } else {
-            instancia.setValue(pathReader.next(), value);
+            instance.setValue(pathReader.next(), value);
         }
     }
 
@@ -246,8 +246,8 @@ public class SIComposite extends SInstance implements ICompositeInstance, Iterab
         if (instance != null) {
             return instance.getValueWithDefaultIfNull(pathReader.next(), resultClass);
         }
-        SType<?> tipo = SFormUtil.resolveFieldType(getType(), pathReader);
-        return tipo.getAttributeValueOrDefaultValueIfNull(resultClass);
+        SType<?> type = SFormUtil.resolveFieldType(getType(), pathReader);
+        return type.getAttributeValueOrDefaultValueIfNull(resultClass);
     }
 
     @Override

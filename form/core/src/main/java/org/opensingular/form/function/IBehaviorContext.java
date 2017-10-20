@@ -24,10 +24,10 @@ public interface IBehaviorContext {
     public IBehaviorContext update(SType<?>... fields);
 
     public default IBehaviorContext update(SInstance... fields) {
-        SType<?>[] tipos = new SType<?>[fields.length];
+        SType<?>[] types = new SType<?>[fields.length];
         for (int i = 0; i < fields.length; i++)
-            tipos[i] = fields[i].getType();
-        update(tipos);
+            types[i] = fields[i].getType();
+        update(types);
         return this;
     }
 }

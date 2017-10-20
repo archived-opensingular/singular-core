@@ -25,11 +25,11 @@ public class VarDefinitionImpl implements VarDefinition {
 
     private final String ref;
 
-    private final String nome;
+    private final String name;
 
-    private final VarType tipo;
+    private final VarType type;
 
-    private boolean obrigatorio;
+    private boolean required;
 
     private MetaData metaData;
 
@@ -38,11 +38,11 @@ public class VarDefinitionImpl implements VarDefinition {
         copy(toCopy);
     }
 
-    public VarDefinitionImpl(String ref, String nome, VarType tipo, boolean obrigatorio) {
+    public VarDefinitionImpl(String ref, String name, VarType type, boolean required) {
         this.ref = ref;
-        this.nome = nome;
-        this.tipo = tipo;
-        this.obrigatorio = obrigatorio;
+        this.name = name;
+        this.type = type;
+        this.required = required;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class VarDefinitionImpl implements VarDefinition {
     }
 
     protected void copy(VarDefinition toCopy) {
-        obrigatorio = toCopy.isRequired();
+        required = toCopy.isRequired();
     }
 
     @Override
@@ -75,28 +75,28 @@ public class VarDefinitionImpl implements VarDefinition {
 
     @Override
     public String getName() {
-        return nome;
+        return name;
     }
 
     @Override
     public VarType getType() {
-        return tipo;
+        return type;
     }
 
     @Override
     public void setRequired(boolean value) {
-        obrigatorio = value;
+        required = value;
     }
 
     @Override
     public VarDefinition required() {
-        obrigatorio = true;
+        required = true;
         return this;
     }
 
     @Override
     public boolean isRequired() {
-        return obrigatorio;
+        return required;
     }
 
     @Override
@@ -115,6 +115,6 @@ public class VarDefinitionImpl implements VarDefinition {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " [ref_=" + ref + ", nome_=" + nome + ", tipo_=" + tipo + "]";
+        return getClass().getSimpleName() + " [ref_=" + ref + ", name=" + name + ", type=" + type + "]";
     }
 }

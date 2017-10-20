@@ -23,7 +23,7 @@ import java.util.List;
 
 public interface IEntityTaskInstance extends IEntityByCod<Integer> {
 
-    IEntityProcessInstance getProcessInstance();
+    IEntityFlowInstance getFlowInstance();
 
     IEntityTaskVersion getTaskVersion();
 
@@ -61,7 +61,7 @@ public interface IEntityTaskInstance extends IEntityByCod<Integer> {
 
     List<? extends IEntityTaskInstanceHistory> getTaskHistory();
 
-    List<? extends IEntityProcessInstance> getChildProcesses();
+    List<? extends IEntityFlowInstance> getChildProcesses();
 
     default boolean isActive() {
         return getEndDate() == null
