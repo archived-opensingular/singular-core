@@ -193,7 +193,7 @@ public class RelationalSQLTest extends TestCaseForm {
 		SIComposite masterInstance = master.newInstance();
 		masterInstance.setValue(master.name, "My name");
 		FormKey.setOnInstance(masterInstance, masterKey(4242));
-		RelationalSQL update = RelationalSQL.update(masterInstance);
+		RelationalSQL update = RelationalSQL.update(masterInstance, null);
 		List<RelationalSQLCommmand> script = update.toSQLScript();
 		assertEquals(1, script.size());
 		assertEquals("update MasterEntity T1 set T1.name = ?, T1.category = ?, T1.obs = ?, T1.file = ? where T1.id = ?",

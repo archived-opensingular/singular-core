@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
@@ -66,34 +67,21 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 
 	@Nonnull
 	public FormKey insert(@Nonnull INSTANCE instance, Integer inclusionActor) {
-		List<RelationalData> toList = new ArrayList<>();
-		RelationalSQL.persistenceStrategy(instance.getType()).save(instance, toList);
-		List<SIComposite> targets = new ArrayList<>();
-		toList.forEach(data -> {
-			if (!targets.contains(data.getTupleKeyRef())) {
-				targets.add((SIComposite) data.getTupleKeyRef());
-			}
-		});
-		for (SIComposite target : targets) {
-			for (RelationalSQLCommmand command : RelationalSQL.insert(target).toSQLScript()) {
-				executeInsertCommand(command);
-			}
-		}
-		return FormKey.fromInstance(instance);
+		return insertInternal(instance, inclusionActor);
 	}
 
 	public void delete(@Nonnull FormKey key) {
 		INSTANCE mainInstance = load(key);
 		for (SInstance field : mainInstance.getAllChildren()) {
-			if (field.getType().isList()) {
+			if (RelationalSQL.isListWithTableBound(field.getType())) {
 				SIList<SIComposite> listInstance = mainInstance.getFieldList(field.getType().getNameSimple(),
 						SIComposite.class);
 				for (SIComposite item : listInstance.getChildren()) {
-					execScript(RelationalSQL.delete(item.getType(), FormKey.fromInstance(item)).toSQLScript());
+					deleteInternal(item.getType(), FormKey.fromInstance(item));
 				}
 			}
 		}
-		execScript(RelationalSQL.delete(createType(), key).toSQLScript());
+		deleteInternal(createType(), key);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -103,31 +91,16 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 	}
 
 	public void update(@Nonnull INSTANCE instance, Integer inclusionActor) {
-		for (SInstance field : instance.getAllChildren()) {
-			if (RelationalSQL.isListWithTableBound(field.getType())) {
-				SIList<SIComposite> listInstance = instance.getFieldList(field.getType().getNameSimple(),
-						SIComposite.class);
-				for (SIComposite item : listInstance.getChildren()) {
-					// TODO Synchronize inserts/updates
-					// item.insertOrUpdate(item, inclusionActor);
-				}
-				// TODO Synchronize deletions
-				// item.delete((FormKey.fromInstance(item));
-			}
-		}
-		if (execScript(RelationalSQL.update(instance).toSQLScript()) == 0) {
-			throw new SingularFormNotFoundException(FormKey.fromInstance(instance));
-		}
+		updateInternal(instance, load(FormKey.fromInstance(instance)), inclusionActor);
 	}
 
 	@Nonnull
 	public FormKey insertOrUpdate(@Nonnull INSTANCE instance, Integer inclusionActor) {
 		if (isPersistent(instance)) {
 			update(instance, inclusionActor);
-		} else {
-			insert(instance, inclusionActor);
+			return FormKey.fromInstance(instance);
 		}
-		return FormKey.fromInstance(instance);
+		return insert(instance, inclusionActor);
 	}
 
 	public boolean isPersistent(@Nonnull INSTANCE instance) {
@@ -198,7 +171,7 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 			}
 		}
 		for (SType<?> field : mainType.getContainedTypes()) {
-			if (field.isList()) {
+			if (RelationalSQL.isListWithTableBound(field)) {
 				SIList<SIComposite> listInstance = mainInstance.getFieldList(field.getNameSimple(), SIComposite.class);
 				for (SType<?> detail : field.getLocalTypes()) {
 					STypeComposite<?> detailType = (STypeComposite<?>) detail.getSuperType();
@@ -220,6 +193,78 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 			result.addAll(executeSelectCommand(command));
 		}
 		return result;
+	}
+
+	protected FormKey insertInternal(@Nonnull SIComposite instance, Integer inclusionActor) {
+		List<RelationalData> toList = new ArrayList<>();
+		RelationalSQL.persistenceStrategy(instance.getType()).save(instance, toList);
+		List<SIComposite> targets = new ArrayList<>();
+		toList.forEach(data -> {
+			if (!targets.contains(data.getTupleKeyRef())) {
+				targets.add((SIComposite) data.getTupleKeyRef());
+			}
+		});
+		for (SIComposite target : targets) {
+			for (RelationalSQLCommmand command : RelationalSQL.insert(target).toSQLScript()) {
+				executeInsertCommand(command);
+			}
+		}
+		return FormKey.fromInstance(instance);
+	}
+
+	protected void updateInternal(@Nonnull SIComposite instance, SIComposite previousPersistedInstance,
+			Integer inclusionActor) {
+		for (SInstance field : instance.getAllChildren()) {
+			if (RelationalSQL.isListWithTableBound(field.getType())) {
+				SIList<SIComposite> listInstance = instance.getFieldList(field.getType().getNameSimple(),
+						SIComposite.class);
+				SIList<SIComposite> previousListInstance = previousPersistedInstance
+						.getFieldList(field.getType().getNameSimple(), SIComposite.class);
+				for (SIComposite item : listInstance.getChildren()) {
+					if (FormKey.containsKey(item))
+						updateInternal(instance, locate(FormKey.fromInstance(item), previousListInstance),
+								inclusionActor);
+					else
+						insertInternal(instance, inclusionActor);
+				}
+				for (SIComposite item : detectIntancesToDelete(field.getType(), instance, previousPersistedInstance)) {
+					deleteInternal(item.getType(), FormKey.fromInstance(item));
+				}
+			}
+		}
+		if (execScript(RelationalSQL.update(instance, previousPersistedInstance).toSQLScript()) == 0) {
+			throw new SingularFormNotFoundException(FormKey.fromInstance(instance));
+		}
+	}
+
+	private SIComposite locate(FormKey key, SIList<SIComposite> previousListInstance) {
+		String keyString = key.toStringPersistence();
+		for (SIComposite item : previousListInstance) {
+			if (FormKey.fromInstance(item).toStringPersistence().equals(keyString)) {
+				return item;
+			}
+		}
+		return null;
+	}
+
+	private Collection<SIComposite> detectIntancesToDelete(SType<?> listField, SIComposite instance,
+			SIComposite previousInstance) {
+		String fieldName = listField.getNameSimple();
+		Map<String, SIComposite> previousKeys = new HashMap<>();
+		for (SIComposite item : previousInstance.getFieldList(fieldName, SIComposite.class).getChildren()) {
+			previousKeys.put(FormKey.fromInstance(item).toStringPersistence(), item);
+		}
+		for (SIComposite item : instance.getFieldList(fieldName, SIComposite.class).getChildren()) {
+			FormKey keyToPreserve = FormKey.fromInstance(item);
+			if (keyToPreserve != null) {
+				previousKeys.remove(keyToPreserve.toStringPersistence());
+			}
+		}
+		return previousKeys.values();
+	}
+
+	protected int deleteInternal(STypeComposite<?> type, FormKey formKey) {
+		return execScript(RelationalSQL.delete(type, formKey).toSQLScript());
 	}
 
 	protected List<INSTANCE> executeSelectCommand(RelationalSQLCommmand command) {

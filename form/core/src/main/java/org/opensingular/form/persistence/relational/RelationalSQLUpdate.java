@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 import org.opensingular.form.SIComposite;
@@ -40,15 +41,18 @@ public class RelationalSQLUpdate extends RelationalSQL {
 	private Map<String, SType<?>> mapColumnToField;
 	private Map<String, Object> mapColumnToValue;
 
-	public RelationalSQLUpdate(SIComposite instance) {
+	public RelationalSQLUpdate(SIComposite instance, SIComposite previousInstance) {
 		this.instance = instance;
 		this.keyColumns = new ArrayList<>();
 		this.targetColumns = new ArrayList<>();
 		this.mapColumnToField = new HashMap<>();
 		for (SType<?> field : getFields(instance)) {
 			if (RelationalSQL.foreignColumn(field) == null) {
-				collectKeyColumns(field, keyColumns);
-				collectTargetColumn(field, targetColumns, keyColumns, mapColumnToField);
+				if (previousInstance == null
+						|| !Objects.equals(fieldValue(instance, field), fieldValue(previousInstance, field))) {
+					collectKeyColumns(field, keyColumns);
+					collectTargetColumn(field, targetColumns, keyColumns, mapColumnToField);
+				}
 			}
 		}
 		mapColumnToValue = ((FormKeyRelational) FormKey.from((SInstance) instance)).getValue();

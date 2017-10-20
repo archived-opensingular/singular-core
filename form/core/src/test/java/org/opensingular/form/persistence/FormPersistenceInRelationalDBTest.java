@@ -93,13 +93,21 @@ public class FormPersistenceInRelationalDBTest extends TestCaseForm {
 
 	@Test
 	public void update() {
+		SIComposite previousInstance = form.newInstance();
+		previousInstance.setValue("name", "My previous form name");
+		previousInstance.setValue("customerKey", 7);
+		previousInstance.setValue("customerDisplay", "Edworld");
+		FormKey.setOnInstance(previousInstance, formKey(4242));
 		SIComposite formInstance = form.newInstance();
 		formInstance.setValue("name", "My form name");
 		formInstance.setValue("customerKey", 7);
 		formInstance.setValue("customerDisplay", "Edworld");
 		FormKey.setOnInstance(formInstance, formKey(4242));
-		when(db.exec("update FORM T1 set T1.name = ?, T1.customer = ? where T1.CODE = ?",
-				Arrays.asList("My form name", 7, 4242))).thenReturn(1);
+		when(db.query(eq(
+				"select T1.name, T1.customer, T2.name, T1.CODE from FORM T1 left join CUST T2 on T1.customer = T2.ID where T1.CODE = ?"),
+				eq(Arrays.asList(4242)), isNull(), isNull(), any())).thenReturn(Arrays.asList(previousInstance));
+		when(db.exec("update FORM T1 set T1.name = ? where T1.CODE = ?", Arrays.asList("My form name", 4242)))
+				.thenReturn(1);
 		repo.update(formInstance, null);
 	}
 

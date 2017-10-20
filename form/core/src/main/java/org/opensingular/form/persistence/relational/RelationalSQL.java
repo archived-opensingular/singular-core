@@ -63,8 +63,8 @@ public abstract class RelationalSQL {
 		return new RelationalSQLInsert(instance);
 	}
 
-	public static RelationalSQLUpdate update(SIComposite instance) {
-		return new RelationalSQLUpdate(instance);
+	public static RelationalSQLUpdate update(SIComposite instance, SIComposite previousInstance) {
+		return new RelationalSQLUpdate(instance, previousInstance);
 	}
 
 	public static RelationalSQLDelete delete(STypeComposite<?> type, FormKey formKey) {
