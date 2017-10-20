@@ -1203,11 +1203,11 @@ public abstract class MElement implements Element, Serializable {
      * e milhar.
      *
      * @param xPath   endereço do valor (atributo, tag, etc.) a ser convertido
-     * @param digitos qtd. de casas decimais a serem exibidas (-1 deixa livre).
+     * @param decimals qtd. de casas decimais a serem exibidas (-1 deixa livre).
      * @return zero se o elemento não existir ou não tiver valor
      */
-    public final String formatNumber(String xPath, int digitos) {
-        return ConversorToolkit.printNumber(getDouble(xPath, 0), digitos);
+    public final String formatNumber(String xPath, int decimals) {
+        return ConversorToolkit.printNumber(getDouble(xPath, 0), decimals);
     }
 
     /**
@@ -1215,12 +1215,12 @@ public abstract class MElement implements Element, Serializable {
      * e milhar com opção de não exibir zeros.
      *
      * @param xPath     endereço do valor (atributo, tag, etc.) a ser convertido
-     * @param digitos   qtd. de casas decimais a serem exibidas (-1 deixa livre).
+     * @param decimals   qtd. de casas decimais a serem exibidas (-1 deixa livre).
      * @param printZero Se falso e o valor zero, então retorna string vazia
      * @return string vazia se o elemento não existir ou não tiver valor
      */
-    public final String formatNumber(String xPath, int digitos, boolean printZero) {
-        return ConversorToolkit.printNumber(getDouble(xPath, 0), digitos, printZero);
+    public final String formatNumber(String xPath, int decimals, boolean printZero) {
+        return ConversorToolkit.printNumber(getDouble(xPath, 0), decimals, printZero);
     }
 
     /**

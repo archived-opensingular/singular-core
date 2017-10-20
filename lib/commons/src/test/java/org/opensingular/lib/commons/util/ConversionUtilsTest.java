@@ -18,13 +18,13 @@
 
 package org.opensingular.lib.commons.util;
 
-import static org.opensingular.lib.commons.util.ConversionUtils.*;
+import org.junit.Test;
 
 import java.time.Duration;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.opensingular.internal.lib.commons.util.ConversionUtils.toIntHumane;
+import static org.opensingular.internal.lib.commons.util.ConversionUtils.toLongHumane;
 
 public class ConversionUtilsTest {
 

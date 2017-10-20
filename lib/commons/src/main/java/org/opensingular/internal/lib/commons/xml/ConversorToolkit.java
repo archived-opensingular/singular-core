@@ -151,20 +151,20 @@ public final class ConversorToolkit {
      * Retorna o formatado que ira gera a quantidade especificadas de casas
      * decimais.
      *
-     * @param digitos Se for -1, então o formatador não força a qtd de decimais
+     * @param decimals Se for -1, então o formatador não força a qtd de decimais
      * @return sempre difente de null.
      */
-    private static NumberFormat getNumberFormat(int digitos) {
-        if (digitos == -1) {
+    private static NumberFormat getNumberFormat(int decimals) {
+        if (decimals == -1) {
             return NumberFormat.getInstance(LOCALE);
         }
-        if (numberFormat__[digitos] == null) {
+        if (numberFormat__[decimals] == null) {
             NumberFormat nf = NumberFormat.getInstance(LOCALE);
-            nf.setMaximumFractionDigits(digitos);
-            nf.setMinimumFractionDigits(digitos);
-            numberFormat__[digitos] = nf;
+            nf.setMaximumFractionDigits(decimals);
+            nf.setMinimumFractionDigits(decimals);
+            numberFormat__[decimals] = nf;
         }
-        return numberFormat__[digitos];
+        return numberFormat__[decimals];
     }
 
     public static synchronized DateFormat getDateFormat(String formato) {
@@ -265,12 +265,12 @@ public final class ConversorToolkit {
         return getTimeFormat().format(data);
     }
 
-    public static String printNumber(BigDecimal bigDecimal, Integer casasDecimais) {
+    public static String printNumber(BigDecimal bigDecimal, Integer precision) {
         DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(LOCALE);
         nf.setParseBigDecimal(true);
         nf.setGroupingUsed(true);
-        nf.setMinimumFractionDigits(casasDecimais);
-        nf.setMaximumFractionDigits(casasDecimais);
+        nf.setMinimumFractionDigits(precision);
+        nf.setMaximumFractionDigits(precision);
         return nf.format(bigDecimal);
     }
     

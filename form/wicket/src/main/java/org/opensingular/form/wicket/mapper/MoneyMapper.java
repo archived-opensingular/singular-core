@@ -98,17 +98,17 @@ public class MoneyMapper extends AbstractControlsFieldComponentMapper {
             final DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
             final BigDecimal value = (BigDecimal) mi.getValue();
             final Map<String, Object> options = withOptionsOf(model);
-            final Integer digitos = (Integer) options.get(PRECISION);
+            final Integer precision = (Integer) options.get(PRECISION);
             final StringBuilder pattern = new StringBuilder();
 
             pattern.append("R$ ###,###.");
 
-            for (int i = 0; i < digitos; i += 1) {
+            for (int i = 0; i < precision; i += 1) {
                 pattern.append('#');
             }
 
             decimalFormat.applyPattern(pattern.toString());
-            decimalFormat.setMinimumFractionDigits(digitos);
+            decimalFormat.setMinimumFractionDigits(precision);
 
             return decimalFormat.format(value);
         }

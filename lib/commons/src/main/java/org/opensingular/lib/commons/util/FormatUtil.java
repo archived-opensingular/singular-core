@@ -21,9 +21,7 @@ import java.util.Date;
 
 public final class FormatUtil {
 
-    private FormatUtil() {
-        /* CONSTRUTOR VAZIO */
-    }
+    private FormatUtil() {}
 
     public static String dateToDefaultTimestampString(Date date) {
         return new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
