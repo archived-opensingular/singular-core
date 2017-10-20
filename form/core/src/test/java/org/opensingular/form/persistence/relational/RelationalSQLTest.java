@@ -41,6 +41,7 @@ import org.opensingular.form.SInfoType;
 import org.opensingular.form.SPackage;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.document.SDocument;
@@ -48,16 +49,19 @@ import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.FormKeyRelational;
 import org.opensingular.form.persistence.relational.RelationalSQLTest.TestPackage.ItemEntity;
 import org.opensingular.form.persistence.relational.RelationalSQLTest.TestPackage.MasterEntity;
+import org.opensingular.form.persistence.relational.RelationalSQLTest.TestPackage.PartiallyMappedEntity;
 import org.opensingular.form.type.core.STypeMonetary;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.type.ref.STypeRef;
+import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 
 /**
  * @author Edmundo Andrade
  */
 @RunWith(Parameterized.class)
 public class RelationalSQLTest extends TestCaseForm {
+	private SDictionary dictionary;
 	private MasterEntity master;
 
 	public RelationalSQLTest(TestFormConfig testFormConfig) {
@@ -66,7 +70,7 @@ public class RelationalSQLTest extends TestCaseForm {
 
 	@Before
 	public void setUp() {
-		SDictionary dictionary = createTestDictionary();
+		dictionary = createTestDictionary();
 		master = dictionary.getType(MasterEntity.class);
 	}
 
@@ -141,6 +145,13 @@ public class RelationalSQLTest extends TestCaseForm {
 		assertEquals(1, script.get(0).getParameters().size());
 		assertEquals(77, script.get(0).getParameters().get(0));
 		assertNull(script.get(0).getInstance());
+	}
+
+	@Test
+	public void selectPartiallyMappedEntity() {
+		PartiallyMappedEntity entity = dictionary.getType(PartiallyMappedEntity.class);
+		SingularTestUtil.assertException(() -> select(entity.getFields()), SingularFormException.class,
+				"Relational mapping should provide table name for the type 'testPackage.PartiallyMappedEntity'.", "");
 	}
 
 	@Test
@@ -330,6 +341,19 @@ public class RelationalSQLTest extends TestCaseForm {
 				asSQL().table().tablePK("id");
 				asSQL().addTableFK("itemID", ItemEntity.class);
 				title.asSQL().column();
+			}
+		}
+
+		@SInfoType(name = "PartiallyMappedEntity", spackage = TestPackage.class)
+		public static final class PartiallyMappedEntity extends STypeComposite<SIComposite> {
+			public STypeString name;
+
+			@Override
+			protected void onLoadType(TypeBuilder tb) {
+				asAtr().label("Category entity");
+				name = addFieldString("name");
+				// relational mapping
+				name.asSQL().column();
 			}
 		}
 	}
