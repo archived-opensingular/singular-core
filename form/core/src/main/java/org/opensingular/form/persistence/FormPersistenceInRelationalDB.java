@@ -70,8 +70,9 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 		RelationalSQL.persistenceStrategy(instance.getType()).save(instance, toList);
 		List<SIComposite> targets = new ArrayList<>();
 		toList.forEach(data -> {
-			if (!targets.contains(data.getTupleKeyRef()))
+			if (!targets.contains(data.getTupleKeyRef())) {
 				targets.add((SIComposite) data.getTupleKeyRef());
+			}
 		});
 		for (SIComposite target : targets) {
 			for (RelationalSQLCommmand command : RelationalSQL.insert(target).toSQLScript()) {
@@ -140,11 +141,7 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 
 	@Nonnull
 	public INSTANCE load(@Nonnull FormKey key) {
-		INSTANCE instance = loadInternal(key);
-		if (instance == null) {
-			throw new SingularFormNotFoundException(key);
-		}
-		return instance;
+		return loadOpt(key).orElseThrow(() -> new SingularFormNotFoundException(key));
 	}
 
 	@Nonnull

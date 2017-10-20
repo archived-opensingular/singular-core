@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opensingular.form.SType;
+import org.opensingular.form.STypeList;
 import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy;
 
 /**
@@ -65,13 +66,15 @@ public class BasicRelationalMapper implements RelationalMapper {
 	}
 
 	public PersistenceStrategy persistenceStrategy(SType<?> field) {
-		PersistenceStrategy result = PersistenceStrategy.COLUMN;
-		if (column(field) == null && foreignColumn(field) == null) {
-			if (field.isComposite()) {
-				result = PersistenceStrategy.TABLE;
-			} else if (field.isList()) {
-				result = PersistenceStrategy.ONE_TO_MANY;
-			}
+		PersistenceStrategy result;
+		String tableName = table(field);
+		if (tableName == null && field.isList()) {
+			tableName = table(((STypeList<?, ?>) field).getElementsType());
+		}
+		if (tableName != null && column(field) == null && foreignColumn(field) == null) {
+			result = PersistenceStrategy.TABLE;
+		} else {
+			result = PersistenceStrategy.COLUMN;
 		}
 		return result;
 	}

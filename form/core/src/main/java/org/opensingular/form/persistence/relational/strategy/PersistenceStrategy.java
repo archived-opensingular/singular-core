@@ -29,7 +29,6 @@ import org.opensingular.form.persistence.relational.RelationalData;
 public interface PersistenceStrategy {
 	public static final PersistenceStrategy TABLE = new PersistenceStrategyTable();
 	public static final PersistenceStrategy COLUMN = new PersistenceStrategyColumn();
-	public static final PersistenceStrategy ONE_TO_MANY = new PersistenceStrategyOneToMany();
 
 	void save(SInstance instance, List<RelationalData> toList);
 
