@@ -104,7 +104,7 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 
 	public void update(@Nonnull INSTANCE instance, Integer inclusionActor) {
 		for (SInstance field : instance.getAllChildren()) {
-			if (field.getType().isList()) {
+			if (RelationalSQL.isListWithTableBound(field.getType())) {
 				SIList<SIComposite> listInstance = instance.getFieldList(field.getType().getNameSimple(),
 						SIComposite.class);
 				for (SIComposite item : listInstance.getChildren()) {

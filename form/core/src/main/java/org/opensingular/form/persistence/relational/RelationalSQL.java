@@ -34,6 +34,7 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy;
@@ -115,6 +116,10 @@ public abstract class RelationalSQL {
 
 	public static Optional<RelationalColumnConverter> aspectRelationalColumnConverter(SType<?> type) {
 		return type.getAspect(ASPECT_RELATIONAL_CONV);
+	}
+
+	public static boolean isListWithTableBound(SType<?> type) {
+		return type.isList() && tableOpt(((STypeList<?, ?>) type).getElementsType()).isPresent();
 	}
 
 	public static SType<?> tableRef(SType<?> field) {
