@@ -34,15 +34,9 @@ public class TableOutputHtml extends TableOutput {
 
     private final ViewOutputHtml vOut;
     private final String tableid = UUID.randomUUID().toString();
-    private final boolean escapeHTML;
 
     public TableOutputHtml(ViewOutputHtml vOut) {
-        this(vOut, true);
-    }
-
-    public TableOutputHtml(ViewOutputHtml vOut, boolean escapeHTML) {
         this.vOut = vOut;
-        this.escapeHTML = escapeHTML;
     }
 
     @Override
@@ -411,15 +405,15 @@ public class TableOutputHtml extends TableOutput {
         } else {
             String s = ctx.generateFormatDisplayString();
             if (s != null) {
-                out.print(escapeHTML(s));
+                out.print(escapeHTML(s, ctx.getColumn().getType().getProcessor()));
             }
         }
         cellTagsClose(ctx, cell, column, out);
         out.println("</td>");
     }
 
-    private String escapeHTML(String s) {
-        if (escapeHTML) {
+    private String escapeHTML(String s, ColumnTypeProcessor type) {
+        if (type instanceof ColumnTypeProcessor.ColumnTypeProcessorTypeRaw) {
             return AlocproToolkit.plainTextToHtml(s, false);
         }
         return s;
