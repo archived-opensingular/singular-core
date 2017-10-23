@@ -176,7 +176,7 @@ public class TesFlowMapValidations {
             f.addEndTask(StepsDI.End);
             assertException(() -> f.addEndTask(StepsDI.End), "already defined");
 
-            assertException(() -> f.build().getStart(), "Task inicial não definida no processo");
+            assertException(() -> f.build().getStart(), "Task inicial não definida no fluxo");
 
             if (condicions.configStart) {
                 f.setStartTask(StepsDI.StepWait);

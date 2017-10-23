@@ -30,7 +30,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Represents the history of execution and current state of a particular process instance so the diagram of the process
+ * Represents the history of execution and current state of a particular flow instance so the diagram of the flow
  * may be decorated with this information.
  *
  * @author Daniel C. Bordin on 2017-09-21.

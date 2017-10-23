@@ -33,10 +33,10 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.opensingular.flow.core.service.IFlowMetadataREST.PATH_PROCESS_DEFINITION_DIAGRAM;
-import static org.opensingular.flow.core.service.IFlowMetadataREST.PATH_PROCESS_DEFINITION_HAS_ACCESS;
-import static org.opensingular.flow.core.service.IFlowMetadataREST.PATH_PROCESS_DEFINITION_WITH_ACCESS;
-import static org.opensingular.flow.core.service.IFlowMetadataREST.PATH_PROCESS_INSTANCE_HAS_ACCESS;
+import static org.opensingular.flow.core.service.IFlowMetadataREST.PATH_FLOW_DEFINITION_DIAGRAM;
+import static org.opensingular.flow.core.service.IFlowMetadataREST.PATH_FLOW_DEFINITION_HAS_ACCESS;
+import static org.opensingular.flow.core.service.IFlowMetadataREST.PATH_FLOW_DEFINITION_WITH_ACCESS;
+import static org.opensingular.flow.core.service.IFlowMetadataREST.PATH_FLOW_INSTANCE_HAS_ACCESS;
 import static org.opensingular.flow.core.service.IFlowMetadataREST.generateGroupToken;
 
 class FlowMetadataSpringREST implements IFlowMetadataService, Loggable {
@@ -54,11 +54,11 @@ class FlowMetadataSpringREST implements IFlowMetadataService, Loggable {
     @Override
     public Set<String> listFlowDefinitionsWithAccess(String userCod, AccessLevel accessLevel) {
         try {
-            Set<String> result = new RestTemplate().getForObject(getConnectionURL(PATH_PROCESS_DEFINITION_WITH_ACCESS,
+            Set<String> result = new RestTemplate().getForObject(getConnectionURL(PATH_FLOW_DEFINITION_WITH_ACCESS,
                 "userCod","accessLevel"), Set.class,  userCod, accessLevel.name());
             return result;
         } catch (Exception e) {
-            getLogger().error("Erro ao acessar serviço: {}{}", connectionURL, PATH_PROCESS_DEFINITION_WITH_ACCESS, e);
+            getLogger().error("Erro ao acessar serviço: {}{}", connectionURL, PATH_FLOW_DEFINITION_WITH_ACCESS, e);
             return Collections.emptySet();
         }
     }
@@ -66,10 +66,10 @@ class FlowMetadataSpringREST implements IFlowMetadataService, Loggable {
     @Override
     public boolean hasAccessToFlowDefinition(String flowDefinitionKey, String userCod, AccessLevel accessLevel) {
         try {
-            return new RestTemplate().getForObject(getConnectionURL(PATH_PROCESS_DEFINITION_HAS_ACCESS,
+            return new RestTemplate().getForObject(getConnectionURL(PATH_FLOW_DEFINITION_HAS_ACCESS,
                 "flowDefinitionKey","userCod","accessLevel"), Boolean.class, flowDefinitionKey, userCod, accessLevel.name());
         } catch (Exception e) {
-            getLogger().error("Erro ao acessar serviço: {}{}", connectionURL, PATH_PROCESS_DEFINITION_WITH_ACCESS, e);
+            getLogger().error("Erro ao acessar serviço: {}{}", connectionURL, PATH_FLOW_DEFINITION_WITH_ACCESS, e);
             return false;
         }
     }
@@ -77,10 +77,10 @@ class FlowMetadataSpringREST implements IFlowMetadataService, Loggable {
     @Override
     public boolean hasAccessToFlowInstance(String flowInstanceFullId, String userCod, AccessLevel accessLevel) {
         try {
-            return new RestTemplate().getForObject(getConnectionURL(PATH_PROCESS_INSTANCE_HAS_ACCESS,
+            return new RestTemplate().getForObject(getConnectionURL(PATH_FLOW_INSTANCE_HAS_ACCESS,
                 "flowInstanceFullId","userCod","accessLevel"), Boolean.class, flowInstanceFullId, userCod, accessLevel.name());
         } catch (Exception e) {
-            getLogger().error("Erro ao acessar serviço: {}{}",connectionURL, PATH_PROCESS_DEFINITION_WITH_ACCESS, e);
+            getLogger().error("Erro ao acessar serviço: {}{}",connectionURL, PATH_FLOW_DEFINITION_WITH_ACCESS, e);
             return false;
         }
     }
@@ -94,15 +94,16 @@ class FlowMetadataSpringREST implements IFlowMetadataService, Loggable {
             headers.setAccept(Arrays.asList(MediaType.IMAGE_PNG));
             HttpEntity<String> entity = new HttpEntity<>(headers);
 
-            ResponseEntity<byte[]> response = restTemplate.exchange(getConnectionURL(PATH_PROCESS_DEFINITION_DIAGRAM,
+            ResponseEntity<byte[]> response = restTemplate.exchange(getConnectionURL(PATH_FLOW_DEFINITION_DIAGRAM,
                 "flowDefinitionKey"), HttpMethod.GET, entity, byte[].class, flowDefinitionKey);
 
             if(response.getStatusCode() == HttpStatus.OK){
                 return response.getBody();
             }
-            getLogger().error("Erro ao acessar serviço: {}{}: StatusCode: {}",connectionURL, PATH_PROCESS_DEFINITION_WITH_ACCESS, response.getStatusCode());
+            getLogger().error("Erro ao acessar serviço: {}{}: StatusCode: {}",connectionURL,
+                    PATH_FLOW_DEFINITION_WITH_ACCESS, response.getStatusCode());
         } catch (Exception e) {
-            getLogger().error("Erro ao acessar serviço: {}{}", connectionURL, PATH_PROCESS_DEFINITION_DIAGRAM, e);
+            getLogger().error("Erro ao acessar serviço: {}{}", connectionURL, PATH_FLOW_DEFINITION_DIAGRAM, e);
         }
         return null;
     }

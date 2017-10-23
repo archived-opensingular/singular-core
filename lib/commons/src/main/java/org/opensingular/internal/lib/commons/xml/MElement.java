@@ -149,10 +149,10 @@ import java.util.List;
  * <b>Criando um MElement.</b> Existe 3 formas de se obter um MElement:
  * <xmp>
  * //Novo element
- * MElement raiz1 = MElement.newIntance("pedido");
+ * MElement raiz1 = MElement.newInstance("pedido");
  * <p/>
  * //Novo element com namespace
- * MElement raiz2 = MElement.newIntance("http://www.com/ordem", "pedido");
+ * MElement raiz2 = MElement.newInstance("http://www.com/ordem", "pedido");
  * <p/>
  * //Convertendo um Element
  * //Toda alteração em wrapper reflete-se no Element original.

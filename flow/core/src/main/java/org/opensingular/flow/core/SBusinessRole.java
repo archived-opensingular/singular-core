@@ -58,7 +58,7 @@ public final class SBusinessRole implements Serializable {
 
     @Override
     public String toString() {
-        return "SProcessRole [abbreviation=" + abbreviation + ", name=" + name
+        return "SBussinesRole [abbreviation=" + abbreviation + ", name=" + name
                 + ", automaticBusinessRoleAllocation=" + automaticUserAllocation
                 + ", businessRoleSettingStrategy=" + businessRoleStrategy + "]";
     }

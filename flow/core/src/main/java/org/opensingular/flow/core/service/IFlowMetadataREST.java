@@ -26,26 +26,26 @@ import java.util.Set;
 
 public interface IFlowMetadataREST {
 
-    static final String PATH_PROCESS_INSTANCE_HAS_ACCESS = "/process/instance/has-access";
-    static final String PATH_PROCESS_DEFINITION_HAS_ACCESS = "/process/definition/has-access";
-    static final String PATH_PROCESS_DEFINITION_WITH_ACCESS = "/process/definition/with-access";
-    static final String PATH_PROCESS_DEFINITION_DIAGRAM = "/process/definition/diagram";
-    static final String PATH_PROCESS_DETAIL_DASHBOARD = "/process/dashboard/detail";
-    static final String PATH_PROCESS_CUSTOM_DASHBOARD = "/process/dashboard/custom";
-    static final String PATH_PROCESS_DASHBOARD_DATA = "/process/dashboard/data";
+    static final String PATH_FLOW_INSTANCE_HAS_ACCESS = "/process/instance/has-access";
+    static final String PATH_FLOW_DEFINITION_HAS_ACCESS = "/process/definition/has-access";
+    static final String PATH_FLOW_DEFINITION_WITH_ACCESS = "/process/definition/with-access";
+    static final String PATH_FLOW_DEFINITION_DIAGRAM = "/process/definition/diagram";
+    static final String PATH_FLOW_DETAIL_DASHBOARD = "/process/dashboard/detail";
+    static final String PATH_FLOW_CUSTOM_DASHBOARD = "/process/dashboard/custom";
+    static final String PATH_FLOW_DASHBOARD_DATA = "/process/dashboard/data";
 
     /**
-     * REST path: {@link IFlowMetadataREST#PATH_PROCESS_DEFINITION_WITH_ACCESS}
+     * REST path: {@link IFlowMetadataREST#PATH_FLOW_DEFINITION_WITH_ACCESS}
      * 
      * @param groupToken - request
      * @param userCod - request
      * @param accessLevel - request
-     * @return set of process definition key with accessLevel required
+     * @return set of flow definition key with accessLevel required
      */
     Set<String> listFlowDefinitionsWithAccess(String groupToken, String userCod, AccessLevel accessLevel);
 
     /**
-     * REST path: {@link IFlowMetadataREST#PATH_PROCESS_DEFINITION_HAS_ACCESS}
+     * REST path: {@link IFlowMetadataREST#PATH_FLOW_DEFINITION_HAS_ACCESS}
      * 
      * @param groupToken - request
      * @param flowDefinitionKey - request
@@ -56,7 +56,7 @@ public interface IFlowMetadataREST {
     boolean hasAccessToFlowDefinition(String groupToken, String flowDefinitionKey, String userCod, AccessLevel accessLevel);
 
     /**
-     * REST path: {@link IFlowMetadataREST#PATH_PROCESS_INSTANCE_HAS_ACCESS}
+     * REST path: {@link IFlowMetadataREST#PATH_FLOW_INSTANCE_HAS_ACCESS}
      * 
      * @param groupToken - request
      * @param flowInstanceFullId - request
@@ -67,7 +67,7 @@ public interface IFlowMetadataREST {
     boolean hasAccessToFlowInstance(String groupToken, String flowInstanceFullId, String userCod, AccessLevel accessLevel);
 
     /**
-     * REST path {@link IFlowMetadataREST#PATH_PROCESS_DEFINITION_DIAGRAM}
+     * REST path {@link IFlowMetadataREST#PATH_FLOW_DEFINITION_DIAGRAM}
      * 
      * @param groupToken - request
      * @param flowDefinitionKey - request

@@ -23,31 +23,31 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.OutputStream;
 
-/** Converters a flow definition to a image representing the process. */
+/** Converters a flow definition to a image representing the flow. */
 public interface IFlowRenderer {
 
-    /** Generates a byte array with PNG image representing the process. */
+    /** Generates a byte array with PNG image representing the flow. */
     @Nonnull
     default byte[] generatePng(@Nonnull FlowDefinition<?> definition) {
         return generatePng(definition, (ExecutionHistoryForRendering) null);
     }
 
     /**
-     * Generates a byte array with PNG image representing the process and also highlights the transactions and task
+     * Generates a byte array with PNG image representing the flow and also highlights the transactions and task
      * executed if this information is available in the history parameter.
      */
     @Nonnull
     byte[] generatePng(@Nonnull FlowDefinition<?> definition, @Nullable ExecutionHistoryForRendering history);
 
     /**
-     * Generates a PNG image to the output stream provided representing the process.
+     * Generates a PNG image to the output stream provided representing the flow.
      */
     default void generatePng(@Nonnull FlowDefinition<?> definition, @Nonnull OutputStream out) throws IOException {
         generatePng(definition, null, out);
     }
 
     /**
-     * Generates a PNG image to the output stream provided representing the process and also highlights the transactions
+     * Generates a PNG image to the output stream provided representing the flow and also highlights the transactions
      * and task executed if this information is available in the history parameter.
      */
     void generatePng(@Nonnull FlowDefinition<?> definition, @Nullable ExecutionHistoryForRendering history,

@@ -78,7 +78,7 @@ public class FlowBuilderImpl extends
     }
 
     @Override
-    protected BuilderBusinessRole<?> newProcessRole(SBusinessRole businessRole) {
+    protected BuilderBusinessRole<?> newBusinessRole(SBusinessRole businessRole) {
         return new ImplBuilderBusinessRole<>(businessRole);
     }
 
@@ -180,16 +180,16 @@ public class FlowBuilderImpl extends
     public static class ImplBuilderBusinessRole<SELF extends ImplBuilderBusinessRole<SELF>> implements
             BuilderBusinessRole<SELF> {
 
-        private final SBusinessRole processRole;
+        private final SBusinessRole businessRole;
 
-        public ImplBuilderBusinessRole(SBusinessRole processRole) {
-            Objects.requireNonNull(processRole);
-            this.processRole = processRole;
+        public ImplBuilderBusinessRole(SBusinessRole businessRole) {
+            Objects.requireNonNull(businessRole);
+            this.businessRole = businessRole;
         }
 
         @Override
         public SBusinessRole getBusinessRole() {
-            return processRole;
+            return businessRole;
         }
     }
 

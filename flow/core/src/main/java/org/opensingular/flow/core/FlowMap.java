@@ -72,10 +72,7 @@ public class FlowMap {
      * Ponto de extensão para customizações. Cria uma nova transição com as características
      * informadas.
      *
-     * @param origin tarefa de origem.
      * @param name o nome da transição.
-     * @param destination a tarefa destino.
-     * @param type o tipo de transição.
      */
     protected STransition newTransition(STask<?> origin, String name, STask<?> destination) {
         return new STransition(origin, name, destination);
@@ -180,12 +177,12 @@ public class FlowMap {
     public SBusinessRole addRoleDefinition(String name, String abbreviation,
             BusinessRoleStrategy<? extends FlowInstance> businessRoleStrategy,
             boolean automaticUserAllocation) {
-        final SBusinessRole processRole = new SBusinessRole(name, abbreviation, businessRoleStrategy, automaticUserAllocation);
-        if (hasRoleWithAbbreviation(processRole.getAbbreviation())) {
-            throw new SingularFlowException("Role with abbreviation '" + processRole.getAbbreviation() + "' already defined", this);
+        final SBusinessRole businessRole = new SBusinessRole(name, abbreviation, businessRoleStrategy, automaticUserAllocation);
+        if (hasRoleWithAbbreviation(businessRole.getAbbreviation())) {
+            throw new SingularFlowException("Role with abbreviation '" + businessRole.getAbbreviation() + "' already defined", this);
         }
-        rolesByAbbreviation.put(processRole.getAbbreviation().toLowerCase(), processRole);
-        return processRole;
+        rolesByAbbreviation.put(businessRole.getAbbreviation().toLowerCase(), businessRole);
+        return businessRole;
     }
 
     /**

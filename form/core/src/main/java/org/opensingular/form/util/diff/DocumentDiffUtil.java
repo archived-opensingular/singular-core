@@ -40,7 +40,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Classe utilitária para cálculo da diferença na estrutura e conteúdo de SDocument ou SIntance. <p>Aceita comparar
+ * Classe utilitária para cálculo da diferença na estrutura e conteúdo de SDocument ou SInstance. <p>Aceita comparar
  * instância de dicionários diferentes ou mesmo de SType diferentes.</p>
  * <p> Utiliza a seguinte heuristica:
  * <ol>

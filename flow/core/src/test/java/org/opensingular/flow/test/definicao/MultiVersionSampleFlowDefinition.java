@@ -25,13 +25,13 @@ import org.opensingular.flow.core.builder.BuilderBusinessRole;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 
 @DefinitionInfo("DefVersoes")
-public class DefinicaoFlowVersoes extends FlowDefinition<FlowVersoes> {
+public class MultiVersionSampleFlowDefinition extends FlowDefinition<MultiVersionSampleFlowInstance> {
 
-    public DefinicaoFlowVersoes() {
-        super(FlowVersoes.class);
+    public MultiVersionSampleFlowDefinition() {
+        super(MultiVersionSampleFlowInstance.class);
     }
 
-    private static InstanceProcessVersao flow = InstanceProcessVersao.VERSAO_1;
+    private static FlowVersionCreator flow = FlowVersionCreator.VERSAO_1;
 
     @Override
     protected FlowMap createFlowMap() {
@@ -39,26 +39,26 @@ public class DefinicaoFlowVersoes extends FlowDefinition<FlowVersoes> {
     }
 
     public synchronized static void  changeFlowToVersao1() {
-        flow = InstanceProcessVersao.VERSAO_1;
+        flow = FlowVersionCreator.VERSAO_1;
     }
 
     public synchronized static void changeFlowToVersao1ComPapeis() {
-        flow = InstanceProcessVersao.VERSAO_1_COM_PAPEIS;
+        flow = FlowVersionCreator.VERSAO_1_COM_PAPEIS;
     }
 
-    public synchronized static void changeFlowToVersao2() {
-        flow = InstanceProcessVersao.VERSAO_2;
+    public synchronized static void changeFlowToVersion2() {
+        flow = FlowVersionCreator.VERSAO_2;
     }
 
-    private enum InstanceProcessVersao {
+    private enum FlowVersionCreator {
         VERSAO_1() {
             @Override
-            public FlowMap createFlowMap(DefinicaoFlowVersoes definicaoProcessVersoes) {
-                definicaoProcessVersoes.setName("Versão", "Usando versões");
+            public FlowMap createFlowMap(MultiVersionSampleFlowDefinition flowDefinition) {
+                flowDefinition.setName("Versão", "Usando versões");
 
-                FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
+                FlowBuilderImpl flow = new FlowBuilderImpl(flowDefinition);
 
-                BuilderBusinessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
+                BuilderBusinessRole<?> papelTecnico = flow.addBusinessRole("TECNICO", "TECNICO", false);
 
                 ITaskDefinition start = () -> "Start";
                 flow.addJavaTask(start).call(p -> {
@@ -84,12 +84,12 @@ public class DefinicaoFlowVersoes extends FlowDefinition<FlowVersoes> {
 
         VERSAO_1_COM_PAPEIS() {
             @Override
-            public FlowMap createFlowMap(DefinicaoFlowVersoes definicaoProcessVersoes) {
-                definicaoProcessVersoes.setName("Versão", "Usando versões");
+            public FlowMap createFlowMap(MultiVersionSampleFlowDefinition flowDefinition) {
+                flowDefinition.setName("Versão", "Usando versões");
 
-                FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
+                FlowBuilderImpl flow = new FlowBuilderImpl(flowDefinition);
 
-                BuilderBusinessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", "ANALISTA", false);
+                BuilderBusinessRole<?> papelAnalista = flow.addBusinessRole("ANALISTA", "ANALISTA", false);
 
                 ITaskDefinition start = () -> "Start";
                 flow.addJavaTask(start).call(p -> {
@@ -114,12 +114,12 @@ public class DefinicaoFlowVersoes extends FlowDefinition<FlowVersoes> {
 
         VERSAO_2() {
             @Override
-            public FlowMap createFlowMap(DefinicaoFlowVersoes definicaoProcessVersoes) {
-                definicaoProcessVersoes.setName("Versão", "Usando versões");
+            public FlowMap createFlowMap(MultiVersionSampleFlowDefinition flowDefinition) {
+                flowDefinition.setName("Versão", "Usando versões");
 
-                FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
+                FlowBuilderImpl flow = new FlowBuilderImpl(flowDefinition);
 
-                BuilderBusinessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
+                BuilderBusinessRole<?> papelTecnico = flow.addBusinessRole("TECNICO", "TECNICO", false);
 
                 ITaskDefinition start = () -> "Start 2";
                 flow.addJavaTask(start).call(p -> {
@@ -143,7 +143,7 @@ public class DefinicaoFlowVersoes extends FlowDefinition<FlowVersoes> {
             }
         };
 
-        public abstract FlowMap createFlowMap(DefinicaoFlowVersoes definicaoProcessVersoes);
+        public abstract FlowMap createFlowMap(MultiVersionSampleFlowDefinition flowDefinition);
     }
 
 }

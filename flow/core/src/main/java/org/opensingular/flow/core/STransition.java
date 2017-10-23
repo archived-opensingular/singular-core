@@ -77,8 +77,8 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
 
     public boolean hasRoleUsersToSet() {
         if (rolesToDefineUser != null) {
-            for (SBusinessRole processRole : rolesToDefineUser) {
-                if (!processRole.isAutomaticBusinessRoleAllocation()) {
+            for (SBusinessRole businessRole : rolesToDefineUser) {
+                if (!businessRole.isAutomaticBusinessRoleAllocation()) {
                     return true;
                 }
             }
@@ -172,9 +172,9 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     @SuppressWarnings("unchecked")
     @Nonnull
     public <K extends FlowInstance> STransition setParametersInitializer(
-            @Nonnull ITransitionParametersInitializerProcess<K> initializerByProcess) {
-        inject(initializerByProcess);
-        return setParametersInitializer((ITransitionParametersInitializer) (params, ctx) -> initializerByProcess.init(params, (K) ctx.getFlowInstance()));
+            @Nonnull ITransitionParametersInitializerWithFlowInstance<K> initializer) {
+        inject(initializer);
+        return setParametersInitializer((ITransitionParametersInitializer) (params, ctx) -> initializer.init(params, (K) ctx.getFlowInstance()));
     }
 
     @Nonnull
@@ -189,9 +189,9 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     @SuppressWarnings("unchecked")
     @Nonnull
     public <K extends FlowInstance> STransition setParametersValidator(
-            @Nonnull ITransitionParametersValidatorProcess<K> validatorByProcess) {
-        inject(validatorByProcess);
-        return setParametersValidator((ITransitionParametersValidator) (params, result, ctx) -> validatorByProcess
+            @Nonnull ITransitionParametersValidatorWithFlowInstance<K> validator) {
+        inject(validator);
+        return setParametersValidator((ITransitionParametersValidator) (params, result, ctx) -> validator
             .validate(params, result, (K) ctx.getFlowInstance()));
     }
 
@@ -220,8 +220,8 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     }
 
     @Override
-    public STransition addParamBindedToProcessVariable(String ref, boolean required) {
-        super.addParamBindedToProcessVariable(ref, required);
+    public STransition addParamBindedToFlowVariable(String ref, boolean required) {
+        super.addParamBindedToFlowVariable(ref, required);
         return this;
     }
 
@@ -246,11 +246,11 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
 
     /**
      * Return the BPMN type of event that triggers the execution of this transition for use when generating a diagram
-     * of the process. When null, it usually means that this a transition manually executed by the user.
+     * of the flow. When null, it usually means that this a transition manually executed by the user.
      * <p> This method first user the value set by {@link #setDisplayEventType(EventType)}. If null and {@link
      * #getPredicate()}
      * is not null, then returns {@link ITaskPredicate#getDisplayEventType()}.
-     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
      */
     @Nullable
     public EventType getDisplayEventType() {
@@ -261,19 +261,19 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     }
 
     /**
-     * Defines, for the purpose of generating a diagram of the process, the BPMN type of the event that triggers the
+     * Defines, for the purpose of generating a diagram of the flow, the BPMN type of the event that triggers the
      * execution of this transition, if not null. When it's null on a human task, usually means that this a transition
      * manually executed by the user.
-     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
      */
     public void setDisplayEventType(@Nullable EventType displayEventType) {
         this.displayEventType = displayEventType;
     }
 
     /**
-     * Define that, when generating a diagram of the process, this transition should be preferred displayed as link
+     * Define that, when generating a diagram of the flow, this transition should be preferred displayed as link
      * event instead of a direct line to the destination.
-     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
      *
      * @param displayAsLinkName The name of the link. If not null, then this transition will be displayed as link.
      */
@@ -282,9 +282,9 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     }
 
     /**
-     * Define that, when generating a diagram of the process, this transition should be preferred displayed as link
+     * Define that, when generating a diagram of the flow, this transition should be preferred displayed as link
      * event instead of a direct line to the destination.
-     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
      *
      * @param displayAsLinkName The name of the link. If not null, then this transition will be displayed as link.
      * @param linkGroupIndex    If there is two links for the same destination with the same index, it
@@ -297,8 +297,8 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
 
     /**
      * If not null, it means that this transition should be preferred displayed as link event instead of a direct line
-     * to the destination when generating a diagram of the process.
-     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     * to the destination when generating a diagram of the flow.
+     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
      */
     @Nullable
     public String getDisplayAsLinkName() {
@@ -309,7 +309,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
      * Two transition marked to be rendered as link and that also have the same non negative index, it means that both
      * transition should be point to the same outgoing link. This information is meaningful only if {@link
      * #getDisplayAsLinkName()} is not null.
-     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
      *
      * @return negative number, if the link shouldn't be grouped. A non negative number, if this transition is part of
      * the same link group.
@@ -324,7 +324,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     }
 
     @FunctionalInterface
-    public interface ITransitionParametersInitializerProcess<K extends FlowInstance> extends Serializable {
+    public interface ITransitionParametersInitializerWithFlowInstance<K extends FlowInstance> extends Serializable {
         void init(VarInstanceMap<?,?> params, K flowInstance);
     }
 
@@ -334,7 +334,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     }
 
     @FunctionalInterface
-    public interface ITransitionParametersValidatorProcess<K extends FlowInstance> extends Serializable {
+    public interface ITransitionParametersValidatorWithFlowInstance<K extends FlowInstance> extends Serializable {
         void validate(VarInstanceMap<?,?> params, ValidationResult validationResult, K flowInstance);
     }
 

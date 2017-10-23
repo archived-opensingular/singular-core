@@ -282,7 +282,7 @@ class FlowEngine {
     private static void copyMarkedParametersToInstanceVariables(@Nonnull FlowInstance instance,
             @Nonnull VarInstanceMap<?, ?> paramIn) {
         for (VarInstance variavel : paramIn) {
-            if (variavel.getValue() != null && SParametersEnabled.isAutoBindedToProcessVariable(variavel)) {
+            if (variavel.getValue() != null && SParametersEnabled.isAutoBindedToFlowVariable(variavel)) {
                 String ref = variavel.getRef();
                 if (instance.getFlowDefinition().getVariables().contains(ref)) {
                     instance.setVariable(ref, variavel.getValue());

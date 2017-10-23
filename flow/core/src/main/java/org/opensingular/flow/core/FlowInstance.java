@@ -138,7 +138,7 @@ public class FlowInstance implements Serializable {
             }
             if (entity == null) {
                 throw SingularException.rethrow(
-                    getClass().getName() + " is not binded to a new and neither to a existing database intance process entity.");
+                    getClass().getName() + " is not binded to a new and neither to a existing database flow instance entity.");
             }
         }
         return entity;
@@ -199,7 +199,7 @@ public class FlowInstance implements Serializable {
     /**
      * Retornar o nome da definição de fluxo desta instância.
      */
-    public String getProcessName() {
+    public String getFlowName() {
         return getFlowDefinition().getName();
     }
 
@@ -445,7 +445,6 @@ public class FlowInstance implements Serializable {
      * Realiza uma transição da tarefa de origiem para a tarefa alvo
      * especificadas.
      *
-     * @param originTaskInstance a tarefa de origem.
      * @param originTransition a transição disparada.
      * @param task a tarefa alvo.
      * @param now o momento da transição.
@@ -529,9 +528,9 @@ public class FlowInstance implements Serializable {
     public final String getExtendedDescription() {
         String description = getDescription();
         if (description == null) {
-            return getProcessName();
+            return getFlowName();
         }
-        return getProcessName() + " - " + description;
+        return getFlowName() + " - " + description;
     }
 
     /**
@@ -693,7 +692,7 @@ public class FlowInstance implements Serializable {
      */
     public final VarInstanceMap<?,?> getVariables() {
         if (variables == null) {
-            variables = new VarInstanceTableProcess(this);
+            variables = new VarInstanceTableFlow(this);
         }
         return variables;
     }

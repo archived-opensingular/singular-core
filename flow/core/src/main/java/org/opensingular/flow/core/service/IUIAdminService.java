@@ -36,9 +36,9 @@ public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE ext
     
     DEFINITION retrieveDefinitionByKey(String flowDefinitionKey);
 
-    List<DEFINITION> retrieveAllDefinition(int first, int size, String orderByProperty, boolean asc, Set<String> processCodeWithAccess);
+    List<DEFINITION> retrieveAllDefinition(int first, int size, String orderByProperty, boolean asc, Set<String> flowDefinitionCodesWithAccess);
 
-    int countAllDefinition(Set<String> processCodeWithAccess);
+    int countAllDefinition(Set<String> flowCodesWithAccess);
 
     List<INSTANCE> retrieveAllInstance(int first, int size, String orderByProperty, boolean asc, Integer flowDefinitionCod);
 
@@ -46,35 +46,35 @@ public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE ext
 
     List<METADATA> retrieveMetaData(Integer flowDefinitionCod);
 
-    List<Map<String, String>> retrieveMeanTimeByProcess(Period period, String processCode, Set<String> processCodeWithAccess);
+    List<Map<String, String>> retrieveMeanTimeByFlowDefinition(Period period, String flowDefinitionCod, Set<String> flowDefinitionCodesWithAccess);
 
-    List<Map<String, String>> retrieveNewInstancesQuantityLastYear(String processCode, Set<String> processCodeWithAccess);
+    List<Map<String, String>> retrieveNewInstancesQuantityLastYear(String flowDefinitionCod, Set<String> flowDefinitionCodesWithAccess);
 
-    List<Map<String, String>> retrieveEndStatusQuantityByPeriod(Period period, String processCode);
+    List<Map<String, String>> retrieveEndStatusQuantityByPeriod(Period period, String flowDefinitionCod);
 
-    List<Map<String, String>> retrieveMeanTimeByTask(Period period, String processCode);
+    List<Map<String, String>> retrieveMeanTimeByTask(Period period, String flowDefinitionCod);
 
     List<Map<String, String>> retrieveStatsByActiveTask(String flowDefinitionCode);
 
-    STATUS retrieveActiveInstanceStatus(String processCode, Set<String> processCodeWithAccess);
+    STATUS retrieveActiveInstanceStatus(String flowInstanceCod, Set<String> flowDefinitionCodesWithAccess);
 
-    List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode, Set<String> processCodeWithAccess);
+    List<Map<String, String>> retrieveMeanTimeActiveInstances(String flowDefinitionCod, Set<String> flowDefinitionCodesWithAccess);
 
-    List<Map<String, String>> retrieveAverageTimesActiveInstances(String processCode, Set<String> processCodeWithAccess);
+    List<Map<String, String>> retrieveAverageTimesActiveInstances(String flowDefinitionCod, Set<String> flowDefinitionCodesWithAccess);
 
-    List<Map<String, String>> retrieveMeanTimeFinishedInstances(String processCode, Set<String> processCodeWithAccess);
+    List<Map<String, String>> retrieveMeanTimeFinishedInstances(String flowDefinitionCod, Set<String> flowDefinitionCodesWithAccess);
 
-    List<Map<String, String>> retrieveCounterActiveInstances(String processCode, Set<String> processCodeWithAccess);
+    List<Map<String, String>> retrieveCounterActiveInstances(String flowDefinitionCod, Set<String> flowDefinitionCodesWithAccess);
 
     String retrieveFlowDefinitionName(String flowDefinitionCode);
 
     String retrieveFlowDefinitionId(String flowDefinitionCode);
 
-    List<FEED> retrieveAllFeed(String processCode, Set<String> processCodeWithAccess);
+    List<FEED> retrieveAllFeed(String flowDefinitionCod, Set<String> flowDefinitionCodesWithAccess);
 
     List<MENU> retrieveAllCategories();
 
-    List<MENU> retrieveAllCategoriesWithAcces(String userId);
+    List<MENU> retrieveAllCategoriesWithAccess(String userId);
     
     Pair<Long, Long> retrieveCategoryDefinitionIdsByCode(String code);
     

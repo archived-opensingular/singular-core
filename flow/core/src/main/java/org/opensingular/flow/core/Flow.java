@@ -151,7 +151,7 @@ public final class Flow {
         return getConfigBean().getUserService().getUserIfAvailable();
     }
 
-    public static void notifyListeners(Consumer<ProcessNotifier> operation) {
+    public static void notifyListeners(Consumer<FlowInstanceListener> operation) {
         getConfigBean().notifyListeners(operation);
     }
 

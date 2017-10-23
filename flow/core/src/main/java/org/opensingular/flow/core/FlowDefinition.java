@@ -30,9 +30,9 @@ import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.property.MetaData;
 import org.opensingular.flow.core.property.MetaDataEnabled;
+import org.opensingular.flow.core.service.IFlowDataService;
 import org.opensingular.flow.core.service.IFlowDefinitionEntityService;
 import org.opensingular.flow.core.service.IPersistenceService;
-import org.opensingular.flow.core.service.IProcessDataService;
 import org.opensingular.flow.core.variable.VarDefinitionMap;
 import org.opensingular.flow.core.variable.VarService;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
@@ -81,17 +81,17 @@ public abstract class FlowDefinition<I extends FlowInstance>
 
     private Integer entityVersionCod;
 
-    private IProcessCreationPageStrategy creationPage;
+    private IFlowCreationPageStrategy creationPage;
 
     private VarDefinitionMap<?> variableDefinitions;
 
     private VarService variableService;
 
-    private IProcessDataService<I> processDataService;
+    private IFlowDataService<I> flowDataService;
 
     private MetaData metaData;
 
-    private final Map<String, ProcessScheduledJob> scheduledJobsByName = new HashMap<>();
+    private final Map<String, FlowScheduledJob> scheduledJobsByName = new HashMap<>();
 
     private transient RefFlowDefinition serializableReference;
     private transient SingularInjector     injector;
@@ -180,18 +180,18 @@ public abstract class FlowDefinition<I extends FlowInstance>
      * Retorna o serviço de consulta das instâncias deste tipo de fluxo.
      */
     @Nonnull
-    public IProcessDataService<I> getDataService() {
-        if (processDataService == null) {
-            processDataService = new ProcessDataServiceImpl<>(this);
+    public IFlowDataService<I> getDataService() {
+        if (flowDataService == null) {
+            flowDataService = new FlowDataServiceImpl<>(this);
         }
-        return processDataService;
+        return flowDataService;
     }
 
     /**
      * Determina o serviço de consulta das instâncias deste tipo de fluxo.
      */
-    protected void setProcessDataService(IProcessDataService<I> processDataService) {
-        this.processDataService = processDataService;
+    protected void setFlowDataService(IFlowDataService<I> flowDataService) {
+        this.flowDataService = flowDataService;
     }
     
     /**
@@ -217,9 +217,9 @@ public abstract class FlowDefinition<I extends FlowInstance>
      *
      * @param impl a implementação do <i>job</i>.
      * @param name o nome do <i>job</i>.
-     * @return o {@link ProcessScheduledJob} que encapsula o <i>job</i> criado.
+     * @return o {@link FlowScheduledJob} que encapsula o <i>job</i> criado.
      */
-    protected final ProcessScheduledJob addScheduledJob(Supplier<Object> impl, String name) {
+    protected final FlowScheduledJob addScheduledJob(Supplier<Object> impl, String name) {
         return addScheduledJob(name).call(impl);
     }
 
@@ -228,9 +228,9 @@ public abstract class FlowDefinition<I extends FlowInstance>
      *
      * @param impl a implementação do <i>job</i>.
      * @param name o nome do <i>job</i>.
-     * @return o {@link ProcessScheduledJob} que encapsula o <i>job</i> criado.
+     * @return o {@link FlowScheduledJob} que encapsula o <i>job</i> criado.
      */
-    protected final ProcessScheduledJob addScheduledJob(Runnable impl, String name) {
+    protected final FlowScheduledJob addScheduledJob(Runnable impl, String name) {
         return addScheduledJob(name).call(impl);
     }
 
@@ -239,12 +239,12 @@ public abstract class FlowDefinition<I extends FlowInstance>
      * fluxo.
      *
      * @param name o nome do <i>job</i>.
-     * @return o {@link ProcessScheduledJob} que encapsula o <i>job</i> criado.
+     * @return o {@link FlowScheduledJob} que encapsula o <i>job</i> criado.
      */
-    protected final ProcessScheduledJob addScheduledJob(String name) {
+    protected final FlowScheduledJob addScheduledJob(String name) {
         String jobName = StringUtils.trimToNull(name);
 
-        ProcessScheduledJob scheduledJob = new ProcessScheduledJob(this, jobName);
+        FlowScheduledJob scheduledJob = new FlowScheduledJob(this, jobName);
 
         if (scheduledJobsByName.containsKey(jobName)) {
             throw new SingularFlowException("A Job with name '" + jobName + "' is already defined.", this);
@@ -254,7 +254,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
     }
 
     @Nonnull
-    final Collection<ProcessScheduledJob> getScheduledJobs() {
+    final Collection<FlowScheduledJob> getScheduledJobs() {
         return CollectionUtils.unmodifiableCollection(scheduledJobsByName.values());
     }
 
@@ -412,7 +412,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
      */
     public final String getName() {
         if (name == null) {
-            logger.warn("!!! process definition name not set, using  class simple name !!!");
+            logger.warn("!!! flow definition name not set, using  class simple name !!!");
             name = this.getClass().getSimpleName();
         }
         return name;
@@ -430,7 +430,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
      */
     public final String getCategory() {
         if (category == null) {
-            logger.warn("!!! process definition category not set, using  class simple name !!!");
+            logger.warn("!!! flow definition category not set, using  class simple name !!!");
             category = this.getClass().getSimpleName();
         }
         return category;
@@ -447,23 +447,23 @@ public abstract class FlowDefinition<I extends FlowInstance>
     }
 
     /**
-     * Retorna o {@link IProcessCreationPageStrategy} deste fluxo.
+     * Retorna o {@link IFlowCreationPageStrategy} deste fluxo.
      */
-    protected final IProcessCreationPageStrategy getCreationPageStrategy() {
+    protected final IFlowCreationPageStrategy getCreationPageStrategy() {
         return creationPage;
     }
 
     /**
-     * Configura o {@link IProcessCreationPageStrategy} deste fluxo.
+     * Configura o {@link IFlowCreationPageStrategy} deste fluxo.
      */
-    protected final void setCreationPageStrategy(@Nonnull IProcessCreationPageStrategy creationPage) {
+    protected final void setCreationPageStrategy(@Nonnull IFlowCreationPageStrategy creationPage) {
         this.creationPage = inject(creationPage);
     }
 
     /**
-     * Verifica se há um {@link IProcessCreationPageStrategy} configurado.
+     * Verifica se há um {@link IFlowCreationPageStrategy} configurado.
      *
-     * @return {@code true} caso exista um {@link IProcessCreationPageStrategy}
+     * @return {@code true} caso exista um {@link IFlowCreationPageStrategy}
      *         configurado; {@code false} caso contrário.
      */
     public boolean isCreatedByUser() {
@@ -471,12 +471,12 @@ public abstract class FlowDefinition<I extends FlowInstance>
     }
 
     /**
-     * Verifica se um {@link IProcessCreationPageStrategy} possa ser configurado
+     * Verifica se um {@link IFlowCreationPageStrategy} possa ser configurado
      * pelo usuário especificado.
      *
      * @param user
      *            o usuário especificado.
-     * @return {@code true} caso um {@link IProcessCreationPageStrategy} possa
+     * @return {@code true} caso um {@link IFlowCreationPageStrategy} possa
      *         ser configurado; {@code false} caso contrário.
      */
     public boolean canBeCreatedBy(SUser user) {

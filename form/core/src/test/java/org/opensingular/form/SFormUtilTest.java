@@ -152,16 +152,16 @@ public class SFormUtilTest extends TestCaseForm {
         assertTipoResultanteException(tipoListaString2, "[1][1]", "Não se aplica um path a um tipo simples");
     }
 
-    private static void assertTipoResultanteException(SType<?> pontoOrigem, String path, String msgExceptionEsperada) {
-        assertException(() -> SFormUtil.resolveFieldType(pontoOrigem, new PathReader(path)), msgExceptionEsperada);
+    private static void assertTipoResultanteException(SType<?> source, String path, String msgExceptionEsperada) {
+        assertException(() -> SFormUtil.resolveFieldType(source, new PathReader(path)), msgExceptionEsperada);
 
     }
 
-    private static void assertTipoResultante(SType<?> pontoOrigem, String path, SType<?> tipoEsperado) {
-        assertTipoResultante(pontoOrigem, path, tipoEsperado, true);
+    private static void assertTipoResultante(SType<?> source, String path, SType<?> tipoEsperado) {
+        assertTipoResultante(source, path, tipoEsperado, true);
     }
-    private static void assertTipoResultante(SType<?> pontoOrigem, String path, SType<?> tipoEsperado, boolean temQueSerCompativel) {
-        SType<?> tipoResultado = SFormUtil.resolveFieldType(pontoOrigem, new PathReader(path));
+    private static void assertTipoResultante(SType<?> source, String path, SType<?> tipoEsperado, boolean temQueSerCompativel) {
+        SType<?> tipoResultado = SFormUtil.resolveFieldType(source, new PathReader(path));
         if (tipoResultado.isTypeOf(tipoEsperado)) {
             if (!temQueSerCompativel) {
                 fail("No path '" + path + "' foi encontrado o resultado '" + tipoResultado.getName() + "', o que não deveria ser o caso");

@@ -66,7 +66,7 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extend
 
     protected abstract BUILDER_TRANSITION newTransition(STransition transition);
 
-    protected abstract BUILDER_ROLE newProcessRole(SBusinessRole businessRole);
+    protected abstract BUILDER_ROLE newBusinessRole(SBusinessRole businessRole);
 
     protected final FLOW_MAP getFlowMap() {
         return flowMap;
@@ -102,25 +102,25 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extend
         getFlowMap().getTasks().stream().map(t -> toBuilder(t)).forEach(consumer);
     }
 
-    public BUILDER_ROLE addRoleDefinition(String description,
+    public BUILDER_ROLE addBusinessRole(String description,
         BusinessRoleStrategy<? extends FlowInstance> businessRoleStrategy,
         boolean automaticUserAllocation) {
-        return addRoleDefinition(description, SingularUtil.convertToJavaIdentity(description, true), businessRoleStrategy, automaticUserAllocation);
+        return addBusinessRole(description, SingularUtil.convertToJavaIdentity(description, true), businessRoleStrategy, automaticUserAllocation);
     }
 
-    public BUILDER_ROLE addRoleDefinition(String description, String abbreviation,
+    public BUILDER_ROLE addBusinessRole(String description, String abbreviation,
             BusinessRoleStrategy<? extends FlowInstance> businessRoleStrategy,
             boolean automaticUserAllocation) {
-        return newProcessRole(getFlowMap().addRoleDefinition(description, abbreviation, businessRoleStrategy, automaticUserAllocation));
+        return newBusinessRole(getFlowMap().addRoleDefinition(description, abbreviation, businessRoleStrategy, automaticUserAllocation));
     }
 
-    public BUILDER_ROLE addRoleDefinition(String description, String abbreviation,
+    public BUILDER_ROLE addBusinessRole(String description, String abbreviation,
                                            boolean automaticUserAllocation) {
-        return newProcessRole(getFlowMap().addRoleDefinition(description, abbreviation, SFlowUtil.dummyBusinessRoleStrategy(), automaticUserAllocation));
+        return newBusinessRole(getFlowMap().addRoleDefinition(description, abbreviation, SFlowUtil.dummyBusinessRoleStrategy(), automaticUserAllocation));
     }
 
-    public BUILDER_ROLE addRoleDefinition(String description, boolean automaticUserAllocation) {
-        return newProcessRole(getFlowMap().addRoleDefinition(description,  SingularUtil.convertToJavaIdentity(description, true),  SFlowUtil.dummyBusinessRoleStrategy(), automaticUserAllocation));
+    public BUILDER_ROLE addBusinessRole(String description, boolean automaticUserAllocation) {
+        return newBusinessRole(getFlowMap().addRoleDefinition(description,  SingularUtil.convertToJavaIdentity(description, true),  SFlowUtil.dummyBusinessRoleStrategy(), automaticUserAllocation));
     }
 
     public BUILDER_JAVA addJavaTask(TASK_DEF taskDefinition) {

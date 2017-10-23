@@ -17,7 +17,7 @@
 package org.opensingular.flow.core;
 
 import org.junit.Test;
-import org.opensingular.flow.core.TestProcessTransitionWithParameters.FlowTransitionWithParameters.StepsTP;
+import org.opensingular.flow.core.TestFlowTransitionWithParameters.FlowTransitionWithParameters.StepsTP;
 import org.opensingular.flow.core.builder.BuilderStart;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.variable.ValidationResult;
@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 /**
  * @author Daniel C. Bordin on 18/03/2017.
  */
-public class TestProcessTransitionWithParameters extends TestFlowExecutionSupport {
+public class TestFlowTransitionWithParameters extends TestFlowExecutionSupport {
 
     private static final Date VALUE_DT = new Date();
 
@@ -46,7 +46,7 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
 
 
     @Nonnull
-    private FlowInstance createTestProcess() {
+    private FlowInstance createTestFlow() {
 
         StartCall<FlowInstance> startCall = new FlowTransitionWithParameters().prepareStartCall()
                 .setValue(PARAM_FLAG, "A")
@@ -56,7 +56,7 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
 
     @Test
     public void callTransition0_withParam() {
-        runTransition(this::createTestProcess, null,
+        runTransition(this::createTestFlow, null,
                 call -> {
                     call.setValue(PARAM_FLAG, "B");
                     call.setValue(PARAM_BIG, VALUE_BIG2);
@@ -71,7 +71,7 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
 
     @Test
     public void callTransition0_withNoParam() {
-        runTransition(this::createTestProcess, null,
+        runTransition(this::createTestFlow, null,
                 call -> {},
                 pi -> {
                     assertions(pi).isAtTask(StepsTP.Second)
@@ -83,7 +83,7 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
 
     @Test
     public void callTransition0_twice() {
-        runTransition(this::createTestProcess, null,
+        runTransition(this::createTestFlow, null,
                 call -> call.go(),
                 SingularFlowException.class,
                 "já está concluida",
@@ -97,7 +97,7 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
 
     @Test
     public void callTransition1_withoutRequiredParam() {
-        runTransition(this::createTestProcess, "transition1",
+        runTransition(this::createTestFlow, "transition1",
                 call -> {
                 },
                 SingularFlowInvalidParametersException.class,
@@ -111,7 +111,7 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
 
     @Test
     public void callTransition2() {
-        runTransition(this::createTestProcess, "transition2",
+        runTransition(this::createTestFlow, "transition2",
                 call -> {
                     call.setValue(PARAM_FLAG, "B");
                     call.setValue(PARAM_BIG, VALUE_BIG2);
@@ -126,7 +126,7 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
 
     @Test
     public void callTransition2_withoutRequiredParam() {
-        runTransition(this::createTestProcess, "transition2",
+        runTransition(this::createTestFlow, "transition2",
                 call -> {
                 },
                 SingularFlowInvalidParametersException.class,
@@ -140,7 +140,7 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
 
     @Test
     public void callTransition2_withInvalidParam() {
-        runTransition(this::createTestProcess, "transition2",
+        runTransition(this::createTestFlow, "transition2",
                 call -> {
                     call.setValue(PARAM_FLAG, "C");
                     call.setValue(PARAM_NOCOPY, 200);
@@ -229,13 +229,13 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
 
             f.from(StepsTP.First).go(StepsTP.Second)
                     .setAsDefaultTransition()
-                    .addParamBindedToProcessVariable(PARAM_FLAG, false)
-                    .addParamBindedToProcessVariable(PARAM_BIG, false)
+                    .addParamBindedToFlowVariable(PARAM_FLAG, false)
+                    .addParamBindedToFlowVariable(PARAM_BIG, false)
                     .addParamInteger(PARAM_NOCOPY, false);
 
             f.from(StepsTP.First).go("transition1", StepsTP.Third)
-                    .addParamBindedToProcessVariable(PARAM_FLAG, true)
-                    .addParamBindedToProcessVariable(PARAM_BIG, false)
+                    .addParamBindedToFlowVariable(PARAM_FLAG, true)
+                    .addParamBindedToFlowVariable(PARAM_BIG, false)
                     .addParamInteger(PARAM_NOCOPY, false);
 
             f.from(StepsTP.First).go("transition2", StepsTP.Third)
@@ -250,7 +250,7 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
         }
 
         private <K extends FlowInstance> void validateParamTransition2(VarInstanceMap<?, ?> vars,
-                ValidationResult result, K process) {
+                ValidationResult result, K flow) {
             Integer v = vars.getValueInteger(PARAM_NOCOPY);
             if (v != null && v > 100) {
                 result.addErro(vars.getVariable(PARAM_NOCOPY), "Valor > 100");
@@ -258,8 +258,8 @@ public class TestProcessTransitionWithParameters extends TestFlowExecutionSuppor
         }
 
         private void setupStartParameters(BuilderStart<?> start) {
-            start.addParamBindedToProcessVariable(PARAM_FLAG, false);
-            start.addParamBindedToProcessVariable(PARAM_BIG, false);
+            start.addParamBindedToFlowVariable(PARAM_FLAG, false);
+            start.addParamBindedToFlowVariable(PARAM_BIG, false);
         }
     }
 }

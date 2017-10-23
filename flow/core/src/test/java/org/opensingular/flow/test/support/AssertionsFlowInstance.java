@@ -93,7 +93,7 @@ public class AssertionsFlowInstance extends AssertionsBase<FlowInstance, Asserti
     /** Verifica se a descrição do fluxo corresponde a descrição esperada, caso contrário dispara exception. */
     public AssertionsFlowInstance isDescription(String expectedDescription) {
         if (!Objects.equals(expectedDescription, getTarget().getDescription())) {
-            throw new AssertionError(errorMsg("Process description diferent of the expected", expectedDescription,
+            throw new AssertionError(errorMsg("Flow description diferent of the expected", expectedDescription,
                     getTarget().getDescription()));
         }
         return this;

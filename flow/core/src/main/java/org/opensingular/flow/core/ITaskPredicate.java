@@ -24,8 +24,8 @@ public interface ITaskPredicate extends Predicate<TaskInstance> {
 
     /**
      * Return the BPMN type of event that triggers the execution of this transition for use when generating a diagram
-     * of the process.
-     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     * of the flow.
+     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
      */
     EventType getDisplayEventType();
 

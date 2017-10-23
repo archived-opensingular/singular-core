@@ -38,9 +38,9 @@ public class STaskEnd extends STask<STaskEnd> {
     }
 
     /**
-     * Defines, for the purpose of generating a diagram of the process, the type of BPMN event will be used to
+     * Defines, for the purpose of generating a diagram of the flow, the type of BPMN event will be used to
      * render this end task (the symbol that goes inside the end symbol).
-     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
      */
     @Nullable
     public EventType getDisplayEventType() {
@@ -48,9 +48,9 @@ public class STaskEnd extends STask<STaskEnd> {
     }
 
     /**
-     * Defines, for the purpose of generating a diagram of the process, the type of BPMN event will be used to
+     * Defines, for the purpose of generating a diagram of the flow, the type of BPMN event will be used to
      * render this end task (the symbol that goes inside the end symbol).
-     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
      */
     public void setDisplayEventType(@Nullable EventType eventType) {
         this.eventType = eventType;

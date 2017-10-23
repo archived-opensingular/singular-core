@@ -158,8 +158,8 @@ public class TaskInstance implements Serializable {
         return getTaskVersion().getAbbreviation();
     }
 
-    public String getProcessName() {
-        return getFlowInstance().getProcessName();
+    public String getFlowName() {
+        return getFlowInstance().getFlowName();
     }
 
     public String getTaskName() {
@@ -313,8 +313,8 @@ public class TaskInstance implements Serializable {
      * @return sempre diferente de null, mas pode ser lista vazia.
      */
     @Nonnull
-    public List<FlowInstance> getChildProcesses() {
-        return Flow.getFlowInstances(getEntity().getChildProcesses());
+    public List<FlowInstance> getChildFlows() {
+        return Flow.getFlowInstances(getEntity().getChildFlows());
     }
 
     private void notifyStateUpdate() {
@@ -347,7 +347,7 @@ public class TaskInstance implements Serializable {
 
     public StringBuilder getExtendedDescription(boolean addAllocated) {
         StringBuilder sb = new StringBuilder(250);
-        sb.append(getFlowInstance().getProcessName()).append(" - ").append(getName());
+        sb.append(getFlowInstance().getFlowName()).append(" - ").append(getName());
         String description = getFlowInstance().getDescription();
         if (description != null) {
             sb.append(" - ").append(description);

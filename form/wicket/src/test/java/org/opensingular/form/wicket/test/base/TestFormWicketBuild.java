@@ -69,7 +69,7 @@ public class TestFormWicketBuild  {
         });
     }
 
-    protected static SInstance createIntance(ISupplier<SType<?>> typeSupplier) {
+    protected static SInstance createInstance(ISupplier<SType<?>> typeSupplier) {
         return SDocumentFactory.empty().createInstance(RefType.of(typeSupplier));
     }
 
@@ -78,14 +78,14 @@ public class TestFormWicketBuild  {
         BSGrid    rootContainer = new BSGrid("teste");
         TestPanel testPanel     = buildTestPanel(rootContainer);
 
-        SIString intance = (SIString) createIntance(() -> {
+        SIString instance = (SIString) createInstance(() -> {
             PackageBuilder pb = dictionary.createNewPackage("teste");
             STypeString tipoCidade = pb.createType("cidade", STypeString.class);
             tipoCidade.asAtr().label("Cidade")/*.editSize(30)*/;
             return tipoCidade;
         });
 
-        IModel<SIString> mCidade = new SInstanceRootModel<SIString>(intance);
+        IModel<SIString> mCidade = new SInstanceRootModel<SIString>(instance);
         mCidade.getObject().setValue("Brasilia");
         WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCidade);
         ctx.build(ViewMode.EDIT);
@@ -105,12 +105,12 @@ public class TestFormWicketBuild  {
         BSGrid rootContainer = new BSGrid("teste");
         TestPanel testPanel = buildTestPanel(rootContainer);
 
-        SIComposite intance = (SIComposite) createIntance(() -> {
+        SIComposite instance = (SIComposite) createInstance(() -> {
             dictionary.loadPackage(SPackageCurriculo.class);
             return dictionary.getType(SPackageCurriculo.TIPO_CURRICULO);
         });
 
-        IModel<SIComposite> mCurriculo = new SInstanceRootModel<SIComposite>(intance);
+        IModel<SIComposite> mCurriculo = new SInstanceRootModel<SIComposite>(instance);
         WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCurriculo);
 //        UIBuilderWicket.buildForEdit(ctx, mCurriculo);
 

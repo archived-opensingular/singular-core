@@ -21,7 +21,7 @@ import org.opensingular.lib.commons.net.Lnk;
 import java.io.Serializable;
 
 @FunctionalInterface
-public interface IProcessCreationPageStrategy extends Serializable {
+public interface IFlowCreationPageStrategy extends Serializable {
 
     public Lnk getCreatePageFor(FlowDefinition<?> flowDefinition, SUser user);
 

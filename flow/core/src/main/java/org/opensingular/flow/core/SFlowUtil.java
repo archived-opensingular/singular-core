@@ -209,11 +209,11 @@ public class SFlowUtil {
         }
     }
 
-    /** Creates a {@link ProcessNotifier} that doesn't do nothing. Useful mainly for implementing tests. */
+    /** Creates a {@link FlowInstanceListener} that doesn't do nothing. Useful mainly for implementing tests. */
     @Nonnull
-    public static ProcessNotifier dummyProcessNotifier() { return new NullNotifier(); }
+    public static FlowInstanceListener dummyFlowInstanceListener() { return new DummyInstanceListener(); }
 
-    private static class NullNotifier implements ProcessNotifier {
+    private static class DummyInstanceListener implements FlowInstanceListener {
         @Override
         public void notifyUserTaskRelocation(TaskInstance taskInstance, SUser responsibleUser, SUser userToNotify,
                 SUser allocatedUser, SUser removedUser) {}

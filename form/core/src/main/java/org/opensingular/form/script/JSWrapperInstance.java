@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * Wrapper para adaptação de um SIntance em um objeto manipulado pela engine de Javascript.
+ * Wrapper para adaptação de um SInstance em um objeto manipulado pela engine de Javascript.
  *
  * @author Daniel Bordin
  */

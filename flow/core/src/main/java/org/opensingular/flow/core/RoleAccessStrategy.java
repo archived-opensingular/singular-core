@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 
 public class RoleAccessStrategy extends TaskAccessStrategy<FlowInstance> {
 
-    public static RoleAccessStrategy of(SBusinessRole processRole) {
-        return new RoleAccessStrategy(processRole);
+    public static RoleAccessStrategy of(SBusinessRole businessRole) {
+        return new RoleAccessStrategy(businessRole);
     }
 
     public static RoleAccessStrategy of(SBusinessRole executionRole, SBusinessRole visualizeRole) {
@@ -75,8 +75,8 @@ public class RoleAccessStrategy extends TaskAccessStrategy<FlowInstance> {
         return canExecute(instance, user);
     }
 
-    private boolean isSameRole(SBusinessRole processRole, IEntityRoleInstance entityRole) {
-        return entityRole.getRole().getAbbreviation().equalsIgnoreCase(processRole.getAbbreviation());
+    private boolean isSameRole(SBusinessRole businessRole, IEntityRoleInstance entityRole) {
+        return entityRole.getRole().getAbbreviation().equalsIgnoreCase(businessRole.getAbbreviation());
     }
 
     @Override
