@@ -80,7 +80,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
 
         final SType<?> currentType = ctx.getCurrentInstance().getType();
 
-        addMinimumSize(currentType, iLista);
+        addInitialNumberOfLines(currentType, iLista, view);
 
         ctx.configureContainer(label);
 
