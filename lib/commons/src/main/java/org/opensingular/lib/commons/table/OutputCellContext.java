@@ -41,7 +41,7 @@ public class OutputCellContext {
     private boolean columnWithSeparator;
 
     OutputCellContext(@Nonnull OutputTableContext outputTableContext, @Nonnull InfoCell cell,
-            @Nonnull DecoratorCell tempDecorator) {
+                      @Nonnull DecoratorCell tempDecorator) {
         this.outputTableContext = outputTableContext;
         this.cell = cell;
         this.value = cell.getValue();
@@ -105,12 +105,16 @@ public class OutputCellContext {
         return columnProcessor.isNullContent(cell);
     }
 
-    /** Verifica se a célula é apenas um conjunto de ações (link ou icones de ações). */
+    /**
+     * Verifica se a célula é apenas um conjunto de ações (link ou icones de ações).
+     */
     public boolean isActionCell() {
         return columnProcessor == ColumnTypeProcessor.ACTION;
     }
 
-    /** Retorna a coluna de celula atual. */
+    /**
+     * Retorna a coluna de celula atual.
+     */
     @Nonnull
     public Column getColumn() {
         return cell.getColumn();
@@ -127,8 +131,7 @@ public class OutputCellContext {
         } else if (targetValue == null) {
             return null;
         }
-        String s = resolveMaxLength(targetValue.toString(), tempDecorator);
-        return AlocproToolkit.plainTextToHtml(s, false);
+        return resolveMaxLength(targetValue.toString(), tempDecorator);
     }
 
     private String resolveMaxLength(String content, DecoratorCell tempDecorator) {
