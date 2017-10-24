@@ -17,6 +17,7 @@
 package org.opensingular.lib.wicket.util.bootstrap.layout;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FeedbackMessage;
@@ -28,6 +29,7 @@ import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.wicket.util.behavior.BSSelectInitBehaviour;
 import org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour;
@@ -141,10 +143,10 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         if (multiple) {
             select.add(new BSSelectInitBehaviour());
         }
-
+        select.add(new AttributeModifier("title", new ResourceModel("BSControls.Select.Title", "")));
         return super.appendTag("select", true,
             ((bootstrap)
-                ? "class='bs-select form-control' title='" + getString("BSControls.Select.Title") + "'"
+                ? "class='bs-select form-control'"
                 : "class='form-control'")
                 + (multiple ? "multiple" : ""),
             select);

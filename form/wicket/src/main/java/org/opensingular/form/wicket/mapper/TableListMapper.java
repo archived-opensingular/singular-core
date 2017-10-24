@@ -99,7 +99,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         final SIList<SInstance> iList = list.getObject();
         final SType<?> currentType = ctx.getCurrentInstance().getType();
 
-        addMinimumSize(currentType, iList);
+        addInitialNumberOfLines(currentType, iList, view);
 
         return TableListPanel.TableListPanelBuilder.build(id,
             (h, form) -> buildHeader(h, form, list, ctx, view, isEdition),

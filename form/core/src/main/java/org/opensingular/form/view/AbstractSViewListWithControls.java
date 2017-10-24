@@ -23,7 +23,9 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
     private boolean newEnabled = true;
     private boolean insertEnabled = false;
     private boolean deleteEnabled = true;
+    private int initialLines;
     private String label;
+
 
     public final boolean isNewEnabled() {
         return newEnabled;
@@ -35,6 +37,10 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
 
     public final boolean isInsertEnabled() {
         return insertEnabled;
+    }
+
+    public int getInitialNumberOfLines() {
+        return initialLines;
     }
 
     public final SELF enableNew() {
@@ -59,6 +65,16 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
 
     public final SELF disableInsert() {
         return setInsertEnabled(false);
+    }
+
+    /**
+     * Configure the number of empty lines that must be added to SIList
+     * @param numberOfLines
+     * @return
+     */
+    public final SELF setInitialNumberOfLines(int numberOfLines) {
+        this.initialLines = numberOfLines;
+        return (SELF) this;
     }
 
     public final SELF setNewEnabled(boolean newEnabled) {
