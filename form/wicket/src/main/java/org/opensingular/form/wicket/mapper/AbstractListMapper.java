@@ -257,7 +257,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
 
                 Component child = renderedChildFunction.apply(item);
                 target.appendJavaScript(JQuery.$(child).append(".fadeOut(200,function(){$(this).remove();});"));
-                remove(item);
+                item.remove();
             } finally {
                 setItemReuseStrategy(DefaultItemReuseStrategy.getInstance());
             }
@@ -328,6 +328,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
             elementsView.removeItem(target, item);
+            target.appendJavaScript(JQuery.$(this).append(".prop('disabled',true);"));
             if (elementsView.getModelObject().isEmpty()) {
                 target.add(form);
             }
