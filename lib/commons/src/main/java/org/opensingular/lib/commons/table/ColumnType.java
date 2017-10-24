@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
  */
 public enum ColumnType {
     //@formatter:off
-    RAW_STRING(ColumnTypeProcessor.RAW),
     STRING(ColumnTypeProcessor.STRING),
     DATE(ColumnTypeProcessor.DATE),
     DATEHOUR(ColumnTypeProcessor.DATE_HOUR),

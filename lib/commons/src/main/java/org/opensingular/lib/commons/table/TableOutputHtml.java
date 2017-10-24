@@ -414,9 +414,9 @@ public class TableOutputHtml extends TableOutput {
 
     private String escapeHTML(String s, ColumnTypeProcessor type) {
         if (type instanceof ColumnTypeProcessor.ColumnTypeProcessorTypeRaw) {
-            return AlocproToolkit.plainTextToHtml(s, false);
+            return s;
         }
-        return s;
+        return AlocproToolkit.plainTextToHtml(s, false);
     }
 
     private void cellTagsOpen(@Nonnull OutputCellContext ctx, InfoCell cell, Column column, PrintWriter out) {
