@@ -36,6 +36,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 class FlowEngine {
@@ -99,7 +100,7 @@ class FlowEngine {
             getPersistenceService().flushSession();
 
             if (!currentDestiny.isImmediateExecution()) {
-                return executeImediate(flowInstance, currentOrigin, currentTransition, currentDestiny, currentParam,
+                return executeImmediately(flowInstance, currentOrigin, currentTransition, currentDestiny, currentParam,
                         newTaskInstance);
             }
 
@@ -162,9 +163,9 @@ class FlowEngine {
         return currentTransition != null && currentOrigin == null;
     }
 
-    private static <P extends FlowInstance> TaskInstance executeImediate(P flowInstance, TaskInstance originTaskInstance,
+    private static <P extends FlowInstance> TaskInstance executeImmediately(P flowInstance, TaskInstance originTaskInstance,
                                                                             STransition transition, STask<?> destinyTask, VarInstanceMap<?, ?> paramIn,
-                                                                            TaskInstance newTaskInstance) {
+                                                                            @Nonnull TaskInstance newTaskInstance) {
         initTask(flowInstance, destinyTask, newTaskInstance);
 
         if (transition != null && transition.hasAutomaticRoleUsersToSet()) {
@@ -179,15 +180,18 @@ class FlowEngine {
         return newTaskInstance;
     }
 
-    private static <P extends FlowInstance> void automaticallySetBusinessRole(P instance, TaskInstance taskInstance,
-                                                                              STransition originTransition) {
+    private static <P extends FlowInstance> void automaticallySetBusinessRole(@Nonnull P instance,
+            @Nonnull TaskInstance taskInstance, @Nonnull STransition originTransition) {
         for (SBusinessRole role : originTransition.getRolesToDefine()) {
             if (role.isAutomaticBusinessRoleAllocation()) {
-                SUser user = role.getBusinessRoleStrategy().getUserForRole(instance, taskInstance);
-                Objects.requireNonNull(user, "Não foi possível determinar a pessoa com o papel " + role.getName()
-                        + " para " + instance.getFullId() + " na transição " + originTransition.getName());
-
-                instance.addOrReplaceUserRole(role.getAbbreviation(), user);
+                Optional<SUser> user = role.getBusinessRoleStrategy().getUserForRole(instance, taskInstance);
+                if (user.isPresent()) {
+                    instance.addOrReplaceUserRole(role.getAbbreviation(), user.get());
+                } else {
+                    throw new SingularFlowException(
+                            "Não foi possível determinar a pessoa com o papel " + role.getName() + " para " +
+                                    instance.getFullId() + " na transição " + originTransition.getName(), taskInstance);
+                }
             }
         }
     }

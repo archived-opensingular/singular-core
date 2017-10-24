@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import org.opensingular.flow.core.entity.AccessStrategyType;
 import org.opensingular.flow.core.entity.IEntityRoleInstance;
 
+import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -91,7 +92,8 @@ public class RoleAccessStrategy extends TaskAccessStrategy<FlowInstance> {
     }
 
     @Override
-    public List<SUser> listAllocableUsers(FlowInstance instance) {
+    @Nonnull
+    public List<SUser> listAllowedUsers(@Nonnull FlowInstance instance) {
         return instance.getUserRoles()
                 .stream()
                 .filter(entityRole -> isSameRole(executionRole, entityRole))

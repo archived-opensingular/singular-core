@@ -198,7 +198,8 @@ public class SFlowUtil {
         }
 
         @Override
-        public List<? extends SUser> listAllocableUsers(FlowInstance instance) {
+        @Nonnull
+        public List<? extends SUser> listAllowedUsers(@Nonnull FlowInstance instance) {
             return Collections.emptyList();
         }
 
@@ -268,7 +269,7 @@ public class SFlowUtil {
 
     private static class EmptyBusinessRoleStrategy extends BusinessRoleStrategy<FlowInstance> {
         @Override
-        public List<? extends SUser> listAllocableUsers(FlowInstance instance) {
+        public List<? extends SUser> listAllowedUsers(FlowInstance instance) {
             return Collections.emptyList();
         }
     }}

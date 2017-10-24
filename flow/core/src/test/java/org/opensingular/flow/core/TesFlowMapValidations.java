@@ -30,7 +30,6 @@ import org.opensingular.internal.lib.commons.test.RunnableEx;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -156,7 +155,7 @@ public class TesFlowMapValidations {
                 humanTask.withExecutionPage((t, u) -> null);
             }
             if (condicions.configPeopleAccessStrategy) {
-                humanTask.uiAccess(new DummyAccessStrategy());
+                humanTask.uiAccess(SFlowUtil.dummyTaskAccessStrategy());
             }
 
             f.addWaitTask(StepsDI.StepWait).setMetaDataValue(TAG, Boolean.TRUE);
@@ -205,30 +204,6 @@ public class TesFlowMapValidations {
         public boolean createTaskWithoutPathToEnd = false;
         public boolean javaTaskSetCode = true;
         public boolean javaTaskSetCodeByBlock = false;
-    }
-
-
-    public static class DummyAccessStrategy extends TaskAccessStrategy<FlowInstance> {
-
-        @Override
-        public boolean canExecute(FlowInstance instance, SUser user) {
-            return false;
-        }
-
-        @Override
-        public Set<Integer> getFirstLevelUsersCodWithAccess(FlowInstance instance) {
-            return null;
-        }
-
-        @Override
-        public List<? extends SUser> listAllocableUsers(FlowInstance instance) {
-            return null;
-        }
-
-        @Override
-        public List<String> getExecuteRoleNames(FlowDefinition<?> definition, STask<?> task) {
-            return null;
-        }
     }
 }
 

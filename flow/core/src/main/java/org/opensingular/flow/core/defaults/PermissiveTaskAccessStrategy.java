@@ -22,6 +22,7 @@ import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.SUser;
 import org.opensingular.flow.core.TaskAccessStrategy;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -44,7 +45,8 @@ public class PermissiveTaskAccessStrategy extends TaskAccessStrategy<FlowInstanc
     }
 
     @Override
-    public List<? extends SUser> listAllocableUsers(FlowInstance instance) {
+    @Nonnull
+    public List<? extends SUser> listAllowedUsers(@Nonnull FlowInstance instance) {
         return Collections.emptyList();
     }
 

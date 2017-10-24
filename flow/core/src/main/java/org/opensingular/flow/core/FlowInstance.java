@@ -299,9 +299,10 @@ public class FlowInstance implements Serializable {
      *
      * @return os usuários com direitos de execução.
      */
-    public List<SUser> listAllocableUsers() {
+    @Nonnull
+    public List<SUser> listAllowedUsers() {
         return getAccessStrategy()
-                .map(strategy -> (List<SUser>) strategy.listAllocableUsers(this))
+                .map(strategy -> (List<SUser>) strategy.listAllowedUsers(this))
                 .orElse(Collections.emptyList());
     }
 
@@ -450,6 +451,7 @@ public class FlowInstance implements Serializable {
      * @param now o momento da transição.
      * @return a tarefa corrente depois da transição.
      */
+    @Nonnull
     protected final TaskInstance updateState(TaskInstance originTaskInstance, STransition originTransition,
             @Nonnull STask<?> task, Date now) {
         synchronized (this) {

@@ -291,7 +291,7 @@ public class TestFlowBeanInjection extends TestFlowExecutionSupport {
         }
 
         @Override
-        public List<? extends SUser> listAllocableUsers(FlowInstance instance) {
+        public List<? extends SUser> listAllowedUsers(FlowInstance instance) {
             return null;
         }
 

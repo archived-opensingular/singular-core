@@ -283,7 +283,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
         IEntityFlowVersion version = getPersistenceService().retrieveFlowVersionByCod(entityVersionCod);
         if (version == null) {
             String errorMsg = createErrorMsg(
-                    String.format("Definicao demanda inconsistente com o BD: codigo '%d' não encontrado",
+                    String.format("Definicao demanda inconsistente com o BD: entityVersionCod '%d' não encontrado",
                             entityVersionCod));
             entityVersionCod = null;
             throw new SingularFlowException(errorMsg, this);
