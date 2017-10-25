@@ -96,8 +96,8 @@ public class STypeStringMultipleSelectionFieldTest {
     @Test
     public void rendersAListWithDanglingOptions() {
         tester.getDummyPage().addInstancePopulator(instance ->{
-            SIList campo = (SIList) instance.getField(fieldType.getNameSimple());
-            SInstance element = campo.addNew();
+            SIList field = (SIList) instance.getField(fieldType.getNameSimple());
+            SInstance element = field.addNew();
             element.setValue("avocado");
         });
         tester.startDummyPage();

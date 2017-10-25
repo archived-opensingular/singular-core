@@ -19,7 +19,7 @@ package org.opensingular.flow.core;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.opensingular.flow.core.TestProcessWithFlowDecisionAsFirstStep.FlowWithFlowDecisionAsFirstStep.StepsDE;
+import org.opensingular.flow.core.TestFlowWithFlowDecisionAsFirstStep.FlowWithFlowDecisionAsFirstStep.StepsDE;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 
@@ -27,7 +27,7 @@ import org.opensingular.internal.lib.commons.test.SingularTestUtil;
  * @author Daniel C. Bordin on 18/03/2017.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class TestProcessWithFlowDecisionAsFirstStep extends TestFlowExecutionSupport {
+public class TestFlowWithFlowDecisionAsFirstStep extends TestFlowExecutionSupport {
 
     public static final String FLAG = "flag";
 

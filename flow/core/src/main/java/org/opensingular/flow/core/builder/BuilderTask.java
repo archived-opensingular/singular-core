@@ -17,7 +17,6 @@
 package org.opensingular.flow.core.builder;
 
 import org.opensingular.flow.core.ITaskDefinition;
-import org.opensingular.flow.core.SFlowUtil;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.flow.core.TaskAccessStrategy;
@@ -41,7 +40,7 @@ public interface BuilderTask {
 
     public BuilderTask uiAccess(TaskAccessStrategy<?> accessStrategy);
 
-    public BuilderTask addStartedTaskListener(StartedTaskListener listenerInicioTarefa);
+    public BuilderTask addStartedTaskListener(StartedTaskListener startedTaskListener);
 
     @Nonnull
     public <T extends Serializable> BuilderTask setMetaDataValue(@Nonnull MetaDataRef<T> propRef, T value);

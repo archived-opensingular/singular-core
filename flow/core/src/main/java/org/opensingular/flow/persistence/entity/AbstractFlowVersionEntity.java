@@ -38,7 +38,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * The base persistent class for the TB_VERSAO_PROCESSO database table.
+ * The base persistent class for the version of a flow definition database table.
  * <p>
  * Must declare a {@link GenericGenerator} with name
  * {@link AbstractFlowVersionEntity#PK_GENERATOR_NAME}.

@@ -41,7 +41,6 @@ public class ActorWrapper {
                 return null;
             }
 
-            @Override
             public String getCodUsuario() {
                 return actor.getCodUsuario();
             }

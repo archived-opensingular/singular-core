@@ -23,7 +23,7 @@ import org.opensingular.flow.core.SStart;
 import java.util.function.Consumer;
 
 /**
- * Builder para configuração dos pontos de start (inicialização) de um processo.
+ * Builder para configuração dos pontos de start (inicialização) de um fluxo.
  *
  * @author Daniel C. Bordin on 19/03/2017.
  */
@@ -47,7 +47,7 @@ public interface BuilderStart<SELF extends BuilderStart<SELF>> extends BuilderPa
 
     /**
      * Define o código de inicialização a ser executado para cada nova instânca criada a partir deste ponto de start
-     * antes do processo ser executado.
+     * antes do fluxo ser executado.
      *
      * @see SStart#setStartInitializer(SStart.IStartInitializer)
      */

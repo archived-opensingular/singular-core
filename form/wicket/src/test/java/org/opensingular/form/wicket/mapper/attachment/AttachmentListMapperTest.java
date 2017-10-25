@@ -75,7 +75,7 @@ public class AttachmentListMapperTest {
         // * Adicionar um arquivo
         // * Compara se o binario do arquivo adicionado bate com o armazenado na SInstance
         // * Fazer downalod do arquivo
-        // * Verificar se a SIntance está consistente
+        // * Verificar se a SInstance está consistente
     }
 
     private static void createType(STypeComposite<?> baseType) {

@@ -16,21 +16,21 @@
 
 package org.opensingular.form.wicket.model;
 
-import java.io.Serializable;
-
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 
-public abstract class AbstractSInstanceItemListaModel<I extends SInstance>
+import java.io.Serializable;
+
+public abstract class AbstractSInstanceItemListModel<I extends SInstance>
     extends AbstractSInstanceModel<I>
     implements IChainingModel<I> {
 
     private Serializable rootTarget;
 
-    public AbstractSInstanceItemListaModel(Serializable rootTarget) {
+    public AbstractSInstanceItemListModel(Serializable rootTarget) {
         this.rootTarget = rootTarget;
     }
 
@@ -42,11 +42,11 @@ public abstract class AbstractSInstanceItemListaModel<I extends SInstance>
 
     @Override
     public I getObject() {
-        SIList<I> iLista = getRootTarget();
-        if (iLista == null || getIndex() < 0 || getIndex() >= iLista.size()) {
+        SIList<I> iList = getRootTarget();
+        if (iList == null || getIndex() < 0 || getIndex() >= iList.size()) {
             return null;
         }
-        return (I) iLista.get(getIndex());
+        return (I) iList.get(getIndex());
     }
 
     @SuppressWarnings("unchecked")
@@ -91,7 +91,7 @@ public abstract class AbstractSInstanceItemListaModel<I extends SInstance>
         if (getClass() != obj.getClass())
             return false;
 
-        final AbstractSInstanceItemListaModel<?> other = (AbstractSInstanceItemListaModel<?>) obj;
+        final AbstractSInstanceItemListModel<?> other = (AbstractSInstanceItemListModel<?>) obj;
         final I object = this.getObject();
         final I otherObject = (I) other.getObject();
 

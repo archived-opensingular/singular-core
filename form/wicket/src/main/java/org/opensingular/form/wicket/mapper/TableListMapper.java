@@ -96,10 +96,10 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         final SViewListByTable view = (SViewListByTable) ctx.getView();
         final ViewMode viewMode = ctx.getViewMode();
         final Boolean isEdition = viewMode == null || viewMode.isEdition();
-        final SIList<SInstance> iLista = list.getObject();
+        final SIList<SInstance> iList = list.getObject();
         final SType<?> currentType = ctx.getCurrentInstance().getType();
 
-        addInitialNumberOfLines(currentType, iLista, view);
+        addInitialNumberOfLines(currentType, iList, view);
 
         return TableListPanel.TableListPanelBuilder.build(id,
             (h, form) -> buildHeader(h, form, list, ctx, view, isEdition),
@@ -196,12 +196,12 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                 ? fields.stream().mapToInt((x) -> x.asAtrBootstrap().getColPreference(1)).sum()
                 : compositeElementsType.asAtrBootstrap().getColPreference(1);
 
-            IConsumer<SType<?>> columnCallback = tCampo -> {
-                final Integer preferentialWidth = tCampo.asAtrBootstrap().getColPreference(1);
-                final IModel<String> headerModel = $m.ofValue(tCampo.asAtr().getLabel());
+            IConsumer<SType<?>> columnCallback = field -> {
+                final Integer preferentialWidth = field.asAtrBootstrap().getColPreference(1);
+                final IModel<String> headerModel = $m.ofValue(field.asAtr().getLabel());
                 final BSTDataCell cell = row.newTHeaderCell(headerModel);
                 final String width = String.format("width:%.0f%%;", (100.0 * preferentialWidth) / sumWidthPref);
-                final boolean isCampoObrigatorio = tCampo.asAtr().isRequired();
+                final boolean requiredField = field.asAtr().isRequired();
 
                 ctx.configureContainer(headerModel);
 
@@ -209,7 +209,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                 cell.add(new ClassAttributeModifier() {
                     @Override
                     protected Set<String> update(Set<String> oldClasses) {
-                        if (isCampoObrigatorio && isEdition) {
+                        if (requiredField && isEdition) {
                             oldClasses.add("singular-form-required");
                         } else {
                             oldClasses.remove("singular-form-required");
@@ -220,8 +220,8 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             };
 
             if (view.isRenderCompositeFieldsAsColumns()) {
-                for (SType<?> tCampo : fields)
-                    columnCallback.accept(tCampo);
+                for (SType<?> field : fields)
+                    columnCallback.accept(field);
             } else {
                 columnCallback.accept(compositeElementsType);
             }

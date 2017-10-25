@@ -254,7 +254,7 @@ public abstract class SingularStudioSimpleCRUDPanel<STYPE extends SType<INSTANCE
             dataTableBuilder.setBorderedTable(false);
 
             BSDataTable<INSTANCE, String> table = dataTableBuilder.build("table");
-            table.add($b.classAppender("worklist"));
+            table.add($b.classAppender("worklList"));
 
             add(table);
             StudioCRUDPermissionStrategy studioCRUDPermissionStrategy = studioCRUDPermissionStrategySupplier.get();

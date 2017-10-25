@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 public class TestSingularIOUtils {
 
     @Test
-    public void testFormatacaoBytes() {
+    public void testFormatBytes() {
         assertFormatBytes(0, "0 B", "0 B", "0 B", "0 B");
         assertFormatBytes(27, "27 B", "27 B", "27 B", "27 B");
         assertFormatBytes(999, "999 B", "999 B", "1 KB", "1 KB");

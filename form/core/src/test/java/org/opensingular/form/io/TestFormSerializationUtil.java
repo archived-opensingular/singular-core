@@ -69,7 +69,7 @@ public class TestFormSerializationUtil extends TestCaseForm {
         super(testFormConfig);
     }
 
-    public static void testSerializacao(InstanceSerializableRef<?> ref) {
+    public static void testSerialization(InstanceSerializableRef<?> ref) {
         SInstance instance2 = SingularIOUtils.serializeAndDeserialize(ref).get();
         assertEquivalent(ref.get().getDocument(), instance2.getDocument(), true);
         assertEquivalent(ref.get(), instance2);
@@ -78,11 +78,11 @@ public class TestFormSerializationUtil extends TestCaseForm {
     /**
      * Serializa e deserializa a instância e testa se a versão original e a deserializada possuem o mesmo conteúdo.
      */
-    public static SInstance testSerializacao(SInstance original) {
-        return testSerializacao(original, FormSerializationUtil::toSerializedObject, FormSerializationUtil::toInstance);
+    public static SInstance testSerialization(SInstance original) {
+        return testSerialization(original, FormSerializationUtil::toSerializedObject, FormSerializationUtil::toInstance);
     }
 
-    private static SInstance testSerializacao(SInstance original, Function<SInstance, FormSerialized> toSerial,
+    private static SInstance testSerialization(SInstance original, Function<SInstance, FormSerialized> toSerial,
                                               Function<FormSerialized, SInstance> fromSerial) {
         // Testa sem transformar em array de bytes
         FormSerialized fs         = toSerial.apply(original);
@@ -98,12 +98,12 @@ public class TestFormSerializationUtil extends TestCaseForm {
         return instance2;
     }
 
-    public static SInstance serializarEDeserializar(SInstance original) {
-        return serializarEDeserializar(original, FormSerializationUtil::toSerializedObject,
+    public static SInstance serializeAndDeserialize(SInstance original) {
+        return serializeAndDeserialize(original, FormSerializationUtil::toSerializedObject,
                 fs -> FormSerializationUtil.toInstance(fs));
     }
 
-    private static SInstance serializarEDeserializar(SInstance original, Function<SInstance, FormSerialized> toSerial,
+    private static SInstance serializeAndDeserialize(SInstance original, Function<SInstance, FormSerialized> toSerial,
                                                      Function<FormSerialized, SInstance> fromSerial) {
         try {
             ByteArrayOutputStream out1 = new ByteArrayOutputStream();
@@ -146,7 +146,7 @@ public class TestFormSerializationUtil extends TestCaseForm {
     @Test
     public void testVerySimplesCase() {
         SInstance instance = createSerializableTestInstance("teste.endereco", pacote -> pacote.createType("endereco", STypeString.class));
-        testSerializacao(instance);
+        testSerialization(instance);
 
     }
 
@@ -162,13 +162,13 @@ public class TestFormSerializationUtil extends TestCaseForm {
         instance.setValue("rua", "A1");
         instance.setValue("bairro", "A2");
         instance.setValue("numero", 10);
-        testSerializacao(instance);
+        testSerialization(instance);
 
         // Testa um subPath
-        testSerializacao(instance.getField("bairro"));
+        testSerialization(instance.getField("bairro"));
 
         instance.setValue("numero", null);
-        testSerializacao(instance);
+        testSerialization(instance);
     }
 
     @Test
@@ -178,9 +178,9 @@ public class TestFormSerializationUtil extends TestCaseForm {
         instance.setValue("bairro", "A2");
         instance.setValue("numero", 10);
         instance.getValue("rua");
-        testSerializacao(instance);
+        testSerialization(instance);
 
-        testSerializacao(instance.getField("bairro"));
+        testSerialization(instance.getField("bairro"));
     }
 
     @Test
@@ -189,7 +189,7 @@ public class TestFormSerializationUtil extends TestCaseForm {
 
         instance.setValue("bairro", "A2");
         instance.setValue("rua", null);
-        testSerializacao(instance);
+        testSerialization(instance);
     }
 
     @Test
@@ -201,7 +201,7 @@ public class TestFormSerializationUtil extends TestCaseForm {
             sub.addFieldString("rua");
         });
         bloco.setValue("ref.rua", null);
-        testSerializacao(bloco);
+        testSerialization(bloco);
     }
 
     @Test
@@ -211,7 +211,7 @@ public class TestFormSerializationUtil extends TestCaseForm {
             tipoBloco.addField("ref", STypeTesteEndereco.class);
         });
         bloco.setValue("ref.rua", null);
-        testSerializacao(bloco);
+        testSerialization(bloco);
     }
 
     @Test
@@ -238,7 +238,7 @@ public class TestFormSerializationUtil extends TestCaseForm {
         instance.asAtrAnnotation().text("numero zero ?");
 
         Assertions.assertThat(instance.asAtrAnnotation().text()).isEqualTo("numero zero ?");
-        SIComposite r = (SIComposite) testSerializacao(instance);
+        SIComposite r = (SIComposite) testSerialization(instance);
         assertThat(r.getField("rua").getValue()).isEqualTo("rua dos bobos");
         Assertions.assertThat(r.asAtrAnnotation().text()).isEqualTo("numero zero ?");
     }
@@ -252,10 +252,10 @@ public class TestFormSerializationUtil extends TestCaseForm {
         instance.addValue("A2");
         instance.addValue("A3");
         instance.addValue("A4");
-        testSerializacao(instance);
+        testSerialization(instance);
 
         // Testa um subPath
-        testSerializacao(instance.getField("[1]"));
+        testSerialization(instance.getField("[1]"));
     }
 
     @Test
@@ -275,11 +275,11 @@ public class TestFormSerializationUtil extends TestCaseForm {
             e.setValue("rua", "A31");
             e.setValue("bairro", "A32");
         });
-        testSerializacao(instance);
+        testSerialization(instance);
 
         // Testa um subPath
-        testSerializacao(instance.getField("[0].rua"));
-        testSerializacao(instance.getField("[2].bairro"));
+        testSerialization(instance.getField("[0].rua"));
+        testSerialization(instance.getField("[2].bairro"));
     }
 
     @Test
@@ -300,11 +300,11 @@ public class TestFormSerializationUtil extends TestCaseForm {
         contato.getFieldList("enderecos").addNew();
         contato.setValue("enderecos[0].rua", "A31");
         contato.setValue("enderecos[0].cidade", "A32");
-        testSerializacao(instance);
+        testSerialization(instance);
 
         // Testa um subPath
-        testSerializacao(instance.getField("nome"));
-        testSerializacao(instance.getField("contatos"));
+        testSerialization(instance.getField("nome"));
+        testSerialization(instance.getField("contatos"));
     }
 
     @Test
@@ -313,21 +313,21 @@ public class TestFormSerializationUtil extends TestCaseForm {
                 "", STypeString.class));
 
         instance.getDocument().bindLocalService("A", String.class, RefService.of("AA"));
-        SInstance instance2 = testSerializacao(instance);
+        SInstance instance2 = testSerialization(instance);
         Assert.assertEquals("AA", instance2.getDocument().lookupLocalService("A", String.class).orElse(null));
 
         // Testa itens não mantido entre serializações
         instance.getDocument().bindLocalService("B", String.class, RefService.ofToBeDescartedIfSerialized("BB"));
-        instance2 = serializarEDeserializar(instance);
+        instance2 = serializeAndDeserialize(instance);
         assertNull(instance2.getDocument().lookupLocalService("B", String.class).orElse(null));
 
     }
 
     @Test
-    public void testSerializacaoAtributos() {
-        SIComposite instance = (SIComposite) createSerializableTestInstance("teste.endereco", pacote -> {
-            pacote.loadPackage(SPackageBasic.class);
-            STypeComposite<?> tipoEndereco = pacote.createCompositeType("endereco");
+    public void testAttributeSerealization() {
+        SIComposite instance = (SIComposite) createSerializableTestInstance("teste.endereco", pkg -> {
+            pkg.loadPackage(SPackageBasic.class);
+            STypeComposite<?> tipoEndereco = pkg.createCompositeType("endereco");
             tipoEndereco.addFieldString("rua");
             tipoEndereco.addFieldString("cidade");
         });
@@ -336,7 +336,7 @@ public class TestFormSerializationUtil extends TestCaseForm {
         instance.getField("rua").asAtr().label("Street");
         instance.getField("cidade").asAtr().label("City");
 
-        SIComposite instance2 = (SIComposite) testSerializacao(instance);
+        SIComposite instance2 = (SIComposite) testSerialization(instance);
 
         assertEquals("Address", instance2.asAtr().getLabel());
         assertEquals("Street", instance2.getField("rua").asAtr().getLabel());
@@ -351,7 +351,7 @@ public class TestFormSerializationUtil extends TestCaseForm {
     @Test
     public void testSerializationAttributes_withDinamicLoadedAttribute() {
         SInstance instance  = createDinamicAttributeInstance();
-        SInstance instance2 = serializarEDeserializar(instance);
+        SInstance instance2 = serializeAndDeserialize(instance);
         assertCorrectAttributeRead(assertInstance(instance2));
     }
 
@@ -362,8 +362,8 @@ public class TestFormSerializationUtil extends TestCaseForm {
     @Test
     public void testSerializationAttributes_withDinamicLoadedAttribute_twice() {
         SInstance instance  = createDinamicAttributeInstance();
-        SInstance instance2 = serializarEDeserializar(instance);
-        SInstance instance3 = serializarEDeserializar(instance2);
+        SInstance instance2 = serializeAndDeserialize(instance);
+        SInstance instance3 = serializeAndDeserialize(instance2);
         assertCorrectAttributeRead(assertInstance(instance3));
     }
 
@@ -422,7 +422,7 @@ public class TestFormSerializationUtil extends TestCaseForm {
         endereco.setValue("aqui");
 
         InstanceSerializableRef<?> ref = endereco.getSerializableRef();
-        testSerializacao(ref);
+        testSerialization(ref);
     }
 
     @Test

@@ -29,9 +29,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Service to provide an interface to retrieve data about the process runtime
+ * Service to provide an interface to retrieve data about the flow runtime
  */
-public interface IProcessDataService<I extends FlowInstance> {
+public interface IFlowDataService<I extends FlowInstance> {
 
     @Nonnull
     I retrieveInstance(@Nonnull Integer entityCod);

@@ -21,7 +21,7 @@ import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 /**
- * The primary key class for the RL_PERMISSAO_PROCESSO database table.
+ * The primary key class for the flow permission database table.
  */
 @Embeddable
 public class FlowRightPK implements Serializable {

@@ -30,7 +30,7 @@ import javax.annotation.Nonnull;
  */
 public abstract class SParametersEnabled {
 
-    private static MetaDataRef<Boolean> AUTO_BIND_VARIABLE = new MetaDataRef("autoBindToProcessVariable",
+    private static MetaDataRef<Boolean> AUTO_BIND_VARIABLE = new MetaDataRef("autoBindToFlowVariable",
             Boolean.class);
 
     private VarDefinitionMap<?> parameters;
@@ -46,13 +46,13 @@ public abstract class SParametersEnabled {
     }
 
     /**
-     * Adiciona um parâmetro que automaticamente atualiza a variável do processo. O parâmetro têm as mesmas
+     * Adiciona um parâmetro que automaticamente atualiza a variável do fluxo. O parâmetro têm as mesmas
      * definições da variável.
      */
-    public SParametersEnabled addParamBindedToProcessVariable(String ref, boolean required) {
+    public SParametersEnabled addParamBindedToFlowVariable(String ref, boolean required) {
         VarDefinition defVar = getFlowMap().getFlowDefinition().getVariables().getDefinition(ref);
         if (defVar == null) {
-            throw new SingularFlowException("Variable '" + ref + "' is not defined in process definition.", getFlowMap());
+            throw new SingularFlowException("Variable '" + ref + "' is not defined in flow definition.", getFlowMap());
         }
         VarDefinition newVarDef = getParameters().addVariable(defVar.copy());
         newVarDef.setRequired(required);
@@ -61,13 +61,13 @@ public abstract class SParametersEnabled {
     }
 
     /** Verifica se a definição indica que a variável deve ser automaticamente copiada para as variável da instância. */
-    final static boolean isAutoBindedToProcessVariable(@Nonnull VarDefinition varDef) {
+    final static boolean isAutoBindedToFlowVariable(@Nonnull VarDefinition varDef) {
         return varDef.getMetaDataValue(AUTO_BIND_VARIABLE, Boolean.FALSE);
     }
 
     /** Verifica se a definição indica que a variável deve ser automaticamente copiada para as variável da instância. */
-    final static boolean isAutoBindedToProcessVariable(@Nonnull VarInstance var) {
-        return isAutoBindedToProcessVariable(var.getDefinition());
+    final static boolean isAutoBindedToFlowVariable(@Nonnull VarInstance var) {
+        return isAutoBindedToFlowVariable(var.getDefinition());
     }
 
     @Nonnull

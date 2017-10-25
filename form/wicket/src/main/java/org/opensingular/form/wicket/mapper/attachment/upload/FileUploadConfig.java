@@ -20,8 +20,13 @@ import org.opensingular.lib.commons.base.SingularProperties;
 
 import java.io.Serializable;
 
-import static org.opensingular.lib.commons.base.SingularProperties.*;
-import static org.opensingular.lib.commons.util.ConversionUtils.toLongHumane;
+import static org.opensingular.internal.lib.commons.util.ConversionUtils.toLongHumane;
+import static org.opensingular.lib.commons.base.SingularProperties.FILEUPLOAD_DEFAULT_MAX_FILE_SIZE;
+import static org.opensingular.lib.commons.base.SingularProperties.FILEUPLOAD_DEFAULT_MAX_REQUEST_SIZE;
+import static org.opensingular.lib.commons.base.SingularProperties.FILEUPLOAD_GLOBAL_MAX_FILE_AGE;
+import static org.opensingular.lib.commons.base.SingularProperties.FILEUPLOAD_GLOBAL_MAX_FILE_COUNT;
+import static org.opensingular.lib.commons.base.SingularProperties.FILEUPLOAD_GLOBAL_MAX_FILE_SIZE;
+import static org.opensingular.lib.commons.base.SingularProperties.FILEUPLOAD_GLOBAL_MAX_REQUEST_SIZE;
 
 public class FileUploadConfig implements Serializable {
 

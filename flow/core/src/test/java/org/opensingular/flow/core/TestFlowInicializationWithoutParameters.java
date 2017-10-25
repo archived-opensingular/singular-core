@@ -19,7 +19,7 @@ package org.opensingular.flow.core;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.opensingular.flow.core.TestProcessInicializationWithoutParameters.FlowWithInitialization.Steps;
+import org.opensingular.flow.core.TestFlowInicializationWithoutParameters.FlowWithInitialization.Steps;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 
 import static org.junit.Assert.assertTrue;
@@ -28,7 +28,7 @@ import static org.junit.Assert.assertTrue;
  * @author Daniel C. Bordin on 18/03/2017.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class TestProcessInicializationWithoutParameters extends TestFlowExecutionSupport {
+public class TestFlowInicializationWithoutParameters extends TestFlowExecutionSupport {
 
     public static final String FLAG = "flag";
 
@@ -68,13 +68,13 @@ public class TestProcessInicializationWithoutParameters extends TestFlowExecutio
             f.addWaitTask(Steps.Second);
             f.addEndTask(Steps.End);
 
-            f.setStartTask(Steps.First).setInitializer(this::processInitializer);
+            f.setStartTask(Steps.First).setInitializer(this::flowInitializer);
             f.from(Steps.First).go(Steps.Second).thenGo(Steps.End);
 
             return f.build();
         }
 
-        private void processInitializer(FlowInstance instance, StartCall<FlowInstance> startCall) {
+        private void flowInitializer(FlowInstance instance, StartCall<FlowInstance> startCall) {
             startInitializerCalled = true;
             instance.getVariables().setValue(FLAG, 1);
             instance.start();

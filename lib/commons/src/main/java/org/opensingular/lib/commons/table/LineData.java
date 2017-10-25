@@ -116,9 +116,9 @@ public final class LineData {
 
     public List<LineData[]> normalizeLevels(int max) {
         List<LineData[]> list = new ArrayList<>(getLines());
-        LineData[] nova = new LineData[max];
-        nova[0] = this;
-        list.add(nova);
+        LineData[] newLine = new LineData[max];
+        newLine[0] = this;
+        list.add(newLine);
         normalizeChildren(list, 1, max);
         return list;
     }

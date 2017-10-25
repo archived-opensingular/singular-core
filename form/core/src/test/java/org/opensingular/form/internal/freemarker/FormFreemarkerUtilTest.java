@@ -18,8 +18,6 @@
 
 package org.opensingular.form.internal.freemarker;
 
-import java.util.Date;
-
 import org.fest.assertions.api.AbstractAssert;
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.api.StringAssert;
@@ -35,13 +33,15 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.type.core.STypeString;
 
+import java.util.Date;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
 public class FormFreemarkerUtilTest extends TestCaseForm {
 
     private STypeComposite<? extends SIComposite>               curriculoType;
-    private STypeComposite<SIComposite>                         dadosType;
+    private STypeComposite<SIComposite> dataType;
     private STypeList<STypeComposite<SIComposite>, SIComposite> certificadosType;
 
     public FormFreemarkerUtilTest(TestFormConfig testFormConfig) {
@@ -53,10 +53,10 @@ public class FormFreemarkerUtilTest extends TestCaseForm {
         PackageBuilder pkt = createTestPackage();
         curriculoType = pkt.createCompositeType("curriculo");
 
-        dadosType = curriculoType.addFieldComposite("dados");
-        dadosType.addFieldString("nome");
-        dadosType.addFieldInteger("idade");
-        dadosType.addFieldString("time");
+        dataType = curriculoType.addFieldComposite("dados");
+        dataType.addFieldString("nome");
+        dataType.addFieldInteger("idade");
+        dataType.addFieldString("time");
 
         certificadosType = curriculoType.addFieldListOfComposite("certificados", "certificado");
         STypeComposite<SIComposite> certificadoType = certificadosType.getElementsType();

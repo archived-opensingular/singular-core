@@ -21,9 +21,9 @@ import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
 import org.opensingular.flow.core.property.MetaDataRef;
 import org.opensingular.flow.core.variable.VarService;
-import org.opensingular.lib.commons.base.SingularException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,7 +38,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * <p>Esta classe representa o mapa de fluxo de uma dada definição de processo.</p>
+ * Esta classe representa o mapa de atividades e transições de uma dada definição de fluxo.
  *
  * @author Daniel Bordin
  */
@@ -62,33 +62,25 @@ public class FlowMap {
     private final Map<String, DashboardView> dashboardViews = new LinkedHashMap<>();
 
     /**
-     * <p>Instancia um novo mapa para a definição de processo especificado.</p>
-     *
-     * @param flowDefinition a definição de processo especificado.
+     * Instancia um novo mapa para a definição de fluxo especificado.
      */
     public FlowMap(FlowDefinition<?> flowDefinition) {
         this.flowDefinition = flowDefinition;
     }
 
     /**
-     * <p>Ponto de extensão para customizações. Cria uma nova transição com as características
-     * informadas.</p>
+     * Ponto de extensão para customizações. Cria uma nova transição com as características
+     * informadas.
      *
-     * @param origin tarefa de origem.
      * @param name o nome da transição.
-     * @param destination a tarefa destino.
-     * @param type o tipo de transição.
-     * @return a nova transição criada.
      */
     protected STransition newTransition(STask<?> origin, String name, STask<?> destination) {
         return new STransition(origin, name, destination);
     }
 
     /**
-     * <p>Retorna as tarefas definidas neste mapa. Apenas tarefas que não são do tipo fim
-     * ({@link TaskType#END}) são retornadas.</p>
-     *
-     * @return as tarefas definidas.
+     * Retorna as tarefas definidas neste mapa. Apenas tarefas que não são do tipo fim
+     * ({@link TaskType#END}) são retornadas.
      */
     @Nonnull
     public Collection<STask<?>> getTasks() {
@@ -109,9 +101,7 @@ public class FlowMap {
     }
 
     /**
-     * <p>Retorna as tarefas definidas neste mapa do tipo {@link TaskType#HUMAN}.</p>
-     *
-     * @return as tarefas definidas do tipo {@link TaskType#HUMAN} ou uma lista vazia.
+     * Retorna as tarefas definidas neste mapa do tipo {@link TaskType#HUMAN} ou uma lista vazia.
      */
     @Nonnull
     public Collection<STaskHuman> getHumanTasks() {
@@ -119,9 +109,7 @@ public class FlowMap {
     }
 
     /**
-     * Retorna as tarefas definidas neste mapa do tipo {@link TaskType#JAVA}.
-     *
-     * @return as tarefas definidas do tipo {@link TaskType#JAVA} ou uma lista vazia.
+     * Retorna as tarefas definidas neste mapa do tipo {@link TaskType#JAVA} ou uma lista vazia.
      */
     @Nonnull
     public Collection<STaskJava> getJavaTasks() {
@@ -129,9 +117,7 @@ public class FlowMap {
     }
 
     /**
-     * <p>Retorna as tarefas definidas neste mapa do tipo {@link TaskType#WAIT}.</p>
-     *
-     * @return as tarefas definidas do tipo {@link TaskType#WAIT} ou uma lista vazia.
+     * Retorna as tarefas definidas neste mapa do tipo {@link TaskType#WAIT} ou uma lista vazia.
      */
     @Nonnull
     public Collection<STaskWait> getWaitTasks() {
@@ -139,10 +125,7 @@ public class FlowMap {
     }
 
     /**
-     * Retorna as tarefas definidas neste mapa do tipo especificado.
-     *
-     * @param IEntityTaskType o tipo especificado.
-     * @return as tarefas definidas do tipo especificado ou uma lista vazia
+     * Retorna as tarefas definidas neste mapa do tipo especificado ou lista vazia.
      */
     @Nonnull
     public Collection<? extends STask<?>> getTasks(IEntityTaskType IEntityTaskType) {
@@ -156,9 +139,7 @@ public class FlowMap {
     }
 
     /**
-     * <p>Retorna as tarefas definidas neste mapa do tipo fim ({@link TaskType#END}).</p>
-     *
-     * @return as tarefas definidas do tipo fim.
+     * Retorna as tarefas definidas neste mapa do tipo fim ({@link TaskType#END}) ou uma lista vazia.
      */
     @Nonnull
     public Collection<STaskEnd> getEndTasks() {
@@ -166,56 +147,46 @@ public class FlowMap {
     }
 
     /**
-     * <p>Verifica se há um papel definido com a sigla especificada.</p>
-     *
-     * @param sigla a sigla especificada.
-     * @return {@code true} caso exista; {@code false} caso contrário.
+     * Verifica se há um papel definido com a sigla especificada.
      */
-    public boolean hasRoleWithAbbreviation(String sigla) {
-        return rolesByAbbreviation.containsKey(sigla.toLowerCase());
+    public boolean hasRoleWithAbbreviation(String abbreviation) {
+        return rolesByAbbreviation.containsKey(abbreviation.toLowerCase());
     }
 
     /**
-     * <p>Retorna o papel definido com a sigla especificada.</p>
-     *
-     * @param abbreviation a sigla especificada.
-     * @return o papel definido; {@code null} caso não haja papel com a sigla especificada.
+     * Retorna o papel definido com a sigla especificada.
      */
+    @Nullable
     public SBusinessRole getRoleWithAbbreviation(String abbreviation) {
         return rolesByAbbreviation.get(abbreviation.toLowerCase());
     }
 
     /**
-     * <p>Retorna os papeis definidos. A coleção retornada é do tipo {@link ImmutableSet}.</p>
-     *
-     * @return todos os papeis definidos.
+     * Retorna os papeis definidos. A coleção retornada é do tipo {@link ImmutableSet}.
      */
+    @Nonnull
     public Collection<SBusinessRole> getRoles() {
         return ImmutableSet.copyOf(rolesByAbbreviation.values());
     }
 
     /**
-     * <p>Adiciona um novo papel a este mapa.</p>
+     * Adiciona um novo papel a este mapa.
      *
-     * @param name o nome do papel.
-     * @param abbreviation a sigla do papel.
-     * @param businessRoleStrategy o {@link BusinessRoleStrategy} do papel.
      * @param automaticUserAllocation indicador de alocação automática.
-     * @return o papel adicionado ao mapa.
      */
     public SBusinessRole addRoleDefinition(String name, String abbreviation,
             BusinessRoleStrategy<? extends FlowInstance> businessRoleStrategy,
             boolean automaticUserAllocation) {
-        final SBusinessRole processRole = new SBusinessRole(name, abbreviation, businessRoleStrategy, automaticUserAllocation);
-        if (hasRoleWithAbbreviation(processRole.getAbbreviation())) {
-            throw new SingularFlowException("Role with abbreviation '" + processRole.getAbbreviation() + "' already defined", this);
+        final SBusinessRole businessRole = new SBusinessRole(name, abbreviation, businessRoleStrategy, automaticUserAllocation);
+        if (hasRoleWithAbbreviation(businessRole.getAbbreviation())) {
+            throw new SingularFlowException("Role with abbreviation '" + businessRole.getAbbreviation() + "' already defined", this);
         }
-        rolesByAbbreviation.put(processRole.getAbbreviation().toLowerCase(), processRole);
-        return processRole;
+        rolesByAbbreviation.put(businessRole.getAbbreviation().toLowerCase(), businessRole);
+        return businessRole;
     }
 
     /**
-     * <p>Registra um <i>listener</i> para mudaças de papel.</p>
+     * Registra um <i>listener</i> para mudaças de papel.
      *
      * @param <T> o tipo deste mapa de fluxo.
      * @param roleChangeListener o <i>listener</i> do tipo {@link IRoleChangeListener}.
@@ -227,9 +198,9 @@ public class FlowMap {
     }
 
     /**
-     * <p>Notifica mudança de papel. Internamente notifica o <i>listener</i> registrado, caso exista.</p>
+     * Notifica mudança de papel. Internamente notifica o <i>listener</i> registrado, caso exista.
      *
-     * @param instance a instância de processo.
+     * @param instance a instância de fluxo.
      * @param role o papel.
      * @param previousUser o usuário anteriormente atribuído ao papel.
      * @param newUser o novo usuário atribuído ao papel.
@@ -241,10 +212,7 @@ public class FlowMap {
     }
 
     /**
-     * <p>Adiciona uma nova tarefa.</p>
-     *
-     * @param task a tarefa para adicionar.
-     * @return a tarefa adicionada.
+     * Adiciona uma nova tarefa.
      */
     protected <T extends STask> T addTask(T task) {
 
@@ -300,7 +268,7 @@ public class FlowMap {
      * <p>Configura a estratégia de execução conforme a especificada ({@link IExecutionDateStrategy}).
      * Isso define a data alvo de uma instância desta tarefa.</p>
      *
-     * @param <T> o tipo da instância de processo.
+     * @param <T> o tipo da instância de fluxo.
      * @param definition a definição da tarefa.
      * @param dateExecutionStrategy a estratégia de execução.
      * @return a nova tarefa criada e adicionada.
@@ -344,15 +312,15 @@ public class FlowMap {
      */
     public SStart getStart() {
         if (start == null) {
-            throw new SingularFlowException("Task inicial não definida no processo", this);
+            throw new SingularFlowException("Task inicial não definida no fluxo", this);
         }
         return start;
     }
 
     /**
-     * <p>Retorna a definição de processo deste mapa.</p>
+     * <p>Retorna a definição de fluxo deste mapa.</p>
      *
-     * @return a definição de processo.
+     * @return a definição de fluxo.
      */
     public FlowDefinition<?> getFlowDefinition() {
         return flowDefinition;
@@ -434,9 +402,10 @@ public class FlowMap {
      *
      * @param taskDefinition a definição informada.
      * @return a definição da tarefa informada.
-     * @throws SingularException caso não encontre a tarefa.
+     * @throws SingularFlowException caso não encontre a tarefa.
      */
-    public STask<?> getTask(ITaskDefinition taskDefinition) {
+    @Nonnull
+    public STask<?> getTask(@Nonnull ITaskDefinition taskDefinition) {
         STask<?> task = getTaskWithName(taskDefinition.getName());
         if (task == null) {
             throw new SingularFlowException(
@@ -510,8 +479,6 @@ public class FlowMap {
 
     /**
      * <p>Retorna o serviço de consulta das definições de variáveis.</p>
-     *
-     * @return o serviço de consulta.
      */
     protected VarService getVarService() {
         return flowDefinition.getVarService();

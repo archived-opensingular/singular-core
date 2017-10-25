@@ -76,7 +76,7 @@ public abstract class TempFileUtils {
      * @param requester    Classe junta a qual será gravado o log de erro do delete
      * @param failQuietily Indica qual o comportamento se não conseguindo apagar ou ocorrendo uma exception ao
      *                     chamar {@link File#delete()}. Se true, engole a exception de erro. Se false, dispara
-     *                     exception senão conseguir apagar ou se ocorre exception no processo.
+     *                     exception senão conseguir apagar ou se ocorrer exception na execução.
      */
     private static void delete(@Nonnull File file, @Nonnull Object requester, boolean failQuietily) {
         Objects.requireNonNull(requester);

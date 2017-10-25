@@ -26,7 +26,7 @@ class GenerationModifierAgrupar extends GenerationModifier {
     public GenerationModifierAgrupar(TableTool table, Column column) {
         super(table);
         this.column = column;
-        for (Column c : getColunas()) {
+        for (Column c : getColumns()) {
             if (c != column && c.getDataLevel() >= column.getDataLevel()) {
                 c.setDataLevel(c.getDataLevel() + 1);
             }
@@ -39,11 +39,11 @@ class GenerationModifierAgrupar extends GenerationModifier {
         Object currentValue = null;
         DataReaderFixed children = null;
         for (LineData line : dataReader) {
-            InfoCell celula = line.getInfoCell(column);
-            Object valueCellLine = celula.getValue();
+            InfoCell cell = line.getInfoCell(column);
+            Object valueCellLine = cell.getValue();
             if (!Objects.equals(currentValue, valueCellLine)) {
                 children = new DataReaderFixed(dataReader);
-                group.add(new LineData(line, new DataReaderModifier(children, getProximoModificador())));
+                group.add(new LineData(line, new DataReaderModifier(children, getNextModifier())));
                 currentValue = valueCellLine;
             }
             if (children != null) {
@@ -55,24 +55,24 @@ class GenerationModifierAgrupar extends GenerationModifier {
     }
 
     @Override
-    public List<Column> adjustTitles(List<Column> visiveis) {
-        int posColumn = visiveis.indexOf(column);
+    public List<Column> adjustTitles(List<Column> visibleColumns) {
+        int posColumn = visibleColumns.indexOf(column);
         if (posColumn != -1) {
-            int posNova = posColumn;
+            int posNew = posColumn;
             for (int i = posColumn - 1; i >= 0; i--) {
-                Column c = visiveis.get(i);
+                Column c = visibleColumns.get(i);
                 if (c.getDataLevel() > column.getDataLevel()) {
-                    posNova = i;
+                    posNew = i;
                 }
             }
-            if (posNova != posColumn) {
-                for (int i = posColumn; i > posNova; i--) {
-                    visiveis.set(i, visiveis.get(i - 1));
+            if (posNew != posColumn) {
+                for (int i = posColumn; i > posNew; i--) {
+                    visibleColumns.set(i, visibleColumns.get(i - 1));
                 }
-                visiveis.set(posNova, column);
+                visibleColumns.set(posNew, column);
             }
         }
-        return super.adjustTitles(visiveis);
+        return super.adjustTitles(visibleColumns);
     }
 
 }

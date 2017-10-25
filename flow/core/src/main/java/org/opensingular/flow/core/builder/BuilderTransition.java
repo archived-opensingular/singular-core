@@ -61,17 +61,17 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
         return self();
     }
 
-    public default SELF defineBusinessRoleInTransition(BuilderBusinessRole<?> processRole) {
-        getTransition().defineBusinessRoleInTransition(processRole.getBusinessRole());
+    public default SELF defineBusinessRoleInTransition(BuilderBusinessRole<?> businessRole) {
+        getTransition().defineBusinessRoleInTransition(businessRole.getBusinessRole());
         return self();
     }
 
-    public default <K extends FlowInstance> SELF setParametersInitializer(STransition.ITransitionParametersInitializerProcess<K> parametrosInicializer) {
+    public default <K extends FlowInstance> SELF setParametersInitializer(STransition.ITransitionParametersInitializerWithFlowInstance<K> parametrosInicializer) {
         getTransition().setParametersInitializer(parametrosInicializer);
         return self();
     }
 
-    public default <K extends FlowInstance> SELF setParametersValidator(STransition.ITransitionParametersValidatorProcess<K> parametrosValidator) {
+    public default <K extends FlowInstance> SELF setParametersValidator(STransition.ITransitionParametersValidatorWithFlowInstance<K> parametrosValidator) {
         getTransition().setParametersValidator(parametrosValidator);
         return self();
     }
@@ -87,10 +87,10 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
     }
 
     /**
-     * Defines, for the purpose of generating a diagram of the process, the BPMN type of the event that triggers the
+     * Defines, for the purpose of generating a diagram of the flow, the BPMN type of the event that triggers the
      * execution of this transition, if not null. When it's null on a human task, usually means that this a transition
      * manually executed by the user.
-     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
      */
     public default SELF setDisplayEventType(EventType eventType) {
         getTransition().setDisplayEventType(eventType);
@@ -106,9 +106,9 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
     }
 
     /**
-     * Define that, when generating a diagram of the process, this transition should be preferred displayed as link
+     * Define that, when generating a diagram of the flow, this transition should be preferred displayed as link
      * event instead of a direct line to the destination.
-     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
      *
      * @param displayAsLinkName The name of the link. If not null, then this transition will be displayed as link.
      */
@@ -118,9 +118,9 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
     }
 
     /**
-     * Define that, when generating a diagram of the process, this transition should be preferred displayed as link
+     * Define that, when generating a diagram of the flow, this transition should be preferred displayed as link
      * event instead of a direct line to the destination.
-     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
      *
      * @param displayAsLinkName The name of the link. If not null, then this transition will be displayed as link.
      * @param linkGroupIndex    If there is two links for the same destination with the same index, it

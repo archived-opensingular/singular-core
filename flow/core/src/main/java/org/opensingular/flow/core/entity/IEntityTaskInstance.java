@@ -61,7 +61,7 @@ public interface IEntityTaskInstance extends IEntityByCod<Integer> {
 
     List<? extends IEntityTaskInstanceHistory> getTaskHistory();
 
-    List<? extends IEntityFlowInstance> getChildProcesses();
+    List<? extends IEntityFlowInstance> getChildFlows();
 
     default boolean isActive() {
         return getEndDate() == null

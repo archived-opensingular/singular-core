@@ -18,7 +18,7 @@ package org.opensingular.flow.core;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.opensingular.flow.core.TestProcessInicializationWithoutParameters.FlowWithInitialization.Steps;
+import org.opensingular.flow.core.TestFlowInicializationWithoutParameters.FlowWithInitialization.Steps;
 import org.opensingular.flow.core.builder.BuilderStart;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
@@ -33,7 +33,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Daniel C. Bordin on 18/03/2017.
  */
-public class TestProcessInicializationWithParameters extends TestFlowExecutionSupport {
+public class TestFlowInicializationWithParameters extends TestFlowExecutionSupport {
 
     private static final Date VALUE_DT = new Date();
 
@@ -141,15 +141,15 @@ public class TestProcessInicializationWithParameters extends TestFlowExecutionSu
             f.addWaitTask(StepsIP.Second);
             f.addEndTask(StepsIP.End);
 
-            f.setStartTask(StepsIP.First).setInitializer(this::processInitializer).with(this::setupStartParameters);
+            f.setStartTask(StepsIP.First).setInitializer(this::flowInitializer).with(this::setupStartParameters);
             f.from(StepsIP.First).go(StepsIP.Second).thenGo(StepsIP.End);
 
             return f.build();
         }
 
         private void setupStartParameters(BuilderStart<?> start) {
-            start.addParamBindedToProcessVariable(PARAM_FLAG, true);
-            start.addParamBindedToProcessVariable(PARAM_BIG, true);
+            start.addParamBindedToFlowVariable(PARAM_FLAG, true);
+            start.addParamBindedToFlowVariable(PARAM_BIG, true);
             start.addParamDate(PARAM_DT, false);
             start.addParamStringMultipleLines(PARAM_NOCOPY, PARAM_NOCOPY, false, 100);
 
@@ -163,7 +163,7 @@ public class TestProcessInicializationWithParameters extends TestFlowExecutionSu
             });
         }
 
-        private void processInitializer(FlowInstance instance, StartCall<FlowInstance> startCall) {
+        private void flowInitializer(FlowInstance instance, StartCall<FlowInstance> startCall) {
             startInitializerCalled = true;
             Double v = startCall.getValueDouble(PARAM_FLAG);
             assertEquals((Double) 1.5d, v);

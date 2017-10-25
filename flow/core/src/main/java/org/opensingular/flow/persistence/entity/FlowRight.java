@@ -25,7 +25,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- * The persistent class for the RL_PERMISSAO_PROCESSO database table.
+ * The persistent class for the flow permission database table.
  */
 @Entity
 @Table(name = "RL_PERMISSAO_PROCESSO", schema = Constants.SCHEMA)

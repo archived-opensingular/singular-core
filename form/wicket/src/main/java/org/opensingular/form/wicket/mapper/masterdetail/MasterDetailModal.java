@@ -42,7 +42,7 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 class MasterDetailModal extends BFModalWindow {
 
-    protected final IModel<String>               listaLabel;
+    protected final IModel<String> listLabel;
     protected final WicketBuildContext           ctx;
     protected final Component                    table;
     protected final ViewMode                     viewMode;
@@ -57,14 +57,14 @@ class MasterDetailModal extends BFModalWindow {
 
     MasterDetailModal(String id,
                       IModel<SIList<SInstance>> model,
-                      IModel<String> listaLabel,
+                      IModel<String> listLabel,
                       WicketBuildContext ctx,
                       ViewMode viewMode,
                       SViewListByMasterDetail view,
                       BSContainer<?> containerExterno) {
         super(id, model, true, false);
 
-        this.listaLabel = listaLabel;
+        this.listLabel = listLabel;
         this.ctx = ctx;
         this.table = ctx.getContainer();
         this.viewMode = viewMode;
@@ -148,7 +148,7 @@ class MasterDetailModal extends BFModalWindow {
 
     private void configureNewContent(String prefix, AjaxRequestTarget target) {
 
-        setTitleText($m.get(() -> (prefix + " " + listaLabel.getObject()).trim()));
+        setTitleText($m.get(() -> (prefix + " " + listLabel.getObject()).trim()));
 
         BSContainer<?> modalBody     = new BSContainer<>("bogoMips");
         ViewMode             viewModeModal = viewMode;

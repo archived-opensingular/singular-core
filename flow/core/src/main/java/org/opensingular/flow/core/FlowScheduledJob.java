@@ -23,7 +23,7 @@ import org.opensingular.flow.schedule.ScheduleDataBuilder;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public class ProcessScheduledJob implements IScheduledJob {
+public class FlowScheduledJob implements IScheduledJob {
 
     private final Class<? extends FlowDefinition<?>> flowDefinition;
 
@@ -34,18 +34,18 @@ public class ProcessScheduledJob implements IScheduledJob {
     private IScheduleData scheduleData;
 
     @SuppressWarnings("unchecked")
-    ProcessScheduledJob(FlowDefinition<?> flowDefinition, String name) {
+    FlowScheduledJob(FlowDefinition<?> flowDefinition, String name) {
         Objects.requireNonNull(name);
         this.flowDefinition = (Class<? extends FlowDefinition<?>>) flowDefinition.getClass();
         this.name = name;
     }
 
-    public ProcessScheduledJob call(Supplier<Object> impl) {
+    public FlowScheduledJob call(Supplier<Object> impl) {
         this.job = impl;
         return this;
     }
 
-    public ProcessScheduledJob call(Runnable impl) {
+    public FlowScheduledJob call(Runnable impl) {
         return call(() -> {
             impl.run();
             return null;
@@ -57,15 +57,15 @@ public class ProcessScheduledJob implements IScheduledJob {
         return job.get();
     }
 
-    public ProcessScheduledJob withMonthlySchedule(int dayOfMonth, int hours, int minutes, Integer... months) {
+    public FlowScheduledJob withMonthlySchedule(int dayOfMonth, int hours, int minutes, Integer... months) {
         return withSchedule(ScheduleDataBuilder.buildMonthly(dayOfMonth, hours, minutes, months));
     }
 
-    public ProcessScheduledJob withDailySchedule(int hora, int minuto) {
-        return withSchedule(ScheduleDataBuilder.buildDaily(hora, minuto));
+    public FlowScheduledJob withDailySchedule(int hour, int minute) {
+        return withSchedule(ScheduleDataBuilder.buildDaily(hour, minute));
     }
 
-    public ProcessScheduledJob withSchedule(IScheduleData scheduleData) {
+    public FlowScheduledJob withSchedule(IScheduleData scheduleData) {
         if(this.scheduleData != null){
             throw new SingularFlowException("Job already scheduled.");
         }
@@ -87,6 +87,6 @@ public class ProcessScheduledJob implements IScheduledJob {
 
     @Override
     public String toString() {
-        return "ProcessScheduledJob [job=" + getId() + ", scheduleData=" + scheduleData + "]";
+        return "FlowScheduledJob [job=" + getId() + ", scheduleData=" + scheduleData + "]";
     }
 }

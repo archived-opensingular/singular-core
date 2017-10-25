@@ -18,12 +18,6 @@
 
 package org.opensingular.form.decorator.action;
 
-import static org.apache.commons.lang3.BooleanUtils.*;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Objects;
-
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
@@ -46,6 +40,13 @@ import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.ref.Out;
 import org.opensingular.lib.commons.util.HTMLUtil;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Objects;
+
+import static org.apache.commons.lang3.BooleanUtils.isFalse;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 /**
  * Provider para a ação de exibição do Help do campo.
@@ -148,16 +149,16 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
     }
 
     private static final class EditAnotacaoRefType extends RefType {
-        static final String JUSTIFICATIVA = "justificativa";
-        static final String APROVADO = "aprovado";
+        static final String JUSTIFICATION = "justificativa";
+        static final String APPROVED = "aprovado";
 
         @Override
         protected SType<?> retrieve() {
             final SDictionary dict = SDictionary.create();
             final PackageBuilder pkg = dict.createNewPackage("anotacoes");
             final STypeComposite<SIComposite> anotacao = pkg.createCompositeType("anotacao");
-            final STypeBoolean aprovado = anotacao.addField(APROVADO, STypeBoolean.class);
-            final STypeString justificativa = anotacao.addField(JUSTIFICATIVA, STypeString.class);
+            final STypeBoolean aprovado = anotacao.addField(APPROVED, STypeBoolean.class);
+            final STypeString justificativa = anotacao.addField(JUSTIFICATION, STypeString.class);
 
             aprovado.asAtr().label("Aprovado?");
             aprovado.asAtrBootstrap().colPreference(12);
@@ -177,9 +178,9 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
         public void onAction(SInstanceAction action, ISupplier<SInstance> fieldInstance, Delegate delegate) {
             ISupplier<SInstance> formSupplier = () -> {
                 SInstance ins = SDocumentFactory.empty().createInstance(new EditAnotacaoRefType());
-                ins.getField(EditAnotacaoRefType.APROVADO)
+                ins.getField(EditAnotacaoRefType.APPROVED)
                         .setValue(fieldInstance.get().asAtrAnnotation().approved());
-                ins.getField(EditAnotacaoRefType.JUSTIFICATIVA)
+                ins.getField(EditAnotacaoRefType.JUSTIFICATION)
                         .setValue(fieldInstance.get().asAtrAnnotation().text());
                 return ins;
             };
@@ -235,8 +236,8 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
             final SInstance fieldInstance = delegate.getInstanceRef().get();
             final SIAnnotation annotationInstance = fieldInstance.asAtrAnnotation().annotation();
 
-            annotationInstance.setApproved(formInstance.getValue(EditAnotacaoRefType.APROVADO));
-            annotationInstance.setText(formInstance.getValue(EditAnotacaoRefType.JUSTIFICATIVA));
+            annotationInstance.setApproved(formInstance.getValue(EditAnotacaoRefType.APPROVED));
+            annotationInstance.setText(formInstance.getValue(EditAnotacaoRefType.JUSTIFICATION));
 
             delegate.refreshFieldForInstance(fieldInstance);
             formDelegate.close();

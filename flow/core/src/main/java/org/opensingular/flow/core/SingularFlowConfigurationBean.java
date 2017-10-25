@@ -20,9 +20,9 @@ import net.vidageek.mirror.dsl.Mirror;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.flow.core.entity.IEntityFlowInstance;
 import org.opensingular.flow.core.renderer.IFlowRenderer;
+import org.opensingular.flow.core.service.IFlowDataService;
 import org.opensingular.flow.core.service.IFlowDefinitionEntityService;
 import org.opensingular.flow.core.service.IPersistenceService;
-import org.opensingular.flow.core.service.IProcessDataService;
 import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.flow.core.view.IViewLocator;
 import org.opensingular.flow.schedule.IScheduleService;
@@ -47,7 +47,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     private String moduleCod;
     
-    private List<ProcessNotifier> notifiers = new ArrayList<>();
+    private List<FlowInstanceListener> notifiers = new ArrayList<>();
 
     /**
      * @param moduleCod - chave do sistema cadastrado no em <code>TB_MODULO</code>
@@ -68,7 +68,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
                     getScheduleService().schedule(new ScheduledJob(task.getCompleteName(), task.getScheduleData(), () -> executeTask(task)));
                 }
             }
-            for (ProcessScheduledJob scheduledJob : flowDefinition.getScheduledJobs()) {
+            for (FlowScheduledJob scheduledJob : flowDefinition.getScheduledJobs()) {
                 getScheduleService().schedule(scheduledJob);
             }
         }
@@ -223,7 +223,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     }
 
     private static String msgNotFound(Object id) {
-        return "Nao foi encontrada a instancia de processo com id=" + id;
+        return "Nao foi encontrada a instancia de fluxo com id=" + id;
     }
 
     // ------- Manipulação de ID --------------------------------------
@@ -257,9 +257,9 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
             throw SingularException.rethrow("O ID da instância não pode ser nulo ou vazio");
         }
         String parts[] = instanceID.split("\\.");
-        String sigla = parts[parts.length - 2];
+        String abbreviation = parts[parts.length - 2];
         String id = parts[parts.length - 1];
-        return new MappingId(sigla, Integer.parseInt(id));
+        return new MappingId(abbreviation, Integer.parseInt(id));
     }
 
     // TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse
@@ -287,8 +287,8 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
      * 
      * @param operation
      */
-    public void notifyListeners(Consumer<ProcessNotifier> operation) {
-        for (ProcessNotifier n : notifiers) {
+    public void notifyListeners(Consumer<FlowInstanceListener> operation) {
+        for (FlowInstanceListener n : notifiers) {
             operation.accept(n);
         }
     }
@@ -298,13 +298,13 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
      * 
      * @param p
      */
-    public void addListener(ProcessNotifier p) {
+    public void addListener(FlowInstanceListener p) {
         notifiers.add(p);
     }
 
     // ------- Consultas ----------------------------------------------
 
-    public final List<? extends FlowDefinition<?>> getEnabledProcessForCreationBy(SUser user) {
+    public final List<? extends FlowDefinition<?>> getUserAllowedFlowsForStart(SUser user) {
         return getDefinitions().stream().filter(d -> d.canBeCreatedBy(user)).sorted().collect(Collectors.toList());
     }
 
@@ -329,7 +329,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     }
 
     public final Object executeTask(STaskJava task) {
-        final IProcessDataService<?> dataService = task.getFlowMap().getFlowDefinition().getDataService();
+        final IFlowDataService<?> dataService = task.getFlowMap().getFlowDefinition().getDataService();
         final Collection<? extends FlowInstance> instances = dataService.retrieveAllInstancesIn(task);
         if (task.isCalledInBlock()) {
             return task.executarByBloco(instances);

@@ -30,7 +30,7 @@ import org.opensingular.form.document.SDocument;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.ViewResolver;
 import org.opensingular.form.wicket.IWicketComponentMapper.HintKey;
-import org.opensingular.form.wicket.behavior.ConfigureByMInstanceAttributesBehavior;
+import org.opensingular.form.wicket.behavior.ConfigureBySInstanceAttributesBehavior;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.AbstractSValidationFeedbackPanel;
@@ -120,7 +120,7 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
         this.externalContainer = externalContainer;
         this.model = model;
         WicketFormUtils.markAsCellContainer(container);
-        container.add(ConfigureByMInstanceAttributesBehavior.getInstance());
+        container.add(ConfigureBySInstanceAttributesBehavior.getInstance());
         container.setMetaData(METADATA_KEY, this);
     }
 
@@ -191,7 +191,7 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
         final IModel<?> defaultModel = formComponent.getDefaultModel();
         if (defaultModel != null && ISInstanceAwareModel.class.isAssignableFrom(defaultModel.getClass())) {
             WicketFormUtils.setCellContainer(formComponent, getContainer());
-            formComponent.add(ConfigureByMInstanceAttributesBehavior.getInstance());
+            formComponent.add(ConfigureBySInstanceAttributesBehavior.getInstance());
             if (formComponent.getLabel() == null) {
                 // formComponent.setDescription(IReadOnlyModel.of(() -> resolveSimpleLabel(formComponent)));
                 formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));

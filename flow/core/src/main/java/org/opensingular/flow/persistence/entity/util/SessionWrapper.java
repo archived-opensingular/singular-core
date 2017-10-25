@@ -224,12 +224,12 @@ public class SessionWrapper {
         if (ids.isEmpty()) {
             return Collections.emptyList();
         }
-        List<T> lista = new ArrayList<>(ids.size());
+        List<T> list = new ArrayList<>(ids.size());
         for (Serializable id : ids) {
             T t = retrieveOrException(entityClass, id);
-            lista.add(t);
+            list.add(t);
         }
-        return lista;
+        return list;
     }
 
     /**

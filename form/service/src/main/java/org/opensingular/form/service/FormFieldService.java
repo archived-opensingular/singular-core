@@ -33,7 +33,6 @@ import org.opensingular.form.persistence.entity.FormTypeEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.transaction.Transactional;
@@ -121,12 +120,12 @@ public class FormFieldService implements IFormFieldService {
     private void LoadMapWithItensFromList(Map<FormCacheFieldEntity, FormCacheValueEntity> mapFields, SIList listField, FormVersionEntity formVersion, FormCacheValueEntity parent) {
         FormCacheValueEntity listFormValue = addItemToMap(mapFields, listField,formVersion, parent);
 
-        for (Object subCampo : listField.getValues()) {
-            if (subCampo instanceof SIComposite) {
-                FormCacheValueEntity parentItem = addItemToMap(mapFields, (SInstance) subCampo, formVersion, parent);
-                loadMapFromInstance(mapFields, (SInstance) subCampo, formVersion, parentItem);
+        for (Object subField : listField.getValues()) {
+            if (subField instanceof SIComposite) {
+                FormCacheValueEntity parentItem = addItemToMap(mapFields, (SInstance) subField, formVersion, parent);
+                loadMapFromInstance(mapFields, (SInstance) subField, formVersion, parentItem);
             } else {
-                loadMapFromInstance(mapFields, (SInstance) subCampo, formVersion, listFormValue);
+                loadMapFromInstance(mapFields, (SInstance) subField, formVersion, listFormValue);
             }
         }
     }

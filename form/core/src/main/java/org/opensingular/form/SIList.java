@@ -44,9 +44,9 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     static <I extends SInstance> SIList<I> of(SType<I> elementsType) {
         SDictionary dictionary = elementsType.getDictionary();
         STypeList type = dictionary.getType(STypeList.class);
-        SIList<I> lista = (SIList<I>) type.newInstance();
-        lista.elementsType = elementsType;
-        return lista;
+        SIList<I> list = (SIList<I>) type.newInstance();
+        list.elementsType = elementsType;
+        return list;
     }
 
     @Override

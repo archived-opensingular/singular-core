@@ -16,20 +16,30 @@
 
 package org.opensingular.flow.core;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Providers information associated to a particular role of a flow.
+ */
 @SuppressWarnings("serial")
 public abstract class BusinessRoleStrategy<K extends FlowInstance> implements Serializable {
 
-    public abstract List<? extends SUser> listAllocableUsers(K instance);
+    /**
+     * List all users that may be attributed to the role for a specific flow instance. One scenery is to use this list
+     * in a user interface to choose a person assigned to role form the listed users.
+     */
+    @Nonnull
+    public abstract List<? extends SUser> listAllowedUsers(@Nonnull K instance);
 
-    public SUser getUserForRole(K instance, TaskInstance task) {
-        Optional<TaskInstance> instanceOptional = instance.getLastFinishedTask();
-        if (instanceOptional.isPresent()) {
-            return instanceOptional.get().getResponsibleUser();
-        }
-        return null;
+    /**
+     * Return the user tha should be automatically assigned to role in the case of the execution of specific flow
+     * instance e taskInstance.
+     */
+    @Nonnull
+    public Optional<SUser> getUserForRole(@Nonnull K instance, @Nonnull TaskInstance task) {
+        return instance.getLastFinishedTask().map(lastTask -> lastTask.getResponsibleUser());
     }
 }

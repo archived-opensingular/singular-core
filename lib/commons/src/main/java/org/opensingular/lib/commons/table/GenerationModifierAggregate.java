@@ -50,8 +50,8 @@ public class GenerationModifierAggregate extends GenerationModifier {
         List<LineData> lines = original.preLoadDataAndCells(getTable());
 
         LineData aggregator = new LineData(getTable().newBlankLine());
-        if(!aggregationTypeByColumn.containsKey(getColunas().get(0))){
-            aggregator.getInfoCell(getColunas().get(0))
+        if(!aggregationTypeByColumn.containsKey(getColumns().get(0))){
+            aggregator.getInfoCell(getColumns().get(0))
                 .setValue("Resultado").getDecorator().addTitle("Agregado").setBold(true);
         }
         doAggregation(lines, aggregator);
@@ -71,9 +71,9 @@ public class GenerationModifierAggregate extends GenerationModifier {
                     .getDecorator().addStyle("cursor", "pointer")
                     .addTitle(aggregationType.getName()).setBold(true);
             } else {
-                List<Object> columnData = lines.stream().map(dado -> dado.getInfoCell(column))
+                List<Object> columnData = lines.stream().map(lineData -> lineData.getInfoCell(column))
                     .filter(Predicates.notNull())
-                    .map(dado -> dado.getValueReal() != null ? dado.getValueReal() : dado.getValue())
+                    .map(lineData -> lineData.getValueReal() != null ? lineData.getValueReal() : lineData.getValue())
                     .collect(Collectors.toList());
                 
                 setValue(infoCell, aggregationType.calculate(columnData))

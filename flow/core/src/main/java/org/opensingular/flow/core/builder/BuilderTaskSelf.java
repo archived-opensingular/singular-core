@@ -49,8 +49,8 @@ public interface BuilderTaskSelf<SELF extends BuilderTaskSelf<SELF, TASK>, TASK 
 
 
     @Override
-    default SELF addStartedTaskListener(StartedTaskListener listenerInicioTarefa) {
-        getTask().addStartedTaskListener(listenerInicioTarefa);
+    default SELF addStartedTaskListener(StartedTaskListener startedTaskListener) {
+        getTask().addStartedTaskListener(startedTaskListener);
         return self();
     }
 

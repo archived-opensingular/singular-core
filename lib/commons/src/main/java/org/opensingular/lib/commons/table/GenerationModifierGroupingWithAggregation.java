@@ -34,25 +34,25 @@ import java.util.stream.Collectors;
  * 
  * @author joao.gomes
  */
-class GenerationModifierAgruparComAgregacao extends GenerationModifier {
+class GenerationModifierGroupingWithAggregation extends GenerationModifier {
     private static final long serialVersionUID = 1L;
     
-    private final List<Column> colunasAgrupamento = new ArrayList<>();  // Colunas do agrupamento por ordem de inserção
+    private final List<Column> groupingColumns = new ArrayList<>();  // Colunas do agrupamento por ordem de inserção
     private final Map<Column, ColumnAggregationType> aggregationTypeByColumn;  // Tipo de agregação por coluna
     
-    public GenerationModifierAgruparComAgregacao(TableTool table) {
+    public GenerationModifierGroupingWithAggregation(TableTool table) {
         super(table);
         aggregationTypeByColumn = createDefaultAggregation();
     }
 
-    public GenerationModifierAgruparComAgregacao(TableTool table,
+    public GenerationModifierGroupingWithAggregation(TableTool table,
                                                  Map<Column, ColumnAggregationType> aggregationConfiguration) {
         this(table);
         aggregationConfiguration.forEach(aggregationTypeByColumn::put);
     }
 
-    public void addColuna(Column column) {
-        this.colunasAgrupamento.add(column);
+    public void addColumn(Column column) {
+        this.groupingColumns.add(column);
     }
 
     @Override
@@ -63,11 +63,11 @@ class GenerationModifierAgruparComAgregacao extends GenerationModifier {
         LinkedListMultimap<LineData, LineData> map = LinkedListMultimap.create();
         if(!lines.isEmpty()){
             // Usa o comparador para determinar as quebras de grupo. Como j houve a
-            // ordenaçãoo prévia, quando o valor da
+            // ordenação prévia, quando o valor da
             // comparaçãoo for diferente de zero, sinaliza quebra de grupo
-            LineData[] piloto = new LineData[] { lines.get(0) };
-            lines.stream().sorted(sortComparator).forEach(dado ->
-                    map.put(piloto[0] = (sortComparator.compare(dado, piloto[0]) != 0) ? dado : piloto[0], dado));
+            LineData[] pilot = new LineData[] { lines.get(0) };
+            lines.stream().sorted(sortComparator).forEach(line ->
+                    map.put(pilot[0] = (sortComparator.compare(line, pilot[0]) != 0) ? line : pilot[0], line));
         }
         
         List<LineData> result = map.asMap().values().stream()
@@ -81,7 +81,7 @@ class GenerationModifierAgruparComAgregacao extends GenerationModifier {
         List<Column> collect = visibleColumns.stream().skip(1).collect(Collectors.toList());
         List<Column> orderedColumns = new ArrayList<>();
         
-        colunasAgrupamento.forEach(column -> {
+        groupingColumns.forEach(column -> {
             orderedColumns.add(column);
             column.setSuperTitle("");
         });
@@ -94,37 +94,37 @@ class GenerationModifierAgruparComAgregacao extends GenerationModifier {
     }
 
     
-    private LineData fillValues(Collection<LineData> informacaoAgrupada) {
+    private LineData fillValues(Collection<LineData> aggregatedInfo) {
 
         LineData newLineData = new LineData(getTable().newBlankLine());
-        LineData reference = informacaoAgrupada.stream().findFirst().orElseThrow(() -> new SingularException("Não foi possivel encontrar a referencia."));
-        colunasAgrupamento.forEach(column -> copyCellValues(newLineData.getInfoCell(column), reference.getInfoCell(column)));
+        LineData reference = aggregatedInfo.stream().findFirst().orElseThrow(() -> new SingularException("Não foi possivel encontrar a referencia."));
+        groupingColumns.forEach(column -> copyCellValues(newLineData.getInfoCell(column), reference.getInfoCell(column)));
         
-        doAggregation(informacaoAgrupada, newLineData);
+        doAggregation(aggregatedInfo, newLineData);
         return newLineData;
     }
     
-    private void copyCellValues(InfoCell dado, InfoCell reference) {
-        dado.setValue(reference.getValue());
-        dado.setValueReal(reference.getValueReal());
+    private void copyCellValues(InfoCell cell, InfoCell reference) {
+        cell.setValue(reference.getValue());
+        cell.setValueReal(reference.getValueReal());
     }
 
-    public void doAggregation(Collection<LineData> lines, LineData agregador) {
+    public void doAggregation(Collection<LineData> lines, LineData lineData) {
         for (Entry<Column, ColumnAggregationType> entry : aggregationTypeByColumn.entrySet()) {
             ColumnAggregationType aggregationType = entry.getValue();
             Column column = entry.getKey();
 
-            if (colunasAgrupamento.contains(column)) { continue; } // As colunas agrupadas não são agregadas //NOSONAR
+            if (groupingColumns.contains(column)) { continue; } // As colunas agrupadas não são agregadas //NOSONAR
             
-            setValue(agregador.getInfoCell(column), aggregationType.calculate(retrieveColumnData(lines, column)))
+            setValue(lineData.getInfoCell(column), aggregationType.calculate(retrieveColumnData(lines, column)))
                 .getDecorator().addStyle("cursor", "pointer")
                                .addTitle(aggregationType.getName());
         }
     }
 
     private static List<Object> retrieveColumnData(Collection<LineData> lines, Column column) {
-        return lines.stream().map(dado -> dado.getInfoCell(column))
-            .map(dado -> dado == null ? null : (Object)(dado.getValueReal() != null ? dado.getValueReal() : dado.getValue()))
+        return lines.stream().map(line -> line.getInfoCell(column))
+            .map(cell -> cell == null ? null : (Object)(cell.getValueReal() != null ? cell.getValueReal() : cell.getValue()))
             .collect(Collectors.toList());
     }
     
@@ -138,7 +138,7 @@ class GenerationModifierAgruparComAgregacao extends GenerationModifier {
     
     private Map<Column, ColumnAggregationType> createDefaultAggregation() {
         Map<Column, ColumnAggregationType> defaultAggregation = new HashMap<>();
-        getColunas().forEach(column -> {
+        getColumns().forEach(column -> {
             switch (column.getType()) {
             case NUMBER:
             case INTEGER:
@@ -156,6 +156,6 @@ class GenerationModifierAgruparComAgregacao extends GenerationModifier {
     }
 
     private Comparator<LineData> getSortComparator() {
-        return colunasAgrupamento.stream().map(this::createComparator).reduce(Comparator::thenComparing).orElse(null);
+        return groupingColumns.stream().map(this::createComparator).reduce(Comparator::thenComparing).orElse(null);
     }
 }

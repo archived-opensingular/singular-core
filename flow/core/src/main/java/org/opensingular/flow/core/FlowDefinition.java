@@ -30,14 +30,13 @@ import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.property.MetaData;
 import org.opensingular.flow.core.property.MetaDataEnabled;
+import org.opensingular.flow.core.service.IFlowDataService;
 import org.opensingular.flow.core.service.IFlowDefinitionEntityService;
 import org.opensingular.flow.core.service.IPersistenceService;
-import org.opensingular.flow.core.service.IProcessDataService;
 import org.opensingular.flow.core.variable.VarDefinitionMap;
 import org.opensingular.flow.core.variable.VarService;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.internal.lib.support.spring.injection.SingularSpringInjector;
-import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.net.Lnk;
 import org.slf4j.Logger;
@@ -59,12 +58,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * <p>
- * Esta é a classe responsável por manter as definições de um dado processo.
- * </p>
+ * Esta é a classe responsável por manter as definições de um dado fluxo.
  *
- * @param <I>
- *            o tipo das instâncias deste processo.
+ * @param <I> o tipo das instâncias deste fluxo.
  * @author Daniel Bordin
  */
 @SuppressWarnings({"serial", "unchecked"})
@@ -85,29 +81,27 @@ public abstract class FlowDefinition<I extends FlowInstance>
 
     private Integer entityVersionCod;
 
-    private IProcessCreationPageStrategy creationPage;
+    private IFlowCreationPageStrategy creationPage;
 
     private VarDefinitionMap<?> variableDefinitions;
 
     private VarService variableService;
 
-    private IProcessDataService<I> processDataService;
+    private IFlowDataService<I> flowDataService;
 
     private MetaData metaData;
 
-    private final Map<String, ProcessScheduledJob> scheduledJobsByName = new HashMap<>();
+    private final Map<String, FlowScheduledJob> scheduledJobsByName = new HashMap<>();
 
     private transient RefFlowDefinition serializableReference;
     private transient SingularInjector     injector;
 
 
     /**
-     * <p>
-     * Instancia uma nova definição de processo do tipo informado.
-     * </p>
+     * Instancia uma nova definição de fluxo do tipo informado.
      *
      * @param key
-     *            a chave do processo.
+     *            a chave do fluxo.
      * @param instanceClass
      *            o tipo da instância da definição a ser instanciada.
      */
@@ -116,9 +110,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
     }
 
     /**
-     * <p>
-     * Instancia uma nova definição de processo do tipo informado.
-     * </p>
+     * Instancia uma nova definição de fluxo do tipo informado.
      *
      * @param flowInstanceClass
      *            o tipo da instância da definição a ser instanciada.
@@ -146,18 +138,14 @@ public abstract class FlowDefinition<I extends FlowInstance>
                     "A definição de fluxo (classe " + getClass().getName() + ") deve ser anotada com " +
                             DefinitionInfo.class.getName(), this);
         } else if (getClass().getSimpleName().equalsIgnoreCase(key)) {
-            throw new SingularFlowException("O nome simples da classe do processo(" + getClass().getSimpleName() +
+            throw new SingularFlowException("O nome simples da classe do fluxo(" + getClass().getSimpleName() +
                     ") não pode ser igual a chave definida em @DefinitionInfo.", this);
         }
         return key;
     }
 
     /**
-     * <p>
-     * Retorna o tipo das instâncias desta definição de processo.
-     * </p>
-     *
-     * @return o tipo das instâncias.
+     * Retorna o tipo das instâncias desta definição de fluxo.
      */
     public final Class<I> getFlowInstanceClass() {
         return flowInstanceClass;
@@ -165,13 +153,13 @@ public abstract class FlowDefinition<I extends FlowInstance>
 
 
     /**
-     * Método a ser implementado com a criação do fluxo do processo.
+     * Método a ser implementado com a criação da estrutura do fluxo.
      */
     @Nonnull
     protected abstract FlowMap createFlowMap();
 
     /**
-     * Retorna o {@link FlowMap} para esta definição de processo.
+     * Retorna o {@link FlowMap} para esta definição de fluxo.
      */
     @Nonnull
     public synchronized final FlowMap getFlowMap() {
@@ -189,32 +177,25 @@ public abstract class FlowDefinition<I extends FlowInstance>
     }
 
     /**
-     * Retorna o serviço de consulta das instâncias deste tipo de processo.
+     * Retorna o serviço de consulta das instâncias deste tipo de fluxo.
      */
     @Nonnull
-    public IProcessDataService<I> getDataService() {
-        if (processDataService == null) {
-            processDataService = new ProcessDataServiceImpl<>(this);
+    public IFlowDataService<I> getDataService() {
+        if (flowDataService == null) {
+            flowDataService = new FlowDataServiceImpl<>(this);
         }
-        return processDataService;
+        return flowDataService;
     }
 
     /**
-     * <p>
-     * Determina o serviço de consulta das instâncias deste tipo de processo.
-     * </p>
-     * @param processDataService
+     * Determina o serviço de consulta das instâncias deste tipo de fluxo.
      */
-    protected void setProcessDataService(IProcessDataService<I> processDataService) {
-        this.processDataService = processDataService;
+    protected void setFlowDataService(IFlowDataService<I> flowDataService) {
+        this.flowDataService = flowDataService;
     }
     
     /**
-     * <p>
      * Retorna o serviço de consulta das definições de variáveis.
-     * </p>
-     *
-     * @return o serviço de consulta.
      */
     protected final VarService getVarService() {
         variableService = variableService.deserialize();
@@ -222,11 +203,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
     }
 
     /**
-     * <p>
-     * Retorna as definições de variáveis deste processo.
-     * </p>
-     *
-     * @return the variables
+     * Retorna as definições de variáveis deste fluxo.
      */
     public final VarDefinitionMap<?> getVariables() {
         if (variableDefinitions == null) {
@@ -236,49 +213,38 @@ public abstract class FlowDefinition<I extends FlowInstance>
     }
 
     /**
-     * <p>
-     * Cria e adiciona um novo <i>job</i> ao agendador deste processo.
-     * </p>
+     * Cria e adiciona um novo <i>job</i> ao agendador deste fluxo.
      *
-     * @param impl
-     *            a implementação do <i>job</i>.
-     * @param name
-     *            o nome do <i>job</i>.
-     * @return o {@link ProcessScheduledJob} que encapsula o <i>job</i> criado.
+     * @param impl a implementação do <i>job</i>.
+     * @param name o nome do <i>job</i>.
+     * @return o {@link FlowScheduledJob} que encapsula o <i>job</i> criado.
      */
-    protected final ProcessScheduledJob addScheduledJob(Supplier<Object> impl, String name) {
+    protected final FlowScheduledJob addScheduledJob(Supplier<Object> impl, String name) {
         return addScheduledJob(name).call(impl);
     }
 
     /**
-     * <p>
-     * Cria e adiciona um novo <i>job</i> ao agendador deste processo.
-     * </p>
+     * Cria e adiciona um novo <i>job</i> ao agendador deste fluxo.
      *
-     * @param impl
-     *            a implementação do <i>job</i>.
-     * @param name
-     *            o nome do <i>job</i>.
-     * @return o {@link ProcessScheduledJob} que encapsula o <i>job</i> criado.
+     * @param impl a implementação do <i>job</i>.
+     * @param name o nome do <i>job</i>.
+     * @return o {@link FlowScheduledJob} que encapsula o <i>job</i> criado.
      */
-    protected final ProcessScheduledJob addScheduledJob(Runnable impl, String name) {
+    protected final FlowScheduledJob addScheduledJob(Runnable impl, String name) {
         return addScheduledJob(name).call(impl);
     }
 
     /**
-     * <p>
      * Cria e adiciona um novo <i>job</i> sem implementação ao agendador deste
-     * processo.
-     * </p>
+     * fluxo.
      *
-     * @param name
-     *            o nome do <i>job</i>.
-     * @return o {@link ProcessScheduledJob} que encapsula o <i>job</i> criado.
+     * @param name o nome do <i>job</i>.
+     * @return o {@link FlowScheduledJob} que encapsula o <i>job</i> criado.
      */
-    protected final ProcessScheduledJob addScheduledJob(String name) {
+    protected final FlowScheduledJob addScheduledJob(String name) {
         String jobName = StringUtils.trimToNull(name);
 
-        ProcessScheduledJob scheduledJob = new ProcessScheduledJob(this, jobName);
+        FlowScheduledJob scheduledJob = new FlowScheduledJob(this, jobName);
 
         if (scheduledJobsByName.containsKey(jobName)) {
             throw new SingularFlowException("A Job with name '" + jobName + "' is already defined.", this);
@@ -288,17 +254,13 @@ public abstract class FlowDefinition<I extends FlowInstance>
     }
 
     @Nonnull
-    final Collection<ProcessScheduledJob> getScheduledJobs() {
+    final Collection<FlowScheduledJob> getScheduledJobs() {
         return CollectionUtils.unmodifiableCollection(scheduledJobsByName.values());
     }
 
     /**
-     * <p>
      * Recupera a entidade persistente correspondente a esta definição de
-     * processo.
-     * </p>
-     *
-     * @return a entidade persistente.
+     * fluxo.
      */
     public synchronized final IEntityFlowVersion getEntityFlowVersion() {
         if (entityVersionCod == null) {
@@ -314,15 +276,17 @@ public abstract class FlowDefinition<I extends FlowInstance>
                     entityVersionCod = oldVersion.getCod();
                 }
             } catch (Exception e) {
-                throw new SingularFlowException(createErrorMsg("Erro ao criar entidade para o processo"), e);
+                throw new SingularFlowException(createErrorMsg("Erro ao criar entidade para o fluxo"), e);
             }
         }
 
         IEntityFlowVersion version = getPersistenceService().retrieveFlowVersionByCod(entityVersionCod);
         if (version == null) {
+            String errorMsg = createErrorMsg(
+                    String.format("Definicao demanda inconsistente com o BD: entityVersionCod '%d' não encontrado",
+                            entityVersionCod));
             entityVersionCod = null;
-            throw new SingularFlowException(
-                    createErrorMsg(String.format("Definicao demanda inconsistente com o BD: codigo '%d' não encontrado", entityVersionCod)), this);
+            throw new SingularFlowException(errorMsg, this);
         }
 
         return version;
@@ -333,17 +297,13 @@ public abstract class FlowDefinition<I extends FlowInstance>
     }
 
     /**
-     * <p>
      * Encontra a definição da tarefa informada ou dispara uma exceção caso não
      * a encontre.
-     * </p>
      *
-     * @param taskDefinition
-     *            a definição informada.
-     * @return a definição da tarefa informada.
-     * @throws SingularException
-     *             caso não encontre a tarefa.
+     * @param taskDefinition a definição informada.
+     * @throws SingularFlowException caso não encontre a tarefa.
      */
+    @Nonnull
     public STask<?> getTask(ITaskDefinition taskDefinition) {
         return getFlowMap().getTask(taskDefinition);
     }
@@ -362,86 +322,65 @@ public abstract class FlowDefinition<I extends FlowInstance>
     }
 
     /**
-     * <p>
      * Retorna as entidades persistentes correspondentes às definições de
      * tarefas informadas.
-     * </p>
      *
-     * @param task
-     *            as definições informadas.
-     * @return as entidades persistentes.
+     * @param task as definições informadas.
      */
     public final List<IEntityTaskDefinition> getEntityTaskDefinition(ITaskDefinition... task) {
         return Arrays.stream(task).map(this::getEntityTaskDefinition).collect(Collectors.toList());
     }
 
     /**
-     * <p>
      * Retorna as entidades persistentes correspondentes às definições de
      * tarefas informadas.
-     * </p>
      *
-     * @param tasks
-     *            as definições informadas.
-     * @return as entidades persistentes.
+     * @param tasks as definições informadas.
      */
     public final List<IEntityTaskDefinition> getEntityTaskDefinition(Collection<? extends ITaskDefinition> tasks) {
         return tasks.stream().map(this::getEntityTaskDefinition).collect(Collectors.toList());
     }
 
     /**
-     * <p>
      * Retorna a entidade persistente correspondente à tarefa informada.
-     * </p>
      *
-     * @param task
-     *            a tarefa informada.
-     * @return a entidade persistente.
+     * @param task a tarefa informada.
      */
     public final IEntityTaskDefinition getEntityTaskDefinition(STask<?> task) {
         return getEntityTaskDefinitionOrException(task.getAbbreviation());
     }
 
     /**
-     * <p>
      * Retorna a entidade persistente correspondente à definição de tarefa
      * informada.
-     * </p>
      *
-     * @param task
-     *            a definição informada.
-     * @return a entidade persistente.
+     * @param task a definição informada.
      */
     public final IEntityTaskDefinition getEntityTaskDefinition(ITaskDefinition task) {
         return getEntityTaskDefinitionOrException(task.getKey());
     }
 
     /**
-     * <p>
      * Retorna a entidade persistente correspondente à definição de tarefa com a
      * sigla informada.
-     * </p>
      *
-     * @param taskAbbreviation
-     *            a sigla da definição informada.
+     * @param taskAbbreviation a sigla da definição informada.
      * @return a entidade persistente; ou {@code null} caso não a encontre.
      */
-    public final IEntityTaskDefinition getEntityTaskDefinition(String taskAbbreviation) {
+    @Nullable
+    public final IEntityTaskDefinition getEntityTaskDefinition(@Nullable String taskAbbreviation) {
         return (taskAbbreviation == null) ? null : getEntityFlowDefinition().getTaskDefinition(taskAbbreviation);
     }
 
     /**
-     * <p>
      * Retorna a entidade persistente correspondente à definição de tarefa com a
      * sigla informada.
-     * </p>
      *
-     * @param taskAbbreviation
-     *            a sigla da definição informada.
+     * @param taskAbbreviation a sigla da definição informada.
      * @return a entidade persistente.
-     * @throws SingularFlowException
-     *             caso a entidade não seja encontrada.
+     * @throws SingularFlowException caso a entidade não seja encontrada.
      */
+    @Nonnull
     public final IEntityTaskDefinition getEntityTaskDefinitionOrException(String taskAbbreviation) {
         IEntityTaskDefinition taskDefinition = getEntityTaskDefinition(taskAbbreviation);
         if (taskDefinition == null) {
@@ -452,97 +391,79 @@ public abstract class FlowDefinition<I extends FlowInstance>
     }
 
     /**
-     * <p>
      * Formata uma mensagem de erro.
-     * </p>
-     * <p>
      * <p>
      * A formatação da mensagem segue o seguinte padrão:
      * </p>
-     * <p>
      *
      * <pre>
-     * "Processo MBPM '" + getName() + "': " + msg
+     * "Fluxo MBPM '" + getName() + "': " + msg
      * </pre>
      *
-     * @param msg
-     *            a mensagem a ser formatada.
-     * @return a mensagem formatada.
+     * @param msg a mensagem a ser formatada.
      * @see #getName()
      */
     protected final String createErrorMsg(String msg) {
-        return "Processo '" + getName() + "': " + msg;
+        return "Fluxo '" + getName() + "': " + msg;
     }
 
     /**
-     * <p>Retorna o nome deste processo.</p>
+     * Retorna o nome deste fluxo.
      */
     public final String getName() {
         if (name == null) {
-            logger.warn("!!! process definition name not set, using  class simple name !!!");
+            logger.warn("!!! flow definition name not set, using  class simple name !!!");
             name = this.getClass().getSimpleName();
         }
         return name;
     }
 
     /**
-     * <p>Retorna a chave deste processo.</p>
+     * Retorna a chave deste fluxo.
      */
     public final String getKey() {
         return key;
     }
 
     /**
-     * <p>Retorna a categoria deste processo.</p>
-     *
-     * @return a categoria deste processo.
+     * Retorna a categoria deste fluxo.
      */
     public final String getCategory() {
         if (category == null) {
-            logger.warn("!!! process definition category not set, using  class simple name !!!");
+            logger.warn("!!! flow definition category not set, using  class simple name !!!");
             category = this.getClass().getSimpleName();
         }
         return category;
     }
 
     /**
-     * <p>
-     * Retorna o <i>link resolver</i> deste processo para o usuário
+     * Retorna o <i>link resolver</i> deste fluxo para o usuário
      * especificado.
-     * </p>
      *
-     * @param user
-     *            o usuário especificado.
-     * @return o <i>link resolver</i>.
+     * @param usero usuário especificado.
      */
     public final Lnk getCreatePageFor(SUser user) {
         return getCreationPageStrategy().getCreatePageFor(this, user);
     }
 
     /**
-     * <p>Retorna o {@link IProcessCreationPageStrategy} deste processo.</p>
-     *
-     * @return o {@link IProcessCreationPageStrategy}.
+     * Retorna o {@link IFlowCreationPageStrategy} deste fluxo.
      */
-    protected final IProcessCreationPageStrategy getCreationPageStrategy() {
+    protected final IFlowCreationPageStrategy getCreationPageStrategy() {
         return creationPage;
     }
 
     /**
-     * <p>Configura o {@link IProcessCreationPageStrategy} deste processo.</p>
-     *
-     * @param creationPage o {@link IProcessCreationPageStrategy}.
+     * Configura o {@link IFlowCreationPageStrategy} deste fluxo.
      */
-    protected final void setCreationPageStrategy(@Nonnull IProcessCreationPageStrategy creationPage) {
+    protected final void setCreationPageStrategy(@Nonnull IFlowCreationPageStrategy creationPage) {
         this.creationPage = inject(creationPage);
     }
 
     /**
-     * <p>
-     * Verifica se há um {@link IProcessCreationPageStrategy} configurado.
-     * </p>
+     * Verifica se há um {@link IFlowCreationPageStrategy} configurado.
      *
-     * @return {@code true} caso exista um {@link IProcessCreationPageStrategy}
+     * @return {@code true} caso exista um {@link IFlowCreationPageStrategy}
      *         configurado; {@code false} caso contrário.
      */
     public boolean isCreatedByUser() {
@@ -550,14 +471,12 @@ public abstract class FlowDefinition<I extends FlowInstance>
     }
 
     /**
-     * <p>
-     * Verifica se um {@link IProcessCreationPageStrategy} possa ser configurado
+     * Verifica se um {@link IFlowCreationPageStrategy} possa ser configurado
      * pelo usuário especificado.
-     * </p>
      *
      * @param user
      *            o usuário especificado.
-     * @return {@code true} caso um {@link IProcessCreationPageStrategy} possa
+     * @return {@code true} caso um {@link IFlowCreationPageStrategy} possa
      *         ser configurado; {@code false} caso contrário.
      */
     public boolean canBeCreatedBy(SUser user) {
@@ -565,25 +484,15 @@ public abstract class FlowDefinition<I extends FlowInstance>
     }
 
     /**
-     * <p>
-     * Gera uma sigla para esta definição de processo.
-     * </p>
-     *
-     * @return a sigla gerada.
+     * Gera uma sigla para esta definição de fluxo.
      */
+    @Nonnull
     protected String generateAbbreviation() {
         return getClass().getSimpleName();
     }
 
     /**
-     * <p>
-     * Configura a categoria e nome desta definição de processo.
-     * </p>
-     *
-     * @param category
-     *            a categoria.
-     * @param name
-     *            o nome.
+     * Configura a categoria e nome desta definição de fluxo.
      */
     protected final void setName(String category, String name) {
         this.category = category;
@@ -609,13 +518,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
     }
 
     /**
-     * <p>
      * Retorna uma lista de instâncias correspondentes às entidades fornecidas.
-     * </p>
-     *
-     * @param entities
-     *            as entidades fornecidas.
-     * @return a lista de instâncias.
      */
     protected final List<I> convertToFlowInstance(List<? extends IEntityFlowInstance> entities) {
         return entities.stream().map(e -> convertToFlowInstance(e)).collect(Collectors.toList());
@@ -634,28 +537,28 @@ public abstract class FlowDefinition<I extends FlowInstance>
         return newInstance;
     }
 
-    /** Verifica se a entidade da instancia de processo pertence a definição de processo. Senão dispara Exception. */
+    /** Verifica se a entidade da instancia de fluxo pertence a definição de fluxo. Senão dispara Exception. */
     private static void checkIfKeysAreCompatible(FlowDefinition<?> definition, IEntityFlowInstance instance) {
         if(! instance.getFlowVersion().getFlowDefinition().getKey().equalsIgnoreCase(definition.getKey())){
             throw new SingularFlowException(
-                    "A instancia de processo com id " + instance.getCod() + " não pertence a definição de processo " +
+                    "A instancia de fluxo com id " + instance.getCod() + " não pertence a definição de fluxo " +
                             definition.getName(), definition);
         }
     }
 
-    /** Verifica se a instancia de processo pertence a definição de processo. Senão dispara Exception. */
+    /** Verifica se a instancia de fluxo pertence a definição de fluxo. Senão dispara Exception. */
     final void checkIfCompatible(FlowInstance instance) {
         checkIfKeysAreCompatible(this, instance.getEntity());
         if (!flowInstanceClass.isInstance(instance)) {
             throw new SingularFlowException(
-                    "A instancia de processo com id=" + instance.getFullId() + " deveria ser da classe " +
+                    "A instancia de fluxo com id=" + instance.getFullId() + " deveria ser da classe " +
                             flowInstanceClass.getName() + " mas na verdade é da classe " +
                             instance.getClass().getName(), instance);
         }
     }
 
     /**
-     * Retorna uma nova instância vazia deste processo pronta para ser
+     * Retorna uma nova instância vazia deste fluxo pronta para ser
      * configurada em um novo fluxo.
      */
     @Nonnull
@@ -701,7 +604,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
 
     /**
      * Retorna uma referência a definição atual que pode ser serializada e
-     * deserializada sem implicar na serialização de toda definição do processo.
+     * deserializada sem implicar na serialização de toda definição do fluxo.
      *
      * @return referência serializável.
      */

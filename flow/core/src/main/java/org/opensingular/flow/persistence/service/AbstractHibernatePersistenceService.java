@@ -62,16 +62,16 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY extends IEntityCategory, FLOW_DEFINITION extends IEntityFlowDefinition, FLOW_VERSION extends IEntityFlowVersion, FLOW_INSTANCE extends IEntityFlowInstance, TASK_INSTANCE extends IEntityTaskInstance, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, VARIABLE_INSTANCE extends IEntityVariableInstance, PROCESS_ROLE extends IEntityRoleDefinition, ROLE_USER extends IEntityRoleInstance>
+public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY extends IEntityCategory, FLOW_DEFINITION extends IEntityFlowDefinition, FLOW_VERSION extends IEntityFlowVersion, FLOW_INSTANCE extends IEntityFlowInstance, TASK_INSTANCE extends IEntityTaskInstance, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, VARIABLE_INSTANCE extends IEntityVariableInstance, ROLE_DEFINITION extends IEntityRoleDefinition, ROLE_INSTANCE extends IEntityRoleInstance>
         extends AbstractHibernateService implements
-        IPersistenceService<DEFINITION_CATEGORY, FLOW_DEFINITION, FLOW_VERSION, FLOW_INSTANCE, TASK_INSTANCE, TASK_DEF, TASK_VERSION, VARIABLE_INSTANCE, PROCESS_ROLE, ROLE_USER> {
+        IPersistenceService<DEFINITION_CATEGORY, FLOW_DEFINITION, FLOW_VERSION, FLOW_INSTANCE, TASK_INSTANCE, TASK_DEF, TASK_VERSION, VARIABLE_INSTANCE, ROLE_DEFINITION, ROLE_INSTANCE> {
 
     public AbstractHibernatePersistenceService(SessionLocator sessionLocator) {
         super(sessionLocator);
     }
 
     // -------------------------------------------------------
-    // ProcessIntance
+    // FlowInstance
     // -------------------------------------------------------
 
     @Override
@@ -82,7 +82,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     }
     
     /**
-     * Cria uma intancia de ProcessIntance parcialmente preenchida. Apenas isola
+     * Cria uma intancia de FlowInstance parcialmente preenchida. Apenas isola
      * a persistencia do tipo correto.
      */
     protected abstract FLOW_INSTANCE newFlowInstance(FLOW_VERSION flowVersion);
@@ -107,13 +107,13 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         throw new UnsupportedOperationException("Apenas o AlocPro tem suporte a instância pai.");
     }
 
-    protected abstract ROLE_USER newEntityRole(FLOW_INSTANCE instance, PROCESS_ROLE role, SUser user, SUser allocator);
+    protected abstract ROLE_INSTANCE newEntityRole(FLOW_INSTANCE instance, ROLE_DEFINITION role, SUser user, SUser allocator);
 
     @Override
-    public ROLE_USER setInstanceUserRole(FLOW_INSTANCE instance, PROCESS_ROLE role, SUser user) {
+    public ROLE_INSTANCE setInstanceUserRole(FLOW_INSTANCE instance, ROLE_DEFINITION role, SUser user) {
         SUser resolvedUser = saveUserIfNeeded(user);
 
-        ROLE_USER entityRole = newEntityRole(instance, role, resolvedUser, Flow.getUserIfAvailable());
+        ROLE_INSTANCE entityRole = newEntityRole(instance, role, resolvedUser, Flow.getUserIfAvailable());
 
         SessionWrapper sw = getSession();
         sw.save(entityRole);
@@ -122,7 +122,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     }
 
     @Override
-    public void removeInstanceUserRole(FLOW_INSTANCE flowInstance, ROLE_USER roleInstance) {
+    public void removeInstanceUserRole(FLOW_INSTANCE flowInstance, ROLE_INSTANCE roleInstance) {
         SessionWrapper sw = getSession();
         sw.delete(roleInstance);
         sw.refresh(flowInstance);
@@ -136,7 +136,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     
     /**
      * Cria uma nova taskInstance parcialmente preenchiada apenas com
-     * processIntance e taskVersion.
+     * FlowInstance e taskVersion.
      */
     protected abstract TASK_INSTANCE newTaskInstance(FLOW_INSTANCE flowInstance, TASK_VERSION taskVersion);
 
@@ -176,8 +176,8 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     }
 
     @Override
-    public void updateTask(TASK_INSTANCE tarefa) {
-        getSession().update(tarefa);
+    public void updateTask(TASK_INSTANCE taskInstance) {
+        getSession().update(taskInstance);
     }
 
     @Override
@@ -463,7 +463,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         List<? extends IEntityTaskInstanceHistory> histories = entityTaskInstance.getTaskHistory();
         for (ListIterator<? extends IEntityTaskInstanceHistory> it = histories.listIterator(histories.size()); it.hasPrevious(); ) {
             IEntityTaskInstanceHistory history = it.previous();
-            if (history.getType().getDescription().toLowerCase().contains(TaskInstance.ALOCACAO.toLowerCase())) {
+            if (history.getType().getDescription().toLowerCase().contains(TaskInstance.ALLOCATE.toLowerCase())) {
                 history.setAllocationEndDate(new Date());
                 getSession().saveOrUpdate(history);
             }

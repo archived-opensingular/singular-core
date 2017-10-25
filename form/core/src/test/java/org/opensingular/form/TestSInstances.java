@@ -18,20 +18,20 @@
 
 package org.opensingular.form;
 
-import org.opensingular.lib.commons.lambda.IPredicate;
-import org.opensingular.form.SInstances.IVisitor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.opensingular.form.SInstances.IVisitor;
+import org.opensingular.lib.commons.lambda.IPredicate;
 
 @RunWith(Parameterized.class)
-public class TestMInstances extends TestCaseForm {
+public class TestSInstances extends TestCaseForm {
 
     private SPackageTesteContatos pacote;
 
-    public TestMInstances(TestFormConfig testFormConfig) {
+    public TestSInstances(TestFormConfig testFormConfig) {
         super(testFormConfig);
     }
 

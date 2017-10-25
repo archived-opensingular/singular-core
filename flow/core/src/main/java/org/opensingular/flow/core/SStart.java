@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 import java.io.Serializable;
 
 /**
- * Representa um ponto de inicialização de um fluxo do processo e as configurações do mesmo.
+ * Representa um ponto de inicialização de um fluxo do fluxo e as configurações do mesmo.
  *
  * @author Daniel C. Bordin on 19/03/2017.
  */
@@ -46,7 +46,7 @@ public class SStart extends SParametersEnabled {
 
     /**
      * Retorna o código de inicialização a ser executado para cada nova instânca criada a partir deste ponto de start
-     * antes do processo ser executado.
+     * antes do fluxo ser executado.
      */
     @Nullable
     public <I extends FlowInstance> IStartInitializer<I> getStartInitializer() {
@@ -55,7 +55,7 @@ public class SStart extends SParametersEnabled {
 
     /**
      * Define o código de inicialização a ser executado para cada nova instânca criada a partir deste ponto de start
-     * antes do processo ser executado.
+     * antes do fluxo ser executado.
      */
     public <I extends FlowInstance> void setStartInitializer(@Nonnull IStartInitializer<I> startInitializer) {
         this.startInitializer = inject(startInitializer);
@@ -92,7 +92,7 @@ public class SStart extends SParametersEnabled {
         public void startInstance(I instance, StartCall<I> startCall);
     }
 
-    /** Validador da chamada de start antes que a instancia do processo seja criada. */
+    /** Validador da chamada de start antes que a instancia do fluxo seja criada. */
     @FunctionalInterface
     public interface IStartValidator<I extends FlowInstance> extends Serializable {
         public void validate(StartCall<I> startCall, ValidationResult validationResult);

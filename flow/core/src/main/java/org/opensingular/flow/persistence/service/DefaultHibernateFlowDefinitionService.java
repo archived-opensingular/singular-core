@@ -45,12 +45,12 @@ public class DefaultHibernateFlowDefinitionService
     }
 
     @Override
-    protected Class<? extends RoleDefinitionEntity> getClassProcessRoleDef() {
+    protected Class<? extends RoleDefinitionEntity> getClassRoleDefinition() {
         return RoleDefinitionEntity.class;
     }
     
     @Override
-    protected Class<RoleInstanceEntity> getClassProcessRole() {
+    protected Class<RoleInstanceEntity> getClassRoleInstance() {
         return RoleInstanceEntity.class;
     }
 
@@ -61,10 +61,10 @@ public class DefaultHibernateFlowDefinitionService
 
     @Override
     public FlowVersionEntity createEntityFlowVersion(FlowDefinitionEntity entityFlowDefinition) {
-        FlowVersionEntity entityProcess = new FlowVersionEntity();
-        entityProcess.setFlowDefinition(entityFlowDefinition);
-        entityProcess.setVersionTasks(new ArrayList<>());
-        return entityProcess;
+        FlowVersionEntity flowVersion = new FlowVersionEntity();
+        flowVersion.setFlowDefinition(entityFlowDefinition);
+        flowVersion.setVersionTasks(new ArrayList<>());
+        return flowVersion;
     }
 
     @Override
@@ -76,9 +76,9 @@ public class DefaultHibernateFlowDefinitionService
     }
 
     @Override
-    public TaskVersionEntity createEntityTaskVersion(FlowVersionEntity process, TaskDefinitionEntity entityTaskDefinition, STask<?> task) {
+    public TaskVersionEntity createEntityTaskVersion(FlowVersionEntity flowVersion, TaskDefinitionEntity entityTaskDefinition, STask<?> task) {
         TaskVersionEntity taskEntity = new TaskVersionEntity();
-        taskEntity.setFlowVersion(process);
+        taskEntity.setFlowVersion(flowVersion);
         taskEntity.setTaskDefinition(entityTaskDefinition);
         taskEntity.setType((TaskType) task.getEffectiveTaskType());
         taskEntity.setTransitions(new ArrayList<>());
@@ -87,9 +87,9 @@ public class DefaultHibernateFlowDefinitionService
 
 
     @Override
-    protected TaskDefinitionEntity createEntityDefinitionTask(FlowDefinitionEntity flowDefinition) {
+    protected TaskDefinitionEntity createEntityDefinitionTask(FlowDefinitionEntity flow) {
         TaskDefinitionEntity taskDefinition = new TaskDefinitionEntity();
-        taskDefinition.setFlowDefinition(flowDefinition);
+        taskDefinition.setFlowDefinition(flow);
         return taskDefinition;
     }
 

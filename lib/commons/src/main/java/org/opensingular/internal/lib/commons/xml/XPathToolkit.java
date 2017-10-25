@@ -179,7 +179,7 @@ public final class XPathToolkit {
             switch (no.getNodeType()) {
                 case Node.ELEMENT_NODE:
                     buffer.append(no.getNodeName());
-                    getIndiceElemento(buffer, no);
+                    addElementIndex(buffer, no);
                     break;
                 case Node.ATTRIBUTE_NODE:
                     buffer.append('@');
@@ -199,7 +199,7 @@ public final class XPathToolkit {
      * @param buffer Destino do texto
      * @param e Node a ser pesquisado o nível
      */
-    private static void getIndiceElemento(StringBuilder buffer, Node e) {
+    private static void addElementIndex(StringBuilder buffer, Node e) {
         int pos = -1;
         // Verifica se possui no com mesmo nome antes
         Node cursor = e.getPreviousSibling();
@@ -361,31 +361,30 @@ public final class XPathToolkit {
      * @return Sempre not null. Se não encontrar nada retorna vazio.
      */
     public static List<String> getValues(Node contextNode, String xPath) {
-        List<String> lista = null;
+        List<String> resultList = null;
         if (isSelectSimples(xPath)) {
             MElementResult rs = new MElementResult((Element) contextNode, xPath);
             while (rs.next()) {
-                lista = addToList(lista, rs.getValue());
+                resultList = addToList(resultList, rs.getValue());
             }
         } else {
-            NodeList list = selectNodeList(contextNode, xPath);
-            int tam = list.getLength();
+            NodeList nodesList = selectNodeList(contextNode, xPath);
+            int tam = nodesList.getLength();
             for (int i = 0; i < tam; i++) {
-                lista = addToList(lista, MElement.getValueText(list.item(i)));
+                resultList = addToList(resultList, MElement.getValueText(nodesList.item(i)));
             }
         }
-        return lista == null ? Collections.emptyList() : lista;
+        return resultList == null ? Collections.emptyList() : resultList;
     }
-
     private static List<String> addToList(List<String> list, String value) {
-        List<String> nova = list;
+        List<String> newList = list;
         if (value != null) {
             if (list == null) {
-                nova = new ArrayList<>();
+                newList = new ArrayList<>();
             }
-            nova.add(value);
+            newList.add(value);
         }
-        return nova;
+        return newList;
     }
 
     /**

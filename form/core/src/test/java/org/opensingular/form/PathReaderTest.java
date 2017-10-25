@@ -24,9 +24,9 @@ import org.junit.runners.Parameterized;
 import org.opensingular.form.internal.PathReader;
 
 @RunWith(Parameterized.class)
-public class TestLeitorPath extends TestCaseForm {
+public class PathReaderTest extends TestCaseForm {
 
-    public TestLeitorPath(TestFormConfig testFormConfig) {
+    public PathReaderTest(TestFormConfig testFormConfig) {
         super(testFormConfig);
     }
 
@@ -55,39 +55,39 @@ public class TestLeitorPath extends TestCaseForm {
 
     private static void assertPathException(String path, String trechoMsgEsperada) {
         assertException(() -> {
-            PathReader leitor = new PathReader(path);
-            while (!leitor.isEmpty()) {
-                leitor = leitor.next();
+            PathReader reader = new PathReader(path);
+            while (!reader.isEmpty()) {
+                reader = reader.next();
             }
         } , trechoMsgEsperada);
 
     }
 
     private static void assertPath(String path, Object... resultadoEsperado) {
-        PathReader leitor = new PathReader(path);
+        PathReader reader = new PathReader(path);
 
         for (int i = 0; i < resultadoEsperado.length; i++) {
             Object esperado = resultadoEsperado[i];
-            if (leitor.isEmpty()) {
+            if (reader.isEmpty()) {
                 fail("O leitor terminou antes do esperado. Faltou o resultado de indice [" + i + "]=" + esperado);
             }
             if (esperado instanceof Integer) {
-                assertTrue(leitor.isIndex());
-                assertEquals(esperado, leitor.getIndex());
+                assertTrue(reader.isIndex());
+                assertEquals(esperado, reader.getIndex());
             } else {
-                assertFalse(leitor.isIndex());
-                assertEquals(esperado, leitor.getToken());
+                assertFalse(reader.isIndex());
+                assertEquals(esperado, reader.getToken());
             }
-            assertEquals((i + 1 == resultadoEsperado.length), leitor.isLast());
-            leitor = leitor.next();
+            assertEquals((i + 1 == resultadoEsperado.length), reader.isLast());
+            reader = reader.next();
         }
-        if (!leitor.isEmpty()) {
-            fail("Ainda há item no leitor para ler: " + leitor.getToken());
+        if (!reader.isEmpty()) {
+            fail("Ainda há item no leitor para ler: " + reader.getToken());
         }
-        final PathReader leitor2 = leitor;
-        assertException(() -> leitor2.isIndex(), "Leitura já está no fim");
-        assertException(() -> leitor2.getToken(), "Leitura já está no fim");
-        assertException(() -> leitor2.next(), "Leitura já está no fim");
+        final PathReader reader2 = reader;
+        assertException(() -> reader2.isIndex(), "Leitura já está no fim");
+        assertException(() -> reader2.getToken(), "Leitura já está no fim");
+        assertException(() -> reader2.next(), "Leitura já está no fim");
 
     }
 }

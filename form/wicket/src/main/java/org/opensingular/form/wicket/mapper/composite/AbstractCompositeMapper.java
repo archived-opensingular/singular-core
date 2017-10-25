@@ -145,19 +145,19 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
             col.lg(colLg.orElse(Integer.min(colPref, BSCol.MAX_COLS)));
         }
 
-        protected int getPrefColspan(WicketBuildContext ctx, final SInstance iCampo) {
-            final SType<?> tCampo = iCampo.getType();
+        protected int getPrefColspan(WicketBuildContext ctx, final SInstance iField) {
+            final SType<?> fieldType = iField.getType();
             final HashMap<String, Integer> hintColWidths = ctx.getHint(COL_WIDTHS);
 
-            String tCampoName = tCampo.getName();
+            String fieldName = fieldType.getName();
 
-            return (hintColWidths.containsKey(tCampoName))
-                ? hintColWidths.get(tCampoName)
-                : iCampo.asAtrBootstrap().getColPreference(BSCol.MAX_COLS);
+            return (hintColWidths.containsKey(fieldName))
+                ? hintColWidths.get(fieldName)
+                : iField.asAtrBootstrap().getColPreference(BSCol.MAX_COLS);
         }
 
-        protected SInstanceFieldModel<SInstance> fieldModel(SType<?> tCampo) {
-            return new SInstanceFieldModel<>(model, tCampo.getNameSimple());
+        protected SInstanceFieldModel<SInstance> fieldModel(SType<?> field) {
+            return new SInstanceFieldModel<>(model, field.getNameSimple());
         }
 
         protected BSCol addLabelIfNeeded(WicketBuildContext ctx, final BSGrid grid) {
@@ -242,13 +242,13 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
 
             int rowColTotal = 0;
 
-            for (SType<?> tCampo : getInstanceType().getFields()) {
-                final Boolean newRow = tCampo.getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
+            for (SType<?> field : getInstanceType().getFields()) {
+                final Boolean newRow = field.getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
                 if (newRow != null && newRow) {
                     row = grid.newRow();
                 }
 
-                final SInstanceFieldModel<SInstance> instanceModel = fieldModel(tCampo);
+                final SInstanceFieldModel<SInstance> instanceModel = fieldModel(field);
 
                 rowColTotal += getPrefColspan(ctx, instanceModel.getObject());
                 if (rowColTotal > BSGrid.MAX_COLS) {

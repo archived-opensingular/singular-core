@@ -284,7 +284,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         final byte[] conteudo1 = new byte[]{1, 2, 3};
         arq.setContent("arq1", tmpProvider.createTempFile(conteudo1), conteudo1.length, HashUtil.toSHA1Base16(conteudo1));
         assertConteudo(conteudo1, arq, 1);
-        SIAttachment arq2 = (SIAttachment) TestFormSerializationUtil.testSerializacao(arq);
+        SIAttachment arq2 = (SIAttachment) TestFormSerializationUtil.testSerialization(arq);
         assertConteudo(conteudo1, arq2, 1);
     }
 
@@ -310,7 +310,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         assertConteudo(conteudo1, arquivo1, 2);
         assertConteudo(conteudo2, arquivo2, 2);
 
-        SIComposite bloco2 = (SIComposite) TestFormSerializationUtil.testSerializacao(bloco);
+        SIComposite bloco2 = (SIComposite) TestFormSerializationUtil.testSerialization(bloco);
 
         assertConteudo(conteudo1, bloco2.getField("arquivo1", SIAttachment.class), 2);
         assertConteudo(conteudo2, bloco2.getField("arquivo2", SIAttachment.class), 2);

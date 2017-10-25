@@ -18,12 +18,8 @@ package org.opensingular.flow.test.definicao;
 
 import org.opensingular.flow.core.FlowInstance;
 
-public class FlowVersoes extends FlowInstance {
+public class MultiVersionSampleFlowInstance extends FlowInstance {
 
-    /**
-     * chamar new DefinicaoProcessVersoes().newInstance();
-     */
-    protected FlowVersoes(){
-
+    protected MultiVersionSampleFlowInstance() {
     }
 }
