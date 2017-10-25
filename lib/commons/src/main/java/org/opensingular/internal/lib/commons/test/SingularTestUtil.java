@@ -22,12 +22,12 @@ import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
 import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
 import org.opensingular.lib.commons.lambda.IConsumerEx;
-import org.opensingular.lib.commons.pdf.PDFUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -216,12 +216,7 @@ public final class SingularTestUtil {
             throw new SingularTestException("Não existe o arquivo " + arq.getAbsolutePath());
         }
         try {
-            if (PDFUtil.isWindows()) {
-                ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", "start", arq.getAbsolutePath());//NOSONAR
-                processBuilder.start();
-            } else {
-                throw new SingularTestException("Sistema operacional não suportado");
-            }
+            Desktop.getDesktop().browse(arq.toURI());
         } catch (IOException e) {
             throw new SingularTestException(e);
         }
