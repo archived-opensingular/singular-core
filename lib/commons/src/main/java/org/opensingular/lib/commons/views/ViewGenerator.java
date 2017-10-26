@@ -27,5 +27,5 @@ public interface ViewGenerator {
 
     void generateView(@Nonnull ViewOutput<?> vOut) throws SingularViewUnsupportedFormatException;
 
-    boolean isDirectCompatiableWith(@Nonnull ViewOutputFormat format);
+    boolean isDirectCompatibleWith(@Nonnull ViewOutputFormat format);
 }
