@@ -110,14 +110,18 @@ public class TestSDocumentServices extends TestCaseForm {
         assertThat(document.lookupLocalService(Number.class).orElse(null)).isSameAs(provider);
     }
 
+    @Test
     @SuppressWarnings("unchecked")
-    @Test(expected = Exception.class)
-    public void rejectsFindByClassWhenThereAreMoreThanOneOptions() {
+    public void chekIfTheLastServiceRegisteredStands() {
         final Object provider = new Object();
-        document.bindLocalService(Object.class, ref(provider));
-        document.bindLocalService(Object.class, ref(provider));
 
-        document.lookupLocalService(Object.class);
+        RefService ref1 = ref(provider);
+
+        RefService ref2 = ref(provider);
+        document.bindLocalService(Object.class, ref1);
+        document.bindLocalService(Object.class, ref2);
+
+        assertEquals(ref2.get(), document.lookupLocalService(Object.class).get());
     }
 
     @SuppressWarnings("unchecked")
@@ -148,7 +152,6 @@ public class TestSDocumentServices extends TestCaseForm {
         assertThat(document.lookupLocalService(Object.class).orElse(null)).isEqualTo(provider);
     }
 
-    @Ignore
     @Test
     public void putTwoServicesWithSameNameAndSameClass() throws Exception {
         String serviceA = "A";
