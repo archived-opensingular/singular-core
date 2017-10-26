@@ -84,12 +84,12 @@ public final class GeneratorUtil implements Serializable {
     private static abstract class TreeLineReader_ implements TreeLineReader, Serializable {
     }
 
-    public static TreeLineReader toLeitorArvore(final Object lista, final LineReader<Object> leitor) {
+    public static TreeLineReader toTreeLineReader(final Object list, final LineReader<Object> reader) {
         return new TreeLineReader_() {
 
             @Override
             public Object getRoots() {
-                return lista;
+                return list;
             }
 
             @Override
@@ -99,7 +99,7 @@ public final class GeneratorUtil implements Serializable {
 
             @Override
             public void retrieveValues(LineReadContext ctx, Object current, LineInfo line) {
-                leitor.retrieveValues(ctx, current, line);
+                reader.retrieveValues(ctx, current, line);
             }
         };
     }

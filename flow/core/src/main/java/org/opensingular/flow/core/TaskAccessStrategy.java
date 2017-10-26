@@ -42,7 +42,13 @@ public abstract class TaskAccessStrategy<K extends FlowInstance> {
 
     public abstract Set<Integer> getFirstLevelUsersCodWithAccess(K instance);
 
-    public abstract List<? extends SUser> listAllocableUsers(K instance);
+    /**
+     * Lists all users that may be allocated to the current task. One case of use of this method is to list on a user's
+     * interface the candidates of users to be allocate to the task.
+     * @return it may return a empty list.
+     */
+    @Nonnull
+    public abstract List<? extends SUser> listAllowedUsers(@Nonnull K instance);
 
     @Nonnull
     public abstract List<String> getExecuteRoleNames(FlowDefinition<?> definition, STask<?> task);
@@ -123,10 +129,11 @@ public abstract class TaskAccessStrategy<K extends FlowInstance> {
         }
 
         @Override
-        public List<SUser> listAllocableUsers(K instance) {
+        @Nonnull
+        public List<SUser> listAllowedUsers(@Nonnull K instance) {
             Set<SUser> users = new LinkedHashSet<>();
             for (TaskAccessStrategy<K> taskAccessStrategy : disjunction) {
-                users.addAll(taskAccessStrategy.listAllocableUsers(instance));
+                users.addAll(taskAccessStrategy.listAllowedUsers(instance));
             }
             return new ArrayList<>(users);
         }
@@ -177,7 +184,8 @@ public abstract class TaskAccessStrategy<K extends FlowInstance> {
         }
 
         @Override
-        public List<SUser> listAllocableUsers(K instance) {
+        @Nonnull
+        public List<SUser> listAllowedUsers(@Nonnull K instance) {
             return Collections.emptyList();
         }
 

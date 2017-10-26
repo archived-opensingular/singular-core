@@ -26,7 +26,7 @@ public interface IInstanceDTO extends Serializable {
 
     String getDescricao();
 
-    void setDescricao(String descricao);
+    void setDescricao(String description);
 
     Long getDelta();
 

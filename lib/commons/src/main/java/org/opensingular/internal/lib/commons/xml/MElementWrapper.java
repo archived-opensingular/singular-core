@@ -48,7 +48,7 @@ public class MElementWrapper extends MElement implements EWrapper {
     /**
      * Caracter separador de nomes de Elementos (Xpath).
      */
-    static final char SEPARADOR_ELEMENT = '/';
+    static final char ELEMENT_PATH_SEPARATOR = '/';
 
     /**
      * Cache do builderFactory de acordo com a configuração desejada.
@@ -188,14 +188,14 @@ public class MElementWrapper extends MElement implements EWrapper {
         // tentar lozalizar um implementação de factory.
         // Daniel (08/05/2003)
 
-        int indice = (namespaceAware ? 1 : 0) + (validating ? 2 : 0);
-        if (buiderFactory__[indice] == null) {
+        int index = (namespaceAware ? 1 : 0) + (validating ? 2 : 0);
+        if (buiderFactory__[index] == null) {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(namespaceAware);
             factory.setValidating(validating);
-            buiderFactory__[indice] = factory;
+            buiderFactory__[index] = factory;
         }
-        return buiderFactory__[indice];
+        return buiderFactory__[index];
     }
 
     /**
@@ -404,7 +404,7 @@ public class MElementWrapper extends MElement implements EWrapper {
         Document d = resolvedParent.getOwnerDocument();
         String resolvedNamespaceURI = namespaceURI;
         String resolvedQualifiedName = qualifiedName;
-        int pos = resolvedQualifiedName.lastIndexOf(SEPARADOR_ELEMENT);
+        int pos = resolvedQualifiedName.lastIndexOf(ELEMENT_PATH_SEPARATOR);
         if (pos != -1) {
             if (pos == 0) {
                 resolvedParent = XmlUtil.getRootParent(resolvedParent);
@@ -508,13 +508,13 @@ public class MElementWrapper extends MElement implements EWrapper {
 
         String subTrecho = null;
         String resolvedQualifiedName = qualifiedName;
-        int pos = resolvedQualifiedName.indexOf(SEPARADOR_ELEMENT);
+        int pos = resolvedQualifiedName.indexOf(ELEMENT_PATH_SEPARATOR);
         Node resolvedParent = parent;
         if (pos != -1) {
             if (pos == 0) {
                 resolvedParent = XmlUtil.getRootParent(resolvedParent);
                 resolvedQualifiedName = resolvedQualifiedName.substring(1);
-                pos = resolvedQualifiedName.indexOf(SEPARADOR_ELEMENT);
+                pos = resolvedQualifiedName.indexOf(ELEMENT_PATH_SEPARATOR);
             }
             if (pos != -1) {
                 subTrecho = resolvedQualifiedName.substring(pos + 1);

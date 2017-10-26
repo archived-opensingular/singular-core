@@ -128,11 +128,11 @@ public class Value {
     @Deprecated
     public static <T extends Serializable> T of(SInstance compositeInstance, String...path) {
         if (compositeInstance instanceof SIComposite) {
-            SInstance campo = ((SIComposite) compositeInstance).getField(Arrays.stream(path).collect(Collectors.joining(".")));
-            if (campo instanceof SISimple) {
-                return Value.of((SISimple<T>) campo);
-            } else if (campo instanceof SIList) {
-                return (T) ofList((SIList) campo);
+            SInstance field = ((SIComposite) compositeInstance).getField(Arrays.stream(path).collect(Collectors.joining(".")));
+            if (field instanceof SISimple) {
+                return Value.of((SISimple<T>) field);
+            } else if (field instanceof SIList) {
+                return (T) ofList((SIList) field);
             }
         }
         return null;
@@ -148,9 +148,9 @@ public class Value {
 
     public static <T> List<T> ofList(SInstance compositeInstance, String path) {
         if (compositeInstance instanceof SIComposite) {
-            SInstance campo = ((SIComposite) compositeInstance).getField(path);
-            if (campo instanceof SIList) {
-                return Value.ofList((SIList<?>) campo);
+            SInstance field = ((SIComposite) compositeInstance).getField(path);
+            if (field instanceof SIList) {
+                return Value.ofList((SIList<?>) field);
             }
         }
         return null;

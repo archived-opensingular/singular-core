@@ -62,7 +62,7 @@ public class DefaultHibernatePersistenceService extends
     }
 
     // -------------------------------------------------------
-    // ProcessIntance
+    // FlowInstance
     // -------------------------------------------------------
 
     @Override
@@ -118,10 +118,6 @@ public class DefaultHibernatePersistenceService extends
     protected Class<? extends TaskHistoricTypeEntity> getClassEntityTaskHistoricType() {
         return TaskHistoricTypeEntity.class;
     }
-
-    // -------------------------------------------------------
-    // Process Definition e Version
-    // -------------------------------------------------------
 
     @Override
     public FlowVersionEntity retrieveFlowVersionByCod(Integer cod) {

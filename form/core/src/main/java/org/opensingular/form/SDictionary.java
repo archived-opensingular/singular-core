@@ -121,9 +121,9 @@ public class SDictionary {
         return loadPackage(atr.getPackageClass());
     }
 
-    public PackageBuilder createNewPackage(String nome) {
-        packages.verifyMustNotBePresent(nome, this);
-        SPackage newPackage = new SPackage(nome);
+    public PackageBuilder createNewPackage(String name) {
+        packages.verifyMustNotBePresent(name, this);
+        SPackage newPackage = new SPackage(name);
         newPackage.setDictionary(this);
         packages.add(newPackage);
         return new PackageBuilder(newPackage);
@@ -140,8 +140,8 @@ public class SDictionary {
         Objects.requireNonNull(typeClass);
         SType<?> typeRef = typeByClass.get(typeClass);
         if (typeRef == null) {
-            Class<? extends SPackage> classPacote = SFormUtil.getTypePackage(typeClass);
-            SPackage typePackage = loadPackage(classPacote);
+            Class<? extends SPackage> packageClass = SFormUtil.getTypePackage(typeClass);
+            SPackage typePackage = loadPackage(packageClass);
             typeRef = typeByClass.get(typeClass);
             if (typeRef == null) {
                 //O tipo é de carga lazy e não se auto registrou no pacote, então regista agora

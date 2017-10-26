@@ -46,7 +46,7 @@ public class AssertionsFlowInstance extends AssertionsBase<FlowInstance, Asserti
     }
 
     /**
-     * Verifica se tarefa corrente é do tipo esperado, ou seja, se o processo está no estado esperado. Caso contrário,
+     * Verifica se tarefa corrente é do tipo esperado, ou seja, se o fluxo está no estado esperado. Caso contrário,
      * dispara exception.
      */
     public AssertionsFlowInstance isAtTask(ITaskDefinition expectedCurrentTaskType) {
@@ -60,19 +60,19 @@ public class AssertionsFlowInstance extends AssertionsBase<FlowInstance, Asserti
         return new AssertionsTaskInstance(task);
     }
 
-    /** Verifica se a váriavel do processo correspondente ao valor esperado. Caso contrário, dispara exception. */
+    /** Verifica se a váriavel do fluxo correspondente ao valor esperado. Caso contrário, dispara exception. */
     public AssertionsFlowInstance isVariableValue(@Nonnull String variableName, @Nullable Object expectedValue) {
         Object currentValue = getTarget().getVariables().getValue(variableName);
         if(!Objects.equals(expectedValue, currentValue)) {
             throw new AssertionError(
-                    errorMsg("Valor incorreto na váriavel '" + variableName + "' do processo", expectedValue,
+                    errorMsg("Valor incorreto na váriavel '" + variableName + "' do fluxo", expectedValue,
                             currentValue));
         }
         return this;
     }
 
     /**
-     * Verifica se a lista de variáveis do processo corresponde a quantidade de variáveis e variáveis não nula
+     * Verifica se a lista de variáveis do fluxo corresponde a quantidade de variáveis e variáveis não nula
      * informada, caso contrário dispara exception.
      */
     public AssertionsFlowInstance isVariablesSize(int expectedListSize, int expectedNotNullSize) {
@@ -90,17 +90,17 @@ public class AssertionsFlowInstance extends AssertionsBase<FlowInstance, Asserti
         return this;
     }
 
-    /** Verifica se a descrição do processo corresponde a descrição esperada, caso contrário dispara exception. */
+    /** Verifica se a descrição do fluxo corresponde a descrição esperada, caso contrário dispara exception. */
     public AssertionsFlowInstance isDescription(String expectedDescription) {
         if (!Objects.equals(expectedDescription, getTarget().getDescription())) {
-            throw new AssertionError(errorMsg("Process description diferent of the expected", expectedDescription,
+            throw new AssertionError(errorMsg("Flow description diferent of the expected", expectedDescription,
                     getTarget().getDescription()));
         }
         return this;
     }
 
     /**
-     * Verifica se o processo possui um histórico de tarefa compatível com a sequencia informada.
+     * Verifica se o fluxo possui um histórico de tarefa compatível com a sequencia informada.
      */
     public AssertionsFlowInstance isTaskSequence(ITaskDefinition... expectedTaskSequence) {
         List<TaskInstance> tasks = getTarget().getTasksOlderFirst();

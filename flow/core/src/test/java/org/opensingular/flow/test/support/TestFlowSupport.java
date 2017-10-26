@@ -32,7 +32,7 @@ import org.junit.runners.parameterized.TestWithParameters;
 import org.opensingular.flow.core.FlowDefinitionCache;
 import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.SingularFlowConfigurationBean;
-import org.opensingular.flow.core.TestProcessBeanInjection;
+import org.opensingular.flow.core.TestFlowBeanInjection;
 import org.opensingular.flow.test.TestDAO;
 import org.opensingular.lib.commons.base.SingularPropertiesImpl;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
@@ -93,14 +93,14 @@ public abstract class TestFlowSupport {
     public static void configApplicationContext(ApplicationContext applicationContext) {
         ServiceRegistryLocator.setup(new SpringServiceRegistry());
         try {
-            myBeanRef = applicationContext.getBean(TestProcessBeanInjection.MyBean.class);
+            myBeanRef = applicationContext.getBean(TestFlowBeanInjection.MyBean.class);
         } catch (NoSuchBeanDefinitionException e) {
             myBeanRef = null;
         }
         if (myBeanRef == null) {
             myBeanRef = new MyBean();
             ((ConfigurableApplicationContext) applicationContext).getBeanFactory().registerSingleton(
-                    TestProcessBeanInjection.MyBean.class.getName(), myBeanRef);
+                    TestFlowBeanInjection.MyBean.class.getName(), myBeanRef);
         }
     }
 

@@ -31,7 +31,7 @@ import javax.persistence.Table;
 import java.util.List;
 
 /**
- * The persistent class for the TB_DEFINICAO_PROCESSO database table.
+ * The persistent class for the flow definition database table.
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity

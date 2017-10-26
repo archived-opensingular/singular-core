@@ -36,6 +36,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 class FlowEngine {
@@ -99,7 +100,7 @@ class FlowEngine {
             getPersistenceService().flushSession();
 
             if (!currentDestiny.isImmediateExecution()) {
-                return executeImediate(flowInstance, currentOrigin, currentTransition, currentDestiny, currentParam,
+                return executeImmediately(flowInstance, currentOrigin, currentTransition, currentDestiny, currentParam,
                         newTaskInstance);
             }
 
@@ -134,7 +135,7 @@ class FlowEngine {
     private static <P extends FlowInstance> void saveParam(@Nonnull P flowInstance, TaskInstance currentOrigin, VarInstanceMap<?, ?> currentParam, Date agora, TaskInstance newTaskInstance) {
         copyMarkedParametersToInstanceVariables(flowInstance, currentParam);
         if (currentOrigin != null) {
-            //TODO (Daniel) o If acima existe para não dar erro a iniciar processo com variáveis setadas no
+            //TODO (Daniel) o If acima existe para não dar erro a iniciar fluxo com variáveis setadas no
             // start, mas deveria guardar no histórico da variavel originais do start (o que o if a cima
             // impede). O problema é uqe originTaskInstance é obrigatório
             getPersistenceService().saveVariableHistoric(agora, flowInstance.getEntity(), currentOrigin, newTaskInstance, currentParam);
@@ -162,9 +163,9 @@ class FlowEngine {
         return currentTransition != null && currentOrigin == null;
     }
 
-    private static <P extends FlowInstance> TaskInstance executeImediate(P flowInstance, TaskInstance originTaskInstance,
+    private static <P extends FlowInstance> TaskInstance executeImmediately(P flowInstance, TaskInstance originTaskInstance,
                                                                             STransition transition, STask<?> destinyTask, VarInstanceMap<?, ?> paramIn,
-                                                                            TaskInstance newTaskInstance) {
+                                                                            @Nonnull TaskInstance newTaskInstance) {
         initTask(flowInstance, destinyTask, newTaskInstance);
 
         if (transition != null && transition.hasAutomaticRoleUsersToSet()) {
@@ -179,16 +180,18 @@ class FlowEngine {
         return newTaskInstance;
     }
 
-    private static <P extends FlowInstance> void automaticallySetBusinessRole(P instance, TaskInstance taskInstance,
-                                                                              STransition originTransition) {
-        for (SBusinessRole papel : originTransition.getRolesToDefine()) {
-            if (papel.isAutomaticBusinessRoleAllocation()) {
-                SUser pessoa = papel.getBusinessRoleStrategy().getUserForRole(instance,
-                        taskInstance);
-                Objects.requireNonNull(pessoa, "Não foi possível determinar a pessoa com o papel " + papel.getName()
-                        + " para " + instance.getFullId() + " na transição " + originTransition.getName());
-
-                instance.addOrReplaceUserRole(papel.getAbbreviation(), pessoa);
+    private static <P extends FlowInstance> void automaticallySetBusinessRole(@Nonnull P instance,
+            @Nonnull TaskInstance taskInstance, @Nonnull STransition originTransition) {
+        for (SBusinessRole role : originTransition.getRolesToDefine()) {
+            if (role.isAutomaticBusinessRoleAllocation()) {
+                Optional<SUser> user = role.getBusinessRoleStrategy().getUserForRole(instance, taskInstance);
+                if (user.isPresent()) {
+                    instance.addOrReplaceUserRole(role.getAbbreviation(), user.get());
+                } else {
+                    throw new SingularFlowException(
+                            "Não foi possível determinar a pessoa com o papel " + role.getName() + " para " +
+                                    instance.getFullId() + " na transição " + originTransition.getName(), taskInstance);
+                }
             }
         }
     }
@@ -283,7 +286,7 @@ class FlowEngine {
     private static void copyMarkedParametersToInstanceVariables(@Nonnull FlowInstance instance,
             @Nonnull VarInstanceMap<?, ?> paramIn) {
         for (VarInstance variavel : paramIn) {
-            if (variavel.getValue() != null && SParametersEnabled.isAutoBindedToProcessVariable(variavel)) {
+            if (variavel.getValue() != null && SParametersEnabled.isAutoBindedToFlowVariable(variavel)) {
                 String ref = variavel.getRef();
                 if (instance.getFlowDefinition().getVariables().contains(ref)) {
                     instance.setVariable(ref, variavel.getValue());

@@ -35,7 +35,9 @@ public class TableOutputHtml extends TableOutput {
     private final ViewOutputHtml vOut;
     private final String tableid = UUID.randomUUID().toString();
 
-    public TableOutputHtml(ViewOutputHtml vOut) {this.vOut = vOut;}
+    public TableOutputHtml(ViewOutputHtml vOut) {
+        this.vOut = vOut;
+    }
 
     @Override
     public String getUrlApp() {
@@ -99,7 +101,7 @@ public class TableOutputHtml extends TableOutput {
     @Override
     public void generateTableStart(OutputTableContext ctx, TableTool tableTool) {
         println();
-        print("<table id='"+tableid+"' cellpadding='0' cellspacing='0'");
+        print("<table id='" + tableid + "' cellpadding='0' cellspacing='0'");
         if (tableTool.isStrippedLines()) {
             printAttribute("class", "T_t table table-bordered table-condensed table-hover table-striped");
         } else {
@@ -120,9 +122,9 @@ public class TableOutputHtml extends TableOutput {
         println("(function(){\n" +
                 "if(typeof $ !== 'undefined'){\n" +
                 "    $(document).ready(function(){\n" +
-                "        var table = $('#"+tableid+"');\n" +
+                "        var table = $('#" + tableid + "');\n" +
                 "        if(table.DataTable){\n" +
-                "            table.DataTable("+datatablesOptions()+");\n" +
+                "            table.DataTable(" + datatablesOptions() + ");\n" +
                 "        }\n" +
                 "    });}\n" +
                 "}());");
@@ -150,7 +152,7 @@ public class TableOutputHtml extends TableOutput {
 
     @Override
     public void generateLineSimpleStart(OutputTableContext ctx, LineInfo line, int lineAlternation) {
-        if (lineAlternation != -1 ) {
+        if (lineAlternation != -1) {
             line.getDecorator().setCssClass(lineAlternation == 0 ? "T_ls0" : "T_ls1");
         }
         print("  <tr");
@@ -201,7 +203,7 @@ public class TableOutputHtml extends TableOutput {
 
     @Override
     public void generateTitleCell(OutputTableContext ctx, Column column, int rowSpan, boolean asSubTitle,
-            boolean columnWithSeparator) {
+                                  boolean columnWithSeparator) {
         PrintWriter out = getOut();
         out.print("   <th");
         if (column.getWidth() != null) {
@@ -235,7 +237,7 @@ public class TableOutputHtml extends TableOutput {
     }
 
     private void generateTitleCellClassAttribute(Column column, boolean asSubTitle, boolean columnWithSeparator,
-            PrintWriter out) {
+                                                 PrintWriter out) {
         if (asSubTitle) {
             switch (column.getAlignment()) {
                 case CENTER:
@@ -304,7 +306,7 @@ public class TableOutputHtml extends TableOutput {
 
     @Override
     public void generateTotalLineStart(@Nonnull OutputTableContext ctx, @Nonnull LineInfo totalLine,
-            @Nonnull Decorator tempDecorator, int level) {
+                                       @Nonnull Decorator tempDecorator, int level) {
         if (level != -1) {
             if (level <= 2) {
                 tempDecorator.setCssClass("RA_TR_" + level);
@@ -328,7 +330,7 @@ public class TableOutputHtml extends TableOutput {
 
     @Override
     public void generateTotalCellSkip(@Nonnull OutputTableContext ctx, @Nonnull Column column,
-            boolean columnWithSeparator) {
+                                      boolean columnWithSeparator) {
         if (columnWithSeparator) {
             getOut().println("   <td class=\"T_sep\">&nbsp;</td>");
         } else {
@@ -338,7 +340,7 @@ public class TableOutputHtml extends TableOutput {
 
     @Override
     public void generateTotalLabel(@Nonnull OutputTableContext ctx, @Nonnull Column column, @Nonnull String label,
-            @Nonnull DecoratorCell tempDecorator, int level) {
+                                   @Nonnull DecoratorCell tempDecorator, int level) {
         tempDecorator.setCssClass("T_tot_label");
 
         PrintWriter out = getOut();
@@ -399,15 +401,22 @@ public class TableOutputHtml extends TableOutput {
         }
         cellTagsOpen(ctx, cell, column, out);
         if (ctx.isActionCell()) {
-            out.print(gerarAcoes(getVOut(), ctx.getCell()));
+            out.print(generateActions(getVOut(), ctx.getCell()));
         } else {
             String s = ctx.generateFormatDisplayString();
             if (s != null) {
-                out.print(s);
+                out.print(escapeHTML(s, ctx.getColumn().getType().getProcessor()));
             }
         }
         cellTagsClose(ctx, cell, column, out);
         out.println("</td>");
+    }
+
+    private String escapeHTML(String s, ColumnTypeProcessor type) {
+        if (type instanceof ColumnTypeProcessor.ColumnTypeProcessorTypeRaw) {
+            return s;
+        }
+        return AlocproToolkit.plainTextToHtml(s, false);
     }
 
     private void cellTagsOpen(@Nonnull OutputCellContext ctx, InfoCell cell, Column column, PrintWriter out) {
@@ -488,11 +497,11 @@ public class TableOutputHtml extends TableOutput {
         }
     }
 
-    private static String gerarAcoes(ViewOutputHtml out, InfoCell cell) {
+    private static String generateActions(ViewOutputHtml out, InfoCell cell) {
         return cell.getActions().stream().filter(Predicates.notNull()).filter(WebRef::appliesToContext).map(
                 webActionEnabled -> webActionEnabled.generateHtml(out.getUrlApp())).filter(Predicates.notNull())
                 .collect(
-                Collectors.joining());
+                        Collectors.joining());
     }
 
     /**
@@ -566,7 +575,7 @@ public class TableOutputHtml extends TableOutput {
         return entry.getValue() == null ? "null" : entry.getValue();
     }
 
-    private String datatablesOptions(){
+    private String datatablesOptions() {
         return "{'oLanguage' : {\n" +
                 "    'sEmptyTable': 'Nenhum registro encontrado',\n" +
                 "    'sInfo': 'Mostrando de _START_ até _END_ de _TOTAL_ registros',\n" +

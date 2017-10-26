@@ -86,26 +86,26 @@ public final class FormFreemarkerUtil {
      * Gera uma string resultante do merge do template com os dados contídos na
      * instancia informada.
      */
-    public String merge(SInstance dados, String templateString) {
-        return internalMerge(dados, templateString, false, false);
+    public String merge(SInstance dataSource, String templateString) {
+        return internalMerge(dataSource, templateString, false, false);
     }
 
     /**
      * Gera uma string resultante do merge do template com os dados contídos na
      * instancia informada podendo ignorar os erros.
      */
-    public String merge(SInstance dados, String templateString, boolean escapeContentHtml, boolean ignoreError) {
-        return internalMerge(dados, templateString, escapeContentHtml, ignoreError);
+    public String merge(SInstance dataSource, String templateString, boolean escapeContentHtml, boolean ignoreError) {
+        return internalMerge(dataSource, templateString, escapeContentHtml, ignoreError);
     }
 
-    private String internalMerge(SInstance dados, String templateString, boolean escapeContentHtml, boolean ignoreError) {
-        return merge(dados, escapeContentHtml, parseTemplate(templateString, ignoreError));
+    private String internalMerge(SInstance dataSource, String templateString, boolean escapeContentHtml, boolean ignoreError) {
+        return merge(dataSource, escapeContentHtml, parseTemplate(templateString, ignoreError));
     }
 
-    public String merge(SInstance dados, boolean escapeContentHtml, Template template) {
+    public String merge(SInstance dataSource, boolean escapeContentHtml, Template template) {
         StringWriter out = new StringWriter();
         try {
-            template.process(dados, out, new FormObjectWrapper(escapeContentHtml));
+            template.process(dataSource, out, new FormObjectWrapper(escapeContentHtml));
         } catch (TemplateException | IOException e) {
             throw new SingularFormException("Erro mesclando dados da instancia com o template: " + template, e);
         }

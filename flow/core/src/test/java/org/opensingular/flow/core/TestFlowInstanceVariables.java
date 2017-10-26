@@ -117,13 +117,13 @@ public class TestFlowInstanceVariables extends TestFlowExecutionSupport {
             f.addWaitTask(StepsPV.First);
             f.addEndTask(StepsPV.End);
 
-            f.setStartTask(StepsPV.First).setInitializer(this::processInitializer);
+            f.setStartTask(StepsPV.First).setInitializer(this::flowInitializer);
             f.from(StepsPV.First).go(StepsPV.End);
 
             return f.build();
         }
 
-        private void processInitializer(FlowInstance instance, StartCall<FlowInstance> startCall) {
+        private void flowInitializer(FlowInstance instance, StartCall<FlowInstance> startCall) {
             instance.getVariables().setValue(PARAM_STRING, PARAM_STRING_VALUE);
             instance.setVariable(PARAM_DATE, PARAM_DATE_VALUE);
             instance.setVariable(PARAM_BOOLEAN, PARAM_BOOLEAN_VALUE);

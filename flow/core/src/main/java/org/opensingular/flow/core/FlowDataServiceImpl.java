@@ -27,8 +27,8 @@ import org.opensingular.flow.core.entity.IEntityTaskDefinition;
 import org.opensingular.flow.core.entity.IEntityTaskInstance;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
+import org.opensingular.flow.core.service.IFlowDataService;
 import org.opensingular.flow.core.service.IPersistenceService;
-import org.opensingular.flow.core.service.IProcessDataService;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -42,11 +42,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ProcessDataServiceImpl<I extends FlowInstance> implements IProcessDataService<I> {
+public class FlowDataServiceImpl<I extends FlowInstance> implements IFlowDataService<I> {
 
     private final FlowDefinition<I> flowDefinition;
 
-    protected ProcessDataServiceImpl(FlowDefinition<I> flowDefinition) {
+    protected FlowDataServiceImpl(FlowDefinition<I> flowDefinition) {
         super();
         this.flowDefinition = flowDefinition;
     }
@@ -54,7 +54,7 @@ public class ProcessDataServiceImpl<I extends FlowInstance> implements IProcessD
     @Override
     public final I retrieveInstance(Integer entityCod) {
         return retrieveInstanceOpt(entityCod).orElseThrow(
-                () -> new SingularFlowException("Nao foi encontrada a instancia de processo cod=" + entityCod));
+                () -> new SingularFlowException("Nao foi encontrada a instancia de fluxo cod=" + entityCod));
     }
 
     @Override

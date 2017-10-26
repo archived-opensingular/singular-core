@@ -18,6 +18,7 @@ package org.opensingular.flow.core.entity;
 
 import org.opensingular.flow.core.SUser;
 
+import javax.annotation.Nonnull;
 import java.util.Date;
 import java.util.List;
 
@@ -31,6 +32,7 @@ public interface IEntityFlowInstance extends IEntityByCod<Integer> {
 
     SUser getUserCreator();
 
+    @Nonnull
     Date getBeginDate();
 
     void setBeginDate(Date beginDate);

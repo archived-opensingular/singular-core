@@ -289,7 +289,7 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
     }
 
     final String createErrorMsg(String message) {
-        return "Processo '" + getFlowMap().getFlowDefinition().getName() + "' : Task '" +name + "' -> " + message;
+        return "Flow '" + getFlowMap().getFlowDefinition().getName() + "' : Task '" +name + "' -> " + message;
     }
 
     void verifyConsistency() {

@@ -19,14 +19,14 @@ package org.opensingular.flow.core;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.opensingular.flow.core.TestProcessInicializationDefault.FlowWithDefaultInitialization.StepsDI;
+import org.opensingular.flow.core.TestFlowInicializationDefault.FlowWithDefaultInitialization.StepsDI;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 
 /**
  * @author Daniel C. Bordin on 18/03/2017.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class TestProcessInicializationDefault extends TestFlowExecutionSupport {
+public class TestFlowInicializationDefault extends TestFlowExecutionSupport {
 
     public static final String FLAG = "flag";
 

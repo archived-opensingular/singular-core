@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Classe base para implementação de teste que executarão um definição de processo.
+ * Classe base para implementação de teste que executarão um definição de fluxo.
  *
  * @author Daniel C. Bordin on 19/03/2017.
  */
@@ -38,15 +38,15 @@ public abstract class TestFlowExecutionSupport extends TestFlowSupport {
     }
 
     /**
-     * Executa o código de assertivas duas vezes. A primeira direto no processo e novamente depois de recarregar o
-     * processo a partir do banco.
+     * Executa o código de assertivas duas vezes. A primeira direto no fluxo e novamente depois de recarregar o
+     * fluxo a partir do banco.
      */
     protected void assertReloadAssert(FlowInstance pi, Consumer<FlowInstance> assertionsCode) {
         assertionsCode.accept(pi);
         assertionsCode.accept(reload(pi));
     }
 
-    /** Recarrega a instância de processo a partir do BD. */
+    /** Recarrega a instância de fluxo a partir do BD. */
     protected FlowInstance reload(FlowInstance pi) {
         Session session = sessionFactory.getCurrentSession();
         session.flush();

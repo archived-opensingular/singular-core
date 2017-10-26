@@ -43,33 +43,33 @@ public class STypeUF extends STypeComposite<SIComposite> implements Loggable {
         this.selection()
                 .id(sigla)
                 .display("${nome!} - ${sigla!}")
-                .simpleProvider(listaBuilder -> {
-                    fillAC(listaBuilder.add().get());
-                    fillAP(listaBuilder.add().get());
-                    fillAM(listaBuilder.add().get());
-                    fillBA(listaBuilder.add().get());
-                    fillCE(listaBuilder.add().get());
-                    fillDF(listaBuilder.add().get());
-                    fillES(listaBuilder.add().get());
-                    fillGO(listaBuilder.add().get());
-                    fillMA(listaBuilder.add().get());
-                    fillMT(listaBuilder.add().get());
-                    fillMS(listaBuilder.add().get());
-                    fillMG(listaBuilder.add().get());
-                    fillPA(listaBuilder.add().get());
-                    fillPB(listaBuilder.add().get());
-                    fillPR(listaBuilder.add().get());
-                    fillPE(listaBuilder.add().get());
-                    fillPI(listaBuilder.add().get());
-                    fillRJ(listaBuilder.add().get());
-                    fillRN(listaBuilder.add().get());
-                    fillRS(listaBuilder.add().get());
-                    fillRO(listaBuilder.add().get());
-                    fillRR(listaBuilder.add().get());
-                    fillSC(listaBuilder.add().get());
-                    fillSP(listaBuilder.add().get());
-                    fillSE(listaBuilder.add().get());
-                    fillTO(listaBuilder.add().get());
+                .simpleProvider(listBuilder -> {
+                    fillAC(listBuilder.add().get());
+                    fillAP(listBuilder.add().get());
+                    fillAM(listBuilder.add().get());
+                    fillBA(listBuilder.add().get());
+                    fillCE(listBuilder.add().get());
+                    fillDF(listBuilder.add().get());
+                    fillES(listBuilder.add().get());
+                    fillGO(listBuilder.add().get());
+                    fillMA(listBuilder.add().get());
+                    fillMT(listBuilder.add().get());
+                    fillMS(listBuilder.add().get());
+                    fillMG(listBuilder.add().get());
+                    fillPA(listBuilder.add().get());
+                    fillPB(listBuilder.add().get());
+                    fillPR(listBuilder.add().get());
+                    fillPE(listBuilder.add().get());
+                    fillPI(listBuilder.add().get());
+                    fillRJ(listBuilder.add().get());
+                    fillRN(listBuilder.add().get());
+                    fillRS(listBuilder.add().get());
+                    fillRO(listBuilder.add().get());
+                    fillRR(listBuilder.add().get());
+                    fillSC(listBuilder.add().get());
+                    fillSP(listBuilder.add().get());
+                    fillSE(listBuilder.add().get());
+                    fillTO(listBuilder.add().get());
 
                 });
     }

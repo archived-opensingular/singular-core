@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package org.opensingular.lib.commons.util;
-
-import static org.apache.commons.lang3.StringUtils.*;
+package org.opensingular.internal.lib.commons.util;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+
+/** Converts a human readable string defining time or size to a absolute numbers. */
 public abstract class ConversionUtils {
     private static Pattern HUMANE_NUMBER_PATTERN = Pattern.compile("(\\-?\\s*(?:[0-9][0-9\\.,_]*))\\s*(k|kb|m|mb|g|gb|t|tb|week|weeks|day|days|hour|hours|min|mins|sec|secs|ms)?", Pattern.CASE_INSENSITIVE);
 
@@ -56,14 +57,12 @@ public abstract class ConversionUtils {
 
     public static int toIntHumane(String s, int defaultValue) {
         long v = toLongHumane(s, defaultValue);
-        if ((v > Integer.MAX_VALUE) || (v < Integer.MIN_VALUE))
-            return defaultValue;
+        if ((v > Integer.MAX_VALUE) || (v < Integer.MIN_VALUE)) return defaultValue;
         return (int) v;
     }
 
     public static long toLongHumane(String s, long defaultValue) {
-        if (s == null)
-            return defaultValue;
+        if (s == null) return defaultValue;
 
         final Matcher m = HUMANE_NUMBER_PATTERN.matcher(s.trim());
         if (!m.matches()) {

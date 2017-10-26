@@ -22,7 +22,7 @@ import org.xml.sax.SAXParseException;
 
 /**
  * Recebe os eventos de erro durante o parse do XML e os guardar para serem
- * recebidos ao final do processo de parse. Desse modo, é possível a aplicação
+ * recebidos ao final da execução de parse. Desse modo, é possível a aplicação
  * listar todos os erros encontrados. <p/>Caso aparece um exceção com uma
  * exceção encadeada, então é disparada a exception de modo a não mascarar o
  * erro.

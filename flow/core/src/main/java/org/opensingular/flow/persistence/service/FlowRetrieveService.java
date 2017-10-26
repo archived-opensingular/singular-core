@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Nonnull;
 
 @Transactional(readOnly = true)
-public class ProcessRetrieveService extends AbstractHibernateService {
+public class FlowRetrieveService extends AbstractHibernateService {
 
     public void setSessionLocator(SessionLocator sessionLocator) {
         this.sessionLocator = sessionLocator;

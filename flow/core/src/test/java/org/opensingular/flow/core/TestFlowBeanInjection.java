@@ -19,7 +19,7 @@ package org.opensingular.flow.core;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.flow.core.TestProcessBeanInjection.FlowDefinitionBeanInjection.StepsBI;
+import org.opensingular.flow.core.TestFlowBeanInjection.FlowDefinitionBeanInjection.StepsBI;
 import org.opensingular.flow.core.builder.BuilderStart;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.variable.ValidationResult;
@@ -38,7 +38,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Daniel C. Bordin on 18/05/2017.
  */
-public class TestProcessBeanInjection extends TestFlowExecutionSupport {
+public class TestFlowBeanInjection extends TestFlowExecutionSupport {
 
     private static final Set<IPoint> executedPoints = EnumSet.noneOf(IPoint.class);
 
@@ -149,7 +149,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         }
 
         private <K extends FlowInstance> void validateParamTransition2(VarInstanceMap<?, ?> vars,
-                                                                          ValidationResult result, K process) {
+                                                                          ValidationResult result, K flow) {
         }
 
         private void setupStartParameters(BuilderStart<?> start) {
@@ -291,7 +291,7 @@ public class TestProcessBeanInjection extends TestFlowExecutionSupport {
         }
 
         @Override
-        public List<? extends SUser> listAllocableUsers(FlowInstance instance) {
+        public List<? extends SUser> listAllowedUsers(FlowInstance instance) {
             return null;
         }
 

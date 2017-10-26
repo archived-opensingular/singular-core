@@ -18,7 +18,7 @@ package org.opensingular.flow.core;
 
 import java.util.List;
 
-public interface ProcessNotifier {
+public interface FlowInstanceListener {
 
     //TODO sugestão: responsibleUser -> userInCharge
     public default void notifyUserTaskRelocation(TaskInstance taskInstance, SUser responsibleUser, SUser userToNotify, SUser allocatedUser,

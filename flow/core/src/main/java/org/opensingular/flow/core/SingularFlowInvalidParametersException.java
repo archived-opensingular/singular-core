@@ -21,19 +21,19 @@ import org.opensingular.flow.core.variable.ValidationResult;
 import javax.annotation.Nonnull;
 
 /**
- * Exception referente a passagem incorreta de parâmentros, em geral em um start de processo ou execução de transição.
+ * Exception referente a passagem incorreta de parâmentros, em geral em um start de fluxo ou execução de transição.
  *
  * @author Daniel C. Bordin on 21/03/2017.
  */
 public class SingularFlowInvalidParametersException extends SingularFlowException {
 
     SingularFlowInvalidParametersException(StartCall<?> startCall, ValidationResult result) {
-        this(startCall.getFlowDefinition(), result, "Erro nos parâmetros passados para inicialização do processo '" +
+        this(startCall.getFlowDefinition(), result, "Erro nos parâmetros passados para inicialização do fluxo '" +
                 startCall.getFlowDefinition().getName() + "'");
     }
 
     SingularFlowInvalidParametersException(FlowDefinition<?> flowDefinition, ValidationResult result) {
-        this(flowDefinition, result, "Erro ao iniciar processo '" + flowDefinition.getName());
+        this(flowDefinition, result, "Erro ao iniciar fluxo '" + flowDefinition.getName());
     }
 
     SingularFlowInvalidParametersException(@Nonnull TaskInstance taskInstance, @Nonnull STransition transition, ValidationResult result) {

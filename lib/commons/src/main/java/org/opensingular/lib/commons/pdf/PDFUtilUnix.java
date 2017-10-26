@@ -18,7 +18,11 @@ package org.opensingular.lib.commons.pdf;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 
 /**
@@ -66,7 +70,6 @@ final class PDFUtilUnix extends PDFUtil {
     /**
      * Gera o arquivo através do processo especificado.
      *
-     * @param process o processo especificado.
      * @param expectedFile    o arquivo a ser criado.
      * @return o arquivo criado.
      */

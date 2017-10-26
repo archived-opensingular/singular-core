@@ -23,9 +23,9 @@ public interface IDefinitionDTO extends Serializable {
 
     void setCod(Integer cod);
 
-    String getNome();
+    String getName();
 
-    void setNome(String nome);
+    void setName(String name);
 
     String getSigla();
 

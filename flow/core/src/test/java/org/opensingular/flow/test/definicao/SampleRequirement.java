@@ -30,19 +30,19 @@ import org.opensingular.flow.core.defaults.PermissiveTaskAccessStrategy;
 
 import java.util.Calendar;
 
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_ANALISE;
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_GERENTE;
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.DEFERIDO;
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.EM_EXIGENCIA;
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.INDEFERIDO;
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.NOTIFICAR_NOVA_INSTANCIA;
-import static org.opensingular.flow.test.definicao.Peticao.PeticaoTask.PUBLICADO;
+import static org.opensingular.flow.test.definicao.SampleRequirement.SampleTask.AGUARDANDO_ANALISE;
+import static org.opensingular.flow.test.definicao.SampleRequirement.SampleTask.AGUARDANDO_GERENTE;
+import static org.opensingular.flow.test.definicao.SampleRequirement.SampleTask.AGUARDANDO_PUBLICACAO;
+import static org.opensingular.flow.test.definicao.SampleRequirement.SampleTask.DEFERIDO;
+import static org.opensingular.flow.test.definicao.SampleRequirement.SampleTask.EM_EXIGENCIA;
+import static org.opensingular.flow.test.definicao.SampleRequirement.SampleTask.INDEFERIDO;
+import static org.opensingular.flow.test.definicao.SampleRequirement.SampleTask.NOTIFICAR_NOVA_INSTANCIA;
+import static org.opensingular.flow.test.definicao.SampleRequirement.SampleTask.PUBLICADO;
 
 @DefinitionInfo("Peticoes")
-public class Peticao extends FlowDefinition<FlowInstance> {
+public class SampleRequirement extends FlowDefinition<FlowInstance> {
 
-    public enum PeticaoTask implements ITaskDefinition {
+    public enum SampleTask implements ITaskDefinition {
         NOTIFICAR_NOVA_INSTANCIA("Notificar nova instância"),
         AGUARDANDO_ANALISE("Aguardando análise"),
         EM_EXIGENCIA("Em exigência"),
@@ -54,7 +54,7 @@ public class Peticao extends FlowDefinition<FlowInstance> {
 
         private final String name;
 
-        PeticaoTask(String name) {
+        SampleTask(String name) {
             this.name = name;
         }
 
@@ -78,7 +78,7 @@ public class Peticao extends FlowDefinition<FlowInstance> {
     public static final String PAPEL_ANALISTA = "analista";
     public static final String PAPEL_GERENTE = "GERENTE";
 
-    public Peticao() {
+    public SampleRequirement() {
         super(FlowInstance.class);
     }
 
@@ -88,8 +88,8 @@ public class Peticao extends FlowDefinition<FlowInstance> {
 
         FlowBuilderImpl flow = new FlowBuilderImpl(this);
 
-        BuilderBusinessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", PAPEL_ANALISTA, false);
-        BuilderBusinessRole<?> papelGerente = flow.addRoleDefinition("GERENTE", PAPEL_GERENTE, false);
+        BuilderBusinessRole<?> papelAnalista = flow.addBusinessRole("ANALISTA", PAPEL_ANALISTA, false);
+        BuilderBusinessRole<?> papelGerente = flow.addBusinessRole("GERENTE", PAPEL_GERENTE, false);
 
         flow.addJavaTask(NOTIFICAR_NOVA_INSTANCIA).call(this::notificar);
         flow.addHumanTask(AGUARDANDO_ANALISE, papelAnalista);

@@ -28,7 +28,7 @@ import org.opensingular.flow.core.entity.IEntityTaskVersion;
 
 public interface IFlowDefinitionEntityService<CATEGORY extends IEntityCategory, FLOW_DEFINITION extends IEntityFlowDefinition,
         FLOW_VERSION extends IEntityFlowVersion, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion,
- TRANSITION extends IEntityTaskTransitionVersion, PROCESS_ROLE extends IEntityRoleDefinition, ROLE_TASK extends IEntityRoleTask> {
+ TRANSITION extends IEntityTaskTransitionVersion, ROLE_DEFINITION extends IEntityRoleDefinition, ROLE_TASK extends IEntityRoleTask> {
 
     /**
      * Generates a new {@link IEntityFlowVersion} if {@link FlowDefinition} is

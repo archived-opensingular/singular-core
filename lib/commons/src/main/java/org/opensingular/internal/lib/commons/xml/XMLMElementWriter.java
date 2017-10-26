@@ -347,8 +347,8 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
     }
 
     private void printSpace(PrintWriter out, int level) {
-        String[] LISTA_SPACE = new String[15];
-        if (level >= LISTA_SPACE.length) {
+        String[] listOfSpaces = new String[15];
+        if (level >= listOfSpaces.length) {
             //Indentação maior que o cache de espaços
             for (int i = level; i != 0; i--) {
                 out.print(SPACE);
@@ -356,15 +356,15 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
             return;
         }
 
-        if (LISTA_SPACE[0] == null) {
+        if (listOfSpaces[0] == null) {
             //Primeira chama monta array de espaços
-            int tamBuffer = SPACE.length() * LISTA_SPACE.length;
+            int tamBuffer = SPACE.length() * listOfSpaces.length;
             StringBuilder buf = new StringBuilder(tamBuffer);
-            for (int i = 0; i < LISTA_SPACE.length; i++) {
-                LISTA_SPACE[i] = buf.toString();
+            for (int i = 0; i < listOfSpaces.length; i++) {
+                listOfSpaces[i] = buf.toString();
                 buf.append(SPACE);
             }
         }
-        out.print(LISTA_SPACE[level]);
+        out.print(listOfSpaces[level]);
     }
 }

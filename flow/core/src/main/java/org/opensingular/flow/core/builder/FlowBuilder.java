@@ -42,7 +42,7 @@ import org.opensingular.lib.commons.base.SingularUtil;
 
 import java.util.function.Consumer;
 
-public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extends FlowMap, BUILDER_TASK extends BuilderTask, BUILDER_JAVA extends BuilderJava<?>, BUILDER_PEOPLE extends BuilderHuman<?>, BUILDER_WAIT extends BuilderWait<?>, BUILDER_END extends BuilderEnd<?>, BUILDER_START extends BuilderStart<?>, BUILDER_TRANSITION extends BuilderTransition<?>, BUILDER_PAPEL extends BuilderBusinessRole<?>, TASK_DEF extends ITaskDefinition> {
+public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extends FlowMap, BUILDER_TASK extends BuilderTask, BUILDER_JAVA extends BuilderJava<?>, BUILDER_PEOPLE extends BuilderHuman<?>, BUILDER_WAIT extends BuilderWait<?>, BUILDER_END extends BuilderEnd<?>, BUILDER_START extends BuilderStart<?>, BUILDER_TRANSITION extends BuilderTransition<?>, BUILDER_ROLE extends BuilderBusinessRole<?>, TASK_DEF extends ITaskDefinition> {
 
     private final FLOW_MAP flowMap;
 
@@ -66,7 +66,7 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extend
 
     protected abstract BUILDER_TRANSITION newTransition(STransition transition);
 
-    protected abstract BUILDER_PAPEL newProcessRole(SBusinessRole transicao);
+    protected abstract BUILDER_ROLE newBusinessRole(SBusinessRole businessRole);
 
     protected final FLOW_MAP getFlowMap() {
         return flowMap;
@@ -102,25 +102,25 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extend
         getFlowMap().getTasks().stream().map(t -> toBuilder(t)).forEach(consumer);
     }
 
-    public BUILDER_PAPEL addRoleDefinition(String description,
+    public BUILDER_ROLE addBusinessRole(String description,
         BusinessRoleStrategy<? extends FlowInstance> businessRoleStrategy,
         boolean automaticUserAllocation) {
-        return addRoleDefinition(description, SingularUtil.convertToJavaIdentity(description, true), businessRoleStrategy, automaticUserAllocation);
+        return addBusinessRole(description, SingularUtil.convertToJavaIdentity(description, true), businessRoleStrategy, automaticUserAllocation);
     }
 
-    public BUILDER_PAPEL addRoleDefinition(String description, String abbreviation,
+    public BUILDER_ROLE addBusinessRole(String description, String abbreviation,
             BusinessRoleStrategy<? extends FlowInstance> businessRoleStrategy,
             boolean automaticUserAllocation) {
-        return newProcessRole(getFlowMap().addRoleDefinition(description, abbreviation, businessRoleStrategy, automaticUserAllocation));
+        return newBusinessRole(getFlowMap().addRoleDefinition(description, abbreviation, businessRoleStrategy, automaticUserAllocation));
     }
 
-    public BUILDER_PAPEL addRoleDefinition(String description, String abbreviation,
+    public BUILDER_ROLE addBusinessRole(String description, String abbreviation,
                                            boolean automaticUserAllocation) {
-        return newProcessRole(getFlowMap().addRoleDefinition(description, abbreviation, SFlowUtil.dummyBusinessRoleStrategy(), automaticUserAllocation));
+        return newBusinessRole(getFlowMap().addRoleDefinition(description, abbreviation, SFlowUtil.dummyBusinessRoleStrategy(), automaticUserAllocation));
     }
 
-    public BUILDER_PAPEL addRoleDefinition(String description, boolean automaticUserAllocation) {
-        return newProcessRole(getFlowMap().addRoleDefinition(description,  SingularUtil.convertToJavaIdentity(description, true),  SFlowUtil.dummyBusinessRoleStrategy(), automaticUserAllocation));
+    public BUILDER_ROLE addBusinessRole(String description, boolean automaticUserAllocation) {
+        return newBusinessRole(getFlowMap().addRoleDefinition(description,  SingularUtil.convertToJavaIdentity(description, true),  SFlowUtil.dummyBusinessRoleStrategy(), automaticUserAllocation));
     }
 
     public BUILDER_JAVA addJavaTask(TASK_DEF taskDefinition) {
@@ -198,7 +198,7 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extend
         return newTransition(flowMap.getTask(origin).addAutomaticTransition(condition, flowMap.getTask(destination)));
     }
 
-    public FlowBuilder<DEF, FLOW_MAP, BUILDER_TASK, BUILDER_JAVA, BUILDER_PEOPLE, BUILDER_WAIT, BUILDER_END, BUILDER_START, BUILDER_TRANSITION, BUILDER_PAPEL, TASK_DEF> addDashboardView(DashboardView dashboardView) {
+    public FlowBuilder<DEF, FLOW_MAP, BUILDER_TASK, BUILDER_JAVA, BUILDER_PEOPLE, BUILDER_WAIT, BUILDER_END, BUILDER_START, BUILDER_TRANSITION, BUILDER_ROLE, TASK_DEF> addDashboardView(DashboardView dashboardView) {
         getFlowMap().addDashboardView(dashboardView);
         return this;
     }

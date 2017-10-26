@@ -34,8 +34,8 @@ public class STaskJava extends STask<STaskJava> {
 
     private DisplayType displayType;
 
-    public STaskJava(FlowMap mapa, String nome, String abbreviation) {
-        super(mapa, nome, abbreviation);
+    public STaskJava(FlowMap flowMap, String name, String abbreviation) {
+        super(flowMap, name, abbreviation);
     }
 
     @Override
@@ -111,18 +111,18 @@ public class STaskJava extends STask<STaskJava> {
     }
 
     /**
-     * Defines, for the purpose of generating a diagram of the process, the type of BPMN node that will be used to
+     * Defines, for the purpose of generating a diagram of the flow, the type of BPMN node that will be used to
      * render this task.
-     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
      */
     public void setDisplayType(@Nullable DisplayType displayType) {
         this.displayType = displayType;
     }
 
     /**
-     * Defines, for the purpose of generating a diagram of the process, the type of BPMN node that will be used to
+     * Defines, for the purpose of generating a diagram of the flow, the type of BPMN node that will be used to
      * render this task.
-     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
      */
     @Nullable
     public DisplayType getDisplayType() {

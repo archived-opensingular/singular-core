@@ -54,12 +54,12 @@ public class SourceCodeProcessor {
                 classStarted = line.contains("public class ");
             }
             if (!isLineToBeIgnored(line)) {
-                i = processCode(lines, i, line);
+                i = analyzeSourceLines(lines, i, line);
             }
         }
     }
 
-    private int processCode(String[] lines, int i, String line) {
+    private int analyzeSourceLines(String[] lines, int i, String line) {
         int j = i;
 
         if(isNotBeShow(line)){

@@ -54,8 +54,8 @@ import java.util.Set;
  */
 public final class SFormXMLUtil {
 
-    public static final String ATRIBUTO_ID      = "id";
-    public static final String ATRIBUTO_LAST_ID = "lastId";
+    public static final String ID_ATTRIBUTE = "id";
+    public static final String LAST_ID_ATTRIBUTE = "lastId";
 
     private SFormXMLUtil() {
     }
@@ -111,7 +111,7 @@ public final class SFormXMLUtil {
     private static <T extends SInstance> T fromXMLInterno(@Nonnull T newInstance, @Nullable MElement xml) {
         Integer lastId = 0;
         if (xml != null) {
-            lastId = xml.getInteger("@" + ATRIBUTO_LAST_ID);
+            lastId = xml.getInteger("@" + LAST_ID_ATTRIBUTE);
         }
 
         // Colocar em modo de não geraçao de IDs
@@ -199,9 +199,9 @@ public final class SFormXMLUtil {
         if (attributes != null) {
             for (int i = 0; i < attributes.getLength(); i++) {
                 Attr at = (Attr) attributes.item(i);
-                if (at.getName().equals(ATRIBUTO_ID)) {
+                if (at.getName().equals(ID_ATTRIBUTE)) {
                     instance.setId(Integer.valueOf(at.getValue()));
-                } else if (!at.getName().equals(ATRIBUTO_LAST_ID)) {
+                } else if (!at.getName().equals(LAST_ID_ATTRIBUTE)) {
                     InternalAccess.INTERNAL.setAttributeValueSavingForLatter(instance, at.getName(), at.getValue());
                 }
             }
@@ -317,7 +317,7 @@ public final class SFormXMLUtil {
         }
         xmlDocument.setRoot(xmlResult);
         if (builder.isPersistId()) {
-            xmlResult.setAttribute(ATRIBUTO_LAST_ID, Integer.toString(instance.getDocument().getLastId()));
+            xmlResult.setAttribute(LAST_ID_ATTRIBUTE, Integer.toString(instance.getDocument().getLastId()));
         }
 
         return xmlResult;
@@ -512,7 +512,7 @@ public final class SFormXMLUtil {
         private MElement complement(SInstance instance, MElement element) {
             Integer id = instance.getId();
             if (builder.isPersistId()) {
-                element.setAttribute(ATRIBUTO_ID, id.toString());
+                element.setAttribute(ID_ATTRIBUTE, id.toString());
             }
             if (builder.isPersistAttributes()) {
                 for (SInstance atr : instance.getAttributes()) {

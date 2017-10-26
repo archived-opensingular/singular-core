@@ -17,7 +17,7 @@
 package org.opensingular.flow.core;
 
 import org.junit.Test;
-import org.opensingular.flow.core.TestProcessInicializationWithNoSerializableParameter.FlowWithNoSerializableStartParameter.StepsNS;
+import org.opensingular.flow.core.TestFlowInicializationWithNoSerializableParameter.FlowWithNoSerializableStartParameter.StepsNS;
 import org.opensingular.flow.core.builder.BuilderStart;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.variable.SingularFlowConvertingValueException;
@@ -33,7 +33,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Daniel C. Bordin on 18/03/2017.
  */
-public class TestProcessInicializationWithNoSerializableParameter extends TestFlowExecutionSupport {
+public class TestFlowInicializationWithNoSerializableParameter extends TestFlowExecutionSupport {
 
     private static final Date VALUE_DT = new Date();
 
@@ -137,7 +137,7 @@ public class TestProcessInicializationWithNoSerializableParameter extends TestFl
             f.addWaitTask(StepsNS.Second);
             f.addEndTask(StepsNS.End);
 
-            f.setStartTask(StepsNS.First).setInitializer(this::processInitializer).with(this::setupStartParameters);
+            f.setStartTask(StepsNS.First).setInitializer(this::flowInitializer).with(this::setupStartParameters);
             f.from(StepsNS.First).go(StepsNS.Second).thenGo(StepsNS.End);
 
             return f.build();
@@ -149,7 +149,7 @@ public class TestProcessInicializationWithNoSerializableParameter extends TestFl
             start.addParamCustom(PARAM_SERIALIZABLE, MySerializable.class, false);
         }
 
-        private void processInitializer(FlowInstance instance, StartCall<FlowInstance> startCall) {
+        private void flowInitializer(FlowInstance instance, StartCall<FlowInstance> startCall) {
             startInitializerCalled = true;
             String flag = startCall.getValueString(PARAM_FLAG);
             MyNoSerializable v = startCall.getValue(PARAM_NO_SERIALIZABLE);

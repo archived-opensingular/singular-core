@@ -25,18 +25,18 @@ import org.opensingular.flow.core.variable.VarInstanceMapImpl;
 import java.util.List;
 import java.util.Objects;
 
-public class VarInstanceTableProcess extends VarInstanceMapImpl {
+public class VarInstanceTableFlow extends VarInstanceMapImpl {
 
     private static final MetaDataRef<Integer> PROP_DB_COD = new MetaDataRef<>("persitence.dbCod", Integer.class);
 
     // TODO transformar o valor abaixo em RefFlowInstance (igual a RefFlowDefinition)
     private FlowInstance instance;
 
-    public VarInstanceTableProcess(FlowDefinition<?> definition) {
+    public VarInstanceTableFlow(FlowDefinition<?> definition) {
         super(definition.getVariables());
     }
 
-    VarInstanceTableProcess(FlowInstance instance) {
+    VarInstanceTableFlow(FlowInstance instance) {
         this(instance.<FlowDefinition<?>>getFlowDefinition());
         bind(instance.getEntity());
         this.instance = instance;
