@@ -44,7 +44,7 @@ public class DatabaseConfigurationMock {
     @Bean
     public DataSource getDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setUrl("jdbc:h2:test");
+        dataSource.setUrl("jdbc:h2:./test");
         dataSource.setDriverClassName("org.h2.Driver");
         dataSource.setUsername("h2");
 
