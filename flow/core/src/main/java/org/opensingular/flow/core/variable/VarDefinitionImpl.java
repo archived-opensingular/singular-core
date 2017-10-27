@@ -16,7 +16,7 @@
 
 package org.opensingular.flow.core.variable;
 
-import org.opensingular.flow.core.property.MetaData;
+import org.opensingular.flow.core.property.MetaDataMap;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -31,7 +31,7 @@ public class VarDefinitionImpl implements VarDefinition {
 
     private boolean required;
 
-    private MetaData metaData;
+    private MetaDataMap metaDataMap;
 
     public VarDefinitionImpl(VarDefinition toCopy) {
         this(toCopy.getRef(), toCopy.getName(), toCopy.getType(), toCopy.isRequired());
@@ -47,16 +47,16 @@ public class VarDefinitionImpl implements VarDefinition {
 
     @Override
     @Nonnull
-    public Optional<MetaData> getMetaDataOpt() {
-        return Optional.ofNullable(metaData);
+    public Optional<MetaDataMap> getMetaDataOpt() {
+        return Optional.ofNullable(metaDataMap);
     }
     @Override
     @Nonnull
-    public MetaData getMetaData() {
-        if (metaData == null) {
-            metaData = new MetaData();
+    public MetaDataMap getMetaData() {
+        if (metaDataMap == null) {
+            metaDataMap = new MetaDataMap();
         }
-        return metaData;
+        return metaDataMap;
     }
 
     @Override

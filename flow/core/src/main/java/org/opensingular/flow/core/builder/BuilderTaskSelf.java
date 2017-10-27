@@ -19,7 +19,7 @@ package org.opensingular.flow.core.builder;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.flow.core.TaskAccessStrategy;
-import org.opensingular.flow.core.property.MetaDataRef;
+import org.opensingular.flow.core.property.MetaDataKey;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
@@ -56,8 +56,8 @@ public interface BuilderTaskSelf<SELF extends BuilderTaskSelf<SELF, TASK>, TASK 
 
     @Override
     @Nonnull
-    default <T extends Serializable> SELF setMetaDataValue(@Nonnull MetaDataRef<T> propRef, T value) {
-        getTask().setMetaDataValue(propRef, value);
+    default <T extends Serializable> SELF setMetaDataValue(@Nonnull MetaDataKey<T> key, T value) {
+        getTask().setMetaDataValue(key, value);
         return self();
     }
 }

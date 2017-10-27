@@ -16,39 +16,33 @@
 
 package org.opensingular.flow.core.property;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 
-public class MetaDataRef<K extends Serializable> implements Serializable {
+/**
+ * Representa um par propriedade e seu valor.
+ *
+ * @author Daniel C. Bordin
+ */
+public class MetaDataEntry implements Serializable {
 
     private final String name;
-    private final Class<K> valueClass;
+    private Serializable value;
 
-    public MetaDataRef(String name, Class<K> valueClass) {
-        this.name = name;
-        this.valueClass = valueClass;
+    MetaDataEntry(@Nonnull MetaDataKey<?> key) {
+        this.name = key.getName();
     }
 
+    public Serializable getValue() {
+        return value;
+    }
+
+    final void setValue(Serializable value) {
+        this.value = value;
+    }
+
+    @Nonnull
     public String getName() {
         return name;
-    }
-
-    public Class<K> getValueClass() {
-        return valueClass;
-    }
-
-    @Override
-    public int hashCode() {
-        return name.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        return name.equals(((MetaDataRef<?>) obj).name);
     }
 }

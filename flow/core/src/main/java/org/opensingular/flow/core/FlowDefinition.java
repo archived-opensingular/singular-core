@@ -28,7 +28,7 @@ import org.opensingular.flow.core.entity.IEntityTaskDefinition;
 import org.opensingular.flow.core.entity.IEntityTaskInstance;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
-import org.opensingular.flow.core.property.MetaData;
+import org.opensingular.flow.core.property.MetaDataMap;
 import org.opensingular.flow.core.property.MetaDataEnabled;
 import org.opensingular.flow.core.service.IFlowDataService;
 import org.opensingular.flow.core.service.IFlowDefinitionEntityService;
@@ -89,7 +89,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
 
     private IFlowDataService<I> flowDataService;
 
-    private MetaData metaData;
+    private MetaDataMap metaDataMap;
 
     private final Map<String, FlowScheduledJob> scheduledJobsByName = new HashMap<>();
 
@@ -501,16 +501,16 @@ public abstract class FlowDefinition<I extends FlowInstance>
 
     @Override
     @Nonnull
-    public Optional<MetaData> getMetaDataOpt() {
-        return Optional.ofNullable(metaData);
+    public Optional<MetaDataMap> getMetaDataOpt() {
+        return Optional.ofNullable(metaDataMap);
     }
 
     @Override
-    public MetaData getMetaData() {
-        if (metaData == null) {
-            metaData = new MetaData();
+    public MetaDataMap getMetaData() {
+        if (metaDataMap == null) {
+            metaDataMap = new MetaDataMap();
         }
-        return metaData;
+        return metaDataMap;
     }
 
     final <X extends IEntityTaskVersion> Set<X> convertToEntityTaskVersion(Stream<? extends STask<?>> stream) {
