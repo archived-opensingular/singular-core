@@ -47,6 +47,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.servlet.MimeTypes;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavior;
 import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
@@ -59,6 +60,7 @@ import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponse
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.commons.util.Loggable;
+import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -70,6 +72,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet.PARAM_NAME;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 public class FileUploadPanel extends Panel implements Loggable {
 
@@ -134,6 +137,8 @@ public class FileUploadPanel extends Panel implements Loggable {
         };
     }
 
+
+
     protected void buildFileUploadInput() {
 
 
@@ -148,7 +153,9 @@ public class FileUploadPanel extends Panel implements Loggable {
 
         filesContainer = new WebMarkupContainer("files");
         add(filesContainer.add(downloadLink));
+        uploadFileButton.add(invisibleIfInputDisabled());
         add(uploadFileButton.add(fileField));
+        uploadFileButton.add(invisibleIfInputDisabled());
         add(removeFileButton.add(new AttributeAppender("title", "Excluir")));
 
         progressBar = new WebMarkupContainer("progress");
@@ -295,7 +302,21 @@ public class FileUploadPanel extends Panel implements Loggable {
                     return oldClasses;
                 }
             });
+            add(DisabledClassBehavior.getInstance());
         }
+    }
+
+    private Behavior invisibleIfInputDisabled(){
+        return new Behavior() {
+            @Override
+            public void onConfigure(Component c) {
+                if (c.isEnabledInHierarchy()){
+//                    c.setVisible(true);
+                } else {
+//                    c.setVisible(false);
+                }
+            }
+        };
     }
 
     private final class RemoveButton extends AjaxButton {
