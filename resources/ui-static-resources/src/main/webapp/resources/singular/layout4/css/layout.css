@@ -2883,3 +2883,15 @@ Login page
 
 .decorator-actions.align-right {
   float: right; }
+
+.annotation-icon {
+  display: table-cell;
+  vertical-align: middle;
+  float: right; }
+
+.labelBar {
+  display: table;
+  width: 100%; }
+  .labelBar > .control-label {
+    display: table-cell;
+    vertical-align: middle; }
