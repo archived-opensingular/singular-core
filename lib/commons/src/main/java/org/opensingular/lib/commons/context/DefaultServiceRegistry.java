@@ -61,8 +61,6 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     }
 
     private final Map<ServiceKey, ServiceEntry> services = newHashMap();
-//    private final Map<String, ServiceEntry> servicesByName = newHashMap();
-//    private final Map<Class<?>, List<RefService<?>>> servicesByClass = newHashMap();
 
     public DefaultServiceRegistry() {
     }
