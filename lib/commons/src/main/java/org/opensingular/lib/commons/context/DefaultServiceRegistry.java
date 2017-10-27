@@ -16,22 +16,53 @@
 
 package org.opensingular.lib.commons.context;
 
-import com.google.common.collect.ImmutableMap;
-
 import javax.annotation.Nonnull;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Lists.*;
+import static com.google.common.collect.Maps.*;
 
 public class DefaultServiceRegistry implements ServiceRegistry {
 
-    private final Map<String, ServiceEntry>          servicesByName  = newHashMap();
-    private final Map<Class<?>, List<RefService<?>>> servicesByClass = newHashMap();
+    private class ServiceKey {
+        String name;
+        Class<?> serviceClass;
+
+        public ServiceKey(String name, Class<?> serviceClass) {
+            this.name = name;
+            this.serviceClass = serviceClass;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof ServiceKey)) return false;
+
+            ServiceKey that = (ServiceKey) o;
+
+            if (name != null ? !name.equals(that.name) : that.name != null) return false;
+            return serviceClass != null ? serviceClass.isAssignableFrom(that.serviceClass) : that.serviceClass == null;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = name != null ? name.hashCode() : 0;
+            result = 31 * result + (serviceClass != null ? serviceClass.hashCode() : 0);
+            return result;
+        }
+
+        public String getName() {
+            return Optional.ofNullable(name).orElse(serviceClass.getName());
+        }
+    }
+
+    private final Map<ServiceKey, ServiceEntry> services = newHashMap();
+//    private final Map<String, ServiceEntry> servicesByName = newHashMap();
+//    private final Map<Class<?>, List<RefService<?>>> servicesByClass = newHashMap();
 
     public DefaultServiceRegistry() {
     }
@@ -41,7 +72,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
      */
     @Override
     public Map<String, ServiceEntry> services() {
-        return ImmutableMap.copyOf(servicesByName);
+        return services.entrySet().stream().collect(HashMap::new, (m, e) -> m.put(e.getKey().getName(), e.getValue()), HashMap::putAll);
     }
 
     @Override
@@ -63,9 +94,9 @@ public class DefaultServiceRegistry implements ServiceRegistry {
 
     private <T> List<RefService<?>> findAllMatchingProviders(Class<T> targetClass) {
         List<RefService<?>> result = newArrayList();
-        for (Map.Entry<Class<?>, List<RefService<?>>> entry : servicesByClass.entrySet()) {
-            if (targetClass.isAssignableFrom(entry.getKey())) {
-                result.addAll(entry.getValue());
+        for (Map.Entry<ServiceKey, ServiceEntry> entry : services.entrySet()) {
+            if (targetClass.isAssignableFrom(entry.getKey().serviceClass)) {
+                result.add(entry.getValue().provider);
             }
         }
         return result;
@@ -96,16 +127,9 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     public <T> Optional<T> lookupLocalService(@Nonnull String name, @Nonnull Class<T> targetClass) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(targetClass);
-        ServiceEntry ref = servicesByName.get(name);
+        ServiceEntry ref = services.entrySet().stream().filter(k -> k.getKey().equals(new ServiceKey(name, targetClass))).findFirst().map(Map.Entry::getValue).orElse(null);
         if (ref != null) {
             Object value = ref.provider.get();
-            if (value == null) {
-                servicesByName.remove(name);
-            } else if (!targetClass.isInstance(value)) {
-                String message = "For service '" + name + "' was found a class of value "
-                        + value.getClass().getName() + " instead of the expected " + targetClass.getName();
-                throw new SingularRegistryLookupException(message);
-            }
             return Optional.ofNullable(targetClass.cast(value));
         }
         return Optional.empty();
@@ -121,17 +145,9 @@ public class DefaultServiceRegistry implements ServiceRegistry {
      */
     @Override
     public <T> void bindService(Class<T> registerClass, RefService<? extends T> provider) {
-        bindService(UUID.randomUUID().toString(), registerClass, provider);
+        bindService(registerClass.getName(), registerClass, provider);
     }
 
-    private <T> void bindByClass(Class<T> registerClass, RefService<? extends T> provider) {
-        List<RefService<?>> list = servicesByClass.get(registerClass);
-        if (list == null) {
-            list = newArrayList();
-            servicesByClass.put(registerClass, list);
-        }
-        list.add(provider);
-    }
 
     /**
      * Registers a {@link RefService} for the specified class with a unique name.
@@ -141,14 +157,8 @@ public class DefaultServiceRegistry implements ServiceRegistry {
      * @param provider      provider of the service
      */
     @Override
-    public <T> void bindService(String serviceName, Class<T> registerClass, RefService<? extends T> provider) {
-        bindByName(serviceName, registerClass, provider);
-        bindByClass(registerClass, provider);
+    public <T> void bindService(@Nonnull String serviceName, Class<T> registerClass, RefService<? extends T> provider) {
+        services.put(new ServiceKey(Objects.requireNonNull(serviceName), registerClass), new ServiceEntry(registerClass, provider));
     }
 
-    private <T> void bindByName(String serviceName, Class<T> registerClass, RefService<?> provider) {
-        Objects.requireNonNull(registerClass);
-        Objects.requireNonNull(provider);
-        servicesByName.put(Objects.requireNonNull(serviceName), new ServiceEntry(registerClass, provider));
-    }
 }
