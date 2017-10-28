@@ -48,7 +48,7 @@ import java.util.Optional;
  * @author Daniel C.Bordin
  */
 
-public class AssertionsSInstance extends AssertionsAbstract<SInstance, AssertionsSInstance> {
+public class AssertionsSInstance extends AssertionsSAttributeEnabled<SInstance, AssertionsSInstance> {
 
     public AssertionsSInstance(SInstance instance) {
         super(instance);

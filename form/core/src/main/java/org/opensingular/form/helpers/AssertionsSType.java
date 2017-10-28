@@ -35,7 +35,7 @@ import java.util.Set;
  *
  * @author Daniel C. Bordin
  */
-public class AssertionsSType extends AssertionsAbstract<SType, AssertionsSType> {
+public class AssertionsSType extends AssertionsSAttributeEnabled<SType, AssertionsSType> {
 
     public AssertionsSType(SType<?> type) {
         super(type);

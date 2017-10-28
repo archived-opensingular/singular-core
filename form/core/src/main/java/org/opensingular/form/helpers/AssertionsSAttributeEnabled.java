@@ -30,11 +30,11 @@ import java.util.Objects;
  *
  * @author Daniel C. Boridn
  */
-public abstract class AssertionsAbstract<T extends SAttributeEnabled, SELF extends AssertionsAbstract<T, SELF>>
+public abstract class AssertionsSAttributeEnabled<T extends SAttributeEnabled, SELF extends AssertionsSAttributeEnabled<T, SELF>>
         extends AssertionsBase<T, SELF> {
 
 
-    public AssertionsAbstract(T target) {
+    public AssertionsSAttributeEnabled(T target) {
         super(target);
     }
 
