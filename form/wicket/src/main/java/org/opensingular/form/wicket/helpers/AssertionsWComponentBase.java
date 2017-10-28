@@ -60,14 +60,14 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
 
     /** Busca um sub componente do componente atual com o tipo informado e retonar o resultado. */
     @Nonnull
-    public final AssertionsWComponent getSubCompomentWithType(SType<?> type) {
+    public final AssertionsWComponent getSubComponentWithType(SType<?> type) {
         return findSubComponent(component -> ISInstanceAwareModel.optionalSInstance(component)
                 .map(SInstance::getType)
                 .map(type::equals).orElse(Boolean.FALSE));
     }
 
     @Nonnull
-    public final <T extends SType<?>> AssertionsWComponent getSubCompomentWithType(Class<? extends T> typeClass) {
+    public final <T extends SType<?>> AssertionsWComponent getSubComponentWithType(Class<? extends T> typeClass) {
         return findSubComponent(component -> ISInstanceAwareModel.optionalSInstance(component)
                 .map(SInstance::getType)
                 .map(SType::getName)
@@ -78,7 +78,7 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
 
     /** Busca um sub componente do componente atual com o nome do tipo informado e retonar o resultado. */
     @Nonnull
-    public final AssertionsWComponent getSubCompomentWithTypeNameSimple(String nameSimple) {
+    public final AssertionsWComponent getSubComponentWithTypeNameSimple(String nameSimple) {
         return findSubComponent(component -> ISInstanceAwareModel.optionalSInstance(component)
                 .map(SInstance::getType)
                 .map(SType::getNameSimple)
@@ -87,14 +87,14 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
 
     /** Busca um sub componente do componente atual com o ID informado e retonar o resultado. */
     @Nonnull
-    public final AssertionsWComponent getSubCompomentWithId(String componentId) {
+    public final AssertionsWComponent getSubComponentWithId(String componentId) {
         return findSubComponent(component -> componentId.equals(component.getId()));
     }
 
     /**
      * Busca um sub componente do componente atual que possua um model cujo o valor seja a {@link SInstance} informada.
      */
-    public final AssertionsWComponent getSubCompomentForSInstance(@Nonnull SInstance expectedInstance) {
+    public final AssertionsWComponent getSubComponentForSInstance(@Nonnull SInstance expectedInstance) {
         return findSubComponent(component -> ISInstanceAwareModel.optionalSInstance(component).orElse(null) ==
                 expectedInstance);
     }
@@ -102,7 +102,7 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
     /**
      * Busca um sub componente do componente atual que possua uma {@link SInstance} como model do componente.
      */
-    public final AssertionsWComponent getSubCompomentWithSInstance() {
+    public final AssertionsWComponent getSubComponentWithSInstance() {
         return findSubComponent(component ->  ISInstanceAwareModel.optionalSInstance(component).isPresent());
     }
 
@@ -153,7 +153,7 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
      * <p>A lista pode ser de tamanho zero.</p>
      */
     @Nonnull
-    public final AssertionsWComponentList<Component> getSubCompomentsWithId(@Nonnull String componentId) {
+    public final AssertionsWComponentList<Component> getSubComponentsWithId(@Nonnull String componentId) {
         return getSubComponents(component -> componentId.equals(component.getId()));
     }
 
@@ -196,6 +196,15 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
     @Nonnull
     public AssertionsWTextField asTextField() {
         return new AssertionsWTextField(getTarget(TextField.class));
+    }
+
+    /**
+     * Verifies if the component is a Label and returns a assertive for Label components. Throws exception if it isn't a
+     * Wicket Label.
+     */
+    @Nonnull
+    public AssertionsWLabel asLabel() {
+        return new AssertionsWLabel(getTarget(Label.class));
     }
 
     /**

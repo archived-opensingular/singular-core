@@ -117,13 +117,13 @@ public class STypeSelectItemModalSearchTest {
         tester.getDummyPage().setTypeBuilder(STypeSelectItemModalSearchTest::buildBaseType);
         tester.startDummyPage();
 
-        Button link = tester.getAssertionsForm().getSubCompomentWithId(SearchModalPanel.MODAL_TRIGGER_ID).getTarget(Button.class);
+        Button link = tester.getAssertionsForm().getSubComponentWithId(SearchModalPanel.MODAL_TRIGGER_ID).getTarget(Button.class);
         tester.executeAjaxEvent(link, "click");
 
-        AjaxLink ajaxLink = tester.getAssertionsForm().getSubCompomentWithId("link").getTarget(AjaxLink.class);
+        AjaxLink ajaxLink = tester.getAssertionsForm().getSubComponentWithId("link").getTarget(AjaxLink.class);
         tester.executeAjaxEvent(ajaxLink, "click");
 
-        AssertionsSInstance noteBookAssertion = tester.getAssertionsForm().getSubCompomentWithType(notebook).assertSInstance();
+        AssertionsSInstance noteBookAssertion = tester.getAssertionsForm().getSubComponentWithType(notebook).assertSInstance();
         noteBookAssertion.field(MARCA).isValueEquals("Apple");
         noteBookAssertion.field(MEMORIA).isValueEquals("4GB");
         noteBookAssertion.field(DISCO).isValueEquals("1T");

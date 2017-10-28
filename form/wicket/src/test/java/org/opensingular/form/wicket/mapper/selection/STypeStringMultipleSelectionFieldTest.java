@@ -58,7 +58,7 @@ public class STypeStringMultipleSelectionFieldTest {
     public void renders(){
         tester.startDummyPage();
         tester.assertEnabled(
-                tester.getAssertionsForm().getSubCompomentWithId("favoriteFruit").getTarget().getPageRelativePath());
+                tester.getAssertionsForm().getSubComponentWithId("favoriteFruit").getTarget().getPageRelativePath());
 
         tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).isSize(1);
     }
@@ -86,10 +86,10 @@ public class STypeStringMultipleSelectionFieldTest {
         tester.startDummyPage();
         tester.newFormTester()
                 .select(getFormRelativePath((FormComponent)
-                        tester.getAssertionsForm().getSubCompomentWithId("favoriteFruit").getTarget()), 2)
+                        tester.getAssertionsForm().getSubComponentWithId("favoriteFruit").getTarget()), 2)
                 .submit();
         List result = (List) tester.getAssertionsForm()
-                .getSubCompomentWithType(fieldType).assertSInstance().isList(1).getTarget().getValue();
+                .getSubComponentWithType(fieldType).assertSInstance().isList(1).getTarget().getValue();
         assertThat(result).containsOnly("orange");
     }
 

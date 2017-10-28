@@ -61,7 +61,7 @@ public class AttachmentListMapperTest {
         SIList<SIAttachment> atts = (SIList<SIAttachment>) ctx.getAssertionsInstance().field("attachments").isList(0)
                 .getTarget();
 
-        ctx.getAssertionsPage().getSubCompomentForSInstance(atts).isNotNull().assertSInstance().isList(0);
+        ctx.getAssertionsPage().getSubComponentForSInstance(atts).isNotNull().assertSInstance().isList(0);
 
         byte[] content = new byte[]{3, 4};
         File tmpFile = tmpProvider.createTempFile(content);
@@ -94,13 +94,13 @@ public class AttachmentListMapperTest {
         SIList<SIAttachment> atts = (SIList<SIAttachment>) ctx.getAssertionsInstance().field("attachments").isList(2)
                 .getTarget();
 
-        AssertionsWComponent assertAttachs = ctx.getAssertionsPage().getSubCompomentForSInstance(atts).isNotNull();
+        AssertionsWComponent assertAttachs = ctx.getAssertionsPage().getSubComponentForSInstance(atts).isNotNull();
 
         FormTester formTester = ctx.newFormTester();
-        AssertionsWComponent button = assertDelButton(assertAttachs.getSubCompomentForSInstance(atts.get(0)), true);
+        AssertionsWComponent button = assertDelButton(assertAttachs.getSubComponentForSInstance(atts.get(0)), true);
         formTester.submit(button.getTarget());
 
-        assertAttachs = ctx.getAssertionsPage().getSubCompomentForSInstance(atts).isNotNull();
+        assertAttachs = ctx.getAssertionsPage().getSubComponentForSInstance(atts).isNotNull();
         SIAttachment att = assertAttachs.assertSInstance().isList(1).field("[0]").getTarget(SIAttachment.class);
         Assert.assertArrayEquals(content2, att.getContentAsByteArray().get());
     }
@@ -118,15 +118,15 @@ public class AttachmentListMapperTest {
         SIList<SIAttachment> atts = (SIList<SIAttachment>) ctx.getAssertionsInstance().field("attachments").isList(2)
                 .getTarget();
 
-        AssertionsWComponent assertAttachs = ctx.getAssertionsPage().getSubCompomentForSInstance(atts).isNotNull();
+        AssertionsWComponent assertAttachs = ctx.getAssertionsPage().getSubComponentForSInstance(atts).isNotNull();
 
-        assertDelButton(assertAttachs.getSubCompomentForSInstance(atts.get(0)), false);
-        assertDelButton(assertAttachs.getSubCompomentForSInstance(atts.get(1)), false);
+        assertDelButton(assertAttachs.getSubComponentForSInstance(atts.get(0)), false);
+        assertDelButton(assertAttachs.getSubComponentForSInstance(atts.get(1)), false);
     }
 
     private AssertionsWComponent assertDelButton(AssertionsWComponent componentAtt, boolean buttonRequired) {
         componentAtt.isNotNull();
-        AssertionsWComponent remove = componentAtt.getSubCompomentWithId("remove_btn");
+        AssertionsWComponent remove = componentAtt.getSubComponentWithId("remove_btn");
         if (buttonRequired) {
             remove.isNotNull();
             Assert.assertTrue(remove.getTarget().isEnabled() && remove.getTarget().isVisible());

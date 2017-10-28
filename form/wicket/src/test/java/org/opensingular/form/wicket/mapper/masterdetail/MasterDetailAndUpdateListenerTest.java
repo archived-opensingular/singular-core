@@ -47,14 +47,14 @@ public class MasterDetailAndUpdateListenerTest {
         ctx.getDummyPage().setAsEditView();
         ctx.startDummyPage();
 
-        AjaxLink addButton = ctx.getAssertionsForm().getSubCompomentWithId("addButton").getTarget(AjaxLink.class);
+        AjaxLink addButton = ctx.getAssertionsForm().getSubComponentWithId("addButton").getTarget(AjaxLink.class);
 
         ctx.executeAjaxEvent(addButton, "click");
 
         MasterDetailModal modal = ctx.getAssertionsForm().getSubComponents(MasterDetailModal.class).get(0).getTarget(MasterDetailModal.class);
 
         ctx.newFormTester().submit(modal.addButton);
-        ctx.getAssertionsForm().getSubCompomentWithTypeNameSimple("total").assertSInstance().isValueEquals(new BigDecimal("10"));
+        ctx.getAssertionsForm().getSubComponentWithTypeNameSimple("total").assertSInstance().isValueEquals(new BigDecimal("10"));
 
     }
 

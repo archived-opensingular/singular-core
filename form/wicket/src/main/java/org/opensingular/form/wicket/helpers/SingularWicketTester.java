@@ -23,6 +23,7 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.tester.WicketTester;
 import org.opensingular.form.SType;
 import org.opensingular.form.helpers.AssertionsSInstance;
+import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 import org.opensingular.internal.lib.wicket.test.WicketSerializationDebugUtil;
 
 import javax.servlet.ServletContext;
@@ -102,7 +103,7 @@ public class SingularWicketTester extends WicketTester {
 
     public final AssertionsSInstance getAssertionsInstance() {
         checkIfStartPageCalled();
-        return getAssertionsPage().getSubCompomentWithSInstance().assertSInstance();
+        return getAssertionsPage().getSubComponentWithSInstance().assertSInstance();
     }
 
     /** Criar um objeto de assertivas para o form da última página executada (assume que o ID é 'form'). */
@@ -167,5 +168,14 @@ public class SingularWicketTester extends WicketTester {
     private String extractMessage(String line) {
         return line.replace("toastr.success('', '", "")
                 .replace("');", "").trim();
+    }
+
+    /**
+     * Opens the html content on the programmer desktop with the associated application of the operating system
+     * (default browser) e waits 5 seconds until resume the flow of execution. Useful to visually inspect the content
+     * just created by a test.
+     */
+    public void showLastResponseOnDesktopForUserAndWaitOpening() {
+        SingularTestUtil.showHtmlContentOnDesktopForUserAndWaitOpening(getLastResponseAsString());
     }
 }

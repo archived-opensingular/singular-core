@@ -52,7 +52,7 @@ public class STypeStringSelectionFieldTest {
     public void rendersAnDropDownWithSpecifiedOptions() {
         tester.startDummyPage();
         tester.assertEnabled(tester.getAssertionsForm()
-                .getSubCompomentWithId("favoriteFruit").getTarget().getPageRelativePath());
+                .getSubComponentWithId("favoriteFruit").getTarget().getPageRelativePath());
 
         tester.newFormTester().submit();
 
@@ -71,10 +71,10 @@ public class STypeStringSelectionFieldTest {
 
         tester.newFormTester()
                 .select(getFormRelativePath((FormComponent)
-                        tester.getAssertionsForm().getSubCompomentWithId("favoriteFruit").getTarget()), 2)
+                        tester.getAssertionsForm().getSubComponentWithId("favoriteFruit").getTarget()), 2)
                 .submit();
 
-        tester.getAssertionsForm().getSubCompomentWithType(selectType).assertSInstance().isValueEquals("orange");
+        tester.getAssertionsForm().getSubComponentWithType(selectType).assertSInstance().isValueEquals("orange");
     }
 
     private String getFormRelativePath(FormComponent component) {

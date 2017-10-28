@@ -70,7 +70,7 @@ public class STypeStringModalSearchTest {
 
     void clickOpenLink() {
         Button button = tester.getAssertionsForm()
-                .getSubCompomentWithId(SearchModalPanel.MODAL_TRIGGER_ID).getTarget(Button.class);
+                .getSubComponentWithId(SearchModalPanel.MODAL_TRIGGER_ID).getTarget(Button.class);
         tester.executeAjaxEvent(button, "click");
     }
 
@@ -120,7 +120,7 @@ public class STypeStringModalSearchTest {
 
         tester.executeAjaxEvent(subComponents.get(3).getTarget(), "click");
 
-        tester.getAssertionsForm().getSubCompomentWithType(selectType).assertSInstance().isValueEquals("banana");
+        tester.getAssertionsForm().getSubComponentWithType(selectType).assertSInstance().isValueEquals("banana");
     }
 
     @Test

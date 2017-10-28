@@ -79,7 +79,7 @@ public class SingularFormTester extends FormTester {
 
     private String getFormRelativeComponentId(String formComponentId) {
         Component formComponent = tester.getAssertionsPage()
-                .getSubCompomentWithId(formComponentId)
+                .getSubComponentWithId(formComponentId)
                 .getTarget();
 
         String path = formComponent.getPath();

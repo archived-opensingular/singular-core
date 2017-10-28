@@ -53,7 +53,7 @@ public abstract class AssertionsSimpleWComponentBase<T extends Component, SELF e
 
     /** Busca um sub componente do componente atual com o ID informado e retonar o resultado. */
     @Nonnull
-    public final AssertionsSimpleWComponent getSubCompomentWithId(String componentId) {
+    public final AssertionsSimpleWComponent getSubComponentWithId(String componentId) {
         return findSubComponent(component -> componentId.equals(component.getId()));
     }
 
@@ -104,7 +104,7 @@ public abstract class AssertionsSimpleWComponentBase<T extends Component, SELF e
      * <p>A lista pode ser de tamanho zero.</p>
      */
     @Nonnull
-    public final AssertionsSimpleWComponentList<Component> getSubCompomentsWithId(@Nonnull String componentId) {
+    public final AssertionsSimpleWComponentList<Component> getSubComponentsWithId(@Nonnull String componentId) {
         return getSubComponents(component -> componentId.equals(component.getId()));
     }
 

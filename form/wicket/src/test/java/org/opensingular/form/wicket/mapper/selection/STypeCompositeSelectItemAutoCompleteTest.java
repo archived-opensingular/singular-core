@@ -71,7 +71,7 @@ public class STypeCompositeSelectItemAutoCompleteTest {
                 .setValue(tester.getAssertionsForm().getSubComponents(TextField.class).get(1).getTarget(), "Venus")
                 .submit();
 
-        tester.getAssertionsForm().getSubCompomentWithType(base)
+        tester.getAssertionsForm().getSubComponentWithType(base)
                 .assertSInstance().isComposite().field(name.getNameSimple()).isValueEquals("Venus");
     }
 }

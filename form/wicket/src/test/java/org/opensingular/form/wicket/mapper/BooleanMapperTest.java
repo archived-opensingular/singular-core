@@ -54,7 +54,7 @@ public class BooleanMapperTest {
 
     private AssertionsSInstance assertWhenSubmitsThroughTheAceitaTermosComponent(String value) {
         SingularDummyFormPageTester tester = createTesterWithSimpleCheckboxAndStart();
-        AssertionsWComponent aceitaTermos = tester.getAssertionsPage().getSubCompomentWithId(ACEITA_TERMOS);
+        AssertionsWComponent aceitaTermos = tester.getAssertionsPage().getSubComponentWithId(ACEITA_TERMOS);
         aceitaTermos.assertSInstance().isValueEquals(null);
         tester.newFormTester().setValue(aceitaTermos.getTarget(), value).submit();
         return aceitaTermos.assertSInstance();
@@ -85,7 +85,7 @@ public class BooleanMapperTest {
     public void rendersACheckBoxByDefaultUnckecked() {
         createTesterWithSimpleCheckboxAndStart()
                 .getAssertionsPage()
-                .getSubCompomentWithId(ACEITA_TERMOS).assertSInstance().isValueEquals(null);
+                .getSubComponentWithId(ACEITA_TERMOS).assertSInstance().isValueEquals(null);
     }
 
     @Test
@@ -105,7 +105,7 @@ public class BooleanMapperTest {
             root.setValue(ACEITA_TERMOS, true);
         });
         tester.startDummyPage();
-        tester.getAssertionsPage().getSubCompomentWithId(ACEITA_TERMOS)
+        tester.getAssertionsPage().getSubComponentWithId(ACEITA_TERMOS)
                 .is(CheckBox.class)
                 .assertSInstance().isValueEquals(true);
     }

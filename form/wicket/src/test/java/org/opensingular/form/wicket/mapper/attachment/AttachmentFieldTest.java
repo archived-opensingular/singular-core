@@ -88,7 +88,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
 
         ctx.getAssertionsInstance().field("attachment").is(SIAttachment.class);
 
-        ctx.getAssertionsPage().getSubCompomentWithId("fileUpload")
+        ctx.getAssertionsPage().getSubComponentWithId("fileUpload")
                 .isNotNull()
                 .assertSInstance().is(SIAttachment.class);
 
@@ -98,7 +98,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
         java.io.File tmpFile = tmpProvider.createTempFile(content);
 
         FormTester formTester = ctx.newFormTester();
-        formTester.submit(ctx.getAssertionsPage().getSubCompomentWithId("remove_btn").getTarget());
+        formTester.submit(ctx.getAssertionsPage().getSubComponentWithId("remove_btn").getTarget());
         //formTester.setFile(getFormRelativePath(multipleFileField), new org.apache.wicket.util.file.File(tempFile), "text/plain");
 
         ctx.getAssertionsPage().debugComponentTree();
@@ -131,12 +131,12 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
         ctx.startDummyPage();
         ctx.getAssertionsPage().debugComponentTree(); //TODO apagar essa linha depois de pronto o teste
         asssertContent(ctx.getAssertionsInstance().field("attachment"), content);
-        ctx.getAssertionsPage().getSubCompomentWithId("fileUpload")
+        ctx.getAssertionsPage().getSubComponentWithId("fileUpload")
                 .isNotNull()
                 .assertSInstance().is(SIAttachment.class);
 
         //TODO Tentar baixar o arquivo
-        //ctx.clickLink(ctx.getAssertionsPage().getSubCompomentWithId("downloadLink").getTarget());
+        //ctx.clickLink(ctx.getAssertionsPage().getSubComponentWithId("downloadLink").getTarget());
 
         //Clica em apagar
         FormTester formTester = ctx.newFormTester();
@@ -147,7 +147,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
 
     private AssertionsWComponent assertDelButton(AssertionsWComponent componentAtt, boolean buttonRequired) {
         componentAtt.isNotNull();
-        AssertionsWComponent remove = componentAtt.getSubCompomentWithId("remove_btn");
+        AssertionsWComponent remove = componentAtt.getSubComponentWithId("remove_btn");
         if (buttonRequired) {
             remove.isNotNull();
             Assert.assertTrue(remove.getTarget().isEnabled() && remove.getTarget().isVisible());
@@ -168,11 +168,11 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
         ctx.startDummyPage();
         ctx.getAssertionsPage().debugComponentTree(); //TODO apagar essa linha depois de pronto o teste
         asssertContent(ctx.getAssertionsInstance().field("attachment"), content);
-        ctx.getAssertionsPage().getSubCompomentWithId("_readOnlyAttachment").isNotNull();
+        ctx.getAssertionsPage().getSubComponentWithId("_readOnlyAttachment").isNotNull();
         assertDelButton(ctx.getAssertionsPage(),false);
 
         //TODO Tentar baixar o arquivo
-        //ctx.clickLink(ctx.getAssertionsPage().getSubCompomentWithId("downloadLink").getTarget());
+        //ctx.clickLink(ctx.getAssertionsPage().getSubComponentWithId("downloadLink").getTarget());
     }
 
     @Nonnull

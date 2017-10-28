@@ -35,6 +35,6 @@ public class DecimalMapperTest {
         tester.startDummyPage();
 
         BigDecimal expectedValue = new BigDecimal(123.45);
-        tester.getAssertionsForm().getSubCompomentWithId("decimal").assertSInstance().isValueEquals(expectedValue);
+        tester.getAssertionsForm().getSubComponentWithId("decimal").assertSInstance().isValueEquals(expectedValue);
     }
 }

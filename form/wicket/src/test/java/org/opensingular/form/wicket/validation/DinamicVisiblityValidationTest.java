@@ -82,7 +82,7 @@ public class DinamicVisiblityValidationTest {
 
     private void setValueOnFieldOneAndCallAjaxValidate(String value) {
         FormTester formTester = tester.newFormTester();
-        Component  fieldOne   = tester.getAssertionsForm().getSubCompomentWithId(FIELD_ONE).getTarget();
+        Component  fieldOne   = tester.getAssertionsForm().getSubComponentWithId(FIELD_ONE).getTarget();
         formTester.setValue(fieldOne, value);
         callAjaxProcessEvent(fieldOne);
     }
@@ -93,7 +93,7 @@ public class DinamicVisiblityValidationTest {
 
     private IterableAssert<ValidationError> asserThatValidationErrorsOfFieldTwo() {
         return tester.getAssertionsForm()
-                .getSubCompomentWithType(
+                .getSubComponentWithType(
                         tester.findTypeBySimpleName(FIELD_TWO).is(STypeString.class).getTarget()
                 )
                 .assertSInstance()
@@ -102,7 +102,7 @@ public class DinamicVisiblityValidationTest {
 
     private IterableAssert<ValidationError> asserThatValidationErrorsOfFieldOne() {
         return tester.getAssertionsForm()
-                .getSubCompomentWithType(
+                .getSubComponentWithType(
                         tester.findTypeBySimpleName(FIELD_ONE).is(STypeString.class).getTarget()
                 )
                 .assertSInstance()

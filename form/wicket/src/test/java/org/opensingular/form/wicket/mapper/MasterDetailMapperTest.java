@@ -64,13 +64,13 @@ public class MasterDetailMapperTest {
         test.getDummyPage().addInstancePopulator(MasterDetailMapperTest::populateInstance);
         test.startDummyPage();
 
-        AssertionsWComponent compositeAssertion = test.getAssertionsForm().getSubCompomentWithType(listBaseType)
-                .getSubCompomentWithType(listElementType).isNotNull();
+        AssertionsWComponent compositeAssertion = test.getAssertionsForm().getSubComponentWithType(listBaseType)
+                .getSubComponentWithType(listElementType).isNotNull();
 
-        compositeAssertion.getSubCompomentWithType(date).assertSInstance().isValueEquals(
+        compositeAssertion.getSubComponentWithType(date).assertSInstance().isValueEquals(
                 java.time.YearMonth.of(2016, 01));
-        //        compositeAssertion.getSubCompomentWithType(number).assertSInstance().isValueEquals(new BigDecimal(2.5));
-//        compositeAssertion.getSubCompomentWithType(cpf).assertSInstance().isValueEquals("000.111.222-33");
+        //        compositeAssertion.getSubComponentWithType(number).assertSInstance().isValueEquals(new BigDecimal(2.5));
+//        compositeAssertion.getSubComponentWithType(cpf).assertSInstance().isValueEquals("000.111.222-33");
 
     }
 }

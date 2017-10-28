@@ -46,7 +46,7 @@ public class AttachmentImageMapperTest {
 
         tester.startDummyPage();
 
-        tester.getAssertionsForm().getSubCompomentWithId("fileUpload").isNotNull();
+        tester.getAssertionsForm().getSubComponentWithId("fileUpload").isNotNull();
     }
 
     @Test
@@ -60,6 +60,6 @@ public class AttachmentImageMapperTest {
 
         tester.startDummyPage();
 
-        tester.getAssertionsForm().getSubCompomentWithId("fileUpload").assertSInstance().isNotNull();
+        tester.getAssertionsForm().getSubComponentWithId("fileUpload").assertSInstance().isNotNull();
     }
 }

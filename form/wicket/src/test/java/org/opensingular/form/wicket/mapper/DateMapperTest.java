@@ -46,7 +46,7 @@ public class DateMapperTest {
         tester.getDummyPage().setAsEditView();
         tester.startDummyPage();
         tester.getAssertionsPage().getSubComponents(BSDatepickerInputGroup.class).isSize(1);
-        tester.getAssertionsForm().getSubCompomentWithTypeNameSimple("data").assertSInstance().assertDateValue()
+        tester.getAssertionsForm().getSubComponentWithTypeNameSimple("data").assertSInstance().assertDateValue()
                 .isInSameYearAs(isoDate)
                 .isInSameDayAs(isoDate)
                 .isInSameMonthAs(isoDate);
@@ -57,9 +57,9 @@ public class DateMapperTest {
 
         tester.getDummyPage().setAsVisualizationView();
         tester.startDummyPage();
-        tester.getAssertionsForm().getSubCompomentWithId("data")
+        tester.getAssertionsForm().getSubComponentWithId("data")
                 .is(BOutputPanel.class)
-                .getSubCompomentWithId("output")
+                .getSubComponentWithId("output")
                 .assertDefaultModelObject()
                 .isEqualTo("01/07/1991");
     }

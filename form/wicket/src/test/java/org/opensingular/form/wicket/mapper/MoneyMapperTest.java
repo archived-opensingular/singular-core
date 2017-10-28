@@ -34,7 +34,7 @@ public class MoneyMapperTest {
         ctx.startDummyPage();
 
         ctx.getAssertionsForm().getSubComponents(TextField.class).isSize(1).get(0);
-        AssertionsWTextField textField = ctx.getAssertionsForm().getSubCompomentWithId("money").asTextField();
+        AssertionsWTextField textField = ctx.getAssertionsForm().getSubComponentWithId("money").asTextField();
         textField.assertValue().isEqualTo("10,00");
     }
 

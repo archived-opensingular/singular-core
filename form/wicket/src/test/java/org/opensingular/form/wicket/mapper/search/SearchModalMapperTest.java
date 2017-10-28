@@ -139,7 +139,7 @@ public class SearchModalMapperTest {
 
     private void openModal() {
         tester.executeAjaxEvent(tester.getAssertionsForm()
-                .getSubCompomentWithId(SearchModalPanel.MODAL_TRIGGER_ID)
+                .getSubComponentWithId(SearchModalPanel.MODAL_TRIGGER_ID)
                 .getTarget(Button.class), "click");
     }
 

@@ -51,7 +51,7 @@ public class STypeStringSelectItemAutoCompleteTest {
     }
 
     private Component valueComponent() {
-        return tester.getAssertionsForm().getSubCompomentWithId("value_field").getTarget();
+        return tester.getAssertionsForm().getSubComponentWithId("value_field").getTarget();
     }
 
     @Before
@@ -81,7 +81,7 @@ public class STypeStringSelectItemAutoCompleteTest {
         tester.newFormTester()
                 .setValue(valueComponent(), KEYS[3])
                 .submit();
-        tester.getAssertionsForm().getSubCompomentWithType(base).assertSInstance().isValueEquals(OPTIONS[3]);
+        tester.getAssertionsForm().getSubComponentWithType(base).assertSInstance().isValueEquals(OPTIONS[3]);
     }
 
     @Test
@@ -91,7 +91,7 @@ public class STypeStringSelectItemAutoCompleteTest {
         tester.startDummyPage();
 
         assertThat(
-                tester.getAssertionsForm().getSubCompomentWithId("output").getTarget().getDefaultModelObjectAsString())
+                tester.getAssertionsForm().getSubComponentWithId("output").getTarget().getDefaultModelObjectAsString())
                 .isEqualTo("Tony Stark");
     }
 
@@ -102,7 +102,7 @@ public class STypeStringSelectItemAutoCompleteTest {
         tester.newFormTester()
                 .setValue(valueComponent(), "Tony Stark")
                 .submit();
-        tester.getAssertionsForm().getSubCompomentWithType(base).assertSInstance().isValueNull();
+        tester.getAssertionsForm().getSubComponentWithType(base).assertSInstance().isValueNull();
     }
 
     @Test
@@ -116,7 +116,7 @@ public class STypeStringSelectItemAutoCompleteTest {
         tester.startDummyPage();
 
         assertThat(
-                tester.getAssertionsForm().getSubCompomentWithId("output").getTarget().getDefaultModelObjectAsString())
+                tester.getAssertionsForm().getSubComponentWithId("output").getTarget().getDefaultModelObjectAsString())
                 .isEqualTo("Clark Kent");
     }
 }

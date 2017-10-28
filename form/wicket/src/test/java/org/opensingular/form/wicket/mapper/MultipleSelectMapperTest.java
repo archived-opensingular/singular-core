@@ -58,7 +58,7 @@ public class MultipleSelectMapperTest {
         SingularDummyFormPageTester ctx = createContext();
         ctx.getDummyPage().setAsEditView();
         ctx.startDummyPage();
-        ctx.getAssertionsForm().getSubCompomentWithId("gadgets").is(ListMultipleChoice.class);
+        ctx.getAssertionsForm().getSubComponentWithId("gadgets").is(ListMultipleChoice.class);
     }
 
     @Test
@@ -66,10 +66,10 @@ public class MultipleSelectMapperTest {
         SingularDummyFormPageTester ctx = createContext();
         ctx.getDummyPage().setAsVisualizationView();
         ctx.startDummyPage();
-        AssertionsWComponent panel = ctx.getAssertionsForm().getSubCompomentWithId("gadgets");
+        AssertionsWComponent panel = ctx.getAssertionsForm().getSubComponentWithId("gadgets");
         panel.is(BOutputPanel.class);
 
-        AssertionsWComponent output = panel.getSubCompomentWithId("output");
+        AssertionsWComponent output = panel.getSubComponentWithId("output");
 
         assertEquals("iPod, iPhone", output.getTarget().getDefaultModelObject());
     }

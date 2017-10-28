@@ -31,7 +31,6 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.provider.SimpleProvider;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 
 import java.io.Serializable;
@@ -95,10 +94,10 @@ public class TypeaheadAjaxUpdateTest {
 
     @Test
     public void assertVisibility() {
-        Component pessoaComponent = tester.getAssertionsForm().getSubCompomentWithType(pessoa).getTarget();
+        Component pessoaComponent = tester.getAssertionsForm().getSubComponentWithType(pessoa).getTarget();
         tester.assertInvisible(pessoaComponent.getPageRelativePath());
 
-        tester.getAssertionsForm().getSubCompomentWithType(pessoa).assertSInstance();
+        tester.getAssertionsForm().getSubComponentWithType(pessoa).assertSInstance();
 
         DropDownChoice dropDown = tester.getAssertionsForm().getSubComponents(DropDownChoice.class).get(0).getTarget(DropDownChoice.class);
 
@@ -135,7 +134,7 @@ public class TypeaheadAjaxUpdateTest {
         tester.executeAjaxEvent(inputNameComponent, SINGULAR_PROCESS_EVENT);
 
         List<SInstance> listITems = (List<SInstance>) tester.getAssertionsForm()
-                .getSubCompomentWithType(pessoa).assertSInstance().getTarget().getValue();
+                .getSubComponentWithType(pessoa).assertSInstance().getTarget().getValue();
         assertThat(listITems.get(1).getValue()).isNotNull();
     }
 

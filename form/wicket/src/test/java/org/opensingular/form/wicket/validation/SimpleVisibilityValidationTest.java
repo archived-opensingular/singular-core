@@ -58,7 +58,7 @@ public class SimpleVisibilityValidationTest {
 
     private IterableAssert<ValidationError> assertThatFieldValidationErros(String field) {
         return tester.getAssertionsForm()
-                .getSubCompomentWithType(
+                .getSubComponentWithType(
                         tester.findTypeBySimpleName(field).is(STypeString.class).getTarget()
                 )
                 .assertSInstance()

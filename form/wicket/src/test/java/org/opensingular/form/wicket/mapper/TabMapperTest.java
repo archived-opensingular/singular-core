@@ -78,21 +78,21 @@ public class TabMapperTest {
     }
 
     private void clickOnTab(SingularDummyFormPageTester ctx, AssertionsWComponent assertionsTab, int tabIndex) {
-        ctx.clickLink(assertionsTab.getSubCompomentWithId("tab").getSubCompomentsWithId("tabAnchor").get(tabIndex)
+        ctx.clickLink(assertionsTab.getSubComponentWithId("tab").getSubComponentsWithId("tabAnchor").get(tabIndex)
                 .getTarget());
     }
 
     private void assertTabContent(AssertionsWComponent assertionsTab, String... expectedInstancesName) {
-        AssertionsWComponent content = assertionsTab.getSubCompomentWithId("tab-content").isNotNull();
+        AssertionsWComponent content = assertionsTab.getSubComponentWithId("tab-content").isNotNull();
         content.getSubComponentsWithSInstance().isSize(expectedInstancesName.length);
         for(String name : expectedInstancesName) {
-            content.getSubCompomentWithTypeNameSimple(name).isNotNull();
+            content.getSubComponentWithTypeNameSimple(name).isNotNull();
         }
     }
 
     @Nonnull
     private AssertionsWComponent getAssertionsTab(SingularDummyFormPageTester ctx) {
-        AssertionsWComponent assertionsTab = ctx.getAssertionsPage().getSubCompomentForSInstance(
+        AssertionsWComponent assertionsTab = ctx.getAssertionsPage().getSubComponentForSInstance(
                 ctx.getAssertionsInstance().getTarget());
         Assert.assertEquals(SViewTab.class, assertionsTab.assertSInstance().getTarget().getType().getView().getClass());
         return assertionsTab;

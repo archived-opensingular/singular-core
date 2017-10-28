@@ -37,12 +37,12 @@ public class ListBreadcrumbMapperTest {
         ctx.getDummyPage().setAsEditView();
         ctx.startDummyPage();
 
-        AssertionsWComponent cmpExpProf = ctx.getAssertionsPage().getSubCompomentWithTypeNameSimple(
+        AssertionsWComponent cmpExpProf = ctx.getAssertionsPage().getSubComponentWithTypeNameSimple(
                 "experienciasProfissionais").isNotNull();
         ctx.getAssertionsInstance().isList("experienciasProfissionais", 0);
 
         //add a item in the breadCrum
-        ctx.clickLink(cmpExpProf.getSubCompomentWithId("_add").getTarget());
+        ctx.clickLink(cmpExpProf.getSubComponentWithId("_add").getTarget());
         ctx.getAssertionsInstance().isList("experienciasProfissionais", 1);
 
         //Cancel sub tela

@@ -75,7 +75,7 @@ public class STypeSelectItemSelectionFieldTest {
         tester.startDummyPage();
 
         tester.assertEnabled(
-                tester.getAssertionsForm().getSubCompomentWithId("originUF").getTarget().getPageRelativePath());
+                tester.getAssertionsForm().getSubComponentWithId("originUF").getTarget().getPageRelativePath());
     }
 
     @Test
@@ -99,10 +99,10 @@ public class STypeSelectItemSelectionFieldTest {
         tester.startDummyPage();
 
         tester.newFormTester()
-                .select(getFormRelativePath((DropDownChoice)tester.getAssertionsForm().getSubCompomentWithId("originUF").getTarget()), 0)
+                .select(getFormRelativePath((DropDownChoice)tester.getAssertionsForm().getSubComponentWithId("originUF").getTarget()), 0)
                 .submit();
 
-        tester.getAssertionsForm().getSubCompomentWithType(selectType).assertSInstance().field(idUF.getNameSimple()).isValueEquals("DF");
+        tester.getAssertionsForm().getSubComponentWithType(selectType).assertSInstance().field(idUF.getNameSimple()).isValueEquals("DF");
     }
 
     @Test
@@ -130,10 +130,10 @@ public class STypeSelectItemSelectionFieldTest {
         tester.startDummyPage();
 
         tester.newFormTester()
-                .select(getFormRelativePath((DropDownChoice)tester.getAssertionsForm().getSubCompomentWithId("originUF").getTarget()), 0)
+                .select(getFormRelativePath((DropDownChoice)tester.getAssertionsForm().getSubComponentWithId("originUF").getTarget()), 0)
                 .submit();
 
-        tester.getAssertionsForm().getSubCompomentWithType(selectType).assertSInstance().field(idUF.getNameSimple()).isValueEquals("DF");
+        tester.getAssertionsForm().getSubComponentWithType(selectType).assertSInstance().field(idUF.getNameSimple()).isValueEquals("DF");
     }
 
     @Test
@@ -141,10 +141,10 @@ public class STypeSelectItemSelectionFieldTest {
         tester.startDummyPage();
 
         tester.newFormTester()
-                .select(getFormRelativePath((DropDownChoice)tester.getAssertionsForm().getSubCompomentWithId("originUF").getTarget()), 0)
+                .select(getFormRelativePath((DropDownChoice)tester.getAssertionsForm().getSubComponentWithId("originUF").getTarget()), 0)
                 .submit();
 
-        tester.getAssertionsForm().getSubCompomentWithType(selectType)
+        tester.getAssertionsForm().getSubComponentWithType(selectType)
                 .assertSInstance().field(nomeUF.getNameSimple()).isValueEquals("Distrito Federal");
     }
 

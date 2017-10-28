@@ -74,31 +74,31 @@ public class MasterDetailWithTableListWithStringTest {
 
         assertThat(findMasterDetailLink()).isNotEqualTo(findTableAddButton());
 
-        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
+        tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(0);
         clickAddButton();
-        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(1);
+        tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(1);
 
         clickAddButton();
         clickAddButton();
 
-        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(3);
+        tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(3);
     }
 
     @Test
     public void keepsFilledDataForAlreadyAddedItems() {
         clickMasterDetailLink();
 
-        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
+        tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(0);
 
         clickAddButton();
 
-        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(1);
-        tester.getAssertionsForm().getSubCompomentWithType(simpleString).assertSInstance().getTarget().setValue("123456");
+        tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(1);
+        tester.getAssertionsForm().getSubComponentWithType(simpleString).assertSInstance().getTarget().setValue("123456");
 
         clickAddButton();
 
-        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(2);
-        tester.getAssertionsForm().getSubCompomentWithType(simpleString).assertSInstance().isValueEquals("123456");
+        tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(2);
+        tester.getAssertionsForm().getSubComponentWithType(simpleString).assertSInstance().isValueEquals("123456");
     }
 
     private void clickMasterDetailLink() {
@@ -110,7 +110,7 @@ public class MasterDetailWithTableListWithStringTest {
     }
 
     private AbstractLink findMasterDetailLink() {
-        return tester.getAssertionsForm().getSubCompomentWithId("addButton").getTarget(AbstractLink.class);
+        return tester.getAssertionsForm().getSubComponentWithId("addButton").getTarget(AbstractLink.class);
     }
 
     private Button findTableAddButton() {

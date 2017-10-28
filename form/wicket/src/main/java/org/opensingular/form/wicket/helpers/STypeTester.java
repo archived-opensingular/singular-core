@@ -166,7 +166,7 @@ public class STypeTester<T extends SType<?>> {
     }
 
     private Component getComponentForSType(SType<?> sType) {
-        return this.singularWicketTester.getAssertionsPage().getSubCompomentWithId(sType.getNameSimple()).getTarget();
+        return this.singularWicketTester.getAssertionsPage().getSubComponentWithId(sType.getNameSimple()).getTarget();
     }
 
     private <ST extends SType<?>> SInstance resolveTypeFinderInstance(IFunction<T, ST> typeFinder) {
