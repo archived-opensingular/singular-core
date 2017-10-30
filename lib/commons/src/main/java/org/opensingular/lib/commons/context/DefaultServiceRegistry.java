@@ -45,7 +45,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
             ServiceKey that = (ServiceKey) o;
 
             if (name != null ? !name.equals(that.name) : that.name != null) return false;
-            return serviceClass != null ? serviceClass.isAssignableFrom(that.serviceClass) : that.serviceClass == null;
+            return that.serviceClass != null ? that.serviceClass.isAssignableFrom(serviceClass) : this.serviceClass == null;
         }
 
         @Override
