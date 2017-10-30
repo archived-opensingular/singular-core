@@ -35,13 +35,13 @@ public class ReportPageTest extends SingularWicketTestCase {
         getTester().startPage(reportPage);
         assertTrue(getTester().getLastRenderedPage().equals(reportPage));
 
-        getTester().debugComponentTrees();
-        getTester().getAssertionsPage().debugComponentTree();
+        //getTester().debugComponentTrees();
+        //getTester().getAssertionsPage().debugComponentTree();
 
-        AssertionsWComponent menuItem = getTester().getAssertionsForPath("app-body:menu:itens:0:menu-item").is(
+        AssertionsWComponent menuItem = getTester().getAssertionsForPath("app-body:menu:itens:0:menu-item").isInstanceOf(
                 MetronicMenuItem.class);
         menuItem.getSubComponentWithId("title").asLabel().assertValue().isEqualTo("X1");
-        getTester().clickLink(menuItem.getSubComponentWithId("anchor").getTarget());
+        //getTester().clickLink(menuItem.getSubComponentWithId("anchor").getTarget());
     }
 
     private static ReportPage createPage() {

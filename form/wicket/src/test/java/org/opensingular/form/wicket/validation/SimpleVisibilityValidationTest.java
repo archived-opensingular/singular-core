@@ -18,7 +18,7 @@
 
 package org.opensingular.form.wicket.validation;
 
-import org.fest.assertions.api.IterableAssert;
+import org.assertj.core.api.IterableAssert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -59,7 +59,7 @@ public class SimpleVisibilityValidationTest {
     private IterableAssert<ValidationError> assertThatFieldValidationErros(String field) {
         return tester.getAssertionsForm()
                 .getSubComponentWithType(
-                        tester.findTypeBySimpleName(field).is(STypeString.class).getTarget()
+                        tester.findTypeBySimpleName(field).isInstanceOf(STypeString.class).getTarget()
                 )
                 .assertSInstance()
                 .assertThatValidationErrors();

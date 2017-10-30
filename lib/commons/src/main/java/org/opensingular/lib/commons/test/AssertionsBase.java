@@ -113,7 +113,7 @@ public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
     /**
      * Verifica se o objeto atual é da classe informada.
      */
-    public final SELF is(Class<?> typeClass) {
+    public final SELF isInstanceOf(Class<?> typeClass) {
         if (! typeClass.isInstance(getTarget())) {
             throw new AssertionError(errorMsg("Não é uma instância da classe " + typeClass.getName(), typeClass,
                     getTarget().getClass()));

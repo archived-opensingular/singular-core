@@ -18,7 +18,7 @@
 
 package org.opensingular.form.io;
 
-import org.fest.assertions.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,7 +60,7 @@ import java.io.Serializable;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
 public class TestFormSerializationUtil extends TestCaseForm {

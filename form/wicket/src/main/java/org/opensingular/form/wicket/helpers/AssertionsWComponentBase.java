@@ -20,8 +20,8 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
-import org.fest.assertions.api.Assertions;
-import org.fest.assertions.api.ObjectAssert;
+import org.assertj.core.api.AbstractObjectAssert;
+import org.assertj.core.api.Assertions;
 import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -221,7 +221,7 @@ public abstract class AssertionsWComponentBase<T extends Component, SELF extends
                         +" não possui model de SInstance "))));
     }
 
-    public ObjectAssert<Serializable> assertDefaultModelObject(){
+    public AbstractObjectAssert<?,Serializable> assertDefaultModelObject(){
         return Assertions.assertThat((Serializable) getTarget().getDefaultModelObject());
     }
 

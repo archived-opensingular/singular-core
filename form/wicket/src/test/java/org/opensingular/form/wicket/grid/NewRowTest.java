@@ -29,7 +29,7 @@ import org.opensingular.form.type.util.STypeEMail;
 import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class NewRowTest {
 

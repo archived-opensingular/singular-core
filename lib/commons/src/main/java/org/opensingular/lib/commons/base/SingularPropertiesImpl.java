@@ -25,6 +25,7 @@ import org.opensingular.lib.commons.util.PropertiesUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -239,7 +240,7 @@ public final class SingularPropertiesImpl implements SingularProperties {
         return selected;
     }
 
-    private void loadOverriding(Properties newProperties, File arq) {
+    private void loadOverriding(@Nonnull Properties newProperties, @Nonnull File arq) {
         if (arq.exists()) {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("   Lendo arquivo de propriedades {}", arq);
@@ -252,18 +253,18 @@ public final class SingularPropertiesImpl implements SingularProperties {
         }
     }
 
-    private void loadOverriding(Properties newProperties, URL resoruce) {
+    private void loadOverriding(@Nonnull Properties newProperties, @Nonnull URL resource) {
         if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("   Lendo arquivo de propriedades {}", resoruce);
+            LOGGER.info("   Lendo arquivo de propriedades {}", resource);
         }
         try {
-            loadOverriding(newProperties, resoruce.openStream());
+            loadOverriding(newProperties, resource.openStream());
         } catch (Exception e) {
-            throw SingularException.rethrow("Erro lendo arquivo de propriedades", e).add("url", resoruce);
+            throw SingularException.rethrow("Erro lendo arquivo de propriedades", e).add("url", resource);
         }
     }
 
-    private void loadOverriding(Properties newProperties, InputStream in) throws IOException {
+    private void loadOverriding(@Nonnull Properties newProperties, @Nonnull InputStream in) throws IOException {
         Properties p = new Properties();
         p.load(in);
         for (Map.Entry<Object, Object> entry : p.entrySet()) {
@@ -275,7 +276,7 @@ public final class SingularPropertiesImpl implements SingularProperties {
      * Copia as propriedades do arquivo para as properties internas. As propriedades previamente existentes serão
      * sobrepostas. Esse método é utilizado para testes unitários com difererentes contextos.
      */
-    public synchronized void reloadAndOverrideWith(URL propertiesURL) {
+    public synchronized void reloadAndOverrideWith(@Nonnull URL propertiesURL) {
         reload();
         loadOverriding(getProperties(), propertiesURL);
     }

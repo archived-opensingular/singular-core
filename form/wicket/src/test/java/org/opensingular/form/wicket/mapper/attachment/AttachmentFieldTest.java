@@ -23,7 +23,7 @@ import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.util.file.File;
 import org.apache.wicket.util.tester.FormTester;
-import org.fest.assertions.core.Condition;
+import org.assertj.core.api.Condition;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -47,7 +47,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertArrayEquals;
 import static org.opensingular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
 
@@ -86,11 +86,11 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
 
         ctx.getAssertionsPage().debugComponentTree(); //TODO apagar essa linha depois de pronto o teste
 
-        ctx.getAssertionsInstance().field("attachment").is(SIAttachment.class);
+        ctx.getAssertionsInstance().field("attachment").isInstanceOf(SIAttachment.class);
 
         ctx.getAssertionsPage().getSubComponentWithId("fileUpload")
                 .isNotNull()
-                .assertSInstance().is(SIAttachment.class);
+                .assertSInstance().isInstanceOf(SIAttachment.class);
 
         //Mas exemplos de conteúdo em BaseAttachmentPersistenceFilesTest.java
         //sha1 = "7110eda4d09e062aa5e4a390b0a572ac0d2c0220"
@@ -133,7 +133,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
         asssertContent(ctx.getAssertionsInstance().field("attachment"), content);
         ctx.getAssertionsPage().getSubComponentWithId("fileUpload")
                 .isNotNull()
-                .assertSInstance().is(SIAttachment.class);
+                .assertSInstance().isInstanceOf(SIAttachment.class);
 
         //TODO Tentar baixar o arquivo
         //ctx.clickLink(ctx.getAssertionsPage().getSubComponentWithId("downloadLink").getTarget());
@@ -188,7 +188,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
     }
 
     private void asssertContent(AssertionsSInstance attachment, byte[] expectedContent) {
-        attachment.is(SIAttachment.class);
+        attachment.isInstanceOf(SIAttachment.class);
         SIAttachment att = attachment.getTarget(SIAttachment.class);
         if (expectedContent == null) {
             Assert.assertFalse(att.getContentAsByteArray().isPresent());

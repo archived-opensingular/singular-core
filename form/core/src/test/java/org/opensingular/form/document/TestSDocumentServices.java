@@ -31,7 +31,7 @@ import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.lib.commons.context.RefService;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
 public class TestSDocumentServices extends TestCaseForm {

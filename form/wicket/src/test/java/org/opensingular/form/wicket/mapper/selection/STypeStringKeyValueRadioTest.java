@@ -30,7 +30,7 @@ import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class STypeStringKeyValueRadioTest {
     private static STypeString tipoDeMedia;

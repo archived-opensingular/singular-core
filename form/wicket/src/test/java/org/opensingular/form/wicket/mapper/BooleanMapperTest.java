@@ -28,7 +28,7 @@ import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 
 import java.util.List;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BooleanMapperTest {
 
@@ -106,7 +106,7 @@ public class BooleanMapperTest {
         });
         tester.startDummyPage();
         tester.getAssertionsPage().getSubComponentWithId(ACEITA_TERMOS)
-                .is(CheckBox.class)
+                .isInstanceOf(CheckBox.class)
                 .assertSInstance().isValueEquals(true);
     }
 

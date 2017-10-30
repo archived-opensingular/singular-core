@@ -18,10 +18,10 @@
 
 package org.opensingular.form.helpers;
 
-import org.fest.assertions.api.Assertions;
-import org.fest.assertions.api.DateAssert;
-import org.fest.assertions.api.IterableAssert;
-import org.fest.assertions.api.StringAssert;
+import org.assertj.core.api.AbstractCharSequenceAssert;
+import org.assertj.core.api.AbstractDateAssert;
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.IterableAssert;
 import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.SAttributeEnabled;
 import org.opensingular.form.SIComposite;
@@ -133,14 +133,14 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<SInstance, 
      * Verifica se a instância atual é uma lista ({@link SIList}).
      */
     public AssertionsSInstance isList() {
-        return is(SIList.class);
+        return isInstanceOf(SIList.class);
     }
 
     /**
      * Verifica se a instância atual é um composite ({@link SIComposite}).
      */
     public AssertionsSInstance isComposite() {
-        return is(SIComposite.class);
+        return isInstanceOf(SIComposite.class);
     }
 
     /**
@@ -191,7 +191,7 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<SInstance, 
      * Cria uma nova assertiva para o valor da instância, se a instância contiver um valor Date. Senão o valor for
      * diferente de null e não for Date, então dispara exception.
      */
-    public DateAssert assertDateValue() {
+    public AbstractDateAssert<?> assertDateValue() {
         Object value = getTarget().getValue();
         if (value instanceof Date || value == null) {
             return Assertions.assertThat((Date) value);
@@ -199,7 +199,7 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<SInstance, 
         throw new AssertionError(errorMsg("O Objeto da instancia atual não é do tipo Date"));
     }
 
-    public StringAssert assertStringValue() {
+    public AbstractCharSequenceAssert<?, String> assertStringValue() {
         Object value = getTarget().getValue();
         if (value instanceof String || value == null) {
             return Assertions.assertThat((String) value);
@@ -212,7 +212,7 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<SInstance, 
         isNotNull();
         AssertionsSInstance a = new AssertionsSInstance(FormSerializationUtil.serializeAndDeserialize(getTarget()));
         a.isNotSameAs(getTarget());
-        a.is(getTarget().getClass());
+        a.isInstanceOf(getTarget().getClass());
         return a;
     }
 

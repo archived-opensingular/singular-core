@@ -34,7 +34,7 @@ import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class STypeStringMultipleSelectionFieldTest {
     private SingularDummyFormPageTester tester;

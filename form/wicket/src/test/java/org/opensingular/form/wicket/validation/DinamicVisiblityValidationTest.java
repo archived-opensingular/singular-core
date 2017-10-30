@@ -20,7 +20,7 @@ package org.opensingular.form.wicket.validation;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.util.tester.FormTester;
-import org.fest.assertions.api.IterableAssert;
+import org.assertj.core.api.IterableAssert;
 import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.form.type.core.STypeString;
@@ -94,7 +94,7 @@ public class DinamicVisiblityValidationTest {
     private IterableAssert<ValidationError> asserThatValidationErrorsOfFieldTwo() {
         return tester.getAssertionsForm()
                 .getSubComponentWithType(
-                        tester.findTypeBySimpleName(FIELD_TWO).is(STypeString.class).getTarget()
+                        tester.findTypeBySimpleName(FIELD_TWO).isInstanceOf(STypeString.class).getTarget()
                 )
                 .assertSInstance()
                 .assertThatValidationErrors();
@@ -103,7 +103,7 @@ public class DinamicVisiblityValidationTest {
     private IterableAssert<ValidationError> asserThatValidationErrorsOfFieldOne() {
         return tester.getAssertionsForm()
                 .getSubComponentWithType(
-                        tester.findTypeBySimpleName(FIELD_ONE).is(STypeString.class).getTarget()
+                        tester.findTypeBySimpleName(FIELD_ONE).isInstanceOf(STypeString.class).getTarget()
                 )
                 .assertSInstance()
                 .assertThatValidationErrors();

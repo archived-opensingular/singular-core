@@ -68,13 +68,13 @@ public class AssertionsBaseTest {
     @Test
     public void testIs(){
         AssertionsTest assertion = new AssertionsTest("raiz");
-        assertion.is(String.class);
+        assertion.isInstanceOf(String.class);
     }
 
     @Test(expected = AssertionError.class)
     public void testIsException(){
         AssertionsTest assertion = new AssertionsTest("raiz");
-        assertion.is(Integer.class);
+        assertion.isInstanceOf(Integer.class);
     }
 
     @Test

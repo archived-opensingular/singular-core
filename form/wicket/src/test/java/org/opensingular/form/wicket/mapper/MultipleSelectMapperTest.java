@@ -58,7 +58,7 @@ public class MultipleSelectMapperTest {
         SingularDummyFormPageTester ctx = createContext();
         ctx.getDummyPage().setAsEditView();
         ctx.startDummyPage();
-        ctx.getAssertionsForm().getSubComponentWithId("gadgets").is(ListMultipleChoice.class);
+        ctx.getAssertionsForm().getSubComponentWithId("gadgets").isInstanceOf(ListMultipleChoice.class);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class MultipleSelectMapperTest {
         ctx.getDummyPage().setAsVisualizationView();
         ctx.startDummyPage();
         AssertionsWComponent panel = ctx.getAssertionsForm().getSubComponentWithId("gadgets");
-        panel.is(BOutputPanel.class);
+        panel.isInstanceOf(BOutputPanel.class);
 
         AssertionsWComponent output = panel.getSubComponentWithId("output");
 

@@ -58,7 +58,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.Date;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 @ActiveProfiles("mssql")

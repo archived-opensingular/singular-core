@@ -17,8 +17,8 @@
 package org.opensingular.internal.lib.wicket.test;
 
 import org.apache.wicket.markup.html.form.TextField;
-import org.fest.assertions.api.Assertions;
-import org.fest.assertions.api.StringAssert;
+import org.assertj.core.api.AbstractCharSequenceAssert;
+import org.assertj.core.api.Assertions;
 
 /**
  * Representa um conjunto de asserções voltadas para TextField do Wicket.
@@ -32,7 +32,7 @@ public class AssertionsSimpleWTextField extends AssertionsSimpleWComponentBase<T
     }
 
     /** Retorna um objeto de assertiva em cima do valor texto do TextField. */
-    public StringAssert assertValue() {
+    public AbstractCharSequenceAssert<?, String> assertValue() {
         return Assertions.assertThat(getTarget().getValue());
 
     }

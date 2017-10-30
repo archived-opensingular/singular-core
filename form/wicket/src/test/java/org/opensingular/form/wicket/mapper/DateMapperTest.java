@@ -58,7 +58,7 @@ public class DateMapperTest {
         tester.getDummyPage().setAsVisualizationView();
         tester.startDummyPage();
         tester.getAssertionsForm().getSubComponentWithId("data")
-                .is(BOutputPanel.class)
+                .isInstanceOf(BOutputPanel.class)
                 .getSubComponentWithId("output")
                 .assertDefaultModelObject()
                 .isEqualTo("01/07/1991");

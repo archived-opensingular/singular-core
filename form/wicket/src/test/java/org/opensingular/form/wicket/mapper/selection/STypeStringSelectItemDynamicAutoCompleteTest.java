@@ -20,14 +20,14 @@ package org.opensingular.form.wicket.mapper.selection;
 
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.form.TextField;
-import org.fest.assertions.core.Condition;
+import org.assertj.core.api.Condition;
 import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewAutoComplete;
 import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class STypeStringSelectItemDynamicAutoCompleteTest {
 

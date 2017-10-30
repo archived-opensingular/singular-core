@@ -28,7 +28,7 @@ import org.opensingular.form.AbstractTestOneType;
 
 import java.util.Date;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
 public class STypeDateTimeTest extends AbstractTestOneType<STypeDateTime, SIDateTime> {

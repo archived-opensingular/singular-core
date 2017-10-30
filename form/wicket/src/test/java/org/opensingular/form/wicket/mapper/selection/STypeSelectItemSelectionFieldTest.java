@@ -32,7 +32,7 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.wicket.helpers.AssertionsWComponentList;
 import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class STypeSelectItemSelectionFieldTest {
     private SingularDummyFormPageTester tester;

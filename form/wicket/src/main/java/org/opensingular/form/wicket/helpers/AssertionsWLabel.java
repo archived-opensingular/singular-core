@@ -17,8 +17,8 @@
 package org.opensingular.form.wicket.helpers;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.fest.assertions.api.Assertions;
-import org.fest.assertions.api.StringAssert;
+import org.assertj.core.api.AbstractCharSequenceAssert;
+import org.assertj.core.api.Assertions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,7 +37,7 @@ public class AssertionsWLabel extends AssertionsWComponentBase<Label, Assertions
 
     /** Returns a String assertive for the label text. */
     @Nonnull
-    public StringAssert assertValue() {
+    public AbstractCharSequenceAssert<?, String> assertValue() {
         return Assertions.assertThat(getTarget().getDefaultModelObjectAsString());
 
     }
