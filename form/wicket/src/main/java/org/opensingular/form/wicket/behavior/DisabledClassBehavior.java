@@ -21,6 +21,12 @@ import org.apache.wicket.behavior.AttributeAppender;
 
 public class DisabledClassBehavior extends AttributeAppender {
 
+    public DisabledClassBehavior(String cssClass) {
+        super("class", cssClass, " ");
+    }
+
+
+
     private static final DisabledClassBehavior INSTANCE = new DisabledClassBehavior();
     public static DisabledClassBehavior getInstance() {
         return INSTANCE;

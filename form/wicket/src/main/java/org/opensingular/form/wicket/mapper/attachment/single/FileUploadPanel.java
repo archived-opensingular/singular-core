@@ -16,14 +16,12 @@
 
 package org.opensingular.form.wicket.mapper.attachment.single;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -36,12 +34,9 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.resource.DynamicImageResource;
-import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.util.string.StringValue;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.servlet.MimeTypes;
@@ -60,19 +55,14 @@ import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponse
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.commons.util.Loggable;
-import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
-import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet.PARAM_NAME;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet.*;
 
 public class FileUploadPanel extends Panel implements Loggable {
 
@@ -87,7 +77,7 @@ public class FileUploadPanel extends Panel implements Loggable {
     private final WebMarkupContainer uploadFileButton = new UploadButton("upload_btn");
 
     private FileUploadField fileField;
-    private WebMarkupContainer filesContainer, progressBar;
+    private WebMarkupContainer filesContainer, progressBar, downloadLinkContainer;
     private DownloadSupportedBehavior downloader;
     private DownloadLink downloadLink;
     private AttachmentKey uploadId;
@@ -138,7 +128,6 @@ public class FileUploadPanel extends Panel implements Loggable {
     }
 
 
-
     protected void buildFileUploadInput() {
 
 
@@ -148,18 +137,24 @@ public class FileUploadPanel extends Panel implements Loggable {
         downloader = new DownloadSupportedBehavior(self.getModel());
         add(downloader);
 
+        downloadLinkContainer = new WebMarkupContainer("input-div");
+        downloadLinkContainer.add(new DisabledClassBehavior("singular-upload-field-disabled"));
         downloadLink = new DownloadLink("downloadLink", self.getModel(), downloader);
-        fileField = new FileUploadField("fileUpload", dummyModel(self.getModel()));
-
         filesContainer = new WebMarkupContainer("files");
-        add(filesContainer.add(downloadLink));
-        uploadFileButton.add(invisibleIfInputDisabled());
-        add(uploadFileButton.add(fileField));
-        uploadFileButton.add(invisibleIfInputDisabled());
-        add(removeFileButton.add(new AttributeAppender("title", "Excluir")));
 
         progressBar = new WebMarkupContainer("progress");
-        add(progressBar);
+
+        add(downloadLinkContainer);
+        downloadLinkContainer.add(filesContainer);
+        filesContainer.add(downloadLink);
+        downloadLinkContainer.add(progressBar);
+
+
+        fileField = new FileUploadField("fileUpload", dummyModel(self.getModel()));
+        fileField.add(new DisabledClassBehavior("singular-upload-disabled"));
+        add(uploadFileButton.add(fileField));
+        add(removeFileButton.add(new AttributeAppender("title", "Excluir")));
+
 
         add(new ClassAttributeModifier() {
 
@@ -274,7 +269,7 @@ public class FileUploadPanel extends Panel implements Loggable {
         return getModelObject().asAtr().getAllowedFileTypes();
     }
 
-    private Set<String> getAllowedExtensions(){
+    private Set<String> getAllowedExtensions() {
         return MimeTypes.getExtensionsFormMimeTypes(getAllowedFileTypes(), true);
     }
 
@@ -306,18 +301,6 @@ public class FileUploadPanel extends Panel implements Loggable {
         }
     }
 
-    private Behavior invisibleIfInputDisabled(){
-        return new Behavior() {
-            @Override
-            public void onConfigure(Component c) {
-                if (c.isEnabledInHierarchy()){
-//                    c.setVisible(true);
-                } else {
-//                    c.setVisible(false);
-                }
-            }
-        };
-    }
 
     private final class RemoveButton extends AjaxButton {
         private RemoveButton(String id) {
