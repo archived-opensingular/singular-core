@@ -16,29 +16,29 @@
 
 (function () {
     "use strict";
-    if (window.FileListUploadPanel == undefined) {
-        window.FileListUploadPanel = function () {
+    if (window.FileUploadListPanel == undefined) {
+        window.FileUploadListPanel = function () {
         };
 
-        window.FileListUploadPanel.setUploadItemState = function (panel_id, box_id, state, errorMessage) {
+        window.FileUploadListPanel.setUploadItemState = function (panel_id, box_id, state, errorMessage) {
             var $panel = $('#' + panel_id);
             var $box = $('#upload-box-' + box_id);
 
-            $panel.toggleClass('FileListUploadPanel_empty', ($panel.find('.upload-list-item').length == 0));
+            $panel.toggleClass('FileUploadListPanel_empty', ($panel.find('.upload-list-item').length == 0));
 
             $box
-                .removeClass('FileListUploadPanel_uploading')
-                .removeClass('FileListUploadPanel_success')
-                .removeClass('FileListUploadPanel_error')
-                .addClass('FileListUploadPanel_' + state);
+                .removeClass('FileUploadListPanel_uploading')
+                .removeClass('FileUploadListPanel_success')
+                .removeClass('FileUploadListPanel_error')
+                .addClass('FileUploadListPanel_' + state);
 
             if (state == 'error') {
-                $box.addClass('FileListUploadPanel_error');
+                $box.addClass('FileUploadListPanel_error');
                 $box.find('.fa-file-text').removeClass('fa-file-text').addClass('fa-remove').css('color', 'red');
                 $box.find('.list-item-uploading').removeClass('list-item-uploading').addClass('list-item-uploaded');
                 $box.find('.list-action-remove').removeClass('hidden').click(function (e) {
                     $box.remove();
-                    window.FileListUploadPanel.setUploadItemState(panel_id, box_id, null);
+                    window.FileUploadListPanel.setUploadItemState(panel_id, box_id, null);
                 });
 
                 //toastr.error(errorMessage);
@@ -64,12 +64,12 @@
                 $('#' + panel_id).find('.upload-list-add').show();
             }
         };
-        window.FileListUploadPanel.setup = function (params) {
+        window.FileUploadListPanel.setup = function (params) {
             var self = this;
             if (self.last_id == undefined) {
                 self.last_id = 1;
             }
-            FileListUploadPanel.setUploadItemState(params.component_id, null, null);
+            FileUploadListPanel.setUploadItemState(params.component_id, null, null);
 
             $('#' + params.file_field_id).fileupload({
                 url: params.upload_url,
@@ -110,10 +110,10 @@
                         + '  </div>'
                         + '</li>'
                         + '');
-                    FileListUploadPanel.setUploadItemState(params.component_id, fake_id, 'uploading');
+                    FileUploadListPanel.setUploadItemState(params.component_id, fake_id, 'uploading');
                     fileList.append(fileElement);
 
-                    if (FileListUploadPanel.validateInputFile(
+                    if (FileUploadListPanel.validateInputFile(
                             e,
                             data,
                             params.component_id,
@@ -132,7 +132,7 @@
                         var fake_id = data.files[index].fake_id;
 
                         if (resp.errorMessage) {
-                            FileListUploadPanel.setUploadItemState(params.component_id, fake_id, 'error', resp.errorMessage);
+                            FileUploadListPanel.setUploadItemState(params.component_id, fake_id, 'error', resp.errorMessage);
                         } else {
                             $.getJSON(
                                 params.add_url,
@@ -144,7 +144,7 @@
                                 },
                                 function (dataSInstance, status, jqXHR) {
                                     if (status == 'success') {
-                                        FileListUploadPanel.setUploadItemState(params.component_id, fake_id, 'success');
+                                        FileUploadListPanel.setUploadItemState(params.component_id, fake_id, 'success');
                                         var $box = $('#upload-box-' + fake_id);
                                         $box.find('.fa-file-text').removeClass('fa-file-text').addClass('fa-check');
                                         $box.find('.list-item-uploading').removeClass('list-item-uploading').addClass('list-item-uploaded');
@@ -159,7 +159,7 @@
                                                             $('#upload-box-' + fake_id).remove();
                                                             var fileList = $('#' + params.fileList_id).find('li');
                                                             if (fileList.length == 0) {
-                                                                FileListUploadPanel.setUploadItemState(params.component_id, fake_id, 'empty');
+                                                                FileUploadListPanel.setUploadItemState(params.component_id, fake_id, 'empty');
                                                             }
                                                         }
                                                     }
@@ -204,7 +204,7 @@
                 .parent().addClass($.support.fileInput ? undefined : 'disabled');
         };
 
-        window.FileListUploadPanel.resetFormElement = function (e) {
+        window.FileUploadListPanel.resetFormElement = function (e) {
             var $input = $(e.target || e.srcElement);
             $input.wrap('<form>').closest('form').get(0).reset();
             $input.unwrap();
@@ -214,14 +214,14 @@
             e.preventDefault();
         };
 
-        window.FileListUploadPanel.validateInputFile = function (e, data, panel_id, maxSize, allowed_file_types, allowed_file_extensions) {
+        window.FileUploadListPanel.validateInputFile = function (e, data, panel_id, maxSize, allowed_file_types, allowed_file_extensions) {
             if (data.files[0].size == 0) {
-                FileListUploadPanel.setUploadItemState(panel_id, data.files[0].fake_id, 'error', "Arquivo não pode ser de tamanho 0 (zero)");
+                FileUploadListPanel.setUploadItemState(panel_id, data.files[0].fake_id, 'error', "Arquivo não pode ser de tamanho 0 (zero)");
                 return false;
             }
 
             if (maxSize && data.files[0].size > maxSize) {
-                FileListUploadPanel.setUploadItemState(panel_id, data.files[0].fake_id, 'error', "Arquivo não pode ser maior que " + FileListUploadPanel.humaneSize(maxSize));
+                FileUploadListPanel.setUploadItemState(panel_id, data.files[0].fake_id, 'error', "Arquivo não pode ser maior que " + FileUploadListPanel.humaneSize(maxSize));
                 return false;
             }
 
@@ -231,14 +231,14 @@
                 var invalidType = (jQuery.inArray(file.type, allowed_file_types) < 0);
                 var invalidExtension = (jQuery.inArray(extension, allowed_file_extensions) < 0);
                 if (invalidType && invalidExtension) {
-                    FileListUploadPanel.setUploadItemState(panel_id, data.files[0].fake_id, 'error', "Tipo de arquivo não permitido.<BR>Permitido apenas: " + allowed_file_extensions.join());
+                    FileUploadListPanel.setUploadItemState(panel_id, data.files[0].fake_id, 'error', "Tipo de arquivo não permitido.<BR>Permitido apenas: " + allowed_file_extensions.join());
                     return false;
                 }
             }
             return true;
         };
 
-        window.FileListUploadPanel.humaneSize = function (size) {
+        window.FileUploadListPanel.humaneSize = function (size) {
             var remainder = size;
             var index = 0;
             var names = ['bytes', 'KB', 'MB', 'GB', 'TB'];

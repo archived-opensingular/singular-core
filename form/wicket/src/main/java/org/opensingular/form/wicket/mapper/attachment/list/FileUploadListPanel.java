@@ -72,13 +72,13 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
  * Lista  os uploads múltiplos.
  * <p>
  * O upload múltiplo executado via jquery para a servlet {@link FileUploadServlet} atualiza
- * o código no cliente via javascript por meio do código java script associado a esse painel FileListUploadPanel.js
- * Para manter os models atualizados o js cliente se comunica com esse panel através do {@link org.opensingular.form.wicket.mapper.attachment.list.FileListUploadPanel.AddFileBehavior}
- * para remover os arquivos e atualizar os models o js cliente se comunica com esse panel através do {@link org.opensingular.form.wicket.mapper.attachment.list.FileListUploadPanel.RemoveFileBehavior}
+ * o código no cliente via javascript por meio do código java script associado a esse painel FileUploadListPanel.js
+ * Para manter os models atualizados o js cliente se comunica com esse panel através do {@link FileUploadListPanel.AddFileBehavior}
+ * para remover os arquivos e atualizar os models o js cliente se comunica com esse panel através do {@link FileUploadListPanel.RemoveFileBehavior}
  *
  * @author fabricio, vinicius
  */
-public class FileListUploadPanel extends Panel implements Loggable {
+public class FileUploadListPanel extends Panel implements Loggable {
 
     private final FileUploadManagerFactory upManagerFactory = new FileUploadManagerFactory();
     private final UploadResponseWriter     upResponseWriter = new UploadResponseWriter();
@@ -92,7 +92,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
     private AttachmentKey uploadId;
 
-    public FileListUploadPanel(String id, IModel<SIList<SIAttachment>> model, WicketBuildContext ctx) {
+    public FileUploadListPanel(String id, IModel<SIList<SIAttachment>> model, WicketBuildContext ctx) {
         super(id, model);
         this.ctx = ctx;
 
@@ -137,11 +137,11 @@ public class FileListUploadPanel extends Panel implements Loggable {
                 .add($b.visibleIf(() -> model.getObject().isEmpty())));
 
         add(adder, remover, downloader);
-        add($b.classAppender("FileListUploadPanel"));
-        add($b.classAppender("FileListUploadPanel_disabled", $m.get(() -> !this.isEnabledInHierarchy())));
+        add($b.classAppender("FileUploadListPanel"));
+        add($b.classAppender("FileUploadListPanel_disabled", $m.get(() -> !this.isEnabledInHierarchy())));
 
         if (viewMode != null && viewMode.isVisualization() && model.getObject().isEmpty()) {
-            add($b.classAppender("FileListUploadPanel_empty"));
+            add($b.classAppender("FileUploadListPanel_empty"));
         }
     }
 
@@ -181,7 +181,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        response.render(JavaScriptHeaderItem.forReference(resourceRef("FileListUploadPanel.js")));
+        response.render(JavaScriptHeaderItem.forReference(resourceRef("FileUploadListPanel.js")));
         response.render(OnDomReadyHeaderItem.forScript(generateInitJS()));
     }
 
@@ -190,7 +190,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
             return ""
                     //@formatter:off
                     + "\n $(function () { "
-                    + "\n   window.FileListUploadPanel.setup(" + new JSONObject()
+                    + "\n   window.FileUploadListPanel.setup(" + new JSONObject()
                     .put("param_name", PARAM_NAME)
                     .put("component_id", this.getMarkupId())
                     .put("file_field_id", fileField.getMarkupId())
@@ -279,7 +279,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
 
     private class AddFileBehavior extends BaseJQueryFileUploadBehavior<SIList<SIAttachment>> {
         public AddFileBehavior() {
-            super(FileListUploadPanel.this.getModel());
+            super(FileUploadListPanel.this.getModel());
         }
 
         @Override
@@ -291,7 +291,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
                 final String pFileId = getParamFileId("fileId").toString();
                 final String pName = getParamFileId("name").toString();
 
-                getLogger().debug("FileListUploadPanel.AddFileBehavior(fileId={},name={})", pFileId, pName);
+                getLogger().debug("FileUploadListPanel.AddFileBehavior(fileId={},name={})", pFileId, pName);
 
                 Optional<UploadResponseInfo> responseInfo = getFileUploadManager().consumeFile(pFileId, attachment -> {
                     final SIAttachment si = currentInstance().addNew();
@@ -375,7 +375,7 @@ public class FileListUploadPanel extends Panel implements Loggable {
                 super.onSubmit(target, form);
                 SIAttachment file = itemModel.getObject();
                 removeFileFrom(FilesListView.this.getAttackmentList(), file.getFileId());
-                target.add(FileListUploadPanel.this);
+                target.add(FileUploadListPanel.this);
                 target.add(fileList);
             }
 

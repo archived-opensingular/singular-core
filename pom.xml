@@ -433,7 +433,7 @@
         <sonar.issue.ignore.multicriteria.s40.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE</sonar.issue.ignore.multicriteria.s40.ruleKey>
         <sonar.issue.ignore.multicriteria.s40.resourceKey>**/STypeFormKey.java</sonar.issue.ignore.multicriteria.s40.resourceKey>
         <sonar.issue.ignore.multicriteria.s41.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE</sonar.issue.ignore.multicriteria.s41.ruleKey>
-        <sonar.issue.ignore.multicriteria.s41.resourceKey>**/FileListUploadPanel.java</sonar.issue.ignore.multicriteria.s41.resourceKey>
+        <sonar.issue.ignore.multicriteria.s41.resourceKey>**/FileUploadListPanel.java</sonar.issue.ignore.multicriteria.s41.resourceKey>
         <sonar.issue.ignore.multicriteria.s42.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE</sonar.issue.ignore.multicriteria.s42.ruleKey>
         <sonar.issue.ignore.multicriteria.s42.resourceKey>**/FileUploadPanel.java</sonar.issue.ignore.multicriteria.s42.resourceKey>
         <sonar.issue.ignore.multicriteria.s43.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE</sonar.issue.ignore.multicriteria.s43.ruleKey>
