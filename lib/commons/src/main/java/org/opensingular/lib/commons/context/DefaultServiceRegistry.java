@@ -28,7 +28,7 @@ import static com.google.common.collect.Maps.*;
 
 public class DefaultServiceRegistry implements ServiceRegistry {
 
-    private class ServiceKey {
+    private static class ServiceKey {
         String name;
         Class<?> serviceClass;
 
