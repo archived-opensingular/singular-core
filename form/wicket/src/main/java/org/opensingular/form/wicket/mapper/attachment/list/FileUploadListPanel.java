@@ -42,6 +42,7 @@ import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavior;
 import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
@@ -138,7 +139,7 @@ public class FileUploadListPanel extends Panel implements Loggable {
 
         add(adder, remover, downloader);
         add($b.classAppender("FileUploadListPanel"));
-        add($b.classAppender("FileUploadListPanel_disabled", $m.get(() -> !this.isEnabledInHierarchy())));
+        add(new DisabledClassBehavior("FileUploadListPanel_disabled"));
 
         if (viewMode != null && viewMode.isVisualization() && model.getObject().isEmpty()) {
             add($b.classAppender("FileUploadListPanel_empty"));

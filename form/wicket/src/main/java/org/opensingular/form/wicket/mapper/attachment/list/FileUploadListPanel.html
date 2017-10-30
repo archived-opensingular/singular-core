@@ -39,7 +39,8 @@
                 display: block;
             }
 
-            .FileUploadListPanel.FileUploadListPanel_empty .upload-list-add {
+            .FileUploadListPanel.FileUploadListPanel_empty .upload-list-add,
+            .FileUploadListPanel.FileUploadListPanel_disabled .upload-list-add {
                 display: none;
             }
 
@@ -60,7 +61,15 @@
             }
 
             .FileUploadListPanel.FileUploadListPanel_disabled {
-                display: none;
+                opacity: 0.65;
+                color: #acb1c2;
+            }
+
+            .FileUploadListPanel_disabled .list-detail-empty > a,
+            .FileUploadListPanel_disabled .list-detail-empty-message p:hover,
+            .FileUploadListPanel_disabled .upload-panel-body .list-detail-empty p:hover {
+                cursor: not-allowed;
+                text-decoration: none;
             }
 
         </style>
