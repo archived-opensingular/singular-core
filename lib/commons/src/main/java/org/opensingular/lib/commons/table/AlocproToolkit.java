@@ -18,15 +18,12 @@ package org.opensingular.lib.commons.table;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
+import org.opensingular.lib.commons.base.SingularException;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -137,7 +134,7 @@ final class AlocproToolkit {
             v = v.scaleByPowerOfTen(decimals).divideToIntegralValue(BigDecimal.ONE).scaleByPowerOfTen(-decimals);
             return v.doubleValue();
         } catch (Exception e) {
-            throw new AlocproToolkitException("Valor: " + value, e);
+            throw SingularException.rethrow("Valor: " + value, e);
         }
     }
 
@@ -207,51 +204,6 @@ final class AlocproToolkit {
         }
     }
 
-
-    private static final char[] ALL_CHARS = new char[62];
-    private static final Random RANDOM = new SecureRandom();
-
-    static {
-        for (int i = 48, j = 0; i < 123; i++) {
-            if (Character.isLetterOrDigit(i)) {
-                ALL_CHARS[j] = (char) i;
-                j++;
-            }
-        }
-    }
-
-    public static String gerarSenha(final int tamanho) {
-        final char[] result = new char[tamanho];
-        for (int i = 0; i < tamanho; i++) {
-            result[i] = ALL_CHARS[RANDOM.nextInt(ALL_CHARS.length)];
-        }
-        return String.valueOf(result);
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public static <T> T selectRandom(Collection<T> lista) {
-        if (lista.isEmpty()) {
-            return null;
-        }
-        int pos;
-        if (lista.size() == 1) {
-            pos = 0;
-        } else {
-            pos = RANDOM.nextInt(lista.size());
-        }
-        if (lista instanceof ArrayList) {
-            return (T) ((ArrayList<?>) lista).get(pos);
-        }
-        int i = 0;
-        for (T obj : lista) {
-            if (i == pos) {
-                return obj;
-            }
-            i++;
-        }
-        return null;
-    }
-
     public static String plainTextToHtml(@Nullable String original, boolean converterURL) {
         if (original == null) {
             return null;
@@ -278,41 +230,22 @@ final class AlocproToolkit {
         }
     }
 
-    public static String printNumber(Number value, int qtdDigitos) {
+    @Nullable
+    public static String printNumber(@Nullable Number value, int precision) {
         if (value == null) {
             return null;
         } else if (value instanceof BigDecimal) {
-            return ConversorToolkit.printNumber((BigDecimal) value, qtdDigitos);
+            return ConversorToolkit.printNumber((BigDecimal) value, precision);
         } else if (value instanceof Double) {
-            return ConversorToolkit.printNumber((Double) value, qtdDigitos);
+            return ConversorToolkit.printNumber((Double) value, precision);
         } else if (isIntegerOrLong(value)) {
-            return ConversorToolkit.printNumber(value.longValue(), qtdDigitos);
+            return ConversorToolkit.printNumber(value.longValue(), precision);
         }
-        return ConversorToolkit.printNumber(value.doubleValue(), qtdDigitos);
+        return ConversorToolkit.printNumber(value.doubleValue(), precision);
     }
 
     private static boolean isIntegerOrLong(Number value) {
         return value instanceof Integer || value instanceof Long;
     }
 
-    private static class AlocproToolkitException extends RuntimeException {
-        public AlocproToolkitException() {
-        }
-
-        public AlocproToolkitException(String message) {
-            super(message);
-        }
-
-        public AlocproToolkitException(String message, Throwable cause) {
-            super(message, cause);
-        }
-
-        public AlocproToolkitException(Throwable cause) {
-            super(cause);
-        }
-
-        public AlocproToolkitException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-            super(message, cause, enableSuppression, writableStackTrace);
-        }
-    }
 }

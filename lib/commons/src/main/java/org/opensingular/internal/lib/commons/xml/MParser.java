@@ -136,15 +136,15 @@ public final class MParser {
      * @param systemId Nome do recurso (no XML a ser lido) quer será
      * interceptado.
      * @param ref Classe a partir do qual será feia a busca pelo recurso.
-     * @param nomeRecurso Arquivo em relação ao pacote da classe de referência.
+     * @param resourceName Arquivo em relação ao pacote da classe de referência.
      * Inciando com '/' indica para começa do raiz dos pacotes.
      * @see java.lang.Class#getResourceAsStream
      */
-    public void addInputSource(String systemId, Class<?> ref, String nomeRecurso) {
-        InputStream in = ref.getResourceAsStream(nomeRecurso);
+    public void addInputSource(String systemId, Class<?> ref, String resourceName) {
+        InputStream in = ref.getResourceAsStream(resourceName);
         if (in == null) {
             throw new SingularException("Nao foi encontrado o recurso '"
-                    + nomeRecurso
+                    + resourceName
                     + "' tendo por base a classe "
                     + ref.getName());
         }

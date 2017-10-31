@@ -31,7 +31,7 @@ public class AttachmentListMapper extends AbstractListMapper {
 
     @Override
     public void buildView(WicketBuildContext ctx) {
-        final FileListUploadPanel comp = new FileListUploadPanel(MULTIPLE_HIDDEN_UPLOAD_FIELD_ID, (IModel<SIList<SIAttachment>>) ctx.getModel(), ctx);
+        final FileUploadListPanel comp = new FileUploadListPanel(MULTIPLE_HIDDEN_UPLOAD_FIELD_ID, (IModel<SIList<SIAttachment>>) ctx.getModel(), ctx);
         ctx.getContainer().appendTag("div", comp);
         final WicketBuildContext.OnFieldUpdatedListener listener = new WicketBuildContext.OnFieldUpdatedListener();
         comp.add(new AjaxEventBehavior(SINGULAR_PROCESS_EVENT) {

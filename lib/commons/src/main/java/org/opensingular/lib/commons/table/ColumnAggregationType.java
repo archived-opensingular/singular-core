@@ -72,13 +72,13 @@ public enum ColumnAggregationType {
         @Override
         public Object calculate(List<?> data) {
             if (data.stream().anyMatch(Predicates.instanceOf(Double.class))) {
-                return data.stream().map(dado -> dado == null ? 0.0d : dado).filter(Predicates.instanceOf(Double.class)).mapToDouble(Double.class::cast).average().orElse(0.0);
+                return data.stream().map(info -> info == null ? 0.0d : info).filter(Predicates.instanceOf(Double.class)).mapToDouble(Double.class::cast).average().orElse(0.0);
             }
             if (data.stream().anyMatch(Predicates.instanceOf(Integer.class))) {
-                return data.stream().map(dado -> dado == null ? 0 : dado).filter(Predicates.instanceOf(Integer.class)).mapToInt(Integer.class::cast).average().orElse(0);
+                return data.stream().map(info -> info == null ? 0 : info).filter(Predicates.instanceOf(Integer.class)).mapToInt(Integer.class::cast).average().orElse(0);
             }
             if (data.stream().anyMatch(Predicates.instanceOf(Long.class))) {
-                return data.stream().map(dado -> dado == null ? 0L : dado).filter(Predicates.instanceOf(Long.class)).mapToLong(Long.class::cast).average().orElse(0L);
+                return data.stream().map(info -> info == null ? 0L : info).filter(Predicates.instanceOf(Long.class)).mapToLong(Long.class::cast).average().orElse(0L);
             }
             return 0;
         }

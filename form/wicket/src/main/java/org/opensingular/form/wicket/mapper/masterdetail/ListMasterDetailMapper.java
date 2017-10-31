@@ -78,9 +78,9 @@ public class ListMasterDetailMapper implements IWicketComponentMapper, ISInstanc
 
     }
 
-    private IModel<String> newItemLabelModel(IModel<SIList<SInstance>> listaModel) {
+    private IModel<String> newItemLabelModel(IModel<SIList<SInstance>> listModel) {
         //Alteração do model para evitar que haja perda de referencias na renderização das tabelas na tela
-        return $m.get(() -> trimToEmpty(listaModel.getObject().asAtr().getItemLabel() != null ? listaModel.getObject().asAtr().getItemLabel() : listaModel.getObject().asAtr().getLabel()));
+        return $m.get(() -> trimToEmpty(listModel.getObject().asAtr().getItemLabel() != null ? listModel.getObject().asAtr().getItemLabel() : listModel.getObject().asAtr().getLabel()));
     }
 
 }

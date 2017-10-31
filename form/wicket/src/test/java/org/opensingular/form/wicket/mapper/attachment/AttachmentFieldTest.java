@@ -109,7 +109,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
         // * Compara se o binario do arquivo adicionado bate com o armazenado na SInstance
         // * Fazer downalod do arquivo
         // * Apagar o arquivo
-        // * Verificar se a SIntance está consistente
+        // * Verificar se a SInstance está consistente
 
     }
 

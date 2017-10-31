@@ -29,7 +29,7 @@ public final class AttributeInstanceInfo {
 
     private final AttrInternalRef ref;
 
-    /** Cira um instância de atributo que está associado a um SIntance. */
+    /** Cira um instância de atributo que está associado a um SInstance. */
     AttributeInstanceInfo(AttrInternalRef ref, SInstance instanceOwner) {
         this.instanceOwner = instanceOwner;
         this.typeOwner = null;

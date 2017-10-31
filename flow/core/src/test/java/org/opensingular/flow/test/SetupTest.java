@@ -56,29 +56,29 @@ public class SetupTest extends TestFlowSupport {
 
     @Test
     public void checkTableAccess() {
-        listaAllFor(Actor.class);
-        listaAllFor(CategoryEntity.class);
-        listaAllFor(ExecutionVariableEntity.class);
-        listaAllFor(FlowVersionEntity.class);
-        listaAllFor(FlowDefinitionEntity.class);
-        listaAllFor(ModuleEntity.class);
-        listaAllFor(FlowInstanceEntity.class);
-        listaAllFor(FlowRight.class);
-        listaAllFor(FlowRightPK.class);
-        listaAllFor(RoleDefinitionEntity.class);
-        listaAllFor(RoleInstanceEntity.class);
-        listaAllFor(TaskVersionEntity.class);
-        listaAllFor(TaskDefinitionEntity.class);
-        listaAllFor(TaskHistoricTypeEntity.class);
-        listaAllFor(TaskInstanceEntity.class);
-        listaAllFor(TaskInstanceHistoryEntity.class);
-        listaAllFor(TaskPermissionEntity.class);
-        listaAllFor(TaskTransitionVersionEntity.class);
-        listaAllFor(VariableInstanceEntity.class);
-        listaAllFor(VariableTypeInstance.class);
+        listAllFor(Actor.class);
+        listAllFor(CategoryEntity.class);
+        listAllFor(ExecutionVariableEntity.class);
+        listAllFor(FlowVersionEntity.class);
+        listAllFor(FlowDefinitionEntity.class);
+        listAllFor(ModuleEntity.class);
+        listAllFor(FlowInstanceEntity.class);
+        listAllFor(FlowRight.class);
+        listAllFor(FlowRightPK.class);
+        listAllFor(RoleDefinitionEntity.class);
+        listAllFor(RoleInstanceEntity.class);
+        listAllFor(TaskVersionEntity.class);
+        listAllFor(TaskDefinitionEntity.class);
+        listAllFor(TaskHistoricTypeEntity.class);
+        listAllFor(TaskInstanceEntity.class);
+        listAllFor(TaskInstanceHistoryEntity.class);
+        listAllFor(TaskPermissionEntity.class);
+        listAllFor(TaskTransitionVersionEntity.class);
+        listAllFor(VariableInstanceEntity.class);
+        listAllFor(VariableTypeInstance.class);
     }
 
-    private void listaAllFor(Class<?> clazz) {
+    private void listAllFor(Class<?> clazz) {
         sessionFactory.getCurrentSession().createCriteria(clazz).list();
     }
 }

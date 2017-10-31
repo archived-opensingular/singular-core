@@ -81,7 +81,7 @@ public class SingularFlowException extends SingularException{
         add(target);
     }
 
-    /** Cria uma nova Exception com complementos de dados da instancia de processo informada. */
+    /** Cria uma nova Exception com complementos de dados da instancia de fluxo informada. */
     public SingularFlowException(@Nullable String cause, @Nullable FlowInstance target) {
         super(cause);
         add(target);
@@ -114,7 +114,7 @@ public class SingularFlowException extends SingularException{
         return this;
     }
 
-    /** Adiciona informações sobre a definição de processo relacionada a exception. */
+    /** Adiciona informações sobre a definição de fluxo relacionada a exception. */
     public SingularFlowException add(@Nullable FlowDefinition<?> flowDefinition) {
         if (flowDefinition != null) {
             add("flowDefinition", flowDefinition.getName() + " (" + flowDefinition.getClass() + ")");

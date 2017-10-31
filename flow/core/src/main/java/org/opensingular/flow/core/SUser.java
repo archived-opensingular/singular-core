@@ -44,7 +44,7 @@ public interface SUser extends Comparable<SUser>, Serializable {
     }
 
     @Override
-    default int compareTo(SUser p) {
-        return getSimpleName().compareTo(p.getSimpleName());
+    default int compareTo(SUser user2) {
+        return getSimpleName().compareTo(user2.getSimpleName());
     }
 }

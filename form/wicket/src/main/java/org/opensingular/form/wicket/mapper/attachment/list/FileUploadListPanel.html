@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html xmlns:wicket="http://wicket.apache.org">
+<head>
+    <wicket:head>
+        <style type="text/css">
+            .FileUploadListPanel .list-detail-empty {
+                display: none;
+            }
+
+            .FileUploadListPanel .upload-list-add {
+                display: block;
+            }
+
+            .FileUploadListPanel .list-action-uploading {
+                display: none;
+            }
+
+            .FileUploadListPanel .list-action-remove {
+                display: inline;
+            }
+
+            .FileUploadListPanel.FileUploadListPanel_empty .list-detail-empty {
+                display: block;
+            }
+
+            .FileUploadListPanel.FileUploadListPanel_empty .upload-list-add,
+            .FileUploadListPanel.FileUploadListPanel_disabled .upload-list-add {
+                display: none;
+            }
+
+            .FileUploadListPanel.FileUploadListPanel_uploading .list-action-uploading {
+                display: block;
+            }
+
+            .FileUploadListPanel.FileUploadListPanel_success .list-action-remove {
+                display: inline;
+            }
+
+            .FileUploadListPanel.FileUploadListPanel_error .list-action-remove {
+                display: inline;
+            }
+
+            .FileUploadListPanel.FileUploadListPanel_error .list-item-icon > a > i {
+                color: red;
+            }
+
+            .FileUploadListPanel.FileUploadListPanel_disabled .upload-list,
+            .FileUploadListPanel.FileUploadListPanel_disabled .list-detail-empty {
+                opacity: 0.65;
+                color: #acb1c2;
+            }
+
+            .FileUploadListPanel_disabled .list-detail-empty > a,
+            .FileUploadListPanel_disabled .list-detail-empty-message p:hover,
+            .FileUploadListPanel_disabled .upload-panel-body .list-detail-empty p:hover {
+                cursor: not-allowed;
+                text-decoration: none;
+            }
+
+        </style>
+    </wicket:head>
+</head>
+<body>
+<wicket:panel>
+    <div class="upload-panel">
+        <div class="upload-panel-body can-have-error">
+            <div class="upload-panel-heading">
+                <span wicket:id="uploadLabel"/>
+            </div>
+            <span wicket:id="uploadSubtitle" class="help-block subtitle_comp hidden-xs hidden-sm hidden-md"></span>
+            <div wicket:id="empty-box" class='list-detail-empty'>
+                <a wicket:id="select-file-link" href="javascript:void(0);">
+                    <p wicket:id="select-file-link-message" class='list-detail-empty-message'/>
+                </a>
+                <p wicket:id="empty-message" class='list-detail-empty-message'/>
+            </div>
+            <div class="upload-list">
+                <div class="upload-list-container">
+                    <ul>
+                        <div wicket:id="fileList">
+                            <li wicket:id="fileItem" class="upload-list-item">
+                                <div class="list-item-icon">
+                                    <a href="#" class="list-item-uploaded">
+                                        <i class="fa fa-file-text"></i>
+                                    </a>
+                                </div>
+                                <div class="list-item-content">
+                                    <a wicket:id="downloadLink"
+                                       class="download-link"></a>
+                                </div>
+                                <div class="list-item-action">
+                                    <a wicket:id="remove_btn" class="list-action-remove">
+                                        <i class="fa fa-close"></i>
+                                    </a>
+                                </div>
+                            </li>
+                        </div>
+                        <li class="upload-list-add" wicket:id="button-container">
+                            <input class="upload-fileinput" type="file" multiple="multiple" wicket:id="fileUpload">
+                            <label wicket:id="fileUploadLabel">
+                                <i class="fa fa-upload"></i>
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="upload-list-feedback" wicket:id="feedback"></div>
+        </div>
+    </div>
+</wicket:panel>
+</body>
+</html>

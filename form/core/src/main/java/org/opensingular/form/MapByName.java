@@ -49,8 +49,8 @@ class MapByName<K> implements Iterable<K> {
     }
 
     public void add(@Nonnull K obj, @Nullable Class<K> classToBeRegisterBy) {
-        String nome = getNome(obj);
-        byName.put(nome, obj);
+        String name = getName(obj);
+        byName.put(name, obj);
         if (classToBeRegisterBy != null) {
             byClass.put(classToBeRegisterBy, obj);
         }
@@ -63,8 +63,8 @@ class MapByName<K> implements Iterable<K> {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends K> T get(String nome) {
-        return (T) byName.get(nome);
+    public <T extends K> T get(String name) {
+        return (T) byName.get(name);
     }
 
     public Collection<K> getValues() {
@@ -87,12 +87,12 @@ class MapByName<K> implements Iterable<K> {
     final <T extends K> void verifyMustNotBePresent(Class<T> targetClass, Object owner) {
         T value = get(targetClass);
         if (value != null) {
-            throw new SingularFormException(errorMsg("A definição '" + getNome(value) + "' já está carregada", owner));
+            throw new SingularFormException(errorMsg("A definição '" + getName(value) + "' já está carregada", owner));
         }
     }
 
     final void verifyMustNotBePresent(@Nonnull K newMember, Object owner) {
-        verifyMustNotBePresent(getNome(newMember), owner);
+        verifyMustNotBePresent(getName(newMember), owner);
     }
 
     final void verifyMustNotBePresent(@Nonnull String fullName, Object owner) {
@@ -109,7 +109,7 @@ class MapByName<K> implements Iterable<K> {
     }
 
     @Nonnull
-    private String getNome(@Nonnull K val) {
+    private String getName(@Nonnull K val) {
         return nameMapper.apply(val);
     }
 

@@ -112,7 +112,7 @@ public final class FlowDefinitionCache {
         FlowDefinition<?> def = definitionsByClass.getUnchecked(definitionClass);
         if (def == null) {
             throw new SingularFlowException(
-                    "Não foi encontrada a definiçao de processo referente a classe " + definitionClass.getName());
+                    "Não foi encontrada a definiçao de flow referente a classe " + definitionClass.getName());
         }
         return definitionClass.cast(def);
     }
@@ -125,7 +125,7 @@ public final class FlowDefinitionCache {
         Objects.requireNonNull(key);
         FlowDefinition<?> flowDefinition = definitionsByKey.get(key);
         if(flowDefinition == null){
-            throw new SingularFlowException("O processo com chave '" + key + "' não foi encontrado nos pacotes: " +
+            throw new SingularFlowException("O flow com chave '" + key + "' não foi encontrado nos pacotes: " +
                     Arrays.toString(packagesNames));
         }
         return flowDefinition;

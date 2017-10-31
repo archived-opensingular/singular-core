@@ -32,7 +32,7 @@ public interface ICompositeInstance {
 
     public Stream<? extends SInstance> stream();
 
-    public void setValue(String pathCampo, Object value);
+    public void setValue(String fieldPath, Object value);
 
     public abstract <T> T getValue(@Nonnull String fieldPath);
 

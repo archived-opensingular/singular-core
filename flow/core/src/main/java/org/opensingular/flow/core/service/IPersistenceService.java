@@ -76,7 +76,7 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
     @Nonnull
     default FLOW_INSTANCE retrieveFlowInstanceByCodOrException(@NotNull Integer cod) {
         return retrieveFlowInstanceByCod(cod).orElseThrow(
-                () -> new SingularFlowException("Nao foi encontrada a instancia de processo cod=" + cod));
+                () -> new SingularFlowException("Nao foi encontrada a instancia de fluxo cod=" + cod));
     }
 
     @Nonnull
@@ -102,8 +102,8 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
      * Must persist: {@link IEntityFlowDefinition}, {@link IEntityFlowVersion},
      * {@link IEntityTaskDefinition}, {@link IEntityTaskVersion} and {@link IEntityTaskTransitionVersion}.
      *
-     * @param flowVersion the process definition to persist.
-     * @return the persisted process definition.
+     * @param flowVersion the flow definition to persist.
+     * @return the persisted flow definition.
      */
     FLOW_VERSION saveFlowVersion(FLOW_VERSION flowVersion);
 

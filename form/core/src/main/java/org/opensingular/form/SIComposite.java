@@ -143,8 +143,8 @@ public class SIComposite extends SInstance implements ICompositeInstance, Iterab
     }
 
     @Override
-    public final void setValue(String pathCampo, Object value) {
-        setValue(new PathReader(pathCampo), value);
+    public final void setValue(String fieldPath, Object value) {
+        setValue(new PathReader(fieldPath), value);
     }
 
     /**

@@ -18,10 +18,10 @@ package org.opensingular.flow.test.definicao;
 
 import org.opensingular.flow.core.DefinitionInfo;
 import org.opensingular.flow.core.ExecutionContext;
-import org.opensingular.flow.core.FlowMap;
-import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.FlowDefinition;
 import org.opensingular.flow.core.FlowInstance;
+import org.opensingular.flow.core.FlowMap;
+import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.builder.FlowBuilder;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.variable.VarDefinitionImpl;
@@ -66,7 +66,7 @@ public class DefinicaoComVariaveis extends FlowDefinition<FlowInstance> {
         return f.build();
     }
 
-    public Object print(ExecutionContext ctxExecucao) {
+    public Object print(ExecutionContext executionContext) {
         System.out.println("legal");
         return null;
     }

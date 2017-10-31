@@ -16,15 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.opensingular.form.wicket.mapper.components.MetronicPanel.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
-
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -57,6 +48,16 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+
 public class PanelListMapper extends AbstractListMapper implements ISInstanceActionCapable {
 
     private SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
@@ -73,14 +74,14 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
     }
 
     private MetronicPanel newPanel(String id, WicketBuildContext ctx) {
-        final IModel<SIList<SInstance>> listaModel = new ReadOnlyCurrentInstanceModel<>(ctx);
-        final SIList<?> iLista = listaModel.getObject();
-        final IModel<String> label = $m.ofValue(trimToEmpty(iLista.asAtr().getLabel()));
+        final IModel<SIList<SInstance>> listModel = new ReadOnlyCurrentInstanceModel<>(ctx);
+        final SIList<?> iList = listModel.getObject();
+        final IModel<String> label = $m.ofValue(trimToEmpty(iList.asAtr().getLabel()));
         final SViewListByForm view = (SViewListByForm) ctx.getView();
 
         final SType<?> currentType = ctx.getCurrentInstance().getType();
 
-        addMinimumSize(currentType, iLista);
+        addInitialNumberOfLines(currentType, iList, view);
 
         ctx.configureContainer(label);
 
@@ -91,20 +92,20 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
                     IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
                             this,
                             RequestCycle.get().find(AjaxRequestTarget.class),
-                            listaModel,
-                            listaModel.getObject(),
+                            listModel,
+                            listModel.getObject(),
                             ctx,
                             ctx.getContainer());
 
                     SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
                             heading,
                             this.instanceActionsProviders,
-                            listaModel,
+                            listModel,
                             true,
                             internalContextListProvider);
 
                     heading.add($b.visibleIf(() -> ctx.getHint(HIDE_LABEL)
-                            || !this.instanceActionsProviders.actionList(listaModel).isEmpty()));
+                            || !this.instanceActionsProviders.actionList(listModel).isEmpty()));
                 },
                 (content, form) -> {
 
@@ -119,18 +120,18 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
                             + "    </ul>");
 
                     final WebMarkupContainer container = new WebMarkupContainer("_u");
-                    final PanelElementsView elements = new PanelElementsView("_e", listaModel, ctx, view, form, container);
+                    final PanelElementsView elements = new PanelElementsView("_e", listModel, ctx, view, form, container);
                     final WebMarkupContainer empty = new WebMarkupContainer("_empty");
 
                 list
                     .add(container
                         .add(elements
-                            .add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty()))))
+                            .add($b.onConfigure(c -> c.setVisible(!listModel.getObject().isEmpty()))))
                     .add(empty
-                        .add($b.onConfigure(c -> c.setVisible(listaModel.getObject().isEmpty())))));
+                        .add($b.onConfigure(c -> c.setVisible(listModel.getObject().isEmpty())))));
                 content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
                 content.getParent()
-                    .add(dependsOnModifier(listaModel));
+                    .add(dependsOnModifier(listModel));
             },
             (f, form) -> {
                 buildFooter(f, form, ctx);

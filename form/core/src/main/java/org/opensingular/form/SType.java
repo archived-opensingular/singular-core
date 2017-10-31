@@ -795,10 +795,10 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
             appendable.append(" extend ");
             appendNameAndId(appendable, superType);
             if (this.isList()) {
-                STypeList<?, ?> lista = (STypeList<?, ?>) this;
-                if (lista.getElementsType() != null) {
+                STypeList<?, ?> list = (STypeList<?, ?>) this;
+                if (list.getElementsType() != null) {
                     appendable.append(" of ");
-                    appendNameAndId(appendable, lista.getElementsType());
+                    appendNameAndId(appendable, list.getElementsType());
                 }
             }
         }

@@ -25,7 +25,7 @@ import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.persistence.entity.FlowInstanceEntity;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
-import org.opensingular.flow.test.definicao.Peticao;
+import org.opensingular.flow.test.definicao.SampleRequirement;
 import org.opensingular.flow.test.support.TestFlowSupport;
 
 import java.util.logging.Logger;
@@ -42,12 +42,12 @@ public class PersistenceTest extends TestFlowSupport {
 
     @Test
     public void testJoinTableCurrentTask() {
-        FlowInstance pi = new Peticao().prepareStartCall().createAndStart();
+        FlowInstance pi = new SampleRequirement().prepareStartCall().createAndStart();
         Integer cod = pi.getEntity().getCod();
         sessionFactory.getCurrentSession().flush();
         //Clear da sessão para evidenciar a consulta como única.
         sessionFactory.getCurrentSession().clear();
-        Logger.getLogger(getClass().getSimpleName()).info("##LOAD BEGIN: Clear na sessão, recarregando process instance: ");
+        Logger.getLogger(getClass().getSimpleName()).info("##LOAD BEGIN: Clear na sessão, recarregando flow instance: ");
         FlowInstanceEntity pientity = (FlowInstanceEntity) sessionFactory.getCurrentSession().load(FlowInstanceEntity.class, cod);
         Assert.assertNotNull(pientity.getCurrentTask());
         Assert.assertEquals(pientity.getCurrentTask().getClass(), TaskInstanceEntity.class);

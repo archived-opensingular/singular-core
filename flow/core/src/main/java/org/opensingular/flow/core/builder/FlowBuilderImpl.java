@@ -16,15 +16,15 @@
 
 package org.opensingular.flow.core.builder;
 
+import org.opensingular.flow.core.FlowDefinition;
 import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.ITaskDefinition;
-import org.opensingular.flow.core.FlowDefinition;
 import org.opensingular.flow.core.SBusinessRole;
 import org.opensingular.flow.core.SStart;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.STaskEnd;
-import org.opensingular.flow.core.STaskJava;
 import org.opensingular.flow.core.STaskHuman;
+import org.opensingular.flow.core.STaskJava;
 import org.opensingular.flow.core.STaskWait;
 import org.opensingular.flow.core.STransition;
 
@@ -78,8 +78,8 @@ public class FlowBuilderImpl extends
     }
 
     @Override
-    protected BuilderBusinessRole<?> newProcessRole(SBusinessRole sBusinessRole) {
-        return new ImplBuilderBusinessRole<>(sBusinessRole);
+    protected BuilderBusinessRole<?> newBusinessRole(SBusinessRole businessRole) {
+        return new ImplBuilderBusinessRole<>(businessRole);
     }
 
     public static class ImplBuilderTask<SELF extends ImplBuilderTask<SELF, TASK>, TASK extends STask<?>> implements BuilderTaskSelf<SELF, TASK> {
@@ -180,16 +180,16 @@ public class FlowBuilderImpl extends
     public static class ImplBuilderBusinessRole<SELF extends ImplBuilderBusinessRole<SELF>> implements
             BuilderBusinessRole<SELF> {
 
-        private final SBusinessRole processRole;
+        private final SBusinessRole businessRole;
 
-        public ImplBuilderBusinessRole(SBusinessRole processRole) {
-            Objects.requireNonNull(processRole);
-            this.processRole = processRole;
+        public ImplBuilderBusinessRole(SBusinessRole businessRole) {
+            Objects.requireNonNull(businessRole);
+            this.businessRole = businessRole;
         }
 
         @Override
         public SBusinessRole getBusinessRole() {
-            return processRole;
+            return businessRole;
         }
     }
 

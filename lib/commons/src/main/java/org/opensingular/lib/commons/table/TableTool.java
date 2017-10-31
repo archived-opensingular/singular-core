@@ -163,7 +163,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         Optional<GenerationModifier> order = modifiers.stream().filter(
                 Predicates.instanceOf(GenerationModifierOrder.class)).findFirst();
         if (order.isPresent()) {
-            ((GenerationModifierOrder) order.get()).addColuna(column);
+            ((GenerationModifierOrder) order.get()).addColumn(column);
         } else {
             addModifier(new GenerationModifierOrder(this, column, descending));
         }
@@ -183,20 +183,20 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
     }
 
     public TableTool addFilter(Column column, Predicate<InfoCell> filter) {
-        findOrAddModifier(GenerationModifierFilter.class, () -> new GenerationModifierFilter(this)).addColuna(
+        findOrAddModifier(GenerationModifierFilter.class, () -> new GenerationModifierFilter(this)).addColumn(
                 column, filter);
         return this;
     }
 
     public TableTool configAggregation(Map<Column, ColumnAggregationType> aggregationConfig) {
-        findOrAddModifier(GenerationModifierAgruparComAgregacao.class,
-                () -> new GenerationModifierAgruparComAgregacao(this, aggregationConfig));
+        findOrAddModifier(GenerationModifierGroupingWithAggregation.class,
+                () -> new GenerationModifierGroupingWithAggregation(this, aggregationConfig));
         return this;
     }
 
-    public TableTool addAgrupamentoComAgregacao(Column column) {
-        findOrAddModifier(GenerationModifierAgruparComAgregacao.class,
-                () -> new GenerationModifierAgruparComAgregacao(this)).addColuna(column);
+    public TableTool addAGroupingWothAggregation(Column column) {
+        findOrAddModifier(GenerationModifierGroupingWithAggregation.class,
+                () -> new GenerationModifierGroupingWithAggregation(this)).addColumn(column);
         return this;
     }
 
@@ -342,8 +342,8 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> void setReaderByLine(Iterable<? extends T> lista, LineReader<T> reader) {
-        this.reader = GeneratorUtil.toLeitorArvore((Object) lista, (LineReader<Object>) reader);
+    public <T> void setReaderByLine(Iterable<? extends T> list, LineReader<T> reader) {
+        this.reader = GeneratorUtil.toTreeLineReader((Object) list, (LineReader<Object>) reader);
         simpleTable = true;
     }
 
@@ -465,8 +465,8 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         if (tableByLevel || columns.stream().anyMatch(c -> c.getDataLevel() > 0)) {
             int qtdLevel = columns.stream().mapToInt(c -> c.getDataLevel()).max().getAsInt() + 1;
             int[] lineCount = new int[qtdLevel];
-            for (LineData dado : children) {
-                for (LineData[] line : dado.normalizeLevels(qtdLevel)) {
+            for (LineData child : children) {
+                for (LineData[] line : child.normalizeLevels(qtdLevel)) {
                     generateTableByLevel(line, ctx, lineCount);
                 }
             }
@@ -597,9 +597,9 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         generateChildren(lineData.getChildrenReader(), ctx, level + 1);
     }
 
-    private void generateSimpleTable(LineData dado, OutputTableContext ctx) {
+    private void generateSimpleTable(LineData lineData, OutputTableContext ctx) {
 
-        LineInfo line = dado.retrieveValues(ctx.getLineReadContext(), 0, true, false);
+        LineInfo line = lineData.retrieveValues(ctx.getLineReadContext(), 0, true, false);
         if (! ctx.isShowLine()) {
             return;
         }

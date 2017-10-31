@@ -22,7 +22,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * Representa uma referência serializável a um ponto de inicialização de um processo.
+ * Representa uma referência serializável a um ponto de inicialização de um fluxo.
  *
  * @author Daniel C. Bordin on 03/05/2017.
  */

@@ -22,7 +22,7 @@ import org.opensingular.flow.core.variable.VarInstanceMap;
 import javax.annotation.Nonnull;
 
 /**
- * Objeto para a preparação para execução do início de um processo.
+ * Objeto para a preparação para execução do início de um fluxo.
  *
  * @author Daniel C. Bordin on 20/03/2017.
  */
@@ -39,8 +39,8 @@ public final class StartCall<I extends FlowInstance> extends CallWithParameters<
     }
 
     /**
-     * Cria a isntância do processo e dispara a execução do mesmo. Se existir, chama o código associado a inicialziação
-     * do processo.
+     * Cria a isntância do fluxo e dispara a execução do mesmo. Se existir, chama o código associado a inicialização
+     * do fluxo.
      */
     @Nonnull
     public I createAndStart() {
@@ -66,12 +66,12 @@ public final class StartCall<I extends FlowInstance> extends CallWithParameters<
         return getStart().getParameters().newInstanceMap();
     }
 
-    /** Definição desse ponto de inicialização segunda a definiçao do próprio processo. */
+    /** Definição desse ponto de inicialização segunda a definiçao do próprio fluxo. */
     public SStart getStart() {
         return start.get();
     }
 
-    /** Retorna a definição do processo que será inicializado. */
+    /** Retorna a definição do fluxo que será inicializado. */
     public FlowDefinition<I> getFlowDefinition() {
         return (FlowDefinition<I>) getStart().getFlowMap().getFlowDefinition();
     }

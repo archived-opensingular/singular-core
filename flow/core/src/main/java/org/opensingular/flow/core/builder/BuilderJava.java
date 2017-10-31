@@ -38,9 +38,9 @@ public interface BuilderJava<SELF extends BuilderJava<SELF>> extends BuilderTask
     }
 
     /**
-     * Defines, for the purpose of generating a diagram of the process, the type of BPMN node that will be used to
+     * Defines, for the purpose of generating a diagram of the flow, the type of BPMN node that will be used to
      * render this task.
-     * <p>This information doesn't affect the runtime of the process. The only affect is on the diagram generation.</p>
+     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
      */
     default SELF setDisplayType(@Nullable DisplayType displayType) {
         getTask().setDisplayType(displayType);

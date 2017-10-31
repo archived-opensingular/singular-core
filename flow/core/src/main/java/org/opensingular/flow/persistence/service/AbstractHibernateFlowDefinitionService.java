@@ -53,10 +53,10 @@ import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
-public abstract class AbstractHibernateFlowDefinitionService<CATEGORY extends IEntityCategory, FLOW_DEFINITION extends IEntityFlowDefinition, FLOW_VERSION extends IEntityFlowVersion, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, TRANSITION extends IEntityTaskTransitionVersion, PROCESS_ROLE_DEF extends IEntityRoleDefinition, PROCESS_ROLE extends IEntityRoleInstance, ROLE_TASK extends IEntityRoleTask>
+public abstract class AbstractHibernateFlowDefinitionService<CATEGORY extends IEntityCategory, FLOW_DEFINITION extends IEntityFlowDefinition, FLOW_VERSION extends IEntityFlowVersion, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, TRANSITION extends IEntityTaskTransitionVersion, ROLE_DEFINITION extends IEntityRoleDefinition, ROLE_INSTANCE extends IEntityRoleInstance, ROLE_TASK extends IEntityRoleTask>
         extends AbstractHibernateService
         implements
-        IFlowDefinitionEntityService<CATEGORY, FLOW_DEFINITION, FLOW_VERSION, TASK_DEF, TASK_VERSION, TRANSITION, PROCESS_ROLE_DEF, ROLE_TASK> {
+        IFlowDefinitionEntityService<CATEGORY, FLOW_DEFINITION, FLOW_VERSION, TASK_DEF, TASK_VERSION, TRANSITION, ROLE_DEFINITION, ROLE_TASK> {
 
     public AbstractHibernateFlowDefinitionService(SessionLocator sessionLocator) {
         super(sessionLocator);
@@ -109,37 +109,37 @@ public abstract class AbstractHibernateFlowDefinitionService<CATEGORY extends IE
 
     protected abstract FLOW_VERSION createEntityFlowVersion(FLOW_DEFINITION entityFlowDefinition);
 
-    protected abstract TASK_VERSION createEntityTaskVersion(FLOW_VERSION process, TASK_DEF entityTaskDefinition, STask<?> task);
+    protected abstract TASK_VERSION createEntityTaskVersion(FLOW_VERSION flowVersion, TASK_DEF entityTaskDefinition, STask<?> task);
 
     protected abstract TRANSITION createEntityTaskTransition(TASK_VERSION originTask, TASK_VERSION destinationTask);
 
 
-    private final FLOW_DEFINITION retrieveOrcreateEntityFlowDefinitionFor(FlowDefinition<?> definicao) {
+    private final FLOW_DEFINITION retrieveOrcreateEntityFlowDefinitionFor(FlowDefinition<?> definition) {
         SessionWrapper sw = getSession();
-        requireNonNull(definicao);
-        String key = definicao.getKey();
+        requireNonNull(definition);
+        String key = definition.getKey();
         FLOW_DEFINITION def = sw.retrieveFirstFromCachedRetrieveAll(getClassFlowDefinition(),
                 pd -> pd.getKey().equals(key));
         if (def == null) {
             def = sw.retrieveFirstFromCachedRetrieveAll(getClassFlowDefinition(),
-                pd -> pd.getDefinitionClassName().equals(definicao.getClass().getName()));
+                pd -> pd.getDefinitionClassName().equals(definition.getClass().getName()));
         }
         IEntityModule module = retrieveModule();
-        String        name         = definicao.getName();
-        String        category     = definicao.getCategory();
+        String        name         = definition.getName();
+        String        category     = definition.getCategory();
         if (def == null) {
             def = newInstanceOf(getClassFlowDefinition());
             def.setCategory(retrieveOrCreateCategoryWith(category));
             def.setModule(module);
             def.setName(name);
             def.setKey(key);
-            def.setDefinitionClassName(definicao.getClass().getName());
+            def.setDefinitionClassName(definition.getClass().getName());
 
             sw.save(def);
             sw.refresh(def);
         } else {
             if(!def.getModule().equals(module)){
-                throw new SingularFlowException("O processo "+ name +" esta associado a outro grupo/sistema: "+def.getModule().getCod()+" - "+def.getModule().getName());
+                throw new SingularFlowException("O fluxo "+ name +" esta associado a outro grupo/sistema: "+def.getModule().getCod()+" - "+def.getModule().getName());
             }
             boolean mudou = false;
             if (!key.equals(def.getKey())) {
@@ -155,8 +155,8 @@ public abstract class AbstractHibernateFlowDefinitionService<CATEGORY extends IE
                 def.setCategory(retrieveOrCreateCategoryWith(category));
                 mudou = true;
             }
-            if (!Objects.equals(def.getDefinitionClassName(), definicao.getClass().getName())) {
-                def.setDefinitionClassName(definicao.getClass().getName());
+            if (!Objects.equals(def.getDefinitionClassName(), definition.getClass().getName())) {
+                def.setDefinitionClassName(definition.getClass().getName());
                 mudou = true;
             }
             if (mudou) {
@@ -176,9 +176,9 @@ public abstract class AbstractHibernateFlowDefinitionService<CATEGORY extends IE
         return ModuleEntity.class;
     }
 
-    protected abstract Class<? extends PROCESS_ROLE_DEF> getClassProcessRoleDef();
+    protected abstract Class<? extends ROLE_DEFINITION> getClassRoleDefinition();
 
-    protected abstract Class<? extends PROCESS_ROLE> getClassProcessRole();
+    protected abstract Class<? extends ROLE_INSTANCE> getClassRoleInstance();
 
     private final void checkRoleDefChanges(FlowDefinition<?> flowDefinition, FLOW_DEFINITION entityFlowDefinition) {
         SessionWrapper sw = getSession();
@@ -202,12 +202,12 @@ public abstract class AbstractHibernateFlowDefinitionService<CATEGORY extends IE
             }
         }
 
-        for (SBusinessRole mPapel : flowDefinition.getFlowMap().getRoles()) {
-            if (!abbreviations.contains(mPapel.getAbbreviation())) {
-                PROCESS_ROLE_DEF role = newInstanceOf(getClassProcessRoleDef());
+        for (SBusinessRole bRole : flowDefinition.getFlowMap().getRoles()) {
+            if (!abbreviations.contains(bRole.getAbbreviation())) {
+                ROLE_DEFINITION role = newInstanceOf(getClassRoleDefinition());
                 role.setFlowDefinition(entityFlowDefinition);
-                role.setName(mPapel.getName());
-                role.setAbbreviation(mPapel.getAbbreviation());
+                role.setName(bRole.getName());
+                role.setAbbreviation(bRole.getAbbreviation());
                 sw.save(role);
             }
         }
@@ -215,7 +215,7 @@ public abstract class AbstractHibernateFlowDefinitionService<CATEGORY extends IE
     }
     
     private boolean hasRoleInstances(SessionWrapper sw, IEntityRoleDefinition role){
-        Criteria criteria = sw.createCriteria(getClassProcessRole());
+        Criteria criteria = sw.createCriteria(getClassRoleInstance());
         criteria.add(Restrictions.eq("role", role));
         criteria.setProjection(Projections.rowCount());
         return ((Number)criteria.uniqueResult()).doubleValue() > 0;
@@ -235,15 +235,15 @@ public abstract class AbstractHibernateFlowDefinitionService<CATEGORY extends IE
         return category;
     }
 
-    protected abstract TASK_DEF createEntityDefinitionTask(FLOW_DEFINITION process);
+    protected abstract TASK_DEF createEntityDefinitionTask(FLOW_DEFINITION flow);
 
-    private final TASK_DEF retrieveOrCreateEntityDefinitionTask(FLOW_DEFINITION process, STask<?> task) {
+    private final TASK_DEF retrieveOrCreateEntityDefinitionTask(FLOW_DEFINITION flow, STask<?> task) {
 
         String abbreviation = task.getAbbreviation();
-        TASK_DEF taskDefinition = (TASK_DEF) process.getTaskDefinition(abbreviation);
+        TASK_DEF taskDefinition = (TASK_DEF) flow.getTaskDefinition(abbreviation);
 
         if (taskDefinition == null) {
-            taskDefinition = createEntityDefinitionTask(process);
+            taskDefinition = createEntityDefinitionTask(flow);
             taskDefinition.setAbbreviation(abbreviation);
 
             TaskAccessStrategy<FlowInstance> accessStrategy = task.getAccessStrategy();
@@ -251,18 +251,18 @@ public abstract class AbstractHibernateFlowDefinitionService<CATEGORY extends IE
             if (accessStrategy != null) {
                 taskDefinition.setAccessStrategyType(accessStrategy.getType());
                 List<String> roles = accessStrategy.getVisualizeRoleNames(task.getFlowMap().getFlowDefinition(), task);
-                addRolesToTaks(process, taskDefinition, roles);
+                addRolesToTaks(flow, taskDefinition, roles);
             }
         }
         return taskDefinition;
     }
 
-    private void addRolesToTaks(FLOW_DEFINITION process, TASK_DEF taskDefinition, @Nonnull List<String> roles) {
+    private void addRolesToTaks(FLOW_DEFINITION flow, TASK_DEF taskDefinition, @Nonnull List<String> roles) {
         for (String roleName : roles) {
-            PROCESS_ROLE_DEF roleDefinition = null;
-            for (IEntityRoleDefinition rd : new ArrayList<>(process.getRoles())) {
+            ROLE_DEFINITION roleDefinition = null;
+            for (IEntityRoleDefinition rd : new ArrayList<>(flow.getRoles())) {
                 if (roleName.toUpperCase().endsWith(rd.getName().toUpperCase())) {
-                    roleDefinition = (PROCESS_ROLE_DEF) rd;
+                    roleDefinition = (ROLE_DEFINITION) rd;
                     break;
                 }
             }
@@ -270,7 +270,7 @@ public abstract class AbstractHibernateFlowDefinitionService<CATEGORY extends IE
         }
     }
 
-    protected abstract ROLE_TASK addRoleToTask(PROCESS_ROLE_DEF roleDefinition, TASK_DEF taskDefinition);
+    protected abstract ROLE_TASK addRoleToTask(ROLE_DEFINITION roleDefinition, TASK_DEF taskDefinition);
 
     @Override
     public boolean isDifferentVersion(IEntityFlowVersion oldEntity, IEntityFlowVersion newEntity) {

@@ -33,8 +33,8 @@ public class GenerationModifierFilter extends GenerationModifier {
         super(table);
     }
 
-    public GenerationModifierFilter addColuna(Column column, Predicate<InfoCell> filtro) {
-        predicates.put(column, filtro);
+    public GenerationModifierFilter addColumn(Column column, Predicate<InfoCell> filter) {
+        predicates.put(column, filter);
         return this;
     }
 

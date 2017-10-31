@@ -139,13 +139,13 @@ public class TestConversorToolkit {
     }
 
     @Test
-    public void testPrintDataHora(){
+    public void testPrintDateTime(){
         Calendar calendar = ConversorToolkit.getCalendar("01/01/2017");
         Date date = calendar.getTime();
 
-        String printDataHora = ConversorToolkit.printDataHora(date);
-        String printDataHoraShort = ConversorToolkit.printDataHoraShort(date);
-        String printDataHoraShortAbreviada = ConversorToolkit.printDataHoraShortAbreviada(date);
+        String printDataHora = ConversorToolkit.printDateTime(date);
+        String printDataHoraShort = ConversorToolkit.printDateTimeShort(date);
+        String printDataHoraShortAbreviada = ConversorToolkit.printDateTimeShortAbbreviated(date);
 
         String printDate = ConversorToolkit.printDate(date);
         String printDateShort = ConversorToolkit.printDateShort(date);
@@ -171,12 +171,12 @@ public class TestConversorToolkit {
         Assert.assertEquals(printDateNullWithFormat, "");
         Assert.assertEquals(printDateNotNullWithFormat, "01/01/17");
 
-        Assert.assertNull(ConversorToolkit.printDataHoraShort(null));
+        Assert.assertNull(ConversorToolkit.printDateTimeShort(null));
         Assert.assertNull(ConversorToolkit.printDate(null));
 
         Calendar calendar2 = ConversorToolkit.getCalendar("01/01/2017");
         calendar2.set(Calendar.HOUR_OF_DAY, 10);
-        Assert.assertEquals("01/01/17 10:00", ConversorToolkit.printDataHoraShortAbreviada(calendar2.getTime()));
+        Assert.assertEquals("01/01/17 10:00", ConversorToolkit.printDateTimeShortAbbreviated(calendar2.getTime()));
 
 
     }

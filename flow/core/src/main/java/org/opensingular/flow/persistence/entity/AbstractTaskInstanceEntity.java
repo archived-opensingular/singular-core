@@ -113,7 +113,7 @@ public abstract class AbstractTaskInstanceEntity<USER extends SUser, FLOW_INSTAN
     private List<EXECUTION_VARIABLE> outputVariables = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentTask", cascade = CascadeType.REMOVE)
-    private List<FLOW_INSTANCE> childProcesses = new ArrayList<>();
+    private List<FLOW_INSTANCE> childFlows = new ArrayList<>();
 
     @Override
     public Integer getCod() {
@@ -230,12 +230,12 @@ public abstract class AbstractTaskInstanceEntity<USER extends SUser, FLOW_INSTAN
     }
 
     @Override
-    public List<FLOW_INSTANCE> getChildProcesses() {
-        return childProcesses;
+    public List<FLOW_INSTANCE> getChildFlows() {
+        return childFlows;
     }
 
-    public void setChildProcesses(List<FLOW_INSTANCE> childProcesses) {
-        this.childProcesses = childProcesses;
+    public void setChildFlows(List<FLOW_INSTANCE> childFlows) {
+        this.childFlows = childFlows;
     }
 
     @Override

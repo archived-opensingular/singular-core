@@ -19,6 +19,7 @@
 package org.opensingular.form.document;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -30,6 +31,8 @@ import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.lib.commons.context.RefService;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
+
+import java.util.Optional;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -107,14 +110,18 @@ public class TestSDocumentServices extends TestCaseForm {
         assertThat(document.lookupLocalService(Number.class).orElse(null)).isSameAs(provider);
     }
 
+    @Test
     @SuppressWarnings("unchecked")
-    @Test(expected = Exception.class)
-    public void rejectsFindByClassWhenThereAreMoreThanOneOptions() {
+    public void chekIfTheLastServiceRegisteredStands() {
         final Object provider = new Object();
-        document.bindLocalService(Object.class, ref(provider));
-        document.bindLocalService(Object.class, ref(provider));
 
-        document.lookupLocalService(Object.class);
+        RefService ref1 = ref(provider);
+
+        RefService ref2 = ref(provider);
+        document.bindLocalService(Object.class, ref1);
+        document.bindLocalService(Object.class, ref2);
+
+        assertEquals(ref2.get(), document.lookupLocalService(Object.class).get());
     }
 
     @SuppressWarnings("unchecked")
@@ -143,6 +150,16 @@ public class TestSDocumentServices extends TestCaseForm {
         document.bindLocalService(Object.class, () -> provider);
 
         assertThat(document.lookupLocalService(Object.class).orElse(null)).isEqualTo(provider);
+    }
+
+    @Test
+    public void putTwoServicesWithSameNameAndSameClass() throws Exception {
+        String serviceA = "A";
+        String serviceB = "B";
+        document.bindLocalService("service", String.class, () -> serviceA);
+        document.bindLocalService("service", String.class, () -> serviceB);
+        Optional<String> myServiceB = document.lookupLocalService(String.class);
+        assertTrue(myServiceB.map(serviceB::equals).orElse(false));
     }
 
 }

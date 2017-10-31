@@ -16,6 +16,13 @@
 
 package org.opensingular.flow.persistence.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleTask;
+import org.opensingular.flow.core.entity.IEntityTaskDefinition;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.util.Constants;
+
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -24,14 +31,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
-
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.hibernate.annotations.GenericGenerator;
-
-import org.opensingular.flow.core.entity.IEntityRoleDefinition;
-import org.opensingular.flow.core.entity.IEntityRoleTask;
-import org.opensingular.flow.core.entity.IEntityTaskDefinition;
-import org.opensingular.lib.support.persistence.util.Constants;
 
 /**
  * The base persistent class for the RL_PAPEL_TAREFA database table.
@@ -42,11 +41,11 @@ import org.opensingular.lib.support.persistence.util.Constants;
  * <code>@GenericGenerator(name = AbstractRoleTaskEntity.PK_GENERATOR_NAME, strategy = "org.hibernate.id.IdentityGenerator")</code>
  *
  * @param <TASK_DEF>
- * @param <PROCESS_ROLE>
+ * @param <ROLE_DEFINITION>
  */
 @MappedSuperclass
 @Table(name = "RL_PAPEL_TAREFA", schema = Constants.SCHEMA)
-public abstract class AbstractRoleTaskEntity<TASK_DEF extends IEntityTaskDefinition, PROCESS_ROLE extends IEntityRoleDefinition> extends BaseEntity<Integer> implements IEntityRoleTask {
+public abstract class AbstractRoleTaskEntity<TASK_DEF extends IEntityTaskDefinition, ROLE_DEFINITION extends IEntityRoleDefinition> extends BaseEntity<Integer> implements IEntityRoleTask {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_PAPEL_TAREFA";
 
@@ -57,7 +56,7 @@ public abstract class AbstractRoleTaskEntity<TASK_DEF extends IEntityTaskDefinit
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_DEFINICAO_PAPEL", nullable = false)
-    private PROCESS_ROLE roleDefinition;
+    private ROLE_DEFINITION roleDefinition;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_DEFINICAO_TAREFA", nullable = false)
@@ -73,11 +72,11 @@ public abstract class AbstractRoleTaskEntity<TASK_DEF extends IEntityTaskDefinit
     }
 
     @Override
-    public PROCESS_ROLE getRoleDefinition() {
+    public ROLE_DEFINITION getRoleDefinition() {
         return roleDefinition;
     }
 
-    public void setRoleDefinition(PROCESS_ROLE roleDefinition) {
+    public void setRoleDefinition(ROLE_DEFINITION roleDefinition) {
         this.roleDefinition = roleDefinition;
     }
 

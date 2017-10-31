@@ -43,9 +43,9 @@ import java.util.Set;
 
 public class TaskInstance implements Serializable {
 
-    public static final String ALOCACAO = "Alocação";
-    public static final String DESALOCACAO = "Desalocação";
-    public static final String LEITURA_DA_TAREFA = "Leitura da tarefa";
+    public static final String ALLOCATE = "Alocação";
+    public static final String DEALLOCATE = "Desalocação";
+    public static final String TASK_VISUALIZATION = "Leitura da tarefa";
 
     private final Integer taskCod;
 
@@ -100,7 +100,7 @@ public class TaskInstance implements Serializable {
     public STask<?> getFlowTaskOrException() {
         return getFlowTask().orElseThrow(() -> new SingularFlowException(
                 "Era esperado encontra a definição para a entidade de tarefa, mas não há correspondente entre o BD e " +
-                        "a definição do processo",
+                        "a definição do fluxo",
                 this));
     }
 
@@ -158,15 +158,15 @@ public class TaskInstance implements Serializable {
         return getTaskVersion().getAbbreviation();
     }
 
-    public String getProcessName() {
-        return getFlowInstance().getProcessName();
+    public String getFlowName() {
+        return getFlowInstance().getFlowName();
     }
 
     public String getTaskName() {
         return getName();
     }
 
-    public String getDescricao() {
+    public String getDescription() {
         return getFlowInstance().getDescription();
     }
 
@@ -253,8 +253,8 @@ public class TaskInstance implements Serializable {
             throw new SingularFlowException(
                     "A tarefa '" + getName() + "' não pode ser realocada, pois não é do tipo pessoa", this);
         }
-        SUser pessoaAlocadaAntes = getAllocatedUser();
-        if (Objects.equals(user, pessoaAlocadaAntes)) {
+        SUser userAllocatedBefore = getAllocatedUser();
+        if (Objects.equals(user, userAllocatedBefore)) {
             return;
         }
 
@@ -266,16 +266,16 @@ public class TaskInstance implements Serializable {
 
         String trimmedRelocationCause = StringUtils.trimToNull(relocationCause);
 
-        String acao = (user == null) ? DESALOCACAO : ALOCACAO;
+        String action = (user == null) ? DEALLOCATE : ALLOCATE;
         if (author == null) {
-            log(acao + " Automática", trimmedRelocationCause, user, null, new Date());
+            log(action + " Automática", trimmedRelocationCause, user, null, new Date());
         } else {
-            log(acao, trimmedRelocationCause, user, author, new Date());
+            log(action, trimmedRelocationCause, user, author, new Date());
         }
 
         if (notify) {
-            Flow.notifyListeners(n -> n.notifyUserTaskRelocation(this, author, pessoaAlocadaAntes, user, pessoaAlocadaAntes));
-            Flow.notifyListeners(n -> n.notifyUserTaskAllocation(this, author, user, user, pessoaAlocadaAntes, trimmedRelocationCause));
+            Flow.notifyListeners(n -> n.notifyUserTaskRelocation(this, author, userAllocatedBefore, user, userAllocatedBefore));
+            Flow.notifyListeners(n -> n.notifyUserTaskAllocation(this, author, user, user, userAllocatedBefore, trimmedRelocationCause));
         }
 
         notifyStateUpdate();
@@ -306,15 +306,15 @@ public class TaskInstance implements Serializable {
     }
 
     /**
-     * Retorna todos os processo filhos associados a essa tarefa. Podem ser
-     * processo disparados em conjunto a tarefa atual ou mesmo um processo filho
-     * que consiste no subProcesso da tarefa.
+     * Retorna todos os fluxos filhos associados a essa tarefa. Podem ser
+     * fluxo disparados em conjunto a tarefa atual ou mesmo um fluxo filho
+     * que consiste no sub fluxo da tarefa.
      *
      * @return sempre diferente de null, mas pode ser lista vazia.
      */
     @Nonnull
-    public List<FlowInstance> getChildProcesses() {
-        return Flow.getFlowInstances(getEntity().getChildProcesses());
+    public List<FlowInstance> getChildFlows() {
+        return Flow.getFlowInstances(getEntity().getChildFlows());
     }
 
     private void notifyStateUpdate() {
@@ -347,7 +347,7 @@ public class TaskInstance implements Serializable {
 
     public StringBuilder getExtendedDescription(boolean addAllocated) {
         StringBuilder sb = new StringBuilder(250);
-        sb.append(getFlowInstance().getProcessName()).append(" - ").append(getName());
+        sb.append(getFlowInstance().getFlowName()).append(" - ").append(getName());
         String description = getFlowInstance().getDescription();
         if (description != null) {
             sb.append(" - ").append(description);

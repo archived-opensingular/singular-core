@@ -276,7 +276,7 @@ public final class DiffInfo implements Serializable {
         return getChildren().get(childIndex);
     }
 
-    /** Monta uma mensagem de erro referente ao processo do path informado. */
+    /** Monta uma mensagem de erro referente ao processamento do path informado. */
     private String getErrorMsg(PathReader pathReader, String msg) {
         return pathReader.getErrorMsg("Para o diff da instância " + getOriginalOrNewer().getPathFull(), msg);
     }
