@@ -92,12 +92,12 @@ public class SIAttachmentIResourceStream implements IResourceStream {
 
     @Override
     public String getVariation() {
-        return variation;
+        return this.variation;
     }
 
     @Override
     public void setVariation(String s) {
-        this.variation = variation;
+        this.variation = s;
     }
 
     @Override
