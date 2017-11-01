@@ -16,6 +16,7 @@
 
 package org.opensingular.form.persistence.service;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Blob;
@@ -36,6 +37,7 @@ import org.hibernate.SessionFactory;
 import org.opensingular.form.persistence.RelationalDatabase;
 import org.opensingular.form.persistence.relational.RelationalTupleHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.lib.commons.base.SingularException;
 
 /**
  * Hibernate-based interaction with a relational database manager.
@@ -158,7 +160,11 @@ public class RelationalDatabaseHibernate implements RelationalDatabase {
 		} else if (parameterValue instanceof String) {
 			return "'" + ((String) parameterValue).replace("'", "''") + "'";
 		} else if (parameterValue instanceof IAttachmentRef) {
-			return "X'" + Hex.encodeHexString(((IAttachmentRef) parameterValue).getContentAsByteArray()) + "'";
+			try {
+				return "X'" + Hex.encodeHexString(org.apache.commons.io.IOUtils.toByteArray(((IAttachmentRef) parameterValue).getContentAsInputStream())) + "'";
+			} catch (IOException e) {
+				throw SingularException.rethrow(e);
+			}
 		}
 		return parameterValue.toString();
 	}

@@ -41,22 +41,18 @@ import org.opensingular.lib.commons.context.RefService;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(Parameterized.class)
 public class TestSDocumentPersistentServices extends TestCaseForm {
 
-    private STypeComposite<?>             groupingType;
-    private SIAttachment                  fileFieldInstance;
-    private SDocument                     document;
+    private STypeComposite<?> groupingType;
+    private SIAttachment fileFieldInstance;
+    private SDocument document;
     private IAttachmentPersistenceHandler<IAttachmentRef> tempHandler, persistentHandler;
 
     public TestSDocumentPersistentServices(TestFormConfig testFormConfig) {
@@ -109,7 +105,7 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
 
         byte[] content = new byte[]{0};
 
-        IAttachmentRef tempRef       = attachmentRef("abacate", content);
+        IAttachmentRef tempRef = attachmentRef("abacate", content);
         IAttachmentRef persistentRef = attachmentRef("abacate", content);
 
         when(tempHandler.getAttachment("abacate"))
@@ -135,7 +131,7 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
 
         byte[] content = new byte[]{0};
 
-        IAttachmentRef tempRef       = attachmentRef("abacate", content);
+        IAttachmentRef tempRef = attachmentRef("abacate", content);
         IAttachmentRef persistentRef = attachmentRef("avocado", content);
 
         when(tempHandler.getAttachment("abacate"))
@@ -187,7 +183,7 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
 
         byte[] content = new byte[]{0};
 
-        IAttachmentRef tempRef       = attachmentRef("abacate", content);
+        IAttachmentRef tempRef = attachmentRef("abacate", content);
         IAttachmentRef persistentRef = attachmentRef("abacate", content);
 
         when(tempHandler.getAttachment("abacate"))
@@ -239,7 +235,7 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
                 return hash;
             }
 
-            public InputStream getInputStream() throws IOException {
+            public InputStream getContentAsInputStream() {
                 return new ByteArrayInputStream(content);
             }
 
@@ -251,11 +247,6 @@ public class TestSDocumentPersistentServices extends TestCaseForm {
             @Override
             public String getContentType() {
                 return IAttachmentRef.super.getContentType();
-            }
-
-            @Override
-            public OutputStream getOutputStream() throws IOException {
-                return IAttachmentRef.super.getOutputStream();
             }
         };
     }

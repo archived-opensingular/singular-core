@@ -16,13 +16,15 @@
 
 package org.opensingular.form.type.core.attachment.handlers;
 
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.lib.commons.base.SingularException;
+
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
-
-import org.opensingular.form.type.core.attachment.IAttachmentRef;
 
 @SuppressWarnings("serial")
 public class InMemoryAttachmentRef implements IAttachmentRef, Serializable {
@@ -49,16 +51,22 @@ public class InMemoryAttachmentRef implements IAttachmentRef, Serializable {
         return hashSHA1Hex;
     }
 
-    @Override
-    public InputStream getInputStream() throws IOException {
-        return new FileInputStream(tempFile);
-    }
-    
+
     @Override
     public long getSize() {
         return size;
     }
-    
+
+    @Nonnull
+    @Override
+    public InputStream getContentAsInputStream() {
+        try {
+            return new FileInputStream(tempFile);
+        } catch (FileNotFoundException e) {
+            throw SingularException.rethrow(e.getMessage(), e);
+        }
+    }
+
     @Override
     public String getName() {
         return tempFile.getName();
