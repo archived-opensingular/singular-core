@@ -76,9 +76,9 @@ public class SearchModalMapperTest {
         tester.startDummyPage();
 
         Component mandatoryFieldComp = tester.getAssertionsForm().getSubComponents(TextField.class)
-                .get(0).asTextField().getTarget();
+                .element(0).asTextField().getTarget();
         Component dependentFieldComp = tester.getAssertionsForm().getSubComponents(TextField.class)
-                .get(1).asTextField().getTarget();
+                .element(1).asTextField().getTarget();
 
         tester.assertInvisible(dependentFieldComp.getPageRelativePath());
 
@@ -87,7 +87,7 @@ public class SearchModalMapperTest {
         tester.executeAjaxEvent(openModalButton, "click");
 
         AssertionsWComponentList links = tester.getAssertionsForm().getSubComponents(ActionAjaxLink.class);
-        tester.executeAjaxEvent(links.get(0).getTarget(), "click");
+        tester.executeAjaxEvent(links.element(0).getTarget(), "click");
 
         tester.getAssertionsForm().getSubComponentWithType(mandatoryField).assertSInstance().isValueEquals("1");
 

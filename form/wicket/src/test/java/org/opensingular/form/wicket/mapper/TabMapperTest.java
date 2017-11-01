@@ -78,13 +78,13 @@ public class TabMapperTest {
     }
 
     private void clickOnTab(SingularDummyFormPageTester ctx, AssertionsWComponent assertionsTab, int tabIndex) {
-        ctx.clickLink(assertionsTab.getSubComponentWithId("tab").getSubComponentsWithId("tabAnchor").get(tabIndex)
+        ctx.clickLink(assertionsTab.getSubComponentWithId("tab").getSubComponentsWithId("tabAnchor").element(tabIndex)
                 .getTarget());
     }
 
     private void assertTabContent(AssertionsWComponent assertionsTab, String... expectedInstancesName) {
         AssertionsWComponent content = assertionsTab.getSubComponentWithId("tab-content").isNotNull();
-        content.getSubComponentsWithSInstance().isSize(expectedInstancesName.length);
+        content.getSubComponentsWithSInstance().hasSize(expectedInstancesName.length);
         for(String name : expectedInstancesName) {
             content.getSubComponentWithTypeNameSimple(name).isNotNull();
         }

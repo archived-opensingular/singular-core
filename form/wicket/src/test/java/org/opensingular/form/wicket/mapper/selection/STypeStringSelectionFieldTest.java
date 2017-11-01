@@ -117,6 +117,6 @@ public class STypeStringSelectionFieldTest {
 
     private DropDownChoice containsOnlyOneDropDownAndReturnIfFinds() {
         return tester.getAssertionsForm()
-                .getSubComponents(DropDownChoice.class).isSize(1).get(0).getTarget(DropDownChoice.class);
+                .getSubComponents(DropDownChoice.class).hasSize(1).element(0).getTarget(DropDownChoice.class);
     }
 }

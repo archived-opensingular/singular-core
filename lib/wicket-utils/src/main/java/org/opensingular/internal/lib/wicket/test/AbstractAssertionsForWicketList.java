@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.wicket.helpers;
+package org.opensingular.internal.lib.wicket.test;
 
 import org.apache.wicket.Component;
-import org.opensingular.internal.lib.wicket.test.AbstractAssertionsForWicketList;
+import org.assertj.core.api.AssertFactory;
+import org.opensingular.lib.commons.test.AssertionsBase;
+import org.opensingular.lib.commons.test.BaseAssertionsForList;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -25,13 +27,16 @@ import java.util.List;
 /**
  * Representa um conjunto de asserções voltadas para lista de Componentes Wicket.
  *
- * @author Daniel Bordin on 12/02/2017.
+ * @author Daniel Bordin
+ * @since 2017-02-12
  */
-public class AssertionsWComponentList
-        extends AbstractAssertionsForWicketList<AssertionsWComponentList, AssertionsWComponent> {
+public abstract class AbstractAssertionsForWicketList<SELF extends AbstractAssertionsForWicketList<SELF,
+        ELEMENT_ASSERT>, ELEMENT_ASSERT extends AssertionsBase<ELEMENT_ASSERT, Component>>
+        extends BaseAssertionsForList<SELF, Component, ELEMENT_ASSERT> {
 
-    public AssertionsWComponentList(@Nonnull List<Component> target) {
-        super(target, component -> new AssertionsWComponent(component));
+    public AbstractAssertionsForWicketList(List<Component> target,
+            @Nonnull AssertFactory<Component, ELEMENT_ASSERT> assertFactory) {
+        super(target, assertFactory);
     }
 
 }

@@ -51,7 +51,7 @@ public class MasterDetailAndUpdateListenerTest {
 
         ctx.executeAjaxEvent(addButton, "click");
 
-        MasterDetailModal modal = ctx.getAssertionsForm().getSubComponents(MasterDetailModal.class).get(0).getTarget(MasterDetailModal.class);
+        MasterDetailModal modal = ctx.getAssertionsForm().getSubComponents(MasterDetailModal.class).element(0).getTarget(MasterDetailModal.class);
 
         ctx.newFormTester().submit(modal.addButton);
         ctx.getAssertionsForm().getSubComponentWithTypeNameSimple("total").assertSInstance().isValueEquals(new BigDecimal("10"));

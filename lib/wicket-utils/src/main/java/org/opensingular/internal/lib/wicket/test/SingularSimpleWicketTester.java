@@ -116,8 +116,7 @@ public class SingularSimpleWicketTester extends WicketTester {
      */
     public final AssertionsSimpleWComponent getAssertionsForSubComp(String id) {
         checkIfStartPageCalled();
-        return AssertionsSimpleWComponentBase.createAssertionForSubComponent(getLastRenderedPage(),
-                c -> c.getId().equals(id));
+        return new AssertionsSimpleWComponent(getLastRenderedPage()).getSubComponentWithId(id);
     }
 
     private void checkIfStartPageCalled() {

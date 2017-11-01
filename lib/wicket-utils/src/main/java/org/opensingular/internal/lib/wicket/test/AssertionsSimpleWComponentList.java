@@ -17,7 +17,6 @@
 package org.opensingular.internal.lib.wicket.test;
 
 import org.apache.wicket.Component;
-import org.opensingular.lib.commons.test.AssertionsBase;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,46 +26,10 @@ import java.util.Objects;
  *
  * @author Daniel Bordin on 12/02/2017.
  */
-public class AssertionsSimpleWComponentList<T extends Component>
-        extends AssertionsBase<List<T>, AssertionsSimpleWComponentList<T>> {
+public class AssertionsSimpleWComponentList
+        extends AbstractAssertionsForWicketList<AssertionsSimpleWComponentList, AssertionsSimpleWComponent> {
 
-    public AssertionsSimpleWComponentList(List<T> target) {
-        super(Objects.requireNonNull(target));
-    }
-
-    @Override
-    protected String errorMsg(String msg) {
-        return msg;
-    }
-
-    /** Verifica se a lista é do tamanho esperado. Senão dispara Exception. */
-    public AssertionsSimpleWComponentList<T> isSize(int expectedSize) {
-        if (expectedSize != getTarget().size()) {
-            throw new AssertionError(errorMsg("Tamanho da lista divergente", expectedSize, getTarget().size()));
-        }
-        return this;
-    }
-
-    /** Verifica se a lista é no mínimo do tamanho esperado. Senão dispara exception. */
-    public AssertionsSimpleWComponentList<T> isSizeAtLeast(int expectedSize) {
-        if (expectedSize > getTarget().size()) {
-            throw new AssertionError(
-                    errorMsg("Tamanho da menor que o mínimo esperado", expectedSize, getTarget().size()));
-        }
-        return this;
-    }
-
-    /** Retorna uma assertiva para o componente na posição solicitada. Dispara exception se o indice for inválido. */
-    public AssertionsSimpleWComponent get(int index) {
-        isSizeAtLeast(index + 1);
-        return new AssertionsSimpleWComponent(getTarget().get(index));
-    }
-
-    public AssertionsSimpleWComponent first() {
-        return get(0);
-    }
-
-    public AssertionsSimpleWComponent last() {
-        return get(getTarget().size() - 1);
+    public AssertionsSimpleWComponentList(List<Component> target) {
+        super(Objects.requireNonNull(target), component -> new AssertionsSimpleWComponent(component));
     }
 }

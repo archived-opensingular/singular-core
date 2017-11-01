@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
  * @author Daniel Bordin
  * @since  2017-10-28
  */
-public class AssertionsWLabel extends AssertionsWComponentBase<Label, AssertionsWLabel> {
+public class AssertionsWLabel extends AssertionsWComponentBase<AssertionsWLabel, Label> {
 
     public AssertionsWLabel(@Nullable Label label) {
         super(label);

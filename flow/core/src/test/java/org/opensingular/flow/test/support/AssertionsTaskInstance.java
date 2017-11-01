@@ -21,6 +21,7 @@ import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.lib.commons.test.AssertionsBase;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
 /**
@@ -28,7 +29,7 @@ import java.util.Optional;
  *
  * @author Daniel on 18/03/2017.
  */
-public class AssertionsTaskInstance extends AssertionsBase<TaskInstance, AssertionsTaskInstance> {
+public class AssertionsTaskInstance extends AssertionsBase<AssertionsTaskInstance, TaskInstance> {
 
     public AssertionsTaskInstance(TaskInstance target) {
         super(target);
@@ -39,11 +40,8 @@ public class AssertionsTaskInstance extends AssertionsBase<TaskInstance, Asserti
     }
 
     @Override
-    protected String errorMsg(String msg) {
-        if (getTargetOpt().isPresent()) {
-            return "(taskInstance=" + getTargetOpt().get() + ") " + msg;
-        }
-        return msg;
+    protected  Optional<String> generateDescriptionForCurrentTarget(@Nonnull Optional<TaskInstance> current) {
+        return current.map(task -> "taskInstance=" + task );
     }
 
     public AssertionsTaskInstance isAtTask(ITaskDefinition expectedType) {

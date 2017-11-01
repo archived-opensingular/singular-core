@@ -45,7 +45,7 @@ public class DateMapperTest {
 
         tester.getDummyPage().setAsEditView();
         tester.startDummyPage();
-        tester.getAssertionsPage().getSubComponents(BSDatepickerInputGroup.class).isSize(1);
+        tester.getAssertionsPage().getSubComponents(BSDatepickerInputGroup.class).hasSize(1);
         tester.getAssertionsForm().getSubComponentWithTypeNameSimple("data").assertSInstance().assertDateValue()
                 .isInSameYearAs(isoDate)
                 .isInSameDayAs(isoDate)

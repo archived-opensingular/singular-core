@@ -71,7 +71,7 @@ public class STypeStringSelectItemAutoCompleteTest {
     public void renderField() {
         tester.startDummyPage();
 
-        tester.getAssertionsForm().getSubComponents(TextField.class).isSize(2);
+        tester.getAssertionsForm().getSubComponents(TextField.class).hasSize(2);
     }
 
     @Test

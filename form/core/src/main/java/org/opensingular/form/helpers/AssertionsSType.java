@@ -26,8 +26,10 @@ import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -35,7 +37,7 @@ import java.util.Set;
  *
  * @author Daniel C. Bordin
  */
-public class AssertionsSType extends AssertionsSAttributeEnabled<SType, AssertionsSType> {
+public class AssertionsSType extends AssertionsSAttributeEnabled<AssertionsSType, SType> {
 
     public AssertionsSType(SType<?> type) {
         super(type);
@@ -331,7 +333,7 @@ public class AssertionsSType extends AssertionsSAttributeEnabled<SType, Assertio
     }
 
     @Override
-    protected String errorMsg(String msg) {
-        return "No tipo '" + getTarget().getName() + "': " + msg;
+    protected Optional<String> generateDescriptionForCurrentTarget(@Nonnull Optional<SType> current) {
+        return current.map(type -> "No tipo '" + type.getName());
     }
 }

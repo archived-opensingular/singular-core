@@ -57,7 +57,7 @@ public class BloodhoundDataBehaviorTest {
     }
 
     private void executeBloodhoundDataBehavior(String query) {
-        final Component typeaheadComponent = tester.getAssertionsForm().getSubComponents(TypeaheadComponent.class).get(0).getTarget();
+        final Component typeaheadComponent = tester.getAssertionsForm().getSubComponents(TypeaheadComponent.class).element(0).getTarget();
         final List<BloodhoundDataBehavior> bloodhoundDataBehaviors = typeaheadComponent.getBehaviors(BloodhoundDataBehavior.class);
         Assert.assertThat("O componente possui mais de um ou nenhum BloodhoundDataBehavior", bloodhoundDataBehaviors, Matchers.hasSize(1));
         String url = String.valueOf(bloodhoundDataBehaviors.get(0).getCallbackUrl());

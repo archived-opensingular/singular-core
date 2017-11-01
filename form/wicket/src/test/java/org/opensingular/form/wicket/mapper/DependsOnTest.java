@@ -90,13 +90,13 @@ public class DependsOnTest {
     // DEFAULT
     @Test
     public void rendersBothDropDowns(){
-        options().isSize(2);
+        options().hasSize(2);
     }
 
     @Test
     public void renderOnlyThePrimaryChoice(){
-        DropDownChoice categoryChoices = options().get(0).getTarget(DropDownChoice.class);
-        DropDownChoice elementChoices = options().get(1).getTarget(DropDownChoice.class);
+        DropDownChoice categoryChoices = options().element(0).getTarget(DropDownChoice.class);
+        DropDownChoice elementChoices = options().element(1).getTarget(DropDownChoice.class);
 
         assertThat(categoryChoices.getChoices()).containsOnly(OPTIONS.keySet().toArray());
         assertThat(elementChoices.getChoices()).isEmpty();
@@ -109,7 +109,7 @@ public class DependsOnTest {
 
         tester.executeAjaxEvent(categoryAssertion.getTarget(), SINGULAR_PROCESS_EVENT);
 
-        DropDownChoice elementChoices = options().get(1).getTarget(DropDownChoice.class);
+        DropDownChoice elementChoices = options().element(1).getTarget(DropDownChoice.class);
 
         assertThat(elementChoices.getChoices()).containsOnly(OPTIONS.get("fruits").toArray());
     }
@@ -122,8 +122,8 @@ public class DependsOnTest {
         categoryAssertion.assertSInstance().getTarget().setValue("vegetables");
         tester.getAssertionsForm().getSubComponentWithType(element).assertSInstance().getTarget().setValue("radish");
 
-        DropDownChoice categoryChoices = options().get(0).getTarget(DropDownChoice.class);
-        DropDownChoice elementChoices = options().get(1).getTarget(DropDownChoice.class);
+        DropDownChoice categoryChoices = options().element(0).getTarget(DropDownChoice.class);
+        DropDownChoice elementChoices = options().element(1).getTarget(DropDownChoice.class);
 
         tester.newFormTester().setValue(categoryChoices, "vegetables");
 
@@ -140,7 +140,7 @@ public class DependsOnTest {
         tester.getAssertionsForm().getSubComponentWithType(category).assertSInstance().getTarget().setValue("special");
         tester.getAssertionsForm().getSubComponentWithType(element).assertSInstance().getTarget().setValue("gluten");
 
-        DropDownChoice elementChoices = options().get(1).getTarget(DropDownChoice.class);
+        DropDownChoice elementChoices = options().element(1).getTarget(DropDownChoice.class);
 
         tester.getAssertionsForm().getSubComponentWithType(category).assertSInstance().isValueEquals("special");
         tester.getAssertionsForm().getSubComponentWithType(element).assertSInstance().isValueEquals("gluten");
@@ -155,8 +155,8 @@ public class DependsOnTest {
         tester.getAssertionsForm().getSubComponentWithType(category).assertSInstance().getTarget().setValue("vegetables");
         tester.getAssertionsForm().getSubComponentWithType(element).assertSInstance().getTarget().setValue("gluten");
 
-        DropDownChoice categoryChoices = options().get(0).getTarget(DropDownChoice.class);
-        DropDownChoice elementChoices = options().get(1).getTarget(DropDownChoice.class);
+        DropDownChoice categoryChoices = options().element(0).getTarget(DropDownChoice.class);
+        DropDownChoice elementChoices = options().element(1).getTarget(DropDownChoice.class);
 
         tester.getAssertionsForm().getSubComponentWithType(category).assertSInstance().isValueEquals("vegetables");
         tester.getAssertionsForm().getSubComponentWithType(element).assertSInstance().isValueEquals("gluten");
@@ -172,7 +172,7 @@ public class DependsOnTest {
         tester.executeAjaxEvent(tester.getAssertionsForm()
                 .getSubComponentWithType(category).getTarget(), SINGULAR_PROCESS_EVENT);
 
-        DropDownChoice elementChoices = options().get(1).getTarget(DropDownChoice.class);
+        DropDownChoice elementChoices = options().element(1).getTarget(DropDownChoice.class);
 
         assertThat(elementChoices.getChoices()).containsOnly(OPTIONS.get("condiments").toArray());
     }

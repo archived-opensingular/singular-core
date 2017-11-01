@@ -67,8 +67,8 @@ public class STypeStringKeyValueRadioTest {
 
         AssertionsWComponentList radioListAssertion = tester.getAssertionsForm().getSubComponents(RadioChoice.class);
 
-        radioListAssertion.isSize(1);
-        RadioChoice radioChoice = radioListAssertion.get(0).getTarget(RadioChoice.class);
+        radioListAssertion.hasSize(1);
+        RadioChoice radioChoice = radioListAssertion.element(0).getTarget(RadioChoice.class);
 
         assertThat(radioChoice.getChoiceRenderer().getIdValue(radioChoice.getChoices().get(0), 0)).isEqualTo("IMG");
         assertThat(radioChoice.getChoiceRenderer().getDisplayValue(radioChoice.getChoices().get(0))).isEqualTo("Imagem");
@@ -85,8 +85,8 @@ public class STypeStringKeyValueRadioTest {
 
         AssertionsWComponentList radioListAssertion = tester.getAssertionsForm().getSubComponents(RadioChoice.class);
 
-        radioListAssertion.isSize(1);
-        RadioChoice radioChoice = radioListAssertion.get(0).getTarget(RadioChoice.class);
+        radioListAssertion.hasSize(1);
+        RadioChoice radioChoice = radioListAssertion.element(0).getTarget(RadioChoice.class);
         assertThat(radioChoice.getChoiceRenderer().getIdValue(radioChoice.getChoices().get(0), 0)).isEqualTo("IMG");
         assertThat(radioChoice.getChoiceRenderer().getDisplayValue(radioChoice.getChoices().get(0))).isEqualTo("Imagem");
         assertThat(radioChoice.getChoiceRenderer().getIdValue(radioChoice.getChoices().get(1), 1)).isEqualTo("TXT");

@@ -60,13 +60,13 @@ public class STypeStringMultipleSelectionFieldTest {
         tester.assertEnabled(
                 tester.getAssertionsForm().getSubComponentWithId("favoriteFruit").getTarget().getPageRelativePath());
 
-        tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).isSize(1);
+        tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).hasSize(1);
     }
 
     @Test
     public void rendersAListWithSpecifiedOptions() {
         tester.startDummyPage();
-        CheckBoxMultipleChoice choices = tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).get(
+        CheckBoxMultipleChoice choices = tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).element(
                 0).getTarget(CheckBoxMultipleChoice.class);
 
         List<String> chaves   = new ArrayList<>();
@@ -102,7 +102,7 @@ public class STypeStringMultipleSelectionFieldTest {
         });
         tester.startDummyPage();
 
-        CheckBoxMultipleChoice choices = tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).get(
+        CheckBoxMultipleChoice choices = tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).element(
                 0).getTarget(CheckBoxMultipleChoice.class);
         List<String> chaves = new ArrayList<>();
         List<String> displays = new ArrayList<>();

@@ -123,8 +123,7 @@ public class SingularWicketTester extends WicketTester {
      */
     public final AssertionsWComponent getAssertionsForSubComp(String id) {
         checkIfStartPageCalled();
-        return AssertionsWComponentBase.createAssertionForSubComponent(getLastRenderedPage(),
-                c -> c.getId().equals(id));
+        return new AssertionsWComponent(getLastRenderedPage()).getSubComponentWithId(id);
     }
 
     private void checkIfStartPageCalled() {

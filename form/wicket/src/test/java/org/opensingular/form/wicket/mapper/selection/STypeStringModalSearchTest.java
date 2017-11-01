@@ -116,9 +116,9 @@ public class STypeStringModalSearchTest {
         clickOpenLink();
 
         AssertionsWComponentList subComponents = tester.getAssertionsForm().getSubComponents(ActionAjaxLink.class);
-        subComponents.isSize(4);
+        subComponents.hasSize(4);
 
-        tester.executeAjaxEvent(subComponents.get(3).getTarget(), "click");
+        tester.executeAjaxEvent(subComponents.element(3).getTarget(), "click");
 
         tester.getAssertionsForm().getSubComponentWithType(selectType).assertSInstance().isValueEquals("banana");
     }

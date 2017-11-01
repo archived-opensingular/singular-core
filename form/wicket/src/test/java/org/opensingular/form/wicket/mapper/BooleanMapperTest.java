@@ -78,7 +78,7 @@ public class BooleanMapperTest {
     public void rendersACheckBoxByDefault() {
         createTesterWithSimpleCheckboxAndStart()
                 .getAssertionsPage()
-                .getSubComponents(CheckBox.class).isSize(1);
+                .getSubComponents(CheckBox.class).hasSize(1);
     }
 
     @Test
@@ -114,8 +114,8 @@ public class BooleanMapperTest {
     public void rendersARadioChoiceIfAsked() {
         SingularDummyFormPageTester tester = createTesterWithSimpleRadioAndStart();
         List choices = tester.getAssertionsPage().getSubComponents(RadioChoice.class)
-                .isSize(1)
-                .get(0)
+                .hasSize(1)
+                .first()
                 .getTarget(RadioChoice.class)
                 .getChoices();
         assertThat(choices).containsOnly("Sim", "Não");
@@ -125,8 +125,8 @@ public class BooleanMapperTest {
     public void rendersNoChoiceIfNoneIsSelected() {
         SingularDummyFormPageTester tester = createTesterWithSimpleRadioAndStart();
         RadioChoice radioChoice = tester.getAssertionsPage().getSubComponents(RadioChoice.class)
-                .isSize(1)
-                .get(0)
+                .hasSize(1)
+                .first()
                 .getTarget(RadioChoice.class);
         assertThat(radioChoice.getDefaultModelObject()).isNull();
     }
@@ -147,8 +147,8 @@ public class BooleanMapperTest {
         tester.getDummyPage().addInstancePopulator(si -> si.setValue(ACEITA_TERMOS, false));
         tester.startDummyPage();
         RadioChoice radioChoice = tester.getAssertionsPage().getSubComponents(RadioChoice.class)
-                .isSize(1)
-                .get(0)
+                .hasSize(1)
+                .first()
                 .getTarget(RadioChoice.class);
         assertThat(radioChoice.getDefaultModelObject()).isEqualTo("Não");
     }
@@ -159,8 +159,8 @@ public class BooleanMapperTest {
         tester.getDummyPage().addInstancePopulator(si -> si.setValue(ACEITA_TERMOS, true));
         tester.startDummyPage();
         RadioChoice radioChoice = tester.getAssertionsPage().getSubComponents(RadioChoice.class)
-                .isSize(1)
-                .get(0)
+                .hasSize(1)
+                .first()
                 .getTarget(RadioChoice.class);
         assertThat(radioChoice.getDefaultModelObject()).isEqualTo("Sim");
     }

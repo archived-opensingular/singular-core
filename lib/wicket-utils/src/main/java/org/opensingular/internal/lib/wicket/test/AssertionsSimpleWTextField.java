@@ -25,7 +25,7 @@ import org.assertj.core.api.Assertions;
  *
  * @author Daniel Bordin on 12/02/2017.
  */
-public class AssertionsSimpleWTextField extends AssertionsSimpleWComponentBase<TextField, AssertionsSimpleWTextField> {
+public class AssertionsSimpleWTextField extends AssertionsSimpleWComponentBase<AssertionsSimpleWTextField, TextField> {
 
     public AssertionsSimpleWTextField(TextField c) {
         super(c);

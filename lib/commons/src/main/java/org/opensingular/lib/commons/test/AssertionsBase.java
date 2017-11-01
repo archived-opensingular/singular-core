@@ -17,7 +17,8 @@
 package org.opensingular.lib.commons.test;
 
 
-import org.apache.commons.lang3.StringUtils;
+import org.assertj.core.api.AbstractAssert;
+import org.assertj.core.description.Description;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -27,17 +28,15 @@ import java.util.Optional;
  *
  * @author Daniel C. Boridn
  */
-public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
-
-
-    private final T target;
+public abstract class AssertionsBase<SELF extends AssertionsBase<SELF, T>, T> extends AbstractAssert<SELF, T> {
 
     public AssertionsBase(T target) {
-        this.target = target;
+        super(target, AssertionsBase.class);
+        as(new DescriptionForTarget(this));
     }
 
     public AssertionsBase(Optional<? extends T> target) {
-        this.target = target.orElse(null);
+        this(target.orElse(null));
     }
 
     /**
@@ -46,12 +45,12 @@ public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
     @Nonnull
     public final T getTarget() {
         isNotNull();
-        return target;
+        return super.actual;
     }
 
     @Nonnull
     public final Optional<T> getTargetOpt() {
-        return Optional.ofNullable(target);
+        return Optional.ofNullable(super.actual);
     }
 
     /**
@@ -60,19 +59,22 @@ public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
      */
     @Nonnull
     public final <TT> TT getTarget(@Nonnull Class<TT> expectedClass) {
-        if (!expectedClass.isInstance(target)) {
-            throw new AssertionError(errorMsg("Não é da classe " + expectedClass.getName(), expectedClass,
-                    target == null ? null : target.getClass()));
-        }
-        return expectedClass.cast(target);
+        isInstanceOf(expectedClass);
+        return expectedClass.cast(getTarget());
     }
 
-
     /**
-     * Deve ser implementado de modo a colocar na mensagem de erro, que será disparada na exception, informações
-     * adicionais sobre o objeto alvo atual {@link #getTarget()} a fim de ajudar o entendimento do erro.
+     * May be overridden to add text to the exception describing the current value bean asserted. It should help the
+     * developer to understand the failed assertion.
      */
-    protected abstract String errorMsg(String msg);
+    @Nonnull
+    protected Optional<String> generateDescriptionForCurrentTarget(@Nonnull Optional<T> current) {
+        return Optional.empty();
+    }
+
+    protected final String errorMsg(String msg) {
+        return errorMsg(msg, null, null);
+    }
 
     protected final String errorMsg(String msg, Object expected, Object current) {
         boolean showClass = (expected != null) && (current != null) && expected.getClass() != current.getClass();
@@ -86,262 +88,21 @@ public abstract class AssertionsBase<T, SELF extends AssertionsBase<T, SELF>> {
         if (showClass && current != null) {
             sb.append(" (").append(current.getClass()).append(')');
         }
-        return errorMsg(sb.toString());
+        Optional<String> targetDescription = generateDescriptionForCurrentTarget(getTargetOpt());
+        return targetDescription.isPresent() ? "[" + targetDescription.get() + "]: " + sb : sb.toString();
     }
 
-    /**
-     * Verifica se o objeto atual é nulo.
-     */
-    public final SELF isNull() {
-        if (target != null) {
-            throw new AssertionError(errorMsg("Era esperado ser null."));
-        }
-        return (SELF) this;
-    }
+    private static class DescriptionForTarget<T> extends Description {
 
+        private final AssertionsBase<?, T> assertionsBase;
 
-    /**
-     * Verifica se o objeto atual não é nulo.
-     */
-    public final SELF isNotNull() {
-        if (target == null) {
-            throw new AssertionError("Resultado está null. Esperado não ser null.");
-        }
-        return (SELF) this;
-    }
-
-    /**
-     * Verifica se o objeto atual é da classe informada.
-     */
-    public final SELF isInstanceOf(Class<?> typeClass) {
-        if (! typeClass.isInstance(getTarget())) {
-            throw new AssertionError(errorMsg("Não é uma instância da classe " + typeClass.getName(), typeClass,
-                    getTarget().getClass()));
-        }
-        return (SELF) this;
-    }
-
-    /**
-     * Verifica se o objeto atual é identico ao valor informado (equivalencia usando '==' ).
-     */
-    public final SELF isSameAs(Object expectedValue) {
-        if (target != expectedValue) {
-            throw new AssertionError(errorMsg("Não é a mesma instância (not the same) de " + expectedValue,
-                    expectedValue, target));
-        }
-        return (SELF) this;
-    }
-
-    /**
-     * Verifica se o objeto atual não é identico ao valor informado (equivalencia usando '==' ).
-     */
-    public final SELF isNotSameAs(Object notExpectedValue) {
-        if (target == notExpectedValue) {
-            throw new AssertionError(errorMsg(
-                    "Era esperado instância diferentes (the same) de " + notExpectedValue + ", mas é igual",
-                    "diferente de '" + notExpectedValue + "'", target));
-        }
-        return (SELF) this;
-    }
-
-    //----------------------------------------------------------------------------
-    // Cloned methods from org.junit.Assert to avoid direct dependency with JUnit
-    //----------------------------------------------------------------------------
-
-    /**
-     * Asserts that two objects are equal. If they are not, an
-     * {@link AssertionError} without a message is thrown. If
-     * <code>expected</code> and <code>actual</code> are <code>null</code>,
-     * they are considered equal.
-     *
-     * @param expected expected value
-     * @param actual   the value to check against <code>expected</code>
-     */
-    protected static void assertEquals(Object expected, Object actual) {
-        assertEquals(null, expected, actual);
-    }
-
-    /**
-     * Asserts that two objects are equal. If they are not, an
-     * {@link AssertionError} is thrown with the given message. If
-     * <code>expected</code> and <code>actual</code> are <code>null</code>,
-     * they are considered equal.
-     *
-     * @param message  the identifying message for the {@link AssertionError} (<code>null</code>
-     *                 okay)
-     * @param expected expected value
-     * @param actual   actual value
-     */
-    protected static void assertEquals(String message, Object expected, Object actual) {
-        if (equalsRegardingNull(expected, actual)) {
-            return;
-        } else if (expected instanceof String && actual instanceof String) {
-            String cleanMessage = message == null ? "" : message;
-            fail(cleanMessage + "\n expected=" + (String) expected + "\n found=" + (String) actual);
-        } else {
-            failNotEquals(message, expected, actual);
-        }
-    }
-
-    private static boolean equalsRegardingNull(Object expected, Object actual) {
-        if (expected == null) {
-            return actual == null;
+        private DescriptionForTarget(@Nonnull AssertionsBase<?, T> assertionsBase) {
+            this.assertionsBase = assertionsBase;
         }
 
-        return isEquals(expected, actual);
-    }
-
-    static private void failNotEquals(String message, Object expected, Object actual) {
-        fail(format(message, expected, actual));
-    }
-
-    static String format(String message, Object expected, Object actual) {
-        String formatted = "";
-        if (!StringUtils.isBlank(message)) {
-            formatted = message + " ";
+        @Override
+        public String value() {
+            return assertionsBase.generateDescriptionForCurrentTarget(assertionsBase.getTargetOpt()).orElse("");
         }
-        String expectedString = String.valueOf(expected);
-        String actualString = String.valueOf(actual);
-        if (expectedString.equals(actualString)) {
-            return formatted + "expected: " + formatClassAndValue(expected, expectedString) + " but was: " +
-                    formatClassAndValue(actual, actualString);
-        } else {
-            return formatted + "expected:<" + expectedString + "> but was:<" + actualString + ">";
-        }
-    }
-
-    private static String formatClassAndValue(Object value, String valueString) {
-        String className = value == null ? "null" : value.getClass().getName();
-        return className + "<" + valueString + ">";
-    }
-
-    private static boolean isEquals(Object expected, Object actual) {
-        return expected.equals(actual);
-    }
-
-    /**
-     * Asserts that two objects do not refer to the same object. If they do
-     * refer to the same object, an {@link AssertionError} is thrown with the
-     * given message.
-     *
-     * @param message    the identifying message for the {@link AssertionError} (<code>null</code>
-     *                   okay)
-     * @param unexpected the object you don't expect
-     * @param actual     the object to compare to <code>unexpected</code>
-     */
-    protected static void assertNotSame(String message, Object unexpected, Object actual) {
-        if (unexpected == actual) {
-            failSame(message);
-        }
-    }
-
-    static private void failSame(String message) {
-        String formatted = "";
-        if (message != null) {
-            formatted = message + " ";
-        }
-        fail(formatted + "expected not same");
-    }
-
-    /**
-     * Asserts that two objects do not refer to the same object. If they do
-     * refer to the same object, an {@link AssertionError} without a message is
-     * thrown.
-     *
-     * @param unexpected the object you don't expect
-     * @param actual     the object to compare to <code>unexpected</code>
-     */
-    protected static void assertNotSame(Object unexpected, Object actual) {
-        assertNotSame(null, unexpected, actual);
-    }
-
-    /**
-     * Asserts that an object isn't null. If it is an {@link AssertionError} is
-     * thrown.
-     *
-     * @param object Object to check or <code>null</code>
-     */
-    protected static void assertNotNull(Object object) {
-        assertNotNull(null, object);
-    }
-
-    /**
-     * Asserts that an object isn't null. If it is an {@link AssertionError} is
-     * thrown with the given message.
-     *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     *                okay)
-     * @param object  Object to check or <code>null</code>
-     */
-    protected static void assertNotNull(String message, Object object) {
-        assertTrue(message, object != null);
-    }
-
-    /**
-     * Asserts that a condition is true. If it isn't it throws an
-     * {@link AssertionError} with the given message.
-     *
-     * @param message   the identifying message for the {@link AssertionError} (<code>null</code>
-     *                  okay)
-     * @param condition condition to be checked
-     */
-    protected static void assertTrue(String message, boolean condition) {
-        if (!condition) {
-            fail(message);
-        }
-    }
-
-    /**
-     * Asserts that an object is null. If it is not, an {@link AssertionError}
-     * is thrown with the given message.
-     *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     *                okay)
-     * @param object  Object to check or <code>null</code>
-     */
-    protected static void assertNull(String message, Object object) {
-        if (object == null) {
-            return;
-        }
-        failNotNull(message, object);
-    }
-
-    /**
-     * Asserts that an object is null. If it isn't an {@link AssertionError} is
-     * thrown.
-     *
-     * @param object Object to check or <code>null</code>
-     */
-    protected static void assertNull(Object object) {
-        assertNull(null, object);
-    }
-
-    static private void failNotNull(String message, Object actual) {
-        String formatted = "";
-        if (message != null) {
-            formatted = message + " ";
-        }
-        fail(formatted + "expected null, but was:<" + actual + ">");
-    }
-
-    /**
-     * Fails a test with no message.
-     */
-    protected static void fail() {
-        fail(null);
-    }
-
-    /**
-     * Fails a test with the given message.
-     *
-     * @param message the identifying message for the {@link AssertionError} (<code>null</code>
-     *                okay)
-     * @see AssertionError
-     */
-    protected static void fail(String message) {
-        if (message == null) {
-            throw new AssertionError();
-        }
-        throw new AssertionError(message);
     }
 }

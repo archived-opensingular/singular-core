@@ -17,15 +17,27 @@
 package org.opensingular.internal.lib.wicket.test;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.TextField;
+
+import javax.annotation.Nonnull;
 
 /**
  * Representa um conjunto de asserções voltadas para componentes genéricos do Wicket.
  *
  * @author Daniel Bordin on 12/02/2017.
  */
-public class AssertionsSimpleWComponent extends AssertionsSimpleWComponentBase<Component, AssertionsSimpleWComponent> {
+public class AssertionsSimpleWComponent extends AssertionsSimpleWComponentBase<AssertionsSimpleWComponent, Component> {
 
     public AssertionsSimpleWComponent(Component c) {
         super(c);
+    }
+
+    /**
+     * Verifica se o componente é um TextField e sendo retorna um assertiva específica para esse caso. Dispara exception
+     * senão for um TextField Wicket.
+     */
+    @Nonnull
+    public AssertionsSimpleWTextField asTextField() {
+        return new AssertionsSimpleWTextField(getTarget(TextField.class));
     }
 }

@@ -49,14 +49,14 @@ public class STypeStringSelectItemDynamicAutoCompleteTest {
 
     @Test
     public void renderField() {
-        tester.getAssertionsPage().getSubComponents(TypeaheadComponent.class).isSize(1);
-        tester.getAssertionsPage().getSubComponents(TextField.class).isSize(2);
+        tester.getAssertionsPage().getSubComponents(TypeaheadComponent.class).hasSize(1);
+        tester.getAssertionsPage().getSubComponents(TextField.class).hasSize(2);
     }
 
     @Test
     public void haveABloodhoundBehabiour() {
         TypeaheadComponent typeaheadComponent = tester.getAssertionsPage().getSubComponents(TypeaheadComponent.class)
-                .get(0)
+                .element(0)
                 .getTarget(TypeaheadComponent.class);
         assertThat(typeaheadComponent.getBehaviors()).haveAtLeast(1, new Condition<Behavior>() {
             @Override
