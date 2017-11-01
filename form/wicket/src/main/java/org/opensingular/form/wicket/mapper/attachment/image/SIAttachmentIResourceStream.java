@@ -16,7 +16,7 @@
  *
  */
 
-package org.opensingular.form.wicket.mapper.attachment.single;
+package org.opensingular.form.wicket.mapper.attachment.image;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
