@@ -35,8 +35,8 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
-import org.apache.wicket.request.resource.DynamicImageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceStreamResource;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.servlet.MimeTypes;
@@ -47,6 +47,7 @@ import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavior;
 import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
 import org.opensingular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
+import org.opensingular.form.wicket.mapper.attachment.image.SIAttachmentIResourceStream;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
 import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManager;
 import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManagerFactory;
@@ -169,12 +170,7 @@ public class FileUploadPanel extends Panel implements Loggable {
 
     private void addPreview() {
         preview = new WebMarkupContainer("preview");
-        Image imagePreview = new Image("imagePreview", new DynamicImageResource() {
-            @Override
-            protected byte[] getImageData(Attributes attributes) {
-                return self.getModel().getObject().getContentAsByteArray().orElse(new byte[0]);
-            }
-        });
+        Image imagePreview = new Image("imagePreview", new ResourceStreamResource(new SIAttachmentIResourceStream(self.getModel())));
         add(preview.add(imagePreview));
         preview.add(new Behavior() {
             @Override
