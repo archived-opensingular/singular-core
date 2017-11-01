@@ -18,6 +18,7 @@
 
 package org.opensingular.form.type.core.attachment;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,7 +64,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     private static void assertConteudo(byte[] conteudoEsperado, SIAttachment arquivo, int expectedDistintictFiles) throws IOException {
         String hash = HashUtil.toSHA1Base16(conteudoEsperado);
 
-//        assertTrue(Arrays.equals(conteudoEsperado, arquivo.getContentAsByteArray().get()));
+        assertTrue(Arrays.equals(conteudoEsperado, IOUtils.toByteArray(arquivo.getContentAsInputStream().get())));
         assertEquals(conteudoEsperado.length, arquivo.getFileSize());
         assertEquals(hash, arquivo.getFileHashSHA1());
         assertNotNull(arquivo.getAttachmentRef());
@@ -77,7 +78,6 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     }
 
     private static void assertNoReference(SIAttachment arquivo, int expectedDistintictFiles) throws IOException {
-//        assertNull(arquivo.getContentAsByteArray().orElse(null));
         assertNull(arquivo.getContentAsInputStream().orElse(null));
         assertNull(arquivo.getFileName());
         assertNull(arquivo.getFileId());
@@ -139,8 +139,8 @@ public class TesteMPacoteAttachment extends TestCaseForm {
 
     @Test
     public void testSetContentToNull() throws IOException {
-        SIAttachment arquivo  = createEmptyAttachment();
-        byte[]       conteudo = new byte[]{1, 2};
+        SIAttachment arquivo = createEmptyAttachment();
+        byte[] conteudo = new byte[]{1, 2};
 
         assertException(() -> arquivo.setContent("", null, 0, ""), "O arquivo não pode ser nulo.");
         assertNoReference(arquivo, 0);

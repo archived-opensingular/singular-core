@@ -18,6 +18,7 @@
 
 package org.opensingular.form.wicket.mapper.attachment;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.wicket.util.tester.FormTester;
 import org.junit.After;
 import org.junit.Assert;
@@ -26,6 +27,7 @@ import org.junit.Test;
 import org.opensingular.form.SIList;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.io.HashUtil;
+import org.opensingular.form.io.IOUtil;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
 import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
@@ -102,7 +104,7 @@ public class AttachmentListMapperTest {
 
         assertAttachs = ctx.getAssertionsPage().getSubCompomentForSInstance(atts).isNotNull();
         SIAttachment att = assertAttachs.assertSInstance().isList(1).field("[0]").getTarget(SIAttachment.class);
-//        Assert.assertArrayEquals(content2, att.getContentAsByteArray().get());
+        Assert.assertArrayEquals(content2, IOUtils.toByteArray(att.getContentAsInputStream().get()));
     }
 
     @Test
