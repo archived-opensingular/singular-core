@@ -30,6 +30,15 @@
     .singular-upload-preview > img {
         max-height: 200px;
     }
+    .singular-upload-disabled, input.singular-upload-disabled, input.singular-upload-disabled.disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+    }
+    .singular-upload-field-disabled, .form-control.singular-upload-field-disabled, div.form-control.singular-upload-field-disabled {
+        background-color: #eaeef2;
+        opacity: 1;
+        cursor: not-allowed !important;
+    }
 </style>
 </wicket:head>
 <wicket:panel >
@@ -42,7 +51,7 @@
         }
     </style>
     <div class="input-group">
-        <div class="form-control overflow-hidden">
+        <div wicket:id="input-div" class="form-control overflow-hidden">
             <i class="fa fa-file"></i>
             <span wicket:id="files" class="fileinput-filename">
                 <a wicket:id="downloadLink"></a>

@@ -31,13 +31,13 @@ import javax.servlet.http.HttpServletResponse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class CachingFilterTest {
+public class CachingAndEncodingFilterTest {
 
-    Logger logger = LoggerFactory.getLogger(CachingFilterTest.class);
+    Logger logger = LoggerFactory.getLogger(CachingAndEncodingFilterTest.class);
 
     @Test
     public void testCache() throws Exception {
-        CachingFilter       filter   = new CachingFilter();
+        CachingAndEncodingFilter filter   = new CachingAndEncodingFilter();
         HttpServletRequest  request  = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         FilterChain         chain    = mock(FilterChain.class);
@@ -51,7 +51,7 @@ public class CachingFilterTest {
 
         verify(response).setHeader(name.capture(), value.capture());
 
-        Assert.assertEquals(CachingFilter.CACHE_CONTROL, name.getValue());
+        Assert.assertEquals(CachingAndEncodingFilter.CACHE_CONTROL, name.getValue());
         Assert.assertTrue(value.getValue().startsWith("max-age="));
 
         logger.info(value.getValue());

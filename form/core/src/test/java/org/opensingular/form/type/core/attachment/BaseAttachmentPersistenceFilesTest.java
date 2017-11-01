@@ -18,6 +18,7 @@
 
 package org.opensingular.form.type.core.attachment;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -97,7 +98,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
     private void assertReference(IAttachmentRef ref) throws IOException {
         assertEquals(hash, ref.getHashSHA1());
         assertEquals(content.length, ref.getSize());
-        assertTrue(Arrays.equals(content, ref.getContentAsByteArray()));
+        assertTrue(Arrays.equals(content, IOUtils.toByteArray(ref.getContentAsInputStream())));
     }
 
     @Test
@@ -112,7 +113,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
         assertEquals(returned.getHashSHA1(), original.getHashSHA1());
         assertEquals(returned.getId(), original.getId());
         assertEquals(returned.getSize(), original.getSize());
-        assertTrue(Arrays.equals(returned.getContentAsByteArray(), original.getContentAsByteArray()));
-        assertTrue(Arrays.equals(returned.getContentAsByteArray(), original.getContentAsByteArray()));
+        assertTrue(Arrays.equals(IOUtils.toByteArray(returned.getContentAsInputStream()), IOUtils.toByteArray(returned.getContentAsInputStream())));
+        assertTrue(Arrays.equals(IOUtils.toByteArray(returned.getContentAsInputStream()), IOUtils.toByteArray(returned.getContentAsInputStream())));
     }
 }

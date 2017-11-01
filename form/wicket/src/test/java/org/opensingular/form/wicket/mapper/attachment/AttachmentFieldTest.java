@@ -18,6 +18,7 @@
 
 package org.opensingular.form.wicket.mapper.attachment;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -187,13 +188,13 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
         return ctx;
     }
 
-    private void asssertContent(AssertionsSInstance attachment, byte[] expectedContent) {
+    private void asssertContent(AssertionsSInstance attachment, byte[] expectedContent) throws IOException {
         attachment.is(SIAttachment.class);
         SIAttachment att = attachment.getTarget(SIAttachment.class);
         if (expectedContent == null) {
-            Assert.assertFalse(att.getContentAsByteArray().isPresent());
+            Assert.assertFalse(att.getContentAsInputStream().isPresent());
         } else {
-            byte[] current = att.getContentAsByteArray().get();
+            byte[] current = IOUtils.toByteArray(att.getContentAsInputStream().get());
             assertArrayEquals(expectedContent, current);
         }
     }
