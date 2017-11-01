@@ -36,7 +36,9 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.resource.DynamicImageResource;
+import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceStreamResource;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.servlet.MimeTypes;
@@ -169,12 +171,7 @@ public class FileUploadPanel extends Panel implements Loggable {
 
     private void addPreview() {
         preview = new WebMarkupContainer("preview");
-        Image imagePreview = new Image("imagePreview", new DynamicImageResource() {
-            @Override
-            protected byte[] getImageData(Attributes attributes) {
-                return self.getModel().getObject().getContentAsByteArray().orElse(new byte[0]);
-            }
-        });
+        Image imagePreview = new Image("imagePreview", new ResourceStreamResource(new SIAttachmentIResourceStream(self.getModel())));
         add(preview.add(imagePreview));
         preview.add(new Behavior() {
             @Override

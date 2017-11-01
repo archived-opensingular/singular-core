@@ -21,7 +21,7 @@ package org.opensingular.form.wicket.mapper.attachment;
 import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.form.SType;
-import org.opensingular.form.type.core.attachment.STypeAttachmentImage;
+import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.view.SViewAttachmentImageTooltip;
 import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
@@ -41,7 +41,7 @@ public class AttachmentImageMapperTest {
     @Test
     public void testRenderComponent() throws IOException {
         SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
-        tester.getDummyPage().setTypeBuilder(tb->tb.addField("imgFile", STypeAttachmentImage.class));
+        tester.getDummyPage().setTypeBuilder(tb->tb.addField("imgFile", STypeAttachment.class));
         tester.getDummyPage().setAsEditView();
 
         tester.startDummyPage();
@@ -53,7 +53,7 @@ public class AttachmentImageMapperTest {
     public void testRenderTooltipMapper() throws IOException {
         SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
         tester.getDummyPage().setTypeBuilder(tb->{
-            SType imgFile = tb.addField("imgFile", STypeAttachmentImage.class);
+            SType imgFile = tb.addField("imgFile", STypeAttachment.class);
             imgFile.setView(SViewAttachmentImageTooltip::new);
         });
         tester.getDummyPage().setAsEditView();

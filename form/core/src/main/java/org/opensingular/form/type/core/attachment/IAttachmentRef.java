@@ -16,7 +16,6 @@
 
 package org.opensingular.form.type.core.attachment;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.tika.Tika;
 import org.opensingular.form.SingularFormException;
 
@@ -88,28 +87,6 @@ public interface IAttachmentRef extends Serializable, DataSource{
         }
     }
 
-    /**
-     * Retorna o conteúdo dessa referência como um array de bytes.
-     * <b>ATENÇÂO: DEVE SER PREFERENCIALMENTE USADO {@link #getContentAsInputStream()}</b> se
-     * há expectativa de manipular arquivos de grande tamanho.
-     */
-    @Nonnull
-    default byte[] getContentAsByteArray() {
-        try(InputStream in = getContentAsInputStream()) {
-            byte[] content = new byte[(int) getSize()];
-            IOUtils.readFully(in, content);
-            if (in.read() != -1) {
-                throw addInfo(new SingularFormException(
-                        "Erro lendo conteúdo da referencia: há mais byte do que o definido por getSize()"), this);
-            }
-            return content;
-        } catch(IOException e) {
-            //Faz em mais de um passo para o sonar não dar falso positivo
-            SingularFormException e2 = new SingularFormException("Erro obtendo referencia", e);
-            addInfo(e2, this);
-            throw e2;
-        }
-    }
 
     static SingularFormException addInfo(SingularFormException e, IAttachmentRef ref) {
         e.add("name", () -> ref.getName())

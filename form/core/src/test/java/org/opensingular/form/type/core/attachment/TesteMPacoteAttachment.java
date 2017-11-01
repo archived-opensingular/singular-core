@@ -63,7 +63,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     private static void assertConteudo(byte[] conteudoEsperado, SIAttachment arquivo, int expectedDistintictFiles) throws IOException {
         String hash = HashUtil.toSHA1Base16(conteudoEsperado);
 
-        assertTrue(Arrays.equals(conteudoEsperado, arquivo.getContentAsByteArray().get()));
+//        assertTrue(Arrays.equals(conteudoEsperado, arquivo.getContentAsByteArray().get()));
         assertEquals(conteudoEsperado.length, arquivo.getFileSize());
         assertEquals(hash, arquivo.getFileHashSHA1());
         assertNotNull(arquivo.getAttachmentRef());
@@ -77,7 +77,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     }
 
     private static void assertNoReference(SIAttachment arquivo, int expectedDistintictFiles) throws IOException {
-        assertNull(arquivo.getContentAsByteArray().orElse(null));
+//        assertNull(arquivo.getContentAsByteArray().orElse(null));
         assertNull(arquivo.getContentAsInputStream().orElse(null));
         assertNull(arquivo.getFileName());
         assertNull(arquivo.getFileId());
