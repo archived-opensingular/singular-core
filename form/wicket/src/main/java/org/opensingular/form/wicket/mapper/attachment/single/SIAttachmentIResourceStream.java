@@ -33,7 +33,7 @@ import java.util.Locale;
 public class SIAttachmentIResourceStream implements IResourceStream {
 
     private IModel<SIAttachment> attachmentIModel;
-    private InputStream stream;
+    private transient InputStream stream;
     private Locale locale;
     private String style;
     private String variation;
