@@ -26,18 +26,22 @@ import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.lib.commons.util.TempFileUtils;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-public class AttachmentRef implements IAttachmentRef{
+public class AttachmentRef implements IAttachmentRef {
 
     private final String id;
-    
+
     private final Long codContent;
 
     private final String hashSha1;
 
     private final long size;
-    
+
     private final String name;
 
     private File file;
@@ -45,7 +49,7 @@ public class AttachmentRef implements IAttachmentRef{
     public AttachmentRef(AttachmentEntity attachmentEntity) {
         this(attachmentEntity.getCod().toString(), attachmentEntity.getCodContent(), attachmentEntity.getHashSha1(), attachmentEntity.getSize(), attachmentEntity.getName());
     }
-    
+
     public AttachmentRef(String id, Long codContent, String hashSha1, long size, String name) {
         super();
         this.id = id;
@@ -70,21 +74,17 @@ public class AttachmentRef implements IAttachmentRef{
     public String getName() {
         return name;
     }
-    
-    public Long getCodContent() {
-        return codContent;
-    }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     public InputStream getInputStream() throws IOException {
         try {
             if (file == null || !file.exists()) {
-                
-                AttachmentPersistenceService<AttachmentEntity, AttachmentContentEntity> persistenceHandler =
-                    ApplicationContextProvider.get().getBean(SDocument.FILE_PERSISTENCE_SERVICE, AttachmentPersistenceService.class);
 
-                file = File.createTempFile(name, hashSha1 + "."+id);
+                AttachmentPersistenceService<AttachmentEntity, AttachmentContentEntity> persistenceHandler =
+                        ApplicationContextProvider.get().getBean(SDocument.FILE_PERSISTENCE_SERVICE, AttachmentPersistenceService.class);
+
+                file = File.createTempFile(name, hashSha1 + "." + id);
                 file.deleteOnExit();
 
                 try (OutputStream fos = IOUtil.newBufferedOutputStream(file)) {
@@ -93,14 +93,14 @@ public class AttachmentRef implements IAttachmentRef{
             }
             return CompressionUtil.inflateToInputStream(new FileInputStream(file));
         } catch (Exception e) {
-            if(file != null){
+            if (file != null) {
                 TempFileUtils.deleteAndFailQuietily(file, getClass());
                 file = null;
             }
             throw SingularUtil.propagate(e);
         }
     }
-    
+
     public int hashCode() {
         String cod = getId();
         return (cod == null) ? super.hashCode() : cod.hashCode();

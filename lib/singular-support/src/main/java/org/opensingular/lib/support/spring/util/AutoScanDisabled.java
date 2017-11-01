@@ -16,6 +16,8 @@
 
 package org.opensingular.lib.support.spring.util;
 
+import org.springframework.core.type.filter.AnnotationTypeFilter;
+
 /**
  * Anotação de marcação para indicar que um componente do spring não deve ser carregado durante o auto-scan.
  * Para isso é preciso definir um filtro no autoscan do tipo annotation e configurar essa anotação como a anotação
@@ -23,4 +25,6 @@ package org.opensingular.lib.support.spring.util;
  *
  */
 public @interface AutoScanDisabled {
+
+    AnnotationTypeFilter AUTO_SCAN_DISABLED_FILTER = new AnnotationTypeFilter(AutoScanDisabled.class);
 }

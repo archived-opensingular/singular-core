@@ -18,6 +18,7 @@
 
 package org.opensingular.form.type.core.attachment;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -65,7 +66,7 @@ public abstract class TestCasePersistenceHandlerBase {
         assertEquals(hashEsperado, ref.getHashSHA1());
         assertEquals(hashEsperado, ref.getId());
         assertEquals(sizeEsperado, handler.getAttachments().size());
-        assertTrue(Arrays.equals(conteudoEsperado, ref.getContentAsByteArray()));
+        assertTrue(Arrays.equals(conteudoEsperado, IOUtils.toByteArray(ref.getContentAsInputStream())));
     }
 
     protected final IAttachmentPersistenceHandler getHandler() {
@@ -98,11 +99,11 @@ public abstract class TestCasePersistenceHandlerBase {
             IAttachmentRef ref3 = getHandler().getAttachment(ref.getId());
 
             assertThat(ref2).isNotNull();
-            assertThat(ref2.getContentAsByteArray()).isEqualTo(conteudos[i]);
+            assertThat(IOUtils.toByteArray(ref2.getContentAsInputStream())).isEqualTo(conteudos[i]);
             assertThat(ref2.getHashSHA1()).isEqualTo(hashs[i]);
 
             assertThat(ref3).isNotNull();
-            assertThat(ref3.getContentAsByteArray()).isEqualTo(conteudos[i]);
+            assertThat(IOUtils.toByteArray(ref3.getContentAsInputStream())).isEqualTo(conteudos[i]);
             assertThat(ref3.getHashSHA1()).isEqualTo(hashs[i]);
         }
     }

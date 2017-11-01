@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.security.SecureRandom;
 
 @WebFilter(urlPatterns = "*")
-public class CachingFilter implements Filter {
+public class CachingAndEncodingFilter implements Filter {
 
     public static final String       CACHE_CONTROL   = "Cache-Control";
     public static final String       MAX_AGE_PATTERN = "max-age=%d";
@@ -45,6 +45,7 @@ public class CachingFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setHeader(CACHE_CONTROL, String.format(MAX_AGE_PATTERN, THIRTY_DAYS + RANDOM.longs(0, TWELVE_HOURS).findFirst().orElse(0L)));
         chain.doFilter(request, httpServletResponse);
     }

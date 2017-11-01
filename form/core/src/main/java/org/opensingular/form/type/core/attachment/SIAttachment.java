@@ -143,18 +143,6 @@ public class SIAttachment extends SIComposite {
         return ref == null ? Optional.empty(): Optional.of(ref.getContentAsInputStream());
     }
 
-    /**
-     * Retorna o conteúdo do anexo como um array de bytes.
-     * <b>ATENÇÂO: DEVE SER PREFERENCIALMENTE USADO {@link #getContentAsInputStream()}</b> se
-     * há expectativa de manipular arquivos de grande tamanho.
-     * @see IAttachmentRef#getContentAsByteArray()
-     */
-    @Nonnull
-    public Optional<byte[]> getContentAsByteArray() {
-        IAttachmentRef ref = getAttachmentRef();
-        return ref == null ? Optional.empty(): Optional.of(ref.getContentAsByteArray());
-    }
-
     public String fileSizeToString() {
         long size = getFileSize();
         return size <= 0 ? "" : SingularIOUtils.humanReadableByteCountRound(getFileSize());
