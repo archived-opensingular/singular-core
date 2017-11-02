@@ -28,7 +28,7 @@ public class FileSystemAttachmentPersistenceFilesTest extends BaseAttachmentPers
 
     @Override
     protected IAttachmentPersistenceHandler createHandler() throws Exception {
-        return new FileSystemAttachmentPersistenceHandler(tmpProvider.createTempDir());
+        return new FileSystemAttachmentPersistenceHandler(getTempFileProvider().createTempDir());
     }
 
 

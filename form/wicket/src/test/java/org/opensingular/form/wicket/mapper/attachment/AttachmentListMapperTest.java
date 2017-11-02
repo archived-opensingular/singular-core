@@ -18,39 +18,24 @@
 
 package org.opensingular.form.wicket.mapper.attachment;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.wicket.util.tester.FormTester;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.form.SIList;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.io.HashUtil;
-import org.opensingular.form.io.IOUtil;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
 import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
-import org.opensingular.internal.lib.commons.util.TempFileProvider;
+import org.opensingular.lib.commons.junit.AbstractTestTempFileSupport;
 
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 
-public class AttachmentListMapperTest {
+import static org.opensingular.form.wicket.mapper.attachment.AttachmentFieldTest.getBytes;
 
-    protected TempFileProvider tmpProvider;
-
-    @Before
-    public void createTmpProvider() {
-        tmpProvider = TempFileProvider.createForUseInTryClause(this);
-    }
-
-    @After
-    public void cleanTmpProvider() {
-        tmpProvider.deleteOrException();
-    }
-
+public class AttachmentListMapperTest extends AbstractTestTempFileSupport {
 
     @Test
     public void testAddNewFileAndRemove() throws IOException {
@@ -66,7 +51,7 @@ public class AttachmentListMapperTest {
         ctx.getAssertionsPage().getSubComponentForSInstance(atts).isNotNull().assertSInstance().isList(0);
 
         byte[] content = new byte[]{3, 4};
-        File tmpFile = tmpProvider.createTempFile(content);
+        File tmpFile = getTempFileProvider().createTempFile(content);
 
         FormTester formTester = ctx.newFormTester();
         //formTester.setFile(getFormRelativePath(multipleFileField), new org.apache.wicket.util.file.File(tempFile),
@@ -104,7 +89,7 @@ public class AttachmentListMapperTest {
 
         assertAttachs = ctx.getAssertionsPage().getSubComponentForSInstance(atts).isNotNull();
         SIAttachment att = assertAttachs.assertSInstance().isList(1).field("[0]").getTarget(SIAttachment.class);
-        Assert.assertArrayEquals(content2, IOUtils.toByteArray(att.getContentAsInputStream().get()));
+        Assert.assertArrayEquals(content2, getBytes(att));
     }
 
     @Test
@@ -141,8 +126,8 @@ public class AttachmentListMapperTest {
 
     @Nonnull
     private SingularDummyFormPageTester createTestPageWithTwoAttachments(byte[] content1, byte[] content2) {
-        File file1 = tmpProvider.createTempFile(content1);
-        File file2 = tmpProvider.createTempFile(content2);
+        File file1 = getTempFileProvider().createTempFile(content1);
+        File file2 = getTempFileProvider().createTempFile(content2);
 
         SingularDummyFormPageTester ctx = new SingularDummyFormPageTester();
         ctx.getDummyPage().setTypeBuilder(AttachmentListMapperTest::createType);

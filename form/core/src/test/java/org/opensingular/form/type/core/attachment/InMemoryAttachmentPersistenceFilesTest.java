@@ -28,7 +28,7 @@ public class InMemoryAttachmentPersistenceFilesTest extends BaseAttachmentPersis
 
     @Override
     protected IAttachmentPersistenceHandler createHandler() {
-        return new InMemoryAttachmentPersistenceHandler(tmpProvider.createTempDir());
+        return new InMemoryAttachmentPersistenceHandler(getTempFileProvider().createTempDir());
     }
 
 

@@ -64,7 +64,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     private static void assertConteudo(byte[] conteudoEsperado, SIAttachment arquivo, int expectedDistintictFiles) throws IOException {
         String hash = HashUtil.toSHA1Base16(conteudoEsperado);
 
-        assertTrue(Arrays.equals(conteudoEsperado, IOUtils.toByteArray(arquivo.getContentAsInputStream().get())));
+        assertTrue(Arrays.equals(conteudoEsperado, getBytes(arquivo)));
         assertEquals(conteudoEsperado.length, arquivo.getFileSize());
         assertEquals(hash, arquivo.getFileHashSHA1());
         assertNotNull(arquivo.getAttachmentRef());
@@ -341,6 +341,12 @@ public class TesteMPacoteAttachment extends TestCaseForm {
             if (count > 102400) {
                 throw new IOException("Simulando IOException no meio de uma leitura (lidos " + count + ")");
             }
+        }
+    }
+
+    protected static byte[] getBytes(SIAttachment attachment) throws IOException {
+        try(InputStream in = attachment.getContentAsInputStream().get()) {
+            return IOUtils.toByteArray(in);
         }
     }
 }
