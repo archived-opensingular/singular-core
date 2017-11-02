@@ -18,16 +18,14 @@
 
 package org.opensingular.form.type.core.attachment;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.io.HashUtil;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
-import org.opensingular.internal.lib.commons.util.TempFileProvider;
+import org.opensingular.lib.commons.junit.AbstractTestTempFileSupport;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,10 +33,14 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.contentOf;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.opensingular.form.type.core.attachment.BaseAttachmentPersistenceFilesTest.getBytes;
 
-public abstract class TestCasePersistenceHandlerBase {
+public abstract class TestCasePersistenceHandlerBase extends AbstractTestTempFileSupport {
 
     // @formatter:off
     private final byte[][] conteudos = new byte[][]{"i".getBytes(), "np".getBytes(), "1234".getBytes()};
@@ -47,23 +49,11 @@ public abstract class TestCasePersistenceHandlerBase {
     private IAttachmentPersistenceHandler persistenHandler;
     // @formatter:on
 
-    protected TempFileProvider tmpProvider;
-
-    @Before
-    public void createTmpProvider() {
-        tmpProvider = TempFileProvider.createForUseInTryClause(this);
-    }
-
-    @After
-    public void cleanTmpProvider() {
-        tmpProvider.deleteOrException();
-    }
-
     private static void assertConteudo(IAttachmentPersistenceHandler handler, IAttachmentRef ref, byte[] conteudoEsperado, String hashEsperado, int sizeEsperado) throws IOException {
         assertEquals(hashEsperado, ref.getHashSHA1());
         assertEquals(hashEsperado, ref.getId());
         assertEquals(sizeEsperado, handler.getAttachments().size());
-        assertTrue(Arrays.equals(conteudoEsperado, IOUtils.toByteArray(ref.getContentAsInputStream())));
+        assertTrue(Arrays.equals(conteudoEsperado, getBytes(ref)));
     }
 
     protected final IAttachmentPersistenceHandler getHandler() {
@@ -87,7 +77,7 @@ public abstract class TestCasePersistenceHandlerBase {
     public void testSerializacao() throws IOException, ClassNotFoundException {
         IAttachmentRef[] refs = new IAttachmentRef[conteudos.length];
         for (int i = 0; i < conteudos.length; i++) {
-            refs[i] = getHandler().addAttachment(tmpProvider.createTempFile(conteudos[i]), conteudos[i].length, fileNames[i], HashUtil.toSHA1Base16(conteudos[i]));
+            refs[i] = getHandler().addAttachment(getTempFileProvider().createTempFile(conteudos[i]), conteudos[i].length, fileNames[i], HashUtil.toSHA1Base16(conteudos[i]));
         }
 
         for (int i = 0; i < conteudos.length; i++) {
@@ -96,11 +86,11 @@ public abstract class TestCasePersistenceHandlerBase {
             IAttachmentRef ref3 = getHandler().getAttachment(ref.getId());
 
             assertThat(ref2).isNotNull();
-            assertThat(IOUtils.toByteArray(ref2.getContentAsInputStream())).isEqualTo(conteudos[i]);
+            assertThat(getBytes(ref2)).isEqualTo(conteudos[i]);
             assertThat(ref2.getHashSHA1()).isEqualTo(hashs[i]);
 
             assertThat(ref3).isNotNull();
-            assertThat(IOUtils.toByteArray(ref3.getContentAsInputStream())).isEqualTo(conteudos[i]);
+            assertThat(getBytes(ref3)).isEqualTo(conteudos[i]);
             assertThat(ref3.getHashSHA1()).isEqualTo(hashs[i]);
         }
     }
@@ -112,13 +102,13 @@ public abstract class TestCasePersistenceHandlerBase {
         IAttachmentPersistenceHandler handler2 = setupHandler();
         assertNotEquals(handler1, handler2);
 
-        IAttachmentRef ref11 = handler1.addAttachment(tmpProvider.createTempFile(conteudos[1]), conteudos[1].length, fileNames[1], HashUtil.toSHA1Base16(conteudos[1]));
-        IAttachmentRef ref12 = handler1.addAttachment(tmpProvider.createTempFile(conteudos[2]), conteudos[2].length, fileNames[2], HashUtil.toSHA1Base16(conteudos[2]));
-        IAttachmentRef ref13 = handler1.addAttachment(tmpProvider.createTempFile(conteudos[0]), conteudos[0].length, fileNames[0], HashUtil.toSHA1Base16(conteudos[0]));
+        IAttachmentRef ref11 = handler1.addAttachment(getTempFileProvider().createTempFile(conteudos[1]), conteudos[1].length, fileNames[1], HashUtil.toSHA1Base16(conteudos[1]));
+        IAttachmentRef ref12 = handler1.addAttachment(getTempFileProvider().createTempFile(conteudos[2]), conteudos[2].length, fileNames[2], HashUtil.toSHA1Base16(conteudos[2]));
+        IAttachmentRef ref13 = handler1.addAttachment(getTempFileProvider().createTempFile(conteudos[0]), conteudos[0].length, fileNames[0], HashUtil.toSHA1Base16(conteudos[0]));
         assertConteudo(handler1, ref13, conteudos[0], hashs[0], 3);
 
-        IAttachmentRef ref21 = handler2.addAttachment(tmpProvider.createTempFile(conteudos[1]), conteudos[1].length, fileNames[1], HashUtil.toSHA1Base16(conteudos[1]));
-        IAttachmentRef ref22 = handler2.addAttachment(tmpProvider.createTempFile(conteudos[2]), conteudos[2].length, fileNames[2], HashUtil.toSHA1Base16(conteudos[2]));
+        IAttachmentRef ref21 = handler2.addAttachment(getTempFileProvider().createTempFile(conteudos[1]), conteudos[1].length, fileNames[1], HashUtil.toSHA1Base16(conteudos[1]));
+        IAttachmentRef ref22 = handler2.addAttachment(getTempFileProvider().createTempFile(conteudos[2]), conteudos[2].length, fileNames[2], HashUtil.toSHA1Base16(conteudos[2]));
         assertConteudo(handler2, ref22, conteudos[2], hashs[2], 2);
 
         handler2.deleteAttachment(ref21.getHashSHA1(), null);
@@ -141,9 +131,9 @@ public abstract class TestCasePersistenceHandlerBase {
         assertNotEquals(handler1, handler2);
 
 
-        handler1.addAttachment(tmpProvider.createTempFile(conteudos[1]), conteudos[1].length, fileNames[1], HashUtil.toSHA1Base16(conteudos[1]));
-        IAttachmentRef ref12o = handler1.addAttachment(tmpProvider.createTempFile(conteudos[2]), conteudos[2].length, fileNames[2], HashUtil.toSHA1Base16(conteudos[2]));
-        IAttachmentRef ref21o = handler2.addAttachment(tmpProvider.createTempFile(conteudos[1]), conteudos[1].length, fileNames[1], HashUtil.toSHA1Base16(conteudos[1]));
+        handler1.addAttachment(getTempFileProvider().createTempFile(conteudos[1]), conteudos[1].length, fileNames[1], HashUtil.toSHA1Base16(conteudos[1]));
+        IAttachmentRef ref12o = handler1.addAttachment(getTempFileProvider().createTempFile(conteudos[2]), conteudos[2].length, fileNames[2], HashUtil.toSHA1Base16(conteudos[2]));
+        IAttachmentRef ref21o = handler2.addAttachment(getTempFileProvider().createTempFile(conteudos[1]), conteudos[1].length, fileNames[1], HashUtil.toSHA1Base16(conteudos[1]));
 
 //         Apagando na origem
         IAttachmentRef ref22c = handler2.copy(ref12o, null).getNewAttachmentRef();
@@ -192,7 +182,7 @@ public abstract class TestCasePersistenceHandlerBase {
     @Test
     public void deletedFileIsNoLongerAvailable() throws IOException {
         byte[] b = {1, 2};
-        IAttachmentRef ref = getHandler().addAttachment(tmpProvider.createTempFile(b), 2l, "testando.txt", HashUtil.toSHA1Base16(b));
+        IAttachmentRef ref = getHandler().addAttachment(getTempFileProvider().createTempFile(b), 2l, "testando.txt", HashUtil.toSHA1Base16(b));
         getHandler().deleteAttachment(ref.getId(), null);
         assertThat(getHandler().getAttachment(ref.getId())).isNull();
     }
@@ -208,9 +198,9 @@ public abstract class TestCasePersistenceHandlerBase {
         byte[] c1;
         byte[] c2;
         byte[] c3;
-        getHandler().addAttachment(tmpProvider.createTempFile(c1 = new byte[]{1, 2, 3}), 3l, "testando1.txt", HashUtil.toSHA1Base16(c1));
-        IAttachmentRef ref = getHandler().addAttachment(tmpProvider.createTempFile(c2 = new byte[]{1, 2}), 2l, "testando2.txt", HashUtil.toSHA1Base16(c2));
-        getHandler().addAttachment(tmpProvider.createTempFile(c3 = new byte[]{1, 2, 4, 5}), 4l, "testando3.txt", HashUtil.toSHA1Base16(c3));
+        getHandler().addAttachment(getTempFileProvider().createTempFile(c1 = new byte[]{1, 2, 3}), 3l, "testando1.txt", HashUtil.toSHA1Base16(c1));
+        IAttachmentRef ref = getHandler().addAttachment(getTempFileProvider().createTempFile(c2 = new byte[]{1, 2}), 2l, "testando2.txt", HashUtil.toSHA1Base16(c2));
+        getHandler().addAttachment(getTempFileProvider().createTempFile(c3 = new byte[]{1, 2, 4, 5}), 4l, "testando3.txt", HashUtil.toSHA1Base16(c3));
 
         getHandler().deleteAttachment(ref.getId(), null);
 
