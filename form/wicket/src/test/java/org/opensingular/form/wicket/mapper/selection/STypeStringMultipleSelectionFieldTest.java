@@ -29,7 +29,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SMultiSelectionByCheckboxView;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class STypeStringMultipleSelectionFieldTest {
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static STypeList fieldType;
 
@@ -50,7 +50,7 @@ public class STypeStringMultipleSelectionFieldTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(STypeStringMultipleSelectionFieldTest::buildBaseType);
     }
 

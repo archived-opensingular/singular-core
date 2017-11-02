@@ -39,8 +39,8 @@ import java.util.function.Predicate;
  * @since 2017-10-30
  */
 public abstract class AbstractAssertionsForWicket<SELF extends AbstractAssertionsForWicket<SELF, T,
-        ASSERTIONS_COMPONENT, ASSERTIONS_LIST>, T extends Component, ASSERTIONS_COMPONENT extends AssertionsBase<ASSERTIONS_COMPONENT,
-        Component>, ASSERTIONS_LIST extends AbstractAssertionsForWicketList<ASSERTIONS_LIST, ASSERTIONS_COMPONENT>>
+        ASSERTIONS_COMPONENT, ASSERTIONS_LIST>, T extends Component, ASSERTIONS_COMPONENT extends AbstractAssertionsForWicket<ASSERTIONS_COMPONENT,
+        Component,?,?>, ASSERTIONS_LIST extends AbstractAssertionsForWicketList<ASSERTIONS_LIST, ASSERTIONS_COMPONENT>>
         extends AssertionsBase<SELF, T> {
 
     public AbstractAssertionsForWicket(T c) {

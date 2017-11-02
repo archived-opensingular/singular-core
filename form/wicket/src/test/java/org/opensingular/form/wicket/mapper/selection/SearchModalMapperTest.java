@@ -31,7 +31,7 @@ import org.opensingular.form.provider.ProviderContext;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.helpers.AssertionsWComponentList;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.form.wicket.mapper.search.SearchModalPanel;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 
@@ -71,7 +71,7 @@ public class SearchModalMapperTest {
 
     @Test
     public void testIfChooseValueInModelUpdatesDependentComponent() {
-        SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(SearchModalMapperTest::buildBaseType);
         tester.startDummyPage();
 

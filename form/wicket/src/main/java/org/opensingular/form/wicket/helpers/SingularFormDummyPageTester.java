@@ -34,34 +34,34 @@ import java.util.stream.Collectors;
  *
  * @author Daniel Bordin on 15/02/2017.
  */
-public final class SingularDummyFormPageTester extends SingularWicketTester {
+public final class SingularFormDummyPageTester extends SingularWicketTester {
 
     private DummyPage page = new DummyPage();
 
-    public SingularDummyFormPageTester() {
+    public SingularFormDummyPageTester() {
     }
 
-    public SingularDummyFormPageTester(Class<? extends Page> homePage) {
+    public SingularFormDummyPageTester(Class<? extends Page> homePage) {
         super(homePage);
     }
 
-    public SingularDummyFormPageTester(WebApplication application) {
+    public SingularFormDummyPageTester(WebApplication application) {
         super(application);
     }
 
-    public SingularDummyFormPageTester(WebApplication application, String path) {
+    public SingularFormDummyPageTester(WebApplication application, String path) {
         super(application, path);
     }
 
-    public SingularDummyFormPageTester(WebApplication application, ServletContext servletCtx) {
+    public SingularFormDummyPageTester(WebApplication application, ServletContext servletCtx) {
         super(application, servletCtx);
     }
 
-    public SingularDummyFormPageTester(WebApplication application, boolean init) {
+    public SingularFormDummyPageTester(WebApplication application, boolean init) {
         super(application, init);
     }
 
-    public SingularDummyFormPageTester(WebApplication application, ServletContext servletCtx, boolean init) {
+    public SingularFormDummyPageTester(WebApplication application, ServletContext servletCtx, boolean init) {
         super(application, servletCtx, init);
     }
 
@@ -75,7 +75,7 @@ public final class SingularDummyFormPageTester extends SingularWicketTester {
     /**
      * Executa no wicket a página de teste padrão que contem o SType ou Form a ser testado.
      */
-    public final SingularDummyFormPageTester startDummyPage() {
+    public final SingularFormDummyPageTester startDummyPage() {
         if (page.getTypeBuilder() == null) {
             throw new IllegalStateException("page.getTypeBuilder() está null (configure para o teste)");
         }

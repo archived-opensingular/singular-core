@@ -23,7 +23,7 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewBreadcrumb;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 /**
  * @author Daniel C. Bordin on 27/03/2017.
@@ -32,7 +32,7 @@ public class ListBreadcrumbMapperTest {
 
     @Test
     public void testEditRendering() {
-        SingularDummyFormPageTester ctx = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
         ctx.getDummyPage().setTypeBuilder(ListBreadcrumbMapperTest::createSimpleForm);
         ctx.getDummyPage().setAsEditView();
         ctx.startDummyPage();

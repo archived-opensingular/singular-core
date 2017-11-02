@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.wicket.helpers;
+package org.opensingular.internal.lib.wicket.test;
 
 import org.apache.wicket.protocol.http.WebApplication;
-import org.opensingular.internal.lib.wicket.test.AbstractWicketTestCase;
 
 import javax.annotation.Nonnull;
 
@@ -25,13 +24,13 @@ import javax.annotation.Nonnull;
  * Support class for creating JUnits test for Wicket.
  *
  * @author Daniel C. Bordin
- * @since 2017-10-28
+ * @since 2017-11-02
  */
-public class SingularWicketTestCase extends AbstractWicketTestCase<SingularWicketTester> {
+public class SingularSimpleWicketTestCase extends AbstractWicketTestCase<SingularSimpleWicketTester> {
 
     @Nonnull
     @Override
-    protected SingularWicketTester createTester(WebApplication app) {
-        return new SingularWicketTester(app);
+    protected SingularSimpleWicketTester createTester(WebApplication app) {
+        return  new SingularSimpleWicketTester(app);
     }
 }

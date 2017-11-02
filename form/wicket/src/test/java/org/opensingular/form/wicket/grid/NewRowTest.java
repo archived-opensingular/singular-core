@@ -26,7 +26,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.util.STypeEMail;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,7 +37,7 @@ public class NewRowTest {
     private static STypeString nome;
     private static STypeInteger idade;
 
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static void buildBaseType(STypeComposite<?> mockType) {
 
@@ -59,7 +59,7 @@ public class NewRowTest {
 
     @Test
     public void testIfEveryTypeIsInDiferentRow() {
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(NewRowTest::buildBaseType);
         tester.startDummyPage();
 

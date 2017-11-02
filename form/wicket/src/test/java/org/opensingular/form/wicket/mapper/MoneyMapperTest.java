@@ -21,13 +21,13 @@ package org.opensingular.form.wicket.mapper;
 import org.apache.wicket.markup.html.form.TextField;
 import org.junit.Test;
 import org.opensingular.form.wicket.helpers.AssertionsWTextField;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 public class MoneyMapperTest {
 
     @Test
     public void testEditRendering() {
-        SingularDummyFormPageTester ctx = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
         ctx.getDummyPage().setTypeBuilder(baseType ->  baseType.addFieldMonetary("money"));
         ctx.getDummyPage().addInstancePopulator(instance -> instance.setValue("money", "10,00"));
         ctx.getDummyPage().setAsEditView();

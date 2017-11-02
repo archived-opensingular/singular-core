@@ -27,11 +27,11 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 public class TableListWithCompositeTypeTest {
 
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static STypeList<STypeComposite<SIComposite>, SIComposite> mockList;
     private static STypeComposite<?> mockTypeComposite;
@@ -52,7 +52,7 @@ public class TableListWithCompositeTypeTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(TableListWithCompositeTypeTest::buildBaseType);
         tester.startDummyPage();
     }

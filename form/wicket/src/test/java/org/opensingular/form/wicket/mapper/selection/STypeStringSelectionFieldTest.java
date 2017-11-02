@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class STypeStringSelectionFieldTest {
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static STypeString selectType;
 
@@ -44,7 +44,7 @@ public class STypeStringSelectionFieldTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(STypeStringSelectionFieldTest::buildBaseType);
     }
 

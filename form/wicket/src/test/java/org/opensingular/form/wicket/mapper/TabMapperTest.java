@@ -24,7 +24,7 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewTab;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;
@@ -61,8 +61,8 @@ public class TabMapperTest {
         });
     }
 
-    public void testTab(Consumer<SingularDummyFormPageTester> config) {
-        SingularDummyFormPageTester ctx = new SingularDummyFormPageTester();
+    public void testTab(Consumer<SingularFormDummyPageTester> config) {
+        SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
         ctx.getDummyPage().setTypeBuilder(TabMapperTest::createSimpleForm);
         config.accept(ctx);
         ctx.startDummyPage();
@@ -77,7 +77,7 @@ public class TabMapperTest {
         assertTabContent(assertionsTab, "nome", "idade");
     }
 
-    private void clickOnTab(SingularDummyFormPageTester ctx, AssertionsWComponent assertionsTab, int tabIndex) {
+    private void clickOnTab(SingularFormDummyPageTester ctx, AssertionsWComponent assertionsTab, int tabIndex) {
         ctx.clickLink(assertionsTab.getSubComponentWithId("tab").getSubComponentsWithId("tabAnchor").element(tabIndex)
                 .getTarget());
     }
@@ -91,7 +91,7 @@ public class TabMapperTest {
     }
 
     @Nonnull
-    private AssertionsWComponent getAssertionsTab(SingularDummyFormPageTester ctx) {
+    private AssertionsWComponent getAssertionsTab(SingularFormDummyPageTester ctx) {
         AssertionsWComponent assertionsTab = ctx.getAssertionsPage().getSubComponentForSInstance(
                 ctx.getAssertionsInstance().getTarget());
         Assert.assertEquals(SViewTab.class, assertionsTab.assertSInstance().getTarget().getType().getView().getClass());

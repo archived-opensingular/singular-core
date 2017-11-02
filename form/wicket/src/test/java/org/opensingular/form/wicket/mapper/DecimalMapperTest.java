@@ -19,7 +19,7 @@
 package org.opensingular.form.wicket.mapper;
 
 import org.junit.Test;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.math.BigDecimal;
 
@@ -27,7 +27,7 @@ public class DecimalMapperTest {
 
     @Test
     public void testIsRendering(){
-        SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(tb-> tb.addFieldDecimal("decimal"));
         tester.getDummyPage().addInstancePopulator(instance -> instance.setValue("decimal", new BigDecimal(123.45)));
 

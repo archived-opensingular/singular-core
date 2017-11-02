@@ -21,7 +21,7 @@ package org.opensingular.form.wicket;
 import org.junit.Test;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.util.Set;
 
@@ -31,7 +31,7 @@ public class SValidationFeedbackHandlerTest {
 
     @Test
     public void testBasic() {
-        SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(tb->tb.addFieldString("string"));
         tester.getDummyPage().setAsEditView();
         tester.startDummyPage();

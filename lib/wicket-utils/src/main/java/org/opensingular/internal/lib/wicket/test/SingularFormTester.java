@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.wicket.helpers;
+package org.opensingular.internal.lib.wicket.test;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.Form;
@@ -23,9 +23,9 @@ import org.apache.wicket.util.tester.FormTester;
 
 public class SingularFormTester extends FormTester {
 
-    private SingularWicketTester tester;
+    private AbstractWicketTester<?> tester;
 
-    protected SingularFormTester(String path, Form<?> workingForm, SingularWicketTester wicketTester, boolean fillBlankString) {
+    protected SingularFormTester(String path, Form<?> workingForm, AbstractWicketTester<?> wicketTester, boolean fillBlankString) {
         super(path, workingForm, wicketTester, fillBlankString);
         this.tester = wicketTester;
     }
@@ -78,9 +78,8 @@ public class SingularFormTester extends FormTester {
     }
 
     private String getFormRelativeComponentId(String formComponentId) {
-        Component formComponent = tester.getAssertionsPage()
-                .getSubComponentWithId(formComponentId)
-                .getTarget();
+        AbstractAssertionsForWicket<?,?,?,?> aC = tester.getAssertionsPage().getSubComponentWithId(formComponentId);
+        Component formComponent = aC.getTarget(Component.class);
 
         String path = formComponent.getPath();
         String formPath = getForm().getPath() + ":";

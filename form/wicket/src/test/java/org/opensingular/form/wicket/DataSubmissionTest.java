@@ -25,14 +25,14 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 
 public class DataSubmissionTest {
 
     private static STypeString data1, data2;
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static void createTypeBuilder(STypeComposite typeBuilder) {
         data1 = typeBuilder.addFieldString("data1");
@@ -46,7 +46,7 @@ public class DataSubmissionTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(DataSubmissionTest::createTypeBuilder);
         tester.getDummyPage().addInstancePopulator(DataSubmissionTest::createInstancePopulator);
     }

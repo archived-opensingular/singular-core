@@ -20,17 +20,17 @@ package org.opensingular.form.wicket.mapper;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerInputGroup;
 import org.opensingular.lib.wicket.util.output.BOutputPanel;
 
 public class DateMapperTest {
 
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(root -> {
             root.addFieldDate("data");
         });

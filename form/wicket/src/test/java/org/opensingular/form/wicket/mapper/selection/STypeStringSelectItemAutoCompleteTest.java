@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewAutoComplete;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.util.Arrays;
 
@@ -39,7 +39,7 @@ public class STypeStringSelectItemAutoCompleteTest {
 
     private static STypeString base;
 
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static void buildBaseType(STypeComposite<?> baseType) {
         base = baseType.addFieldString("myHero");
@@ -56,7 +56,7 @@ public class STypeStringSelectItemAutoCompleteTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(STypeStringSelectItemAutoCompleteTest::buildBaseType);
     }
 

@@ -31,7 +31,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.provider.SimpleProvider;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -48,7 +48,7 @@ import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_P
  * Falhou: Não que eu saiba
  */
 public class TypeaheadAjaxUpdateTest {
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static STypeString                 genero;
     private static STypeComposite<SIComposite> pessoa;
@@ -86,7 +86,7 @@ public class TypeaheadAjaxUpdateTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(TypeaheadAjaxUpdateTest::buildBaseType);
         tester.getDummyPage().setAsEditView();
         tester.startDummyPage();

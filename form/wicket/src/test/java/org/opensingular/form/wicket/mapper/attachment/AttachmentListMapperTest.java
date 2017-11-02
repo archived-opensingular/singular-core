@@ -26,7 +26,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.io.HashUtil;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.lib.commons.junit.AbstractTestTempFileSupport;
 
 import javax.annotation.Nonnull;
@@ -39,7 +39,7 @@ public class AttachmentListMapperTest extends AbstractTestTempFileSupport {
 
     @Test
     public void testAddNewFileAndRemove() throws IOException {
-        SingularDummyFormPageTester ctx = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
         ctx.getDummyPage().setTypeBuilder(AttachmentListMapperTest::createType);
         ctx.getDummyPage().setAsEditView();
         ctx.startDummyPage();
@@ -74,7 +74,7 @@ public class AttachmentListMapperTest extends AbstractTestTempFileSupport {
         byte[] content1 = new byte[]{1, 2};
         byte[] content2 = new byte[]{3, 4, 5};
 
-        SingularDummyFormPageTester ctx = createTestPageWithTwoAttachments(content1, content2);
+        SingularFormDummyPageTester ctx = createTestPageWithTwoAttachments(content1, content2);
         ctx.getDummyPage().setAsEditView();
         ctx.startDummyPage();
 
@@ -97,7 +97,7 @@ public class AttachmentListMapperTest extends AbstractTestTempFileSupport {
         byte[] content1 = new byte[]{1, 2};
         byte[] content2 = new byte[]{3, 4, 5};
 
-        SingularDummyFormPageTester ctx = createTestPageWithTwoAttachments(content1, content2);
+        SingularFormDummyPageTester ctx = createTestPageWithTwoAttachments(content1, content2);
         ctx.getDummyPage().setAsVisualizationView();
         ctx.startDummyPage();
 
@@ -125,11 +125,11 @@ public class AttachmentListMapperTest extends AbstractTestTempFileSupport {
     }
 
     @Nonnull
-    private SingularDummyFormPageTester createTestPageWithTwoAttachments(byte[] content1, byte[] content2) {
+    private SingularFormDummyPageTester createTestPageWithTwoAttachments(byte[] content1, byte[] content2) {
         File file1 = getTempFileProvider().createTempFile(content1);
         File file2 = getTempFileProvider().createTempFile(content2);
 
-        SingularDummyFormPageTester ctx = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
         ctx.getDummyPage().setTypeBuilder(AttachmentListMapperTest::createType);
         ctx.getDummyPage().addInstancePopulator(instance -> {
             SIList<SIAttachment> attachments = (SIList<SIAttachment>) instance.getField("attachments");

@@ -26,7 +26,7 @@ import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SMultiSelectionBySelectView;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.lib.wicket.util.output.BOutputPanel;
 
 import java.util.Arrays;
@@ -35,8 +35,8 @@ import static org.junit.Assert.assertEquals;
 
 public class MultipleSelectMapperTest {
 
-    protected SingularDummyFormPageTester createContext() {
-        SingularDummyFormPageTester ctx = new SingularDummyFormPageTester();
+    protected SingularFormDummyPageTester createContext() {
+        SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
         ctx.getDummyPage().setTypeBuilder(baseType -> {
             STypeString gadgets = baseType.addFieldString("gadget").selectionOf("iPod", "iPhone", "iMac").cast();
             STypeList<STypeString, SIString> gadgetsChoices = baseType.addFieldListOf("gadgets", gadgets);
@@ -55,7 +55,7 @@ public class MultipleSelectMapperTest {
 
     @Test
     public void withEditionViewTestEditRendering() {
-        SingularDummyFormPageTester ctx = createContext();
+        SingularFormDummyPageTester ctx = createContext();
         ctx.getDummyPage().setAsEditView();
         ctx.startDummyPage();
         ctx.getAssertionsForm().getSubComponentWithId("gadgets").isInstanceOf(ListMultipleChoice.class);
@@ -63,7 +63,7 @@ public class MultipleSelectMapperTest {
 
     @Test
     public void withVisualizationViewTestVisualizationRendering() {
-        SingularDummyFormPageTester ctx = createContext();
+        SingularFormDummyPageTester ctx = createContext();
         ctx.getDummyPage().setAsVisualizationView();
         ctx.startDummyPage();
         AssertionsWComponent panel = ctx.getAssertionsForm().getSubComponentWithId("gadgets");

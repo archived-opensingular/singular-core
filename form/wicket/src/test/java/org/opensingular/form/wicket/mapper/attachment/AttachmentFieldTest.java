@@ -38,8 +38,8 @@ import org.opensingular.form.io.HashUtil;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
 
@@ -79,7 +79,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
 
     @Test
     public void testAddNewFileAndRemove() throws IOException {
-        SingularDummyFormPageTester ctx = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
         ctx.getDummyPage().setTypeBuilder(AttachmentFieldTest::createType);
         ctx.getDummyPage().setAsEditView();
 
@@ -125,7 +125,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
     @Test
     public void testRemove() throws IOException {
         byte[] content =  new byte[]{1, 2};
-        SingularDummyFormPageTester ctx = createPageWithContent(content);
+        SingularFormDummyPageTester ctx = createPageWithContent(content);
         ctx.getDummyPage().setAsEditView();
 
 
@@ -163,7 +163,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
     @Test
     public void testReadOnly() throws IOException {
         byte[] content =  new byte[]{1, 2};
-        SingularDummyFormPageTester ctx = createPageWithContent(content);
+        SingularFormDummyPageTester ctx = createPageWithContent(content);
         ctx.getDummyPage().setAsVisualizationView();
 
         //Start
@@ -178,10 +178,10 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
     }
 
     @Nonnull
-    private SingularDummyFormPageTester createPageWithContent(byte[] content) {
+    private SingularFormDummyPageTester createPageWithContent(byte[] content) {
         java.io.File file = tmpProvider.createTempFile(content);
 
-        SingularDummyFormPageTester ctx = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
         ctx.getDummyPage().setTypeBuilder(AttachmentFieldTest::createType);
         ctx.getDummyPage().addInstancePopulator( instance -> {
             instance.getField("attachment", SIAttachment.class).setContent("teste.txt", file, file.length(), HashUtil.toSHA1Base16(content));

@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewAutoComplete;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,11 +34,11 @@ public class STypeStringSelectItemDynamicAutoCompleteTest {
     private static final String[] DOMAINS = {"@gmail.com", "@hotmail.com", "@yahoo.com"};
     private static final String   MY_HERO = "myHero";
 
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     @Before
     public void setUp() {
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(root -> {
             STypeString myHero = root.addFieldString(MY_HERO);
             myHero.selectionOf(DOMAINS);

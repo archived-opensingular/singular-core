@@ -30,7 +30,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.provider.TextQueryProvider;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewAutoComplete;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.nio.charset.StandardCharsets;
@@ -42,12 +42,12 @@ import static org.junit.Assert.assertEquals;
 
 public class BloodhoundDataBehaviorTest {
 
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
     private static STypeString string;
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(BloodhoundDataBehaviorTest::buildBaseType);
         tester.startDummyPage();
     }

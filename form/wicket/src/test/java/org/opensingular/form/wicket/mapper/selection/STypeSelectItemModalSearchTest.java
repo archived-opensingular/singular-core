@@ -30,7 +30,7 @@ import org.opensingular.form.provider.Config;
 import org.opensingular.form.provider.FilteredProvider;
 import org.opensingular.form.provider.ProviderContext;
 import org.opensingular.form.view.SViewSearchModal;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.form.wicket.mapper.search.SearchModalPanel;
 
 import java.io.Serializable;
@@ -113,7 +113,7 @@ public class STypeSelectItemModalSearchTest {
 
     @Test
     public void testSelection() {
-        SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(STypeSelectItemModalSearchTest::buildBaseType);
         tester.startDummyPage();
 

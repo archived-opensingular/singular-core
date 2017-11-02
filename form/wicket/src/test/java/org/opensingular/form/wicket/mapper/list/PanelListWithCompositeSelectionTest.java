@@ -28,7 +28,7 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewListByForm;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ public class PanelListWithCompositeSelectionTest {
     private static STypeString id;
     private static STypeString description;
 
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static void buildBaseType(STypeComposite<?> mockType) {
         mockList = mockType.addFieldListOfComposite("mockList", "mockTypeComposite");
@@ -66,7 +66,7 @@ public class PanelListWithCompositeSelectionTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setAsEditView();
         tester.getDummyPage().setTypeBuilder(PanelListWithCompositeSelectionTest::buildBaseType);
         tester.startDummyPage();

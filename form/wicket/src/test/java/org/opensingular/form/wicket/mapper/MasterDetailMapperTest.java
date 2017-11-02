@@ -28,7 +28,7 @@ import org.opensingular.form.type.country.brazil.STypeCPF;
 import org.opensingular.form.type.util.STypeYearMonth;
 import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 public class MasterDetailMapperTest {
 
@@ -58,7 +58,7 @@ public class MasterDetailMapperTest {
 
     @Test
     public void rendersDataDisplayValuesOnTable(){
-        SingularDummyFormPageTester test = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester test = new SingularFormDummyPageTester();
 
         test.getDummyPage().setTypeBuilder(MasterDetailMapperTest::buildBaseType);
         test.getDummyPage().addInstancePopulator(MasterDetailMapperTest::populateInstance);

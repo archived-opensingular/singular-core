@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.validation.ValidationError;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 
@@ -35,11 +35,11 @@ public class DinamicVisiblityValidationTest {
     private static final String FIELD_ONE = "fieldOne";
     private static final String FIELD_TWO = "fieldTwo";
 
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     @Before
     public void setUp() {
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(root -> {
             STypeString fieldOne = root.addFieldString("fieldOne");
             STypeString fieldTwo = root.addFieldString("fieldTwo");

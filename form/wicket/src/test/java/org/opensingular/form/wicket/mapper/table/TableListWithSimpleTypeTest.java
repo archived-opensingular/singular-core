@@ -26,7 +26,7 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewListByTable;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 
 public class TableListWithSimpleTypeTest {
@@ -34,7 +34,7 @@ public class TableListWithSimpleTypeTest {
     private static STypeList<STypeString, SIString> nomes;
     private static STypeString elementsType;
 
-    private static SingularDummyFormPageTester tester;
+    private static SingularFormDummyPageTester tester;
 
     private static void buildBaseType(STypeComposite<?> mockType){
         nomes = mockType.addFieldListOf("nomes", STypeString.class);
@@ -46,7 +46,7 @@ public class TableListWithSimpleTypeTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(TableListWithSimpleTypeTest::buildBaseType);
         tester.startDummyPage();
     }

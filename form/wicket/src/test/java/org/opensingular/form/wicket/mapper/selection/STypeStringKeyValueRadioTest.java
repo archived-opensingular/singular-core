@@ -25,7 +25,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewSelectionByRadio;
 import org.opensingular.form.wicket.helpers.AssertionsWComponentList;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class STypeStringKeyValueRadioTest {
     private static STypeString tipoDeMedia;
 
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static void buildBaseType(STypeComposite<?> baseCompositeField) {
         tipoDeMedia = baseCompositeField.addFieldString("tipoDeMedia");
@@ -56,7 +56,7 @@ public class STypeStringKeyValueRadioTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(STypeStringKeyValueRadioTest::buildBaseType);
         tester.getDummyPage().enableAnnotation();
     }

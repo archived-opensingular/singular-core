@@ -28,13 +28,13 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.view.SViewListByTable;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MasterDetailWithTableListWithStringTest {
 
-    private static SingularDummyFormPageTester tester;
+    private static SingularFormDummyPageTester tester;
 
     private static STypeList<STypeComposite<SIComposite>, SIComposite> mockList;
     private static STypeComposite<?> mockTypeComposite;
@@ -63,7 +63,7 @@ public class MasterDetailWithTableListWithStringTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(MasterDetailWithTableListWithStringTest::baseType);
         tester.startDummyPage();
     }

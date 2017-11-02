@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.form.type.core.STypeBoolean;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.util.List;
 
@@ -34,16 +34,16 @@ public class BooleanMapperTest {
 
     private final static String ACEITA_TERMOS = "ACEITA_TERMOS";
 
-    private SingularDummyFormPageTester createTesterWithSimpleCheckbox() {
-        SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
+    private SingularFormDummyPageTester createTesterWithSimpleCheckbox() {
+        SingularFormDummyPageTester tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(root -> {
             root.addFieldBoolean(ACEITA_TERMOS).asAtr().label("Aceito os termos e condições");
         });
         return tester;
     }
 
-    private SingularDummyFormPageTester createTesterWithSimpleRadio() {
-        SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
+    private SingularFormDummyPageTester createTesterWithSimpleRadio() {
+        SingularFormDummyPageTester tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(root -> {
             STypeBoolean aceitaTermos = root.addFieldBoolean(ACEITA_TERMOS);
             aceitaTermos.asAtr().label("Aceito os termos e condições");
@@ -53,18 +53,18 @@ public class BooleanMapperTest {
     }
 
     private AssertionsSInstance assertWhenSubmitsThroughTheAceitaTermosComponent(String value) {
-        SingularDummyFormPageTester tester = createTesterWithSimpleCheckboxAndStart();
+        SingularFormDummyPageTester tester = createTesterWithSimpleCheckboxAndStart();
         AssertionsWComponent aceitaTermos = tester.getAssertionsPage().getSubComponentWithId(ACEITA_TERMOS);
         aceitaTermos.assertSInstance().isValueEquals(null);
         tester.newFormTester().setValue(aceitaTermos.getTarget(), value).submit();
         return aceitaTermos.assertSInstance();
     }
 
-    private SingularDummyFormPageTester createTesterWithSimpleRadioAndStart() {
+    private SingularFormDummyPageTester createTesterWithSimpleRadioAndStart() {
         return createTesterWithSimpleRadio().startDummyPage();
     }
 
-    private SingularDummyFormPageTester createTesterWithSimpleCheckboxAndStart() {
+    private SingularFormDummyPageTester createTesterWithSimpleCheckboxAndStart() {
         return createTesterWithSimpleCheckbox().startDummyPage();
     }
 
@@ -100,7 +100,7 @@ public class BooleanMapperTest {
 
     @Test
     public void rendersACheckBoxCheckedWhenValueIsTrue() {
-        SingularDummyFormPageTester tester = createTesterWithSimpleCheckbox();
+        SingularFormDummyPageTester tester = createTesterWithSimpleCheckbox();
         tester.getDummyPage().addInstancePopulator(root -> {
             root.setValue(ACEITA_TERMOS, true);
         });
@@ -112,7 +112,7 @@ public class BooleanMapperTest {
 
     @Test
     public void rendersARadioChoiceIfAsked() {
-        SingularDummyFormPageTester tester = createTesterWithSimpleRadioAndStart();
+        SingularFormDummyPageTester tester = createTesterWithSimpleRadioAndStart();
         List choices = tester.getAssertionsPage().getSubComponents(RadioChoice.class)
                 .hasSize(1)
                 .first()
@@ -123,7 +123,7 @@ public class BooleanMapperTest {
 
     @Test
     public void rendersNoChoiceIfNoneIsSelected() {
-        SingularDummyFormPageTester tester = createTesterWithSimpleRadioAndStart();
+        SingularFormDummyPageTester tester = createTesterWithSimpleRadioAndStart();
         RadioChoice radioChoice = tester.getAssertionsPage().getSubComponents(RadioChoice.class)
                 .hasSize(1)
                 .first()
@@ -143,7 +143,7 @@ public class BooleanMapperTest {
 
     @Test
     public void rendersFalseChoiceIfFalseIsSelected() {
-        SingularDummyFormPageTester tester = createTesterWithSimpleRadio();
+        SingularFormDummyPageTester tester = createTesterWithSimpleRadio();
         tester.getDummyPage().addInstancePopulator(si -> si.setValue(ACEITA_TERMOS, false));
         tester.startDummyPage();
         RadioChoice radioChoice = tester.getAssertionsPage().getSubComponents(RadioChoice.class)
@@ -155,7 +155,7 @@ public class BooleanMapperTest {
 
     @Test
     public void rendersTrueChoiceIfTrueIsSelected() {
-        SingularDummyFormPageTester tester = createTesterWithSimpleRadio();
+        SingularFormDummyPageTester tester = createTesterWithSimpleRadio();
         tester.getDummyPage().addInstancePopulator(si -> si.setValue(ACEITA_TERMOS, true));
         tester.startDummyPage();
         RadioChoice radioChoice = tester.getAssertionsPage().getSubComponents(RadioChoice.class)

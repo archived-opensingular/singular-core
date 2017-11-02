@@ -26,10 +26,10 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 public class STypeCompositeSelectItemAutoCompleteTest {
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static STypeComposite<SIComposite> base;
     private static STypeString                 name;
@@ -53,7 +53,7 @@ public class STypeCompositeSelectItemAutoCompleteTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(STypeCompositeSelectItemAutoCompleteTest::buildBaseType);
         tester.startDummyPage();
     }

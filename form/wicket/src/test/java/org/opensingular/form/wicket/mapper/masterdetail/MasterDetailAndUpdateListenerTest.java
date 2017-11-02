@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.type.core.STypeMonetary;
 import org.opensingular.form.view.SViewListByMasterDetail;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.math.BigDecimal;
 
@@ -32,7 +32,7 @@ public class MasterDetailAndUpdateListenerTest {
     @Test
     public void test() {
 
-        SingularDummyFormPageTester ctx = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
         ctx.getDummyPage().setTypeBuilder(root ->  {
             STypeList values = root.addFieldListOfComposite("valores", "valor");
             values.withView(SViewListByMasterDetail::new);

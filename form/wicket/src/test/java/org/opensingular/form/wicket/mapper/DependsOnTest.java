@@ -27,7 +27,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
 import org.opensingular.form.wicket.helpers.AssertionsWComponentList;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +38,7 @@ import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_P
 
 public class DependsOnTest {
 
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static STypeString category, element;
 
@@ -82,7 +82,7 @@ public class DependsOnTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(DependsOnTest::buildType);
         tester.startDummyPage();
     }

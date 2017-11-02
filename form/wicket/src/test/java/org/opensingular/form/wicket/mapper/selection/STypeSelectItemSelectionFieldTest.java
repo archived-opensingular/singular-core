@@ -30,12 +30,12 @@ import org.opensingular.form.STypeSimple;
 import org.opensingular.form.provider.SSimpleProvider;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.wicket.helpers.AssertionsWComponentList;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class STypeSelectItemSelectionFieldTest {
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static STypeComposite selectType;
     private static STypeSimple    nomeUF;
@@ -66,7 +66,7 @@ public class STypeSelectItemSelectionFieldTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(STypeSelectItemSelectionFieldTest::buildBaseTypeBase);
     }
 

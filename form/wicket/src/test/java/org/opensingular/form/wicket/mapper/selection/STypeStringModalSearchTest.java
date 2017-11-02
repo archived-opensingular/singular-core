@@ -30,7 +30,7 @@ import org.opensingular.form.provider.ProviderContext;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.helpers.AssertionsWComponentList;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.form.wicket.mapper.search.SearchModalPanel;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 
@@ -42,7 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class STypeStringModalSearchTest {
 
     private static STypeString selectType;
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static void buildBaseType(STypeComposite<?> baseType) {
         selectType = baseType.addFieldString("favoriteFruit");
@@ -76,7 +76,7 @@ public class STypeStringModalSearchTest {
 
     @Before
     public void setUp() {
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(STypeStringModalSearchTest::buildBaseType);
     }
 
