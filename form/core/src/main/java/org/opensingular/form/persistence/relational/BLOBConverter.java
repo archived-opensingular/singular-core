@@ -17,13 +17,15 @@
 package org.opensingular.form.persistence.relational;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.sql.Blob;
-import java.sql.SQLException;
 
+import org.apache.commons.io.IOUtils;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.io.HashUtil;
 import org.opensingular.form.type.core.attachment.SIAttachment;
-import org.opensingular.internal.lib.commons.util.TempFileProvider;
+import org.opensingular.lib.commons.base.SingularException;
 
 /**
  * Converter implementation for transforming SIAttachment instances from/to a
@@ -32,28 +34,30 @@ import org.opensingular.internal.lib.commons.util.TempFileProvider;
  * @author Edmundo Andrade
  */
 public class BLOBConverter implements RelationalColumnConverter {
-	public Object toRelationalColumn(SInstance fromInstance) {
-		Object value = fromInstance.getValue();
-		if (value == null) {
-			return null;
-		}
-		return ((SIAttachment) fromInstance).getAttachmentRef();
-	}
+    public Object toRelationalColumn(SInstance fromInstance) {
+        Object value = fromInstance.getValue();
+        if (value == null) {
+            return null;
+        }
+        return ((SIAttachment) fromInstance).getAttachmentRef();
+    }
 
-	public void fromRelationalColumn(Object dbData, SInstance toInstance) {
-		if (dbData == null) {
-			toInstance.clearInstance();
-		} else {
-			Blob blob = (Blob) dbData;
-			TempFileProvider.create(this, tempFileProvider -> {
-				try {
-					File tempFile = tempFileProvider.createTempFile(blob.getBinaryStream());
-					((SIAttachment) toInstance).setContent(tempFile.getName(), tempFile, blob.length(),
-							HashUtil.toSHA1Base16(tempFile));
-				} catch (SQLException e) {
-					throw new IllegalArgumentException(e);
-				}
-			});
-		}
-	}
+    public void fromRelationalColumn(Object dbData, SInstance toInstance) {
+        if (dbData == null) {
+            toInstance.clearInstance();
+            return;
+        }
+        try {
+            Blob blob = (Blob) dbData;
+            File tempFile = File.createTempFile(toInstance.getName(), null);
+            tempFile.deleteOnExit();
+            try (InputStream input = blob.getBinaryStream(); FileOutputStream output = new FileOutputStream(tempFile)) {
+                IOUtils.copy(input, output);
+            }
+            ((SIAttachment) toInstance).setContent(tempFile.getName(), tempFile, blob.length(),
+                    HashUtil.toSHA1Base16(tempFile));
+        } catch (Exception e) {
+            throw SingularException.rethrow("Error on converting BLOB data to SInstance", e);
+        }
+    }
 }
