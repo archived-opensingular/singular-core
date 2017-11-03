@@ -49,7 +49,7 @@ public class BLOBConverter implements RelationalColumnConverter {
         }
         try {
             Blob blob = (Blob) dbData;
-            File tempFile = File.createTempFile(toInstance.getName(), null);
+            File tempFile = File.createTempFile("blob_" + toInstance.getName(), null);
             tempFile.deleteOnExit();
             try (InputStream input = blob.getBinaryStream(); FileOutputStream output = new FileOutputStream(tempFile)) {
                 IOUtils.copy(input, output);
