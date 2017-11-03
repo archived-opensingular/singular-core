@@ -45,6 +45,7 @@ import org.opensingular.internal.lib.commons.util.TempFileProvider;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -194,7 +195,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
         if (expectedContent == null) {
             Assert.assertFalse(att.getContentAsInputStream().isPresent());
         } else {
-            byte[] current = IOUtils.toByteArray(att.getContentAsInputStream().get());
+            byte[] current = getBytes(att);
             assertArrayEquals(expectedContent, current);
         }
     }
@@ -289,4 +290,9 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
         return file;
     }
 
+    protected static byte[] getBytes(SIAttachment attachment) throws IOException {
+        try(InputStream in = attachment.getContentAsInputStream().get()) {
+            return IOUtils.toByteArray(in);
+        }
+    }
 }

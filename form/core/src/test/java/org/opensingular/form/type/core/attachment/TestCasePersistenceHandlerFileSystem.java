@@ -24,7 +24,7 @@ public class TestCasePersistenceHandlerFileSystem extends TestCasePersistenceHan
 
     @Override
     protected IAttachmentPersistenceHandler setupHandler() {
-        return new FileSystemAttachmentPersistenceHandler(tmpProvider.createTempDir());
+        return new FileSystemAttachmentPersistenceHandler(getTempFileProvider().createTempDir());
     }
 
 }
