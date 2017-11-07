@@ -58,6 +58,6 @@ public abstract class DashboardView<C extends DashboardContext> {
         this.dashboardFilterClass = dashboardFilterClass;
     }
 
-    public abstract List<Map<String, String>> getData(C context);
+    public abstract List<Map<String, Object>> getData(C context);
 
 }
