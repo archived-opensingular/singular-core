@@ -16,7 +16,6 @@
 
 package org.opensingular.lib.support.persistence.util;
 
-import org.opensingular.lib.commons.base.SingularProperties;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
 import org.hibernate.dialect.Dialect;
@@ -29,10 +28,12 @@ import org.hibernate.id.PostInsertIdentityPersister;
 import org.hibernate.id.SequenceIdentityGenerator;
 import org.hibernate.id.insert.InsertGeneratedIdentifierDelegate;
 import org.hibernate.type.Type;
+import org.opensingular.lib.commons.base.SingularProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.Properties;
 
 public class HybridIdentityOrSequenceGenerator implements PostInsertIdentifierGenerator, Configurable, BulkInsertionCapableIdentifierGenerator {
@@ -50,7 +51,7 @@ public class HybridIdentityOrSequenceGenerator implements PostInsertIdentifierGe
 
     private PostInsertIdentifierGenerator getDelegate(){
         if (delegate == null) {
-            String generator = SingularProperties.get().getProperty(SingularProperties.HIBERNATE_GENERATOR);
+            String generator = SingularProperties.getOpt(SingularProperties.HIBERNATE_GENERATOR).orElse(null);
             if ("sequence".equals(generator)) {
                 delegate = new SequenceIdentityGenerator();
             } else if ("identity".equals(generator)) {
@@ -78,9 +79,9 @@ public class HybridIdentityOrSequenceGenerator implements PostInsertIdentifierGe
     public void configure(Type type, Properties params, Dialect d) throws MappingException {
         if (getDelegate() instanceof Configurable) {
             String key = String.format(SingularProperties.HIBERNATE_SEQUENCE_PROPERTY_PATTERN, params.getProperty(ENTITY, ""));
-            String value = SingularProperties.get().getProperty(key);
-            if (value != null) {
-                params.put(SEQUENCE, value);
+            Optional<String> value = SingularProperties.getOpt(key);
+            if (value.isPresent()) {
+                params.put(SEQUENCE, value.get());
             } else {
                 logger.warn("Property {} não foi definida.  Utilizando nome default de sequence do hibernate. ", key);
             }

@@ -16,40 +16,28 @@
 
 package org.opensingular.lib.commons.base;
 
-import org.apache.commons.io.input.NullInputStream;
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.lib.commons.context.SingularContext;
 import org.opensingular.lib.commons.context.SingularSingletonStrategy;
 import org.opensingular.lib.commons.lambda.IConsumerEx;
-import org.opensingular.lib.commons.util.PropertiesUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.Serializable;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
-import java.util.function.Supplier;
-
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 public final class SingularPropertiesImpl implements SingularProperties {
     private static final Logger   LOGGER                      = LoggerFactory.getLogger(SingularPropertiesImpl.class);
     private static final String   DEFAULT_PROPERTIES_FILENAME = "singular-defaults.properties";
-    private static final String[] PROPERTIES_FILES_NAME       = {"singular-form-service.properties", "singular.properties"};
-    private volatile Properties properties;
-    private Supplier<Properties> singularDefaultPropertiesSupplier = this::getSingularDefaultProperties;
+    private static final String[] PROPERTIES_FILES_NAME       = {"singular.properties"};
+    private volatile PropertyMap propertyMap;
 
     public static SingularPropertiesImpl get() {
         return (SingularPropertiesImpl) ((SingularSingletonStrategy) SingularContext.get()).singletonize(
@@ -84,9 +72,9 @@ public final class SingularPropertiesImpl implements SingularProperties {
      */
     public synchronized void reload() {
         LOGGER.info("Carregando configurações do Singular");
-        Properties newProperties = readClasspathDefaults();
-        readPropertiesFilesOverrides(newProperties);
-        properties = newProperties;
+        PropertyMap newProperties = readClasspathDefaults();
+        newProperties = readPropertiesFilesOverrides(newProperties);
+        propertyMap = newProperties.consolidateAndFrozen();
     }
 
     public void setSingularServerHome(String serverHome) {
@@ -97,197 +85,131 @@ public final class SingularPropertiesImpl implements SingularProperties {
     }
 
     /**
-     * Verifica se a propriedade de nome informado existe.
+     * Looks for the property with the giving key.
+     * <p>Never return empty String (in this case they became null) and also trims the resulting String.</p>
+     *
+     * @throws SingularPropertyException If the search results in a null value.
      */
     @Override
-    public boolean containsKey(String key) {
-        return getProperties().containsKey(key) || System.getProperties().containsKey(key);
+    @Nonnull
+    public String getProperty(@Nonnull String key) {
+        String value = getInternal(key);
+        if (value == null) {
+            throw new SingularPropertyException("The property '" + key + "' is not set or it's value is null.");
+        }
+        return value;
     }
 
-    /**
-     * Retorna o valor da propriedade solicitada. Pode retornar null.
-     */
-    @Override
-    public String getProperty(String key) {
+    @Nullable
+    private String getInternal(@Nonnull String key) {
         //se contém a chave ainda que esta seja com valor nulo
-        if (getProperties().containsKey(key)) {
-            return Optional.ofNullable(getProperties().getProperty(key)).map(String::trim).orElse(null);
-        } else {
-            return Optional.ofNullable(System.getProperties().getProperty(key)).map(String::trim).orElse(null);
+        PropertyEntry entry = getProperties().getEntry(key);
+        if (entry != null) {
+            return entry.getValue();
         }
+        return StringUtils.trimToNull(System.getProperties().getProperty(key));
     }
+
+    @Override
+    @Nonnull
+    public Optional<String> getPropertyOpt(@Nonnull String key) {
+        return Optional.ofNullable(getInternal(key));
+    }
+
 
     @Override
     public boolean isTrue(String key) {
-        return "true".equals(Optional.ofNullable(getProperty(key)).map(String::toLowerCase).orElse(null));
+        return "true".equalsIgnoreCase(getInternal(key));
     }
 
     @Override
     public boolean isFalse(String key) {
-        return "false".equals(Optional.ofNullable(getProperty(key)).map(String::toLowerCase).orElse(null));
+        return "false".equalsIgnoreCase(getInternal(key));
     }
 
-    public String setProperty(String key, String value) {
-        return (String) getProperties().setProperty(key, value);
+    @VisibleForTesting
+    public void setProperty(@Nonnull String key, @Nonnull String value) {
+        if (getProperties().isFrozen()) {
+            propertyMap = new PropertyMap(getProperties());
+        }
+        propertyMap.add(key, value);
     }
 
-    private synchronized Properties getProperties() {
+    private synchronized PropertyMap getProperties() {
         //Faz leitura lazy das propriedades, pois no construtor da enum, as variáveis estáticas não estão disponíveis
-        if (properties == null) {
+        if (propertyMap == null) {
             reload();
         }
-        return properties;
+        return propertyMap;
     }
 
-    private void readPropertiesFilesOverrides(Properties newProperties) {
+    private PropertyMap readPropertiesFilesOverrides(PropertyMap newProperties) {
         File confDir = findConfDir();
-        if (confDir != null) {
-            for (String name : PROPERTIES_FILES_NAME) {
-                File arq = new File(confDir, name);
-                loadOverriding(newProperties, arq);
-            }
+        if (confDir == null) {
+            return newProperties;
         }
-    }
-
-    private Properties readClasspathDefaults() {
-        Properties newProperties = null;
+        PropertyMap props = new PropertyMap(newProperties);
         for (String name : PROPERTIES_FILES_NAME) {
-            URL url = findProperties(name);
-            if (url == null) {
-                LOGGER.warn("   Não foi encontrado o arquivo no classpath: {}", name);
-            } else {
-                LOGGER.info("   Lendo arquivo de propriedades '{}' em {}", name, url);
-                newProperties = loadNotOverriding(newProperties, name, url);
-            }
+            props.readProperties(new File(confDir, name));
         }
-        Properties resolvedProperties = newProperties == null ? new Properties() : newProperties;
-
-        appendDefaultProperties(resolvedProperties);
-
-        return resolvedProperties;
+        return props;
     }
 
-    /**
-     * Adiciona as propriedades default que já não foram carregadas dos arquivos em PROPERTIES_FILES_NAME.
-     *
-     * @param resolvedProperties
-     */
-    private void appendDefaultProperties(Properties resolvedProperties) {
-        Properties defaults = singularDefaultPropertiesSupplier.get();
-        for (String key : defaults.stringPropertyNames()) {
-            if (!resolvedProperties.containsKey(key)) {
-                resolvedProperties.setProperty(key, StringUtils.defaultString(defaults.getProperty(key)));
-            }
-        }
-    }
-
-    public Properties getSingularDefaultProperties() {
-        Properties defaults = new Properties();
-        try (
-                InputStream input = defaultIfNull(SingularProperties.class.getResourceAsStream(DEFAULT_PROPERTIES_FILENAME), new NullInputStream(0));
-                Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8.name())) {
-            defaults.load(reader);
-        } catch (IOException ex) {
-            throw new IllegalStateException("", ex);
-        }
-        return defaults;
-    }
-
-    private Properties loadNotOverriding(Properties newProperties, String propertiesName, URL propertiesUrl) {
-        Properties props;
-        try {
-            props = PropertiesUtils.load(propertiesUrl);
-        } catch (IOException e) {
-            throw SingularException.rethrow("Erro lendo arquivo de propriedade", e).add("url", propertiesUrl);
-        }
-        if (newProperties == null) {
-            return props;
-        }
-        for (Map.Entry<Object, Object> entry : props.entrySet()) {
-            if (newProperties.containsKey(entry.getKey())) {
-                throw SingularException.rethrow("O arquivo de propriedade '" + propertiesName +
-                        "' no classpath define novamente a propriedade '" + entry.getKey() +
-                        "' definida anteriormente em outro arquivo de propriedade no class path.").add("url",
-                        propertiesUrl);
-            } else {
-                newProperties.setProperty((String) entry.getKey(), (String) entry.getValue());
-            }
+    private PropertyMap readClasspathDefaults() {
+        PropertyMap newProperties = new PropertyMap();
+        newProperties.readAllPropertiesFileFromClassPath(DEFAULT_PROPERTIES_FILENAME);
+        for (String name : PROPERTIES_FILES_NAME) {
+            newProperties.readAllPropertiesFileFromClassPath(name);
         }
         return newProperties;
-    }
-
-    private URL findProperties(String name) {
-        try {
-            return Thread.currentThread().getContextClassLoader().getResource(name);
-        } catch (Exception e) {
-            throw SingularException.rethrow("Erro procurando arquivo de properties '" + name + "' no class path", e);
-        }
-    }
-
-    private URL add(URL current, String name, Enumeration<URL> resources) throws URISyntaxException {
-        URL selected = current;
-        while (resources.hasMoreElements()) {
-            URL u = resources.nextElement();
-            if (selected == null) {
-                selected = u;
-            } else if (!selected.toURI().equals(u.toURI())) {
-                throw SingularException.rethrow(
-                        "Foram encontrados dois arquivos com mesmo nome '" + name + "' no class path").add("arquivo 1",
-                        selected).add("arquivo 2", u);
-            }
-        }
-        return selected;
-    }
-
-    private void loadOverriding(Properties newProperties, File arq) {
-        if (arq.exists()) {
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("   Lendo arquivo de propriedades {}", arq);
-            }
-            try (FileInputStream in = new FileInputStream(arq)) {
-                loadOverriding(newProperties, in);
-            } catch (Exception e) {
-                throw SingularException.rethrow("Erro lendo arquivo de propriedades", e).add("arquivo", arq);
-            }
-        }
-    }
-
-    private void loadOverriding(Properties newProperties, URL resoruce) {
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("   Lendo arquivo de propriedades {}", resoruce);
-        }
-        try {
-            loadOverriding(newProperties, resoruce.openStream());
-        } catch (Exception e) {
-            throw SingularException.rethrow("Erro lendo arquivo de propriedades", e).add("url", resoruce);
-        }
-    }
-
-    private void loadOverriding(Properties newProperties, InputStream in) throws IOException {
-        Properties p = new Properties();
-        p.load(in);
-        for (Map.Entry<Object, Object> entry : p.entrySet()) {
-            newProperties.setProperty((String) entry.getKey(), (String) entry.getValue());
-        }
     }
 
     /**
      * Copia as propriedades do arquivo para as properties internas. As propriedades previamente existentes serão
      * sobrepostas. Esse método é utilizado para testes unitários com difererentes contextos.
      */
+    @VisibleForTesting
     public synchronized void reloadAndOverrideWith(URL propertiesURL) {
         reload();
-        loadOverriding(getProperties(), propertiesURL);
+        PropertyMap p = new PropertyMap(getProperties());
+        p.readProperties(propertiesURL);
+        propertyMap = p;
     }
 
-    public static class Tester {
-        private final Properties props;
+    /**
+     * Prints the content of map of properties to the system output identifying the source of each property.
+     */
+    @Override
+    public void debugContent() {
+        getProperties().debugContent();
+    }
 
-        public Tester(Properties props) {
-            this.props = props;
-        }
+    /**
+     * Prints the content of map of properties to the specific output identifying the source of each property.
+     */
+    @Override
+    public void debugContent(@Nonnull Appendable out) { getProperties().debugContent(out); }
 
-        public static <EX extends Exception> void runInSandbox(IConsumerEx<SingularPropertiesImpl, EX> callable) throws EX {
+    /**
+     * Helper class to execute tests with different configuration of properties without leaving the runtime context of
+     * properties dirty.
+     *
+     * @see #runInSandbox(IConsumerEx)
+     */
+    @VisibleForTesting
+    public static final class Tester {
+
+        private Tester() {}
+
+        /**
+         * Runs the code ensuring that the properties context (in {@link SingularProperties#get()}) will be restore to
+         * the previous state before the execution, also provides access to current properties to be changed within the
+         * code.
+         * <p>In shot, saves the properties, run the code (that may change the properties) and restore the properties
+         * context to the previous state.</p>
+         */
+        public static <EX extends Exception> void runInSandbox(
+                @Nonnull IConsumerEx<SingularPropertiesImpl, EX> callable) throws EX {
             Object state = saveState();
             try {
                 callable.accept(SingularPropertiesImpl.get());
@@ -298,29 +220,24 @@ public final class SingularPropertiesImpl implements SingularProperties {
 
         protected static void restoreState(Object stateObject) {
             State  state      = (State) stateObject;
-            String serverHome = state.systemBackup.get(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME);
-            SingularPropertiesImpl.get().setSingularServerHome(serverHome);
-            SingularPropertiesImpl.get().properties = state.propertiesBackup;
+            SingularPropertiesImpl impl = SingularPropertiesImpl.get();
+            impl.setSingularServerHome(state.systemBackup.get(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME));
+            impl.propertyMap = state.propertiesBackup;
         }
 
         public static Object saveState() {
+            SingularPropertiesImpl impl = SingularPropertiesImpl.get();
             State state = new State();
-            PropertiesUtils.copyTo(SingularPropertiesImpl.get().properties, state.propertiesBackup);
+            state.propertiesBackup = impl.propertyMap;
             state.systemBackup.put(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME, System.getProperty(SYSTEM_PROPERTY_SINGULAR_SERVER_HOME));
+
+            impl.propertyMap = new PropertyMap(impl.getProperties().consolidateAndFrozen());
             return state;
         }
+    }
 
-        public String getProperty(String key) {
-            return props.getProperty(key);
-        }
-
-        public String setProperty(String key, String value) {
-            return (String) props.setProperty(key, value);
-        }
-
-        private static class State implements Serializable {
-            private final Properties          propertiesBackup = new Properties();
-            private final Map<String, String> systemBackup     = new HashMap<>();
-        }
+    private static class State implements Serializable {
+        private PropertyMap propertiesBackup;
+        private final Map<String, String> systemBackup = new HashMap<>();
     }
 }

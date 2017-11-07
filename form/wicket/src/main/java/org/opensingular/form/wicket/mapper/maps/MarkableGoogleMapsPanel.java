@@ -63,8 +63,8 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
     public static final String MAP_ID = "map";
     public static final String MAP_STATIC_ID = "mapStatic";
 
-    private String singularKeyMaps = SingularProperties.get().getProperty(SINGULAR_GOOGLEMAPS_JS_KEY);
-    private String singularKeyMapStatic = SingularProperties.get().getProperty(SINGULAR_GOOGLEMAPS_STATIC_KEY);
+    private final String singularKeyMaps = SingularProperties.getOpt(SINGULAR_GOOGLEMAPS_JS_KEY).orElse(null);
+    private final String singularKeyMapStatic = SingularProperties.getOpt(SINGULAR_GOOGLEMAPS_STATIC_KEY).orElse(null);
 
     private final IModel<String> metaDataModel = new Model<>();
     private final IModel<Boolean> readOnly = $m.ofValue(Boolean.FALSE);
