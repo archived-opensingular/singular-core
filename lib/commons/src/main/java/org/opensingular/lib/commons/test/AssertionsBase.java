@@ -32,7 +32,7 @@ public abstract class AssertionsBase<SELF extends AssertionsBase<SELF, T>, T> ex
 
     public AssertionsBase(T target) {
         super(target, AssertionsBase.class);
-        as(new DescriptionForTarget(this));
+        as(new DescriptionForTarget(this));//NOSONAR
     }
 
     public AssertionsBase(Optional<? extends T> target) {
