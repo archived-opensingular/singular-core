@@ -174,10 +174,11 @@ public abstract class AbstractAssertionsForWicket<SELF extends AbstractAssertion
 
     @Nonnull
     protected String debugAddDetailsToLine(@Nonnull Component component, @Nonnull String currentTextLine) {
+        String result = currentTextLine;
         if (component instanceof Label) {
-            currentTextLine += ": \"" + ((Label) component).getDefaultModelObjectAsString() + '"';
+            result += ": \"" + component.getDefaultModelObjectAsString() + '"';
         }
-        return currentTextLine;
+        return result;
     }
 
     private String resolveClassName(Class<?> aClass) {
