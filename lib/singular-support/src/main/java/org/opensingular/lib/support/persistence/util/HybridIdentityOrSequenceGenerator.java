@@ -81,7 +81,7 @@ public class HybridIdentityOrSequenceGenerator implements PostInsertIdentifierGe
             String key = String.format(SingularProperties.HIBERNATE_SEQUENCE_PROPERTY_PATTERN, params.getProperty(ENTITY, ""));
             Optional<String> value = SingularProperties.getOpt(key);
             if (value.isPresent()) {
-                params.put(SEQUENCE, value.get());
+                params.setProperty(SEQUENCE, value.get());
             } else {
                 logger.warn("Property {} não foi definida.  Utilizando nome default de sequence do hibernate. ", key);
             }

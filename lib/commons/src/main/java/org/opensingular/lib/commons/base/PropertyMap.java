@@ -114,7 +114,9 @@ public final class PropertyMap {
             Properties properties = Objects.requireNonNull(propertiesLoader.get());
             readProperties(properties, source);
         } catch (Exception e) {
-            throw new SingularPropertyException("Fail to read properties file", e).add("source", source);
+            SingularPropertyException e2 = new SingularPropertyException("Fail to read properties file", e);
+            e2.add("source", source);
+            throw e2;
         }
     }
 
