@@ -18,11 +18,9 @@
 
 package org.opensingular.lib.commons.util;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.internal.lib.commons.util.TempFileProvider;
+import org.opensingular.lib.commons.junit.AbstractTestTempFileSupport;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,19 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public class PropertiesUtilsTest {
+public class PropertiesUtilsTest extends AbstractTestTempFileSupport {
 
-    protected TempFileProvider tmpProvider;
-
-    @Before
-    public void createTmpProvider() {
-        tmpProvider = TempFileProvider.createForUseInTryClause(this);
-    }
-
-    @After
-    public void cleanTmpProvider() {
-        tmpProvider.deleteOrException();
-    }
 
     @Test
     public void propertiesFromMapTest(){
@@ -62,7 +49,7 @@ public class PropertiesUtilsTest {
     public void storeWithOutputStreamAndLoadWithFileTest() throws IOException {
         Properties properties = getPropertiesTest();
 
-        File arquivoTemporario = tmpProvider.createTempFile(".txt");
+        File arquivoTemporario = getTempFileProvider().createTempFile(".txt");
 
         try(FileOutputStream outputStream = new FileOutputStream(arquivoTemporario)) {
 
@@ -81,7 +68,7 @@ public class PropertiesUtilsTest {
     public void loadUsingReaderTest() throws IOException {
         Properties properties = getPropertiesTest();
 
-        File arquivoTemporario = tmpProvider.createTempFile(".txt");
+        File arquivoTemporario = getTempFileProvider().createTempFile(".txt");
 
         try(FileOutputStream outputStream = new FileOutputStream(arquivoTemporario)) {
             PropertiesUtils.store(properties, outputStream);

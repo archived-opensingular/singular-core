@@ -19,7 +19,7 @@
     var newWindow;
 
     window['openNewTabWithCKEditor${hash}'] = function () {
-        if (typeof newWindow != "undefined") {
+        if (typeof newWindow !== "undefined") {
             newWindow.close();
         }
         newWindow = window.open("", label);
@@ -41,8 +41,12 @@
                 width: '215mm',
                 savePlugin: {
                     onSave: function (data) {
-                        $('#' + htmlContainer).html(data);
-                        $('#' + hiddenInput).val(data);
+                        var jQuerRefOfHtmlContainer = $('#' + htmlContainer);
+                        jQuerRefOfHtmlContainer.html(data);
+
+                        var jQueryRefOfHiddenInput = $('#' + hiddenInput);
+                        jQueryRefOfHiddenInput.val(data);
+                        jQueryRefOfHiddenInput.trigger("singular:process");
                     }
                 },
                 toolbar: [
