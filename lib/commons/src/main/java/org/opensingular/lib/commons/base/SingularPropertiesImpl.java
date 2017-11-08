@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -236,7 +235,7 @@ public final class SingularPropertiesImpl implements SingularProperties {
         }
     }
 
-    private static class State implements Serializable {
+    private static class State {
         private PropertyMap propertiesBackup;
         private final Map<String, String> systemBackup = new HashMap<>();
     }

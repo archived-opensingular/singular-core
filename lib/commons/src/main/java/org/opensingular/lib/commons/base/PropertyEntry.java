@@ -28,11 +28,8 @@ import java.util.Objects;
  */
 public final class PropertyEntry implements Comparable<PropertyEntry>{
 
-    @Nonnull
     private final String key;
-    @Nullable
     private final String value;
-    @Nonnull
     private final PropertySource<?> source;
 
     public PropertyEntry(@Nonnull String key, @Nullable String value, @Nonnull PropertySource<?> source) {

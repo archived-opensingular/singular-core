@@ -115,16 +115,12 @@ public final class FormFreemarkerUtil {
 
     private Template parseTemplate(String template, boolean ignoreError) {
         try {
-            TemplateExceptionHandler exceptionHandler;
+            TemplateExceptionHandler exceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER;
             Optional<String> property = SingularProperties.getOpt(SingularProperties.FREEMARKER_IGNORE_ERROR);
-            if (property.isPresent() && TRUE.equalsIgnoreCase(property.get())) {
-                exceptionHandler = TemplateExceptionHandler.IGNORE_HANDLER;
-            } else if (property.isPresent() && FALSE.equalsIgnoreCase(property.get())) {
+            if (property.isPresent() && FALSE.equalsIgnoreCase(property.get())) {
                 exceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER;
-            } else if (ignoreError) {
+            } else if ((property.isPresent() && TRUE.equalsIgnoreCase(property.get())) || ignoreError) {
                 exceptionHandler = TemplateExceptionHandler.IGNORE_HANDLER;
-            } else {
-                exceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER;
             }
 
             return new Template("templateStringParameter", template, getConfiguration(exceptionHandler));
