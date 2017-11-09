@@ -19,6 +19,7 @@
 package org.opensingular.studio.app.init;
 
 import org.apache.wicket.protocol.http.WicketFilter;
+import org.opensingular.lib.support.spring.util.SingularAnnotationConfigWebApplicationContext;
 import org.opensingular.studio.app.config.StudioAppConfig;
 import org.opensingular.studio.core.config.StudioConfigProvider;
 import org.opensingular.studio.core.wicket.StudioApplication;
@@ -65,7 +66,7 @@ public class StudioWebAppInitializer implements WebApplicationInitializer {
 
     @Nonnull
     private AnnotationConfigWebApplicationContext createContext() {
-        return new AnnotationConfigWebApplicationContext();
+        return new SingularAnnotationConfigWebApplicationContext();
     }
 
     private void addSpringMVCServlet(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
