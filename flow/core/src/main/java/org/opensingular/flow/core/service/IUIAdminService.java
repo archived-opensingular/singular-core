@@ -46,25 +46,25 @@ public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE ext
 
     List<METADATA> retrieveMetaData(Integer flowDefinitionCod);
 
-    List<Map<String, String>> retrieveMeanTimeByFlowDefinition(Period period, String flowDefinitionCod, Set<String> flowDefinitionCodesWithAccess);
+    List<Map<String, Object>> retrieveMeanTimeByFlowDefinition(Period period, String flowDefinitionCod, Set<String> flowDefinitionCodesWithAccess);
 
-    List<Map<String, String>> retrieveNewInstancesQuantityLastYear(String flowDefinitionCod, Set<String> flowDefinitionCodesWithAccess);
+    List<Map<String, Object>> retrieveNewInstancesQuantityLastYear(String flowDefinitionCod, Set<String> flowDefinitionCodesWithAccess);
 
-    List<Map<String, String>> retrieveEndStatusQuantityByPeriod(Period period, String flowDefinitionCod);
+    List<Map<String, Object>> retrieveEndStatusQuantityByPeriod(Period period, String flowDefinitionCod);
 
-    List<Map<String, String>> retrieveMeanTimeByTask(Period period, String flowDefinitionCod);
+    List<Map<String, Object>> retrieveMeanTimeByTask(Period period, String flowDefinitionCod);
 
-    List<Map<String, String>> retrieveStatsByActiveTask(String flowDefinitionCode);
+    List<Map<String, Object>> retrieveStatsByActiveTask(String flowDefinitionCode);
 
     STATUS retrieveActiveInstanceStatus(String flowInstanceCod, Set<String> flowDefinitionCodesWithAccess);
 
-    List<Map<String, String>> retrieveMeanTimeActiveInstances(String flowDefinitionCod, Set<String> flowDefinitionCodesWithAccess);
+    List<Map<String, Object>> retrieveMeanTimeActiveInstances(String flowDefinitionCod, Set<String> flowDefinitionCodesWithAccess);
 
-    List<Map<String, String>> retrieveAverageTimesActiveInstances(String flowDefinitionCod, Set<String> flowDefinitionCodesWithAccess);
+    List<Map<String, Object>> retrieveAverageTimesActiveInstances(String flowDefinitionCod, Set<String> flowDefinitionCodesWithAccess);
 
-    List<Map<String, String>> retrieveMeanTimeFinishedInstances(String flowDefinitionCod, Set<String> flowDefinitionCodesWithAccess);
+    List<Map<String, Object>> retrieveMeanTimeFinishedInstances(String flowDefinitionCod, Set<String> flowDefinitionCodesWithAccess);
 
-    List<Map<String, String>> retrieveCounterActiveInstances(String flowDefinitionCod, Set<String> flowDefinitionCodesWithAccess);
+    List<Map<String, Object>> retrieveCounterActiveInstances(String flowDefinitionCod, Set<String> flowDefinitionCodesWithAccess);
 
     String retrieveFlowDefinitionName(String flowDefinitionCode);
 
