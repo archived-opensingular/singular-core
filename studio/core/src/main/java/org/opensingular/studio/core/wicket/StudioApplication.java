@@ -29,6 +29,7 @@ import org.apache.wicket.resource.loader.ClassStringResourceLoader;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.wicket.util.application.SingularAnnotatedMountScanner;
 import org.opensingular.lib.wicket.util.application.SkinnableApplication;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
 import org.opensingular.lib.wicket.util.template.SkinOptions;
@@ -71,7 +72,7 @@ public class StudioApplication extends WebApplication implements SingularAdminAp
         getMarkupSettings().setDefaultMarkupEncoding(StandardCharsets.UTF_8.name());
         setHeaderResponseDecorator(r -> new JavaScriptFilteredIntoFooterHeaderResponse(r, SingularTemplate.JAVASCRIPT_CONTAINER));
         getComponentInstantiationListeners().add(new SpringComponentInjector(this));
-        new AnnotatedMountScanner().scanPackage("org.opensingular.studio").mount(this);
+        new SingularAnnotatedMountScanner().mountPages(this);
         List<IStringResourceLoader> stringResourceLoaders = getResourceSettings().getStringResourceLoaders();
         stringResourceLoaders.add(0, new ClassStringResourceLoader(appConfig.getClass()));
         getComponentOnConfigureListeners().add(component -> {
