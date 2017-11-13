@@ -397,7 +397,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
      * </p>
      *
      * <pre>
-     * "Fluxo MBPM '" + getName() + "': " + msg
+     * "Fluxo '" + getName() + "': " + msg
      * </pre>
      *
      * @param msg a mensagem a ser formatada.

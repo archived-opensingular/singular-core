@@ -45,28 +45,28 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
     @Override
     public Object run() {
 
-        final SingularFlowConfigurationBean mbpmBean = Flow.getConfigBean();
+        final SingularFlowConfigurationBean singularFlowConfigurationBean = Flow.getConfigBean();
         final StringBuilder log = new StringBuilder();
         final Date today = new Date();
 
-        for (FlowDefinition<?> definition : mbpmBean.getDefinitions()) {
+        for (FlowDefinition<?> definition : singularFlowConfigurationBean.getDefinitions()) {
             definition.getFlowMap().getHumanTasks().stream()
                     .filter(task -> task.getTargetDateExecutionStrategy() != null)
-                    .forEach(fillTargetEndDate(mbpmBean, log, definition));
+                    .forEach(fillTargetEndDate(singularFlowConfigurationBean, log, definition));
         }
 
-        for (FlowDefinition<?> definition : mbpmBean.getDefinitions()) {
+        for (FlowDefinition<?> definition : singularFlowConfigurationBean.getDefinitions()) {
             for (final STaskWait task : definition.getFlowMap().getWaitTasks()) {
-                executeTaskIfNecessary(mbpmBean, log, today, definition, task);
+                executeTaskIfNecessary(singularFlowConfigurationBean, log, today, definition, task);
             }
         }
 
 
-        for (FlowDefinition<?> definition : mbpmBean.getDefinitions()) {
+        for (FlowDefinition<?> definition : singularFlowConfigurationBean.getDefinitions()) {
             for (STask<?> task : definition.getFlowMap().getTasks()) {
                 List<IConditionalTaskAction> acoesAutomaticas = task.getAutomaticActions();
                 if (!acoesAutomaticas.isEmpty()) {
-                    executeAutomaticActions(mbpmBean, log, definition, task, acoesAutomaticas);
+                    executeAutomaticActions(singularFlowConfigurationBean, log, definition, task, acoesAutomaticas);
                 }
 
             }
@@ -75,7 +75,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
         return log.toString();
     }
 
-    private void executeTaskIfNecessary(SingularFlowConfigurationBean mbpmBean, StringBuilder log, Date now,
+    private void executeTaskIfNecessary(SingularFlowConfigurationBean singularFlowConfigurationBean, StringBuilder log, Date now,
                                         FlowDefinition<?> flowDefinition, STaskWait task) {
         if (task.hasExecutionDateStrategy()) {
             for (FlowInstance instance : flowDefinition.getDataService().retrieveAllInstancesIn(task)) {
@@ -87,14 +87,14 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
                 if (now.after(executionDate)) {
                     log.append("Executando transição da instância: ").append(instance.getFullId()).append('\n');
                     instance.prepareTransition().go();
-                    mbpmBean.getPersistenceService().commitTransaction();
+                    singularFlowConfigurationBean.getPersistenceService().commitTransaction();
                 }
 
             }
         }
     }
 
-    private Consumer<STaskHuman> fillTargetEndDate(SingularFlowConfigurationBean mbpmBean, StringBuilder log, FlowDefinition<?> flowDefinition) {
+    private Consumer<STaskHuman> fillTargetEndDate(SingularFlowConfigurationBean singularFlowConfigurationBean, StringBuilder log, FlowDefinition<?> flowDefinition) {
         return task -> {
             // Preenche Data Alvo para os casos que estiverem null
             for (FlowInstance instance : flowDefinition.getDataService().retrieveAllInstancesIn(task)) {
@@ -105,14 +105,14 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
                         log.append("Alterando data alvo: ").append(instance.getFullId()).append(" para ").append(target)
                                 .append('\n');
                         taskInstance.setTargetEndDate(target);
-                        mbpmBean.getPersistenceService().commitTransaction();
+                        singularFlowConfigurationBean.getPersistenceService().commitTransaction();
                     }
                 }
             }
         };
     }
 
-    private void executeAutomaticActions(SingularFlowConfigurationBean mbpmBean, StringBuilder log, FlowDefinition<?> flowDefinition, STask<?> task, List<IConditionalTaskAction> acoesAutomaticas) {
+    private void executeAutomaticActions(SingularFlowConfigurationBean singularFlowConfigurationBean, StringBuilder log, FlowDefinition<?> flowDefinition, STask<?> task, List<IConditionalTaskAction> acoesAutomaticas) {
         for (FlowInstance instance : flowDefinition.getDataService().retrieveAllInstancesIn(task)) {
             TaskInstance taskInstance = instance.getCurrentTaskOrException();
             for (IConditionalTaskAction action : acoesAutomaticas) {
@@ -121,7 +121,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
                             .append(action.getPredicate().getDescription(taskInstance)).append("' executando '")
                             .append(action.getCompleteDescription()).append("'\n");
                     action.execute(taskInstance);
-                    mbpmBean.getPersistenceService().commitTransaction();
+                    singularFlowConfigurationBean.getPersistenceService().commitTransaction();
                     break;
                 }
             }
