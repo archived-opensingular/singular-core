@@ -57,11 +57,11 @@ public final class FlowDefinitionCache {
         ImmutableList.Builder<FlowDefinition<?>> newCache = ImmutableList.builder();
         Map<String, FlowDefinition<?>> cacheByKey = new HashMap<>();
 
-        List<String> packcageToScan = Arrays.asList(packagesNames);
-        packcageToScan.add("org.opensingular");
-        packcageToScan.add("com.opensingular");
+        String[] packagesToScan = Arrays.copyOf(packagesNames, packagesNames.length + 2);
+        packagesToScan[packagesToScan.length - 2] = "org.opensingular";
+        packagesToScan[packagesToScan.length - 1] = "com.opensingular";
 
-        Set<Class<? extends FlowDefinition>> subTypes = SingularClassPathScanner.get().findSubclassesOf(FlowDefinition.class, packcageToScan.toArray(new String[packagesNames.length]));
+        Set<Class<? extends FlowDefinition>> subTypes = SingularClassPathScanner.get().findSubclassesOf(FlowDefinition.class,packagesToScan);
 
         for (Class<? extends FlowDefinition> definitionClass : subTypes) {
             if (Modifier.isAbstract(definitionClass.getModifiers()) || !hasEmptyConstructor(definitionClass)) {
