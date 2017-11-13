@@ -20,12 +20,12 @@ package org.opensingular.form.wicket.validation;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.util.tester.FormTester;
-import org.fest.assertions.api.IterableAssert;
+import org.assertj.core.api.IterableAssert;
 import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.validation.ValidationError;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 
@@ -35,11 +35,11 @@ public class DinamicVisiblityValidationTest {
     private static final String FIELD_ONE = "fieldOne";
     private static final String FIELD_TWO = "fieldTwo";
 
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     @Before
     public void setUp() {
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(root -> {
             STypeString fieldOne = root.addFieldString("fieldOne");
             STypeString fieldTwo = root.addFieldString("fieldTwo");
@@ -82,7 +82,7 @@ public class DinamicVisiblityValidationTest {
 
     private void setValueOnFieldOneAndCallAjaxValidate(String value) {
         FormTester formTester = tester.newFormTester();
-        Component  fieldOne   = tester.getAssertionsForm().getSubCompomentWithId(FIELD_ONE).getTarget();
+        Component  fieldOne   = tester.getAssertionsForm().getSubComponentWithId(FIELD_ONE).getTarget();
         formTester.setValue(fieldOne, value);
         callAjaxProcessEvent(fieldOne);
     }
@@ -93,8 +93,8 @@ public class DinamicVisiblityValidationTest {
 
     private IterableAssert<ValidationError> asserThatValidationErrorsOfFieldTwo() {
         return tester.getAssertionsForm()
-                .getSubCompomentWithType(
-                        tester.findTypeBySimpleName(FIELD_TWO).is(STypeString.class).getTarget()
+                .getSubComponentWithType(
+                        tester.findTypeBySimpleName(FIELD_TWO).isInstanceOf(STypeString.class).getTarget()
                 )
                 .assertSInstance()
                 .assertThatValidationErrors();
@@ -102,8 +102,8 @@ public class DinamicVisiblityValidationTest {
 
     private IterableAssert<ValidationError> asserThatValidationErrorsOfFieldOne() {
         return tester.getAssertionsForm()
-                .getSubCompomentWithType(
-                        tester.findTypeBySimpleName(FIELD_ONE).is(STypeString.class).getTarget()
+                .getSubComponentWithType(
+                        tester.findTypeBySimpleName(FIELD_ONE).isInstanceOf(STypeString.class).getTarget()
                 )
                 .assertSInstance()
                 .assertThatValidationErrors();

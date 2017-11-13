@@ -16,7 +16,7 @@
 
 package org.opensingular.flow.core.property;
 
-import com.google.common.base.MoreObjects;
+import org.opensingular.lib.commons.base.SingularException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -24,68 +24,47 @@ import java.io.Serializable;
 import java.util.Optional;
 
 /**
- * Indica que o objeto é capaz de receber informações de meta dado sobre ele.
+ * Indicates the capability of a class to have meta data information through a dynamic map of key and value.
+ * @see MetaDataMap
  *
- * @author Daniel C. Bordin on 04/05/2017.
+ * @author Daniel C. Bordin
+ * @since 2017-05-04
  */
 public interface MetaDataEnabled {
 
     @Nonnull
-    public MetaData getMetaData();
+    public MetaDataMap getMetaData();
 
     @Nonnull
-    public Optional<MetaData> getMetaDataOpt();
+    public Optional<MetaDataMap> getMetaDataOpt();
 
     /**
-     * <p>
-     * Configura o valor do metadado especificado.
-     * </p>
-     *
-     * @param <T>
-     *            o tipo do metadado.
-     * @param propRef
-     *            o metadado especificado.
-     * @param value
-     *            o valor do metadado a ser configurado.
-     * @return esta definição de fluxo já com o metadado definido.
+     * Set a value associeted to the key. If the value is null, then reverted the value to default value of the key
+     * ({@link MetaDataKey#getDefaultValue()}).
      */
-    default <T extends Serializable> void setMetaDataValue(@Nonnull MetaDataRef<T> propRef, T value) {
-        getMetaData().set(propRef, value);
+    default <T extends Serializable> void setMetaDataValue(@Nonnull MetaDataKey<T> key, @Nullable T value) {
+        getMetaData().set(key, value);
     }
 
     /**
-     * <p>
-     * Retorna o valor do metadado especificado.
-     * </p>
-     *
-     * @param <T>
-     *            o tipo do metadado.
-     * @param propRef
-     *            o metadado especificado.
-     * @param defaultValue
-     *            o valor padrão do metadado.
-     * @return o valor do metadado especificado; ou o valor padrão caso não
-     *         encontre o metadado especificado.
+     * Returns the value associated to the meta data key or the default value direct associated to the key.
+     * <p>Throws a exception if the key don't have a default value associated to it. In this case, should be used
+     * {@link #getMetaDataValueOpt(MetaDataKey)}</p>
      */
     @Nonnull
-    default <T extends Serializable> T getMetaDataValue(@Nonnull MetaDataRef<T> propRef, @Nonnull T defaultValue) {
-        return MoreObjects.firstNonNull(getMetaDataValue(propRef), defaultValue);
+    default <T extends Serializable> T getMetaDataValue(@Nonnull MetaDataKey<T> key) {
+        if (key.getDefaultValue() == null) {
+            throw new SingularException(MetaDataKey.class.getSimpleName() + " '" + key.getName() +
+                    "' don't have a default value configured. Use method getMetaDataValueOpt() or configure a default" +
+                    " " + "value for the key");
+        }
+        return getMetaDataValueOpt(key).orElse(key.getDefaultValue());
     }
 
-    /**
-     * <p>
-     * Retorna o valor do metadado especificado.
-     * </p>
-     *
-     * @param <T>
-     *            o tipo do metadado.
-     * @param propRef
-     *            o metadado especificado.
-     * @return o valor do metadado especificado; ou {@code null} caso não
-     *         encontre o metadado especificado.
-     */
-    @Nullable
-    default  <T extends Serializable> T getMetaDataValue(@Nonnull MetaDataRef<T> propRef) {
-        return getMetaDataOpt().map(m -> m.get(propRef)).orElse(null);
+    /** Returns the value associated to the meta data key if available. */
+    @Nonnull
+    default <T extends Serializable> Optional<T> getMetaDataValueOpt(@Nonnull MetaDataKey<T> key) {
+        Optional<MetaDataMap> map = getMetaDataOpt();
+        return map.isPresent() ? map.get().getOpt(key) : Optional.ofNullable(key.getDefaultValue());
     }
 }

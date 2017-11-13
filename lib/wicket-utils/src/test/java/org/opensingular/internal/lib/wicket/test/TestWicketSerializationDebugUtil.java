@@ -42,7 +42,7 @@ public class TestWicketSerializationDebugUtil {
     }
 
     @Test
-    public void testeWrongSerializationPage() {
+    public void testWrongSerializationPage() {
         tester.startPage(WrongSerializationPage.class);
         tester.assertRenderedPage(WrongSerializationPage.class);
         Assert.assertTrue(WicketSerializationDebugUtil.getLastVerificationResult(tester.getApplication()).contains(" size="));

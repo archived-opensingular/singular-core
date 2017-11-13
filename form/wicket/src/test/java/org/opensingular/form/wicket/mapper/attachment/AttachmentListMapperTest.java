@@ -26,7 +26,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.io.HashUtil;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.lib.commons.junit.AbstractTestTempFileSupport;
 
 import javax.annotation.Nonnull;
@@ -39,7 +39,7 @@ public class AttachmentListMapperTest extends AbstractTestTempFileSupport {
 
     @Test
     public void testAddNewFileAndRemove() throws IOException {
-        SingularDummyFormPageTester ctx = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
         ctx.getDummyPage().setTypeBuilder(AttachmentListMapperTest::createType);
         ctx.getDummyPage().setAsEditView();
         ctx.startDummyPage();
@@ -48,7 +48,7 @@ public class AttachmentListMapperTest extends AbstractTestTempFileSupport {
         SIList<SIAttachment> atts = (SIList<SIAttachment>) ctx.getAssertionsInstance().field("attachments").isList(0)
                 .getTarget();
 
-        ctx.getAssertionsPage().getSubCompomentForSInstance(atts).isNotNull().assertSInstance().isList(0);
+        ctx.getAssertionsPage().getSubComponentForSInstance(atts).isNotNull().assertSInstance().isList(0);
 
         byte[] content = new byte[]{3, 4};
         File tmpFile = getTempFileProvider().createTempFile(content);
@@ -74,20 +74,20 @@ public class AttachmentListMapperTest extends AbstractTestTempFileSupport {
         byte[] content1 = new byte[]{1, 2};
         byte[] content2 = new byte[]{3, 4, 5};
 
-        SingularDummyFormPageTester ctx = createTestPageWithTwoAttachments(content1, content2);
+        SingularFormDummyPageTester ctx = createTestPageWithTwoAttachments(content1, content2);
         ctx.getDummyPage().setAsEditView();
         ctx.startDummyPage();
 
         SIList<SIAttachment> atts = (SIList<SIAttachment>) ctx.getAssertionsInstance().field("attachments").isList(2)
                 .getTarget();
 
-        AssertionsWComponent assertAttachs = ctx.getAssertionsPage().getSubCompomentForSInstance(atts).isNotNull();
+        AssertionsWComponent assertAttachs = ctx.getAssertionsPage().getSubComponentForSInstance(atts).isNotNull();
 
         FormTester formTester = ctx.newFormTester();
-        AssertionsWComponent button = assertDelButton(assertAttachs.getSubCompomentForSInstance(atts.get(0)), true);
+        AssertionsWComponent button = assertDelButton(assertAttachs.getSubComponentForSInstance(atts.get(0)), true);
         formTester.submit(button.getTarget());
 
-        assertAttachs = ctx.getAssertionsPage().getSubCompomentForSInstance(atts).isNotNull();
+        assertAttachs = ctx.getAssertionsPage().getSubComponentForSInstance(atts).isNotNull();
         SIAttachment att = assertAttachs.assertSInstance().isList(1).field("[0]").getTarget(SIAttachment.class);
         Assert.assertArrayEquals(content2, getBytes(att));
     }
@@ -97,7 +97,7 @@ public class AttachmentListMapperTest extends AbstractTestTempFileSupport {
         byte[] content1 = new byte[]{1, 2};
         byte[] content2 = new byte[]{3, 4, 5};
 
-        SingularDummyFormPageTester ctx = createTestPageWithTwoAttachments(content1, content2);
+        SingularFormDummyPageTester ctx = createTestPageWithTwoAttachments(content1, content2);
         ctx.getDummyPage().setAsVisualizationView();
         ctx.startDummyPage();
 
@@ -105,15 +105,15 @@ public class AttachmentListMapperTest extends AbstractTestTempFileSupport {
         SIList<SIAttachment> atts = (SIList<SIAttachment>) ctx.getAssertionsInstance().field("attachments").isList(2)
                 .getTarget();
 
-        AssertionsWComponent assertAttachs = ctx.getAssertionsPage().getSubCompomentForSInstance(atts).isNotNull();
+        AssertionsWComponent assertAttachs = ctx.getAssertionsPage().getSubComponentForSInstance(atts).isNotNull();
 
-        assertDelButton(assertAttachs.getSubCompomentForSInstance(atts.get(0)), false);
-        assertDelButton(assertAttachs.getSubCompomentForSInstance(atts.get(1)), false);
+        assertDelButton(assertAttachs.getSubComponentForSInstance(atts.get(0)), false);
+        assertDelButton(assertAttachs.getSubComponentForSInstance(atts.get(1)), false);
     }
 
     private AssertionsWComponent assertDelButton(AssertionsWComponent componentAtt, boolean buttonRequired) {
         componentAtt.isNotNull();
-        AssertionsWComponent remove = componentAtt.getSubCompomentWithId("remove_btn");
+        AssertionsWComponent remove = componentAtt.getSubComponentWithId("remove_btn");
         if (buttonRequired) {
             remove.isNotNull();
             Assert.assertTrue(remove.getTarget().isEnabled() && remove.getTarget().isVisible());
@@ -125,11 +125,11 @@ public class AttachmentListMapperTest extends AbstractTestTempFileSupport {
     }
 
     @Nonnull
-    private SingularDummyFormPageTester createTestPageWithTwoAttachments(byte[] content1, byte[] content2) {
+    private SingularFormDummyPageTester createTestPageWithTwoAttachments(byte[] content1, byte[] content2) {
         File file1 = getTempFileProvider().createTempFile(content1);
         File file2 = getTempFileProvider().createTempFile(content2);
 
-        SingularDummyFormPageTester ctx = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
         ctx.getDummyPage().setTypeBuilder(AttachmentListMapperTest::createType);
         ctx.getDummyPage().addInstancePopulator(instance -> {
             SIList<SIAttachment> attachments = (SIList<SIAttachment>) instance.getField("attachments");

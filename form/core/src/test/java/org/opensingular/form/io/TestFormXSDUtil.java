@@ -28,7 +28,6 @@ import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TestCaseForm;
-import org.opensingular.form.helpers.AssertionsSForm;
 import org.opensingular.form.helpers.AssertionsSType;
 import org.opensingular.form.helpers.AssertionsXML;
 import org.opensingular.form.type.core.STypeBoolean;
@@ -282,6 +281,6 @@ public class TestFormXSDUtil extends TestCaseForm {
     private AssertionsSType parseXsd(String xsd) {
         PackageBuilder sPackage = createTestPackage();
         SType<?> type = FormXSDUtil.xsdToSType(sPackage, xsd);
-        return AssertionsSForm.assertType(type).isNotNull();
+        return new AssertionsSType(type).isNotNull();
     }
 }

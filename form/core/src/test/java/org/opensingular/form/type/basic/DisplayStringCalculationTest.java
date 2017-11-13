@@ -28,7 +28,7 @@ import org.opensingular.form.TestCaseForm;
 
 import java.util.GregorianCalendar;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
 public class DisplayStringCalculationTest extends TestCaseForm {

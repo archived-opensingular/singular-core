@@ -22,10 +22,10 @@ import org.hibernate.proxy.LazyInitializer;
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
-public abstract class BaseEntity<PK extends Serializable> implements Serializable{
+public abstract class BaseEntity<PK extends Serializable> implements Serializable {
 
     public abstract PK getCod();
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
@@ -59,7 +59,7 @@ public abstract class BaseEntity<PK extends Serializable> implements Serializabl
             return true;
         }
         if (getCod() == null) {
-            return false; 
+            return false;
         }
         if (!other.getClass().isAssignableFrom(me.getClass())) {
             return false;

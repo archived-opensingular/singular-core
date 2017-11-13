@@ -36,9 +36,11 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.commons.ui.Icon;
+import org.opensingular.lib.wicket.util.util.Shortcuts;
 import org.opensingular.lib.wicket.views.SingularReportPanel;
 import org.opensingular.lib.wicket.views.plugin.ReportButtonExtension;
 
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.*;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public class SearchReportButtonExtension implements ReportButtonExtension {
@@ -117,6 +119,7 @@ public class SearchReportButtonExtension implements ReportButtonExtension {
             }
         };
         bsModalBorder.addButton(BSModalBorder.ButtonStyle.CONFIRM, Model.of("Aplicar"), filterButton);
+        bsModalBorder.add(Shortcuts.$b.onEnterDelegate(filterButton, SINGULAR_PROCESS_EVENT));
     }
 
     private void addFilter(BSModalBorder bsModalBorder) {

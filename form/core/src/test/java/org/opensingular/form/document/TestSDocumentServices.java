@@ -34,7 +34,7 @@ import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 
 import java.util.Optional;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
 public class TestSDocumentServices extends TestCaseForm {

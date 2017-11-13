@@ -22,9 +22,8 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewByBlock;
-import org.opensingular.form.view.SViewTab;
 import org.opensingular.form.wicket.enums.AnnotationMode;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.util.function.Consumer;
 
@@ -84,8 +83,8 @@ public class BlocksCompositeMapperTest {
         });
     }
 
-    public void testBlocksCompositeMapper(Consumer<SingularDummyFormPageTester> config) {
-        SingularDummyFormPageTester ctx = new SingularDummyFormPageTester();
+    public void testBlocksCompositeMapper(Consumer<SingularFormDummyPageTester> config) {
+        SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
         ctx.getDummyPage().setTypeBuilder(BlocksCompositeMapperTest::createSimpleForm);
         config.accept(ctx);
         ctx.startDummyPage();

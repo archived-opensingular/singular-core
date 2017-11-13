@@ -19,7 +19,7 @@ package org.opensingular.flow.core;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
-import org.opensingular.flow.core.property.MetaDataRef;
+import org.opensingular.flow.core.property.MetaDataKey;
 import org.opensingular.flow.core.variable.VarService;
 
 import javax.annotation.Nonnull;
@@ -427,12 +427,6 @@ public class FlowMap {
         return endTasks.get(name);
     }
 
-    public List<STask<?>> getTasksWithMetadata(MetaDataRef ref) {
-        return (List<STask<?>>) getAllTasks().stream()
-                .filter(t -> t.getMetaData().get(ref) != null)
-                .collect(Collectors.toList());
-    }
-
     /**
      * <p>Verifica a consistência deste mapa.</p>
      *
@@ -502,8 +496,8 @@ public class FlowMap {
     }
 
     @Nonnull
-    public <T extends Serializable> FlowMap setMetaDataValue(@Nonnull MetaDataRef<T> propRef, T value) {
-        getFlowDefinition().setMetaDataValue(propRef, value);
+    public <T extends Serializable> FlowMap setMetaDataValue(@Nonnull MetaDataKey<T> key, T value) {
+        getFlowDefinition().setMetaDataValue(key, value);
         return this;
     }
 }

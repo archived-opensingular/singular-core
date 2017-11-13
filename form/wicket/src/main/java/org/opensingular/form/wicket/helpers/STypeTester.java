@@ -31,6 +31,7 @@ import org.opensingular.form.converter.SInstanceConverter;
 import org.opensingular.form.helpers.AssertionsSInstance;
 import org.opensingular.form.wicket.AjaxUpdateListenersFactory;
 import org.opensingular.form.wicket.util.WicketFormUtils;
+import org.opensingular.internal.lib.wicket.test.SingularFormTester;
 import org.opensingular.lib.commons.lambda.IBiConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 
@@ -49,12 +50,12 @@ public class STypeTester<T extends SType<?>> {
 
     private AjaxUpdateListenersFactory ajaxUpdateListenersFactory = new AjaxUpdateListenersFactory();
     private SingularWicketTester singularWicketTester;
-    private Class<? extends T>   stypeClass;
+    private Class<? extends T> sTypeClass;
     private Map<String, SingularFormTester> testers = new HashMap<>();
 
-    public STypeTester(SingularWicketTester singularWicketTester, Class<? extends T> stypeClass) {
+    public STypeTester(SingularWicketTester singularWicketTester, Class<? extends T> sTypeClass) {
         this.singularWicketTester = singularWicketTester;
-        this.stypeClass = stypeClass;
+        this.sTypeClass = sTypeClass;
     }
 
 
@@ -166,7 +167,7 @@ public class STypeTester<T extends SType<?>> {
     }
 
     private Component getComponentForSType(SType<?> sType) {
-        return this.singularWicketTester.getAssertionsPage().getSubCompomentWithId(sType.getNameSimple()).getTarget();
+        return this.singularWicketTester.getAssertionsPage().getSubComponentWithId(sType.getNameSimple()).getTarget();
     }
 
     private <ST extends SType<?>> SInstance resolveTypeFinderInstance(IFunction<T, ST> typeFinder) {
@@ -177,13 +178,13 @@ public class STypeTester<T extends SType<?>> {
 
     private SInstance getRootSInstanceForGivenSTypeClass() {
         SInstance instance = singularWicketTester.getAssertionsInstance().getTarget();
-        if (instance.getType().getName().equals(SFormUtil.getTypeName(this.stypeClass))) {
+        if (instance.getType().getName().equals(SFormUtil.getTypeName(this.sTypeClass))) {
             return instance;
         } else {
             throw new SingularFormException(
                     String.format(
                             "A classe do tipo informado (%s) não corresponde ao tipo encontrado: %s ",
-                            SFormUtil.getTypeName(stypeClass),
+                            SFormUtil.getTypeName(sTypeClass),
                             instance.getType().getName()));
         }
     }

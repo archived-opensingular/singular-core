@@ -23,11 +23,6 @@ import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.WebComponent;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.views.ViewGenerator;
-import org.opensingular.lib.commons.views.ViewMultiGenerator;
-import org.opensingular.lib.commons.views.ViewOutput;
-
-import javax.annotation.Nonnull;
-import java.io.Writer;
 
 public class WicketViewWrapperForViewOutputHtml extends WebComponent {
 
@@ -43,15 +38,7 @@ public class WicketViewWrapperForViewOutputHtml extends WebComponent {
         ViewOutputHtmlToWicket viewOutput = new ViewOutputHtmlToWicket(getRequestCycle());
         ViewGenerator generator = viewGeneratorSupplier.get();
         if (generator != null) {
-            generator = resolveGenerator(generator, viewOutput);
             generator.generateView(viewOutput);
         }
-    }
-
-    private static ViewGenerator resolveGenerator(@Nonnull ViewGenerator generator, ViewOutput<Writer> vOut) {
-        if (generator instanceof ViewMultiGenerator) {
-            return ((ViewMultiGenerator) generator).getGeneratorFor(vOut);
-        }
-        return generator;
     }
 }

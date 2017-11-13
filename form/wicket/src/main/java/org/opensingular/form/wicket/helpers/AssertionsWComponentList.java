@@ -17,56 +17,21 @@
 package org.opensingular.form.wicket.helpers;
 
 import org.apache.wicket.Component;
-import org.opensingular.lib.commons.test.AssertionsBase;
+import org.opensingular.internal.lib.wicket.test.AbstractAssertionsForWicketList;
 
+import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Representa um conjunto de asserções voltadas para lista de Componentes Wicket.
  *
  * @author Daniel Bordin on 12/02/2017.
  */
-public class AssertionsWComponentList<T extends Component>
-        extends AssertionsBase<List<T>, AssertionsWComponentList<T>> {
+public class AssertionsWComponentList
+        extends AbstractAssertionsForWicketList<AssertionsWComponentList, AssertionsWComponent> {
 
-    public AssertionsWComponentList(List<T> target) {
-        super(Objects.requireNonNull(target));
+    public AssertionsWComponentList(@Nonnull List<Component> target) {
+        super(target, component -> new AssertionsWComponent(component));
     }
 
-    @Override
-    protected String errorMsg(String msg) {
-        return msg;
-    }
-
-    /** Verifica se a lista é do tamanho esperado. Senão dispara Exception. */
-    public AssertionsWComponentList<T> isSize(int expectedSize) {
-        if (expectedSize != getTarget().size()) {
-            throw new AssertionError(errorMsg("Tamanho da lista divergente", expectedSize, getTarget().size()));
-        }
-        return this;
-    }
-
-    /** Verifica se a lista é no mínimo do tamanho esperado. Senão dispara exception. */
-    public AssertionsWComponentList<T> isSizeAtLeast(int expectedSize) {
-        if (expectedSize > getTarget().size()) {
-            throw new AssertionError(
-                    errorMsg("Tamanho da menor que o mínimo esperado", expectedSize, getTarget().size()));
-        }
-        return this;
-    }
-
-    /** Retorna uma assertiva para o componente na posição solicitada. Dispara exception se o indice for inválido. */
-    public AssertionsWComponent get(int index) {
-        isSizeAtLeast(index + 1);
-        return new AssertionsWComponent(getTarget().get(index));
-    }
-
-    public AssertionsWComponent first() {
-        return get(0);
-    }
-
-    public AssertionsWComponent last() {
-        return get(getTarget().size() - 1);
-    }
 }

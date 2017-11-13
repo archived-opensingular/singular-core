@@ -31,8 +31,8 @@ public class ViewOutputHtmlWicketTest {
     @Test
     public void test() {
         TableTool table = createSimple();
-        Assert.assertTrue(table.isDirectCompatiableWith(ViewOutputFormat.HTML));
-        Assert.assertTrue(table.isDirectCompatiableWith(ViewOutputWicket.WICKET));
+        Assert.assertTrue(table.isDirectCompatibleWith(ViewOutputFormat.HTML));
+        Assert.assertTrue(table.isDirectCompatibleWith(ViewOutputWicket.WICKET));
         Assert.assertTrue(table.getDirectSupportedFormats().contains(ViewOutputFormat.HTML));
         Assert.assertTrue(table.getDirectSupportedFormats().contains(ViewOutputWicket.WICKET));
     }

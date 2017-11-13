@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -34,15 +35,15 @@ import java.util.stream.Collectors;
  *
  * @author Daniel C. Bordin on 18/03/2017.
  */
-public class AssertionsFlowInstance extends AssertionsBase<FlowInstance, AssertionsFlowInstance> {
+public class AssertionsFlowInstance extends AssertionsBase<AssertionsFlowInstance, FlowInstance> {
 
     public AssertionsFlowInstance(FlowInstance target) {
         super(target);
     }
 
     @Override
-    protected String errorMsg(String msg) {
-        return getTargetOpt().map(target -> "(flowInstance=" + target + ") " + msg).orElse(msg);
+    protected Optional<String> generateDescriptionForCurrentTarget(@Nonnull Optional<FlowInstance> current) {
+        return current.map(target -> "flowInstance=" + target );
     }
 
     /**

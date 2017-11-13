@@ -30,12 +30,12 @@ import org.opensingular.form.STypeSimple;
 import org.opensingular.form.provider.SSimpleProvider;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.wicket.helpers.AssertionsWComponentList;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class STypeSelectItemSelectionFieldTest {
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static STypeComposite selectType;
     private static STypeSimple    nomeUF;
@@ -66,7 +66,7 @@ public class STypeSelectItemSelectionFieldTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(STypeSelectItemSelectionFieldTest::buildBaseTypeBase);
     }
 
@@ -75,7 +75,7 @@ public class STypeSelectItemSelectionFieldTest {
         tester.startDummyPage();
 
         tester.assertEnabled(
-                tester.getAssertionsForm().getSubCompomentWithId("originUF").getTarget().getPageRelativePath());
+                tester.getAssertionsForm().getSubComponentWithId("originUF").getTarget().getPageRelativePath());
     }
 
     @Test
@@ -83,9 +83,9 @@ public class STypeSelectItemSelectionFieldTest {
         tester.startDummyPage();
 
         AssertionsWComponentList dropDownAssertion = tester.getAssertionsForm().getSubComponents(DropDownChoice.class);
-        dropDownAssertion.isSize(1);
+        dropDownAssertion.hasSize(1);
 
-        DropDownChoice choices = dropDownAssertion.get(0).getTarget(DropDownChoice.class);
+        DropDownChoice choices = dropDownAssertion.first().getTarget(DropDownChoice.class);
 
         assertThat(choices.getChoices()).hasSize(2);
         assertThat(choices.getChoiceRenderer().getIdValue(choices.getChoices().get(0), 0)).isEqualTo("DF");
@@ -99,10 +99,10 @@ public class STypeSelectItemSelectionFieldTest {
         tester.startDummyPage();
 
         tester.newFormTester()
-                .select(getFormRelativePath((DropDownChoice)tester.getAssertionsForm().getSubCompomentWithId("originUF").getTarget()), 0)
+                .select(getFormRelativePath((DropDownChoice)tester.getAssertionsForm().getSubComponentWithId("originUF").getTarget()), 0)
                 .submit();
 
-        tester.getAssertionsForm().getSubCompomentWithType(selectType).assertSInstance().field(idUF.getNameSimple()).isValueEquals("DF");
+        tester.getAssertionsForm().getSubComponentWithType(selectType).assertSInstance().field(idUF.getNameSimple()).isValueEquals("DF");
     }
 
     @Test
@@ -115,7 +115,7 @@ public class STypeSelectItemSelectionFieldTest {
         tester.startDummyPage();
 
         DropDownChoice choices = tester.getAssertionsForm()
-                .getSubComponents(DropDownChoice.class).get(0).getTarget(DropDownChoice.class);
+                .getSubComponents(DropDownChoice.class).first().getTarget(DropDownChoice.class);
 
         assertThat(choices.getChoiceRenderer().getIdValue(choices.getChoices().get(0), 0)).isEqualTo("GO");
         assertThat(choices.getChoiceRenderer().getDisplayValue(choices.getChoices().get(0))).isEqualTo("Goias");
@@ -130,10 +130,10 @@ public class STypeSelectItemSelectionFieldTest {
         tester.startDummyPage();
 
         tester.newFormTester()
-                .select(getFormRelativePath((DropDownChoice)tester.getAssertionsForm().getSubCompomentWithId("originUF").getTarget()), 0)
+                .select(getFormRelativePath((DropDownChoice)tester.getAssertionsForm().getSubComponentWithId("originUF").getTarget()), 0)
                 .submit();
 
-        tester.getAssertionsForm().getSubCompomentWithType(selectType).assertSInstance().field(idUF.getNameSimple()).isValueEquals("DF");
+        tester.getAssertionsForm().getSubComponentWithType(selectType).assertSInstance().field(idUF.getNameSimple()).isValueEquals("DF");
     }
 
     @Test
@@ -141,10 +141,10 @@ public class STypeSelectItemSelectionFieldTest {
         tester.startDummyPage();
 
         tester.newFormTester()
-                .select(getFormRelativePath((DropDownChoice)tester.getAssertionsForm().getSubCompomentWithId("originUF").getTarget()), 0)
+                .select(getFormRelativePath((DropDownChoice)tester.getAssertionsForm().getSubComponentWithId("originUF").getTarget()), 0)
                 .submit();
 
-        tester.getAssertionsForm().getSubCompomentWithType(selectType)
+        tester.getAssertionsForm().getSubComponentWithType(selectType)
                 .assertSInstance().field(nomeUF.getNameSimple()).isValueEquals("Distrito Federal");
     }
 

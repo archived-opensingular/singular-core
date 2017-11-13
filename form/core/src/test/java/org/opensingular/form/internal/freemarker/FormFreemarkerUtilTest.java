@@ -18,9 +18,8 @@
 
 package org.opensingular.form.internal.freemarker;
 
-import org.fest.assertions.api.AbstractAssert;
-import org.fest.assertions.api.Assertions;
-import org.fest.assertions.api.StringAssert;
+import org.assertj.core.api.AbstractCharSequenceAssert;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +34,7 @@ import org.opensingular.form.type.core.STypeString;
 
 import java.util.Date;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
 public class FormFreemarkerUtilTest extends TestCaseForm {
@@ -100,7 +99,7 @@ public class FormFreemarkerUtilTest extends TestCaseForm {
         assertMerge(curriculo, "certificados", "<#list _inst as c>${c.nome};</#list>").isEqualTo("Java;Oracle;");
     }
 
-    private static AbstractAssert<StringAssert, String> assertMerge(SIComposite composite, String path, String templateString) {
+    private static AbstractCharSequenceAssert<?, String> assertMerge(SIComposite composite, String path, String templateString) {
         SInstance instance = path == null ? composite : composite.getField(path);
         return Assertions.assertThat(FormFreemarkerUtil.get().merge(instance, templateString));
     }

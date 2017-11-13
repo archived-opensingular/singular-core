@@ -26,12 +26,14 @@ import org.opensingular.lib.commons.context.SingularSingletonStrategy;
 import org.opensingular.lib.commons.util.Loggable;
 
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A centralized classpath scanner used by Singular.
@@ -75,6 +77,22 @@ public class SingularClassPathScanner implements Loggable {
     }
 
     /**
+     * Does almost the same of {@link SingularClassPathScanner#findSubclassesOf(Class)}, but also filter results
+     * by packages names
+     *
+     * @param clazz          An class or interface to filter subclasses or implementing classes from classpath.
+     * @param filterPackages packages names to filter
+     * @param <T>            The class type
+     * @return A list of unique classes.
+     */
+    public <T> Set<Class<? extends T>> findSubclassesOf(Class<T> clazz, String... filterPackages) {
+        return convertClassesNamesToTypedClassesObjects(clazz,
+                filterByPackages(findClassesImplementingInterface(clazz), Arrays.asList(filterPackages)),
+                filterByPackages(findSubclasses(clazz), Arrays.asList(filterPackages)),
+                filterByPackages(findInterfacesExtendingInterface(clazz), Arrays.asList(filterPackages)));
+    }
+
+    /**
      * Find a set of classes annotated with the annotation represented by {@param annotationClass} class.
      * PS: the current implementation is not able to find classes that are annotated indirectly
      * from jvm classes. Ex: {@link java.security.Certificate} is annotated {@link java.lang.Deprecated}, if a hypothetical
@@ -82,14 +100,33 @@ public class SingularClassPathScanner implements Loggable {
      * foo.bar.Foo as a class that is annotated with  {@link java.lang.Deprecated} because this annotaton is indirectly
      * from an jvm class.
      *
-     * @param annotationClass
-     * @return
+     * @param annotationClass An class or representing an annotation to filter classes from classpath.
+     * @return A list of unique classes.
      */
     public Set<Class<?>> findClassesAnnotatedWith(Class<?> annotationClass) {
         if (!annotationClass.isAnnotation()) {
             throw SingularException.rethrow("Invalid Parameter: must be an annotation.");
         }
         return convertClassesNamesToTypedClassesObjects(Object.class, findAnnotated(annotationClass));
+    }
+
+    /**
+     * Does almost the same of {@link SingularClassPathScanner#findClassesAnnotatedWith(Class)}, but also filter results
+     * by packages names
+     *
+     * @param annotationClass An class or representing an annotation to filter classes from classpath.
+     * @param filterPackages  packages names to filter
+     * @return A list of unique classes.
+     */
+    public Set<Class<?>> findClassesAnnotatedWith(Class<?> annotationClass, String... filterPackages) {
+        if (!annotationClass.isAnnotation()) {
+            throw SingularException.rethrow("Invalid Parameter: must be an annotation.");
+        }
+        return convertClassesNamesToTypedClassesObjects(Object.class, filterByPackages(findAnnotated(annotationClass), Arrays.asList(filterPackages)));
+    }
+
+    private List<String> filterByPackages(List<String> classes, List<String> packages) {
+        return classes.stream().filter(c -> packages.stream().anyMatch(c::startsWith)).collect(Collectors.toList());
     }
 
     private <T> Set<Class<? extends T>> convertClassesNamesToTypedClassesObjects(Class<T> type, List<String>... lists) {

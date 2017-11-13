@@ -42,8 +42,8 @@ public class InstanciaDefinicaoComVariavelTest extends TestFlowSupport {
 
     @Before
     public void setUp() {
-        assertNotNull(mbpmBean);
-        Flow.setConf(mbpmBean, true);
+        assertNotNull(singularFlowConfigurationBean);
+        Flow.setConf(singularFlowConfigurationBean, true);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class InstanciaDefinicaoComVariavelTest extends TestFlowSupport {
 
     @Test()
     public void teste2PersistenciaVariaveis() {
-        DefinicaoComVariaveis d = mbpmBean.getFlowDefinition(DefinicaoComVariaveis.class);
+        DefinicaoComVariaveis d = singularFlowConfigurationBean.getFlowDefinition(DefinicaoComVariaveis.class);
         List<FlowInstanceEntity> instances = testDAO.findAllFlowInstancesByDefinition(d.getEntityFlowVersion());
         for (FlowInstanceEntity p : instances) {
             List<VariableInstanceEntity> variables = testDAO.retrieveVariablesByInstance(p.getCod());

@@ -16,7 +16,7 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.core.property.MetaData;
+import org.opensingular.flow.core.property.MetaDataMap;
 import org.opensingular.flow.core.property.MetaDataEnabled;
 import org.opensingular.flow.core.variable.ValidationResult;
 import org.opensingular.flow.core.variable.VarInstanceMap;
@@ -41,7 +41,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     private UITransitionAccessStrategy<TaskInstance> accessStrategy;
     private List<SBusinessRole> rolesToDefineUser;
 
-    private MetaData metaData;
+    private MetaDataMap metaDataMap;
 
     private ITransitionParametersInitializer parametersInitializer;
     private ITransitionParametersValidator   parametersValidator;
@@ -115,17 +115,17 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
 
     @Override
     @Nonnull
-    public Optional<MetaData> getMetaDataOpt() {
-        return Optional.ofNullable(metaData);
+    public Optional<MetaDataMap> getMetaDataOpt() {
+        return Optional.ofNullable(metaDataMap);
     }
 
     @Override
     @Nonnull
-    public MetaData getMetaData() {
-        if (metaData == null) {
-            metaData = new MetaData();
+    public MetaDataMap getMetaData() {
+        if (metaDataMap == null) {
+            metaDataMap = new MetaDataMap();
         }
-        return metaData;
+        return metaDataMap;
     }
 
     public STask<?> getOrigin() {

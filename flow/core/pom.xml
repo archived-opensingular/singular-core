@@ -26,13 +26,6 @@
             <version>${singular.version}</version>
         </dependency>
 
-        <!-- Remover essa dependência de reflections em favor "org.reflections - mirror" -->
-        <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.9.11</version>
-        </dependency>
-
         <!-- Test -->
 
         <dependency>

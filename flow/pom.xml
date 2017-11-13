@@ -16,7 +16,6 @@
 	<modules>
 		<module>core</module>
 		<module>schedule</module>
-		<module>rest-client</module>
 	</modules>
 
 	<dependencies>

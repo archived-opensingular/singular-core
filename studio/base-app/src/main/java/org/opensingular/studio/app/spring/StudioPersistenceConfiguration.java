@@ -69,7 +69,19 @@ public class StudioPersistenceConfiguration implements Loggable {
     }
 
     protected Properties hibernateProperties() {
-        return new Properties();
+        final Properties hibernateProperties = new Properties();
+        hibernateProperties.setProperty("hibernate.connection.isolation", "2");
+        hibernateProperties.setProperty("hibernate.jdbc.batch_size", "30");
+        hibernateProperties.setProperty("hibernate.show_sql", "false");
+        hibernateProperties.setProperty("hibernate.format_sql", "true");
+        hibernateProperties.setProperty("hibernate.enable_lazy_load_no_trans", "true");
+        hibernateProperties.setProperty("hibernate.jdbc.use_get_generated_keys", "true");
+        hibernateProperties.setProperty("hibernate.cache.use_second_level_cache", "true");
+        hibernateProperties.setProperty("hibernate.cache.use_query_cache", "true");
+        /*não utilizar a singleton region factory para não conflitar com o cache do singular-server */
+        hibernateProperties.setProperty("net.sf.ehcache.configurationResourceName", "/studioapp-ehcache.xml");
+        hibernateProperties.setProperty("hibernate.cache.region.factory_class", "org.hibernate.cache.ehcache.EhCacheRegionFactory");
+        return hibernateProperties;
     }
 
     protected String[] hibernatePackagesToScan() {
