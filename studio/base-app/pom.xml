@@ -22,7 +22,12 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-form-service</artifactId>
-            <version>1.6.9-SNAPSHOT</version>
+            <version>${singular.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opensingular</groupId>
+            <artifactId>singular-form-core</artifactId>
+            <version>${singular.version}</version>
         </dependency>
         <dependency>
             <groupId>org.opensingular</groupId>
