@@ -10,21 +10,16 @@
                            http://www.springframework.org/schema/jdbc
                            http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd">
 
-    <!-- DATA SOURCE CONFIGURATION -->
-    <bean name="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+    <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+        <property name="poolName" value="springHikariCP"/>
         <property name="driverClassName" value="org.h2.Driver"/>
-        <!--Conexão com o banco local-->
-        <!--<property name="url" value="jdbc:h2:tcp://localhost:9092//opt/h2/singularserverdb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=128000;EARLY_FILTER=1;LOCK_TIMEOUT=15000;LOCK_MODE=3;QUERY_TIMEOUT=15000"/>-->
-        <!--<property name="username" value="sa"/>-->
-        <!--<property name="password" value=""/>-->
-
-        <property name="url" value="jdbc:h2:file:./singulardb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=2048;MVCC=TRUE;LOCK_TIMEOUT=15000;"/>
+        <property name="jdbcUrl" value="jdbc:h2:file:./singulardb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=2048;MVCC=TRUE;LOCK_TIMEOUT=15000;" />
         <property name="username" value="sa"/>
         <property name="password" value="sa"/>
-        <property name="removeAbandoned" value="true"/>
-        <property name="initialSize" value="5" />
-        <property name="maxActive" value="10" />
-        <property name="minIdle" value="1" />
+    </bean>
+
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <constructor-arg ref="hikariConfig"/>
     </bean>
 
 
@@ -32,7 +27,8 @@
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <!-- Incluir o pacote quando tiver um -->
-        <property name="packagesToScan" value="org.opensingular.singular.form.showcase.dao.form,org.opensingular.form.persistence"/>
+        <property name="packagesToScan"
+                  value="org.opensingular.singular.form.showcase.dao.form,org.opensingular.form.persistence"/>
 
         <property name="hibernateProperties">
             <props>
@@ -54,10 +50,10 @@
     </bean>
 
     <jdbc:initialize-database data-source="dataSource" ignore-failures="ALL">
-        <jdbc:script location="classpath:/db/ddl/drops.sql" />
-        <jdbc:script location="classpath:/db/ddl/create-tables-form.sql" />
-        <jdbc:script location="classpath:/db/ddl/create-sequences-form.sql" />
-        <jdbc:script location="classpath:/db/ddl/create-constraints-form.sql" />
+        <jdbc:script location="classpath:/db/ddl/drops.sql"/>
+        <jdbc:script location="classpath:/db/ddl/create-tables-form.sql"/>
+        <jdbc:script location="classpath:/db/ddl/create-sequences-form.sql"/>
+        <jdbc:script location="classpath:/db/ddl/create-constraints-form.sql"/>
     </jdbc:initialize-database>
 
 </beans>

@@ -165,6 +165,13 @@
             <version>2.5</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>2.6.1</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- USED IN TESTS -->
         <dependency>
             <groupId>com.h2database</groupId>
