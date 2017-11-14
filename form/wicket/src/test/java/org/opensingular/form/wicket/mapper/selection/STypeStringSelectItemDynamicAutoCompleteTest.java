@@ -20,25 +20,25 @@ package org.opensingular.form.wicket.mapper.selection;
 
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.form.TextField;
-import org.fest.assertions.core.Condition;
+import org.assertj.core.api.Condition;
 import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewAutoComplete;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class STypeStringSelectItemDynamicAutoCompleteTest {
 
     private static final String[] DOMAINS = {"@gmail.com", "@hotmail.com", "@yahoo.com"};
     private static final String   MY_HERO = "myHero";
 
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     @Before
     public void setUp() {
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(root -> {
             STypeString myHero = root.addFieldString(MY_HERO);
             myHero.selectionOf(DOMAINS);
@@ -49,14 +49,14 @@ public class STypeStringSelectItemDynamicAutoCompleteTest {
 
     @Test
     public void renderField() {
-        tester.getAssertionsPage().getSubComponents(TypeaheadComponent.class).isSize(1);
-        tester.getAssertionsPage().getSubComponents(TextField.class).isSize(2);
+        tester.getAssertionsPage().getSubComponents(TypeaheadComponent.class).hasSize(1);
+        tester.getAssertionsPage().getSubComponents(TextField.class).hasSize(2);
     }
 
     @Test
     public void haveABloodhoundBehabiour() {
         TypeaheadComponent typeaheadComponent = tester.getAssertionsPage().getSubComponents(TypeaheadComponent.class)
-                .get(0)
+                .element(0)
                 .getTarget(TypeaheadComponent.class);
         assertThat(typeaheadComponent.getBehaviors()).haveAtLeast(1, new Condition<Behavior>() {
             @Override

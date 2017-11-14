@@ -27,7 +27,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewListByForm;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 public class PanelListWithSimpleSelectionTest {
 
@@ -35,7 +35,7 @@ public class PanelListWithSimpleSelectionTest {
     private static STypeComposite mockTypeComposite;
     private static STypeString simpleSelection;
 
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static void buildBaseType(STypeComposite<?> mockType) {
 
@@ -51,7 +51,7 @@ public class PanelListWithSimpleSelectionTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(PanelListWithSimpleSelectionTest::buildBaseType);
         tester.getDummyPage().setAsEditView();
         tester.startDummyPage();
@@ -61,77 +61,77 @@ public class PanelListWithSimpleSelectionTest {
     public void testAddItem() {
         final Button addButton = getAddButton();
 
-        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
+        tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(0);
 
         tester.executeAjaxEvent(addButton, "click");
-        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(1);
+        tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(1);
 
         tester.executeAjaxEvent(addButton, "click");
-        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(2);
+        tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(2);
 
         tester.executeAjaxEvent(addButton, "click");
-        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(3);
+        tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(3);
     }
 
     @Test
     public void testRemoveItem() {
         final Button addButton = getAddButton();
 
-        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
+        tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(0);
 
         tester.executeAjaxEvent(addButton, "click");
-        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(1);
+        tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(1);
 
         final Button removeButton = (Button) tester.getAssertionsForm()
                 .findSubComponent(b -> b.getClass().getName().contains("RemoverButton")).getTarget();
 
         tester.executeAjaxEvent(removeButton, "click");
-        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
+        tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(0);
     }
 
     @Test
     public void testAddItemAndFillOptions() {
         final Button addButton = getAddButton();
 
-        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
+        tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(0);
 
         tester.executeAjaxEvent(addButton, "click");
-        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(1);
+        tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(1);
 
         tester.getAssertionsForm()
-                .getSubCompomentWithType(mockList)
-                .getSubCompomentWithType(mockTypeComposite)
-                .getSubCompomentWithType(simpleSelection).assertSInstance().getTarget().setValue("a");
+                .getSubComponentWithType(mockList)
+                .getSubComponentWithType(mockTypeComposite)
+                .getSubComponentWithType(simpleSelection).assertSInstance().getTarget().setValue("a");
 
         tester.newFormTester().submit();
 
         tester.getAssertionsForm()
-                .getSubCompomentWithType(mockList)
-                .getSubCompomentWithType(mockTypeComposite)
-                .getSubCompomentWithType(simpleSelection).assertSInstance().isNotNull().isValueEquals("a");
+                .getSubComponentWithType(mockList)
+                .getSubComponentWithType(mockTypeComposite)
+                .getSubComponentWithType(simpleSelection).assertSInstance().isNotNull().isValueEquals("a");
     }
 
     @Test
     public void testAddItemFillOptionsAndThenAddOtherItem() {
         final Button addButton = getAddButton();
 
-        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(0);
+        tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(0);
 
         tester.executeAjaxEvent(addButton, "click");
-        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(1);
+        tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(1);
 
         tester.getAssertionsForm()
-                .getSubCompomentWithType(mockList)
-                .getSubCompomentWithType(mockTypeComposite)
-                .getSubCompomentWithType(simpleSelection).assertSInstance().getTarget().setValue("a");
+                .getSubComponentWithType(mockList)
+                .getSubComponentWithType(mockTypeComposite)
+                .getSubComponentWithType(simpleSelection).assertSInstance().getTarget().setValue("a");
 
         tester.executeAjaxEvent(addButton, "click");
-        tester.getAssertionsForm().getSubCompomentWithType(mockList).assertSInstance().isList(2);
+        tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(2);
 
         tester.getAssertionsForm()
-                .getSubCompomentWithType(mockList)
-                .getSubCompomentWithType(mockTypeComposite)
-                .getSubCompomentWithType(simpleSelection).assertSInstance().isValueEquals("a");
+                .getSubComponentWithType(mockList)
+                .getSubComponentWithType(mockTypeComposite)
+                .getSubComponentWithType(simpleSelection).assertSInstance().isValueEquals("a");
     }
 
     private Button getAddButton() {

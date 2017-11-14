@@ -32,7 +32,7 @@ import org.opensingular.form.type.core.STypeBoolean;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.util.transformer.Value;
 import org.opensingular.form.view.SViewSearchModal;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.lib.wicket.util.datatable.BSDataTable;
 
 import java.io.Serializable;
@@ -49,11 +49,11 @@ public class SearchModalMapperTest {
 
     private static int PAGE_SIZE = 5;
 
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     @Before
     public void setUp() {
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(SearchModalMapperTest::buildBaseType);
     }
 
@@ -139,7 +139,7 @@ public class SearchModalMapperTest {
 
     private void openModal() {
         tester.executeAjaxEvent(tester.getAssertionsForm()
-                .getSubCompomentWithId(SearchModalPanel.MODAL_TRIGGER_ID)
+                .getSubComponentWithId(SearchModalPanel.MODAL_TRIGGER_ID)
                 .getTarget(Button.class), "click");
     }
 

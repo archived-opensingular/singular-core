@@ -29,15 +29,15 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SMultiSelectionByCheckboxView;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class STypeStringMultipleSelectionFieldTest {
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static STypeList fieldType;
 
@@ -50,7 +50,7 @@ public class STypeStringMultipleSelectionFieldTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(STypeStringMultipleSelectionFieldTest::buildBaseType);
     }
 
@@ -58,15 +58,15 @@ public class STypeStringMultipleSelectionFieldTest {
     public void renders(){
         tester.startDummyPage();
         tester.assertEnabled(
-                tester.getAssertionsForm().getSubCompomentWithId("favoriteFruit").getTarget().getPageRelativePath());
+                tester.getAssertionsForm().getSubComponentWithId("favoriteFruit").getTarget().getPageRelativePath());
 
-        tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).isSize(1);
+        tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).hasSize(1);
     }
 
     @Test
     public void rendersAListWithSpecifiedOptions() {
         tester.startDummyPage();
-        CheckBoxMultipleChoice choices = tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).get(
+        CheckBoxMultipleChoice choices = tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).element(
                 0).getTarget(CheckBoxMultipleChoice.class);
 
         List<String> chaves   = new ArrayList<>();
@@ -86,10 +86,10 @@ public class STypeStringMultipleSelectionFieldTest {
         tester.startDummyPage();
         tester.newFormTester()
                 .select(getFormRelativePath((FormComponent)
-                        tester.getAssertionsForm().getSubCompomentWithId("favoriteFruit").getTarget()), 2)
+                        tester.getAssertionsForm().getSubComponentWithId("favoriteFruit").getTarget()), 2)
                 .submit();
         List result = (List) tester.getAssertionsForm()
-                .getSubCompomentWithType(fieldType).assertSInstance().isList(1).getTarget().getValue();
+                .getSubComponentWithType(fieldType).assertSInstance().isList(1).getTarget().getValue();
         assertThat(result).containsOnly("orange");
     }
 
@@ -102,7 +102,7 @@ public class STypeStringMultipleSelectionFieldTest {
         });
         tester.startDummyPage();
 
-        CheckBoxMultipleChoice choices = tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).get(
+        CheckBoxMultipleChoice choices = tester.getAssertionsForm().getSubComponents(CheckBoxMultipleChoice.class).element(
                 0).getTarget(CheckBoxMultipleChoice.class);
         List<String> chaves = new ArrayList<>();
         List<String> displays = new ArrayList<>();

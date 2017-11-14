@@ -24,7 +24,7 @@ import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.util.file.File;
 import org.apache.wicket.util.tester.FormTester;
-import org.fest.assertions.core.Condition;
+import org.assertj.core.api.Condition;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -38,8 +38,8 @@ import org.opensingular.form.io.HashUtil;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
 import org.opensingular.form.wicket.helpers.SingularFormBaseTest;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
 
@@ -49,7 +49,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertArrayEquals;
 import static org.opensingular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
 
@@ -79,7 +79,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
 
     @Test
     public void testAddNewFileAndRemove() throws IOException {
-        SingularDummyFormPageTester ctx = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
         ctx.getDummyPage().setTypeBuilder(AttachmentFieldTest::createType);
         ctx.getDummyPage().setAsEditView();
 
@@ -88,11 +88,11 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
 
         ctx.getAssertionsPage().debugComponentTree(); //TODO apagar essa linha depois de pronto o teste
 
-        ctx.getAssertionsInstance().field("attachment").is(SIAttachment.class);
+        ctx.getAssertionsInstance().field("attachment").isInstanceOf(SIAttachment.class);
 
-        ctx.getAssertionsPage().getSubCompomentWithId("fileUpload")
+        ctx.getAssertionsPage().getSubComponentWithId("fileUpload")
                 .isNotNull()
-                .assertSInstance().is(SIAttachment.class);
+                .assertSInstance().isInstanceOf(SIAttachment.class);
 
         //Mas exemplos de conteúdo em BaseAttachmentPersistenceFilesTest.java
         //sha1 = "7110eda4d09e062aa5e4a390b0a572ac0d2c0220"
@@ -100,7 +100,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
         java.io.File tmpFile = tmpProvider.createTempFile(content);
 
         FormTester formTester = ctx.newFormTester();
-        formTester.submit(ctx.getAssertionsPage().getSubCompomentWithId("remove_btn").getTarget());
+        formTester.submit(ctx.getAssertionsPage().getSubComponentWithId("remove_btn").getTarget());
         //formTester.setFile(getFormRelativePath(multipleFileField), new org.apache.wicket.util.file.File(tempFile), "text/plain");
 
         ctx.getAssertionsPage().debugComponentTree();
@@ -125,7 +125,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
     @Test
     public void testRemove() throws IOException {
         byte[] content =  new byte[]{1, 2};
-        SingularDummyFormPageTester ctx = createPageWithContent(content);
+        SingularFormDummyPageTester ctx = createPageWithContent(content);
         ctx.getDummyPage().setAsEditView();
 
 
@@ -133,12 +133,12 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
         ctx.startDummyPage();
         ctx.getAssertionsPage().debugComponentTree(); //TODO apagar essa linha depois de pronto o teste
         asssertContent(ctx.getAssertionsInstance().field("attachment"), content);
-        ctx.getAssertionsPage().getSubCompomentWithId("fileUpload")
+        ctx.getAssertionsPage().getSubComponentWithId("fileUpload")
                 .isNotNull()
-                .assertSInstance().is(SIAttachment.class);
+                .assertSInstance().isInstanceOf(SIAttachment.class);
 
         //TODO Tentar baixar o arquivo
-        //ctx.clickLink(ctx.getAssertionsPage().getSubCompomentWithId("downloadLink").getTarget());
+        //ctx.clickLink(ctx.getAssertionsPage().getSubComponentWithId("downloadLink").getTarget());
 
         //Clica em apagar
         FormTester formTester = ctx.newFormTester();
@@ -149,7 +149,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
 
     private AssertionsWComponent assertDelButton(AssertionsWComponent componentAtt, boolean buttonRequired) {
         componentAtt.isNotNull();
-        AssertionsWComponent remove = componentAtt.getSubCompomentWithId("remove_btn");
+        AssertionsWComponent remove = componentAtt.getSubComponentWithId("remove_btn");
         if (buttonRequired) {
             remove.isNotNull();
             Assert.assertTrue(remove.getTarget().isEnabled() && remove.getTarget().isVisible());
@@ -163,25 +163,25 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
     @Test
     public void testReadOnly() throws IOException {
         byte[] content =  new byte[]{1, 2};
-        SingularDummyFormPageTester ctx = createPageWithContent(content);
+        SingularFormDummyPageTester ctx = createPageWithContent(content);
         ctx.getDummyPage().setAsVisualizationView();
 
         //Start
         ctx.startDummyPage();
         ctx.getAssertionsPage().debugComponentTree(); //TODO apagar essa linha depois de pronto o teste
         asssertContent(ctx.getAssertionsInstance().field("attachment"), content);
-        ctx.getAssertionsPage().getSubCompomentWithId("_readOnlyAttachment").isNotNull();
+        ctx.getAssertionsPage().getSubComponentWithId("_readOnlyAttachment").isNotNull();
         assertDelButton(ctx.getAssertionsPage(),false);
 
         //TODO Tentar baixar o arquivo
-        //ctx.clickLink(ctx.getAssertionsPage().getSubCompomentWithId("downloadLink").getTarget());
+        //ctx.clickLink(ctx.getAssertionsPage().getSubComponentWithId("downloadLink").getTarget());
     }
 
     @Nonnull
-    private SingularDummyFormPageTester createPageWithContent(byte[] content) {
+    private SingularFormDummyPageTester createPageWithContent(byte[] content) {
         java.io.File file = tmpProvider.createTempFile(content);
 
-        SingularDummyFormPageTester ctx = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
         ctx.getDummyPage().setTypeBuilder(AttachmentFieldTest::createType);
         ctx.getDummyPage().addInstancePopulator( instance -> {
             instance.getField("attachment", SIAttachment.class).setContent("teste.txt", file, file.length(), HashUtil.toSHA1Base16(content));
@@ -190,7 +190,7 @@ public class AttachmentFieldTest extends SingularFormBaseTest {
     }
 
     private void asssertContent(AssertionsSInstance attachment, byte[] expectedContent) throws IOException {
-        attachment.is(SIAttachment.class);
+        attachment.isInstanceOf(SIAttachment.class);
         SIAttachment att = attachment.getTarget(SIAttachment.class);
         if (expectedContent == null) {
             Assert.assertFalse(att.getContentAsInputStream().isPresent());

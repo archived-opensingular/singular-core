@@ -18,13 +18,14 @@
 
 package org.opensingular.lib.wicket.views;
 
-import org.apache.wicket.util.tester.WicketTestCase;
 import org.junit.Test;
+import org.opensingular.internal.lib.wicket.test.SingularSimpleWicketTestCase;
 
-public class SingularReportPanelTest extends WicketTestCase {
+public class SingularReportPanelTest extends SingularSimpleWicketTestCase {
+
     @Test
     public void testRendering() throws Exception {
-        tester.startPage(new MockSingularReportPage(id -> new BlankSingularReportPanel(id, () -> null)));
-        tester.assertRenderedPage(MockSingularReportPage.class);
+        getTester().startPage(new MockSingularReportPage(id -> new BlankSingularReportPanel(id, () -> null)));
+        getTester().assertRenderedPage(MockSingularReportPage.class);
     }
 }

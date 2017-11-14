@@ -237,8 +237,9 @@ public final class SingularTestUtil {
     }
 
     /**
-     * Abre o conteúdo html informado com o aplicativo associado no sistema operacional (browser default) e espera 5
-     * segundos para prosseguir. Útil para inspecionar visualmente um arquivo que acabou de ser gerado por um teste.
+     * Opens the html content on the programmer desktop with the associated application of the operating system
+     * (default browser) e waits 5 seconds until resume the flow of execution. Useful to visually inspect the content
+     * just created by a test.
      */
     public static void showHtmlContentOnDesktopForUserAndWaitOpening(@Nonnull String content) {
         showFileOnDesktopForUserAndWaitOpening(SingularTestUtil.class, "html", out -> {

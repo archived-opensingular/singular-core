@@ -18,9 +18,8 @@
 
 package org.opensingular.form.internal.freemarker;
 
-import org.fest.assertions.api.AbstractAssert;
-import org.fest.assertions.api.Assertions;
-import org.fest.assertions.api.StringAssert;
+import org.assertj.core.api.AbstractCharSequenceAssert;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -176,7 +175,7 @@ public class FreemarkerErrorHandlerWithPropertyTrueTest extends TestCaseForm {
      * @param templateString
      * @return
      */
-    private static AbstractAssert<StringAssert, String> assertMerge(SIComposite composite, String path, String templateString) {
+    private static AbstractCharSequenceAssert<?, String> assertMerge(SIComposite composite, String path, String templateString) {
         SInstance instance = path == null ? composite : composite.getField(path);
         return Assertions.assertThat(FormFreemarkerUtil.get().merge(instance, templateString));
     }
@@ -188,7 +187,7 @@ public class FreemarkerErrorHandlerWithPropertyTrueTest extends TestCaseForm {
      * @param templateString
      * @return
      */
-    private static AbstractAssert<StringAssert, String> assertMergeLikeDisplay(SIComposite composite, String path, String templateString) {
+    private static AbstractCharSequenceAssert<?, String> assertMergeLikeDisplay(SIComposite composite, String path, String templateString) {
         SInstance instance = path == null ? composite : composite.getField(path);
         return Assertions.assertThat(FormFreemarkerUtil.get().merge(instance, templateString, false, true));
     }

@@ -31,15 +31,14 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.provider.SimpleProvider;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.wicket.IWicketComponentMapper;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 /**
  * Verifica se é possivel selecionar um valor apos
@@ -49,7 +48,7 @@ import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_P
  * Falhou: Não que eu saiba
  */
 public class TypeaheadAjaxUpdateTest {
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static STypeString                 genero;
     private static STypeComposite<SIComposite> pessoa;
@@ -87,7 +86,7 @@ public class TypeaheadAjaxUpdateTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(TypeaheadAjaxUpdateTest::buildBaseType);
         tester.getDummyPage().setAsEditView();
         tester.startDummyPage();
@@ -95,12 +94,12 @@ public class TypeaheadAjaxUpdateTest {
 
     @Test
     public void assertVisibility() {
-        Component pessoaComponent = tester.getAssertionsForm().getSubCompomentWithType(pessoa).getTarget();
+        Component pessoaComponent = tester.getAssertionsForm().getSubComponentWithType(pessoa).getTarget();
         tester.assertInvisible(pessoaComponent.getPageRelativePath());
 
-        tester.getAssertionsForm().getSubCompomentWithType(pessoa).assertSInstance();
+        tester.getAssertionsForm().getSubComponentWithType(pessoa).assertSInstance();
 
-        DropDownChoice dropDown = tester.getAssertionsForm().getSubComponents(DropDownChoice.class).get(0).getTarget(DropDownChoice.class);
+        DropDownChoice dropDown = tester.getAssertionsForm().getSubComponents(DropDownChoice.class).element(0).getTarget(DropDownChoice.class);
 
         tester.newFormTester().select(getFormRelativePath(dropDown), 0);
         tester.executeAjaxEvent(dropDown, SINGULAR_PROCESS_EVENT);
@@ -111,7 +110,7 @@ public class TypeaheadAjaxUpdateTest {
     @Test
     public void assertUpdate() {
         DropDownChoice dropDownGenero =  tester.getAssertionsForm()
-                .getSubComponents(DropDownChoice.class).get(0).getTarget(DropDownChoice.class);
+                .getSubComponents(DropDownChoice.class).element(0).getTarget(DropDownChoice.class);
 
         {
             tester.newFormTester().select(getFormRelativePath(dropDownGenero), 1);
@@ -129,13 +128,13 @@ public class TypeaheadAjaxUpdateTest {
     }
 
     private void setAndCheckValue() {
-        Component inputNameComponent = tester.getAssertionsForm().getSubComponents(TextField.class).get(1).getTarget();
+        Component inputNameComponent = tester.getAssertionsForm().getSubComponents(TextField.class).element(1).getTarget();
 
         tester.newFormTester().setValue(inputNameComponent, "Danilo");
         tester.executeAjaxEvent(inputNameComponent, SINGULAR_PROCESS_EVENT);
 
         List<SInstance> listITems = (List<SInstance>) tester.getAssertionsForm()
-                .getSubCompomentWithType(pessoa).assertSInstance().getTarget().getValue();
+                .getSubComponentWithType(pessoa).assertSInstance().getTarget().getValue();
         assertThat(listITems.get(1).getValue()).isNotNull();
     }
 

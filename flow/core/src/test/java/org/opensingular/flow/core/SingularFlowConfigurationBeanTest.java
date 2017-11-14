@@ -30,14 +30,14 @@ public class SingularFlowConfigurationBeanTest extends TestFlowSupport {
 
     @Before
     public void setUp() {
-        assertNotNull(mbpmBean);
-        Flow.setConf(mbpmBean, true);
+        assertNotNull(singularFlowConfigurationBean);
+        Flow.setConf(singularFlowConfigurationBean, true);
     }
 
 
     @Test
     public void inexistentFlowVersionShouldReturnNull() throws Exception {
-        IEntityFlowVersion entityFlowVersion = mbpmBean.getPersistenceService().retrieveFlowVersionByCod(0);
+        IEntityFlowVersion entityFlowVersion = singularFlowConfigurationBean.getPersistenceService().retrieveFlowVersionByCod(0);
 
         assertNull(entityFlowVersion);
     }

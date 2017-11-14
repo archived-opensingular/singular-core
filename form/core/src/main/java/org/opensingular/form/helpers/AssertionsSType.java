@@ -18,7 +18,7 @@
 
 package org.opensingular.form.helpers;
 
-import org.fest.assertions.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
@@ -26,8 +26,10 @@ import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -35,7 +37,7 @@ import java.util.Set;
  *
  * @author Daniel C. Bordin
  */
-public class AssertionsSType extends AssertionsAbstract<SType, AssertionsSType> {
+public class AssertionsSType extends AssertionsSAttributeEnabled<AssertionsSType, SType> {
 
     public AssertionsSType(SType<?> type) {
         super(type);
@@ -45,7 +47,7 @@ public class AssertionsSType extends AssertionsAbstract<SType, AssertionsSType> 
      * Retorna um novo objeto de assertiva para o tipo indicado pelo caminho informado.
      */
     public AssertionsSType field(String fieldPath) {
-        is(STypeComposite.class);
+        isInstanceOf(STypeComposite.class);
         return new AssertionsSType(getTarget().getLocalType(fieldPath));
     }
 
@@ -102,7 +104,7 @@ public class AssertionsSType extends AssertionsAbstract<SType, AssertionsSType> 
     public AssertionsSType isExtensionOfParentCompositeFieldReference() {
         Assertions.assertThat(getTarget().getParentScope()).isInstanceOf(STypeComposite.class);
         STypeComposite parent = (STypeComposite) getTarget().getParentScope();
-        new AssertionsSType(parent.getSuperType()).is(parent.getClass());
+        new AssertionsSType(parent.getSuperType()).isInstanceOf(parent.getClass());
         STypeComposite parent2 = (STypeComposite) parent.getSuperType();
         SType<?> parentRef = parent2.getField(getTarget().getNameSimple());
         return isDirectExtensionOf(parentRef);
@@ -153,14 +155,14 @@ public class AssertionsSType extends AssertionsAbstract<SType, AssertionsSType> 
         if (fieldPath != null) {
             assertions = field(fieldPath);
         }
-        return assertions.is(typeString);
+        return assertions.isInstanceOf(typeString);
     }
 
     /**
      * Verifica se o tipo atual é um {@link STypeComposite}.
      */
     public AssertionsSType isComposite() {
-        return is(STypeComposite.class);
+        return isInstanceOf(STypeComposite.class);
     }
 
     /**
@@ -256,7 +258,7 @@ public class AssertionsSType extends AssertionsAbstract<SType, AssertionsSType> 
      * Verifica se o tipo atual é um {@link STypeString}.
      */
     public AssertionsSType isString() {
-        return is(STypeString.class);
+        return isInstanceOf(STypeString.class);
     }
 
     /**
@@ -331,7 +333,7 @@ public class AssertionsSType extends AssertionsAbstract<SType, AssertionsSType> 
     }
 
     @Override
-    protected String errorMsg(String msg) {
-        return "No tipo '" + getTarget().getName() + "': " + msg;
+    protected Optional<String> generateDescriptionForCurrentTarget(@Nonnull Optional<SType> current) {
+        return current.map(type -> "No tipo '" + type.getName());
     }
 }

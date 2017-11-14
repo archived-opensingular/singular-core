@@ -36,7 +36,7 @@ import org.opensingular.lib.commons.context.RefService;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.opensingular.form.wicket.helpers.TestFinders.findTag;
 
 @RunWith(Enclosed.class)

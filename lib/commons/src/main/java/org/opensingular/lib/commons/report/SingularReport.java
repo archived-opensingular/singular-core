@@ -34,11 +34,7 @@ import java.util.List;
  * @param <T> the filter type
  */
 public interface SingularReport<R extends ReportMetadata<T>, T extends ReportFilter> extends Serializable {
-    /**
-     * The Report Name
-     *
-     * @return the name
-     */
+
     String getReportName();
 
     /**

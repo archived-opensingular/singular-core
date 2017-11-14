@@ -43,7 +43,7 @@ public class WicketViewsUtilTest {
         tester.startPage(WrongSerializationPage.class);
         tester.assertRenderedPage(WrongSerializationPage.class);
         if (showContentOnDesktop) {
-            tester.showHtmlContentOnDesktopForUserAndWaitOpening();
+            tester.showLastResponseOnDesktopForUserAndWaitOpening();
         }
     }
 

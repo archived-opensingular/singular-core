@@ -30,24 +30,24 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.provider.TextQueryProvider;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewAutoComplete;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 public class BloodhoundDataBehaviorTest {
 
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
     private static STypeString string;
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(BloodhoundDataBehaviorTest::buildBaseType);
         tester.startDummyPage();
     }
@@ -57,7 +57,7 @@ public class BloodhoundDataBehaviorTest {
     }
 
     private void executeBloodhoundDataBehavior(String query) {
-        final Component typeaheadComponent = tester.getAssertionsForm().getSubComponents(TypeaheadComponent.class).get(0).getTarget();
+        final Component typeaheadComponent = tester.getAssertionsForm().getSubComponents(TypeaheadComponent.class).element(0).getTarget();
         final List<BloodhoundDataBehavior> bloodhoundDataBehaviors = typeaheadComponent.getBehaviors(BloodhoundDataBehavior.class);
         Assert.assertThat("O componente possui mais de um ou nenhum BloodhoundDataBehavior", bloodhoundDataBehaviors, Matchers.hasSize(1));
         String url = String.valueOf(bloodhoundDataBehaviors.get(0).getCallbackUrl());

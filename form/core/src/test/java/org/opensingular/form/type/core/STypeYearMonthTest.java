@@ -18,18 +18,18 @@
 
 package org.opensingular.form.type.core;
 
-import org.opensingular.form.SDictionary;
-import org.opensingular.form.type.util.SIYearMonth;
-import org.opensingular.form.type.util.STypeYearMonth;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.type.util.SIYearMonth;
+import org.opensingular.form.type.util.STypeYearMonth;
 
 import java.time.YearMonth;
 import java.util.Arrays;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 @RunWith(value = Parameterized.class)

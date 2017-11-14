@@ -18,7 +18,7 @@
 
 package org.opensingular.form.type.core.attachment;
 
-import org.fest.assertions.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;

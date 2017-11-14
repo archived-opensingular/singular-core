@@ -18,10 +18,9 @@
 
 package org.opensingular.form.helpers;
 
-import org.fest.assertions.api.Assertions;
-import org.fest.assertions.api.DateAssert;
-import org.fest.assertions.api.IterableAssert;
-import org.fest.assertions.api.StringAssert;
+import org.assertj.core.api.AbstractCharSequenceAssert;
+import org.assertj.core.api.AbstractDateAssert;
+import org.assertj.core.api.IterableAssert;
 import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.SAttributeEnabled;
 import org.opensingular.form.SIComposite;
@@ -41,6 +40,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * Classe de apoio a a escrita de assertivas referentes a um {@link SInstance}. Dispara {@link AssertionError} se uma
  * assertiva for violada.
@@ -48,15 +49,15 @@ import java.util.Optional;
  * @author Daniel C.Bordin
  */
 
-public class AssertionsSInstance extends AssertionsAbstract<SInstance, AssertionsSInstance> {
+public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsSInstance, SInstance> {
 
     public AssertionsSInstance(SInstance instance) {
         super(instance);
     }
 
     @Override
-    protected String errorMsg(String msg) {
-        return "Na instância '" + getTarget().getName() + "': " + msg;
+    protected Optional<String> generateDescriptionForCurrentTarget(@Nonnull Optional<SInstance> current) {
+        return current.map(i -> "Na instância '" + i.getName());
     }
 
     /**
@@ -133,14 +134,14 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
      * Verifica se a instância atual é uma lista ({@link SIList}).
      */
     public AssertionsSInstance isList() {
-        return is(SIList.class);
+        return isInstanceOf(SIList.class);
     }
 
     /**
      * Verifica se a instância atual é um composite ({@link SIComposite}).
      */
     public AssertionsSInstance isComposite() {
-        return is(SIComposite.class);
+        return isInstanceOf(SIComposite.class);
     }
 
     /**
@@ -184,25 +185,25 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
     }
 
     public IterableAssert<ValidationError> assertThatValidationErrors(){
-        return Assertions.assertThat(getTarget().getValidationErrors());
+        return assertThat(getTarget().getValidationErrors());
     }
 
     /**
      * Cria uma nova assertiva para o valor da instância, se a instância contiver um valor Date. Senão o valor for
      * diferente de null e não for Date, então dispara exception.
      */
-    public DateAssert assertDateValue() {
+    public AbstractDateAssert<?> assertDateValue() {
         Object value = getTarget().getValue();
         if (value instanceof Date || value == null) {
-            return Assertions.assertThat((Date) value);
+            return assertThat((Date) value);
         }
         throw new AssertionError(errorMsg("O Objeto da instancia atual não é do tipo Date"));
     }
 
-    public StringAssert assertStringValue() {
+    public AbstractCharSequenceAssert<?, String> assertStringValue() {
         Object value = getTarget().getValue();
         if (value instanceof String || value == null) {
-            return Assertions.assertThat((String) value);
+            return assertThat((String) value);
         }
         throw new AssertionError(errorMsg("O Objeto da instancia atual não é do tipo String"));
     }
@@ -212,7 +213,7 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
         isNotNull();
         AssertionsSInstance a = new AssertionsSInstance(FormSerializationUtil.serializeAndDeserialize(getTarget()));
         a.isNotSameAs(getTarget());
-        a.is(getTarget().getClass());
+        a.isInstanceOf(getTarget().getClass());
         return a;
     }
 
@@ -227,20 +228,20 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
 
     public static void assertEquivalentInstance(SInstance original, SInstance copy, boolean mustHaveSameId, boolean ignoreNullValues) {
         try {
-            assertNotSame(original, copy);
-            assertEquals(original.getClass(), copy.getClass());
-            assertEquals(original.getType().getName(), copy.getType().getName());
-            assertEquals(original.getType().getClass(), copy.getType().getClass());
-            assertEquals(original.getName(), copy.getName());
+            assertThat(copy).isNotSameAs(original);
+            assertThat(copy.getClass()).isEqualTo(original.getClass());
+            assertThat(copy.getType().getName()).isEqualTo(original.getType().getName());
+            assertThat(copy.getType().getClass()).isEqualTo(original.getType().getClass());
+            assertThat(copy.getName()).isEqualTo(original.getName());
             if (mustHaveSameId) {
-                assertEquals(original.getId(), copy.getId());
+                assertThat(copy.getId()).isEqualTo(original.getId());
             }
-            assertEquals(original.getPathFull(), copy.getPathFull());
+            assertThat(copy.getPathFull()).isEqualTo(original.getPathFull());
             if (original.getParent() != null) {
-                assertNotNull(copy.getParent());
-                assertEquals(original.getParent().getPathFull(), copy.getParent().getPathFull());
+                assertThat(copy.getParent()).isNotNull();
+                assertThat(copy.getParent().getPathFull()).isEqualTo(original.getParent().getPathFull());
             } else {
-                assertNull(copy.getParent());
+                assertThat(copy.getParent()).isNull();
             }
             if (original instanceof ICompositeInstance) {
                 List<SInstance> originalChildren = new ArrayList<>(((ICompositeInstance) original).getChildren());
@@ -251,15 +252,15 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
                     removeNullChildren(copyChildren);
                 }
 
-                assertEquals(originalChildren.size(), copyChildren.size());
+                assertThat(copyChildren.size()).isEqualTo(originalChildren.size());
                 for (int i = 0; i < originalChildren.size(); i++) {
                     assertEquivalentInstance(originalChildren.get(0), copyChildren.get(0), mustHaveSameId);
                 }
             } else {
-                assertEquals(original.getValue(), copy.getValue());
+                assertThat(copy.getValue()).isEqualTo(original.getValue());
             }
 
-            assertEquals(original.isAttribute(), copy.isAttribute());
+            assertThat(copy.isAttribute()).isEqualTo(original.isAttribute());
             if(! original.isAttribute()) {
                 assertEqualsAttributes(original, copy);
             }
@@ -277,7 +278,7 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
 
     public static void assertEqualsAttributes(SAttributeEnabled original, SAttributeEnabled copy) {
         try {
-            assertEquals(original.getAttributes().size(), copy.getAttributes().size());
+            assertThat(copy.getAttributes().size()).isEqualTo(original.getAttributes().size());
 
             for (SInstance atrOriginal : original.getAttributes()) {
                 assertEqualsAtribute(copy, atrOriginal);
@@ -293,12 +294,9 @@ public class AssertionsSInstance extends AssertionsAbstract<SInstance, Assertion
     public static void assertEqualsAtribute(SAttributeEnabled copy, SInstance atrOriginal) {
         Optional<SInstance> atrNewOpt = copy.getAttributeDirectly(atrOriginal.getAttributeInstanceInfo().getName());
         try {
+            assertThat(atrNewOpt).isPresent();
             if (atrNewOpt.isPresent()) {
-                SInstance atrNew = atrNewOpt.get();
-                assertNotNull(atrNew);
-                assertEquivalentInstance(atrOriginal, atrNew, false);
-            } else {
-                fail();
+                assertEquivalentInstance(atrOriginal, atrNewOpt.get(), false);
             }
         } catch (AssertionError e) {
             throw new AssertionError(
