@@ -18,32 +18,34 @@
 
 package org.opensingular.form.report;
 
-import org.apache.wicket.mock.MockApplication;
-import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.util.tester.WicketTestCase;
 import org.junit.Test;
+import org.opensingular.form.wicket.helpers.AssertionsWComponent;
+import org.opensingular.form.wicket.helpers.SingularWicketTestCase;
 import org.opensingular.lib.commons.table.ColumnType;
 import org.opensingular.lib.commons.table.TableTool;
 import org.opensingular.lib.commons.views.ViewGenerator;
+import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
-import org.opensingular.lib.wicket.util.template.admin.SingularAdminApp;
 
-public class ReportPageTest extends WicketTestCase {
+public class ReportPageTest extends SingularWicketTestCase {
 
     @Test
     public void testRendering() throws Exception {
-        ReportPage reportPage = new ReportPage(null) {
-            @Override
-            protected void configureMenu(ReportMenuBuilder menu) {
-                menu.addItem(DefaultIcons.PENCIL, "X", () -> makeSingularReport());
-            }
-        };
-        tester.startPage(reportPage);
-        assertTrue(tester.getLastRenderedPage().equals(reportPage));
+        ReportPage reportPage = createPage();
+        getTester().startPage(reportPage);
+        assertTrue(getTester().getLastRenderedPage().equals(reportPage));
+
+        //getTester().debugComponentTrees();
+        //getTester().getAssertionsPage().debugComponentTree();
+
+        AssertionsWComponent menuItem = getTester().getAssertionsForPath("app-body:menu:itens:0:menu-item").isInstanceOf(
+                MetronicMenuItem.class);
+        menuItem.getSubComponentWithId("title").asLabel().assertValue().isEqualTo("X1");
+        //getTester().clickLink(menuItem.getSubComponentWithId("anchor").getTarget());
     }
 
-    private SingularFormReport makeSingularReport() {
-        return new SingularFormReport() {
+    private static ReportPage createPage() {
+        SingularFormReport report = new SingularFormReport() {
             @Override
             public Class getFilterType() {
                 return null;
@@ -64,14 +66,11 @@ public class ReportPageTest extends WicketTestCase {
                 return tableTool;
             }
         };
+        return new ReportPage(null) {
+            @Override
+            protected void configureMenu(ReportMenuBuilder menu) {
+                menu.addItem(DefaultIcons.PENCIL, "X1", () -> report);
+            }
+        };
     }
-
-    @Override
-    protected WebApplication newApplication() {
-        return new AdminApp();
-    }
-
-    private class AdminApp extends MockApplication implements SingularAdminApp {
-    }
-
 }

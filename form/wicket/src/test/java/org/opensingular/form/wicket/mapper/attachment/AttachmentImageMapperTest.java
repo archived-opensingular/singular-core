@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.opensingular.form.SType;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.view.SViewAttachmentImageTooltip;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.io.IOException;
 
@@ -31,18 +31,18 @@ public class AttachmentImageMapperTest {
 
     @Test
     public void testRenderComponent() throws IOException {
-        SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(tb->tb.addField("imgFile", STypeAttachment.class));
         tester.getDummyPage().setAsEditView();
 
         tester.startDummyPage();
 
-        tester.getAssertionsForm().getSubCompomentWithId("fileUpload").isNotNull();
+        tester.getAssertionsForm().getSubComponentWithId("fileUpload").isNotNull();
     }
 
     @Test
     public void testRenderTooltipMapper() throws IOException {
-        SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(tb->{
             SType imgFile = tb.addField("imgFile", STypeAttachment.class);
             imgFile.setView(SViewAttachmentImageTooltip::new);
@@ -51,6 +51,6 @@ public class AttachmentImageMapperTest {
 
         tester.startDummyPage();
 
-        tester.getAssertionsForm().getSubCompomentWithId("fileUpload").assertSInstance().isNotNull();
+        tester.getAssertionsForm().getSubComponentWithId("fileUpload").assertSInstance().isNotNull();
     }
 }

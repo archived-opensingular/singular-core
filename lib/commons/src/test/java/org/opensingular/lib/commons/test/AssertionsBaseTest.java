@@ -21,7 +21,10 @@ package org.opensingular.lib.commons.test;
 import org.junit.Assert;
 import org.junit.Test;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class AssertionsBaseTest {
     @Test
@@ -68,13 +71,13 @@ public class AssertionsBaseTest {
     @Test
     public void testIs(){
         AssertionsTest assertion = new AssertionsTest("raiz");
-        assertion.is(String.class);
+        assertion.isInstanceOf(String.class);
     }
 
     @Test(expected = AssertionError.class)
     public void testIsException(){
         AssertionsTest assertion = new AssertionsTest("raiz");
-        assertion.is(Integer.class);
+        assertion.isInstanceOf(Integer.class);
     }
 
     @Test
@@ -100,15 +103,21 @@ public class AssertionsBaseTest {
         assertion.isNotSameAs(root2);
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testIsNotSameAsException(){
-        String root = new String("valor");
+        String root = "valor";
         AssertionsTest assertion = new AssertionsTest(root);
-        assertion.isNotSameAs(root);
+        assertThatThrownBy(() -> assertion.isNotSameAs(root)).isInstanceOf(AssertionError.class);
+    }
+
+    @Test
+    public void testDescription(){
+        assertThatThrownBy(() -> new AssertionsTest("hello").isNull()).isInstanceOf(AssertionError.class)
+                .hasMessageContaining("Text hello");
     }
 
 
-    private class AssertionsTest extends AssertionsBase<String, AssertionsTest>{
+    private class AssertionsTest extends AssertionsBase<AssertionsTest, String>{
 
         public AssertionsTest(String target) {
             super(target);
@@ -119,8 +128,8 @@ public class AssertionsBaseTest {
         }
 
         @Override
-        protected String errorMsg(String msg) {
-            return getTargetOpt().isPresent() ? "No elemento " + getTarget() + ": " + msg : msg;
+        protected  Optional<String> generateDescriptionForCurrentTarget(@Nonnull Optional<String> current) {
+            return current.map(t -> "Text " + t);
         }
     }
 }

@@ -38,19 +38,21 @@ public interface ViewMultiGenerator extends ViewGenerator {
 
     @Override
     default void generateView(@Nonnull ViewOutput<?> vOut) throws SingularViewUnsupportedFormatException {
-        ViewsUtil.getGeneratorFor(this, vOut.getFormat()).generateView(vOut);
+        getGeneratorFor(vOut).generateView(vOut);
     }
 
 
     @Override
-    default boolean isDirectCompatiableWith(@Nonnull ViewOutputFormat format) {
+    default boolean isDirectCompatibleWith(@Nonnull ViewOutputFormat format) {
         return getGenerators().stream().anyMatch(p -> Objects.equals(format, p.getOutputFormat()));
     }
 
-    default ViewGenerator getGeneratorFor(@Nonnull ViewOutput<java.io.Writer> vOut) {
+    @Nonnull
+    default ViewGenerator getGeneratorFor(@Nonnull ViewOutput<?> vOut) {
         return getGeneratorFor(vOut.getFormat());
     }
 
+    @Nonnull
     default ViewGenerator getGeneratorFor(@Nonnull ViewOutputFormat format) {
         return ViewsUtil.getGeneratorFor(this, format);
     }

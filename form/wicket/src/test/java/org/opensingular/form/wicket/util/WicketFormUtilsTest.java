@@ -18,8 +18,6 @@
 
 package org.opensingular.form.wicket.util;
 
-import static org.junit.Assert.*;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.junit.Test;
@@ -33,10 +31,14 @@ import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeLong;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.wicket.helpers.DummyPage;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("rawtypes")
 public class WicketFormUtilsTest {
@@ -62,7 +64,7 @@ public class WicketFormUtilsTest {
     public void test() {
         TypeBuilder typeBuilder = new TypeBuilder();
 
-        SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(typeBuilder);
 
         tester.startDummyPage();
@@ -94,7 +96,7 @@ public class WicketFormUtilsTest {
     public void generateTitlePath() {
         TypeBuilder typeBuilder = new TypeBuilder();
 
-        SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(typeBuilder);
 
         tester.startDummyPage();

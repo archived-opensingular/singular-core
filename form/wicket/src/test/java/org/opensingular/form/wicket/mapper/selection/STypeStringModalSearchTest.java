@@ -30,19 +30,19 @@ import org.opensingular.form.provider.ProviderContext;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.helpers.AssertionsWComponentList;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.form.wicket.mapper.search.SearchModalPanel;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class STypeStringModalSearchTest {
 
     private static STypeString selectType;
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static void buildBaseType(STypeComposite<?> baseType) {
         selectType = baseType.addFieldString("favoriteFruit");
@@ -70,13 +70,13 @@ public class STypeStringModalSearchTest {
 
     void clickOpenLink() {
         Button button = tester.getAssertionsForm()
-                .getSubCompomentWithId(SearchModalPanel.MODAL_TRIGGER_ID).getTarget(Button.class);
+                .getSubComponentWithId(SearchModalPanel.MODAL_TRIGGER_ID).getTarget(Button.class);
         tester.executeAjaxEvent(button, "click");
     }
 
     @Before
     public void setUp() {
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(STypeStringModalSearchTest::buildBaseType);
     }
 
@@ -116,11 +116,11 @@ public class STypeStringModalSearchTest {
         clickOpenLink();
 
         AssertionsWComponentList subComponents = tester.getAssertionsForm().getSubComponents(ActionAjaxLink.class);
-        subComponents.isSize(4);
+        subComponents.hasSize(4);
 
-        tester.executeAjaxEvent(subComponents.get(3).getTarget(), "click");
+        tester.executeAjaxEvent(subComponents.element(3).getTarget(), "click");
 
-        tester.getAssertionsForm().getSubCompomentWithType(selectType).assertSInstance().isValueEquals("banana");
+        tester.getAssertionsForm().getSubComponentWithType(selectType).assertSInstance().isValueEquals("banana");
     }
 
     @Test

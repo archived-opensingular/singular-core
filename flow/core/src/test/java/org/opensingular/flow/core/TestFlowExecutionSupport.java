@@ -33,8 +33,8 @@ public abstract class TestFlowExecutionSupport extends TestFlowSupport {
 
     @Before
     public final void setUp() {
-        assertNotNull(mbpmBean);
-        Flow.setConf(mbpmBean, true);
+        assertNotNull(singularFlowConfigurationBean);
+        Flow.setConf(singularFlowConfigurationBean, true);
     }
 
     /**
@@ -51,7 +51,7 @@ public abstract class TestFlowExecutionSupport extends TestFlowSupport {
         Session session = sessionFactory.getCurrentSession();
         session.flush();
         session.clear();
-        return mbpmBean.getFlowInstance(pi.getFullId());
+        return singularFlowConfigurationBean.getFlowInstance(pi.getFullId());
     }
 
 }

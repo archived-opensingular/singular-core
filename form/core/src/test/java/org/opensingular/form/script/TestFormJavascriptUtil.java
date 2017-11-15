@@ -16,8 +16,8 @@
 
 package org.opensingular.form.script;
 
-import org.fest.assertions.api.Assertions;
-import org.fest.assertions.api.ObjectAssert;
+import org.assertj.core.api.AbstractObjectAssert;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -112,11 +112,11 @@ public class TestFormJavascriptUtil extends TestCaseForm {
         assertInstance(curriculum).isValueEquals("info.age", 20);
     }
 
-    private static ObjectAssert<Object> assertScript(SInstance instance, String script) {
+    private static AbstractObjectAssert<?, ?> assertScript(SInstance instance, String script) {
         return assertScript(instance, null, script);
     }
 
-    private static ObjectAssert<Object> assertScript(SInstance instance, String path, String script) {
+    private static AbstractObjectAssert<?, ?> assertScript(SInstance instance, String path, String script) {
         if (path != null) {
             instance = ((ICompositeInstance) instance).getField(path);
         }

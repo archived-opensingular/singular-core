@@ -18,13 +18,13 @@
 
 package org.opensingular.form.wicket.validation;
 
-import org.fest.assertions.api.IterableAssert;
+import org.assertj.core.api.IterableAssert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.validation.ValidationError;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 @Ignore
 public class SimpleVisibilityValidationTest {
@@ -32,11 +32,11 @@ public class SimpleVisibilityValidationTest {
     private static final String FIELD_ONE = "fieldOne";
     private static final String FIELD_TWO = "fieldTwo";
 
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(baseType -> {
 
             STypeString fieldOne = baseType.addFieldString(FIELD_ONE);
@@ -58,8 +58,8 @@ public class SimpleVisibilityValidationTest {
 
     private IterableAssert<ValidationError> assertThatFieldValidationErros(String field) {
         return tester.getAssertionsForm()
-                .getSubCompomentWithType(
-                        tester.findTypeBySimpleName(field).is(STypeString.class).getTarget()
+                .getSubComponentWithType(
+                        tester.findTypeBySimpleName(field).isInstanceOf(STypeString.class).getTarget()
                 )
                 .assertSInstance()
                 .assertThatValidationErrors();

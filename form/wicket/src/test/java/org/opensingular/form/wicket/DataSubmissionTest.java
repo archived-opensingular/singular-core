@@ -25,13 +25,14 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
+
 import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 
 public class DataSubmissionTest {
 
     private static STypeString data1, data2;
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static void createTypeBuilder(STypeComposite typeBuilder) {
         data1 = typeBuilder.addFieldString("data1");
@@ -45,7 +46,7 @@ public class DataSubmissionTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(DataSubmissionTest::createTypeBuilder);
         tester.getDummyPage().addInstancePopulator(DataSubmissionTest::createInstancePopulator);
     }
@@ -56,8 +57,8 @@ public class DataSubmissionTest {
         tester.getDummyPage().setAsEditView();
         tester.startDummyPage();
 
-        tester.getAssertionsForm().getSubCompomentWithId("data1").asTextField().assertValue().isEqualTo("value1");
-        tester.getAssertionsForm().getSubCompomentWithId("data2").asTextField().assertValue().isEqualTo("value2");
+        tester.getAssertionsForm().getSubComponentWithId("data1").asTextField().assertValue().isEqualTo("value1");
+        tester.getAssertionsForm().getSubComponentWithId("data2").asTextField().assertValue().isEqualTo("value2");
     }
 
     @Test
@@ -65,8 +66,8 @@ public class DataSubmissionTest {
         tester.getDummyPage().setAsEditView();
         tester.startDummyPage();
 
-        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubCompomentWithId("data1").isNotNull();
-        AssertionsWComponent data2Assert = tester.getAssertionsForm().getSubCompomentWithId("data2").isNotNull();
+        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubComponentWithId("data1").isNotNull();
+        AssertionsWComponent data2Assert = tester.getAssertionsForm().getSubComponentWithId("data2").isNotNull();
 
         tester.newFormTester().submit();
 
@@ -81,8 +82,8 @@ public class DataSubmissionTest {
         tester.startDummyPage();
         data2.asAtr().enabled(false);
 
-        tester.getAssertionsForm().getSubCompomentWithId("data1").asTextField().assertValue().isEqualTo("value1");
-        tester.getAssertionsForm().getSubCompomentWithId("data2").asTextField().assertValue().isEqualTo("value2");
+        tester.getAssertionsForm().getSubComponentWithId("data1").asTextField().assertValue().isEqualTo("value1");
+        tester.getAssertionsForm().getSubComponentWithId("data2").asTextField().assertValue().isEqualTo("value2");
     }
 
     @Test
@@ -91,8 +92,8 @@ public class DataSubmissionTest {
         tester.startDummyPage();
         data2.asAtr().enabled(false);
 
-        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubCompomentWithId("data1").isNotNull();
-        AssertionsWComponent data2Assert = tester.getAssertionsForm().getSubCompomentWithId("data2").isNotNull();
+        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubComponentWithId("data1").isNotNull();
+        AssertionsWComponent data2Assert = tester.getAssertionsForm().getSubComponentWithId("data2").isNotNull();
 
         tester.newFormTester().submit();
 
@@ -107,8 +108,8 @@ public class DataSubmissionTest {
         tester.startDummyPage();
         data2.asAtr().visible(false);
 
-        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubCompomentWithId("data1");
-        AssertionsWComponent data2Assert = tester.getAssertionsForm().getSubCompomentWithId("data2");
+        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubComponentWithId("data1");
+        AssertionsWComponent data2Assert = tester.getAssertionsForm().getSubComponentWithId("data2");
 
         data1Assert.assertSInstance().isValueEquals("value1");
         data2Assert.assertSInstance().isValueEquals("value2");
@@ -134,15 +135,15 @@ public class DataSubmissionTest {
             return !d1.getValue().equals("clear");
         });
 
-        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubCompomentWithId("data1");
+        AssertionsWComponent data1Assert = tester.getAssertionsForm().getSubComponentWithId("data1");
         data1Assert.assertSInstance().isNotNull().isValueEquals("value1");
-        tester.getAssertionsForm().getSubCompomentWithId("data2").assertSInstance().isNotNull().isValueEquals("value2");
+        tester.getAssertionsForm().getSubComponentWithId("data2").assertSInstance().isNotNull().isValueEquals("value2");
 
         tester.newFormTester().setValue(data1Assert.getTarget(), "clear");
         tester.executeAjaxEvent(data1Assert.getTarget(), SINGULAR_PROCESS_EVENT);
 
-        tester.getAssertionsForm().getSubCompomentWithId("data1").assertSInstance().isNotNull().isValueEquals("clear");
-        tester.getAssertionsForm().getSubCompomentWithId("data2").assertSInstance().isValueNull();
+        tester.getAssertionsForm().getSubComponentWithId("data1").assertSInstance().isNotNull().isValueEquals("clear");
+        tester.getAssertionsForm().getSubComponentWithId("data2").assertSInstance().isValueNull();
     }
 
 }

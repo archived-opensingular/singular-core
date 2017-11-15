@@ -18,9 +18,7 @@
 
 package org.opensingular.studio.app.spring;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.annotation.Import;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.opensingular.lib.support.spring.util.AutoScanDisabled;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -28,14 +26,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import javax.inject.Named;
-import java.util.Collections;
+import javax.inject.Inject;
 
-@Named("studioSpringSecurityConfig")
+@AutoScanDisabled
 @EnableWebSecurity
 public class DefaulSpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -67,10 +63,7 @@ public class DefaulSpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
             @Override
             protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-                if (StringUtils.isNotBlank(username)) {
-                    return new User(username, authentication.getCredentials().toString(), Collections.emptyList());
-                }
-                throw new BadCredentialsException("Não foi possivel autenticar o usuario informado");
+                return userDetailsService().loadUserByUsername(username);
             }
         });
     }

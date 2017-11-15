@@ -28,7 +28,7 @@ import org.opensingular.form.type.country.brazil.STypeCPF;
 import org.opensingular.form.type.util.STypeYearMonth;
 import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 public class MasterDetailMapperTest {
 
@@ -58,19 +58,19 @@ public class MasterDetailMapperTest {
 
     @Test
     public void rendersDataDisplayValuesOnTable(){
-        SingularDummyFormPageTester test = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester test = new SingularFormDummyPageTester();
 
         test.getDummyPage().setTypeBuilder(MasterDetailMapperTest::buildBaseType);
         test.getDummyPage().addInstancePopulator(MasterDetailMapperTest::populateInstance);
         test.startDummyPage();
 
-        AssertionsWComponent compositeAssertion = test.getAssertionsForm().getSubCompomentWithType(listBaseType)
-                .getSubCompomentWithType(listElementType).isNotNull();
+        AssertionsWComponent compositeAssertion = test.getAssertionsForm().getSubComponentWithType(listBaseType)
+                .getSubComponentWithType(listElementType).isNotNull();
 
-        compositeAssertion.getSubCompomentWithType(date).assertSInstance().isValueEquals(
+        compositeAssertion.getSubComponentWithType(date).assertSInstance().isValueEquals(
                 java.time.YearMonth.of(2016, 01));
-        //        compositeAssertion.getSubCompomentWithType(number).assertSInstance().isValueEquals(new BigDecimal(2.5));
-//        compositeAssertion.getSubCompomentWithType(cpf).assertSInstance().isValueEquals("000.111.222-33");
+        //        compositeAssertion.getSubComponentWithType(number).assertSInstance().isValueEquals(new BigDecimal(2.5));
+//        compositeAssertion.getSubComponentWithType(cpf).assertSInstance().isValueEquals("000.111.222-33");
 
     }
 }

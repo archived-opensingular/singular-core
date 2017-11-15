@@ -16,7 +16,7 @@
 
 package org.opensingular.flow.core.variable;
 
-import org.opensingular.flow.core.property.MetaData;
+import org.opensingular.flow.core.property.MetaDataMap;
 import org.opensingular.flow.core.property.MetaDataEnabled;
 
 import javax.annotation.Nullable;
@@ -43,7 +43,7 @@ public interface VarInstance extends Serializable, MetaDataEnabled {
 
     String getPersistentString();
 
-    MetaData getMetaData();
+    MetaDataMap getMetaData();
 
     @SuppressWarnings("unchecked")
     default <T> T getValue(T defaultValue) {

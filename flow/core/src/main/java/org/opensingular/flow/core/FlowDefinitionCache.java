@@ -21,7 +21,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.reflections.Reflections;
+import org.opensingular.lib.commons.scan.SingularClassPathScanner;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Modifier;
@@ -35,7 +35,7 @@ import java.util.Set;
 
 public final class FlowDefinitionCache {
 
-    private final ImmutableList<FlowDefinition<?>>        definitions;
+    private final ImmutableList<FlowDefinition<?>> definitions;
     private final ImmutableMap<String, FlowDefinition<?>> definitionsByKey;
 
     private static LoadingCache<Class<? extends FlowDefinition<?>>, FlowDefinition<?>> definitionsByClass = CacheBuilder
@@ -54,17 +54,17 @@ public final class FlowDefinitionCache {
     @SuppressWarnings("rawtypes")
     private FlowDefinitionCache(String[] packagesNames) {
         this.packagesNames = packagesNames;
-        ImmutableList.Builder<FlowDefinition<?>> newCache   = ImmutableList.builder();
-        Map<String, FlowDefinition<?>>           cacheByKey = new HashMap<>();
+        ImmutableList.Builder<FlowDefinition<?>> newCache = ImmutableList.builder();
+        Map<String, FlowDefinition<?>> cacheByKey = new HashMap<>();
 
-        String[] packagesToScan = Arrays.copyOf(packagesNames, packagesNames.length + 1);
-        packagesToScan[packagesToScan.length - 1] = "org.opensingular";
-        Reflections reflections = new Reflections(packagesToScan);
+        String[] packagesToScan = Arrays.copyOf(packagesNames, packagesNames.length + 2);
+        packagesToScan[packagesToScan.length - 2] = "org.opensingular";
+        packagesToScan[packagesToScan.length - 1] = "com.opensingular";
 
-        Set<Class<? extends FlowDefinition>> subTypes = reflections.getSubTypesOf(FlowDefinition.class);
+        Set<Class<? extends FlowDefinition>> subTypes = SingularClassPathScanner.get().findSubclassesOf(FlowDefinition.class,packagesToScan);
 
         for (Class<? extends FlowDefinition> definitionClass : subTypes) {
-            if (Modifier.isAbstract(definitionClass.getModifiers()) || ! hasEmptyConstructor(definitionClass)) {
+            if (Modifier.isAbstract(definitionClass.getModifiers()) || !hasEmptyConstructor(definitionClass)) {
                 continue;
             }
             FlowDefinition<?> def = getDefinition(definitionClass);
@@ -124,7 +124,7 @@ public final class FlowDefinitionCache {
     public FlowDefinition<?> getDefinition(@Nonnull String key) {
         Objects.requireNonNull(key);
         FlowDefinition<?> flowDefinition = definitionsByKey.get(key);
-        if(flowDefinition == null){
+        if (flowDefinition == null) {
             throw new SingularFlowException("O flow com chave '" + key + "' não foi encontrado nos pacotes: " +
                     Arrays.toString(packagesNames));
         }

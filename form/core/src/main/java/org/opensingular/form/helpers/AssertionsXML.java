@@ -36,7 +36,7 @@ import java.util.Optional;
  *
  * @author Daniel C. Bordin on 27/02/2017.
  */
-public class AssertionsXML extends AssertionsBase<MElement, AssertionsXML> implements Iterable<AssertionsXML> {
+public class AssertionsXML extends AssertionsBase<AssertionsXML, MElement> implements Iterable<AssertionsXML> {
 
     public AssertionsXML(Element e) {
         super(MElement.toMElement(e));
@@ -51,8 +51,8 @@ public class AssertionsXML extends AssertionsBase<MElement, AssertionsXML> imple
     }
 
     @Override
-    protected String errorMsg(String msg) {
-        return getTargetOpt().isPresent() ? "No elemento " + getTarget().getFullPath() + ": " + msg : msg;
+    protected  Optional<String> generateDescriptionForCurrentTarget(@Nonnull Optional<MElement> current) {
+        return current.map(element -> "No elemento " + element.getFullPath());
     }
 
     /** Verifica se o elemento atual não é null e o nome do nó corresponde ao indicado. */

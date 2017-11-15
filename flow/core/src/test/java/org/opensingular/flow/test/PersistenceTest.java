@@ -36,8 +36,8 @@ public class PersistenceTest extends TestFlowSupport {
 
     @Before
     public void setUp() {
-        assertNotNull(mbpmBean);
-        Flow.setConf(mbpmBean, true);
+        assertNotNull(singularFlowConfigurationBean);
+        Flow.setConf(singularFlowConfigurationBean, true);
     }
 
     @Test

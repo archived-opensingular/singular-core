@@ -127,6 +127,6 @@ public class TestSDocumentFactory {
 
     private AssertionsSInstance createWithFactory(SDocumentFactory factory) {
         RefType refType = RefType.of(STypeString.class);
-        return new AssertionsSInstance(factory.createInstance(refType)).is(SIString.class);
+        return new AssertionsSInstance(factory.createInstance(refType)).isInstanceOf(SIString.class);
     }
 }

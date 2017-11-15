@@ -24,7 +24,7 @@ import org.opensingular.flow.core.STransition;
 import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.flow.core.UITransitionAccessStrategy;
 import org.opensingular.flow.core.UITransitionAccessStrategyImplUI;
-import org.opensingular.flow.core.property.MetaDataRef;
+import org.opensingular.flow.core.property.MetaDataKey;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -77,8 +77,8 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
     }
 
     @Nonnull
-    public default <T extends Serializable> SELF setMetaDataValue(@Nonnull MetaDataRef<T> propRef, T value) {
-        getTransition().setMetaDataValue(propRef, value);
+    public default <T extends Serializable> SELF setMetaDataValue(@Nonnull MetaDataKey<T> key, T value) {
+        getTransition().setMetaDataValue(key, value);
         return self();
     }
 

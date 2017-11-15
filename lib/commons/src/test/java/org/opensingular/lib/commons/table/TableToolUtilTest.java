@@ -30,7 +30,7 @@ public class TableToolUtilTest {
     @Test
     public void test() {
         TableTool table = createSimple();
-        Assert.assertTrue(table.isDirectCompatiableWith(ViewOutputFormat.HTML));
+        Assert.assertTrue(table.isDirectCompatibleWith(ViewOutputFormat.HTML));
 
         Assert.assertTrue(table.getDirectSupportedFormats().contains(ViewOutputFormat.HTML));
     }
@@ -38,7 +38,7 @@ public class TableToolUtilTest {
     @Test
     public void testInvalidFormat() {
         TableTool table = createSimple();
-        Assert.assertFalse(table.isDirectCompatiableWith(XXX));
+        Assert.assertFalse(table.isDirectCompatibleWith(XXX));
         Assert.assertFalse(table.getDirectSupportedFormats().contains(XXX));
     }
     

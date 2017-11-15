@@ -19,11 +19,10 @@
 package org.opensingular.form.type.util;
 
 import org.junit.Test;
-import org.opensingular.form.type.util.STypeYearMonth;
 
 import java.time.YearMonth;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class STypeAnoMesTest {
 

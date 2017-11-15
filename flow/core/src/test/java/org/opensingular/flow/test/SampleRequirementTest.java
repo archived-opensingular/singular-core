@@ -60,7 +60,7 @@ public class SampleRequirementTest extends TestFlowSupport {
 
     @Before
     public void setUp() {
-        Flow.setConf(mbpmBean, true);
+        Flow.setConf(singularFlowConfigurationBean, true);
     }
 
     @After

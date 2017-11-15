@@ -17,22 +17,22 @@
 package org.opensingular.form.wicket.helpers;
 
 import org.apache.wicket.markup.html.form.TextField;
-import org.fest.assertions.api.Assertions;
-import org.fest.assertions.api.StringAssert;
+import org.assertj.core.api.AbstractCharSequenceAssert;
+import org.assertj.core.api.Assertions;
 
 /**
  * Representa um conjunto de asserções voltadas para TextField do Wicket.
  *
  * @author Daniel Bordin on 12/02/2017.
  */
-public class AssertionsWTextField extends AssertionsWComponentBase<TextField, AssertionsWTextField> {
+public class AssertionsWTextField extends AssertionsWComponentBase<AssertionsWTextField, TextField> {
 
     public AssertionsWTextField(TextField c) {
         super(c);
     }
 
     /** Retorna um objeto de assertiva em cima do valor texto do TextField. */
-    public StringAssert assertValue() {
+    public AbstractCharSequenceAssert<?, String> assertValue() {
         return Assertions.assertThat(getTarget().getValue());
 
     }
