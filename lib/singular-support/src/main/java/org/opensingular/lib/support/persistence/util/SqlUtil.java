@@ -18,10 +18,14 @@ package org.opensingular.lib.support.persistence.util;
 import org.apache.commons.collections.CollectionUtils;
 import org.opensingular.lib.commons.base.SingularProperties;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.opensingular.lib.commons.base.SingularProperties.CUSTOM_SCHEMA_NAME;
+import static org.opensingular.lib.commons.base.SingularProperties.SINGULAR_DEV_MODE;
+import static org.opensingular.lib.commons.base.SingularProperties.USE_EMBEDDED_DATABASE;
 
 /**
  * Utility class for sql processing.
@@ -40,7 +44,8 @@ public class SqlUtil {
      * @param sql - an sql query
      * @return return the {@param sql} with the schema name replaced
      */
-    public static String replaceInSQL(String sql, String current, String replacement) {
+    @Nonnull
+    public static String replaceInSQL(@Nonnull String sql, @Nonnull String current, @Nonnull String replacement) {
         return sql.replaceAll(current, replacement);
 
     }
@@ -58,17 +63,14 @@ public class SqlUtil {
 
     /**
      * Replaces default singular schema name using the configured replacement
-     *
-     * @param sql
-     * @return
      */
-    public static String replaceSingularSchemaName(String sql) {
-        if (SingularProperties.get().containsKey(CUSTOM_SCHEMA_NAME)) {
-            String customSchema = SingularProperties.get().getProperty(CUSTOM_SCHEMA_NAME);
-            return SqlUtil.replaceInSQL(sql, Constants.SCHEMA, customSchema);
-        } else {
-            return sql;
+    @Nonnull
+    public static String replaceSingularSchemaName(@Nonnull String sql) {
+        Optional<String> customSchema = SingularProperties.getOpt(CUSTOM_SCHEMA_NAME);
+        if (customSchema.isPresent()) {
+            return SqlUtil.replaceInSQL(sql, Constants.SCHEMA, customSchema.get());
         }
+        return sql;
     }
 
     public static boolean hasCompleteCrud(List<String> vals) {
@@ -81,7 +83,17 @@ public class SqlUtil {
                 return false;
             }
         }
+        return true;
+    }
 
+    /** Verifies if should use embedded database (usually while running a test or in development mode). */
+    public static boolean useEmbeddedDatabase() {
+        //In the future, this code should be move to Embedded Database helper class
+        if (SingularProperties.getOpt(USE_EMBEDDED_DATABASE).isPresent()) {
+            return SingularProperties.get().isTrue(USE_EMBEDDED_DATABASE);
+        } else if (SingularProperties.get().isTrue(SINGULAR_DEV_MODE)) {
+            return false;
+        }
         return true;
     }
 }

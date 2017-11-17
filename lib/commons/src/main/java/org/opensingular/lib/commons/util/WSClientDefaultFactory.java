@@ -22,6 +22,7 @@ import org.opensingular.lib.commons.base.SingularProperties;
 
 import javax.xml.ws.BindingProvider;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -55,15 +56,16 @@ public class WSClientDefaultFactory<T> implements WSClientSafeWrapper.WSClientFa
     }
 
     private void changeTargetEndpointAddress(T servicePortType) {
-        String propertyValue = SingularProperties.get().getProperty(property);
-        if (propertyValue == null) {
+        Optional<String> propertyValue = SingularProperties.getOpt(property);
+        if (! propertyValue.isPresent()) {
             throw new WSConnectionException(String.format("WebService endpoint property not found in SingularProperties. Missing property %s", property));
         }
-        if (propertyValue.endsWith("?wsdl")) {
-            propertyValue = propertyValue.substring(0, propertyValue.length() - "?wsdl".length());
+        String value = propertyValue.get();
+        if (value.endsWith("?wsdl")) {
+            value = value.substring(0, value.length() - "?wsdl".length());
         }
         Map<String, Object> requestContext = ((BindingProvider) servicePortType).getRequestContext();
-        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, propertyValue);
+        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, value);
         requestContext.put("set-jaxb-validation-event-handler", Boolean.FALSE);
     }
 

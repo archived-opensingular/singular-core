@@ -21,6 +21,7 @@ package org.opensingular.lib.commons.base;
 import com.google.common.base.Preconditions;
 import org.junit.Assert;
 import org.junit.Test;
+import org.opensingular.internal.lib.commons.util.RandomUtil;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
 import org.opensingular.lib.commons.lambda.IBiConsumerEx;
 import org.opensingular.lib.commons.util.TempFileUtils;
@@ -49,7 +50,7 @@ public class SingularPropertiesTest {
     public void loadFromClasspath() throws Exception {
         SingularPropertiesImpl.Tester.runInSandbox(impl -> {
             impl.reload();
-            Assert.assertEquals(MOCK_PROPERTY_CLASSPATH_VALUE, SingularProperties.get().getProperty(MOCK_PROPERTY_KEY));
+            Assert.assertEquals(MOCK_PROPERTY_CLASSPATH_VALUE, SingularProperties.get(MOCK_PROPERTY_KEY));
         });
     }
 
@@ -58,13 +59,13 @@ public class SingularPropertiesTest {
         SingularPropertiesImpl.Tester.runInSandbox(impl -> {
 
             withFileInTempDir(Paths.get("conf", "singular.properties"), (baseDir, propertiesFile) -> {
-
-                store(properties(MOCK_PROPERTY_KEY, MOCK_PROPERTY_FILE_VALUE), propertiesFile, "iso-8859-1");
+                String key = "key." + RandomUtil.generateRandomPassword(4);
+                String value = "value" + RandomUtil.generateRandomPassword(6);
+                store(properties(key, value), propertiesFile, "iso-8859-1");
                 impl.setSingularServerHome(baseDir.getCanonicalPath());
                 impl.reload();
 
-                Assert.assertEquals(MOCK_PROPERTY_FILE_VALUE, SingularProperties.get().getProperty(MOCK_PROPERTY_KEY));
-
+                Assert.assertEquals(value, SingularProperties.get(key));
             });
         });
         SingularPropertiesImpl.get().setSingularServerHome(null);
@@ -93,5 +94,7 @@ public class SingularPropertiesTest {
         Assert.assertEquals("defaultValue", property);
 
         Assert.assertEquals("true", singularProperties.getProperty(MOCK_TRUE_KEY, "defaultValue"));
+
+        singularProperties.debugContent();
     }
 }

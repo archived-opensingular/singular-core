@@ -17,16 +17,7 @@
 package org.opensingular.ws.wkhtmltopdf.client;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Optional;
-import java.util.UUID;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.commons.dto.HtmlToPdfDTO;
@@ -38,7 +29,15 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Implementação do conversor de html para pdf que se comunica com um serviço
@@ -52,7 +51,7 @@ public class RestfulHtmlToPdfConverter implements HtmlToPdfConverter {
     private final String endpoint;
 
     public static RestfulHtmlToPdfConverter createUsingDefaultConfig() {
-        String baseURL = SingularProperties.get().getProperty(HtmlToPdfConstants.ENDPOINT_WS_WKHTMLTOPDF);
+        String baseURL = SingularProperties.get(HtmlToPdfConstants.ENDPOINT_WS_WKHTMLTOPDF);
         String context = HtmlToPdfConstants.CONVERT_HTML_TO_PDF_PATH;
         return new RestfulHtmlToPdfConverter(baseURL + context);
     }
