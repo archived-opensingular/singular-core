@@ -95,9 +95,7 @@ public class DateTimeContainer extends BSContainer<DateTimeContainer> {
         params.put("showMeridian", Boolean.FALSE);
         if (dateTimerView != null) {
             params.put("showMeridian", dateTimerView.isMode24hs());
-            if (dateTimerView.getMinuteStep() == null) {
-                params.put("minuteStep", dateTimerView.getMinuteStep());
-            }
+            params.put("minuteStep", dateTimerView.getMinuteStep());
         }
         return params;
     }
