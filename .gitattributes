@@ -50,3 +50,5 @@
 *.dylib binary
 wkhtmltopdf binary
 wkhtmltoimage binary
+singular-core/resources/ui-static-resources/src/main/webapp/resources/comum/* linguist-vendored
+
