@@ -19,4 +19,25 @@
 package org.opensingular.form.view;
 
 public class SViewCurrentLocation extends SView {
+
+    private boolean disableUserLocationSelection;
+
+    /**
+     * Disable inputs and markers, so that user cannot select its position
+     *
+     * @return
+     */
+    public SViewCurrentLocation disableUserLocationSelection() {
+        this.disableUserLocationSelection = true;
+        return this;
+    }
+
+    public SViewCurrentLocation disableUserLocationSelection(boolean value) {
+        this.disableUserLocationSelection = value;
+        return this;
+    }
+
+    public boolean isDisableUserLocationSelection() {
+        return disableUserLocationSelection;
+    }
 }
