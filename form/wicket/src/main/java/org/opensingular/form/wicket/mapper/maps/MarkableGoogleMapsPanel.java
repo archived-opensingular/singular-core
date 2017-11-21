@@ -166,7 +166,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        populateMataData();
+
 
         TemplatePanel panelErrorMsg = newTemplateTag(tt -> {
             final StringBuilder templateBuilder = new StringBuilder();
@@ -209,6 +209,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
     @Override
     protected void onConfigure() {
         super.onConfigure();
+        populateMataData();
 
         visitChildren(FormComponent.class, (comp, visit) -> comp.setEnabled(!isVisualization()));
         this.add(WicketUtils.$b.attrAppender("style", "height: " + getHeight() + "px;", ""));
