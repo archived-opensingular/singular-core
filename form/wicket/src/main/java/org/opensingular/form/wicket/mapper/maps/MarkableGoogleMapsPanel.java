@@ -37,6 +37,7 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
+import org.opensingular.form.view.SView;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.commons.base.SingularProperties;
@@ -54,30 +55,30 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 public class MarkableGoogleMapsPanel<T> extends BSContainer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MarkableGoogleMapsPanel.class);
-    private static final String PANEL_SCRIPT = "MarkableGoogleMapsPanel.js";
+    private static final Logger LOGGER        = LoggerFactory.getLogger(MarkableGoogleMapsPanel.class);
+    private static final String PANEL_SCRIPT  = "MarkableGoogleMapsPanel.js";
     private static final String METADATA_JSON = "MarkableGoogleMapsPanelMetadata.json";
 
-    private static final String SINGULAR_GOOGLEMAPS_JS_KEY = "singular.googlemaps.js.key";
+    private static final String SINGULAR_GOOGLEMAPS_JS_KEY     = "singular.googlemaps.js.key";
     private static final String SINGULAR_GOOGLEMAPS_STATIC_KEY = "singular.googlemaps.static.key";
-    public static final String MAP_ID = "map";
-    public static final String MAP_STATIC_ID = "mapStatic";
+    public static final  String MAP_ID                         = "map";
+    public static final  String MAP_STATIC_ID                  = "mapStatic";
     private final LatLongMarkupIds ids;
 
-    private final String singularKeyMaps = SingularProperties.getOpt(SINGULAR_GOOGLEMAPS_JS_KEY).orElse(null);
+    private final String singularKeyMaps      = SingularProperties.getOpt(SINGULAR_GOOGLEMAPS_JS_KEY).orElse(null);
     private final String singularKeyMapStatic = SingularProperties.getOpt(SINGULAR_GOOGLEMAPS_STATIC_KEY).orElse(null);
 
-    private final IModel<String> metaDataModel = new Model<>();
-    private final IModel<Boolean> readOnly = $m.ofValue(Boolean.FALSE);
+    private final IModel<String>  metaDataModel = new Model<>();
+    private final IModel<Boolean> readOnly      = $m.ofValue(Boolean.FALSE);
 
     private IModel<SInstance> latitudeModel;
     private IModel<SInstance> longitudeModel;
     private IModel<SInstance> zoomModel;
 
-    private final Button cleanButton;
+    private final Button       cleanButton;
     private final ExternalLink verNoMaps;
-    private final ImgMap mapStatic;
-    private final WebMarkupContainer map = new WebMarkupContainer(MAP_ID);
+    private final ImgMap       mapStatic;
+    private final WebMarkupContainer  map      = new WebMarkupContainer(MAP_ID);
     private final HiddenField<String> metaData = new HiddenField<>("metadados", metaDataModel);
 
     @Override
@@ -86,11 +87,11 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         final PackageResourceReference customJS = new PackageResourceReference(getClass(), PANEL_SCRIPT);
         response.render(JavaScriptReferenceHeaderItem.forReference(customJS));
         if (StringUtils.isNotBlank(singularKeyMapStatic) && StringUtils.isNotBlank(singularKeyMaps)) {
-            response.render(OnDomReadyHeaderItem.forScript("createSingularMap(" + stringfyId(metaData) + ", '" + singularKeyMaps + "');"));
+            response.render(OnDomReadyHeaderItem.forScript("Singular.createSingularMap(" + stringfyId(metaData) + ", '" + singularKeyMaps + "');"));
         }
     }
 
-    public MarkableGoogleMapsPanel(IModel<? extends SInstance> model, LatLongMarkupIds ids) {
+    public MarkableGoogleMapsPanel(LatLongMarkupIds ids, IModel<? extends SInstance> model) {
         super(model.getObject().getName());
         this.ids = ids;
         this.cleanButton = new Button("cleanButton", $m.ofValue("Limpar"));
@@ -107,6 +108,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
                 return "https://www.google.com.br/maps/search/-15.7481632,-47.8872134,15";
             }
         });
+
         verNoMaps = new ExternalLink("verNoMaps", googleMapsLinkModel, $m.ofValue("Visualizar no Google Maps")) {
             @Override
             protected void onComponentTag(ComponentTag tag) {
@@ -180,7 +182,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         });
 
         Component errorMapStatic = new Label("errorMapStatic", "Não foi encontrada a Key do Google Maps Static no arquivo singular.properties").setVisible(false);
-        Component errorMapJS = new Label("errorMapJS", "Não foi encontrada a Key do Google Maps JS no arquivo singular.properties").setVisible(false);
+        Component errorMapJS     = new Label("errorMapJS", "Não foi encontrada a Key do Google Maps JS no arquivo singular.properties").setVisible(false);
 
         panelErrorMsg.add(errorMapJS, errorMapStatic);
         templatePanel.add(verNoMaps, cleanButton, map, metaData, mapStatic);

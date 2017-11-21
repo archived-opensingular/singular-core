@@ -54,7 +54,7 @@ public class LatitudeLongitudeMapper extends DefaultCompositeMapper {
 
         final IModel<? extends SInstance> model = ctx.getModel();
 
-        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(model, ids);
+        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, model);
 
         googleMapsPanel.setReadOnly(ctx.getViewMode().isVisualization());
         ctx.getContainer().newFormGroup().appendDiv(googleMapsPanel);

@@ -13,29 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+(function () {
+    "use strict";
 
-function createSingularMap(idMetadados, googleMapsKey) {
-
-    if (typeof google != 'undefined') {
-        createSingularMapImpl();
-    } else {
-        var result = $.getScript('https://maps.googleapis.com/maps/api/js?key=' + googleMapsKey, createSingularMapImpl)
-            .fail(function (s, Status){
-                if (Status == 'OverQuotaMapError') {
-                    var meta = JSON.parse(document.getElementById(idMetadados).value);
-                    document.getElementById(meta.idMap).style.visibility = "hidden";
-                }
-            });
+    if (window.Singular === undefined) {
+        window.Singular = function () {
+        };
     }
 
-    function createSingularMapImpl() {
+    window.Singular.createSingularMap = function createSingularMap(idMetadados, googleMapsKey) {
+
+        if (typeof google !== 'undefined') {
+            createSingularMapImpl(idMetadados);
+        } else {
+            var result = $.getScript('https://maps.googleapis.com/maps/api/js?key=' + googleMapsKey, function () {createSingularMap(idMetadados);})
+                .fail(function (s, Status) {
+                    if (Status === 'OverQuotaMapError') {
+                        var meta = JSON.parse(document.getElementById(idMetadados).value);
+                        document.getElementById(meta.idMap).style.visibility = "hidden";
+                    }
+                });
+        }
+    };
+
+    function createSingularMapImpl(idMetadados) {
         var meta = JSON.parse(document.getElementById(idMetadados).value);
-        if (document.getElementById(meta.idLat) != null) {
+        if (document.getElementById(meta.idLat) !== null) {
             var metadados = JSON.parse(document.getElementById(idMetadados).value),
                 lat = document.getElementById(metadados.idLat).value,
                 lng = document.getElementById(metadados.idLng).value,
                 zoom = document.getElementById(metadados.idZoom).value,
-                latLong = new google.maps.LatLng(lat.replace(",", "."), lng.replace(",", ".")),
+                latLong = buildGmapsLatLong(lat, lng),
                 map, marker;
 
             var latElement = document.getElementById(metadados.idLat);
@@ -55,10 +63,8 @@ function createSingularMap(idMetadados, googleMapsKey) {
             });
 
             if (!JSON.parse(metadados.readOnly)) {
-                if (latElement.value != "" && lngElement.value != "") {
-                    lat = latElement.value.replace(",", ".");
-                    lng = lngElement.value.replace(",", ".");
-                    latLong = new google.maps.LatLng(lat, lng);
+                if (latElement.value !== "" && lngElement.value !== "") {
+                    latLong = buildGmapsLatLong(lat, lng);
                     marker.setPosition(latLong);
                     marker.setVisible(true);
                 } else {
@@ -98,26 +104,31 @@ function createSingularMap(idMetadados, googleMapsKey) {
             document.getElementById(meta.idMap).style.visibility = "hidden";
         }
 
-        function defineMarkerPositionManual() {
-            var valLat = $("#" + metadados.idLat).val();
-            var valLng = $("#" + metadados.idLng).val();
+    }
 
-            if (valLat != null && valLng !== "" &&
-                valLat && valLng !== "") {
+    function buildGmapsLatLong(lat, long){
+        var valLat = lat.replace(",", ".");
+        var valLng = long.replace(",", ".");
+        return new google.maps.LatLng(valLat, valLng);
+    }
 
-                valLat = valLat.replace(",", ".");
-                valLng = valLng.replace(",", ".");
+    function defineMarkerPositionManual() {
+        var valLat = $("#" + metadados.idLat).val();
+        var valLng = $("#" + metadados.idLng).val();
 
-                latLong = new google.maps.LatLng(valLat, valLng);
-                map.setCenter(latLong);
-                marker.setPosition(latLong);
-                marker.setMap(map);
-                if (!marker.getVisible()) {
-                    marker.setVisible(true);
-                }
-            } else {
-                marker.setVisible(false);
+        if (valLat !== null && valLng !== "" &&
+            valLat && valLng !== "") {
+
+            var latLong = buildGmapsLatLong(valLat, valLng)
+            map.setCenter(latLong);
+            marker.setPosition(latLong);
+            marker.setMap(map);
+            if (!marker.getVisible()) {
+                marker.setVisible(true);
             }
+        } else {
+            marker.setVisible(false);
         }
     }
-}
+
+})();
