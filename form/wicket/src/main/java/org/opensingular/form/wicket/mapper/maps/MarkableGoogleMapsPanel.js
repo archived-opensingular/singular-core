@@ -77,7 +77,7 @@
         });
 
         var marker = configureMarker(latLong, latElement, lngElement, map, readOnly);
-        configreFieldsEvents(latElement, lngElement, map, marker, idClearButton, readOnly, idCurrentLocationButton);
+        configureFieldsEvents(latElement, lngElement, map, marker, idClearButton, readOnly, idCurrentLocationButton);
 
         if (!readOnly) {
             map.addListener('click', function (event) {
@@ -133,21 +133,19 @@
         return new google.maps.LatLng(valLat, valLng);
     }
 
-    function configreFieldsEvents(latElement, lngElement, map, marker, idClearButton, readOnly, idCurrentLocationButton) {
+    function configureFieldsEvents(latElement, lngElement, map, marker, idClearButton, readOnly, idCurrentLocationButton) {
         if (readOnly) {
             $(latElement).attr('readonly', 'readonly');
             $(latElement).addClass('disabled');
             $(lngElement).attr('readonly', 'readonly');
             $(lngElement).addClass('disabled');
-        } else {
-            $(latElement).on('change', function () {
-                defineMarkerPositionManual(latElement, lngElement, map, marker);
-            });
-            $(lngElement).on('change', function () {
-                defineMarkerPositionManual(latElement, lngElement, map, marker);
-            });
-
         }
+        $(latElement).on('change', function () {
+            defineMarkerPositionManual(latElement, lngElement, map, marker);
+        });
+        $(lngElement).on('change', function () {
+            defineMarkerPositionManual(latElement, lngElement, map, marker);
+        });
         $("#" + idClearButton).on('click', function () {
             latElement.value = null;
             lngElement.value = null;
