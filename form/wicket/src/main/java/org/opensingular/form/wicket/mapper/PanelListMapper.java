@@ -101,7 +101,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
                             heading,
                             this.instanceActionsProviders,
                             listModel,
-                            true,
+                            false,
                             internalContextListProvider);
 
                     heading.add($b.visibleIf(() -> ctx.getHint(HIDE_LABEL)

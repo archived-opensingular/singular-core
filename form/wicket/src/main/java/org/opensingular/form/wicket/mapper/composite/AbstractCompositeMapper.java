@@ -191,7 +191,7 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
                     column,
                     mapper.getInstanceActionsProviders(),
                     model,
-                    true,
+                    false,
                     internalContextListProvider);
 
                 return column;
