@@ -189,7 +189,12 @@
 
     function findCurrentLocation(success, failure) {
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(success, failure);
+            var options = {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            };
+            navigator.geolocation.getCurrentPosition(success, failure, options);
         } else {
             toastr.error("Seu navegador não suporta geolocalização.");
         }
