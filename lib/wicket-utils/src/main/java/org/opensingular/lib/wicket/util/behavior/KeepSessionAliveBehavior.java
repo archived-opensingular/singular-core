@@ -22,6 +22,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.servlet.KeepSessionAliveServlet;
@@ -29,9 +30,9 @@ import org.opensingular.servlet.KeepSessionAliveServlet;
 import java.util.HashMap;
 import java.util.Map;
 
-public class KeepSessionAliveBehaviour extends Behavior implements Loggable {
+public class KeepSessionAliveBehavior extends Behavior implements Loggable {
 
-    public final static String KEEP_ALIVE_JS = "KeepSessionAliveBehaviour.js";
+    public final static String KEEP_ALIVE_JS = "KeepSessionAliveBehavior.js";
 
     @Override
     public void renderHead(Component component, IHeaderResponse response) {
@@ -45,8 +46,21 @@ public class KeepSessionAliveBehaviour extends Behavior implements Loggable {
 
     private Map<String, Object> getKeepAliveParametersMap() {
         final Map<String, Object> params = new HashMap<>();
-        params.put("callbackUrl", KeepSessionAliveServlet.ENDPOINT);
+        params.put("callbackUrl", getContextRelativePath());
         return params;
+    }
+
+    private String getContextRelativePath() {
+        String path = WebApplication.get().getServletContext().getContextPath();
+        if (!path.endsWith("/")) {
+            path += "/";
+        }
+        if (KeepSessionAliveServlet.ENDPOINT.startsWith("/")) {
+            path += KeepSessionAliveServlet.ENDPOINT.substring(1, KeepSessionAliveServlet.ENDPOINT.length());
+        } else {
+            path += KeepSessionAliveServlet.ENDPOINT;
+        }
+        return path;
     }
 
 }

@@ -146,7 +146,7 @@ public class MasterDetailPanel extends Panel {
             actionsContainer,
             this.instanceActionsProviders,
             ctx.getModel(),
-            true,
+            false,
             internalContextListProvider);
 
     }

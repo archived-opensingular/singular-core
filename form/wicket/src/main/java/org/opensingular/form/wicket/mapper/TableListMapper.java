@@ -129,7 +129,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             header,
             this.instanceActionsProviders,
             list,
-            true,
+            false,
             internalContextListProvider);
 
         final SType<SInstance> elementsType = list.getObject().getElementsType();
