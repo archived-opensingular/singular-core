@@ -30,7 +30,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.flatview.FlatViewContext;
 import org.opensingular.form.provider.SSimpleProvider;
 import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.util.transformer.SCompositeListBuilder;
+import org.opensingular.form.provider.SSimpleProviderListBuilder;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -118,7 +118,7 @@ public class SelectionFlatViewGeneratorTest {
             STypeString nome = estado.addFieldString("nome");
             estado.selection().id(sigla).display("${sigla}-${nome!}").simpleProvider(new SSimpleProvider() {
                 @Override
-                public void fill(SCompositeListBuilder builder) {
+                public void fill(SSimpleProviderListBuilder builder) {
                     builder.add()
                             .set(sigla, "DF").set(nome, "Distrito Federal")
                             .set(sigla, "SP").set(nome, "São Paulo")
