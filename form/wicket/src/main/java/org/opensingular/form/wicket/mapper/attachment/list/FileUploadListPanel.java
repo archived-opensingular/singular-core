@@ -55,17 +55,24 @@ import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponse
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet;
 import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppender;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
+import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.commons.util.Loggable;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
-import org.opensingular.lib.commons.ui.Icon;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet.PARAM_NAME;
+import static org.apache.commons.lang3.ObjectUtils.*;
+import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet.*;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
@@ -93,7 +100,8 @@ public class FileUploadListPanel extends Panel implements Loggable {
 
     private AttachmentKey uploadId;
 
-    public FileUploadListPanel(String id, IModel<SIList<SIAttachment>> model, WicketBuildContext ctx) {
+    @SuppressWarnings("unchecked")
+    public FileUploadListPanel(String id, IModel<SIList<SIAttachment>> model, WicketBuildContext ctx, IConsumer<BSContainer<?>> sInstanceActionsContainerConfigurer) {
         super(id, model);
         this.ctx = ctx;
 
@@ -103,6 +111,10 @@ public class FileUploadListPanel extends Panel implements Loggable {
 
         Label label = new Label("uploadLabel", $m.get(() -> ctx.getCurrentInstance().asAtr().getLabel()));
         label.add($b.visibleIfModelObject(StringUtils::isNotEmpty));
+
+        BSContainer<?> sInstanceActionsContainer = new BSContainer<>("sInstanceActionsContainer");
+        add(sInstanceActionsContainer);
+        sInstanceActionsContainerConfigurer.accept(sInstanceActionsContainer);
 
 
         Label subtitle = new Label("uploadSubtitle", $m.get(() -> ctx.getCurrentInstance().asAtr().getSubtitle()));
@@ -203,7 +215,7 @@ public class FileUploadListPanel extends Panel implements Loggable {
                     .put("max_file_size", getMaxFileSize())
                     .put("allowed_file_types", getAllowedTypes())
                     .put("allowed_file_extensions", getAllowedExtensions())
-                            .toString(2) + "); "
+                    .toString(2) + "); "
                     + "\n });";
             //@formatter:on
         } else {
@@ -211,7 +223,7 @@ public class FileUploadListPanel extends Panel implements Loggable {
         }
     }
 
-    private Set<String> getAllowedExtensions(){
+    private Set<String> getAllowedExtensions() {
         return MimeTypes.getExtensionsFormMimeTypes(getAllowedTypes(), true);
     }
 
@@ -290,7 +302,7 @@ public class FileUploadListPanel extends Panel implements Loggable {
 
             try {
                 final String pFileId = getParamFileId("fileId").toString();
-                final String pName = getParamFileId("name").toString();
+                final String pName   = getParamFileId("name").toString();
 
                 getLogger().debug("FileUploadListPanel.AddFileBehavior(fileId={},name={})", pFileId, pName);
 
