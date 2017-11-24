@@ -428,6 +428,12 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @Override
     public String toStringDisplayDefault() {
-        return this.values.stream().map(SInstance::toStringDisplay).filter(Objects::nonNull).collect(Collectors.joining(", "));
+        return Optional
+                .ofNullable(this.values)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(SInstance::toStringDisplay)
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining(", "));
     }
 }
