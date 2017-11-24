@@ -64,7 +64,7 @@ public class SSimpleProviderListBuilder {
      * @return
      *
      */
-    public void addAll(Collection<SInstance> instances) {
+    public void addAll(Collection<? extends SInstance> instances) {
         instances.forEach(i -> add().get().setValue(i));
     }
 
