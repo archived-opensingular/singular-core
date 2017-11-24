@@ -16,6 +16,8 @@
 
 package org.opensingular.form;
 
+import com.google.common.base.Joiner;
+import org.assertj.core.util.Lists;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.util.transformer.Value;
 
@@ -83,12 +85,12 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
             invokeUpdateListeners();
         }
     }
-    
+
     @Override
     public void removeChildren() {
         clearInstance();
     }
-    
+
     @Override
     public boolean isEmptyOfData() {
         return isEmpty() || values.stream().allMatch(SInstance::isEmptyOfData);
@@ -421,5 +423,11 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     public E remove(E e) {
         return remove(values.indexOf(e));
+    }
+
+
+    @Override
+    public String toStringDisplayDefault() {
+        return this.values.stream().map(SInstance::toStringDisplay).filter(Objects::nonNull).collect(Collectors.joining(", "));
     }
 }
