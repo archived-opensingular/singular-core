@@ -33,6 +33,7 @@ import org.opensingular.form.view.Block;
 import org.opensingular.form.view.SViewByBlock;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackPanel;
+import org.opensingular.form.wicket.mapper.behavior.RequiredBehaviorUtil;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
@@ -53,10 +54,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 public class BlocksCompositeMapper extends AbstractCompositeMapper {
 
@@ -68,7 +67,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
     private static boolean isBlockHandlesTitleFromChild(WicketBuildContext ctx, Block block) {
         SInstance currentInstance = ctx.getCurrentInstance();
         if (block.isSingleType() && currentInstance instanceof SIComposite) {
-            final boolean blockTitleBlank = isBlank(block.getName());
+            final boolean blockTitleBlank      = isBlank(block.getName());
             final boolean singleTypeTitleBlank = isSingleTypeTitleBlank(block, (SIComposite) currentInstance);
 
             return blockTitleBlank ^ singleTypeTitleBlank;
@@ -78,7 +77,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
 
     private static boolean isSingleTypeTitleBlank(final Block block, SIComposite currentInstance) {
         Optional<SInstance> singleTypeInstance = block.getSingleType(currentInstance);
-        String label = null;
+        String              label              = null;
         if (singleTypeInstance.isPresent()) {
             label = singleTypeInstance.get().asAtr().getLabel();
         }
@@ -95,11 +94,11 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
         protected void buildFields(WicketBuildContext ctx, BSGrid grid) {
 
             final List<String> remainingTypes = new ArrayList<>();
-            final List<String> addedTypes = new ArrayList<>();
-            final SViewByBlock view = (SViewByBlock) ctx.getView();
+            final List<String> addedTypes     = new ArrayList<>();
+            final SViewByBlock view           = (SViewByBlock) ctx.getView();
 
-            final WicketBuildContext rootContext = ctx.getRootContext();
-            final IBSComponentFactory<Component> factory = rootContext.getPreFormPanelFactory();
+            final WicketBuildContext             rootContext = ctx.getRootContext();
+            final IBSComponentFactory<Component> factory     = rootContext.getPreFormPanelFactory();
 
             BSGrid targetGrid = grid;
             if (factory != null) {
@@ -114,7 +113,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             targetGrid = targetGrid.newGrid();
 
             for (int i = 0; i < view.getBlocks().size(); i++) {
-                final Block block = view.getBlocks().get(i);
+                final Block        block   = view.getBlocks().get(i);
                 final PortletPanel portlet = new PortletPanel("_portlet" + i, block, ctx, (BlocksCompositeMapper) mapper);
                 addedTypes.addAll(block.getTypes());
                 appendBlock(targetGrid, block, portlet);
@@ -128,7 +127,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             }
 
             if (!remainingTypes.isEmpty()) {
-                final Block block = new Block();
+                final Block        block   = new Block();
                 final PortletPanel portlet = new PortletPanel("_portletForRemaining", block, ctx, (BlocksCompositeMapper) mapper);
                 block.setTypes(remainingTypes);
                 appendBlock(targetGrid, block, portlet);
@@ -137,7 +136,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
 
         private void appendBlock(BSGrid grid, Block block, PortletPanel portlet) {
             final BSGrid newGrid = portlet.getNewGrid();
-            BSRow row = newGrid.newRow();
+            BSRow        row     = newGrid.newRow();
 
             grid.appendTag("div", portlet);
 
@@ -147,16 +146,16 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
         }
 
         private BSRow buildBlockAndGetCurrentRow(SType<?> field, BSGrid grid, BSRow row, Block block) {
-            Boolean newRow = field.getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
-            SInstanceFieldModel<SInstance> im = fieldModel(field);
-            BSRow target = (newRow != null && newRow) ? grid.newRow() : row;
+            Boolean                        newRow = field.getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
+            SInstanceFieldModel<SInstance> im     = fieldModel(field);
+            BSRow                          target = (newRow != null && newRow) ? grid.newRow() : row;
             buildField(target, im, block);
             return target;
         }
 
         private void buildField(final BSRow row, final SInstanceFieldModel<SInstance> mField, Block block) {
             SInstance iField = mField.getObject();
-            BSCol col = row.newCol();
+            BSCol     col    = row.newCol();
             configureColspan(ctx, iField, col);
 
             WicketBuildContext childCtx = ctx.createChild(col, mField);
@@ -168,7 +167,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
     private static class PortletPanel extends TemplatePanel {
 
         private static final String TITLE_ID = "title";
-        private static final String GRID_ID = "grid";
+        private static final String GRID_ID  = "grid";
 
         private static final String PORTLET_MARKUP = ""
                 + "<div class='portlet light'>                                     "
@@ -178,9 +177,9 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
                 + "  </div>                                                        "
                 + "</div>                                                          ";
 
-        private final Block block;
-        private final BSGrid newGrid;
-        private final WicketBuildContext ctx;
+        private final Block                 block;
+        private final BSGrid                newGrid;
+        private final WicketBuildContext    ctx;
         private final BlocksCompositeMapper mapper;
 
         private boolean visible;
@@ -234,8 +233,8 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             }
             Boolean isAnyFieldUpdated = getRequestCycle().getMetaData(WicketFormProcessing.MDK_FIELD_UPDATED);
             if (isAnyFieldUpdated != null && isAnyFieldUpdated) {
-                AjaxRequestTarget payload = (AjaxRequestTarget) event.getPayload();
-                boolean newVisible = isAnyChildrenVisible();
+                AjaxRequestTarget payload    = (AjaxRequestTarget) event.getPayload();
+                boolean           newVisible = isAnyChildrenVisible();
                 if (newVisible != visible) {
                     if (newVisible) {
                         payload.appendJavaScript("$('#" + this.getMarkupId() + "').css('display', 'block');");
@@ -248,12 +247,12 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
         }
 
         private TemplatePanel buildPortletTitle(Block block, WicketBuildContext ctx) {
-            final String titleMarkup = "<div wicket:id='caption' class='caption'></div>";
+            final String         titleMarkup     = "<div wicket:id='caption' class='caption'></div>";
             final IModel<String> titleLabelModel = newBlockLabelModel(block, ctx);
 
-            final TemplatePanel portletTitle = new TemplatePanel(TITLE_ID, titleMarkup);
-            final Label titleLabel = new Label("title", titleLabelModel);
-            final BSContainer<?> caption = new BSContainer<>("caption");
+            final TemplatePanel  portletTitle = new TemplatePanel(TITLE_ID, titleMarkup);
+            final Label          titleLabel   = new Label("title", titleLabelModel);
+            final BSContainer<?> caption      = new BSContainer<>("caption");
 
             portletTitle.setVisible(isNotBlank(titleLabelModel.getObject()));
             portletTitle.add(caption);
@@ -284,13 +283,9 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
                 @Override
                 protected Set<String> update(Set<String> oldClasses) {
                     if (block.getTypes().size() == 1) {
-                        final SIComposite sic = ctx.getCurrentInstance();
-                        final SInstance firstChild = sic.getField(block.getTypes().get(0));
-                        if (firstChild.isRequired()) {
-                            oldClasses.add("singular-form-required");
-                        } else {
-                            oldClasses.remove("singular-form-required");
-                        }
+                        final SIComposite sic        = ctx.getCurrentInstance();
+                        final SInstance   firstChild = sic.getField(block.getTypes().get(0));
+                        return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, firstChild);
                     }
                     return oldClasses;
                 }
