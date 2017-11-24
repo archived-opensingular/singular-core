@@ -28,13 +28,13 @@ public interface STextQueryProvider extends TextQueryProvider<Value.Content, SIC
 
     @Override
     default List<Value.Content> load(SIComposite ins, String query) {
-        final SCompositeListBuilder builder = new SCompositeListBuilder((STypeComposite<SIComposite>) ins.getType(), ins);
+        final SSimpleProviderListBuilder builder = new SSimpleProviderListBuilder(new SCompositeListBuilder((STypeComposite<SIComposite>) ins.getType(), ins));
         fill(builder, query);
         final List<Value.Content> listMap = new ArrayList<>();
         builder.getList().forEach(i -> listMap.add(Value.dehydrate(i)));
         return listMap;
     }
 
-    void fill(SCompositeListBuilder builder, String query);
+    void fill(SSimpleProviderListBuilder builder, String query);
 
 }

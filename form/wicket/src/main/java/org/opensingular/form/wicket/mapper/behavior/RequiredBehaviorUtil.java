@@ -18,24 +18,25 @@
 
 package org.opensingular.form.wicket.mapper.behavior;
 
-import org.apache.wicket.ClassAttributeModifier;
-import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.basic.SPackageBasic;
 
+import java.util.Optional;
 import java.util.Set;
 
-public class RequiredListLabelClassAppender extends ClassAttributeModifier {
+public class RequiredBehaviorUtil {
 
-    private final IModel<? extends SInstance> model;
-
-    public RequiredListLabelClassAppender(IModel<? extends SInstance> model) {
-        this.model = model;
+    public static Set<String> updateRequiredClasses(Set<String> oldClasses, SInstance instance) {
+        Boolean required = Optional.ofNullable(instance.getAttributeValue(SPackageBasic.ATR_REQUIRED)).orElse(Boolean.FALSE);
+        if (instance.getType().isList()) {
+            final Integer minimumSize = instance.getAttributeValue(SPackageBasic.ATR_MINIMUM_SIZE);
+            required |= (minimumSize != null && minimumSize > 0);
+        }
+        if (required) {
+            oldClasses.add("singular-form-required");
+        } else {
+            oldClasses.remove("singular-form-required");
+        }
+        return oldClasses;
     }
-
-    @Override
-    protected Set<String> update(Set<String> oldClasses) {
-        return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
-    }
-
 }

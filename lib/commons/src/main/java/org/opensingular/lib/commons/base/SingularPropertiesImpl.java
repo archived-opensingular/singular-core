@@ -157,6 +157,9 @@ public final class SingularPropertiesImpl implements SingularProperties {
     private PropertyMap readClasspathDefaults() {
         PropertyMap newProperties = new PropertyMap();
         newProperties.readAllPropertiesFileFromClassPath(DEFAULT_PROPERTIES_FILENAME);
+        if (newProperties.getSize() != 0) {
+            newProperties = new PropertyMap(newProperties);
+        }
         for (String name : PROPERTIES_FILES_NAME) {
             newProperties.readAllPropertiesFileFromClassPath(name);
         }
