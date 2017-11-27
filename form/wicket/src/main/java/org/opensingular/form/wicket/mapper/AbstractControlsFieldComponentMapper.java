@@ -33,6 +33,7 @@ import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
 import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.mapper.behavior.RequiredBehaviorUtil;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.AttributeModel;
@@ -48,21 +49,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 public abstract class AbstractControlsFieldComponentMapper implements IWicketComponentMapper, ISInstanceActionCapable {
 
-    final static HintKey<Boolean>           NO_DECORATION            = new HintKey<Boolean>() {
-                                                                         @Override
-                                                                         public Boolean getDefaultValue() {
-                                                                             return Boolean.FALSE;
-                                                                         }
-                                                                         @Override
-                                                                         public boolean isInheritable() {
-                                                                             return true;
-                                                                         }
-                                                                     };
+    final static HintKey<Boolean> NO_DECORATION = new HintKey<Boolean>() {
+        @Override
+        public Boolean getDefaultValue() {
+            return Boolean.FALSE;
+        }
+
+        @Override
+        public boolean isInheritable() {
+            return true;
+        }
+    };
 
     private final SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
 
@@ -72,8 +73,8 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
 
     protected Component appendReadOnlyInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
-        final SInstance mi = model.getObject();
-        final BOutputPanel comp = new BOutputPanel(mi.getName(), $m.ofValue(getReadOnlyFormattedText(ctx, model)));
+        final SInstance                   mi    = model.getObject();
+        final BOutputPanel                comp  = new BOutputPanel(mi.getName(), $m.ofValue(getReadOnlyFormattedText(ctx, model)));
         formGroup.appendTag("div", comp);
         return comp;
     }
@@ -81,15 +82,15 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
     @Override
     public void buildView(WicketBuildContext ctx) {
 
-        final IModel<? extends SInstance> model = ctx.getModel();
-        final IModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
+        final IModel<? extends SInstance> model      = ctx.getModel();
+        final IModel<String>              labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
 
-        final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
-        final BSContainer<?> container = ctx.getContainer();
-        final AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
-        final ViewMode viewMode = ctx.getViewMode();
-        final BSLabel label = new BSLabel("label", labelModel);
-        final BSControls formGroup = container.newFormGroup();
+        final boolean                hintNoDecoration = ctx.getHint(NO_DECORATION);
+        final BSContainer<?>         container        = ctx.getContainer();
+        final AttributeModel<String> subtitle         = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
+        final ViewMode               viewMode         = ctx.getViewMode();
+        final BSLabel                label            = new BSLabel("label", labelModel);
+        final BSControls             formGroup        = container.newFormGroup();
 
         configureLabel(ctx, labelModel, hintNoDecoration, label);
 
@@ -97,31 +98,31 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
             formGroup.appendLabel(label);
         } else {
             BSControls labelBar = new BSControls("labelBar")
-                .appendLabel(label);
-            
+                    .appendLabel(label);
+
             labelBar.add(WicketUtils.$b.classAppender("labelBar"));
 
             IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
-                AbstractControlsFieldComponentMapper.this,
-                RequestCycle.get().find(AjaxRequestTarget.class),
-                model,
-                model.getObject(),
-                ctx,
-                ctx.getContainer());
+                    AbstractControlsFieldComponentMapper.this,
+                    RequestCycle.get().find(AjaxRequestTarget.class),
+                    model,
+                    model.getObject(),
+                    ctx,
+                    ctx.getContainer());
 
             SInstanceActionsPanel.addLeftSecondaryRightPanelsTo(
-                labelBar,
-                instanceActionsProviders,
-                model,
-                false,
-                internalContextListProvider);
+                    labelBar,
+                    instanceActionsProviders,
+                    model,
+                    false,
+                    internalContextListProvider);
             formGroup.appendDiv(labelBar);
         }
 
         formGroup.newHelpBlock(subtitle)
-            .add($b.classAppender("hidden-xs"))
-            .add($b.classAppender("hidden-sm"))
-            .add($b.classAppender("hidden-md"));
+                .add($b.classAppender("hidden-xs"))
+                .add($b.classAppender("hidden-sm"))
+                .add($b.classAppender("hidden-md"));
         //.add(InvisibleIfNullOrEmptyBehavior.getInstance());
 
         final Component input;
@@ -142,12 +143,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
             input.add($b.onConfigure(c -> label.add(new ClassAttributeModifier() {
                 @Override
                 protected Set<String> update(Set<String> oldClasses) {
-                    if (model.getObject().getAttributeValue(SPackageBasic.ATR_REQUIRED)) {
-                        oldClasses.add("singular-form-required");
-                    } else {
-                        oldClasses.remove("singular-form-required");
-                    }
-                    return oldClasses;
+                    return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
                 }
             })));
             for (FormComponent<?> fc : findAjaxComponents(input)) {
@@ -174,7 +170,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
 
     protected FormComponent<?>[] findAjaxComponents(Component input) {
         if (input instanceof FormComponent) {
-            return new FormComponent[] { (FormComponent<?>) input };
+            return new FormComponent[]{(FormComponent<?>) input};
         } else if (input instanceof MarkupContainer) {
             List<FormComponent<?>> formComponents = new ArrayList<>();
             ((MarkupContainer) input).visitChildren((component, iVisit) -> {
@@ -196,6 +192,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
      * Quando algum blur acontecer, verifica se algum change está agendado, caso não esteja, agenda um blur
      * Quando algum change acontecer, verifica se algum blur está agendado, caso tenha limpa o blur dando dando prioridade ao change
      * <p>
+     *
      * @param comp o Componente a ser configurado.
      */
     @Override

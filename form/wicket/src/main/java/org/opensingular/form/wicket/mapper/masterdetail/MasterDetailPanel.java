@@ -81,6 +81,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.opensingular.form.wicket.IWicketComponentMapper.*;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
@@ -153,7 +154,7 @@ public class MasterDetailPanel extends Panel {
 
     private void createComponents() {
         form = new SingularFormWicket<>("form");
-        head = new WebMarkupContainer("head");
+        head = newHead("head");
         headLabel = newHeadLabel();
         actionsContainer = new BSContainer<>("actionsContainer");
         body = new WebMarkupContainer("body");
@@ -162,6 +163,13 @@ public class MasterDetailPanel extends Panel {
         addButtonLabel = new Label("addButtonLabel", Model.of(AbstractListMapper.defineLabel(ctx)));
         table = newTable("table");
         feedback = ctx.createFeedbackCompactPanel("feedback");
+    }
+
+    private WebMarkupContainer newHead(String id) {
+        WebMarkupContainer thisHead = new WebMarkupContainer(id);
+        thisHead.add($b.visibleIf(() -> !ctx.getHint(HIDE_LABEL)
+                || !this.instanceActionsProviders.actionList(this.list).isEmpty()));
+        return thisHead;
     }
 
     private BSDataTable<SInstance, ?> newTable(String id) {

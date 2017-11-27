@@ -33,6 +33,7 @@ import org.opensingular.form.view.SViewBooleanSwitch;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
+import org.opensingular.form.wicket.mapper.behavior.RequiredBehaviorUtil;
 import org.opensingular.form.wicket.model.AttributeModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
@@ -62,12 +63,7 @@ public class BooleanSwitchMapper implements IWicketComponentMapper {
             @Override
             protected Set<String> update(Set<String> oldClasses) {
                 oldClasses.add("control-label");
-                if (model.getObject().isRequired()) {
-                    oldClasses.add("singular-form-required");
-                } else {
-                    oldClasses.remove("singular-form-required");
-                }
-                return oldClasses;
+                return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
             }
         });
 
