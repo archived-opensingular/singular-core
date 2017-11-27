@@ -28,20 +28,18 @@ import org.apache.wicket.model.Model;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.component.SingularSaveButton;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
-import org.opensingular.lib.commons.lambda.ISupplier;
-import org.opensingular.lib.commons.report.ReportMetadata;
 import org.opensingular.lib.commons.report.SingularReport;
+import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
-import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.wicket.util.util.Shortcuts;
 import org.opensingular.lib.wicket.views.SingularReportPanel;
 import org.opensingular.lib.wicket.views.plugin.ReportButtonExtension;
 
 import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.*;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
 
 public class SearchReportButtonExtension implements ReportButtonExtension {
 
@@ -49,18 +47,13 @@ public class SearchReportButtonExtension implements ReportButtonExtension {
     private SingularSaveButton filterButton;
     private BSModalBorder searchModal;
     private boolean init = true;
-    private ISupplier<SingularReport> singularFormReport;
-    private FormReportFilter formReportFilter;
+    private SingularReport singularFormReport;
 
     @Override
-    public void init(ISupplier<SingularReport> singularReport) {
+    public void init(SingularReport singularReport) {
         this.singularFormReport = singularReport;
     }
 
-    @Override
-    public void updateReportMetatada(ReportMetadata reportMetadata) {
-        reportMetadata.setFilter(formReportFilter);
-    }
 
     @Override
     public Icon getIcon() {
@@ -115,6 +108,7 @@ public class SearchReportButtonExtension implements ReportButtonExtension {
             @Override
             protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
                 target.add(form);
+                singularFormReport.setFilterValue(singularFormPanel.getInstance());
                 bsModalBorder.hide(target);
             }
         };
@@ -123,16 +117,14 @@ public class SearchReportButtonExtension implements ReportButtonExtension {
     }
 
     private void addFilter(BSModalBorder bsModalBorder) {
-        SingularFormReport sr = (SingularFormReport) singularFormReport.get();
-        singularFormPanel = new SingularFormPanel("singular-form-panel", sr.getFilterType());
+        SingularFormReport sr = (SingularFormReport) singularFormReport;
+        singularFormPanel = new SingularFormPanel("singular-form-panel", (SInstance) sr.getFilterValue());
         singularFormPanel.setNested(true);
         bsModalBorder.add(singularFormPanel);
-        formReportFilter = new FormReportFilter(() -> singularFormPanel.getInstance());
-        sr.onFilterInit(formReportFilter);
     }
 
     private boolean isFirstRequestAndIsNotEagerLoading() {
-        return init && !singularFormReport.get().eagerLoading();
+        return init && !singularFormReport.eagerLoading();
     }
 
 }

@@ -34,8 +34,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.util.time.Duration;
 import org.opensingular.lib.commons.extension.SingularExtensionUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
-import org.opensingular.lib.commons.report.ReportMetadata;
-import org.opensingular.lib.commons.report.ReportMetadataFactory;
 import org.opensingular.lib.commons.report.SingularReport;
 import org.opensingular.lib.commons.util.FormatUtil;
 import org.opensingular.lib.commons.views.ViewGenerator;
@@ -57,7 +55,7 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class SingularReportPanel extends Panel {
-    private final ISupplier<SingularReport> singularReportSupplier;
+    private final SingularReport              singularReportSupplier;
     private final List<ReportButtonExtension> reportButtonExtensions;
 
     private Form<Void> form;
@@ -65,13 +63,11 @@ public class SingularReportPanel extends Panel {
     private WicketViewWrapperForViewOutputHtml table;
     private Button exportButton;
     private ListView<ViewOutputFormat> formats;
-    private ReportMetadata reportMetadata;
 
-    public SingularReportPanel(String id, ISupplier<SingularReport> singularReportSupplier) {
+    public SingularReportPanel(String id, SingularReport report) {
         super(id);
-        this.singularReportSupplier = singularReportSupplier;
+        this.singularReportSupplier = report;
         this.reportButtonExtensions = SingularExtensionUtil.get().findExtensionsByClass(ReportButtonExtension.class);
-        this.reportMetadata = makeReportMetadata();
     }
 
     @Override
@@ -116,13 +112,13 @@ public class SingularReportPanel extends Panel {
 
 
     private ViewGenerator makeViewGenerator() {
-        reportButtonExtensions.forEach(b -> b.updateReportMetatada(reportMetadata));
-        return getSingularReport().map(r -> r.makeViewGenerator(reportMetadata)).orElse(null);
+//        reportButtonExtensions.forEach(b -> b.updateReportMetatada(getSingularReport().orElse(null)));
+        return getSingularReport().map(r -> r.getViewGenerator()).orElse(null);
     }
 
-    protected ReportMetadata makeReportMetadata() {
-        return SingularExtensionUtil.get().findExtensionByClass(ReportMetadataFactory.class).get();
-    }
+//    protected ReportMetadata makeReportMetadata() {
+//        return SingularExtensionUtil.get().findExtensionByClass(ReportMetadataFactory.class).get();
+//    }
 
     private void addTitle() {
         form.add(new Label("title", getSingularReport().map(SingularReport::getReportName).orElse("")));
@@ -175,7 +171,7 @@ public class SingularReportPanel extends Panel {
 
     @Nonnull
     private String generateExportFileName(ListItem<ViewOutputFormat> item) {
-        return singularReportSupplier.get().getReportName()
+        return singularReportSupplier.getReportName()
                 + " "
                 + FormatUtil.dateToDefaultTimestampString(new Date())
                 + "."
@@ -220,7 +216,7 @@ public class SingularReportPanel extends Panel {
     }
 
     private Optional<SingularReport> getSingularReport() {
-        return Optional.ofNullable(singularReportSupplier.get());
+        return Optional.ofNullable(singularReportSupplier);
     }
 
     public List<ReportButtonExtension> getReportButtonExtensions() {

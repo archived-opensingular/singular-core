@@ -27,6 +27,8 @@ import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
+import java.io.Serializable;
+
 public class ReportPageTest extends SingularWicketTestCase {
 
     @Test
@@ -57,7 +59,7 @@ public class ReportPageTest extends SingularWicketTestCase {
             }
 
             @Override
-            public ViewGenerator makeViewGenerator(FormReportMetadata reportMetadata) {
+            public ViewGenerator getViewGenerator() {
                 TableTool tableTool = new TableTool();
                 tableTool.addColumn(ColumnType.STRING, "nome");
                 tableTool.createSimpleTablePopulator()
@@ -65,11 +67,41 @@ public class ReportPageTest extends SingularWicketTestCase {
                         .setValue(0, "Danilo");
                 return tableTool;
             }
+
+            @Override
+            public void load(String XML) {
+
+            }
+
+            @Override
+            public String dumpXML() {
+                return null;
+            }
+
+            @Override
+            public void setParam(String key, Serializable val) {
+
+            }
+
+            @Override
+            public Serializable getParam(String key) {
+                return null;
+            }
+
+            @Override
+            public Object getFilterValue() {
+                return null;
+            }
+
+            @Override
+            public void setFilterValue(Object value) {
+
+            }
         };
         return new ReportPage(null) {
             @Override
             protected void configureMenu(ReportMenuBuilder menu) {
-                menu.addItem(DefaultIcons.PENCIL, "X1", () -> report);
+                menu.addItem(DefaultIcons.PENCIL, "X1", report);
             }
         };
     }

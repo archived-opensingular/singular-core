@@ -30,7 +30,6 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.lang.Objects;
 import org.opensingular.form.report.extension.ReportMenuExtension;
 import org.opensingular.lib.commons.extension.SingularExtensionUtil;
-import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.report.SingularReport;
 import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.commons.util.Loggable;
@@ -51,10 +50,10 @@ import java.util.List;
 public abstract class ReportPage extends SingularAdminTemplate {
     public static final String IDENTITY_PARAM = "identity";
 
-    private MetronicMenu menu;
-    private Component body;
-    private String identity;
-    private ISupplier<SingularReport> activeReport;
+    private MetronicMenu   menu;
+    private Component      body;
+    private String         identity;
+    private SingularReport activeReport;
 
     public ReportPage(PageParameters parameters) {
         super(parameters);
@@ -124,16 +123,16 @@ public abstract class ReportPage extends SingularAdminTemplate {
     protected abstract void configureMenu(ReportMenuBuilder menu);
 
     protected class ReportAjaxMenuItem extends MetronicMenuItem {
-        private final ISupplier<SingularReport> supplier;
+        private final SingularReport report;
 
-        ReportAjaxMenuItem(Icon icon, String title, ISupplier<SingularReport> supplier) {
-            super(icon, title, ReportPage.this.getClass(), new PageParameters().set("identity", supplier.get().getIdentity()));
-            this.supplier = supplier;
+        ReportAjaxMenuItem(Icon icon, String title, SingularReport supplier) {
+            super(icon, title, ReportPage.this.getClass(), new PageParameters().set("identity", supplier.getIdentity()));
+            this.report = supplier;
         }
 
         @Override
         protected boolean isActive() {
-            return supplier.get().getIdentity().equals(identity);
+            return report.getIdentity().equals(identity);
         }
     }
 
@@ -144,7 +143,7 @@ public abstract class ReportPage extends SingularAdminTemplate {
             return new ReportMenuGroupBuilder(group);
         }
 
-        public ReportMenuBuilder addItem(Icon icon, String title, ISupplier<SingularReport> report) {
+        public ReportMenuBuilder addItem(Icon icon, String title, SingularReport report) {
             try {
                 menu.addItem(newMenuItem(icon, title, report));
             } catch (Exception ex) {
@@ -161,7 +160,7 @@ public abstract class ReportPage extends SingularAdminTemplate {
             this.group = group;
         }
 
-        public ReportMenuGroupBuilder addItem(Icon icon, String title, ISupplier<SingularReport> report) {
+        public ReportMenuGroupBuilder addItem(Icon icon, String title, SingularReport report) {
             try {
                 group.addItem(newMenuItem(icon, title, report));
             } catch (Exception ex) {
@@ -177,7 +176,7 @@ public abstract class ReportPage extends SingularAdminTemplate {
         }
     }
 
-    private ReportAjaxMenuItem newMenuItem(Icon icon, String title, ISupplier<SingularReport> report) {
+    private ReportAjaxMenuItem newMenuItem(Icon icon, String title, SingularReport report) {
         ReportAjaxMenuItem newAjaxItem = new ReportAjaxMenuItem(icon, title, report);
         if (newAjaxItem.isActive()) {
             activeReport = report;

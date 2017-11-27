@@ -18,6 +18,7 @@
 
 package org.opensingular.form.report;
 
+import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.lib.commons.report.SingularReport;
 
@@ -25,12 +26,14 @@ import org.opensingular.lib.commons.report.SingularReport;
  * SingularFormReport
  * <p>
  * Interface for create reports using the SingularForms engine
- *
  */
-public interface SingularFormReport extends SingularReport<FormReportMetadata, FormReportFilter> {
+public interface SingularFormReport<S extends SInstance> extends SingularReport<S> {
+
     /**
      * The type to build the filter
+     *
      * @return the type
      */
-    Class<? extends SType<?>> getFilterType();
+    Class<? extends SType<S>> getFilterType();
+
 }
