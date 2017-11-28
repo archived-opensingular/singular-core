@@ -72,14 +72,14 @@ public interface SingularReport<F> extends Serializable {
      *
      * @param XML the content
      */
-    void load(String XML);
+    void loadReportInstance(String XML);
 
     /**
      * Extract the XML definition of this Report Instance
      *
      * @return the content
      */
-    String dumpXML();
+    String dumpReportInstanceXML();
 
     /**
      * Set parameters

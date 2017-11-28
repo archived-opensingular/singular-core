@@ -106,14 +106,15 @@ public class SingularReportPanelDownloadTest extends WicketTestCase {
             }
 
             @Override
-            public void load(String XML) {
+            public void loadReportInstance(String XML) {
 
             }
 
             @Override
-            public String dumpXML() {
+            public String dumpReportInstanceXML() {
                 return null;
             }
+
 
             @Override
             public void setParam(String key, Serializable val) {
