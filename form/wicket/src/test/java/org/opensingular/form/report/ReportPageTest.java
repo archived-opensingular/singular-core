@@ -19,6 +19,8 @@
 package org.opensingular.form.report;
 
 import org.junit.Test;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SType;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
 import org.opensingular.form.wicket.helpers.SingularWicketTestCase;
 import org.opensingular.lib.commons.table.ColumnType;
@@ -48,8 +50,10 @@ public class ReportPageTest extends SingularWicketTestCase {
 
     private static ReportPage createPage() {
         SingularFormReport report = new SingularFormReport() {
+
+
             @Override
-            public Class getFilterType() {
+            public SType getFilterType(PackageBuilder packageBuilder) {
                 return null;
             }
 

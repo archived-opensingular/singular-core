@@ -18,6 +18,7 @@
 
 package org.opensingular.form.report;
 
+import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.lib.commons.report.SingularReport;
@@ -34,6 +35,6 @@ public interface SingularFormReport<S extends SInstance> extends SingularReport<
      *
      * @return the type
      */
-    Class<? extends SType<S>> getFilterType();
+    SType<S> getFilterType(PackageBuilder packageBuilder);
 
 }
