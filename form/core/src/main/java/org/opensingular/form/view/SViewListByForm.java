@@ -22,9 +22,19 @@ public class SViewListByForm extends AbstractSViewListWithControls<SViewListByFo
 
     private String headerPath;
 
+    /**
+     * Uses the displayString defined in the list element type as header for each form panel
+     */
     public SViewListByForm() {
     }
 
+    /**
+     *
+     * @param header
+     * a subtype of  element type of the list.
+     * it can not be the very element type of the list
+     * in order to use de element type as header it is necessary to define a displayString and call {@link #SViewListByForm()}
+     */
     public SViewListByForm(SType header) {
         this.headerPath = header.getNameSimple();
     }
