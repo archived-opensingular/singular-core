@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.opensingular.lib.commons.lambda.IConsumer;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,25 +47,37 @@ public class SingularFormProcessing {
      *  List of dependants SInstances
      */
     protected static Set<SInstance> evaluateUpdateListeners(SInstance i) {
+        Set<SInstance> evaluated = new HashSet<>();
+        return circularEvaluateUpdateListeners(i, evaluated);
+    }
+
+
+    protected static Set<SInstance> circularEvaluateUpdateListeners(SInstance i, final Set<SInstance> evaluated) {
         return SInstances
                 .streamDescendants(i.getRoot(), true)
                 .filter(isDependantOf(i))
                 .filter(SingularFormProcessing::isNotOrphan)
                 .filter(dependant -> isNotInListOrIsBothInSameList(i, dependant))
-                .map(dependant -> {
-                    List<SInstance> instances = new ArrayList<>();
-                    IConsumer<SInstance> updateListener = dependant.asAtr().getUpdateListener();
-                    if (updateListener != null) {
-                        updateListener.accept(dependant);
-                    }
-                    instances.add(dependant);
-                    if (!dependant.equals(i)) {
-                        instances.addAll(SingularFormProcessing.evaluateUpdateListeners(dependant));
-                    }
-                    return instances;
-                })
+                .filter(dependant -> !evaluated.contains(dependant))
+                .map(evaluateUpdateListenerCascadingExecution(i, evaluated))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
+    }
+
+    private static Function<SInstance, List<SInstance>> evaluateUpdateListenerCascadingExecution(SInstance i, Set<SInstance> evaluated) {
+        return dependant -> {
+            evaluated.add(dependant);
+            List<SInstance>      instances      = new ArrayList<>();
+            IConsumer<SInstance> updateListener = dependant.asAtr().getUpdateListener();
+            if (updateListener != null) {
+                updateListener.accept(dependant);
+            }
+            instances.add(dependant);
+            if (!dependant.equals(i)) {
+                instances.addAll(SingularFormProcessing.circularEvaluateUpdateListeners(dependant, evaluated));
+            }
+            return instances;
+        };
     }
 
     private static Predicate<SInstance> isDependantOf(SInstance i) {
