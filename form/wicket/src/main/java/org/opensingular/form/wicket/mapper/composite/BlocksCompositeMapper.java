@@ -282,7 +282,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
                         caption,
                         mapper.getInstanceActionsProviders(),
                         model,
-                        true,
+                        false,
                         internalContextListProvider);
             }
 
