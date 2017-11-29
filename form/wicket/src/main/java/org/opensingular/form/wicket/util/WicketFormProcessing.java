@@ -181,7 +181,7 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
             return;
         }
 
-        validate(component, target, instance);
+        Set<SInstance> revalidatedInstances = validate(component, target, instance);
 
         Set<SInstance> updatedInstances = evaluateUpdateListeners(instance);
 
@@ -191,6 +191,7 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
 
         Set<SInstance> instancesToUpdateComponents = new HashSet<>();
 
+        instancesToUpdateComponents.addAll(revalidatedInstances);
         instancesToUpdateComponents.addAll(eventCollector.getEventSourceInstances());
         instancesToUpdateComponents.addAll(updatedInstances);
 
@@ -198,7 +199,8 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
     }
 
 
-    private static void validate(Component component, AjaxRequestTarget target, SInstance fieldInstance) {
+    private static Set<SInstance> validate(Component component, AjaxRequestTarget target, SInstance fieldInstance) {
+        Set<SInstance> revalidated = new HashSet<>();
         if (!isSkipValidationOnRequest()) {
 
             final InstanceValidationContext validationContext;
@@ -212,10 +214,11 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
                 fieldInstance
                         .findNearest(dependentType)
                         .ifPresent(it -> {
-                            it.getDocument().clearValidationErrors(it.getId());
                             //Executa validações que dependem do valor preenchido
-                            if (!it.isEmptyOfData()) {
+                            if (it.hasValidationErrors()) {
+                                it.getDocument().clearValidationErrors(it.getId());
                                 validationContext.validateSingle(it);
+                                revalidated.add(it);
                             }
                         });
             }
@@ -228,6 +231,7 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
                         updateValidationFeedbackOnDescendants(target, (MarkupContainer) container);
                     }));
         }
+        return revalidated;
     }
 
     private static boolean isSkipValidationOnRequest() {
