@@ -24,6 +24,7 @@ import org.opensingular.form.type.core.STypeDate;
 import org.opensingular.form.type.core.STypeDateTime;
 import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.core.STypeLong;
 import org.opensingular.form.type.core.STypeMonetary;
 import org.opensingular.form.type.core.STypePassword;
 import org.opensingular.form.type.core.STypeString;
@@ -374,6 +375,20 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     }
 
     /**
+     * Cria um novo campo do tipo {@link STypeLong} com o nome informado.
+     */
+    public STypeLong addFieldLong(String fieldSimpleName) {
+        return addField(fieldSimpleName, STypeLong.class);
+    }
+
+    /**
+     * Cria um novo campo do tipo {@link STypeLong} com o nome informado.
+     */
+    public STypeLong addFieldLong(String fieldSimpleName, boolean required) {
+        return addField(fieldSimpleName, STypeLong.class, required);
+    }
+
+    /**
      * Cria um novo campo do tipo {@link STypeDecimal} com o nome informado.
      */
     public STypeDecimal addFieldDecimal(String fieldSimpleName, boolean required) {
@@ -435,6 +450,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     public SType<?> getField(SType<?> field) {
         return getField(field.getNameSimple());
     }
+
 
     /**
      * Mapa de alto nível que funciona tanto por nome quanto por índice do campo
