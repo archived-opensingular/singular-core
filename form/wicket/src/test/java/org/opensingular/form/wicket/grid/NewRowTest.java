@@ -26,10 +26,10 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.util.STypeEMail;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class NewRowTest {
 
@@ -37,7 +37,7 @@ public class NewRowTest {
     private static STypeString nome;
     private static STypeInteger idade;
 
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static void buildBaseType(STypeComposite<?> mockType) {
 
@@ -59,7 +59,7 @@ public class NewRowTest {
 
     @Test
     public void testIfEveryTypeIsInDiferentRow() {
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(NewRowTest::buildBaseType);
         tester.startDummyPage();
 
@@ -73,7 +73,7 @@ public class NewRowTest {
     }
 
     BSRow findRowForType(SType<?> type) {
-        return tester.getAssertionsForm().getSubCompomentWithType(type).getTarget()
+        return tester.getAssertionsForm().getSubComponentWithType(type).getTarget()
                 .visitParents(BSRow.class, new IVisitor<BSRow, BSRow>() {
                     @Override
                     public void component(BSRow row, IVisit<BSRow> visit) {

@@ -23,7 +23,7 @@ import org.apache.wicket.Component;
  *
  * @author Daniel Bordin on 12/02/2017.
  */
-public class AssertionsWComponent extends AssertionsWComponentBase<Component, AssertionsWComponent> {
+public class AssertionsWComponent extends AssertionsWComponentBase<AssertionsWComponent, Component> {
 
     public AssertionsWComponent(Component c) {
         super(c);

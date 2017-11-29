@@ -37,7 +37,7 @@ import org.opensingular.form.type.util.STypeEMail;
 import javax.annotation.Nonnull;
 import java.io.Serializable;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
 public class CoreAttributesTest extends TestCaseForm {

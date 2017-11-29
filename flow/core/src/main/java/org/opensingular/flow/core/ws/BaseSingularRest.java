@@ -28,7 +28,6 @@ public class BaseSingularRest {
     public static final String EXECUTE_TRANSITION = "/executeTransition";
     public static final String RELOCATE_TASK = "/relocateTask";
 
-    public static final String FLOW_DEFINITION_ABBREVIATION = "flowDefinitionAbbreviation";
     public static final String COD_FLOW_INSTANCE = "codFlowInstance";
     public static final String USERNAME = "username";
     public static final String LAST_VERSION = "lastVersion";

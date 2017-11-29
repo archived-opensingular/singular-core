@@ -16,10 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
-
-import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
@@ -31,11 +27,16 @@ import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
+import org.opensingular.form.wicket.mapper.behavior.RequiredBehaviorUtil;
 import org.opensingular.form.wicket.model.AttributeModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSWellBorder;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
+
+import java.util.Set;
+
+import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
 
 public class BooleanMapper implements IWicketComponentMapper {
 
@@ -52,11 +53,11 @@ public class BooleanMapper implements IWicketComponentMapper {
     }
 
     protected void buildForEdition(WicketBuildContext ctx) {
-        final BSControls formGroup = ctx.getContainer().newFormGroup();
-        final IModel<? extends SInstance> model = ctx.getModel();
-        final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
-        final CheckBox input = new CheckBox(model.getObject().getName(), new SInstanceValueModel<>(model));
-        final Label label = buildLabel("_", labelModel);
+        final BSControls                  formGroup  = ctx.getContainer().newFormGroup();
+        final IModel<? extends SInstance> model      = ctx.getModel();
+        final AttributeModel<String>      labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
+        final CheckBox                    input      = new CheckBox(model.getObject().getName(), new SInstanceValueModel<>(model));
+        final Label                       label      = buildLabel("_", labelModel);
         adjustJSEvents(ctx, label);
         formGroup.appendCheckbox(input, label);
         input.add(DisabledClassBehavior.getInstance());
@@ -66,20 +67,15 @@ public class BooleanMapper implements IWicketComponentMapper {
         label.add(new ClassAttributeModifier() {
             @Override
             protected Set<String> update(Set<String> oldClasses) {
-                if (model.getObject().isRequired()) {
-                    oldClasses.add("singular-form-required");
-                } else {
-                    oldClasses.remove("singular-form-required");
-                }
-                return oldClasses;
+                return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
             }
         });
     }
 
     protected void buildForVisualization(WicketBuildContext ctx) {
-        final BSControls formGroup = ctx.getContainer().newFormGroup();
-        final IModel<? extends SInstance> model = ctx.getModel();
-        final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
+        final BSControls                  formGroup  = ctx.getContainer().newFormGroup();
+        final IModel<? extends SInstance> model      = ctx.getModel();
+        final AttributeModel<String>      labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
 
         final Boolean checked;
 
@@ -90,7 +86,7 @@ public class BooleanMapper implements IWicketComponentMapper {
             checked = Boolean.FALSE;
         }
 
-        String clazz = checked ? "fa fa-check-square" : "fa fa-square-o";
+        String clazz    = checked ? "fa fa-check-square" : "fa fa-square-o";
         String idSuffix = (mi != null) ? mi.getName() : StringUtils.EMPTY;
         TemplatePanel tp = formGroup.newTemplateTag(t -> ""
                 + "<div wicket:id='" + "_well" + idSuffix + "'>"

@@ -32,11 +32,11 @@ import org.opensingular.form.report.extension.ReportMenuExtension;
 import org.opensingular.lib.commons.extension.SingularExtensionUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.report.SingularReport;
+import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.menu.MetronicMenu;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuGroup;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
-import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.wicket.util.template.admin.SingularAdminTemplate;
 import org.opensingular.lib.wicket.util.toastr.ToastrHelper;
 import org.opensingular.lib.wicket.views.SingularReportPanel;
@@ -62,15 +62,15 @@ public abstract class ReportPage extends SingularAdminTemplate {
             return;
         }
         this.identity = parameters.get(IDENTITY_PARAM).toString(null);
-        Serializable successMessage = Session.get().getAttribute(sucessMessageAttribute(identity));
+        Serializable successMessage = Session.get().getAttribute(successMessageAttribute(identity));
         if (successMessage != null) {
             new ToastrHelper(this).addToastrMessage(ToastrType.SUCCESS, (String) successMessage);
-            Session.get().removeAttribute(sucessMessageAttribute(identity));
+            Session.get().removeAttribute(successMessageAttribute(identity));
         }
     }
 
     @Nonnull
-    private static String sucessMessageAttribute(String identity) {
+    private static String successMessageAttribute(String identity) {
         return "message_" + Objects.defaultIfNull(identity, "empty");
     }
 
@@ -185,9 +185,9 @@ public abstract class ReportPage extends SingularAdminTemplate {
         return newAjaxItem;
     }
 
-    public static void setAsRespondePageWithMessage(Component c, String message, String identity) {
+    public static void setAsResponsePageWithMessage(Component c, String message, String identity) {
         if (StringUtils.isNotBlank(message)) {
-            Session.get().setAttribute(sucessMessageAttribute(identity), message);
+            Session.get().setAttribute(successMessageAttribute(identity), message);
         }
         PageParameters params = new PageParameters();
         if (identity != null) {

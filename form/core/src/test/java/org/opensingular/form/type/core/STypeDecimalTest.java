@@ -18,20 +18,18 @@
 
 package org.opensingular.form.type.core;
 
-import org.opensingular.form.type.core.SIBigDecimal;
-import org.opensingular.form.type.core.STypeDecimal;
-import org.opensingular.form.AbstractTestOneType;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.opensingular.form.AbstractTestOneType;
 
 import java.io.File;
 import java.math.BigDecimal;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
 public class STypeDecimalTest extends AbstractTestOneType<STypeDecimal, SIBigDecimal> {

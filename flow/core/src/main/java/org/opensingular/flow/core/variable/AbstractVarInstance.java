@@ -16,14 +16,14 @@
 
 package org.opensingular.flow.core.variable;
 
-import org.opensingular.flow.core.property.MetaData;
+import org.opensingular.flow.core.property.MetaDataMap;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public abstract class AbstractVarInstance implements VarInstance {
 
-    private MetaData metaData;
+    private MetaDataMap metaDataMap;
 
     private final VarDefinition definition;
 
@@ -51,16 +51,16 @@ public abstract class AbstractVarInstance implements VarInstance {
 
     @Override
     @Nonnull
-    public Optional<MetaData> getMetaDataOpt() {
-        return Optional.ofNullable(metaData);
+    public Optional<MetaDataMap> getMetaDataOpt() {
+        return Optional.ofNullable(metaDataMap);
     }
 
     @Override
-    public MetaData getMetaData() {
-        if (metaData == null) {
-            metaData = new MetaData();
+    public MetaDataMap getMetaData() {
+        if (metaDataMap == null) {
+            metaDataMap = new MetaDataMap();
         }
-        return metaData;
+        return metaDataMap;
     }
 
     @Override

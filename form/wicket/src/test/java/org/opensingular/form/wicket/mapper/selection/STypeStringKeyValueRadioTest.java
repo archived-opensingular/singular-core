@@ -25,17 +25,17 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewSelectionByRadio;
 import org.opensingular.form.wicket.helpers.AssertionsWComponentList;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class STypeStringKeyValueRadioTest {
     private static STypeString tipoDeMedia;
 
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static void buildBaseType(STypeComposite<?> baseCompositeField) {
         tipoDeMedia = baseCompositeField.addFieldString("tipoDeMedia");
@@ -56,7 +56,7 @@ public class STypeStringKeyValueRadioTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(STypeStringKeyValueRadioTest::buildBaseType);
         tester.getDummyPage().enableAnnotation();
     }
@@ -67,8 +67,8 @@ public class STypeStringKeyValueRadioTest {
 
         AssertionsWComponentList radioListAssertion = tester.getAssertionsForm().getSubComponents(RadioChoice.class);
 
-        radioListAssertion.isSize(1);
-        RadioChoice radioChoice = radioListAssertion.get(0).getTarget(RadioChoice.class);
+        radioListAssertion.hasSize(1);
+        RadioChoice radioChoice = radioListAssertion.element(0).getTarget(RadioChoice.class);
 
         assertThat(radioChoice.getChoiceRenderer().getIdValue(radioChoice.getChoices().get(0), 0)).isEqualTo("IMG");
         assertThat(radioChoice.getChoiceRenderer().getDisplayValue(radioChoice.getChoices().get(0))).isEqualTo("Imagem");
@@ -85,8 +85,8 @@ public class STypeStringKeyValueRadioTest {
 
         AssertionsWComponentList radioListAssertion = tester.getAssertionsForm().getSubComponents(RadioChoice.class);
 
-        radioListAssertion.isSize(1);
-        RadioChoice radioChoice = radioListAssertion.get(0).getTarget(RadioChoice.class);
+        radioListAssertion.hasSize(1);
+        RadioChoice radioChoice = radioListAssertion.element(0).getTarget(RadioChoice.class);
         assertThat(radioChoice.getChoiceRenderer().getIdValue(radioChoice.getChoices().get(0), 0)).isEqualTo("IMG");
         assertThat(radioChoice.getChoiceRenderer().getDisplayValue(radioChoice.getChoices().get(0))).isEqualTo("Imagem");
         assertThat(radioChoice.getChoiceRenderer().getIdValue(radioChoice.getChoices().get(1), 1)).isEqualTo("TXT");

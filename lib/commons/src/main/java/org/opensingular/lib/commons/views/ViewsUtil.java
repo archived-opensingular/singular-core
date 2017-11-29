@@ -43,6 +43,7 @@ public class ViewsUtil {
         return formatsLoader;
     }
 
+    @Nonnull
     static ViewGenerator getGeneratorFor(@Nonnull ViewMultiGenerator target, @Nonnull ViewOutputFormat format)
             throws SingularViewUnsupportedFormatException {
         ViewGeneratorProvider<ViewGenerator, ViewOutput<?>> provider = getGeneratorProviderFor(target, format);
@@ -53,7 +54,7 @@ public class ViewsUtil {
             }
 
             @Override
-            public boolean isDirectCompatiableWith(@Nonnull ViewOutputFormat format2) {
+            public boolean isDirectCompatibleWith(@Nonnull ViewOutputFormat format2) {
                 return format.equals(format2);
             }
         };
@@ -84,7 +85,7 @@ public class ViewsUtil {
 
     @Nullable
     private ViewGenerator findDirectCompatiable(@Nonnull ViewGenerator viewGenerator, @Nonnull ViewOutputFormatExportable format) {
-        if (viewGenerator.isDirectCompatiableWith(format)) {
+        if (viewGenerator.isDirectCompatibleWith(format)) {
             return viewGenerator;
         } else if (viewGenerator instanceof ViewMultiGenerator) {
             return getGeneratorFor((ViewMultiGenerator) viewGenerator, format);
@@ -105,7 +106,7 @@ public class ViewsUtil {
 
         ViewGenerator copyOfViewGenerator = viewGenerator;
 
-        if (!copyOfViewGenerator.isDirectCompatiableWith(format)) {
+        if (!copyOfViewGenerator.isDirectCompatibleWith(format)) {
             if (copyOfViewGenerator instanceof ViewMultiGenerator) {
                 copyOfViewGenerator = getGeneratorFor((ViewMultiGenerator) copyOfViewGenerator, format);
             }

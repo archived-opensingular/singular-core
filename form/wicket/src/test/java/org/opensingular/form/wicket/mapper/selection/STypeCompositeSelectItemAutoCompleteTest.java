@@ -26,10 +26,10 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 public class STypeCompositeSelectItemAutoCompleteTest {
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static STypeComposite<SIComposite> base;
     private static STypeString                 name;
@@ -53,7 +53,7 @@ public class STypeCompositeSelectItemAutoCompleteTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(STypeCompositeSelectItemAutoCompleteTest::buildBaseType);
         tester.startDummyPage();
     }
@@ -68,10 +68,10 @@ public class STypeCompositeSelectItemAutoCompleteTest {
     @Test
     public void submitsSelectedCompositeValue(){
         tester.newFormTester()
-                .setValue(tester.getAssertionsForm().getSubComponents(TextField.class).get(1).getTarget(), "Venus")
+                .setValue(tester.getAssertionsForm().getSubComponents(TextField.class).element(1).getTarget(), "Venus")
                 .submit();
 
-        tester.getAssertionsForm().getSubCompomentWithType(base)
+        tester.getAssertionsForm().getSubComponentWithType(base)
                 .assertSInstance().isComposite().field(name.getNameSimple()).isValueEquals("Venus");
     }
 }

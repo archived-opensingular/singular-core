@@ -31,13 +31,12 @@ import org.apache.wicket.markup.html.IHeaderResponseDecorator;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.lib.wicket.util.application.SkinnableApplication;
-import org.opensingular.lib.wicket.util.behavior.KeepSessionAliveBehaviour;
+import org.opensingular.lib.wicket.util.behavior.KeepSessionAliveBehavior;
 
 import com.google.common.collect.ImmutableList;
 
@@ -152,7 +151,7 @@ public abstract class SingularTemplate extends WebPage {
                 .setJQueryReference(new PackageResourceReference(SingularTemplate.class, "empty.js"));
         add(new Label("pageTitle", getPageTitleModel()));
         add(new HeaderResponseContainer(JAVASCRIPT_CONTAINER, JAVASCRIPT_CONTAINER));
-        add(new KeepSessionAliveBehaviour());
+        add(new KeepSessionAliveBehavior());
     }
 
     @Override

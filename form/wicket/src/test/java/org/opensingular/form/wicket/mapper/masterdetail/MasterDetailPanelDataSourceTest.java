@@ -69,10 +69,10 @@ public class MasterDetailPanelDataSourceTest {
         List<SInstance> page2 = Lists.newArrayList(dataProvider.iterator(2, 2, "", true));
 
         Assert.assertEquals(2, page1.size());
-        new AssertionsSInstance(page1.get(0)).is(SIString.class).isValueEquals("01");
-        new AssertionsSInstance(page1.get(1)).is(SIString.class).isValueEquals("02");
+        new AssertionsSInstance(page1.get(0)).isInstanceOf(SIString.class).isValueEquals("01");
+        new AssertionsSInstance(page1.get(1)).isInstanceOf(SIString.class).isValueEquals("02");
         Assert.assertEquals(2, page2.size());
-        new AssertionsSInstance(page2.get(0)).is(SIString.class).isValueEquals("03");
-        new AssertionsSInstance(page2.get(1)).is(SIString.class).isValueEquals("04");
+        new AssertionsSInstance(page2.get(0)).isInstanceOf(SIString.class).isValueEquals("03");
+        new AssertionsSInstance(page2.get(1)).isInstanceOf(SIString.class).isValueEquals("04");
     }
 }

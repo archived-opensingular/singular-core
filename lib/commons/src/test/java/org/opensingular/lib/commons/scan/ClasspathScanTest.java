@@ -28,6 +28,7 @@ import java.util.Set;
 
 public class ClasspathScanTest {
 
+
     @Test
     public void scanSubclassesOfDATE() {
         Set<Class<? extends Date>> dates = SingularClassPathScanner.get().findSubclassesOf(Date.class);
@@ -41,15 +42,40 @@ public class ClasspathScanTest {
     }
 
     @Test
-    public void scanClassesAnnotatedWithBar(){
+    public void scanClassesAnnotatedWithBar() {
         Set<Class<?>> bars = SingularClassPathScanner.get().findClassesAnnotatedWith(Bar.class);
         Assert.assertTrue(bars.contains(FooSerializable.class));
         Assert.assertTrue(bars.contains(FooDate.class));
     }
 
     @Test(expected = SingularException.class)
-    public void testPassNonAnnotationClass(){
+    public void testPassNonAnnotationClass() {
         SingularClassPathScanner.get().findClassesAnnotatedWith(Object.class);
+    }
+
+    @Test
+    public void filterUnknownPackage() {
+        Set<Class<? extends Serializable>> empty = SingularClassPathScanner.get().findSubclassesOf(Serializable.class, ClasspathScanTest.class.getPackage().getName() + ".naoexiste");
+        Assert.assertTrue(empty.isEmpty());
+    }
+
+    @Test
+    public void filterExistentPackage() {
+        Set<Class<? extends Serializable>> notEmpty = SingularClassPathScanner.get().findSubclassesOf(Serializable.class, FooSerializable.class.getPackage().getName());
+        Assert.assertTrue(notEmpty.contains(FooSerializable.class));
+    }
+
+
+    @Test
+    public void filterAnnotationUnknownPackage() {
+        Set<Class<?>> empty = SingularClassPathScanner.get().findClassesAnnotatedWith(Bar.class, ClasspathScanTest.class.getPackage().getName() + ".naoexiste");
+        Assert.assertTrue(empty.isEmpty());
+    }
+
+    @Test
+    public void filterAnnotationExistentPackage() {
+        Set<Class<?>> notEmpty = SingularClassPathScanner.get().findClassesAnnotatedWith(Bar.class, FooSerializable.class.getPackage().getName());
+        Assert.assertTrue(notEmpty.contains(FooSerializable.class));
     }
 
 

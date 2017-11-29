@@ -38,12 +38,19 @@ import org.opensingular.lib.commons.report.ReportMetadata;
 import org.opensingular.lib.commons.report.ReportMetadataFactory;
 import org.opensingular.lib.commons.report.SingularReport;
 import org.opensingular.lib.commons.util.FormatUtil;
-import org.opensingular.lib.commons.views.*;
+import org.opensingular.lib.commons.views.ViewGenerator;
+import org.opensingular.lib.commons.views.ViewMultiGenerator;
+import org.opensingular.lib.commons.views.ViewOutputFormat;
+import org.opensingular.lib.commons.views.ViewOutputFormatExportable;
+import org.opensingular.lib.commons.views.ViewsUtil;
 import org.opensingular.lib.wicket.views.plugin.ReportButtonExtension;
 
 import javax.annotation.Nonnull;
 import java.io.File;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
@@ -122,9 +129,9 @@ public class SingularReportPanel extends Panel {
     }
 
     private List<ViewOutputFormat> exportFormatList() {
-        final ViewGenerator vg = makeViewGenerator();
+        ViewGenerator vg = makeViewGenerator();
         if (vg instanceof ViewMultiGenerator) {
-            final List<ViewOutputFormat> enabledFormats = getSingularReport()
+            List<ViewOutputFormat> enabledFormats = getSingularReport()
                     .map(SingularReport::getEnabledExportFormats).orElse(Collections.emptyList());
             return ((ViewMultiGenerator) vg).getDirectSupportedFormats().stream()
                     .filter(enabledFormats::contains).collect(Collectors.toList());

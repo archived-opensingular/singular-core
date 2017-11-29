@@ -45,7 +45,7 @@ public interface SSimpleProvider extends SimpleProvider<Content, SInstance> {
             throw new SingularFormException("Não foi possivel obter o tipo da instancia", ins);
         }
 
-        final SCompositeListBuilder builder = new SCompositeListBuilder(typeComposite, ins);
+        final SSimpleProviderListBuilder builder = new SSimpleProviderListBuilder(new SCompositeListBuilder(typeComposite, ins));
         final List<Content>         listMap = new ArrayList<>();
 
         fill(builder);
@@ -54,6 +54,6 @@ public interface SSimpleProvider extends SimpleProvider<Content, SInstance> {
         return listMap;
     }
 
-    void fill(SCompositeListBuilder builder);
+    void fill(SSimpleProviderListBuilder builder);
 
 }

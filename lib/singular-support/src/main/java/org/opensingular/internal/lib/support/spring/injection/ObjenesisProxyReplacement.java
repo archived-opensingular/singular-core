@@ -17,12 +17,13 @@
 package org.opensingular.internal.lib.support.spring.injection;
 
 import java.io.ObjectStreamException;
+import java.io.Serializable;
 
 /**
  * Object that replaces the proxy when it is serialized. Upon deserialization this object will
  * create a new proxy with the same locator.
  */
-class ObjenesisProxyReplacement {
+class ObjenesisProxyReplacement implements Serializable{
     private static final long serialVersionUID = 1L;
 
     private final IProxyTargetLocator locator;

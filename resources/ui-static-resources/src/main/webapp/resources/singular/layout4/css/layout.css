@@ -129,6 +129,11 @@ button {
 .annotation-status-approved {
   color: #5AB879; }
 
+.nav-tabs .tabs-left .annotation-icon {
+  top: 13px;
+  right: 4px;
+  position: absolute; }
+
 /***
 Page Header
 ***/
@@ -1935,9 +1940,6 @@ Theme Panel
 
 .upload-single.upload-single-uploading .upload-single-remove, .upload-single.upload-single-uploading .upload-single-progress {
   display: block; }
-
-.upload-panel {
-  margin-bottom: 45px; }
 
 .upload-panel-heading {
   margin: 1px 0 15px 0; }

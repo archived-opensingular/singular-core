@@ -24,12 +24,13 @@ import org.junit.runners.MethodSorters;
 import org.opensingular.flow.core.TesFlowMapValidations.FlowWithFlowValidation.StepsDI;
 import org.opensingular.flow.core.builder.BuilderHuman;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
-import org.opensingular.flow.core.property.MetaDataRef;
+import org.opensingular.flow.core.property.MetaDataKey;
 import org.opensingular.flow.schedule.ScheduleDataBuilder;
 import org.opensingular.internal.lib.commons.test.RunnableEx;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -41,8 +42,8 @@ import static org.junit.Assert.assertTrue;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TesFlowMapValidations {
 
-    private static final MetaDataRef<Boolean> TAG = new MetaDataRef<>("tag", Boolean.class);
-    private static final MetaDataRef<Boolean> FLAG = new MetaDataRef<>("flag", Boolean.class);
+    private static final MetaDataKey<Boolean> TAG = MetaDataKey.of("tag", Boolean.class);
+    private static final MetaDataKey<Boolean> FLAG = MetaDataKey.of("flag", Boolean.class);
 
     private static ValidationConditions condicions = new ValidationConditions();
 
@@ -64,11 +65,12 @@ public class TesFlowMapValidations {
         assertException(() -> definition.getFlowMap().getHumanTaskByAbbreviationOrException(StepsDI.StepWait.getKey()), "found, but it is of type");
         assertException(() -> definition.getFlowMap().getTask(StepsDI.NoAndded), "não encontrada");
 
-        List<STask<?>> result = definition.getFlowMap().getTasksWithMetadata(TAG);
+        List<STask<?>> result = definition.getFlowMap().getAllTasks().stream().filter(
+                task -> task.getMetaDataValueOpt(TAG).isPresent()).collect(Collectors.toList());
         assertEquals(1, result.size());
         assertTrue(result.get(0).is(StepsDI.StepWait));
 
-        assertTrue(definition.getFlowMap().getTask(StepsDI.StepWait).getMetaData().get(FLAG));
+        assertTrue(definition.getFlowMap().getTask(StepsDI.StepWait).getMetaData().getOpt(FLAG).orElse(null));
     }
 
     @Test
@@ -101,9 +103,9 @@ public class TesFlowMapValidations {
         condicions = new ValidationConditions();
         FlowWithFlowValidation p = new FlowWithFlowValidation();
         p.getFlowMap().setMetaDataValue(TAG, Boolean.TRUE);
-        assertTrue(p.getMetaDataValue(TAG));
+        assertTrue(p.getMetaDataValueOpt(TAG).orElse(null));
         p.getFlowMap().setMetaDataValue(TAG, Boolean.FALSE);
-        assertFalse(p.getMetaDataValue(TAG));
+        assertFalse(p.getMetaDataValueOpt(TAG).orElse(null));
     }
 
     @Test

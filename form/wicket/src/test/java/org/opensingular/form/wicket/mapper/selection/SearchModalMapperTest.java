@@ -30,14 +30,14 @@ import org.opensingular.form.provider.FilteredProvider;
 import org.opensingular.form.provider.ProviderContext;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewSearchModal;
-import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.helpers.AssertionsWComponentList;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.form.wicket.mapper.search.SearchModalPanel;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 
 import java.util.Arrays;
 import java.util.List;
+
 import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 
 
@@ -71,25 +71,25 @@ public class SearchModalMapperTest {
 
     @Test
     public void testIfChooseValueInModelUpdatesDependentComponent() {
-        SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(SearchModalMapperTest::buildBaseType);
         tester.startDummyPage();
 
         Component mandatoryFieldComp = tester.getAssertionsForm().getSubComponents(TextField.class)
-                .get(0).asTextField().getTarget();
+                .element(0).asTextField().getTarget();
         Component dependentFieldComp = tester.getAssertionsForm().getSubComponents(TextField.class)
-                .get(1).asTextField().getTarget();
+                .element(1).asTextField().getTarget();
 
         tester.assertInvisible(dependentFieldComp.getPageRelativePath());
 
         Button openModalButton = tester.getAssertionsForm()
-                .getSubCompomentWithId(SearchModalPanel.MODAL_TRIGGER_ID).getTarget(Button.class);
+                .getSubComponentWithId(SearchModalPanel.MODAL_TRIGGER_ID).getTarget(Button.class);
         tester.executeAjaxEvent(openModalButton, "click");
 
         AssertionsWComponentList links = tester.getAssertionsForm().getSubComponents(ActionAjaxLink.class);
-        tester.executeAjaxEvent(links.get(0).getTarget(), "click");
+        tester.executeAjaxEvent(links.element(0).getTarget(), "click");
 
-        tester.getAssertionsForm().getSubCompomentWithType(mandatoryField).assertSInstance().isValueEquals("1");
+        tester.getAssertionsForm().getSubComponentWithType(mandatoryField).assertSInstance().isValueEquals("1");
 
         tester.executeAjaxEvent(mandatoryFieldComp, SINGULAR_PROCESS_EVENT);
 

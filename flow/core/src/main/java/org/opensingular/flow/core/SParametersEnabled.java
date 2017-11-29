@@ -16,7 +16,7 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.core.property.MetaDataRef;
+import org.opensingular.flow.core.property.MetaDataKey;
 import org.opensingular.flow.core.variable.VarDefinition;
 import org.opensingular.flow.core.variable.VarDefinitionMap;
 import org.opensingular.flow.core.variable.VarInstance;
@@ -30,8 +30,8 @@ import javax.annotation.Nonnull;
  */
 public abstract class SParametersEnabled {
 
-    private static MetaDataRef<Boolean> AUTO_BIND_VARIABLE = new MetaDataRef("autoBindToFlowVariable",
-            Boolean.class);
+    private static MetaDataKey<Boolean> AUTO_BIND_VARIABLE = MetaDataKey.of("autoBindToFlowVariable",
+            Boolean.class, Boolean.FALSE);
 
     private VarDefinitionMap<?> parameters;
 
@@ -62,7 +62,7 @@ public abstract class SParametersEnabled {
 
     /** Verifica se a definição indica que a variável deve ser automaticamente copiada para as variável da instância. */
     final static boolean isAutoBindedToFlowVariable(@Nonnull VarDefinition varDef) {
-        return varDef.getMetaDataValue(AUTO_BIND_VARIABLE, Boolean.FALSE);
+        return varDef.getMetaDataValue(AUTO_BIND_VARIABLE);
     }
 
     /** Verifica se a definição indica que a variável deve ser automaticamente copiada para as variável da instância. */

@@ -29,10 +29,10 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TestCaseForm;
-import org.opensingular.internal.lib.commons.xml.MParser;
 import org.opensingular.form.io.SFormXMLUtil;
+import org.opensingular.internal.lib.commons.xml.MParser;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
 public class STypeListTest extends TestCaseForm {

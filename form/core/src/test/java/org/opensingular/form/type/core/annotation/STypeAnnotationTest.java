@@ -18,7 +18,7 @@
 
 package org.opensingular.form.type.core.annotation;
 
-import org.fest.assertions.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.form.PackageBuilder;
@@ -34,8 +34,8 @@ import org.opensingular.form.type.core.STypeString;
 
 import java.util.List;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.groups.Properties.extractProperty;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Properties.extractProperty;
 
 public class STypeAnnotationTest {
     protected static SDictionary dictionary;

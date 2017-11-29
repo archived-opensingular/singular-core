@@ -18,17 +18,19 @@
 
 package org.opensingular.form.type.basic;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
 import org.opensingular.form.TestCaseForm;
 
 import java.util.GregorianCalendar;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
 public class DisplayStringCalculationTest extends TestCaseForm {
@@ -50,6 +52,11 @@ public class DisplayStringCalculationTest extends TestCaseForm {
         tipoDetalhes.addFieldBoolean("fragil");
         tipoDetalhes.addFieldString("obs");
 
+        STypeList<STypeComposite<SIComposite>, SIComposite> listaQualquerCoisa = tipoPedido.addFieldListOfComposite("coisas", "qualquerCoisa");
+        listaQualquerCoisa.getElementsType().addFieldString("nome");
+        listaQualquerCoisa.getElementsType().addFieldString("identificador");
+        listaQualquerCoisa.getElementsType().asAtr().displayString("${nome}");
+
         SIComposite pedido = tipoPedido.newInstance();
         pedido.setValue("cod", 10);
         pedido.setValue("nome", "Teclado USB");
@@ -57,6 +64,13 @@ public class DisplayStringCalculationTest extends TestCaseForm {
         pedido.setValue("entrega", new GregorianCalendar(2000, 6, 1).getTime());
         pedido.setValue("detalhes.fragil", true);
         pedido.setValue("detalhes.obs", "usado");
+        SIComposite composite = pedido.getField(listaQualquerCoisa).addNew();
+        composite.setValue("nome", "supernome");
+        composite.setValue("identificador", "1");
+
+        SIComposite composite2 = pedido.getField(listaQualquerCoisa).addNew();
+        composite2.setValue("nome", "supernome2");
+        composite2.setValue("identificador", "2");
         return pedido;
     }
 
@@ -148,5 +162,19 @@ public class DisplayStringCalculationTest extends TestCaseForm {
 
         pedido.getType().asAtr().displayString("${cod} ${nome} ${entrega?string.iso}");
         assertThat(pedido.toStringDisplay()).isEqualTo("10 Teclado USB 2000-07-01");
+    }
+
+    @Test
+    public void testDisplayStringListOfComposite() {
+        SIComposite pedido = createPedido();
+        Assert.assertEquals("supernome, supernome2",pedido.getField("coisas").toStringDisplay());
+    }
+
+
+    @Test
+    public void testDisplayStringEmptyListOfComposite() {
+        SIComposite pedido = createPedido();
+        pedido.getField("coisas").clearInstance();
+        Assert.assertEquals("",pedido.getField("coisas").toStringDisplay());
     }
 }

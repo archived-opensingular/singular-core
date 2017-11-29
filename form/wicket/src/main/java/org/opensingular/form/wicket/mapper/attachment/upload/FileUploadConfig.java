@@ -18,6 +18,7 @@ package org.opensingular.form.wicket.mapper.attachment.upload;
 
 import org.opensingular.lib.commons.base.SingularProperties;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 
 import static org.opensingular.internal.lib.commons.util.ConversionUtils.toLongHumane;
@@ -37,16 +38,17 @@ public class FileUploadConfig implements Serializable {
     private final long defaultMaxFileSize;
     private final long defaultMaxRequestSize;
 
-    public FileUploadConfig(SingularProperties sp) {
-        //@formatter:off
-        this.globalMaxFileAge = toLongHumane(sp.getProperty(FILEUPLOAD_GLOBAL_MAX_FILE_AGE), Long.MAX_VALUE);
-        this.globalMaxFileCount = toLongHumane(sp.getProperty(FILEUPLOAD_GLOBAL_MAX_FILE_COUNT), Long.MAX_VALUE);
-        this.globalMaxFileSize = toLongHumane(sp.getProperty(FILEUPLOAD_GLOBAL_MAX_FILE_SIZE), Long.MAX_VALUE);
-        this.globalMaxRequestSize = toLongHumane(sp.getProperty(FILEUPLOAD_GLOBAL_MAX_REQUEST_SIZE), Long.MAX_VALUE);
+    public FileUploadConfig(@Nonnull SingularProperties sp) {
+        this.globalMaxFileAge = readLong(sp, FILEUPLOAD_GLOBAL_MAX_FILE_AGE);
+        this.globalMaxFileCount = readLong(sp, FILEUPLOAD_GLOBAL_MAX_FILE_COUNT);
+        this.globalMaxFileSize = readLong(sp, FILEUPLOAD_GLOBAL_MAX_FILE_SIZE);
+        this.globalMaxRequestSize = readLong(sp, FILEUPLOAD_GLOBAL_MAX_REQUEST_SIZE);
+        this.defaultMaxFileSize = readLong(sp, FILEUPLOAD_DEFAULT_MAX_FILE_SIZE);
+        this.defaultMaxRequestSize = readLong(sp, FILEUPLOAD_DEFAULT_MAX_REQUEST_SIZE);
+    }
 
-        this.defaultMaxFileSize = toLongHumane(sp.getProperty(FILEUPLOAD_DEFAULT_MAX_FILE_SIZE), Long.MAX_VALUE);
-        this.defaultMaxRequestSize = toLongHumane(sp.getProperty(FILEUPLOAD_DEFAULT_MAX_REQUEST_SIZE), Long.MAX_VALUE);
-        //@formatter:on
+    private long readLong(@Nonnull SingularProperties sp, @Nonnull String key) {
+        return toLongHumane(sp.getPropertyOpt(key).orElse(null), Long.MAX_VALUE);
     }
 
     public long getGlobalMaxFileAge() {
