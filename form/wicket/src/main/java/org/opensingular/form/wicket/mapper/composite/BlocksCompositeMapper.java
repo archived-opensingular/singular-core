@@ -25,9 +25,11 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
+import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.core.SPackageBootstrap;
 import org.opensingular.form.view.Block;
 import org.opensingular.form.view.SViewByBlock;
@@ -46,12 +48,12 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.model.IMappingModel;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.apache.commons.lang3.StringUtils.*;
@@ -66,22 +68,27 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
 
     private static boolean isBlockHandlesTitleFromChild(WicketBuildContext ctx, Block block) {
         SInstance currentInstance = ctx.getCurrentInstance();
-        if (block.isSingleType() && currentInstance instanceof SIComposite) {
+        if (block.isSingleType() && currentInstance instanceof ICompositeInstance) {
             final boolean blockTitleBlank      = isBlank(block.getName());
-            final boolean singleTypeTitleBlank = isSingleTypeTitleBlank(block, (SIComposite) currentInstance);
+            final boolean singleTypeTitleBlank = isSingleTypeTitleBlank(block, (ICompositeInstance) currentInstance);
+            final boolean sameTitle            = isSameTitle(block, currentInstance);
 
-            return blockTitleBlank ^ singleTypeTitleBlank;
+            return blockTitleBlank ^ singleTypeTitleBlank ^ sameTitle;
         }
         return false;
     }
 
-    private static boolean isSingleTypeTitleBlank(final Block block, SIComposite currentInstance) {
-        Optional<SInstance> singleTypeInstance = block.getSingleType(currentInstance);
-        String              label              = null;
-        if (singleTypeInstance.isPresent()) {
-            label = singleTypeInstance.get().asAtr().getLabel();
-        }
-        return isBlank(label);
+    private static boolean isSameTitle(final Block block, SInstance currentInstance) {
+        return getSingleBlockLabel(block, currentInstance).equalsIgnoreCase(block.getName());
+    }
+
+    private static boolean isSingleTypeTitleBlank(final Block block, ICompositeInstance currentInstance) {
+        return isBlank(getSingleBlockLabel(block, (SInstance) currentInstance));
+    }
+
+    @Nonnull
+    private static String getSingleBlockLabel(Block block, SInstance currentInstance) {
+        return block.getSingleType(currentInstance).map(SInstance::asAtr).map(AtrBasic::getLabel).orElse("");
     }
 
     private static class BlocksCompositeViewBuilder extends AbstractCompositeViewBuilder {
