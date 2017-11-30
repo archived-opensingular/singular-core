@@ -29,7 +29,6 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.Visits;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
 import org.opensingular.form.SingularFormProcessing;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.event.ISInstanceListener.EventCollector;
@@ -189,11 +188,10 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
         EventCollector eventCollector = new EventCollector();
         updateAttributes(instance, eventCollector);
 
-        Set<SInstance> revalidatedInstances = revalidateDependentTypes(instance);
+        revalidateInvalidOrNonEmptyInstances(updatedInstances);
 
         Set<SInstance> instancesToUpdateComponents = new HashSet<>();
 
-        instancesToUpdateComponents.addAll(revalidatedInstances);
         instancesToUpdateComponents.addAll(eventCollector.getEventSourceInstances());
         instancesToUpdateComponents.addAll(updatedInstances);
 
@@ -216,32 +214,25 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
         }
     }
 
-
     /**
-     * rerun validation on dependnt types that are filled with data and currently valid and the invalid ones (filled or not)
-     * @param fieldInstance
+     * rerun validation on types that are filled with data and currently valid and the invalid ones (filled or not)
+     *
+     * @param updatedInstances a list of instances to rerun the validation
      * @return
      */
-    private static Set<SInstance> revalidateDependentTypes(SInstance fieldInstance) {
-        Set<SInstance> revalidated = new HashSet<>();
+    private static void revalidateInvalidOrNonEmptyInstances(Set<SInstance> updatedInstances) {
         if (!isSkipValidationOnRequest()) {
             final InstanceValidationContext validationContext = new InstanceValidationContext();
             // limpa erros de instancias dependentes, e limpa o valor caso de este não seja válido para o provider
-            for (SType<?> dependentType : fieldInstance.getType().getDependentTypes()) {
-                fieldInstance
-                        .findNearest(dependentType)
-                        .ifPresent(it -> {
-                            //Executa validações que dependem do valor preenchido que não estão com valor vazio ou
-                            // que já haviam sido validadas anteriormente e possuem mensagens
-                            if (!it.isEmptyOfData() || it.hasValidationErrors()) {
-                                it.getDocument().clearValidationErrors(it.getId());
-                                validationContext.validateSingle(it);
-                                revalidated.add(it);
-                            }
-                        });
+            for (SInstance it : updatedInstances) {
+                //Executa validações que dependem do valor preenchido que não estão com valor vazio ou
+                // que já haviam sido validadas anteriormente e possuem mensagens
+                if (!it.isEmptyOfData() || it.hasValidationErrors()) {
+                    it.getDocument().clearValidationErrors(it.getId());
+                    validationContext.validateSingle(it);
+                }
             }
         }
-        return revalidated;
     }
 
 
