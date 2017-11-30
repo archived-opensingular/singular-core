@@ -22,6 +22,8 @@ import org.junit.Test;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.circulartypes.STypeLongCircularDependsOn1;
+import org.opensingular.form.circulartypes.STypeShortCircularDependsOn1;
 
 public class TestCircularDependsOn {
 
@@ -32,9 +34,25 @@ public class TestCircularDependsOn {
 
         SIComposite           instance = dictionary.newInstance(STypeCircularDependsOn.class);
         STypeCircularDependsOn type     = (STypeCircularDependsOn) instance.getType();
-
-
         SFormUtil.evaluateUpdateListeners(instance.getField(type.dependsOnByClass));
+    }
+
+
+    @Test
+    public void testDependsOnCircularLongCycle() throws Exception {
+        SDictionary dictionary = SDictionary.create();
+
+        SIComposite           instance1 = dictionary.newInstance(STypeShortCircularDependsOn1.class);
+
+        SIComposite           instance = dictionary.newInstance(STypeLongCircularDependsOn1.class);
+        STypeLongCircularDependsOn1 type     = (STypeLongCircularDependsOn1) instance.getType();
+
+
+        SFormUtil.evaluateUpdateListeners(instance.getField(type.whatever1));
+
+        System.out.println(instance.getField(type.whatever1));
+        System.out.println(instance.findNearest(type.sTypeLongCircularDependsOn2.whatever1));
+        System.out.println(instance.findNearest(type.sTypeLongCircularDependsOn2.sTypeLongCircularDependsOn3.whatever1));
 
     }
 }
