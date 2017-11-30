@@ -44,7 +44,7 @@ public class SingularFormProcessing {
      *  i the instance from which all dependents types must be notified
      * @see <a href="https://www.pivotaltracker.com/story/show/131103577">[#131103577]</a>
      * @return
-     *  List of dependants SInstances
+     *  List of dependants SInstances visited regardless whether it contains or not an update listener
      */
     protected static Set<SInstance> evaluateUpdateListeners(SInstance i) {
         Set<SInstance> evaluated = new HashSet<>();
