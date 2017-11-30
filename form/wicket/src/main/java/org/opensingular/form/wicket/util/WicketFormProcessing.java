@@ -28,7 +28,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.Visits;
-import org.opensingular.form.*;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.SingularFormProcessing;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.event.ISInstanceListener.EventCollector;
 import org.opensingular.form.validation.InstanceValidationContext;
@@ -50,11 +52,11 @@ import java.util.stream.Stream;
  */
 public class WicketFormProcessing extends SingularFormProcessing implements Loggable {
 
-    public final static MetaDataKey<Boolean> MDK_SKIP_VALIDATION_ON_REQUEST = new MetaDataKey<Boolean>() {
+    public final static  MetaDataKey<Boolean> MDK_SKIP_VALIDATION_ON_REQUEST = new MetaDataKey<Boolean>() {
     };
-    private final static MetaDataKey<Boolean> MDK_PROCESSED = new MetaDataKey<Boolean>() {
+    private final static MetaDataKey<Boolean> MDK_PROCESSED                  = new MetaDataKey<Boolean>() {
     };
-    public final static MetaDataKey<Boolean> MDK_FIELD_UPDATED = new MetaDataKey<Boolean>() {
+    public final static  MetaDataKey<Boolean> MDK_FIELD_UPDATED              = new MetaDataKey<Boolean>() {
     };
 
     private WicketFormProcessing() {
@@ -108,7 +110,7 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
             }
 
             final SInstance baseInstance = baseInstanceModel.getObject();
-            final SDocument document = baseInstance.getDocument();
+            final SDocument document     = baseInstance.getDocument();
 
             // Validação do valor do componente
             boolean hasErrors = false;
@@ -152,7 +154,6 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
     }
 
 
-
     /**
      * Busca todas as instancias dependentes da instancia informada e executa o update listener.
      * Apos a execução ira procurar os componente de tela vinculados as instancias atualizadas
@@ -181,13 +182,14 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
             return;
         }
 
-        Set<SInstance> revalidatedInstances = validate(component, target, instance);
+        validate(component, target, instance);
 
         Set<SInstance> updatedInstances = evaluateUpdateListeners(instance);
 
         EventCollector eventCollector = new EventCollector();
-
         updateAttributes(instance, eventCollector);
+
+        Set<SInstance> revalidatedInstances = revalidateDependentTypes(instance);
 
         Set<SInstance> instancesToUpdateComponents = new HashSet<>();
 
@@ -199,30 +201,11 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
     }
 
 
-    private static Set<SInstance> validate(Component component, AjaxRequestTarget target, SInstance fieldInstance) {
-        Set<SInstance> revalidated = new HashSet<>();
+    private static void validate(Component component, AjaxRequestTarget target, SInstance fieldInstance) {
         if (!isSkipValidationOnRequest()) {
-
-            final InstanceValidationContext validationContext;
-
             // Validação do valor do componente
-            validationContext = new InstanceValidationContext();
+            final InstanceValidationContext validationContext = new InstanceValidationContext();
             validationContext.validateSingle(fieldInstance);
-
-            // limpa erros de instancias dependentes, e limpa o valor caso de este não seja válido para o provider
-            for (SType<?> dependentType : fieldInstance.getType().getDependentTypes()) {
-                fieldInstance
-                        .findNearest(dependentType)
-                        .ifPresent(it -> {
-                            //Executa validações que dependem do valor preenchido
-                            if (it.hasValidationErrors()) {
-                                it.getDocument().clearValidationErrors(it.getId());
-                                validationContext.validateSingle(it);
-                                revalidated.add(it);
-                            }
-                        });
-            }
-
             WicketBuildContext
                     .findNearest(component)
                     .flatMap(ctx -> Optional.of(ctx.getRootContext()))
@@ -231,8 +214,36 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
                         updateValidationFeedbackOnDescendants(target, (MarkupContainer) container);
                     }));
         }
+    }
+
+
+    /**
+     * rerun validation on dependnt types that are filled with data and currently valid and the invalid ones (filled or not)
+     * @param fieldInstance
+     * @return
+     */
+    private static Set<SInstance> revalidateDependentTypes(SInstance fieldInstance) {
+        Set<SInstance> revalidated = new HashSet<>();
+        if (!isSkipValidationOnRequest()) {
+            final InstanceValidationContext validationContext = new InstanceValidationContext();
+            // limpa erros de instancias dependentes, e limpa o valor caso de este não seja válido para o provider
+            for (SType<?> dependentType : fieldInstance.getType().getDependentTypes()) {
+                fieldInstance
+                        .findNearest(dependentType)
+                        .ifPresent(it -> {
+                            //Executa validações que dependem do valor preenchido que não estão com valor vazio ou
+                            // que já haviam sido validadas anteriormente e possuem mensagens
+                            if (!it.isEmptyOfData() || it.hasValidationErrors()) {
+                                it.getDocument().clearValidationErrors(it.getId());
+                                validationContext.validateSingle(it);
+                                revalidated.add(it);
+                            }
+                        });
+            }
+        }
         return revalidated;
     }
+
 
     private static boolean isSkipValidationOnRequest() {
         return RequestCycle.get().getMetaData(MDK_SKIP_VALIDATION_ON_REQUEST) != null && RequestCycle.get().getMetaData(MDK_SKIP_VALIDATION_ON_REQUEST);
