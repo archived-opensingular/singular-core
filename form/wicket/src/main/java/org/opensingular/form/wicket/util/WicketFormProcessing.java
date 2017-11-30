@@ -146,8 +146,8 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
             return;
 
         // Validação do valor do componente
-        final InstanceValidationContext validationContext = new InstanceValidationContext();
-        validationContext.validateSingle(fieldInstance.getObject());
+        validate(fieldInstance.getObject());
+
         SValidationFeedbackHandler.findNearest(formComponent)
                 .ifPresent(it -> it.updateValidationMessages(target));
     }
@@ -181,29 +181,11 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
             return;
         }
 
-        validate(component, target, instance);
+        boolean skipValidation = isSkipValidationOnRequest();
 
-        Set<SInstance> updatedInstances = evaluateUpdateListeners(instance);
+        Set<SInstance> instancesToUpdateComponents = executeFieldProcessLifecycle(instance, skipValidation);
 
-        EventCollector eventCollector = new EventCollector();
-        updateAttributes(instance, eventCollector);
-
-        revalidateInvalidOrNonEmptyInstances(updatedInstances);
-
-        Set<SInstance> instancesToUpdateComponents = new HashSet<>();
-
-        instancesToUpdateComponents.addAll(eventCollector.getEventSourceInstances());
-        instancesToUpdateComponents.addAll(updatedInstances);
-
-        updateBoundedComponents(component.getPage(), target, instancesToUpdateComponents);
-    }
-
-
-    private static void validate(Component component, AjaxRequestTarget target, SInstance fieldInstance) {
-        if (!isSkipValidationOnRequest()) {
-            // Validação do valor do componente
-            final InstanceValidationContext validationContext = new InstanceValidationContext();
-            validationContext.validateSingle(fieldInstance);
+        if (!skipValidation) {
             WicketBuildContext
                     .findNearest(component)
                     .flatMap(ctx -> Optional.of(ctx.getRootContext()))
@@ -212,37 +194,12 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
                         updateValidationFeedbackOnDescendants(target, (MarkupContainer) container);
                     }));
         }
-    }
 
-    /**
-     * rerun validation on types that are filled with data and currently valid and the invalid ones (filled or not)
-     *
-     * @param updatedInstances a list of instances to rerun the validation
-     * @return
-     */
-    private static void revalidateInvalidOrNonEmptyInstances(Set<SInstance> updatedInstances) {
-        if (!isSkipValidationOnRequest()) {
-            final InstanceValidationContext validationContext = new InstanceValidationContext();
-            // limpa erros de instancias dependentes, e limpa o valor caso de este não seja válido para o provider
-            for (SInstance it : updatedInstances) {
-                //Executa validações que dependem do valor preenchido que não estão com valor vazio ou
-                // que já haviam sido validadas anteriormente e possuem mensagens
-                if (!it.isEmptyOfData() || it.hasValidationErrors()) {
-                    it.getDocument().clearValidationErrors(it.getId());
-                    validationContext.validateSingle(it);
-                }
-            }
-        }
+        updateBoundedComponents(component.getPage(), target, instancesToUpdateComponents);
     }
-
 
     private static boolean isSkipValidationOnRequest() {
         return RequestCycle.get().getMetaData(MDK_SKIP_VALIDATION_ON_REQUEST) != null && RequestCycle.get().getMetaData(MDK_SKIP_VALIDATION_ON_REQUEST);
-    }
-
-    private static void updateAttributes(final SInstance fieldInstance, EventCollector eventCollector) {
-        final SDocument document = fieldInstance.getDocument();
-        document.updateAttributes(eventCollector);
     }
 
     public static void refreshComponentOrCellContainer(AjaxRequestTarget target, Component component) {
@@ -253,9 +210,7 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
         }
     }
 
-    public static void updateValidationFeedbackOnDescendants(AjaxRequestTarget target,
-                                                             MarkupContainer container) {
-
+    public static void updateValidationFeedbackOnDescendants(AjaxRequestTarget target, MarkupContainer container) {
         if (container != null) {
             Visits.visitPostOrder(container, (Component comp, IVisit<Void> visit) -> {
                 if (SValidationFeedbackHandler.isBound(comp) && comp.isVisibleInHierarchy()) {
