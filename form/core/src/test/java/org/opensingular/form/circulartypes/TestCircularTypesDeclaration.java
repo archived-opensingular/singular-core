@@ -16,26 +16,25 @@
  *
  */
 
-package org.opensingular.form.dependson;
+package org.opensingular.form.circulartypes;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opensingular.form.SDictionary;
-import org.opensingular.form.SFormUtil;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.circulartypes.STypeLongCircularDependsOn1;
-import org.opensingular.form.circulartypes.STypeShortCircularDependsOn1;
 
-public class TestCircularDependsOn {
+public class TestCircularTypesDeclaration {
 
-
+    @Ignore
     @Test
-    public void testDependsOnCircular() throws Exception {
-        SDictionary dictionary = SDictionary.create();
-
-        SIComposite           instance = dictionary.newInstance(STypeCircularDependsOn.class);
-        STypeCircularDependsOn type     = (STypeCircularDependsOn) instance.getType();
-        SFormUtil.evaluateUpdateListeners(instance.getField(type.dependsOnByClass));
+    public void testLoadTypeLongCycle() throws Exception {
+        SDictionary.create().getType(STypeLongCircularDependsOn1.class);
     }
 
+
+    @Ignore
+    @Test
+    public void testLoadTypeShortCycle() throws Exception {
+        SDictionary.create().getType(STypeShortCircularDependsOn1.class);
+    }
 
 }
