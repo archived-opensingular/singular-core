@@ -29,12 +29,12 @@ import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import java.util.Set;
 
 
-public class SInstanceBoudComponentUpdateVisitor implements IVisitor<Component, Void> {
+public class SInstanceBoundedComponentUpdateVisitor implements IVisitor<Component, Void> {
 
     private final AjaxRequestTarget ajaxRequestTarget;
     private final Set<SInstance> instances;
 
-    public SInstanceBoudComponentUpdateVisitor(AjaxRequestTarget ajaxRequestTarget, Set<SInstance> instances) {
+    public SInstanceBoundedComponentUpdateVisitor(AjaxRequestTarget ajaxRequestTarget, Set<SInstance> instances) {
         this.ajaxRequestTarget = ajaxRequestTarget;
         this.instances = instances;
     }

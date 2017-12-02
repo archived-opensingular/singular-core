@@ -107,7 +107,7 @@ class LazyInitProxyFactory implements Loggable {
                 }
 
             } else {
-                if (IS_OBJENESIS_AVAILABLE && !hasNoArgConstructor(type)) {
+                if (IS_OBJENESIS_AVAILABLE && (!hasNoArgConstructor(type) || hasFinalMethods(type))) {
                     return ObjenesisProxyFactory.createProxy(type, locator, SingularProxyNamingPolicy.INSTANCE);
                 }
                 CGLibInterceptor handler = new CGLibInterceptor(type, locator);
@@ -130,6 +130,15 @@ class LazyInitProxyFactory implements Loggable {
             throw new SingularInjectionException("Erro ao tentar criar proxy para a classe [" + type.getName() + ']',
                     e);
         }
+    }
+
+    private static boolean hasFinalMethods(Class<?> type) {
+        for (Method m : type.getDeclaredMethods()) {
+            if (Modifier.isFinal(m.getModifiers())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static ClassLoader resolveClassLoader() {

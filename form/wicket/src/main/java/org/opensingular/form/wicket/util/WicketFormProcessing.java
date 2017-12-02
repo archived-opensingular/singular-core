@@ -163,14 +163,14 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
      * @param instance a instancia
      */
     public static void processDependentTypes(Page page, AjaxRequestTarget target, SInstance instance) {
-        updateBoundComponents(page, target, new HashSet<>(evaluateUpdateListeners(instance)));
+        updateBoundedComponents(page, target, new HashSet<>(evaluateUpdateListeners(instance)));
     }
 
     /**
      * Atualiza todos os componentes vinculados as instancias informadas
      */
-    private static void updateBoundComponents(Page page, AjaxRequestTarget target, Set<SInstance> instances) {
-        page.visitChildren(Component.class, new SInstanceBoudComponentUpdateVisitor(target, instances));
+    private static void updateBoundedComponents(Page page, AjaxRequestTarget target, Set<SInstance> instances) {
+        page.visitChildren(Component.class, new SInstanceBoundedComponentUpdateVisitor(target, instances));
     }
 
     public static void onFieldProcess(Component component, AjaxRequestTarget target, IModel<? extends SInstance> model) {
@@ -194,7 +194,7 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
         instancesToUpdateComponents.addAll(eventCollector.getEventSourceInstances());
         instancesToUpdateComponents.addAll(updatedInstances);
 
-        updateBoundComponents(component.getPage(), target, instancesToUpdateComponents);
+        updateBoundedComponents(component.getPage(), target, instancesToUpdateComponents);
     }
 
 
