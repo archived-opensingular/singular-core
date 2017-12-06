@@ -584,30 +584,12 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     public final SType<I> addDependentType(SType<?> type) {
         if (!isDependentType(type)) {
-            if (type.hasDirectOrInderectDependentType(this)) {
-                throw new SingularFormException(
-                        "Referência circular de dependência detectada ao tentar adicionar " + type +
-                                " como dependente de " + this, this);
-            }
             if (dependentTypes == null) {
                 dependentTypes = new LinkedHashSet<>();
             }
             dependentTypes.add(type);
         }
         return this;
-    }
-
-    private boolean hasDirectOrInderectDependentType(SType<?> type) {
-        if (dependentTypes != null) {
-            for (SType<?> d : dependentTypes) {
-                if (type.isTypeOf(d) || d.hasDirectOrInderectDependentType(type)) {
-                    return true;
-                }
-            }
-        } else if (superType != null) {
-            return superType.hasDirectOrInderectDependentType(type);
-        }
-        return false;
     }
 
     public final boolean isDependentType(SType<?> type) {
@@ -621,17 +603,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return superType != null && superType.isDependentType(type);
     }
 
-    public boolean hasDependentTypes() {
-        return (dependentTypes != null) && (!dependentTypes.isEmpty());
-    }
-
     public boolean dependsOnAnyType() {
         return Optional.ofNullable(getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION)).map(Supplier::get).map(
                 it -> !it.isEmpty()).orElse(Boolean.FALSE);
-    }
-
-    public boolean dependsOnAnyTypeInHierarchy() {
-        return STypes.listAscendants(this, true).stream().anyMatch(SType::dependsOnAnyType);
     }
 
     public SType<I> addInstanceValidator(InstanceValidator<I> validator) {
@@ -665,15 +639,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
             }
         }
         return list;
-    }
-
-    @SuppressWarnings("unchecked")
-    public I castInstance(SInstance instance) {
-        // TODO verificar se essa é a verificação correta
-        if (instance.getType() != this) {
-            throw new SingularFormException("A instância " + instance + " não é do tipo " + this, this);
-        }
-        return (I) instance;
     }
 
     /**
@@ -949,7 +914,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
      * <p>To understand the registration and retrieval process see {@link AspectRef}.</p>
      */
     public <T> void setAspectFixImplementation(@Nonnull AspectRef<T> aspectRef, @Nonnull T implementation) {
-        setAspect(aspectRef, (Supplier<T>) () -> implementation);
+        setAspect(aspectRef, () -> implementation);
     }
 
     /**

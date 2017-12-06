@@ -17,6 +17,7 @@
 package org.opensingular.form;
 
 import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.persistence.relational.AtrSQL;
 import org.opensingular.form.provider.AtrProvider;
 import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.basic.AtrBootstrap;
@@ -150,6 +151,11 @@ public interface SAttributeEnabled {
      */
     public default AtrAnnotation asAtrAnnotation() {
         return as(AtrAnnotation::new);
+    }
+
+    /** Returns specific reader for defining persistence attributes of the current SType or SInstance. */
+    public default AtrSQL asSQL() {
+        return as(AtrSQL::new);
     }
 
     default AtrProvider asAtrProvider() {

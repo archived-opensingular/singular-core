@@ -18,6 +18,7 @@
 
 package org.opensingular.studio.app.spring;
 
+import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 import org.opensingular.lib.support.spring.util.AutoScanDisabled;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
@@ -27,6 +28,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.inject.Inject;
@@ -66,5 +68,10 @@ public class DefaulSpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 return userDetailsService().loadUserByUsername(username);
             }
         });
+    }
+
+    @Override
+    public UserDetailsService userDetailsService() {
+        return ApplicationContextProvider.get().getBean(UserDetailsService.class);
     }
 }
