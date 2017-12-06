@@ -112,13 +112,8 @@ public class SingularReportPanel extends Panel {
 
 
     private ViewGenerator makeViewGenerator() {
-//        reportButtonExtensions.forEach(b -> b.updateReportMetatada(getSingularReport().orElse(null)));
         return getSingularReport().map(r -> r.getViewGenerator()).orElse(null);
     }
-
-//    protected ReportMetadata makeReportMetadata() {
-//        return SingularExtensionUtil.get().findExtensionByClass(ReportMetadataFactory.class).get();
-//    }
 
     private void addTitle() {
         form.add(new Label("title", getSingularReport().map(SingularReport::getReportName).orElse("")));
