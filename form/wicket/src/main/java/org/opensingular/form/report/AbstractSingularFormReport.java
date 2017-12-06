@@ -24,7 +24,8 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.io.SFormXMLUtil;
-import org.opensingular.internal.lib.support.spring.injection.SingularSpringInjector;
+import org.opensingular.internal.lib.commons.injection.SingularInjector;
+import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -40,7 +41,7 @@ public abstract class AbstractSingularFormReport<F extends SInstance> implements
     private SDocumentFactory documentFactory;
 
     public AbstractSingularFormReport() {
-        SingularSpringInjector.get().inject(this);
+        ServiceRegistryLocator.locate().lookupService(SingularInjector.class).ifPresent(s -> s.inject(AbstractSingularFormReport.this));
     }
 
     private RefType createRefType() {
