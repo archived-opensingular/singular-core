@@ -21,16 +21,20 @@ package org.opensingular.form.report;
 import org.opensingular.form.InstanceSerializableRef;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public abstract class AbstractSingularFormReport<F extends SInstance> implements SingularFormReport<F> {
 
@@ -44,22 +48,46 @@ public abstract class AbstractSingularFormReport<F extends SInstance> implements
         ServiceRegistryLocator.locate().lookupService(SingularInjector.class).ifPresent(s -> s.inject(AbstractSingularFormReport.this));
     }
 
-    private RefType createRefType() {
-        return RefType.of(() -> getFilterType(SDictionary.create().createNewPackage(this.getClass().getName())));
+    private Optional<RefType> createRefType() {
+        RefType refType = new RefType() {
+            transient SType<?> refType = null;
+
+            @Nullable
+            @Override
+            protected SType<?> retrieve() {
+                if (refType == null) {
+                    refType = getFilterType(SDictionary.create().createNewPackage(this.getClass().getName()));
+                }
+                return refType;
+            }
+        };
+
+        if (refType.get() == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(refType);
+        }
     }
 
-    private SInstance createInstance() {
-        return documentFactory.createInstance(createRefType());
+    private Optional<SInstance> createInstance() {
+        return createRefType().map(r -> documentFactory.createInstance(r));
     }
 
     @Override
     public void loadReportInstance(String xml) {
-        setFilterValue(SFormXMLUtil.fromXML(createRefType(), xml, documentFactory));
+        Optional<RefType> ref = createRefType();
+        if (ref.isPresent() && xml != null) {
+            setFilterValue(SFormXMLUtil.fromXML(ref.get(), xml, documentFactory));
+        }
     }
 
     @Override
     public String dumpReportInstanceXML() {
-        return SFormXMLUtil.toStringXMLOrEmptyXML(getFilterValue());
+        F value = getFilterValue();
+        if (value == null){
+            return null;
+        }
+        return SFormXMLUtil.toStringXMLOrEmptyXML(value);
     }
 
     @Override
@@ -76,9 +104,9 @@ public abstract class AbstractSingularFormReport<F extends SInstance> implements
     @Override
     public F getFilterValue() {
         if (filter == null) {
-            filter = (InstanceSerializableRef<F>) createInstance().getSerializableRef();
+            filter = (InstanceSerializableRef<F>) createInstance().map(SInstance::getSerializableRef).orElse(null);
         }
-        return filter.get();
+        return Optional.ofNullable(filter).map(InstanceSerializableRef::get).orElse(null);
     }
 
     @SuppressWarnings("unchecked")

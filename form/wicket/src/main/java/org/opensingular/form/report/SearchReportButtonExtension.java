@@ -43,15 +43,17 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
 
 public class SearchReportButtonExtension implements ReportButtonExtension {
 
-    private SingularFormPanel singularFormPanel;
+    private SingularFormPanel  singularFormPanel;
     private SingularSaveButton filterButton;
-    private BSModalBorder searchModal;
+    private BSModalBorder      searchModal;
     private boolean init = true;
     private SingularReport singularFormReport;
+    private boolean hasFilter;
 
     @Override
     public void init(SingularReport singularReport) {
         this.singularFormReport = singularReport;
+        hasFilter = singularFormReport.getFilterValue() != null;
     }
 
 
@@ -67,30 +69,39 @@ public class SearchReportButtonExtension implements ReportButtonExtension {
 
     @Override
     public void onAction(AjaxRequestTarget ajaxRequestTarget, ViewGenerator viewGenerator) {
-        searchModal.show(ajaxRequestTarget);
+        if (hasFilter) {
+            searchModal.show(ajaxRequestTarget);
+        }
+    }
+
+    @Override
+    public boolean isButtonVisible() {
+        return hasFilter;
     }
 
     @Override
     public void onBuild(SingularReportPanel reportPanel) {
-        TemplatePanel templatePanel = new TemplatePanel(reportPanel.getPluginContainerView().newChildId(),
-                "<div wicket:id='modal-border'><div wicket:id='singular-form-panel'></div></div>");
-        searchModal = new BSModalBorder("modal-border");
-        addFilter(searchModal);
-        addFilterButton(searchModal);
-        addCloseButton(searchModal);
-        reportPanel.getTable().add($b.notVisibleIf(this::isFirstRequestAndIsNotEagerLoading));
-        searchModal.add(new Behavior() {
-            @Override
-            public void onConfigure(Component component) {
-                super.onConfigure(component);
-                if (isFirstRequestAndIsNotEagerLoading()) {
-                    searchModal.show(null);
-                    init = false;
+        if (hasFilter){
+            TemplatePanel templatePanel = new TemplatePanel(reportPanel.getPluginContainerView().newChildId(),
+                    "<div wicket:id='modal-border'><div wicket:id='singular-form-panel'></div></div>");
+            searchModal = new BSModalBorder("modal-border");
+            addFilter(searchModal);
+            addFilterButton(searchModal);
+            templatePanel.add(searchModal);
+            reportPanel.getPluginContainerView().add(templatePanel);
+            addCloseButton(searchModal);
+            reportPanel.getTable().add($b.notVisibleIf(this::isFirstRequestAndIsNotEagerLoading));
+            searchModal.add(new Behavior() {
+                @Override
+                public void onConfigure(Component component) {
+                    super.onConfigure(component);
+                    if (isFirstRequestAndIsNotEagerLoading()) {
+                        searchModal.show(null);
+                        init = false;
+                    }
                 }
-            }
-        });
-        templatePanel.add(searchModal);
-        reportPanel.getPluginContainerView().add(templatePanel);
+            });
+        }
     }
 
     private void addCloseButton(BSModalBorder bsModalBorder) {
