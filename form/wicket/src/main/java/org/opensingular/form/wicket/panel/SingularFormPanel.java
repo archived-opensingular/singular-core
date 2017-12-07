@@ -90,6 +90,7 @@ public class SingularFormPanel extends Panel {
 
     //Set this if is this panel is nested inside a modal, to prevent z-index errors
     private BSContainer<?> modalContainer = null;
+    private boolean firstFieldFocusEnabled = true;
 
     /**
      * Construtor do painel.
@@ -287,7 +288,7 @@ public class SingularFormPanel extends Panel {
         super.renderHead(response);
         response.render(JavaScriptHeaderItem
             .forReference(new JQueryPluginResourceReference(SingularFormPanel.class, "SingularFormPanel.js")));
-        if (firstRender && viewMode.isEdition()) {
+        if (firstRender && viewMode.isEdition() && firstFieldFocusEnabled) {
             response.render(
                 OnDomReadyHeaderItem.forScript("SingularFormPanel.initFocus('" + this.getMarkupId() + "');"));
             firstRender = false;
@@ -447,6 +448,10 @@ public class SingularFormPanel extends Panel {
 
     public void setNested(boolean nested) {
         this.nested = nested;
+    }
+
+    public void setFirstFieldFocusEnabled(boolean firstFieldFocusEnabled) {
+        this.firstFieldFocusEnabled = firstFieldFocusEnabled;
     }
 
     /**
