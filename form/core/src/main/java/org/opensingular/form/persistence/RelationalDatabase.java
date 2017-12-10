@@ -26,19 +26,23 @@ import org.opensingular.form.persistence.relational.RelationalTupleHandler;
  * @author Edmundo Andrade
  */
 public interface RelationalDatabase {
-	int exec(String sql);
+    int exec(String sql);
 
-	int exec(String sql, List<Object> params);
+    int exec(String sql, List<Object> params);
 
-	int execReturningGenerated(String sql, List<Object> params, List<String> generatedColumns,
-			RelationalTupleHandler<?> tupleHandler);
+    int execReturningGenerated(String sql, List<Object> params, List<String> generatedColumns,
+            RelationalTupleHandler<?> tupleHandler);
 
-	List<Object[]> query(String sql, List<Object> params);
+    List<Object[]> query(String sql, List<Object> params);
 
-	<T> List<T> query(String sql, List<Object> params, RelationalTupleHandler<T> tupleHandler);
+    <T> List<T> query(String sql, List<Object> params, RelationalTupleHandler<T> tupleHandler);
 
-	List<Object[]> query(String sql, List<Object> params, Long limitOffset, Long limitRows);
+    List<Object[]> query(String sql, List<Object> params, Long limitOffset, Long limitRows);
 
-	<T> List<T> query(String sql, List<Object> params, Long limitOffset, Long limitRows,
-			RelationalTupleHandler<T> tupleHandler);
+    <T> List<T> query(String sql, List<Object> params, Long limitOffset, Long limitRows,
+            RelationalTupleHandler<T> tupleHandler);
+
+    public static void debug(String message) {
+        System.out.println("[DB] " + message);
+    }
 }
