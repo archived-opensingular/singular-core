@@ -41,8 +41,4 @@ public interface RelationalDatabase {
 
     <T> List<T> query(String sql, List<Object> params, Long limitOffset, Long limitRows,
             RelationalTupleHandler<T> tupleHandler);
-
-    public static void debug(String message) {
-        System.out.println("[DB] " + message);
-    }
 }

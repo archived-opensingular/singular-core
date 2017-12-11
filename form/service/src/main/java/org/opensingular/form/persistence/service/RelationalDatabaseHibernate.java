@@ -38,6 +38,7 @@ import org.opensingular.form.persistence.RelationalDatabase;
 import org.opensingular.form.persistence.relational.RelationalTupleHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.util.Loggable;
 
 /**
  * Hibernate-based interaction with a relational database manager.
@@ -45,7 +46,7 @@ import org.opensingular.lib.commons.base.SingularException;
  * @author Edmundo Andrade
  */
 @Transactional
-public class RelationalDatabaseHibernate implements RelationalDatabase {
+public class RelationalDatabaseHibernate implements RelationalDatabase, Loggable {
     private SessionFactory sessionFactory;
 
     public RelationalDatabaseHibernate(SessionFactory sessionFactory) {
@@ -53,14 +54,14 @@ public class RelationalDatabaseHibernate implements RelationalDatabase {
     }
 
     public int exec(String sql) {
-        RelationalDatabase.debug(sql);
+        getLogger().debug(sql);
         return sessionFactory.getCurrentSession().doReturningWork(connection -> {
             return connection.createStatement().executeUpdate(sql);
         });
     }
 
     public int exec(String sql, List<Object> params) {
-        RelationalDatabase.debug(sql);
+        getLogger().debug(sql);
         return sessionFactory.getCurrentSession().doReturningWork(connection -> {
             return prepareStatement(connection, sql, params, null, null).executeUpdate();
         });
@@ -76,7 +77,7 @@ public class RelationalDatabaseHibernate implements RelationalDatabase {
             for (Object param : params) {
                 newSQL = newSQL.replaceFirst("\\?", toSqlConstant(param));
             }
-            RelationalDatabase.debug(newSQL);
+            getLogger().debug(newSQL);
             Statement statement = connection.createStatement();
             int result = statement.executeUpdate(newSQL, generatedColumns.toArray(new String[generatedColumns.size()]));
             try (ResultSet rs = statement.getGeneratedKeys()) {
@@ -108,7 +109,7 @@ public class RelationalDatabaseHibernate implements RelationalDatabase {
 
     public <T> List<T> query(String sql, List<Object> params, Long limitOffset, Long limitRows,
             RelationalTupleHandler<T> tupleHandler) {
-        RelationalDatabase.debug(sql);
+        getLogger().debug(sql);
         return sessionFactory.getCurrentSession().doReturningWork(connection -> {
             List<T> result = new ArrayList<>();
             try (ResultSet rs = prepareStatement(connection, sql, params, limitOffset, limitRows).executeQuery()) {
