@@ -16,15 +16,17 @@
 
 package org.opensingular.form.wicket.mapper.maps;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.composite.DefaultCompositeMapper;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.opensingular.form.wicket.model.SInstanceValueModel;
 
 public class LatitudeLongitudeMapper extends DefaultCompositeMapper {
 
@@ -32,27 +34,28 @@ public class LatitudeLongitudeMapper extends DefaultCompositeMapper {
     public void buildView(WicketBuildContext ctx) {
         super.buildView(ctx);
 
-        List<String> markups = new ArrayList<>();
-        ctx.getContainer().visitChildren((TextField.class), (component, iVisit) -> markups.add(component.getMarkupId(true)));
+        LatLongMarkupIds ids = new LatLongMarkupIds();
 
-        String latitudeId = null;
-        String longitudeId = null;
-        String zoomId = null;
-        for(String t : markups){
-            if(t.contains(STypeLatitudeLongitude.FIELD_LATITUDE))
-                latitudeId = t;
-            if(t.contains(STypeLatitudeLongitude.FIELD_LONGITUDE))
-                longitudeId = t;
-            if(t.contains(STypeLatitudeLongitude.FIELD_ZOOM))
-                zoomId = t;
-        }
+        ctx.getContainer().visitChildren((TextField.class), new IVisitor<Component, Object>() {
+            @Override
+            public void component(Component object, IVisit<Object> visit) {
+                String nameSimple = ((SInstanceValueModel)object.getDefaultModel()).getSInstance().getType().getNameSimple();
+                if (nameSimple.equals(STypeLatitudeLongitude.FIELD_LATITUDE)) {
+                    ids.latitudeId = object.getMarkupId();
+                }
+                if (nameSimple.equals(STypeLatitudeLongitude.FIELD_LONGITUDE)) {
+                    ids.longitudeId = object.getMarkupId();
+                }
+                if (nameSimple.equals(STypeLatitudeLongitude.FIELD_ZOOM)) {
+                    ids.zoomId = object.getMarkupId();
+                }
+            }
+        });
 
         final IModel<? extends SInstance> model = ctx.getModel();
 
-        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel =
-                new MarkableGoogleMapsPanel<>(model, latitudeId, longitudeId, zoomId);
-
-        googleMapsPanel.setReadOnly(ctx.getViewMode().isVisualization());
+        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, model, ctx.getView(), ctx.getViewMode().isVisualization());
         ctx.getContainer().newFormGroup().appendDiv(googleMapsPanel);
     }
+
 }

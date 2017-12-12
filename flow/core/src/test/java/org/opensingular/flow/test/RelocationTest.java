@@ -58,7 +58,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.Date;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 @ActiveProfiles("mssql")
@@ -70,7 +70,7 @@ public class RelocationTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     @Inject
-    protected HibernateSingularFlowConfigurationBean mbpmBean;
+    protected HibernateSingularFlowConfigurationBean hibernateSingularFlowConfigurationBean;
     @Inject
     protected TestDAO testDAO;
     @Inject
@@ -90,10 +90,10 @@ public class RelocationTest {
 
     @Before
     public void setUp() {
-        Flow.setConf(mbpmBean, true);
+        Flow.setConf(hibernateSingularFlowConfigurationBean, true);
 
         session = sessionFactory.openSession();
-        mbpmBean.setSessionLocator(() -> session);
+        hibernateSingularFlowConfigurationBean.setSessionLocator(() -> session);
         session.beginTransaction();
 
         P p = new P();

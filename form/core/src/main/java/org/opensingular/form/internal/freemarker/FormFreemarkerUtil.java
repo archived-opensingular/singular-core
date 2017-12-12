@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -114,23 +115,12 @@ public final class FormFreemarkerUtil {
 
     private Template parseTemplate(String template, boolean ignoreError) {
         try {
-            TemplateExceptionHandler exceptionHandler;
-            String property = SingularProperties.get().getProperty(SingularProperties.FREEMARKER_IGNORE_ERROR);
-            if (TRUE.equalsIgnoreCase(property) || FALSE.equalsIgnoreCase(property)) {
-                switch (property.toUpperCase()) {
-                    case TRUE:
-                        exceptionHandler = TemplateExceptionHandler.IGNORE_HANDLER;
-                        break;
-                    case FALSE:
-                        exceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER;
-                        break;
-                    default:
-                        exceptionHandler = null;
-                }
-            } else if (ignoreError) {
-                exceptionHandler = TemplateExceptionHandler.IGNORE_HANDLER;
-            } else {
+            TemplateExceptionHandler exceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER;
+            Optional<String> property = SingularProperties.getOpt(SingularProperties.FREEMARKER_IGNORE_ERROR);
+            if (property.isPresent() && FALSE.equalsIgnoreCase(property.get())) {
                 exceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER;
+            } else if ((property.isPresent() && TRUE.equalsIgnoreCase(property.get())) || ignoreError) {
+                exceptionHandler = TemplateExceptionHandler.IGNORE_HANDLER;
             }
 
             return new Template("templateStringParameter", template, getConfiguration(exceptionHandler));

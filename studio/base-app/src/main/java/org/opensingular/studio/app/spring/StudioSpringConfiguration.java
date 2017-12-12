@@ -22,14 +22,22 @@ import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.lib.commons.context.ServiceRegistry;
 import org.opensingular.lib.commons.context.SingularSingletonStrategy;
 import org.opensingular.lib.commons.util.Loggable;
+import org.opensingular.lib.support.spring.util.AutoScanDisabled;
 import org.opensingular.studio.app.config.StudioAppConfig;
 import org.opensingular.studio.core.config.StudioConfigProvider;
 import org.opensingular.studio.core.menu.StudioMenu;
 import org.opensingular.studio.core.wicket.StudioApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 
-@ComponentScan({"org.opensingular.lib.support.spring.util", "org.opensingular.studio.app"})
+@ComponentScan(basePackages = {"org.opensingular.lib.support.spring.util",
+        "org.opensingular.studio.app",
+        "com.opensingular"},
+        excludeFilters = {
+                @ComponentScan.Filter(type = FilterType.ANNOTATION,
+                        value = AutoScanDisabled.class)
+        })
 public class StudioSpringConfiguration implements Loggable {
     private final StudioAppConfig studioConfig;
 

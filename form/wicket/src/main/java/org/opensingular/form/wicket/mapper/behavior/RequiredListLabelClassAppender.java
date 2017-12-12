@@ -35,14 +35,7 @@ public class RequiredListLabelClassAppender extends ClassAttributeModifier {
 
     @Override
     protected Set<String> update(Set<String> oldClasses) {
-        final Boolean required    = model.getObject().getAttributeValue(SPackageBasic.ATR_REQUIRED);
-        final Integer minimumSize = model.getObject().getAttributeValue(SPackageBasic.ATR_MINIMUM_SIZE);
-        if ((required != null && required) || (minimumSize != null && minimumSize > 0)) {
-            oldClasses.add("singular-form-required");
-        } else {
-            oldClasses.remove("singular-form-required");
-        }
-        return oldClasses;
+        return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
     }
 
 }

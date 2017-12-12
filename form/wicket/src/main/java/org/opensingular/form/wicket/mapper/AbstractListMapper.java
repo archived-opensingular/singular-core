@@ -191,13 +191,9 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         }
 
         @Override
-        protected IItemFactory<SInstance> newItemFactory() {
-            IItemFactory<SInstance> factory = super.newItemFactory();
-            return (index, model) -> {
-                Item<SInstance> item = factory.newItem(index, model);
-                WicketFormProcessing.onFormPrepare(item, model, false);
-                return item;
-            };
+        protected void onBeforeRender() {
+            WicketFormProcessing.onFormPrepare(this, this.getModel(), false);
+            super.onBeforeRender();
         }
 
         public void insertItem(AjaxRequestTarget target, int index) {

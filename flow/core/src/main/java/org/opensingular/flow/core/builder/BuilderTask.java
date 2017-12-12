@@ -20,7 +20,7 @@ import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.flow.core.TaskAccessStrategy;
-import org.opensingular.flow.core.property.MetaDataRef;
+import org.opensingular.flow.core.property.MetaDataKey;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
@@ -43,6 +43,6 @@ public interface BuilderTask {
     public BuilderTask addStartedTaskListener(StartedTaskListener startedTaskListener);
 
     @Nonnull
-    public <T extends Serializable> BuilderTask setMetaDataValue(@Nonnull MetaDataRef<T> propRef, T value);
+    public <T extends Serializable> BuilderTask setMetaDataValue(@Nonnull MetaDataKey<T> key, T value);
 
 }

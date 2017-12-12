@@ -78,10 +78,11 @@
 </head>
 <body>
 <wicket:panel>
-    <div class="upload-panel">
+    <div>
         <div class="upload-panel-body can-have-error">
             <div class="upload-panel-heading">
                 <span wicket:id="uploadLabel"/>
+                <wicket:container wicket:id="sInstanceActionsContainer"></wicket:container>
             </div>
             <span wicket:id="uploadSubtitle" class="help-block subtitle_comp hidden-xs hidden-sm hidden-md"></span>
             <div wicket:id="empty-box" class='list-detail-empty'>

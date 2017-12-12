@@ -18,7 +18,7 @@ package org.opensingular.flow.core;
 
 import org.opensingular.flow.core.entity.IEntityFlowInstance;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
-import org.opensingular.flow.core.property.MetaDataRef;
+import org.opensingular.flow.core.property.MetaDataKey;
 import org.opensingular.flow.core.variable.VarInstance;
 import org.opensingular.flow.core.variable.VarInstanceMapImpl;
 
@@ -27,7 +27,7 @@ import java.util.Objects;
 
 public class VarInstanceTableFlow extends VarInstanceMapImpl {
 
-    private static final MetaDataRef<Integer> PROP_DB_COD = new MetaDataRef<>("persitence.dbCod", Integer.class);
+    private static final MetaDataKey<Integer> PROP_DB_COD = MetaDataKey.of("persitence.dbCod", Integer.class);
 
     // TODO transformar o valor abaixo em RefFlowInstance (igual a RefFlowDefinition)
     private FlowInstance instance;
@@ -68,7 +68,7 @@ public class VarInstanceTableFlow extends VarInstanceMapImpl {
     @Override
     public void onValueChanged(VarInstance changedVar) {
         if (isBinded()) {
-            Integer dbCod = changedVar.getMetaDataValue(PROP_DB_COD);
+            Integer dbCod = changedVar.getMetaDataValueOpt(PROP_DB_COD).orElse(null);
             Integer dbCod2 = instance.getPersistenceService().updateVariableValue(instance.getInternalEntity(), changedVar, dbCod);
             if (!Objects.equals(dbCod, dbCod2)) {
                 changedVar.setMetaDataValue(PROP_DB_COD, dbCod2);

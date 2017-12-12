@@ -18,22 +18,22 @@
 
 package org.opensingular.form.wicket.mapper.decorator;
 
-import java.util.Arrays;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.model.Model;
 import org.junit.Test;
 import org.opensingular.form.decorator.action.SInstanceAction.FormDelegate;
 import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.lib.commons.ref.Out;
+
+import java.util.Arrays;
 
 public class WicketSIconActionDelegateTest {
 
     @Test
     @SuppressWarnings("unchecked")
     public void test() {
-        SingularDummyFormPageTester tester = new SingularDummyFormPageTester();
+        SingularFormDummyPageTester tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(c -> c.addField("bla", STypeString.class).asAtr().help("HELP!!!"));
         tester.startDummyPage();
 

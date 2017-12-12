@@ -72,7 +72,7 @@ public abstract class TestFlowSupport {
     public FlowTestConfig flowTestConfig;
 
     @Inject
-    protected SingularFlowConfigurationBean mbpmBean;
+    protected SingularFlowConfigurationBean singularFlowConfigurationBean;
 
     @Inject
     protected TestDAO testDAO;

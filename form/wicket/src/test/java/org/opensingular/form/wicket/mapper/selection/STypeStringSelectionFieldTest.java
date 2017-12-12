@@ -25,15 +25,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.wicket.helpers.SingularDummyFormPageTester;
+import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class STypeStringSelectionFieldTest {
-    private SingularDummyFormPageTester tester;
+    private SingularFormDummyPageTester tester;
 
     private static STypeString selectType;
 
@@ -44,7 +44,7 @@ public class STypeStringSelectionFieldTest {
 
     @Before
     public void setUp(){
-        tester = new SingularDummyFormPageTester();
+        tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(STypeStringSelectionFieldTest::buildBaseType);
     }
 
@@ -52,7 +52,7 @@ public class STypeStringSelectionFieldTest {
     public void rendersAnDropDownWithSpecifiedOptions() {
         tester.startDummyPage();
         tester.assertEnabled(tester.getAssertionsForm()
-                .getSubCompomentWithId("favoriteFruit").getTarget().getPageRelativePath());
+                .getSubComponentWithId("favoriteFruit").getTarget().getPageRelativePath());
 
         tester.newFormTester().submit();
 
@@ -71,10 +71,10 @@ public class STypeStringSelectionFieldTest {
 
         tester.newFormTester()
                 .select(getFormRelativePath((FormComponent)
-                        tester.getAssertionsForm().getSubCompomentWithId("favoriteFruit").getTarget()), 2)
+                        tester.getAssertionsForm().getSubComponentWithId("favoriteFruit").getTarget()), 2)
                 .submit();
 
-        tester.getAssertionsForm().getSubCompomentWithType(selectType).assertSInstance().isValueEquals("orange");
+        tester.getAssertionsForm().getSubComponentWithType(selectType).assertSInstance().isValueEquals("orange");
     }
 
     private String getFormRelativePath(FormComponent component) {
@@ -117,6 +117,6 @@ public class STypeStringSelectionFieldTest {
 
     private DropDownChoice containsOnlyOneDropDownAndReturnIfFinds() {
         return tester.getAssertionsForm()
-                .getSubComponents(DropDownChoice.class).isSize(1).get(0).getTarget(DropDownChoice.class);
+                .getSubComponents(DropDownChoice.class).hasSize(1).element(0).getTarget(DropDownChoice.class);
     }
 }

@@ -4,5 +4,6 @@
   "idLng": "${idLng}",
   "idZoom": "${idZoom}",
   "readOnly" : "${readOnly}",
-  "idButton" : "${idButton}"
+  "idClearButton" : "${idClearButton}",
+  "idCurrentLocationButton" : "${idCurrentLocationButton}"
 }

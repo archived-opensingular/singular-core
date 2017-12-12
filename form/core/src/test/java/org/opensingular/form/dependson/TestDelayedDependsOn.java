@@ -19,22 +19,17 @@
 package org.opensingular.form.dependson;
 
 
-import org.apache.commons.lang3.StringUtils;
+import org.junit.Assert;
 import org.junit.Test;
-import org.opensingular.form.*;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SFormUtil;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SType;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.sample.FormTestPackage;
 import org.opensingular.form.sample.STypeFormTest;
-import org.opensingular.form.type.core.SIString;
-import org.opensingular.form.type.country.brazil.STypeUF;
-import org.opensingular.lib.commons.lambda.IConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class TestDelayedDependsOn {
 
@@ -46,7 +41,7 @@ public class TestDelayedDependsOn {
         dictionary.loadPackage(FormTestPackage.class);
 
         STypeFormTest stype     = dictionary.getType(STypeFormTest.class);
-        SIComposite      composite = stype.newInstance();
+        SIComposite   composite = stype.newInstance();
 
         org.junit.Assert.assertEquals(2, stype.compositeWithListField.theList.getDependentTypes().size());
         for (SType s : stype.compositeWithListField.theList.getDependentTypes()) {
@@ -81,12 +76,12 @@ public class TestDelayedDependsOn {
         dictionary.loadPackage(FormTestPackage.class);
 
 
-        SIComposite instance = dictionary.newInstance(STypeDependsOnByClass.class);
-        STypeDependsOnByClass type = (STypeDependsOnByClass) instance.getType();
+        SIComposite           instance = dictionary.newInstance(STypeDependsOnByClass.class);
+        STypeDependsOnByClass type     = (STypeDependsOnByClass) instance.getType();
         type.uf1.fillDF(instance.getField(type.uf1));
         SFormUtil.evaluateUpdateListeners(instance.getField(type.uf1));
         SFormUtil.evaluateUpdateListeners(instance.getField(type.uf2));
-        System.out.println(instance.getField(type.updateListenerCalls).getValue());
+        Assert.assertEquals(2, instance.getField(type.updateListenerCalls).getValue().intValue());
     }
 
 }

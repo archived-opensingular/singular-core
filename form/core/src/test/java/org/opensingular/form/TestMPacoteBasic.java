@@ -27,7 +27,7 @@ import org.opensingular.form.type.core.SIDate;
 import org.opensingular.form.type.core.STypeDate;
 import org.opensingular.form.type.core.STypeInteger;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
 public class TestMPacoteBasic extends TestCaseForm {

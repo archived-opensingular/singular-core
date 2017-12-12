@@ -74,19 +74,19 @@ public abstract class TempFileUtils {
      *
      * @param file         Arquivo a ser apagado
      * @param requester    Classe junta a qual será gravado o log de erro do delete
-     * @param failQuietily Indica qual o comportamento se não conseguindo apagar ou ocorrendo uma exception ao
+     * @param failQuietly Indica qual o comportamento se não conseguindo apagar ou ocorrendo uma exception ao
      *                     chamar {@link File#delete()}. Se true, engole a exception de erro. Se false, dispara
      *                     exception senão conseguir apagar ou se ocorrer exception na execução.
      */
-    private static void delete(@Nonnull File file, @Nonnull Object requester, boolean failQuietily) {
+    private static void delete(@Nonnull File file, @Nonnull Object requester, boolean failQuietly) {
         Objects.requireNonNull(requester);
         if (file.exists()) {
             try {
                 if (!file.delete()) {
-                    dealWithDeleteErro(file, requester, failQuietily, null);
+                    dealWithDeleteError(file, requester, failQuietly, null);
                 }
             } catch (Exception e) {
-                dealWithDeleteErro(file, requester, failQuietily, e);
+                dealWithDeleteError(file, requester, failQuietly, e);
             }
         }
     }
@@ -94,13 +94,13 @@ public abstract class TempFileUtils {
     /**
      * Faz log do erro do delete e dispara exception se necessário.
      */
-    private static void dealWithDeleteErro(@Nonnull File file, @Nonnull Object requester, boolean failQuietily,
+    private static void dealWithDeleteError(@Nonnull File file, @Nonnull Object requester, boolean failQuietly,
                                            @Nullable Exception e) {
         Class<?> req = requester instanceof Class ? (Class<?>) requester : requester.getClass();
         String msg = "Nao foi possível apagar o arquivo " + file;
         msg += " (solicitação da classe " + req.getName() + ")";
 
-        if (failQuietily) {
+        if (failQuietly) {
             Logger logger = Logger.getLogger(req.getName());
             logger.log(Level.SEVERE, msg, e);
         } else {
@@ -166,14 +166,14 @@ public abstract class TempFileUtils {
     /**
      * Escreve um array de bytes para um arquivo em disco.
      *
-     * @param arquivo
+     * @param file
      *            um arquivo
      * @param bytes
      *            um bytes
      * @throws IOException
      *             Métodos subjeito a erros de entrada e saída.
      */
-    public static void writeByteArrayToFile(File arquivo, byte[] bytes) throws IOException {
-        FileUtils.writeByteArrayToFile(arquivo, bytes);
+    public static void writeByteArrayToFile(File file, byte[] bytes) throws IOException {
+        FileUtils.writeByteArrayToFile(file, bytes);
     }
 }

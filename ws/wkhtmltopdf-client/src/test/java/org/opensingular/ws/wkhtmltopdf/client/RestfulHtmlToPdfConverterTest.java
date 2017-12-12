@@ -18,18 +18,23 @@
 
 package org.opensingular.ws.wkhtmltopdf.client;
 
+import org.junit.Assert;
+import org.junit.Test;
+import org.opensingular.lib.commons.base.SingularPropertiesImpl;
+import org.opensingular.ws.wkhtmltopdf.constains.HtmlToPdfConstants;
+
 import java.io.File;
 import java.io.InputStream;
 import java.util.Optional;
-
-import org.junit.Assert;
-import org.junit.Test;
 
 public class RestfulHtmlToPdfConverterTest {
 
     @Test
     public void testCreateUsingDefaultConfig(){
-        Assert.assertNotNull(RestfulHtmlToPdfConverter.createUsingDefaultConfig());
+        SingularPropertiesImpl.Tester.runInSandbox(props -> {
+            props.setProperty(HtmlToPdfConstants.ENDPOINT_WS_WKHTMLTOPDF, "http:\\someplace");
+            Assert.assertNotNull(RestfulHtmlToPdfConverter.createUsingDefaultConfig());
+        });
     }
 
     @Test
@@ -39,19 +44,23 @@ public class RestfulHtmlToPdfConverterTest {
 
     @Test
     public void testConvertWithNullValue(){
-        RestfulHtmlToPdfConverter usingDefaultConfig =
-                RestfulHtmlToPdfConverter.createUsingDefaultConfig();
+        SingularPropertiesImpl.Tester.runInSandbox(props -> {
+            props.setProperty(HtmlToPdfConstants.ENDPOINT_WS_WKHTMLTOPDF, "http:\\someplace");
 
-        Optional<File> convert = usingDefaultConfig.convert(null);
-        Assert.assertFalse(convert.isPresent());
+            RestfulHtmlToPdfConverter usingDefaultConfig = RestfulHtmlToPdfConverter.createUsingDefaultConfig();
+            Optional<File> convert = usingDefaultConfig.convert(null);
+            Assert.assertFalse(convert.isPresent());
+        });
     }
     
     @Test
     public void testConvertStreamWithNullValue(){
-        RestfulHtmlToPdfConverter usingDefaultConfig =
-                RestfulHtmlToPdfConverter.createUsingDefaultConfig();
+        SingularPropertiesImpl.Tester.runInSandbox(props -> {
+            props.setProperty(HtmlToPdfConstants.ENDPOINT_WS_WKHTMLTOPDF, "http:\\someplace");
 
-        InputStream in = usingDefaultConfig.convertStream(null);
-        Assert.assertNull(in);
+            RestfulHtmlToPdfConverter usingDefaultConfig = RestfulHtmlToPdfConverter.createUsingDefaultConfig();
+            InputStream in = usingDefaultConfig.convertStream(null);
+            Assert.assertNull(in);
+        });
     }
 }
