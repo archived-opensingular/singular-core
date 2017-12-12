@@ -16,6 +16,7 @@
 
 package org.opensingular.form.wicket.component;
 
+import net.vidageek.mirror.dsl.Mirror;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.IFormSubmitter;
@@ -23,8 +24,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.visit.ClassVisitFilter;
 import org.apache.wicket.util.visit.IVisitor;
 import org.apache.wicket.util.visit.Visits;
-
-import java.lang.reflect.InvocationTargetException;
 
 public class SingularFormWicket<T> extends Form<T> {
     //TODO (by Daniel Bordin) Entender por que esse método copia vários método da classe Form do Wicket. Isso pode
@@ -41,22 +40,21 @@ public class SingularFormWicket<T> extends Form<T> {
     protected boolean isIgnoreValidation() {
         return true;
     }
+
     protected boolean isIgnoreErrors() {
         return true;
     }
 
     //@formatter:off
     @Override
-    protected void callOnError(IFormSubmitter submitter)
-    {
+    protected void callOnError(IFormSubmitter submitter) {
         if (!isIgnoreErrors())
             super.callOnError(submitter);
     }
-    
+
     @Override
     public void process(IFormSubmitter submittingComponent) {
-        if (!isEnabledInHierarchy() || !isVisibleInHierarchy())
-        {
+        if (!isEnabledInHierarchy() || !isVisibleInHierarchy()) {
             // since process() can be called outside of the default form workflow, an additional
             // check is needed
 
@@ -65,7 +63,7 @@ public class SingularFormWicket<T> extends Form<T> {
         }
 
         final boolean ignoreValidation = isIgnoreValidation();
-        final boolean ignoreErrors = isIgnoreErrors();
+        final boolean ignoreErrors     = isIgnoreErrors();
 
         // run validation
         if (!ignoreValidation) {
@@ -77,16 +75,13 @@ public class SingularFormWicket<T> extends Form<T> {
         }
 
         // If a validation error occurred
-        if (!ignoreErrors && hasError())
-        {
+        if (!ignoreErrors && hasError()) {
             // mark all children as invalid
             markFormComponentsInvalid();
 
             // let subclass handle error
             callOnError(submittingComponent);
-        }
-        else
-        {
+        } else {
             // mark all children as valid
             markFormComponentsValid();
 
@@ -97,9 +92,8 @@ public class SingularFormWicket<T> extends Form<T> {
             updateFormComponentModels();
 
             // validate model objects after input values have been bound
-            internalOnValidateModelObjects2();
-            if (!ignoreErrors && hasError())
-            {
+            singularInternalOnValidateModelObjects();
+            if (!ignoreErrors && hasError()) {
                 callOnError(submittingComponent);
                 return;
             }
@@ -109,8 +103,7 @@ public class SingularFormWicket<T> extends Form<T> {
         }
     }
 
-    private void convertWithoutValidateNestedForms()
-    {
+    private void convertWithoutValidateNestedForms() {
         Visits.visitPostOrder(this, (IVisitor<SingularFormWicket<?>, Void>) (form, visit) -> {
             if (SingularFormWicket.this.equals(form)) {
                 // skip self, only process children
@@ -123,30 +116,25 @@ public class SingularFormWicket<T> extends Form<T> {
     }
 
     protected void convertWithoutValidateComponents() {
-        if (isEnabledInHierarchy() && isVisibleInHierarchy())
-        {
-            visitFormComponentsPostOrder(new ValidationVisitor()
-            {
+        if (isEnabledInHierarchy() && isVisibleInHierarchy()) {
+            visitFormComponentsPostOrder(new ValidationVisitor() {
                 @Override
-                public void validate(final FormComponent<?> formComponent)
-                {
+                public void validate(final FormComponent<?> formComponent) {
                     final Form<?> form = formComponent.getForm();
                     if ((!(form instanceof SingularFormWicket<?>) || (SingularFormWicket.this.equals(form)))
-                        && form.isEnabledInHierarchy() && form.isVisibleInHierarchy())
-                    {
+                            && form.isEnabledInHierarchy() && form.isVisibleInHierarchy()) {
                         formComponent.convertInput();
                     }
                 }
             });
         }
     }
-    
+
     /**
      * Calls {@linkplain #onValidateModelObjects()} on this form and all nested forms that are
      * visible and enabled
      */
-    private void internalOnValidateModelObjects2()
-    {   //Esse método é a mesma implementação no super. O nome foi alterado para o sonar não reclamar
+    private void singularInternalOnValidateModelObjects() {   //Esse método é a mesma implementação no super. O nome foi alterado para o sonar não reclamar
         onValidateModelObjects();
         visitChildren(Form.class, (IVisitor<Form<?>, Void>) (form, visit) -> {
             if (form.isSubmitted()) {
@@ -163,8 +151,8 @@ public class SingularFormWicket<T> extends Form<T> {
             ((SingularFormWicket<?>) form).onValidateModelObjects();
         } else {
             try {
-                Form.class.getMethod("onValidateModelObjects").invoke(form);
-            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                new Mirror().on(form).invoke().method("onValidateModelObjects").withoutArgs();
+            } catch (Exception e) {
                 throw new IllegalStateException(e.getMessage(), e);
             }
         }
