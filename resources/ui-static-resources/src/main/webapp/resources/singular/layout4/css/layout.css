@@ -2910,8 +2910,8 @@ div.checker.disabled span {
 div.checker.disabled span:hover {
   background-position: -152px -260px; }
 
-div.checker.disabled span {
+div.checker.disabled span.checked {
   background-position: -170px -260px; }
 
-div.checker.disabled span {
+div.checker.disabled span.checked:hover {
   background-position: -170px -260px; }
