@@ -123,9 +123,9 @@ public class TestSPackageCoreSType extends TestCaseForm {
         STypeString field13 = typeRec1.addFieldString("field3");
 
         field11.addDependentType(field12);
-        assertException(() -> field12.addDependentType(field11), SingularFormException.class, "Referência circular");
+
         field12.addDependentType(field13);
-        assertException(() -> field13.addDependentType(field11), SingularFormException.class, "Referência circular");
+
 
         assertType(field11).dependentsTypesAre(field12);
         assertType(field12).dependentsTypesAre(field13);
@@ -138,11 +138,9 @@ public class TestSPackageCoreSType extends TestCaseForm {
         STypeString field24 = typeRec2.addFieldString("field4");
         STypeString field25 = typeRec2.addFieldString("field5");
 
-        assertException(() -> field22.addDependentType(field21), SingularFormException.class, "Referência circular");
-        assertException(() -> field23.addDependentType(field21), SingularFormException.class, "Referência circular");
 
         field23.addDependentType(field24);
-        assertException(() -> field24.addDependentType(field23), SingularFormException.class, "Referência circular");
+
 
         //Os dois casos abaixo deveriam ser detectados, mas a lógica atual não consegue
         //Descomentar se no futuro for resolvido
