@@ -2897,3 +2897,21 @@ Login page
   .labelBar > .control-label {
     display: table-cell;
     vertical-align: middle; }
+
+div.checker.disabled span {
+  cursor: not-allowed; }
+
+div.checker.disabled span input:hover {
+  cursor: not-allowed; }
+
+div.checker.disabled span {
+  background-position: -152px -260px; }
+
+div.checker.disabled span:hover {
+  background-position: -152px -260px; }
+
+div.checker.disabled span.checked {
+  background-position: -170px -260px; }
+
+div.checker.disabled span.checked:hover {
+  background-position: -170px -260px; }
