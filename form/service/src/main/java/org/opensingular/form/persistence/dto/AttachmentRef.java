@@ -84,7 +84,7 @@ public class AttachmentRef implements IAttachmentRef {
                 AttachmentPersistenceService<AttachmentEntity, AttachmentContentEntity> persistenceHandler =
                         ApplicationContextProvider.get().getBean(SDocument.FILE_PERSISTENCE_SERVICE, AttachmentPersistenceService.class);
 
-                file = File.createTempFile(name, hashSha1 + "." + id);
+                file = File.createTempFile(hashSha1, id);
                 file.deleteOnExit();
 
                 try (OutputStream fos = IOUtil.newBufferedOutputStream(file)) {
