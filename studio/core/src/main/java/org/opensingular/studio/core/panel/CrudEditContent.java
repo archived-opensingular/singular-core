@@ -205,4 +205,8 @@ public class CrudEditContent extends CrudShellContent {
             crudShellManager.addToastrMessage(ToastrType.ERROR, "Existem correções a serem feitas no formulário.");
         }
     }
+
+    public IModel<? extends SInstance> getSingularFormPanelModelInstance() {
+        return singularFormPanel.getInstanceModel();
+    }
 }
