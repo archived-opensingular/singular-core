@@ -19,7 +19,7 @@
 package org.opensingular.form.wicket;
 
 import com.google.common.collect.Lists;
-import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.form.FormComponent;
@@ -35,9 +35,10 @@ import org.opensingular.form.type.country.brazil.STypeUF;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.*;
 
@@ -48,9 +49,9 @@ public class TestSelectionCleanInstanceBeforeListeners implements Serializable {
     private transient STypeUF                     uf;
     private transient STypeString                 pais;
     private transient STypeString                 ecapital;
-    private transient String              PAIS_SIMPLE_PROVIDER           = "PAIS_SIMPLE_PROVIDER";
-    private transient String              ECAPITAL_UPDATE_LISTENER       = "ECAPITAL_UPDATE_LISTENER";
-    private transient Map<String, String> EXECUTION_ORDER_AND_PAIS_VALUE = new HashMap<>();
+    private transient String                     PAIS_SIMPLE_PROVIDER           = "PAIS_SIMPLE_PROVIDER";
+    private transient String                     ECAPITAL_UPDATE_LISTENER       = "ECAPITAL_UPDATE_LISTENER";
+    private transient List<Pair<String, String>> EXECUTION_ORDER_AND_PAIS_VALUE = new ArrayList<>();
 
     @Before
     public void testClear() throws Exception {
@@ -63,7 +64,7 @@ public class TestSelectionCleanInstanceBeforeListeners implements Serializable {
             pais = root.addFieldString("pais");
             pais.asAtr().dependsOn(uf).label("Capital do país:");
             pais.selection().selfIdAndDisplay().simpleProvider(siString -> {
-                EXECUTION_ORDER_AND_PAIS_VALUE.put(PAIS_SIMPLE_PROVIDER, siString.findNearest(uf.sigla).map(SIString::getValue).orElse(null));
+                EXECUTION_ORDER_AND_PAIS_VALUE.add(Pair.of(PAIS_SIMPLE_PROVIDER, siString.findNearest(pais).map(SIString::getValue).orElse(null)));
                 if (siString.findNearest(uf.sigla).map(SIString::getValue).map("DF"::equalsIgnoreCase).orElse(false)) {
                     return Lists.newArrayList("Brasil");
                 }
@@ -73,7 +74,7 @@ public class TestSelectionCleanInstanceBeforeListeners implements Serializable {
             ecapital = root.addFieldString("ecapital");
             ecapital
                     .withUpdateListener(si -> {
-                        EXECUTION_ORDER_AND_PAIS_VALUE.put(ECAPITAL_UPDATE_LISTENER, si.findNearest(uf.sigla).map(SIString::getValue).orElse(null));
+                        EXECUTION_ORDER_AND_PAIS_VALUE.add(Pair.of(ECAPITAL_UPDATE_LISTENER, si.findNearest(pais).map(SIString::getValue).orElse(null)));
                         if (si.findNearest(pais).map(SIString::getValue).map("Brasil"::equals).orElse(false)) {
                             si.setValue("Brasil está selecionado!");
                         } else {
@@ -91,8 +92,26 @@ public class TestSelectionCleanInstanceBeforeListeners implements Serializable {
     public void testChangeUfShouldClearPaisBeforeEcapitalUpdateListener() throws Exception {
         EXECUTION_ORDER_AND_PAIS_VALUE.clear();
         setValueOnFieldOneAndCallAjaxValidate("DF", uf);
+        setValueOnFieldOneAndCallAjaxValidate("Brasil", pais);
+        setValueOnFieldOneAndCallAjaxValidate("AC", uf);
         printExecutionOrder();
-        Assert.assertEquals(null, EXECUTION_ORDER_AND_PAIS_VALUE.get(ECAPITAL_UPDATE_LISTENER));
+        String paisValue = tester.getAssertionsInstance().getTarget().getField(pais).getValue();
+        Assert.assertEquals(null, paisValue);
+        Assert.assertEquals(3, EXECUTION_ORDER_AND_PAIS_VALUE.stream().filter(p -> ECAPITAL_UPDATE_LISTENER.equals(p.getKey())).count());
+        Assert.assertEquals(Lists.newArrayList(null, "Brasil", null), EXECUTION_ORDER_AND_PAIS_VALUE.stream().filter(p -> ECAPITAL_UPDATE_LISTENER.equals(p.getKey())).map(Pair::getValue).collect(Collectors.toList()));
+    }
+
+
+    @Test
+    public void testChangeUfShouldClearEcapitalField() throws Exception {
+        EXECUTION_ORDER_AND_PAIS_VALUE.clear();
+        setValueOnFieldOneAndCallAjaxValidate("DF", uf);
+        setValueOnFieldOneAndCallAjaxValidate("Brasil", pais);
+        setValueOnFieldOneAndCallAjaxValidate("AC", uf);
+        printExecutionOrder();
+        String ecapitalValue = tester.getAssertionsInstance().getTarget().getField(ecapital).getValue();
+        Assert.assertEquals(null, ecapitalValue);
+        Assert.assertEquals(3, EXECUTION_ORDER_AND_PAIS_VALUE.stream().filter(p -> ECAPITAL_UPDATE_LISTENER.equals(p.getKey())).count());
     }
 
     private void setValueOnFieldOneAndCallAjaxValidate(String value, SType<?> field) {
@@ -103,7 +122,8 @@ public class TestSelectionCleanInstanceBeforeListeners implements Serializable {
     }
 
     private void printExecutionOrder() {
-        MapUtils.verbosePrint(System.out, "Execution order and Pais value", EXECUTION_ORDER_AND_PAIS_VALUE);
+        System.out.println("Execution Order and Pais Value Pairs: ");
+        System.out.println(EXECUTION_ORDER_AND_PAIS_VALUE.toString().replaceAll("\\),", "),\n"));
     }
 
     private FormComponent<?> findFormComponentForType(SType<?> field) {
