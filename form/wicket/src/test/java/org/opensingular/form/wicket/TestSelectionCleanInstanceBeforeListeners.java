@@ -51,6 +51,9 @@ public class TestSelectionCleanInstanceBeforeListeners implements Serializable {
     private transient STypeString                 ecapital;
     private transient String                     PAIS_SIMPLE_PROVIDER           = "PAIS_SIMPLE_PROVIDER";
     private transient String                     ECAPITAL_UPDATE_LISTENER       = "ECAPITAL_UPDATE_LISTENER";
+    /**
+     * Records the execution order of update listeners and simple providers in the stype below
+     */
     private transient List<Pair<String, String>> EXECUTION_ORDER_AND_PAIS_VALUE = new ArrayList<>();
 
     @Before
@@ -88,6 +91,12 @@ public class TestSelectionCleanInstanceBeforeListeners implements Serializable {
         tester.startDummyPage();
     }
 
+    /**
+     * In this scenario the we select "DF" in the uf drop down and then select "Brasil" in pais drop down.
+     * After this selection we change the first drop down to "AC", this change impacts the simple provider from pais and "Brasil" is no longer a valid value.
+     * When the the ecapital update listener runs it should find no value in pais field since its old value is not valid the selection anymore.
+     * @throws Exception
+     */
     @Test
     public void testChangeUfShouldClearPaisBeforeEcapitalUpdateListener() throws Exception {
         EXECUTION_ORDER_AND_PAIS_VALUE.clear();
