@@ -149,6 +149,13 @@ public class AtrBasic extends STranslatorForAttribute {
         return this;
     }
 
+    /**
+     * Configures the current type to depend on all STypes created from the given {@param typeClass} or its subclasses.
+     * This dependency should be used with caution since it can let do unwanted dependencies and apparently unpredictable behavior.
+     * Prefer using the {{@link #dependsOn(SType[])}} alternative.
+     * @param typeClass
+     * @return
+     */
     public AtrBasic dependsOn(Class<? extends SType<?>> typeClass) {
         assertNoNull(DEPENDSON_NULL_PARAM_MSG, typeClass);
         return dependsOn(typeClass, stype -> stype);

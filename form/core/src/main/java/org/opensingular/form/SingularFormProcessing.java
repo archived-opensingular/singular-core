@@ -24,17 +24,14 @@ import org.opensingular.form.event.ISInstanceListener;
 import org.opensingular.form.validation.InstanceValidationContext;
 import org.opensingular.lib.commons.lambda.IConsumer;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Singular Core processing lifecycle
@@ -56,8 +53,18 @@ public class SingularFormProcessing {
      * @see <a href="https://www.pivotaltracker.com/story/show/131103577">[#131103577]</a>
      */
     public static Set<SInstance> evaluateUpdateListeners(SInstance i) {
-        Set<SInstance> evaluated = new HashSet<>();
-        return circularEvaluateUpdateListeners(i, evaluated);
+        LinkedHashSet<SInstance> collected = new LinkedHashSet<>();
+        circularEvaluateUpdateListeners(i, collected);
+        for (SInstance dependant : collected) {
+            notifyDependentTypesBeforeRunUpdateListeners(dependant);
+        }
+        for (SInstance dependant : collected) {
+            IConsumer<SInstance> updateListener = dependant.asAtr().getUpdateListener();
+            if (updateListener != null) {
+                updateListener.accept(dependant);
+            }
+        }
+        return collected;
     }
 
 
@@ -67,12 +74,10 @@ public class SingularFormProcessing {
      * Every update listener of every collected type is executed.
      * Validation is executed for every collected type that currently contains validations errors or the types
      * that have values (regardless it contains errors or not)
-     * @param instance
-     *  field instance to be processed
-     * @param skipValidation
-     *  if true, validations are no executed
-     * @return
-     *  a set of processed instances
+     *
+     * @param instance       field instance to be processed
+     * @param skipValidation if true, validations are no executed
+     * @return a set of processed instances
      */
     public static Set<SInstance> executeFieldProcessLifecycle(SInstance instance, boolean skipValidation) {
         Set<SInstance> instancesToUpdateComponents = new HashSet<>();
@@ -96,6 +101,10 @@ public class SingularFormProcessing {
         return instancesToUpdateComponents;
     }
 
+    private static void notifyDependentTypesBeforeRunUpdateListeners(SInstance instance) {
+        instance.getDocument().getInstanceListeners().fireBeforeRunUpdateListener(instance);
+    }
+
 
     private static void updateAttributes(final SInstance fieldInstance, ISInstanceListener.EventCollector eventCollector) {
         final SDocument document = fieldInstance.getDocument();
@@ -106,6 +115,7 @@ public class SingularFormProcessing {
     /**
      * Validates the instance {@param fieldInstance}
      * it does not validates children components or dependents ones
+     *
      * @param fieldInstance
      */
     public static void validate(SInstance fieldInstance) {
@@ -135,31 +145,22 @@ public class SingularFormProcessing {
     }
 
 
-    private static Set<SInstance> circularEvaluateUpdateListeners(SInstance i, final Set<SInstance> evaluated) {
-        return SInstances
+    private static void circularEvaluateUpdateListeners(SInstance i, final LinkedHashSet<SInstance> evaluated) {
+        SInstances
                 .streamDescendants(i.getRoot(), true)
                 .filter(isDependantOf(i))
                 .filter(SingularFormProcessing::isNotOrphan)
                 .filter(dependant -> isNotInListOrIsBothInSameList(i, dependant))
                 .filter(dependant -> !evaluated.contains(dependant))
-                .map(evaluateUpdateListenerCascadingExecution(i, evaluated))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
+                .forEach(collectUpdateListenerCascadingCollecting(i, evaluated));
     }
 
-    private static Function<SInstance, List<SInstance>> evaluateUpdateListenerCascadingExecution(SInstance i, Set<SInstance> evaluated) {
+    private static Consumer<SInstance> collectUpdateListenerCascadingCollecting(SInstance i, LinkedHashSet<SInstance> evaluated) {
         return dependant -> {
             evaluated.add(dependant);
-            List<SInstance>      instances      = new ArrayList<>();
-            IConsumer<SInstance> updateListener = dependant.asAtr().getUpdateListener();
-            if (updateListener != null) {
-                updateListener.accept(dependant);
-            }
-            instances.add(dependant);
             if (!dependant.equals(i)) {
-                instances.addAll(SingularFormProcessing.circularEvaluateUpdateListeners(dependant, evaluated));
+                SingularFormProcessing.circularEvaluateUpdateListeners(dependant, evaluated);
             }
-            return instances;
         };
     }
 

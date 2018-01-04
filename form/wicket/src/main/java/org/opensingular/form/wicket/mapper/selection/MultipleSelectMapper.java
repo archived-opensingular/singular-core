@@ -17,15 +17,15 @@
 package org.opensingular.form.wicket.mapper.selection;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.converter.SInstanceConverter;
 import org.opensingular.form.enums.PhraseBreak;
-import org.opensingular.form.provider.Provider;
-import org.opensingular.form.provider.ProviderContext;
+import org.opensingular.form.provider.ProviderLoader;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import org.opensingular.form.wicket.model.MultipleSelectSInstanceAwareModel;
@@ -34,7 +34,6 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("serial")
@@ -48,26 +47,11 @@ public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {
         final IModel<List<Serializable>> valuesModel = new IReadOnlyModel<List<Serializable>>() {
             @Override
             public List<Serializable> getObject() {
-                final List<Serializable> values = new ArrayList<>();
-                if (model.getObject().getType().isList()) {
-                    final Provider provider = model.getObject().asAtrProvider().getProvider();
-                    if (provider != null) {
-                        values.addAll(provider.load(ProviderContext.of(ctx.getCurrentInstance())));
-                    }
-                }
-                //Dangling values
-                if (!model.getObject().isEmptyOfData()) {
-                    final SIList list = (SIList) model.getObject();
-                    for (int i = 0; i < list.size(); i += 1) {
-                        SInstance ins = list.get(i);
-                        final SInstanceConverter converter = list.asAtrProvider().getConverter();
-                        final Serializable converterted = converter.toObject(ins);
-                        if (!values.contains(converterted)) {
-                            values.add(i, converterted);
-                        }
-                    }
-                }
-                return values;
+                final RequestCycle requestCycle = RequestCycle.get();
+                boolean            ajaxRequest  = requestCycle != null && requestCycle.find(AjaxRequestTarget.class) != null;
+                /* Se for requisição Ajax, limpa o campo caso o valor não for encontrado, caso contrario mantem o valor. */
+                boolean enableDanglingValues = !ajaxRequest;
+                return new ProviderLoader(model::getObject, enableDanglingValues).load();
             }
         };
 
@@ -96,7 +80,7 @@ public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {
             return "";
         }
         StringBuilder output = new StringBuilder();
-        boolean first = true;
+        boolean       first  = true;
         for (SInstance val : ((SIList<?>) mi).getChildren()) {
             Serializable converted = mi.asAtrProvider().getConverter().toObject(val);
             if (converted != null) {
