@@ -111,6 +111,7 @@ public class FormXSDUtil {
 
         MElement element = composite.addElementNS(XSD_NAMESPACE_URI, XSD_COMPLEX_TYPE);
         element = element.addElementNS(XSD_NAMESPACE_URI, XSD_SEQUENCE);
+        element.setAttribute("minOccurs", "0");
         for (SType<?> child : type.getFields()) {
             toXsdFromSType(element, child, config);
         }
