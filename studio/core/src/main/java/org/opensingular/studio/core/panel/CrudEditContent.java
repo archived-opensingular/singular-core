@@ -206,7 +206,11 @@ public class CrudEditContent extends CrudShellContent {
         }
     }
 
-    public IModel<? extends SInstance> getSingularFormPanelModelInstance() {
+    protected IModel<? extends SInstance> getSingularFormPanelModelInstance() {
         return singularFormPanel.getInstanceModel();
+    }
+
+    protected SingularFormPanel getSingularFormPanel() {
+        return singularFormPanel;
     }
 }
