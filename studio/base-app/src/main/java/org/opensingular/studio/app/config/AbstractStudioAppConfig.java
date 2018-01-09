@@ -27,6 +27,7 @@ import org.opensingular.lib.context.singleton.SpringBoundedSingletonStrategy;
 import org.opensingular.studio.app.spring.DefaulSpringSecurityConfig;
 import org.opensingular.studio.app.spring.StudioPersistenceConfiguration;
 import org.opensingular.studio.app.spring.StudioSpringConfiguration;
+import org.opensingular.studio.app.spring.StudioUserDetailsService;
 import org.opensingular.studio.app.spring.StudioWebConfiguration;
 import org.opensingular.studio.core.wicket.StudioApplication;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -83,4 +84,8 @@ public abstract class AbstractStudioAppConfig implements StudioAppConfig {
         return StudioPersistenceConfiguration.class;
     }
 
+    @Override
+    public StudioUserDetailsService getUserDetailsService() {
+        return new StudioUserDetailsService();
+    }
 }
