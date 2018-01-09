@@ -24,7 +24,6 @@ import org.opensingular.form.io.HashUtil;
 import org.opensingular.form.persistence.SingularFormPersistenceException;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.attachment.SIAttachment;
-import org.opensingular.lib.commons.base.SingularException;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,6 +31,7 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.sql.Clob;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Converter implementation for transforming SIAttachment instances from/to a
@@ -51,8 +51,8 @@ public class CLOBConverter implements RelationalColumnConverter {
         } else if (fromInstance instanceof SIString) {
             return fromInstance.getValue();
         }
-        SingularFormPersistenceException exception = new SingularFormPersistenceException(this.getClass().getName() + " is not compatible with " + fromInstance.getClass().getName());
-        exception.add(fromInstance.getName());
+        SingularFormPersistenceException exception = new SingularFormPersistenceException(this.getClass().getName() + " is not compatible with " + Optional.ofNullable(fromInstance).map(Object::getClass).map(Class::getName).orElse(null));
+        exception.add(Optional.ofNullable(fromInstance).map(SInstance::getName).orElse(null));
         throw exception;
     }
 
@@ -78,7 +78,10 @@ public class CLOBConverter implements RelationalColumnConverter {
                 toInstance.setValue(sb.toString());
             }
         } catch (Exception e) {
-            throw SingularException.rethrow("Error on converting BLOB data to SInstance", e);
+            SingularFormPersistenceException exception = new SingularFormPersistenceException("Error on converting CLOB data to " + Optional.ofNullable(toInstance).map(Object::getClass).map(Class::getName).orElse(null), e);
+            exception.add(Optional.ofNullable(toInstance).map(SInstance::getName).orElse(null));
+            throw exception;
+
         }
     }
 }
