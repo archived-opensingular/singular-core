@@ -31,6 +31,12 @@ public class SInstanceListeners {
         if (hasListenersFor(SInstanceEventType.VALUE_CHANGED))
             fireInstanceEvent(SInstanceEventType.VALUE_CHANGED, new SInstanceValueChangeEvent(instance, oldValue, newValue));
     }
+
+    public void fireBeforeRunUpdateListener(SInstance instance) {
+        if (hasListenersFor(SInstanceEventType.BEFORE_RUN_UPDATE_LISTENER))
+            fireInstanceEvent(SInstanceEventType.BEFORE_RUN_UPDATE_LISTENER, new SInstanceBeforeUpdateListenerEvent(instance));
+    }
+
     public void fireInstanceAttributeChanged(SInstance instance, SInstance attributeInstance, Object oldValue, Object value) {
         if (hasListenersFor(SInstanceEventType.ATTRIBUTE_CHANGED))
             fireInstanceEvent(SInstanceEventType.ATTRIBUTE_CHANGED, new SInstanceAttributeChangeEvent(instance, attributeInstance, oldValue, value));

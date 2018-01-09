@@ -53,7 +53,7 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
         return o;
     }
 
-    public T insert(InputStream is, long length, String name, String hashSha1){
+    public T insert(InputStream is, long length, String name, String hashSha1) {
         C content = attachmentContentDao.insert(is, length, hashSha1);
         return insert(createAttachment(content, name));
     }
@@ -61,7 +61,7 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
     public void delete(Long id) {
         Optional<T> t = get(id);
         if (t.isPresent()) {
-            T entity = t.get();
+            T    entity     = t.get();
             Long codContent = entity.getCodContent();
             delete(entity);
             attachmentContentDao.delete(codContent);
@@ -76,13 +76,31 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
     protected T createAttachment(C content, String name) {
 
         T fileEntity = createInstance();
-
         fileEntity.setCodContent(content.getCod());
         fileEntity.setHashSha1(content.getHashSha1());
         fileEntity.setSize(content.getSize());
         fileEntity.setCreationDate(new Date());
-        fileEntity.setName(name);
+        fileEntity.setName(truncateNameIfNeeded(name));
         return fileEntity;
+    }
+
+    /**
+     * Truncates file names too long to fit in the underlying database model
+     * currently 200 characters.
+     *
+     * @return truncated file name preserving the original file extension
+     */
+    private String truncateNameIfNeeded(String s) {
+        if (s != null && s.length() > 200) {
+            String extension      = "";
+            int    lastIndexOfDot = s.lastIndexOf('.');
+            if (lastIndexOfDot > 0) {
+                extension = s.substring(lastIndexOfDot, s.length());
+            }
+            String name = s.substring(0, 200 - extension.length());
+            return (name + extension).substring(0, 200);
+        }
+        return s;
     }
 
     protected T createInstance() {
@@ -104,7 +122,7 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
         hql.append(" ) ");
 
         Query query = getSession().createQuery(hql.toString());
-        Date ontem = new DateTime().minusDays(1).toDate();
+        Date  ontem = new DateTime().minusDays(1).toDate();
         query.setParameter("ontem", ontem);
 
         return query.list();

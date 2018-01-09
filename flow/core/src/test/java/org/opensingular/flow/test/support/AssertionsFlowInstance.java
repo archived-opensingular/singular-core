@@ -16,7 +16,6 @@
 
 package org.opensingular.flow.test.support;
 
-import com.mchange.util.AssertException;
 import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.TaskInstance;

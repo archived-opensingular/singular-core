@@ -31,13 +31,13 @@
         </dependency>
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>singular-studio-core</artifactId>
+            <artifactId>singular-form-core</artifactId>
             <version>${singular.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>2.6.1</version>
+            <groupId>org.opensingular</groupId>
+            <artifactId>singular-studio-core</artifactId>
+            <version>${singular.version}</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
