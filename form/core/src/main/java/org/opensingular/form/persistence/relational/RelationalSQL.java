@@ -179,7 +179,8 @@ public abstract class RelationalSQL {
     static Object getFieldValue(String tableName, SInstance tupleKeyRef, String fieldName,
             List<RelationalData> fromList) {
         for (RelationalData data : fromList) {
-            if (data.getTableName().equals(tableName) && data.getTupleKeyRef().equals(tupleKeyRef)
+            if (data.getTableName().equals(tableName)
+                    && (data.getTupleKeyRef().equals(tupleKeyRef) || data.getTupleKeyRef().equals(tupleKeyRef.getParent()))
                     && data.getFieldName().equals(fieldName)) {
                 return data.getFieldValue();
             }
