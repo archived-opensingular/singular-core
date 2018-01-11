@@ -28,9 +28,14 @@ import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.flow.test.definicao.SampleRequirement;
 import org.opensingular.flow.test.support.TestFlowSupport;
 
+import java.sql.PreparedStatement;
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
+import static org.opensingular.flow.test.definicao.SampleRequirement.*;
+import static org.opensingular.flow.test.definicao.SampleRequirement.SampleTask.*;
 
 public class PersistenceTest extends TestFlowSupport {
 
@@ -42,8 +47,8 @@ public class PersistenceTest extends TestFlowSupport {
 
     @Test
     public void testJoinTableCurrentTask() {
-        FlowInstance pi = new SampleRequirement().prepareStartCall().createAndStart();
-        Integer cod = pi.getEntity().getCod();
+        FlowInstance pi  = new SampleRequirement().prepareStartCall().createAndStart();
+        Integer      cod = pi.getEntity().getCod();
         sessionFactory.getCurrentSession().flush();
         //Clear da sessão para evidenciar a consulta como única.
         sessionFactory.getCurrentSession().clear();
@@ -52,5 +57,37 @@ public class PersistenceTest extends TestFlowSupport {
         Assert.assertNotNull(pientity.getCurrentTask());
         Assert.assertEquals(pientity.getCurrentTask().getClass(), TaskInstanceEntity.class);
         Logger.getLogger(getClass().getSimpleName()).info("##LOAD END. ");
+    }
+
+    /**
+     * Simulates an unordered sequence use for task instances. In that case we could end with newer tasks with numeric ids smaller than older ones.
+     * This scenario covers oracle RAC with non ordered sequences.
+     */
+    @Test
+    public void testUnorderedSequenceExecution() {
+        FlowInstance pi = new SampleRequirement().prepareStartCall().createAndStart();
+        pi.prepareTransition(APROVAR_TECNICO).go();
+        sessionFactory.getCurrentSession().flush();
+        List<Integer> pks = pi.getEntity().getTasks().stream().map(i -> i.getCod()).collect(Collectors.toList());
+        System.out.println(pks);
+        //reversing pk order to simulate unordered sequences like in a Oracle RAC database:
+        sessionFactory.getCurrentSession().doWork(c -> {
+            for (int i = 0; i < pks.size(); i++) {
+                PreparedStatement ps = c.prepareStatement(" update DBSINGULAR.TB_INSTANCIA_TAREFA SET CO_INSTANCIA_TAREFA = " + (pks.get(pks.size() - i - 1) + 100) + " where CO_INSTANCIA_TAREFA = " + pks.get(i));
+                ps.executeUpdate();
+                ps.close();
+            }
+            c.commit();
+        });
+
+
+        sessionFactory.getCurrentSession().flush();
+        sessionFactory.getCurrentSession().clear();
+        FlowInstanceEntity flowInstanceEntity = (FlowInstanceEntity) pi.getEntity();
+        List<Integer>      pksNovas           = flowInstanceEntity.getTasks().stream().map(i -> i.getCod()).collect(Collectors.toList());
+        System.out.println(pksNovas);
+        String currentTask = flowInstanceEntity.getCurrentTask().getTaskVersion().getAbbreviation();
+        System.out.println(currentTask);
+        Assert.assertEquals(AGUARDANDO_GERENTE.getKey(), currentTask);
     }
 }
