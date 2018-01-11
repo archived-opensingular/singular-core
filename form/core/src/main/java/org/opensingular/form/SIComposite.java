@@ -55,8 +55,12 @@ public class SIComposite extends SInstance implements ICompositeInstance, Iterab
         return fields == null || fields.stream().allMatch(SInstance::isEmptyOfData);
     }
 
-    /** Return only the already initialized fields. */
-    @Nonnull
+    /**
+     * List only those fields already instantiated.
+     * OBS: field instantiation occurs automatically when its value is set for the first time.
+     *
+     * @return field instances
+     */
     public List<SInstance> getFields() {
         return (fields == null) ? Collections.emptyList() : fields.getFields();
     }

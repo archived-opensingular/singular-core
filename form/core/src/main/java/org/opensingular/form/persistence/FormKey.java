@@ -72,14 +72,51 @@ public interface FormKey extends Serializable {
         return Optional.ofNullable((FormKey) document.getRoot().getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY));
     }
 
-    /**
-     * Atribui na instância a chave de persistência informada. Esse método deve ser usado por cautela para não quebrar a
-     * camada de persistência.
-     */
-    static void set(@Nonnull SInstance instance, @Nullable FormKey formKey) {
+	/**
+	 * Returns the persistence key assigned to a given SInstance. This key is
+	 * assigned by the persistence mechanism after loading/saving an instance.
+	 */
+    @Nonnull
+    public static FormKey fromInstance(@Nonnull SInstance instance) {
         Objects.requireNonNull(instance);
-        instance.getRoot().setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, formKey);
+        return instance.getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY);
     }
 
+	/**
+	 * Assigns a persistence key to the root of a given SInstance. Advised caution
+	 * in calling this method as the persistence mechanism will be affected
+	 * accordingly.
+	 *
+	 * This method is deprecated. Use instead one of the following: setOnRoot or
+	 * setOnInstance.
+	 */
+    @Deprecated
+    static void set(@Nonnull SInstance instance, @Nullable FormKey formKey) {
+        setOnRoot(instance, formKey);
+    }
+
+	/**
+	 * Assigns a persistence key to a given SInstance. Advised caution in calling
+	 * this method as the persistence mechanism will be affected accordingly.
+	 */
+    static void setOnInstance(@Nonnull SInstance instance, @Nullable FormKey formKey) {
+        Objects.requireNonNull(instance);
+        instance.setAttributeValue(SPackageFormPersistence.ATR_FORM_KEY, formKey);
+    }
+
+	/**
+	 * Assigns a persistence key to the root of a given SInstance. Advised caution
+	 * in calling this method as the persistence mechanism will be affected
+	 * accordingly.
+	 */
+    static void setOnRoot(@Nonnull SInstance instance, @Nullable FormKey formKey) {
+        Objects.requireNonNull(instance);
+        setOnInstance(instance.getRoot(), formKey);
+    }
+
+    static boolean containsKey(@Nonnull SInstance instance) {
+        Objects.requireNonNull(instance);
+        return instance.getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY) != null;
+    }
 
 }
