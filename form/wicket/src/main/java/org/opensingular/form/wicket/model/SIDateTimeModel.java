@@ -120,6 +120,9 @@ public interface SIDateTimeModel {
 
                 c.set(Calendar.HOUR_OF_DAY, hour);
                 c.set(Calendar.MINUTE, minute);
+                /* the java time API do not work well with years below 1900 (see java.util.Date javadocs)
+                * and java time in millis starts from 1970, so we decided to set an arbitrary year of 1970 to avoid conversions errors */
+                c.set(Calendar.YEAR, 1970);
 
                 model.setObject(c.getTime());
             } else {
