@@ -171,7 +171,7 @@ public class FlowInstance implements Serializable {
             if (current.isPresent()) {
                 currentState = getFlowDefinition().getFlowMap().getTaskByAbbreviation(current.get().getAbbreviation()).orElse(null);
             } else if (isFinished()) {
-                current = getTaskNewer();
+                current = getNewestTask();
                 if (current.isPresent()&& current.get().isFinished()) {
                     currentState = getFlowDefinition().getFlowMap().getTaskByAbbreviation(current.get().getAbbreviation()).orElse(null);
                 } else {
@@ -435,7 +435,7 @@ public class FlowInstance implements Serializable {
         FlowEngine.initTask(this, task, newTask);
         ExecutionContext executionContext = new ExecutionContext(this, newTask, null);
 
-        TaskInstance taskNew2 = getTaskNewer(task).orElseThrow(() -> new SingularFlowException("Erro Interno", this));
+        TaskInstance taskNew2 = getNewestTask(task).orElseThrow(() -> new SingularFlowException("Erro Interno", this));
         task.notifyTaskStart(taskNew2, executionContext);
         if (task.isImmediateExecution()) {
             prepareTransition().go();
@@ -632,7 +632,7 @@ public class FlowInstance implements Serializable {
             addUserRole(sBusinessRole, newUser);
         }
         getFlowDefinition().getFlowMap().notifyRoleChange(this, sBusinessRole, previousUser, newUser);
-        Optional<TaskInstance> latestTask = getTaskNewer();
+        Optional<TaskInstance> latestTask = getNewestTask();
         if (latestTask.isPresent()) {
             if (Objects.nonNull(newUser)) {
                 latestTask.get().log("Papel alterado", String.format("%s: %s", sBusinessRole.getName(), newUser.getSimpleName()));
@@ -646,7 +646,7 @@ public class FlowInstance implements Serializable {
         if (Objects.nonNull(newUser)) {
             addUserRole(sBusinessRole, newUser);
             getFlowDefinition().getFlowMap().notifyRoleChange(this, sBusinessRole, null, newUser);
-            Optional<TaskInstance> latestTask = getTaskNewer();
+            Optional<TaskInstance> latestTask = getNewestTask();
             latestTask.ifPresent(taskInstance -> taskInstance.log("Papel definido", String.format("%s: %s", sBusinessRole.getName(), newUser.getSimpleName())));
         }
     }
@@ -762,7 +762,7 @@ public class FlowInstance implements Serializable {
      * Retorna a mais nova tarefa que atende a condição informada.
      */
     @Nonnull
-    public Optional<TaskInstance> getTaskNewer(@Nonnull Predicate<TaskInstance> predicate) {
+    public Optional<TaskInstance> getNewestTask(@Nonnull Predicate<TaskInstance> predicate) {
         Objects.requireNonNull(predicate);
         List<? extends IEntityTaskInstance> list = getEntity().getTasks();
         for (int i = list.size() - 1; i != -1; i--) {
@@ -777,7 +777,7 @@ public class FlowInstance implements Serializable {
     /** Retorna a tarefa atual (tarefa ativa). */
     @Nonnull
     public Optional<TaskInstance> getCurrentTask() {
-        return getTaskNewer(t -> t.isActive());
+        return getEntity().getCurrentTask().map(this::getTaskInstance);
     }
 
     /** Retorna a tarefa atual (tarefa ativa) ou dispara exception senão existir. */
@@ -792,8 +792,8 @@ public class FlowInstance implements Serializable {
      * Retorna a mais nova tarefa encerrada ou ativa.
      */
     @Nonnull
-    public Optional<TaskInstance> getTaskNewer() {
-        return getTaskNewer(t -> true);
+    public Optional<TaskInstance> getNewestTask() {
+        return getNewestTask(t -> true);
     }
 
     /**
@@ -801,7 +801,7 @@ public class FlowInstance implements Serializable {
      */
     @Nonnull
     public TaskInstance getLastTaskOrException() {
-        return getTaskNewer().orElseThrow(
+        return getNewestTask().orElseThrow(
                 () -> new SingularFlowException(createErrorMsg("Não há nenhuma tarefa no fluxo"), this));
     }
 
@@ -809,16 +809,16 @@ public class FlowInstance implements Serializable {
      * Encontra a mais nova tarefa encerrada ou ativa com a sigla da referência.
      */
     @Nonnull
-    public Optional<TaskInstance> getTaskNewer(@Nonnull ITaskDefinition taskRef) {
-        return getTaskNewer(TaskPredicates.simpleTaskType(taskRef));
+    public Optional<TaskInstance> getNewestTask(@Nonnull ITaskDefinition taskRef) {
+        return getNewestTask(TaskPredicates.simpleTaskType(taskRef));
     }
 
     /**
      * Encontra a mais nova tarefa encerrada ou ativa do tipo informado.
      */
     @Nonnull
-    public Optional<TaskInstance> getTaskNewer(@Nonnull STask<?> type) {
-        return getTaskNewer(TaskPredicates.simpleTaskType(type));
+    public Optional<TaskInstance> getNewestTask(@Nonnull STask<?> type) {
+        return getNewestTask(TaskPredicates.simpleTaskType(type));
     }
 
     /**
@@ -826,7 +826,7 @@ public class FlowInstance implements Serializable {
      */
     @Nonnull
     public Optional<TaskInstance> getFinishedTask(@Nonnull ITaskDefinition taskRef) {
-        return getTaskNewer(TaskPredicates.finished().and(TaskPredicates.simpleTaskType(taskRef)));
+        return getNewestTask(TaskPredicates.finished().and(TaskPredicates.simpleTaskType(taskRef)));
     }
 
     /**
@@ -834,7 +834,7 @@ public class FlowInstance implements Serializable {
      */
     @Nonnull
     public Optional<TaskInstance> getFinishedTask(@Nonnull STask<?> type) {
-        return getTaskNewer(TaskPredicates.finished().and(TaskPredicates.simpleTaskType(type)));
+        return getNewestTask(TaskPredicates.finished().and(TaskPredicates.simpleTaskType(type)));
     }
 
     protected IPersistenceService<IEntityCategory, IEntityFlowDefinition, IEntityFlowVersion, IEntityFlowInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {
@@ -860,6 +860,6 @@ public class FlowInstance implements Serializable {
      */
     @Nonnull
     public Optional<TaskInstance> getLastFinishedTask() {
-        return getTaskNewer(TaskPredicates.finished());
+        return getNewestTask(TaskPredicates.finished());
     }
 }

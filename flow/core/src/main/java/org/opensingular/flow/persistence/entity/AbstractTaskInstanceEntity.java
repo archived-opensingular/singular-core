@@ -37,6 +37,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Version;
 import java.util.ArrayList;
 import java.util.Date;
@@ -71,12 +73,15 @@ public abstract class AbstractTaskInstanceEntity<USER extends SUser, FLOW_INSTAN
     @JoinColumn(name = "CO_INSTANCIA_PROCESSO", nullable = false)
     private FLOW_INSTANCE flowInstance;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_INICIO", nullable = false, updatable = false)
     private Date beginDate;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_FIM")
     private Date endDate;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_ESPERADA_FIM")
     private Date targetEndDate;
 
