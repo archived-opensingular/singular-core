@@ -77,7 +77,7 @@ public class AttachmentRef implements IAttachmentRef {
 
     @SuppressWarnings("unchecked")
     @Override
-    public InputStream getInputStream() throws IOException {
+    public InputStream getContentAsInputStream() {
         try {
             if (file == null || !file.exists()) {
 

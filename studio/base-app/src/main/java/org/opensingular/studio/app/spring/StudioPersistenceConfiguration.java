@@ -18,9 +18,13 @@
 
 package org.opensingular.studio.app.spring;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
 import org.hibernate.SessionFactory;
+import org.opensingular.form.persistence.RelationalDatabase;
+import org.opensingular.form.persistence.service.RelationalDatabaseHibernate;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.util.Loggable;
 import org.springframework.context.annotation.Bean;
@@ -28,8 +32,8 @@ import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.sql.DataSource;
-import java.util.Properties;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 @EnableTransactionManagement(proxyTargetClass = true)
 public class StudioPersistenceConfiguration implements Loggable {
@@ -55,6 +59,11 @@ public class StudioPersistenceConfiguration implements Loggable {
         sessionFactoryBean.setHibernateProperties(hibernateProperties());
         sessionFactoryBean.setPackagesToScan(hibernatePackagesToScan());
         return sessionFactoryBean;
+    }
+
+    @Bean
+    public RelationalDatabase relationalDatabase(final SessionFactory sessionFactory) {
+        return new RelationalDatabaseHibernate(sessionFactory);
     }
 
     @Bean

@@ -19,20 +19,17 @@ package org.opensingular.form.type.core.attachment;
 import org.apache.tika.Tika;
 import org.opensingular.form.SingularFormException;
 
-import javax.activation.DataSource;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * Referência para um arquivo binário persistido, contudo não identifica a data ou tamanho do arquivo.
  *
  * @author Daniel C. Bordin
  */
-public interface IAttachmentRef extends Serializable, DataSource{
+public interface IAttachmentRef extends Serializable {
 
     /**
      * <p>
@@ -52,7 +49,7 @@ public interface IAttachmentRef extends Serializable, DataSource{
      * Retorna String de 40 digitos com o SHA1 do conteudo do arquivo.
      */
     String getHashSHA1();
-    
+
     /**
      * Retorna o tamanho do arquivo se a informação estiver disponível ou -1
      * se não for possível informar. No entanto, deve sempre retornar o tamanho
@@ -61,31 +58,20 @@ public interface IAttachmentRef extends Serializable, DataSource{
      */
     long getSize();
 
-    @Override
+
     default String getContentType() {
-        try (InputStream is = getContentAsInputStream()){
+        try (InputStream is = getContentAsInputStream()) {
             return new Tika().detect(is);
         } catch (IOException e) {
             throw addInfo(new SingularFormException("Não foi possivel detectar o content type.", e), this);
         }
     }
-    
-    default OutputStream getOutputStream() throws java.io.IOException {
-        throw new UnsupportedOperationException();
-    }
 
-    /** Retorna o conteúdo desta referência. Mesmo que {@link #getInputStream()}. */
+    /**
+     * Retorna o conteúdo desta referência. Mesmo que .
+     */
     @Nonnull
-    default InputStream getContentAsInputStream() {
-        try {
-            return Objects.requireNonNull(getInputStream());
-        } catch (IOException e) {
-            //Faz em mais de um passo para o sonar não dar falso positivo
-            SingularFormException e2 = new SingularFormException("Erro obtendo referencia", e);
-            addInfo(e2, this);
-            throw e2;
-        }
-    }
+    InputStream getContentAsInputStream();
 
 
     static SingularFormException addInfo(SingularFormException e, IAttachmentRef ref) {
@@ -95,4 +81,6 @@ public interface IAttachmentRef extends Serializable, DataSource{
                 .add("sha1", () -> ref.getHashSHA1());
         return e;
     }
+
+    String getName();
 }

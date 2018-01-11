@@ -75,6 +75,7 @@ public class DropdownMenu extends Panel {
     @Override
     protected void onConfigure() {
     	super.onConfigure();
+        menus.replaceWith((menus = new RepeatingView("menus")));
         this.setVisible(menus.size() > 0);
     }
 }

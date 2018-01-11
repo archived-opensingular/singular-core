@@ -22,8 +22,11 @@ import static org.junit.Assert.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Date;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.form.PackageBuilder;
@@ -91,6 +94,18 @@ public class SIDateTimeModelTest {
 
         mDate.detach();
     }
+
+    @Test
+    public void testDateConverionToLocalDate() {
+        TimeModel mTime = new SIDateTimeModel.TimeModel(mTimeValue);
+        mTime.setObject("08:00");
+        LocalTime hora = mTime.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalTime();
+        Assert.assertEquals(8, hora.getHour());
+        Assert.assertEquals(0, hora.getMinute());
+        System.out.println(hora);
+    }
+
+
 
     @Test
     public void testDateTwice() throws ParseException {
