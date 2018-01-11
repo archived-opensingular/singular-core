@@ -54,8 +54,8 @@ public class PersistenceTest extends TestFlowSupport {
         sessionFactory.getCurrentSession().clear();
         Logger.getLogger(getClass().getSimpleName()).info("##LOAD BEGIN: Clear na sessão, recarregando flow instance: ");
         FlowInstanceEntity pientity = (FlowInstanceEntity) sessionFactory.getCurrentSession().load(FlowInstanceEntity.class, cod);
-        Assert.assertNotNull(pientity.getCurrentTask());
-        Assert.assertEquals(pientity.getCurrentTask().getClass(), TaskInstanceEntity.class);
+        Assert.assertTrue(pientity.getCurrentTask().isPresent());
+        Assert.assertEquals(pientity.getCurrentTask().get().getClass(), TaskInstanceEntity.class);
         Logger.getLogger(getClass().getSimpleName()).info("##LOAD END. ");
     }
 
@@ -86,7 +86,7 @@ public class PersistenceTest extends TestFlowSupport {
         FlowInstanceEntity flowInstanceEntity = (FlowInstanceEntity) pi.getEntity();
         List<Integer>      pksNovas           = flowInstanceEntity.getTasks().stream().map(i -> i.getCod()).collect(Collectors.toList());
         System.out.println(pksNovas);
-        String currentTask = flowInstanceEntity.getCurrentTask().getTaskVersion().getAbbreviation();
+        String currentTask = flowInstanceEntity.getCurrentTask().get().getTaskVersion().getAbbreviation();
         System.out.println(currentTask);
         Assert.assertEquals(AGUARDANDO_GERENTE.getKey(), currentTask);
     }
