@@ -39,28 +39,4 @@ public class FlowInstanceEntity extends
         AbstractFlowInstanceEntity<Actor, FlowVersionEntity, TaskInstanceEntity, VariableInstanceEntity, RoleInstanceEntity, ExecutionVariableEntity> {
     private static final long serialVersionUID = 1L;
 
-    @OneToMany(mappedBy = "flowInstance", fetch = FetchType.EAGER)
-    @Fetch(FetchMode.JOIN)
-    @Where(clause = "DT_FIM is null")
-    private List<TaskInstanceEntity> currentTasks;
-
-    public List<TaskInstanceEntity> getCurrentTasks() {
-        return currentTasks;
-    }
-
-    public void setCurrentTasks(List<TaskInstanceEntity> currentTasks) {
-        this.currentTasks = currentTasks;
-    }
-
-    /**
-     * O current task também pode ser uma task com o tipo End,
-     * mas não tem como fazer isso com o @Where
-     */
-    public TaskInstanceEntity getCurrentTask() {
-        if (getTasks() != null && ! getTasks().isEmpty()) {
-            return getTasks().get(getTasks().size() - 1);
-        }
-        return null;
-    }
-
 }

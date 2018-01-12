@@ -29,6 +29,7 @@ import org.opensingular.form.context.DelegatingLocalServiceRegistry;
 import org.opensingular.form.event.ISInstanceListener;
 import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.event.SInstanceListeners;
+import org.opensingular.form.event.SelectionValueValidationListener;
 import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.annotation.DocumentAnnotations;
@@ -87,6 +88,11 @@ public class SDocument {
 
     public SDocument() {
         registry = new DelegatingLocalServiceRegistry(ServiceRegistryLocator.locate());
+        init();
+    }
+
+    private void init() {
+        getInstanceListeners().add(SInstanceEventType.BEFORE_RUN_UPDATE_LISTENER, new SelectionValueValidationListener());
     }
 
     /**

@@ -69,4 +69,9 @@ public class StudioSpringConfiguration implements Loggable {
     public ServiceRegistry serviceRegistry() {
         return studioConfig.getServiceRegistry();
     }
+
+    @Bean
+    public StudioUserDetailsService userDetailsService(){
+        return studioConfig.getUserDetailsService();
+    }
 }

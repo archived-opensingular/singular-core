@@ -893,6 +893,7 @@ public abstract class SInstance implements SAttributeEnabled {
             listeners.add(SInstanceEventType.VALUE_CHANGED, this.eventCollector);
             listeners.add(SInstanceEventType.LIST_ELEMENT_ADDED, this.eventCollector);
             listeners.add(SInstanceEventType.LIST_ELEMENT_REMOVED, this.eventCollector);
+            listeners.add(SInstanceEventType.BEFORE_RUN_UPDATE_LISTENER, this.eventCollector);
         }
     }
 

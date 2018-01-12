@@ -21,6 +21,6 @@ public enum SInstanceEventType {
     ATTRIBUTE_CHANGED, //
     LIST_ELEMENT_ADDED, //
     LIST_ELEMENT_REMOVED, //
-
+    BEFORE_RUN_UPDATE_LISTENER, //
     ;
 }
