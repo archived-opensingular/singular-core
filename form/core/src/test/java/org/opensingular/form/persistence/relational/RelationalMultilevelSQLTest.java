@@ -3,7 +3,10 @@ package org.opensingular.form.persistence.relational;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.opensingular.form.*;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.sample.FormTestPackage;
 import org.opensingular.form.support.TestFormSupport;
 import org.opensingular.form.type.core.STypeInteger;
@@ -19,15 +22,12 @@ import static org.junit.Assert.assertNotNull;
 @FixMethodOrder
 public class RelationalMultilevelSQLTest extends TestFormSupport {
 
-    private STypePostoAtendimento postoAtendimento;
-
     @Inject
     private PostoAtendimentoRepository postoAtendimentoRepository;
 
     @Before
     public void setUp() {
         assertNotNull(postoAtendimentoRepository);
-        assertNotNull(postoAtendimento = SDictionary.create().getType(STypePostoAtendimento.class));
     }
 
     @Test
