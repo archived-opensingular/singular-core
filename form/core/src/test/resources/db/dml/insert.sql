@@ -1,0 +1,14 @@
+---------------------
+-- ITEM
+---------------------
+INSERT INTO DBFORM.TB_ITEM (ID_ITEM, DS_DESCRIPTION) VALUES (1, 'Item #1');
+INSERT INTO DBFORM.TB_ITEM (ID_ITEM, DS_DESCRIPTION) VALUES (2, 'Item #2');
+INSERT INTO DBFORM.TB_ITEM (ID_ITEM, DS_DESCRIPTION) VALUES (3, 'Item #3');
+
+------------------
+-- PARENT
+------------------
+INSERT INTO DBFORM.TB_PARENT (ID_PARENT, FK_ITEM, DS_DESCRIPTION) VALUES (1, 1, 'Parent Description');
+
+
+
