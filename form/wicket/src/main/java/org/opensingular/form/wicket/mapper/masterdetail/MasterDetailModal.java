@@ -81,7 +81,7 @@ class MasterDetailModal extends BFModalWindow {
                 MasterDetailModal.this.hide(target);
                 if (viewMode.isEdition()) {
                     WicketFormProcessing.processDependentTypes(this.getPage(), target, model.getObject());
-                    WicketFormProcessing.onFormSubmit((WebMarkupContainer) table, target, currentInstance, true);
+                    WicketFormProcessing.onFormSubmit((WebMarkupContainer) table, target, MasterDetailModal.this.getModel(), true);
                 }
             }
         };
