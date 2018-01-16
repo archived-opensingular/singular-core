@@ -20,6 +20,7 @@ package org.opensingular.studio.core.wicket;
 
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.head.filter.JavaScriptFilteredIntoFooterHeaderResponse;
 import org.apache.wicket.protocol.http.WebApplication;
@@ -28,6 +29,7 @@ import org.apache.wicket.request.Response;
 import org.apache.wicket.resource.loader.ClassStringResourceLoader;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
+import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.wicket.util.application.SingularAnnotatedMountScanner;
 import org.opensingular.lib.wicket.util.application.SkinnableApplication;
@@ -86,6 +88,15 @@ public class StudioApplication extends WebApplication implements SingularAdminAp
                                            boolean withMenu,
                                            SingularAdminTemplate adminTemplate) {
         return new StudioHeader(id);
+    }
+
+    @Override
+    public RuntimeConfigurationType getConfigurationType() {
+        if (SingularProperties.get().isFalse(SingularProperties.SINGULAR_DEV_MODE)) {
+            return RuntimeConfigurationType.DEPLOYMENT;
+        } else {
+            return RuntimeConfigurationType.DEVELOPMENT;
+        }
     }
 
     @Override
