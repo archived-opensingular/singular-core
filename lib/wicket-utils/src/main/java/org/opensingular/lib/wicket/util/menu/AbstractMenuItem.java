@@ -22,6 +22,7 @@ import org.opensingular.lib.commons.ui.Icon;
 public abstract class AbstractMenuItem extends Panel {
 
     protected String title;
+    protected String helpText;
     protected Icon   icon;
 
     public AbstractMenuItem(String id) {

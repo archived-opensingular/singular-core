@@ -109,7 +109,7 @@ public class SValidationFeedbackCompactPanel extends AbstractSValidationFeedback
                                 + "  });"
                                 + "$formGroup"
                                 + "  .hover("
-                                + "    function(){ console.log($span); $span.popover('show'); },"
+                                + "    function(){ $span.popover('show'); },"
                                 + "    function(){ $span.popover('hide'); });"
                                 + "})();"));
                     }
