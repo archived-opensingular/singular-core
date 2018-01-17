@@ -176,7 +176,7 @@ public class StudioPage extends SingularAdminTemplate {
                 return metronicMenuGroup;
             }
         }
-        return new MetronicMenuItem(menuEntry.getIcon(), menuEntry.getName(), null, menuEntry.getEndpoint());
+        return new MetronicMenuItem(menuEntry.getIcon(), menuEntry.getName(), menuEntry.getEndpoint());
     }
 
     @Override
