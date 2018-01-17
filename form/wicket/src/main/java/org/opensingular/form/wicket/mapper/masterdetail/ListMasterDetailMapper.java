@@ -27,6 +27,7 @@ import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 
@@ -74,7 +75,10 @@ public class ListMasterDetailMapper implements IWicketComponentMapper, ISInstanc
 
         currentExternal.appendTag("div", true, null, modal);
 
-        MasterDetailPanel masterDetailPanel = new MasterDetailPanel("panel", ctx, model, modal, view, instanceActionsProviders, currentConfirmation);
+        ConfirmationModal confirmationModal = new ConfirmationModal("confirmationModal");
+        currentConfirmation.appendTag("div", true, null, confirmationModal);
+
+        MasterDetailPanel masterDetailPanel = new MasterDetailPanel("panel", ctx, model, modal, view, instanceActionsProviders, confirmationModal);
         ctx.getContainer().appendTag("div", true, null, masterDetailPanel);
 
         modal.add($b.onEnterDelegate(modal.addButton, SINGULAR_PROCESS_EVENT));

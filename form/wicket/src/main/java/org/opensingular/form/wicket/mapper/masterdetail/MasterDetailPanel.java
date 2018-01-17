@@ -95,7 +95,7 @@ public class MasterDetailPanel extends Panel {
     private final MasterDetailModal         modal;
     private final SViewListByMasterDetail   view;
     private final SInstanceActionsProviders instanceActionsProviders;
-    private final BSContainer<?>            currentConfirmation;
+    private final ConfirmationModal         confirmationModal;
 
     private SingularFormWicket<?>           form;
     private WebMarkupContainer              head;
@@ -107,18 +107,17 @@ public class MasterDetailPanel extends Panel {
     private AjaxLink<?>                     addButton;
     private Label                           addButtonLabel;
     private SValidationFeedbackCompactPanel feedback;
-    private ConfirmationModal               confirmationModal;
 
     public MasterDetailPanel(String id, WicketBuildContext ctx, IModel<SIList<SInstance>> list, MasterDetailModal modal,
                              SViewListByMasterDetail view, SInstanceActionsProviders instanceActionsProviders,
-                             BSContainer<?> currentConfirmation) {
+                             ConfirmationModal confirmationModal) {
         super(id);
         this.ctx = ctx;
         this.list = list;
         this.modal = modal;
         this.view = view;
         this.instanceActionsProviders = instanceActionsProviders;
-        this.currentConfirmation = currentConfirmation;
+        this.confirmationModal = confirmationModal;
 
         createComponents();
         addComponents();
@@ -172,8 +171,6 @@ public class MasterDetailPanel extends Panel {
         table = newTable("table");
         feedback = ctx.createFeedbackCompactPanel("feedback");
 
-        confirmationModal = new ConfirmationModal("confirmationModal");
-        currentConfirmation.appendTag("div", true, null, confirmationModal);
     }
 
     private WebMarkupContainer newHead(String id) {
