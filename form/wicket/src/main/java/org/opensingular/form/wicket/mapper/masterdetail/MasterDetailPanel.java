@@ -21,7 +21,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
@@ -56,7 +55,6 @@ import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
-import org.opensingular.lib.commons.lambda.IBiConsumer;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.IPredicate;
@@ -307,11 +305,11 @@ public class MasterDetailPanel extends Panel {
 
     private IBSAction<SInstance> buildRemoveAction(IModel<? extends SInstance> model, WicketBuildContext ctx) {
         return (target, rowModel) -> {
-            IBiConsumer<AjaxRequestTarget, Form<?>> confirmationAction = (t,  f) -> {
+            IConsumer<AjaxRequestTarget> confirmationAction = t -> {
                 final SIList<?> list = ((SIList<?>) model.getObject());
                 list.remove(list.indexOf(rowModel.getObject()));
                 t.add(ctx.getContainer());
-                WicketFormProcessing.onFieldProcess(f, t, model);
+                WicketFormProcessing.onFieldProcess(MasterDetailPanel.this.form, t, model);
             };
             confirmationModal.show(target, confirmationAction);
         };

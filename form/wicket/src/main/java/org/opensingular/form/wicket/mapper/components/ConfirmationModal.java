@@ -23,7 +23,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.opensingular.lib.commons.lambda.IBiConsumer;
+import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 
@@ -37,7 +37,7 @@ public class ConfirmationModal extends Panel {
 
     protected AjaxButton confirmButton;
     protected AjaxButton cancelButton;
-    protected IBiConsumer<AjaxRequestTarget, Form<?>> confirmationAction;
+    protected IConsumer<AjaxRequestTarget> confirmationAction;
 
     public ConfirmationModal(String id) {
         super(id);
@@ -61,6 +61,7 @@ public class ConfirmationModal extends Panel {
                 cancelButton = (AjaxButton) new AjaxButton("cancel-btn", confirmationForm) {
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                        onCancel(target);
                         border.hide(target);
                     }
                 }.setDefaultFormProcessing(false));
@@ -71,10 +72,17 @@ public class ConfirmationModal extends Panel {
                 confirmButton = new AjaxButton("confirm-btn", confirmationForm) {
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                        confirmationAction.accept(target, form);
+                        onConfirm(target);
                         border.hide(target);
                     }
                 });
+    }
+
+    protected void onCancel(AjaxRequestTarget target) {
+    }
+
+    protected void onConfirm(AjaxRequestTarget target) {
+        confirmationAction.accept(target);
     }
 
     protected String getCancelButtonLabel() {
@@ -93,7 +101,7 @@ public class ConfirmationModal extends Panel {
         return new StringResourceModel("label.title.delete.item").getString();
     }
 
-    public void show(AjaxRequestTarget target, IBiConsumer<AjaxRequestTarget, Form<?>> confirmationAction) {
+    public void show(AjaxRequestTarget target, IConsumer<AjaxRequestTarget> confirmationAction) {
         this.confirmationAction = confirmationAction;
         border.show(target);
         target.appendJavaScript(Scripts.multipleModalBackDrop());

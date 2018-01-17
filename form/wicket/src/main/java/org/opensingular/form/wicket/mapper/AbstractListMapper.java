@@ -323,7 +323,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
             confirmationModal.show(target, this::removeItem);
         }
 
-        private void removeItem(AjaxRequestTarget target, Form<?> form) {
+        private void removeItem(AjaxRequestTarget target) {
             elementsView.removeItem(target, item);
             target.appendJavaScript(JQuery.$(this).append(".prop('disabled',true);"));
             if (elementsView.getModelObject().isEmpty()) {
