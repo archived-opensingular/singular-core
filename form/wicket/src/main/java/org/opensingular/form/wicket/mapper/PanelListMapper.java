@@ -36,6 +36,7 @@ import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.view.SViewListByForm;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackPanel;
+import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
@@ -85,6 +86,12 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
 
         ctx.configureContainer(label);
 
+        final BSContainer<?> currentConfirmation = new BSContainer<>("externalContainerConfirmacao");
+        ctx.getExternalContainer().appendTag("div", true, null, currentConfirmation);
+
+        final ConfirmationModal confirmationModal = new ConfirmationModal("confirmationModal");
+        currentConfirmation.appendTag("div", true, null, confirmationModal);
+
         return MetronicPanel.MetronicPanelBuilder.build(id,
                 (heading, form) -> {
                     heading.appendTag("span", new Label("_title", label));
@@ -120,7 +127,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
                             + "    </ul>");
 
                     final WebMarkupContainer container = new WebMarkupContainer("_u");
-                    final PanelElementsView elements = new PanelElementsView("_e", listModel, ctx, view, form, container);
+                    final PanelElementsView elements = new PanelElementsView("_e", listModel, ctx, view, form, container, confirmationModal);
                     final WebMarkupContainer empty = new WebMarkupContainer("_empty");
 
                 list
@@ -148,17 +155,19 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
         private final SViewListByForm view;
         private final Form<?> form;
         private final WicketBuildContext ctx;
+        private final ConfirmationModal confirmationModal;
 
         private PanelElementsView(String id,
                                   IModel<SIList<SInstance>> model,
                                   WicketBuildContext ctx,
                                   SViewListByForm view,
                                   Form<?> form,
-                                  WebMarkupContainer parentContainer) {
+                                  WebMarkupContainer parentContainer, ConfirmationModal confirmationModal) {
             super(id, model, parentContainer);
             this.ctx = ctx;
             this.view = view;
             this.form = form;
+            this.confirmationModal = confirmationModal;
         }
 
         @Override
@@ -210,7 +219,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
             final BSCol btnCell = btnGrid.newColInRow();
 
             if ((view != null) && view.isDeleteEnabled() && ctx.getViewMode().isEdition()) {
-                appendRemoverIconButton(this, form, item, btnCell).add($b.classAppender("pull-right"));
+                appendRemoverIconButton(this, form, item, btnCell, confirmationModal).add($b.classAppender("pull-right"));
             }
 
         }
@@ -222,8 +231,9 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
         }
     }
 
-    protected static RemoverButton appendRemoverIconButton(ElementsView elementsView, Form<?> form, Item<SInstance> item, BSContainer<?> cell) {
-        final RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item);
+    protected static RemoverButton appendRemoverIconButton(ElementsView elementsView, Form<?> form, Item<SInstance> item,
+                                                           BSContainer<?> cell, ConfirmationModal confirmationModal) {
+        final RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item, confirmationModal);
         cell
                 .newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + DefaultIcons.REMOVE + "' />")
                 .add(btn);
