@@ -64,15 +64,18 @@ public class ListMasterDetailMapper implements IWicketComponentMapper, ISInstanc
         final ViewMode                viewMode      = ctx.getViewMode();
         final BSContainer<?>          currentExternal = new BSContainer<>("externalContainerAtual");
         final BSContainer<?>          currentSibling = new BSContainer<>("externalContainerIrmao");
+        final BSContainer<?>          currentConfirmation = new BSContainer<>("externalContainerConfirmacao");
 
         ctx.getExternalContainer().appendTag("div", true, null, currentExternal);
         ctx.getExternalContainer().appendTag("div", true, null, currentSibling);
+        ctx.getExternalContainer().appendTag("div", true, null, currentConfirmation);
 
         final MasterDetailModal modal = new MasterDetailModal("mods", model, newItemLabelModel(model), ctx, viewMode, view, currentSibling);
 
         currentExternal.appendTag("div", true, null, modal);
 
-        ctx.getContainer().appendTag("div", true, null, new MasterDetailPanel("panel", ctx, model, modal, view, instanceActionsProviders));
+        MasterDetailPanel masterDetailPanel = new MasterDetailPanel("panel", ctx, model, modal, view, instanceActionsProviders, currentConfirmation);
+        ctx.getContainer().appendTag("div", true, null, masterDetailPanel);
 
         modal.add($b.onEnterDelegate(modal.addButton, SINGULAR_PROCESS_EVENT));
 
