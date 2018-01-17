@@ -25,6 +25,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.opensingular.lib.commons.lambda.IBiConsumer;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+import org.opensingular.lib.wicket.util.scripts.Scripts;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
@@ -95,5 +96,6 @@ public class ConfirmationModal extends Panel {
     public void show(AjaxRequestTarget target, IBiConsumer<AjaxRequestTarget, Form<?>> confirmationAction) {
         this.confirmationAction = confirmationAction;
         border.show(target);
+        target.appendJavaScript(Scripts.multipleModalBackDrop());
     }
 }
