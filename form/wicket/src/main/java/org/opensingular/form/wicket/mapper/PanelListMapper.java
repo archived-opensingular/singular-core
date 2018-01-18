@@ -17,7 +17,6 @@
 package org.opensingular.form.wicket.mapper;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -35,7 +34,6 @@ import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.view.SViewListByForm;
 import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.feedback.SValidationFeedbackPanel;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
@@ -134,13 +132,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
                 content.getParent()
                     .add(dependsOnModifier(listModel));
             },
-            (f, form) -> {
-                buildFooter(f, form, ctx);
-                SValidationFeedbackPanel feedback = ctx.createFeedbackPanel("feedback").setShowBox(true);
-                AttributeAppender style = $b.attrAppender("style", "margin-top: 15px", ";");
-                feedback.add(style);
-                f.appendTag("div", feedback);
-            });
+            (f, form) -> buildFooter(f, form, ctx));
 
     }
 

@@ -20,6 +20,7 @@ import org.apache.commons.collections.Factory;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.DefaultItemReuseStrategy;
@@ -32,6 +33,7 @@ import org.opensingular.form.SType;
 import org.opensingular.form.view.AbstractSViewListWithControls;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.feedback.SValidationFeedbackPanel;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.form.wicket.repeater.PathInstanceItemReuseStrategy;
@@ -44,6 +46,7 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
+import org.opensingular.lib.wicket.util.util.Shortcuts;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -103,6 +106,11 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                                       WicketBuildContext ctx) {
         Factory createAddButton = () -> new AddButton("_add", form, (IModel<SIList<SInstance>>) ctx.getModel());
         buildFooter(footer, ctx, createAddButton);
+
+        SValidationFeedbackPanel feedback = ctx.createFeedbackPanel("feedback").setShowBox(true);
+        AttributeAppender style = Shortcuts.$b.attrAppender("style", "margin-top: 15px", ";");
+        feedback.add(style);
+        footer.appendTag("div", feedback);
     }
 
     public static void buildFooter(BSContainer<?> footer, WicketBuildContext ctx, Factory createAddButton) {
