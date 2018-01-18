@@ -39,6 +39,7 @@ import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.panel.BSPanelGrid;
 import org.opensingular.form.wicket.panel.BSPanelGrid.BSTab;
 import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.wicket.util.scripts.Scripts;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -120,7 +121,9 @@ public class TabMapper implements IWicketComponentMapper {
             @Override
             public void updateTab(BSTab tab, List<BSTab> tabs) {
                 renderTab(tab.getSubtree(), this, ctx);
-                ctx.updateExternalContainer(RequestCycle.get().find(AjaxRequestTarget.class));
+                AjaxRequestTarget ajaxRequestTarget = RequestCycle.get().find(AjaxRequestTarget.class);
+                ctx.updateExternalContainer(ajaxRequestTarget);
+                ajaxRequestTarget.appendJavaScript(Scripts.scrollToTop());
             }
 
             @Override

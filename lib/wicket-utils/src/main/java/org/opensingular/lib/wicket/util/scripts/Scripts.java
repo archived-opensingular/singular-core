@@ -55,4 +55,8 @@ public class Scripts {
         js += " })(10050); ";
         return js;
     }
+
+    public static String scrollToTop() {
+        return "$('html, body').animate({ scrollTop: 0 }, 'slow');";
+    }
 }
