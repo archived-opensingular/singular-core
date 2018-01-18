@@ -49,7 +49,6 @@ import org.opensingular.form.wicket.mapper.AbstractListMapper;
 import org.opensingular.form.wicket.mapper.MapperCommons;
 import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppender;
 import org.opensingular.form.wicket.mapper.common.util.ColumnType;
-import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
@@ -93,7 +92,6 @@ public class MasterDetailPanel extends Panel {
     private final MasterDetailModal         modal;
     private final SViewListByMasterDetail   view;
     private final SInstanceActionsProviders instanceActionsProviders;
-    private final ConfirmationModal         confirmationModal;
 
     private SingularFormWicket<?>           form;
     private WebMarkupContainer              head;
@@ -107,15 +105,13 @@ public class MasterDetailPanel extends Panel {
     private SValidationFeedbackCompactPanel feedback;
 
     public MasterDetailPanel(String id, WicketBuildContext ctx, IModel<SIList<SInstance>> list, MasterDetailModal modal,
-                             SViewListByMasterDetail view, SInstanceActionsProviders instanceActionsProviders,
-                             ConfirmationModal confirmationModal) {
+                             SViewListByMasterDetail view, SInstanceActionsProviders instanceActionsProviders) {
         super(id);
         this.ctx = ctx;
         this.list = list;
         this.modal = modal;
         this.view = view;
         this.instanceActionsProviders = instanceActionsProviders;
-        this.confirmationModal = confirmationModal;
 
         createComponents();
         addComponents();
@@ -311,7 +307,7 @@ public class MasterDetailPanel extends Panel {
                 t.add(ctx.getContainer());
                 WicketFormProcessing.onFieldProcess(MasterDetailPanel.this.form, t, model);
             };
-            confirmationModal.show(target, confirmationAction);
+            ctx.getConfirmationModal().show(target, confirmationAction);
         };
     }
 

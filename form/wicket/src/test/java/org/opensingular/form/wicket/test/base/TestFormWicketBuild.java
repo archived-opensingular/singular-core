@@ -87,7 +87,7 @@ public class TestFormWicketBuild  {
 
         IModel<SIString> mCidade = new SInstanceRootModel<SIString>(instance);
         mCidade.getObject().setValue("Brasilia");
-        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCidade);
+        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCidade, null);
         ctx.build(ViewMode.EDIT);
 
         tester.startComponentInPage(testPanel);
@@ -111,7 +111,7 @@ public class TestFormWicketBuild  {
         });
 
         IModel<SIComposite> mCurriculo = new SInstanceRootModel<SIComposite>(instance);
-        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCurriculo);
+        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCurriculo, null);
 //        UIBuilderWicket.buildForEdit(ctx, mCurriculo);
 
 

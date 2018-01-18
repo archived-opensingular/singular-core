@@ -71,8 +71,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.apache.commons.lang3.ObjectUtils.*;
-import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet.*;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet.PARAM_NAME;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
@@ -101,7 +101,8 @@ public class FileUploadListPanel extends Panel implements Loggable {
     private AttachmentKey uploadId;
 
     @SuppressWarnings("unchecked")
-    public FileUploadListPanel(String id, IModel<SIList<SIAttachment>> model, WicketBuildContext ctx, IConsumer<BSContainer<?>> sInstanceActionsContainerConfigurer) {
+    public FileUploadListPanel(String id, IModel<SIList<SIAttachment>> model, WicketBuildContext ctx,
+                               IConsumer<BSContainer<?>> sInstanceActionsContainerConfigurer) {
         super(id, model);
         this.ctx = ctx;
 
@@ -385,11 +386,15 @@ public class FileUploadListPanel extends Panel implements Loggable {
             }
 
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                super.onSubmit(target, form);
-                SIAttachment file = itemModel.getObject();
-                removeFileFrom(FilesListView.this.getAttackmentList(), file.getFileId());
-                target.add(FileUploadListPanel.this);
-                target.add(fileList);
+                IConsumer<AjaxRequestTarget> confirmationAction = (t) -> {
+                    super.onSubmit(t, form);
+                    SIAttachment file = itemModel.getObject();
+                    removeFileFrom(FilesListView.this.getAttackmentList(), file.getFileId());
+                    t.add(FileUploadListPanel.this);
+                    t.add(fileList);
+                };
+
+                ctx.getConfirmationModal().show(target, confirmationAction);
             }
 
             @Override

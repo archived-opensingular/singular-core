@@ -86,12 +86,6 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
 
         ctx.configureContainer(label);
 
-        final BSContainer<?> currentConfirmation = new BSContainer<>("externalContainerConfirmacao");
-        ctx.getExternalContainer().appendTag("div", true, null, currentConfirmation);
-
-        final ConfirmationModal confirmationModal = new ConfirmationModal("confirmationModal");
-        currentConfirmation.appendTag("div", true, null, confirmationModal);
-
         return MetronicPanel.MetronicPanelBuilder.build(id,
                 (heading, form) -> {
                     heading.appendTag("span", new Label("_title", label));
@@ -127,7 +121,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
                             + "    </ul>");
 
                     final WebMarkupContainer container = new WebMarkupContainer("_u");
-                    final PanelElementsView elements = new PanelElementsView("_e", listModel, ctx, view, form, container, confirmationModal);
+                    final PanelElementsView elements = new PanelElementsView("_e", listModel, ctx, view, form, container);
                     final WebMarkupContainer empty = new WebMarkupContainer("_empty");
 
                 list
@@ -155,19 +149,17 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
         private final SViewListByForm view;
         private final Form<?> form;
         private final WicketBuildContext ctx;
-        private final ConfirmationModal confirmationModal;
 
         private PanelElementsView(String id,
                                   IModel<SIList<SInstance>> model,
                                   WicketBuildContext ctx,
                                   SViewListByForm view,
                                   Form<?> form,
-                                  WebMarkupContainer parentContainer, ConfirmationModal confirmationModal) {
+                                  WebMarkupContainer parentContainer) {
             super(id, model, parentContainer);
             this.ctx = ctx;
             this.view = view;
             this.form = form;
-            this.confirmationModal = confirmationModal;
         }
 
         @Override
@@ -219,7 +211,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
             final BSCol btnCell = btnGrid.newColInRow();
 
             if ((view != null) && view.isDeleteEnabled() && ctx.getViewMode().isEdition()) {
-                appendRemoverIconButton(this, form, item, btnCell, confirmationModal).add($b.classAppender("pull-right"));
+                appendRemoverIconButton(this, form, item, btnCell, ctx.getConfirmationModal()).add($b.classAppender("pull-right"));
             }
 
         }
@@ -227,7 +219,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
         private void buildBody(Item<SInstance> item, BSGrid grid) {
             final BSRow body = grid.newRow();
             body.add($b.classAppender("list-item-body"));
-            ctx.createChild(body.newCol(12), item.getModel()).build();
+            ctx.createChild(body.newCol(12), item.getModel(), ctx.getConfirmationModal()).build();
         }
     }
 

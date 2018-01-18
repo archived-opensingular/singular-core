@@ -41,6 +41,7 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.WicketBuildListeners;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.lib.commons.lambda.ISupplier;
@@ -262,8 +263,11 @@ public class SingularFormPanel extends Panel {
             externalContainer = bodyContainer;
         }
 
+        final ConfirmationModal confirmationModal = new ConfirmationModal("confirmationModal");
+        externalContainer.appendTag("div", true, null, confirmationModal);
+
         // Chama o builder wicket para construção do formulário
-        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), externalContainer, getInstanceModel());
+        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), externalContainer, getInstanceModel(), confirmationModal);
         ctx.setAnnotationMode(getAnnotationMode());
         ctx.setNested(nested);
         ctx.setPreFormPanelFactory(preFormPanelFactory);

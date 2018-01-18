@@ -159,7 +159,7 @@ class MasterDetailModal extends BFModalWindow {
             viewModeModal = ViewMode.READ_ONLY;
         }
 
-        WicketBuildContext context = ctx.createChild(modalBody, containerExterno, currentInstance);
+        WicketBuildContext context = ctx.createChild(modalBody, containerExterno, currentInstance, ctx.getConfirmationModal());
 
         context.build(viewModeModal);
 

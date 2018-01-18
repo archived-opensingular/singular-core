@@ -27,7 +27,6 @@ import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
-import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 
@@ -65,20 +64,15 @@ public class ListMasterDetailMapper implements IWicketComponentMapper, ISInstanc
         final ViewMode                viewMode      = ctx.getViewMode();
         final BSContainer<?>          currentExternal = new BSContainer<>("externalContainerAtual");
         final BSContainer<?>          currentSibling = new BSContainer<>("externalContainerIrmao");
-        final BSContainer<?>          currentConfirmation = new BSContainer<>("externalContainerConfirmacao");
 
         ctx.getExternalContainer().appendTag("div", true, null, currentExternal);
         ctx.getExternalContainer().appendTag("div", true, null, currentSibling);
-        ctx.getExternalContainer().appendTag("div", true, null, currentConfirmation);
 
         final MasterDetailModal modal = new MasterDetailModal("mods", model, newItemLabelModel(model), ctx, viewMode, view, currentSibling);
 
         currentExternal.appendTag("div", true, null, modal);
 
-        ConfirmationModal confirmationModal = new ConfirmationModal("confirmationModal");
-        currentConfirmation.appendTag("div", true, null, confirmationModal);
-
-        MasterDetailPanel masterDetailPanel = new MasterDetailPanel("panel", ctx, model, modal, view, instanceActionsProviders, confirmationModal);
+        MasterDetailPanel masterDetailPanel = new MasterDetailPanel("panel", ctx, model, modal, view, instanceActionsProviders);
         ctx.getContainer().appendTag("div", true, null, masterDetailPanel);
 
         modal.add($b.onEnterDelegate(modal.addButton, SINGULAR_PROCESS_EVENT));

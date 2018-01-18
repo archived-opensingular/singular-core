@@ -16,14 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static java.util.stream.Collectors.*;
-import static org.apache.commons.lang3.ObjectUtils.*;
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
-
-import java.util.List;
-import java.util.Set;
-
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -49,6 +41,15 @@ import org.opensingular.form.wicket.panel.BSPanelGrid.BSTab;
 import org.opensingular.lib.commons.lambda.ISupplier;
 
 import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class TabMapper implements IWicketComponentMapper {
 
@@ -250,7 +251,7 @@ public class TabMapper implements IWicketComponentMapper {
     private void renderTab(List<String> typeNames, BSPanelGrid panel, WicketBuildContext ctx) {
         for (String typeName : typeNames) {
             SInstanceFieldModel<SInstance> subtree = new SInstanceFieldModel<>(ctx.getModel(), typeName);
-            WicketBuildContext childContext = ctx.createChild(panel.getContainer().newGrid().newColInRow(), subtree);
+            WicketBuildContext childContext = ctx.createChild(panel.getContainer().newGrid().newColInRow(), subtree, ctx.getConfirmationModal());
             childContext.init(ctx.getViewMode());
             childContext.build();
             childContext.initContainerBehavior();
