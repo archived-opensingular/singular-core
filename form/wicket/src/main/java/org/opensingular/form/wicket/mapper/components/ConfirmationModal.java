@@ -86,19 +86,19 @@ public class ConfirmationModal extends Panel {
     }
 
     protected String getCancelButtonLabel() {
-        return new StringResourceModel("label.button.cancel").getString();
+        return new StringResourceModel("label.button.cancel", this).getString();
     }
 
     protected String getConfirmButtonLabel() {
-        return new StringResourceModel("label.button.delete").getString();
+        return new StringResourceModel("label.button.delete", this).getString();
     }
 
     protected String getConfirmationMessage() {
-        return new StringResourceModel("label.delete.message").getString();
+        return new StringResourceModel("label.delete.message", this).getString();
     }
 
     protected String getTitleText() {
-        return new StringResourceModel("label.title.delete.item").getString();
+        return new StringResourceModel("label.title.delete.item", this).getString();
     }
 
     public void show(AjaxRequestTarget target, IConsumer<AjaxRequestTarget> confirmationAction) {
