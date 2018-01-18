@@ -42,6 +42,7 @@ import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
+import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
@@ -86,11 +87,17 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             return;
         }
 
+        final BSContainer<?> currentConfirmation = new BSContainer<>("externalContainerConfirmacao");
+        ctx.getExternalContainer().appendTag("div", true, null, currentConfirmation);
+
+        final ConfirmationModal confirmationModal = new ConfirmationModal("confirmationModal");
+        currentConfirmation.appendTag("div", true, null, confirmationModal);
+
         ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, Boolean.TRUE);
-        ctx.getContainer().appendComponent((String id) -> buildPanel(ctx, id));
+        ctx.getContainer().appendComponent((String id) -> buildPanel(ctx, id, confirmationModal));
     }
 
-    private TableListPanel buildPanel(WicketBuildContext ctx, String id) {
+    private TableListPanel buildPanel(WicketBuildContext ctx, String id, ConfirmationModal confirmationModal) {
 
         final IModel<SIList<SInstance>> list = new ReadOnlyCurrentInstanceModel<>(ctx);
         final SViewListByTable view = (SViewListByTable) ctx.getView();
@@ -103,7 +110,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
 
         return TableListPanel.TableListPanelBuilder.build(id,
             (h, form) -> buildHeader(h, form, list, ctx, view, isEdition),
-            (c, form) -> builContent(c, form, list, ctx, view, isEdition),
+            (c, form) -> builContent(c, form, list, ctx, view, isEdition, confirmationModal),
             (f, form) -> buildFooter(f, form, ctx));
     }
 
@@ -141,7 +148,8 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
     }
 
     private void builContent(BSContainer<?> content, Form<?> form, IModel<SIList<SInstance>> list,
-        WicketBuildContext ctx, SViewListByTable view, boolean isEdition) {
+                             WicketBuildContext ctx, SViewListByTable view, boolean isEdition,
+                             ConfirmationModal confirmationModal) {
 
         final String markup = ""
             + " <div class='list-table-empty' wicket:id='empty-content'>                                             "
@@ -173,7 +181,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
 
         final BSTSection tableHeader = new BSTSection("_h").setTagName("thead");
         final WebMarkupContainer tableBody = new WebMarkupContainer("_b");
-        final ElementsView tableRows = new TableElementsView("_e", list, ctx, form, tableBody);
+        final ElementsView tableRows = new TableElementsView("_e", list, ctx, form, tableBody, confirmationModal);
         final WebMarkupContainer tableFooter = new WebMarkupContainer("_ft");
         final BSContainer<?> footerBody = new BSContainer<>("_fb");
         final SType<SInstance> elementsType = list.getObject().getElementsType();
@@ -243,13 +251,16 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         private final WicketBuildContext ctx;
         private final SView              view;
         private final Form<?>            form;
+        private final ConfirmationModal  confirmationModal;
 
-        private TableElementsView(String id, IModel<SIList<SInstance>> model, WicketBuildContext ctx, Form<?> form, WebMarkupContainer parentContainer) {
+        private TableElementsView(String id, IModel<SIList<SInstance>> model, WicketBuildContext ctx, Form<?> form,
+                                  WebMarkupContainer parentContainer, ConfirmationModal confirmationModal) {
             super(id, model, parentContainer);
             super.setRenderedChildFunction(c -> ((MarkupContainer) c).get("_r"));
             this.ctx = ctx;
             this.view = ctx.getView();
             this.form = form;
+            this.confirmationModal = confirmationModal;
         }
 
         @Override
@@ -294,7 +305,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             if (viewListByTable.isDeleteEnabled() && ctx.getViewMode().isEdition()) {
                 final BSTDataCell actionColumn = row.newCol();
                 actionColumn.add($b.attrAppender("style", "width:20px", ";"));
-                appendRemoverButton(this, form, item, actionColumn);
+                appendRemoverButton(this, form, item, actionColumn, confirmationModal);
             }
 
             item.add(row);

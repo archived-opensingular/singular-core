@@ -49,6 +49,7 @@ import org.opensingular.form.wicket.mapper.AbstractListMapper;
 import org.opensingular.form.wicket.mapper.MapperCommons;
 import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppender;
 import org.opensingular.form.wicket.mapper.common.util.ColumnType;
+import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
@@ -81,7 +82,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.opensingular.form.wicket.IWicketComponentMapper.*;
+import static org.opensingular.form.wicket.IWicketComponentMapper.HIDE_LABEL;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
@@ -92,6 +93,7 @@ public class MasterDetailPanel extends Panel {
     private final MasterDetailModal         modal;
     private final SViewListByMasterDetail   view;
     private final SInstanceActionsProviders instanceActionsProviders;
+    private final ConfirmationModal         confirmationModal;
 
     private SingularFormWicket<?>           form;
     private WebMarkupContainer              head;
@@ -104,13 +106,16 @@ public class MasterDetailPanel extends Panel {
     private Label                           addButtonLabel;
     private SValidationFeedbackCompactPanel feedback;
 
-    public MasterDetailPanel(String id, WicketBuildContext ctx, IModel<SIList<SInstance>> list, MasterDetailModal modal, SViewListByMasterDetail view, SInstanceActionsProviders instanceActionsProviders) {
+    public MasterDetailPanel(String id, WicketBuildContext ctx, IModel<SIList<SInstance>> list, MasterDetailModal modal,
+                             SViewListByMasterDetail view, SInstanceActionsProviders instanceActionsProviders,
+                             ConfirmationModal confirmationModal) {
         super(id);
         this.ctx = ctx;
         this.list = list;
         this.modal = modal;
         this.view = view;
         this.instanceActionsProviders = instanceActionsProviders;
+        this.confirmationModal = confirmationModal;
 
         createComponents();
         addComponents();
@@ -163,6 +168,7 @@ public class MasterDetailPanel extends Panel {
         addButtonLabel = new Label("addButtonLabel", Model.of(AbstractListMapper.defineLabel(ctx)));
         table = newTable("table");
         feedback = ctx.createFeedbackCompactPanel("feedback");
+
     }
 
     private WebMarkupContainer newHead(String id) {
@@ -299,10 +305,13 @@ public class MasterDetailPanel extends Panel {
 
     private IBSAction<SInstance> buildRemoveAction(IModel<? extends SInstance> model, WicketBuildContext ctx) {
         return (target, rowModel) -> {
-            final SIList<?> list = ((SIList<?>) model.getObject());
-            list.remove(list.indexOf(rowModel.getObject()));
-            target.add(ctx.getContainer());
-            WicketFormProcessing.onFieldProcess(form, target, model);
+            IConsumer<AjaxRequestTarget> confirmationAction = t -> {
+                final SIList<?> list = ((SIList<?>) model.getObject());
+                list.remove(list.indexOf(rowModel.getObject()));
+                t.add(ctx.getContainer());
+                WicketFormProcessing.onFieldProcess(MasterDetailPanel.this.form, t, model);
+            };
+            confirmationModal.show(target, confirmationAction);
         };
     }
 

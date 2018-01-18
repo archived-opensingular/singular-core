@@ -93,14 +93,13 @@ public class SValidationFeedbackCompactPanel extends AbstractSValidationFeedback
                             .map(ValidationError::getMessage)
                             .collect(joining("</li><li>", "<ul class='list-unstyled'><li>", "</li></ul>"));
                     if (messages.size() > 1) {
-						//FIXME esta com problema ao visualizar os baloes, ajustar.
                         response.render(OnDomReadyHeaderItem.forScript(""
                                 + "(function(){"
                                 + "'use strict';"
                                 + "var $feedback = " + JQuery.$(component) + ";"
                                 + "var $formGroup = $feedback.parent();"
-                                + "var $input = $formGroup.find(':input:first');"
-                                + "$input"
+                                + "var $span = $feedback.find('span span');"
+                                + "$span"
                                 + "  .data('content', '" + JavaScriptUtils.javaScriptEscape(errors) + "')"
                                 + "  .popover({"
                                 + "    'container':'body',"
@@ -110,8 +109,8 @@ public class SValidationFeedbackCompactPanel extends AbstractSValidationFeedback
                                 + "  });"
                                 + "$formGroup"
                                 + "  .hover("
-                                + "    function(){ console.log($input); $input.popover('show'); },"
-                                + "    function(){ $input.popover('hide'); });"
+                                + "    function(){ $span.popover('show'); },"
+                                + "    function(){ $span.popover('hide'); });"
                                 + "})();"));
                     }
                 }

@@ -24,9 +24,8 @@ import org.opensingular.form.validation.InstanceValidator;
 
 import java.util.function.Predicate;
 
-
 /**
- * Classe com valodadores comuns de string.
+ * Classe com validadores comuns de string.
  */
 public class StringValidators {
 

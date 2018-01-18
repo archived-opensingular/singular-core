@@ -99,7 +99,7 @@ public abstract class AbstractFlowInstanceEntity<USER extends SUser, FLOW_VERSIO
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "flowInstance", cascade = CascadeType.REMOVE)
     private List<USER_ROLE> roles;
 
-    @OrderBy(clause = "CO_INSTANCIA_TAREFA, DT_INICIO asc")
+    @OrderBy(clause = "DT_INICIO asc")
     @OneToMany(mappedBy = "flowInstance", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<TASK_INSTANCE> tasks;
 
