@@ -476,6 +476,8 @@
         <sonar.issue.ignore.multicriteria.s56.resourceKey>**/SpringFieldValueFactory.java</sonar.issue.ignore.multicriteria.s56.resourceKey>
         <sonar.issue.ignore.multicriteria.s57.ruleKey>squid:S1166</sonar.issue.ignore.multicriteria.s57.ruleKey>
         <sonar.issue.ignore.multicriteria.s57.resourceKey>**/LazyInitProxyFactory.java</sonar.issue.ignore.multicriteria.s57.resourceKey>
+        <sonar.issue.ignore.multicriteria.s58.ruleKey>findsecbugs:SQL_INJECTION_JDBC</sonar.issue.ignore.multicriteria.s58.ruleKey>
+        <sonar.issue.ignore.multicriteria.s58.resourceKey>**/RelationalDatabaseHibernate.java</sonar.issue.ignore.multicriteria.s58.resourceKey>
 
         <!-- Sonar -->
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
