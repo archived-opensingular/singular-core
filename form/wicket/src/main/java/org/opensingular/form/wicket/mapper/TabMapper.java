@@ -74,10 +74,12 @@ public class TabMapper implements IWicketComponentMapper {
 
         SIComposite instance = (SIComposite) ctx.getModel().getObject();
         for (SViewTab.STab tab : tabView.getTabs()) {
-            defineTabIconCss(ctx, instance, tab.getTypesNames());
-            IModel<SInstance> baseInstanceModel = (IModel<SInstance>) ctx.getModel();
-            BSPanelGrid.BSTab t = panel.addTab(tab.getId(), tab.getTitle(), tab.getTypesNames(), baseInstanceModel);
-            t.iconClass((t1, m) -> defineTabIconCss(ctx, (SIComposite) m.getObject(), t1.getSubtree()));
+            if (tab.isVisible(instance)) {
+                defineTabIconCss(ctx, instance, tab.getTypesNames());
+                IModel<SInstance> baseInstanceModel = (IModel<SInstance>) ctx.getModel();
+                BSPanelGrid.BSTab t = panel.addTab(tab.getId(), tab.getTitle(), tab.getTypesNames(), baseInstanceModel);
+                t.iconClass((t1, m) -> defineTabIconCss(ctx, (SIComposite) m.getObject(), t1.getSubtree()));
+            }
         }
 
         final IModel<String> label = $m.ofValue(trimToEmpty(instance.asAtr().getLabel()));
