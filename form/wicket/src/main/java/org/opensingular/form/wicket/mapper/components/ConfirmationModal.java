@@ -58,7 +58,7 @@ public class ConfirmationModal extends Panel {
 
     protected void addCancelButton() {
         border.addButton(BSModalBorder.ButtonStyle.CANCEL, $m.get(this::getCancelButtonLabel),
-                cancelButton = (AjaxButton) new AjaxButton("cancel-btn", confirmationForm) {
+                cancelButton = (AjaxButton) new AjaxButton("modal-cancel-btn", confirmationForm) {
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         onCancel(target);
@@ -69,7 +69,7 @@ public class ConfirmationModal extends Panel {
 
     protected void addConfirmButton() {
         border.addButton(BSModalBorder.ButtonStyle.CONFIRM, $m.get(this::getConfirmButtonLabel),
-                confirmButton = new AjaxButton("confirm-btn", confirmationForm) {
+                confirmButton = new AjaxButton("modal-confirm-btn", confirmationForm) {
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         onConfirm(target);
