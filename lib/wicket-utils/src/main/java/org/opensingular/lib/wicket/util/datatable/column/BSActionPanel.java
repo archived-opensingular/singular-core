@@ -16,10 +16,6 @@
 
 package org.opensingular.lib.wicket.util.datatable.column;
 
-import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
-
-import java.io.Serializable;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -29,14 +25,18 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
-
 import org.opensingular.lib.commons.lambda.IBiFunction;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
-import org.opensingular.lib.wicket.util.resource.IconeView;
+import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 import org.opensingular.lib.wicket.util.datatable.IBSAction;
-import org.opensingular.lib.commons.ui.Icon;
+import org.opensingular.lib.wicket.util.resource.IconeView;
+
+import java.io.Serializable;
+
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class BSActionPanel<T> extends Panel {
 
@@ -71,7 +71,13 @@ public class BSActionPanel<T> extends Panel {
         }
 
         if (link.get(ICONE_ID) == null) {
-            link.add(new IconeView(ICONE_ID, actionConfig.iconeModel, actionConfig.iconeStyle, actionConfig.iconeClass));
+            IModel<Icon> iconModel;
+            if (actionConfig.iconFunction != null) {
+                iconModel = actionConfig.iconFunction.apply(getModel());
+            } else {
+                iconModel = actionConfig.iconeModel;
+            }
+            link.add(new IconeView(ICONE_ID, iconModel, actionConfig.iconeStyle, actionConfig.iconeClass));
         }
 
         if (actionConfig.labelModel != null) {
@@ -161,12 +167,18 @@ public class BSActionPanel<T> extends Panel {
         protected IModel<String> styleClasses = $m.ofValue("btn btn-link btn-xs black md-skip");
         protected IModel<String>               style;
         protected IFunction<IModel<T>, String> titleFunction;
+        protected IFunction<IModel<T>, IModel<Icon>> iconFunction;
         protected boolean withText = false;
         protected IBiFunction<String, IModel<T>, MarkupContainer> linkFactory;
         protected IFunction<IModel<T>, Boolean> visibleFor = m -> Boolean.TRUE;
 
         public ActionConfig<T> labelModel(IModel<?> labelModel) {
             this.labelModel = labelModel;
+            return this;
+        }
+
+        public ActionConfig<T> iconFunction(IFunction<IModel<T>, IModel<Icon>> iconFunction) {
+            this.iconFunction = iconFunction;
             return this;
         }
 

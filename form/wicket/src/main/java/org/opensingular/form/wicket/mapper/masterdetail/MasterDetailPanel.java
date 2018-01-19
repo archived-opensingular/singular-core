@@ -288,7 +288,7 @@ public class MasterDetailPanel extends Panel {
             ac.appendAction(buildShowErrorsActionConfig(model), buildShowErrorsAction());
 
             if (ctx.getAnnotationMode().enabled())
-                ac.appendAction(buildShowAnnotationsActionConfig(model), buildViewOrEditAction(modal, ctx));
+                ac.appendAction(buildShowAnnotationsActionConfig(), buildViewOrEditAction(modal, ctx));
         });
     }
 
@@ -367,26 +367,28 @@ public class MasterDetailPanel extends Panel {
         };
     }
 
-    private BSActionPanel.ActionConfig<SInstance> buildShowAnnotationsActionConfig(IModel<? extends SInstance> model) {
+    private BSActionPanel.ActionConfig<SInstance> buildShowAnnotationsActionConfig() {
         IPredicate<SInstance> hasAnyRefusal = it -> it.asAtrAnnotation().hasAnyRefusal();
         IPredicate<SInstance> hasAnyAnnotable = it -> it.asAtrAnnotation().hasAnyAnnotable();
         IPredicate<SInstance> hasAnyAnnotation = it -> it.asAtrAnnotation().hasAnyAnnotationOnTree();
         //@formatter:off
         IFunction<SInstance, String> titleFunc = it -> 
-            hasAnyRefusal   .test(it) ? "possui anotação rejeitada"
-          : hasAnyAnnotation.test(it) ? "possui anotação"
-          : hasAnyAnnotable .test(it) ? "possui anotável"
+            hasAnyRefusal   .test(it) ? "Possui anotação rejeitada"
+          : hasAnyAnnotation.test(it) ? "Possui anotação"
+          : hasAnyAnnotable .test(it) ? "Possui anotável"
           : null;
 
-        IModel<Icon> iconModel = IMappingModel.of(model).map(it -> 
+        IFunction<SInstance, IModel<Icon>> iconFunc = it ->
+            $m.ofValue(
             hasAnyRefusal   .test(it) ? Icon.of("annotation-icon annotation-icon-rejected")
           : hasAnyAnnotation.test(it) ? Icon.of("annotation-icon annotation-icon-approved")
           : hasAnyAnnotable .test(it) ? Icon.of("annotation-icon annotation-icon-empty")
-          : null);
+          : null
+        );
         //@formatter:on
 
         return new BSActionPanel.ActionConfig<SInstance>()
-            .iconeModel(iconModel)
+            .iconFunction(rowModel -> iconFunc.apply(rowModel.getObject()))
             .titleFunction(rowModel -> titleFunc.apply(rowModel.getObject()))
             .style($m.ofValue("line-height:1em; font-size: 1em;"));
     }
