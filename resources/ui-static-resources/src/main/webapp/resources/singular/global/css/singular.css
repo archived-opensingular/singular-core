@@ -29,3 +29,6 @@
     text-align: center;
     display: table-cell;
     padding-top: 50px; } }
+
+.fa-hover:hover {
+  color: #40BAA7; }
