@@ -16,10 +16,6 @@
 
 package org.opensingular.form.wicket.feedback;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.StyleAttributeModifier;
 import org.apache.wicket.behavior.Behavior;
@@ -33,6 +29,10 @@ import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.joining;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
@@ -110,6 +110,9 @@ public class SValidationFeedbackCompactPanel extends AbstractSValidationFeedback
                                 + "$formGroup"
                                 + "  .hover("
                                 + "    function(){ $span.popover('show'); },"
+                                + "    function(){ $span.popover('hide'); });"
+                                + "$feedback"
+                                + "  .on('remove', "
                                 + "    function(){ $span.popover('hide'); });"
                                 + "})();"));
                     }
