@@ -66,7 +66,7 @@ public class BasicRelationalMapper implements RelationalMapper {
 
 	public PersistenceStrategy persistenceStrategy(SType<?> field) {
 		PersistenceStrategy result = PersistenceStrategy.COLUMN;
-		if (column(field) == null && foreignColumn(field) == null) {
+		if (column(field) == null && foreignColumn(field) == null || field.isComposite()) {
 			if (table(field) != null || RelationalSQL.isListWithTableBound(field)) {
 				result = PersistenceStrategy.TABLE;
 			}

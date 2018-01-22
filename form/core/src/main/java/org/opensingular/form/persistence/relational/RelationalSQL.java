@@ -16,28 +16,15 @@
 
 package org.opensingular.form.persistence.relational;
 
-import static org.opensingular.form.persistence.relational.RelationalColumnConverter.ASPECT_RELATIONAL_CONV;
-import static org.opensingular.form.persistence.relational.RelationalMapper.ASPECT_RELATIONAL_MAP;
-import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.COUNT;
-import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.DISTINCT;
-import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.NONE;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.StringJoiner;
-
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.SingularFormException;
+import org.opensingular.form.*;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy;
+
+import java.util.*;
+
+import static org.opensingular.form.persistence.relational.RelationalColumnConverter.ASPECT_RELATIONAL_CONV;
+import static org.opensingular.form.persistence.relational.RelationalMapper.ASPECT_RELATIONAL_MAP;
+import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.*;
 
 /**
  * Abstract class for relational SQL builders.
@@ -164,8 +151,7 @@ public abstract class RelationalSQL {
             fieldName = foreignColumn.getForeignColumn();
         }
         String tableName = table(tableContext);
-        SInstance tupleKeyRef = tupleKeyRef(instance);
-        Object value = getFieldValue(tableName, tupleKeyRef, fieldName, fromList);
+        Object value = getFieldValue(tableName, fieldName, fromList);
         Optional<RelationalColumnConverter> converter = aspectRelationalColumnConverter(instance.getType());
         if (converter.isPresent()) {
             converter.get().fromRelationalColumn(value, instance);
@@ -176,11 +162,10 @@ public abstract class RelationalSQL {
         }
     }
 
-    static Object getFieldValue(String tableName, SInstance tupleKeyRef, String fieldName,
+    static Object getFieldValue(String tableName, String fieldName,
             List<RelationalData> fromList) {
         for (RelationalData data : fromList) {
-            if (data.getTableName().equals(tableName) && data.getTupleKeyRef().equals(tupleKeyRef)
-                    && data.getFieldName().equals(fieldName)) {
+            if (data.getTableName().equals(tableName) && data.getFieldName().equals(fieldName)) {
                 return data.getFieldValue();
             }
         }
