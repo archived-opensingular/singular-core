@@ -127,7 +127,7 @@ public class SingularFormPanel extends Panel {
      * Construtor do painel. <p>Veja {@link #setInstanceFromType(ISupplier)}.</p>
      *
      * @param id        o markup id wicket
-     * @param typeClass Tipo a ser utilizado para montar o formulário.
+     * @param typeSupplier Supllier do tipo a ser utilizado para montar o formulário.
      */
     public SingularFormPanel(@Nonnull String id, @Nonnull ISupplier<SType<?>> typeSupplier) {
         this(id, false);
@@ -159,9 +159,8 @@ public class SingularFormPanel extends Panel {
     /**
      * Construtor do painel.
      *
-     * @param id                 o markup id wicket
-     * @param singularFormConfig configuração para manipulação do documento a ser criado ou
-     *                           recuperado.
+     * @param id     o markup id wicket
+     * @param nested indica se o painel está aninhado em uma modal.
      */
     public SingularFormPanel(@Nonnull String id, boolean nested) {
         super(id);
@@ -263,8 +262,9 @@ public class SingularFormPanel extends Panel {
             externalContainer = bodyContainer;
         }
 
-        final ConfirmationModal confirmationModal = new ConfirmationModal("confirmationModal");
-        externalContainer.appendTag("div", true, null, confirmationModal);
+        // Constrói a confirmation modal
+        final ConfirmationModal confirmationModal = new ConfirmationModal("confirmation-modal");
+        addOrReplace(confirmationModal);
 
         // Chama o builder wicket para construção do formulário
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), externalContainer, getInstanceModel(), confirmationModal);
