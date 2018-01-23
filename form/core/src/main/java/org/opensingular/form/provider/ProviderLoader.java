@@ -31,7 +31,6 @@ import java.util.List;
 public class ProviderLoader {
 
     private boolean enableDanglingValues;
-    ;
     private ISupplier<SInstance> instanceISupplier;
 
     public ProviderLoader(ISupplier<SInstance> instanceISupplier, boolean enableDanglingValues) {
