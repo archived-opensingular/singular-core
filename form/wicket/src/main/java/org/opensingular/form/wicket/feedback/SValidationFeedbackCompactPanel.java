@@ -98,8 +98,11 @@ public class SValidationFeedbackCompactPanel extends AbstractSValidationFeedback
                                 + "'use strict';"
                                 + "var $feedback = " + JQuery.$(component) + ";"
                                 + "var $formGroup = $feedback.parent();"
-                                + "var $span = $feedback.find('span span');"
-                                + "$span"
+                                + "var $popoverTarget = $formGroup.find(':input:first');"
+                                + "if ($popoverTarget.length == 0) {"
+                                + "  $popoverTarget = $feedback.find('span span');"
+                                + "}"
+                                + "$popoverTarget"
                                 + "  .data('content', '" + JavaScriptUtils.javaScriptEscape(errors) + "')"
                                 + "  .popover({"
                                 + "    'container':'body',"
@@ -109,11 +112,11 @@ public class SValidationFeedbackCompactPanel extends AbstractSValidationFeedback
                                 + "  });"
                                 + "$formGroup"
                                 + "  .hover("
-                                + "    function(){ $span.popover('show'); },"
-                                + "    function(){ $span.popover('hide'); });"
+                                + "    function(){ $popoverTarget.popover('show'); },"
+                                + "    function(){ $popoverTarget.popover('hide'); });"
                                 + "$feedback"
                                 + "  .on('remove', "
-                                + "    function(){ $span.popover('hide'); });"
+                                + "    function(){ $popoverTarget.popover('hide'); });"
                                 + "})();"));
                     }
                 }
