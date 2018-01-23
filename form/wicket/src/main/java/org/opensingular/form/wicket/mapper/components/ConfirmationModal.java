@@ -58,7 +58,7 @@ public class ConfirmationModal extends Panel {
 
     protected void addCancelButton() {
         border.addButton(BSModalBorder.ButtonStyle.CANCEL, $m.get(this::getCancelButtonLabel),
-                cancelButton = (AjaxButton) new AjaxButton("cancel-btn", confirmationForm) {
+                cancelButton = (AjaxButton) new AjaxButton("modal-cancel-btn", confirmationForm) {
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         onCancel(target);
@@ -69,7 +69,7 @@ public class ConfirmationModal extends Panel {
 
     protected void addConfirmButton() {
         border.addButton(BSModalBorder.ButtonStyle.CONFIRM, $m.get(this::getConfirmButtonLabel),
-                confirmButton = new AjaxButton("confirm-btn", confirmationForm) {
+                confirmButton = new AjaxButton("modal-confirm-btn", confirmationForm) {
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         onConfirm(target);
@@ -86,19 +86,19 @@ public class ConfirmationModal extends Panel {
     }
 
     protected String getCancelButtonLabel() {
-        return new StringResourceModel("label.button.cancel").getString();
+        return new StringResourceModel("label.button.cancel", this).getString();
     }
 
     protected String getConfirmButtonLabel() {
-        return new StringResourceModel("label.button.delete").getString();
+        return new StringResourceModel("label.button.delete", this).getString();
     }
 
     protected String getConfirmationMessage() {
-        return new StringResourceModel("label.delete.message").getString();
+        return new StringResourceModel("label.delete.message", this).getString();
     }
 
     protected String getTitleText() {
-        return new StringResourceModel("label.title.delete.item").getString();
+        return new StringResourceModel("label.title.delete.item", this).getString();
     }
 
     public void show(AjaxRequestTarget target, IConsumer<AjaxRequestTarget> confirmationAction) {

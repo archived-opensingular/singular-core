@@ -37,6 +37,7 @@
                 $box.find('.fa-file-text').removeClass('fa-file-text').addClass('fa-remove').css('color', 'red');
                 $box.find('.list-item-uploading').removeClass('list-item-uploading').addClass('list-item-uploaded');
                 $box.find('.list-action-remove').removeClass('hidden').click(function (e) {
+                    console.log('blabla');
                     $box.remove();
                     window.FileUploadListPanel.setUploadItemState(panel_id, box_id, null);
                 });
@@ -70,6 +71,31 @@
                 self.last_id = 1;
             }
             FileUploadListPanel.setUploadItemState(params.component_id, null, null);
+
+            var modalId = 'modal-' + params.component_id;
+
+            var popupTemplate =
+                '<div id="' + modalId + '" class="modal fade">' +
+                '  <div class="modal-dialog modal-belver">' +
+                '    <div class="modal-content">' +
+                '      <div class="modal-header">' +
+                '        <button type="button" class="close" data-dismiss="modal">&times;</button>' +
+                '        <h4 class="modal-title">Excluir anexo selecionado</h4>' +
+                '      </div>' +
+                '      <div class="modal-body" >' +
+                '        <div class="form-group">' +
+                '          <label>Confirma a exclusão?</label>' +
+                '        </div >' +
+                '      </div >' +
+                '      <div class="modal-footer">' +
+                '        <button type="button" class="btn cancel-btn" data-dismiss="modal">Cancelar</button>' +
+                '        <button type="button" class="btn confirm-btn" data-dismiss="modal">Remover</button>' +
+                '      </div>' +
+                '    </div>' +
+                '  </div>' +
+                '</div>';
+
+            var $modal = $(popupTemplate).modal({show: false});
 
             $('#' + params.file_field_id).fileupload({
                 url: params.upload_url,
@@ -150,20 +176,24 @@
                                         $box.find('.list-item-uploading').removeClass('list-item-uploading').addClass('list-item-uploaded');
                                         $box.find('.list-action-remove').removeClass('hidden')
                                             .click(function (e) {
-                                                $.getJSON(params.remove_url,
-                                                    {
-                                                        fileId: dataSInstance.fileId
-                                                    },
-                                                    function (data, status, jqXHR) {
-                                                        if (status == 'success') {
-                                                            $('#upload-box-' + fake_id).remove();
-                                                            var fileList = $('#' + params.fileList_id).find('li');
-                                                            if (fileList.length == 0) {
-                                                                FileUploadListPanel.setUploadItemState(params.component_id, fake_id, 'empty');
+                                                $modal.modal('show');
+                                                $modal.find('.confirm-btn').click(function (e) {
+                                                    $.getJSON(params.remove_url,
+                                                        {
+                                                            fileId: dataSInstance.fileId
+                                                        },
+                                                        function (data, status, jqXHR) {
+                                                            if (status == 'success') {
+                                                                $('#upload-box-' + fake_id).remove();
+                                                                var fileList = $('#' + params.fileList_id).find('li');
+                                                                if (fileList.length == 0) {
+                                                                    FileUploadListPanel.setUploadItemState(params.component_id, fake_id, 'empty');
+                                                                }
                                                             }
                                                         }
-                                                    }
-                                                );
+                                                    );
+                                                    $modal.modal('hide');
+                                                });
                                             });
                                         DownloadSupportedBehavior.resolveUrl(
                                             params.download_url,

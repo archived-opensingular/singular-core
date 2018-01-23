@@ -56,8 +56,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class BlocksCompositeMapper extends AbstractCompositeMapper {
 
@@ -165,7 +167,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             BSCol     col    = row.newCol();
             configureColspan(ctx, iField, col);
 
-            WicketBuildContext childCtx = ctx.createChild(col, mField);
+            WicketBuildContext childCtx = ctx.createChild(col, mField, ctx.getConfirmationModal());
             childCtx.setHint(AbstractCompositeMapper.HIDE_LABEL, isBlockHandlesTitleFromChild(ctx, block));
             childCtx.build();
         }

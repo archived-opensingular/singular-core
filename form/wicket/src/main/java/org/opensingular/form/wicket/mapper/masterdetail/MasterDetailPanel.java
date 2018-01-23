@@ -49,7 +49,6 @@ import org.opensingular.form.wicket.mapper.AbstractListMapper;
 import org.opensingular.form.wicket.mapper.MapperCommons;
 import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppender;
 import org.opensingular.form.wicket.mapper.common.util.ColumnType;
-import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
@@ -93,7 +92,6 @@ public class MasterDetailPanel extends Panel {
     private final MasterDetailModal         modal;
     private final SViewListByMasterDetail   view;
     private final SInstanceActionsProviders instanceActionsProviders;
-    private final ConfirmationModal         confirmationModal;
 
     private SingularFormWicket<?>           form;
     private WebMarkupContainer              head;
@@ -107,15 +105,13 @@ public class MasterDetailPanel extends Panel {
     private SValidationFeedbackCompactPanel feedback;
 
     public MasterDetailPanel(String id, WicketBuildContext ctx, IModel<SIList<SInstance>> list, MasterDetailModal modal,
-                             SViewListByMasterDetail view, SInstanceActionsProviders instanceActionsProviders,
-                             ConfirmationModal confirmationModal) {
+                             SViewListByMasterDetail view, SInstanceActionsProviders instanceActionsProviders) {
         super(id);
         this.ctx = ctx;
         this.list = list;
         this.modal = modal;
         this.view = view;
         this.instanceActionsProviders = instanceActionsProviders;
-        this.confirmationModal = confirmationModal;
 
         createComponents();
         addComponents();
@@ -292,7 +288,7 @@ public class MasterDetailPanel extends Panel {
             ac.appendAction(buildShowErrorsActionConfig(model), buildShowErrorsAction());
 
             if (ctx.getAnnotationMode().enabled())
-                ac.appendAction(buildShowAnnotationsActionConfig(model), buildViewOrEditAction(modal, ctx));
+                ac.appendAction(buildShowAnnotationsActionConfig(), buildViewOrEditAction(modal, ctx));
         });
     }
 
@@ -311,7 +307,7 @@ public class MasterDetailPanel extends Panel {
                 t.add(ctx.getContainer());
                 WicketFormProcessing.onFieldProcess(MasterDetailPanel.this.form, t, model);
             };
-            confirmationModal.show(target, confirmationAction);
+            ctx.getConfirmationModal().show(target, confirmationAction);
         };
     }
 
@@ -371,26 +367,28 @@ public class MasterDetailPanel extends Panel {
         };
     }
 
-    private BSActionPanel.ActionConfig<SInstance> buildShowAnnotationsActionConfig(IModel<? extends SInstance> model) {
+    private BSActionPanel.ActionConfig<SInstance> buildShowAnnotationsActionConfig() {
         IPredicate<SInstance> hasAnyRefusal = it -> it.asAtrAnnotation().hasAnyRefusal();
         IPredicate<SInstance> hasAnyAnnotable = it -> it.asAtrAnnotation().hasAnyAnnotable();
         IPredicate<SInstance> hasAnyAnnotation = it -> it.asAtrAnnotation().hasAnyAnnotationOnTree();
         //@formatter:off
         IFunction<SInstance, String> titleFunc = it -> 
-            hasAnyRefusal   .test(it) ? "possui anotação rejeitada"
-          : hasAnyAnnotation.test(it) ? "possui anotação"
-          : hasAnyAnnotable .test(it) ? "possui anotável"
+            hasAnyRefusal   .test(it) ? "Possui anotação rejeitada"
+          : hasAnyAnnotation.test(it) ? "Possui anotação"
+          : hasAnyAnnotable .test(it) ? "Possui anotável"
           : null;
 
-        IModel<Icon> iconModel = IMappingModel.of(model).map(it -> 
+        IFunction<SInstance, IModel<Icon>> iconFunc = it ->
+            $m.ofValue(
             hasAnyRefusal   .test(it) ? Icon.of("annotation-icon annotation-icon-rejected")
           : hasAnyAnnotation.test(it) ? Icon.of("annotation-icon annotation-icon-approved")
           : hasAnyAnnotable .test(it) ? Icon.of("annotation-icon annotation-icon-empty")
-          : null);
+          : null
+        );
         //@formatter:on
 
         return new BSActionPanel.ActionConfig<SInstance>()
-            .iconeModel(iconModel)
+            .iconFunction(rowModel -> iconFunc.apply(rowModel.getObject()))
             .titleFunction(rowModel -> titleFunc.apply(rowModel.getObject()))
             .style($m.ofValue("line-height:1em; font-size: 1em;"));
     }

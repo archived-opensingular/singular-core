@@ -107,7 +107,8 @@ public enum DefaultIcons implements Icon {
     TASKS("fa fa-tasks"),
     SEARCH("fa fa-search"),
     SITEMAP("fa fa-sitemap"),
-    FOLDER_OPEN("fa fa-folder-open-o")
+    FOLDER_OPEN("fa fa-folder-open-o"),
+    QUESTION_CIRCLE("fa fa-question-circle")
     ;
 
     private final String cssClass;

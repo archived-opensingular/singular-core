@@ -16,13 +16,9 @@
 
 package org.opensingular.lib.wicket.util.menu;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -31,8 +27,6 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.component.IRequestablePage;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.opensingular.lib.commons.ui.Icon;
-import org.opensingular.lib.wicket.util.jquery.JQuery;
-import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
 
 import java.util.regex.Pattern;
 
@@ -57,16 +51,6 @@ public class MetronicMenuItem extends AbstractMenuItem {
     public MetronicMenuItem(Icon icon, String title, Class<? extends IRequestablePage> responsePageClass,
                             IRequestablePage page, PageParameters parameters) {
         this(icon, title);
-        this.responsePageClass = responsePageClass;
-        this.page = page;
-        this.parameters = parameters;
-        add(buildMenuItem());
-    }
-
-    public MetronicMenuItem(Icon icon, String title, String helpText, Class<? extends IRequestablePage> responsePageClass,
-                            IRequestablePage page, PageParameters parameters) {
-        this(icon, title);
-        this.helpText = helpText;
         this.responsePageClass = responsePageClass;
         this.page = page;
         this.parameters = parameters;
@@ -121,24 +105,6 @@ public class MetronicMenuItem extends AbstractMenuItem {
             };
         } else {
             throw new WicketRuntimeException("É necessario informar o destino do item");
-        }
-
-        if (helpText != null) {
-            anchor.add($b.onReadyScript(
-                    component -> "var $anchor = " + JQuery.$(component) + ";"
-                            + "$anchor"
-                            + "  .data('content', '" + helpText + "')"
-                            + "  .popover({"
-                            + "    'container':'body',"
-                            + "    'html':true,"
-                            + "    'placement':'auto right',"
-                            + "    'trigger':'manual'"
-                            + "  });"
-                            + "$anchor"
-                            + "  .hover("
-                            + "    function(){ $anchor.popover('show'); },"
-                            + "    function(){ $anchor.popover('hide'); });"
-            ));
         }
 
         WebMarkupContainer iconMarkup = new WebMarkupContainer("icon");
