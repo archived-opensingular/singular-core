@@ -39,6 +39,7 @@ import org.opensingular.form.wicket.feedback.SValidationFeedbackCompactPanel;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackPanel;
 import org.opensingular.form.wicket.mapper.ListBreadcrumbMapper;
 import org.opensingular.form.wicket.mapper.TabMapper;
+import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
@@ -85,6 +86,7 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
     private final WicketBuildContext                                     parent;
     private final BSContainer<?>                                         container;
     private final BSContainer<?>                                         externalContainer;
+    private final ConfirmationModal                                      confirmationModal;
 
     private IModel<? extends SInstance>                                  model;
     private ViewMode                                                     viewMode;
@@ -101,15 +103,17 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
 
     private SView                                                        view;
 
-    public WicketBuildContext(BSCol container, BSContainer<?> externalContainer, IModel<? extends SInstance> model) {
-        this(null, container, externalContainer, model);
+    public WicketBuildContext(BSCol container, BSContainer<?> externalContainer, IModel<? extends SInstance> model,
+                              ConfirmationModal confirmationModal) {
+        this(null, container, externalContainer, model, confirmationModal);
         this.listeners = new ArrayList<>();
     }
 
     protected WicketBuildContext(WicketBuildContext parent,
-        BSContainer<?> container,
-        BSContainer<?> externalContainer,
-        IModel<? extends SInstance> model) {
+                                 BSContainer<?> container,
+                                 BSContainer<?> externalContainer,
+                                 IModel<? extends SInstance> model,
+                                 ConfirmationModal confirmationModal) {
 
         this.parent = parent;
         if (parent != null) {
@@ -119,18 +123,19 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
         this.container = container;
         this.externalContainer = externalContainer;
         this.model = model;
+        this.confirmationModal = confirmationModal;
         WicketFormUtils.markAsCellContainer(container);
         container.add(ConfigureBySInstanceAttributesBehavior.getInstance());
         container.setMetaData(METADATA_KEY, this);
     }
 
-    public WicketBuildContext createChild(BSContainer<?> childContainer, IModel<? extends SInstance> model) {
-        return configureNestedContext(new WicketBuildContext(this, childContainer, getExternalContainer(), model)
+    public WicketBuildContext createChild(BSContainer<?> childContainer, IModel<? extends SInstance> model, ConfirmationModal confirmationModal) {
+        return configureNestedContext(new WicketBuildContext(this, childContainer, getExternalContainer(), model, confirmationModal)
             .setAnnotationMode(getAnnotationMode()));
     }
 
-    public WicketBuildContext createChild(BSContainer<?> childContainer, BSContainer<?> externalContainer, IModel<? extends SInstance> model) {
-        return configureNestedContext(new WicketBuildContext(this, childContainer, externalContainer, model)
+    public WicketBuildContext createChild(BSContainer<?> childContainer, BSContainer<?> externalContainer, IModel<? extends SInstance> model, ConfirmationModal confirmationModal) {
+        return configureNestedContext(new WicketBuildContext(this, childContainer, externalContainer, model, confirmationModal)
             .setAnnotationMode(getAnnotationMode()));
     }
 
@@ -524,5 +529,9 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
 
     public void build(ViewMode viewMode) {
         UIBuilderWicket.build(this, viewMode);
+    }
+
+    public ConfirmationModal getConfirmationModal() {
+        return confirmationModal;
     }
 }

@@ -16,14 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import org.opensingular.form.SInstance;
-import org.opensingular.form.type.core.STypeTime;
-import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.model.SIDateTimeModel;
-import org.opensingular.form.wicket.behavior.InputMaskBehavior;
-import org.opensingular.form.wicket.model.SInstanceValueModel;
-import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.json.JSONObject;
@@ -32,6 +24,13 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.type.core.STypeTime;
+import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.behavior.InputMaskBehavior;
+import org.opensingular.form.wicket.model.SIDateTimeModel;
+import org.opensingular.form.wicket.model.SInstanceValueModel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -49,7 +48,11 @@ public class TimeMapper extends AbstractControlsFieldComponentMapper {
             @Override
             public void renderHead(Component component, IHeaderResponse response) {
                 super.renderHead(component, response);
-                final String script = String.format("$('#%s').timepicker(%s)", component.getMarkupId(true), getJSONParams());
+                final String script = String.format("$('#%s').timepicker(%s); ", component.getMarkupId(true), getJSONParams())
+                        + "$('#"+component.getMarkupId(true)+"').on('keydown', function(e){"
+                        + "  switch (e.keyCode) { case 9: $(this).timepicker('hideWidget'); }"
+                        + "});"
+                        ;
                 response.render(OnDomReadyHeaderItem.forScript(script));
             }
         });

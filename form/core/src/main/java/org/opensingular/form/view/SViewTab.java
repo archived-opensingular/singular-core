@@ -16,7 +16,9 @@
 
 package org.opensingular.form.view;
 
+import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
+import org.opensingular.lib.commons.lambda.IPredicate;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -121,6 +123,7 @@ public class SViewTab extends SView {
         private final String   id;
         private final String   title;
         private final List<String> typesNames;
+        private IPredicate<SInstance> visible = IPredicate.all();
 
         private STab(SViewTab tabView, String id, String title) {
             this.tabView = tabView;
@@ -149,6 +152,15 @@ public class SViewTab extends SView {
         public STab setDefault() {
             tabView.defaultTab = this;
             return this;
+        }
+
+        public STab visible(IPredicate<SInstance> visible) {
+            this.visible = visible;
+            return this;
+        }
+
+        public boolean isVisible(SInstance sInstance) {
+            return visible.test(sInstance);
         }
     }
 }

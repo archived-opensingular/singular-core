@@ -16,18 +16,18 @@
 
 package org.opensingular.form.persistence.relational;
 
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.persistence.FormKey;
+import org.opensingular.form.persistence.FormKeyRelational;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.StringJoiner;
-
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
-import org.opensingular.form.persistence.FormKey;
-import org.opensingular.form.persistence.FormKeyRelational;
 
 /**
  * Builder for SQL insertions on Relational DBMS.
@@ -97,18 +97,23 @@ public class RelationalSQLInsert extends RelationalSQL {
 			List<String> containerPK = RelationalSQL.tablePK(container.getType());
 			for (RelationalFK fk : RelationalSQL.tableFKs(instance.getType())) {
 				if (fk.getForeignType().equals(container.getType())) {
-					for (int i = 0; i < fk.getKeyColumns().size(); i++) {
-						RelationalColumn keyColumn = fk.getKeyColumns().get(i);
-						if (!result.contains(keyColumn)) {
-							containerKeyColumns.put(keyColumn.getName(),
-									containerKey.getColumnValue(containerPK.get(i)));
-							result.add(keyColumn);
-						}
-					}
+					collectColumnIfNecessary(containerKeyColumns, result, containerKey, containerPK, fk);
 				}
 			}
 		}
 		return result;
+	}
+
+	private void collectColumnIfNecessary(Map<String, Object> containerKeyColumns, List<RelationalColumn> result,
+										  FormKeyRelational containerKey, List<String> containerPK, RelationalFK fk) {
+		for (int i = 0; i < fk.getKeyColumns().size(); i++) {
+            RelationalColumn keyColumn = fk.getKeyColumns().get(i);
+            if (!result.contains(keyColumn)) {
+                containerKeyColumns.put(keyColumn.getName(),
+                        containerKey.getColumnValue(containerPK.get(i)));
+                result.add(keyColumn);
+            }
+        }
 	}
 
 	private String concatenateColumnNames(List<RelationalColumn> columns, String separator) {

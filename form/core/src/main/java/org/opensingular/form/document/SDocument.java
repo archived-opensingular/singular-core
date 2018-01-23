@@ -140,7 +140,7 @@ public class SDocument {
      * Retorna null se estiver no modo de restore da persistencia.
      */
     final public Integer nextId() {
-        if (lastId == -1) {
+        if (isRestoreMode()) {
             return null;
         }
         return ++lastId;

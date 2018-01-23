@@ -16,14 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static java.util.stream.Collectors.*;
-import static org.apache.commons.lang3.ObjectUtils.*;
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
-
-import java.util.List;
-import java.util.Set;
-
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -47,8 +39,18 @@ import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.panel.BSPanelGrid;
 import org.opensingular.form.wicket.panel.BSPanelGrid.BSTab;
 import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.wicket.util.scripts.Scripts;
 
 import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class TabMapper implements IWicketComponentMapper {
 
@@ -73,10 +75,12 @@ public class TabMapper implements IWicketComponentMapper {
 
         SIComposite instance = (SIComposite) ctx.getModel().getObject();
         for (SViewTab.STab tab : tabView.getTabs()) {
-            defineTabIconCss(ctx, instance, tab.getTypesNames());
-            IModel<SInstance> baseInstanceModel = (IModel<SInstance>) ctx.getModel();
-            BSPanelGrid.BSTab t = panel.addTab(tab.getId(), tab.getTitle(), tab.getTypesNames(), baseInstanceModel);
-            t.iconClass((t1, m) -> defineTabIconCss(ctx, (SIComposite) m.getObject(), t1.getSubtree()));
+            if (tab.isVisible(instance)) {
+                defineTabIconCss(ctx, instance, tab.getTypesNames());
+                IModel<SInstance> baseInstanceModel = (IModel<SInstance>) ctx.getModel();
+                BSPanelGrid.BSTab t = panel.addTab(tab.getId(), tab.getTitle(), tab.getTypesNames(), baseInstanceModel);
+                t.iconClass((t1, m) -> defineTabIconCss(ctx, (SIComposite) m.getObject(), t1.getSubtree()));
+            }
         }
 
         final IModel<String> label = $m.ofValue(trimToEmpty(instance.asAtr().getLabel()));
@@ -117,7 +121,9 @@ public class TabMapper implements IWicketComponentMapper {
             @Override
             public void updateTab(BSTab tab, List<BSTab> tabs) {
                 renderTab(tab.getSubtree(), this, ctx);
-                ctx.updateExternalContainer(RequestCycle.get().find(AjaxRequestTarget.class));
+                AjaxRequestTarget ajaxRequestTarget = RequestCycle.get().find(AjaxRequestTarget.class);
+                ctx.updateExternalContainer(ajaxRequestTarget);
+                ajaxRequestTarget.appendJavaScript(Scripts.scrollToTop());
             }
 
             @Override
@@ -250,7 +256,7 @@ public class TabMapper implements IWicketComponentMapper {
     private void renderTab(List<String> typeNames, BSPanelGrid panel, WicketBuildContext ctx) {
         for (String typeName : typeNames) {
             SInstanceFieldModel<SInstance> subtree = new SInstanceFieldModel<>(ctx.getModel(), typeName);
-            WicketBuildContext childContext = ctx.createChild(panel.getContainer().newGrid().newColInRow(), subtree);
+            WicketBuildContext childContext = ctx.createChild(panel.getContainer().newGrid().newColInRow(), subtree, ctx.getConfirmationModal());
             childContext.init(ctx.getViewMode());
             childContext.build();
             childContext.initContainerBehavior();

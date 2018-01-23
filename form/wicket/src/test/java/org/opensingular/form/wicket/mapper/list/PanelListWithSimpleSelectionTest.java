@@ -19,6 +19,7 @@
 package org.opensingular.form.wicket.mapper.list;
 
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.Button;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,8 +85,11 @@ public class PanelListWithSimpleSelectionTest {
 
         final Button removeButton = (Button) tester.getAssertionsForm()
                 .findSubComponent(b -> b.getClass().getName().contains("RemoverButton")).getTarget();
-
         tester.executeAjaxEvent(removeButton, "click");
+
+        Component modalConfirm = tester.getAssertionsForm().findSubComponent(c -> c.getId().equalsIgnoreCase("modal-confirm-btn")).getTarget();
+        tester.executeAjaxEvent(modalConfirm, "click");
+
         tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(0);
     }
 

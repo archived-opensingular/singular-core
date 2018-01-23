@@ -86,6 +86,7 @@ public class AttachmentListMapperTest extends AbstractTestTempFileSupport {
         FormTester formTester = ctx.newFormTester();
         AssertionsWComponent button = assertDelButton(assertAttachs.getSubComponentForSInstance(atts.get(0)), true);
         formTester.submit(button.getTarget());
+        formTester.submit(ctx.getAssertionsPage().findSubComponent(c -> c.getId().equalsIgnoreCase("modal-confirm-btn")).getTarget());
 
         assertAttachs = ctx.getAssertionsPage().getSubComponentForSInstance(atts).isNotNull();
         SIAttachment att = assertAttachs.assertSInstance().isList(1).field("[0]").getTarget(SIAttachment.class);

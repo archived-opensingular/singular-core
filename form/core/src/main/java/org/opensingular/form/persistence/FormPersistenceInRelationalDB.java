@@ -16,19 +16,6 @@
 
 package org.opensingular.form.persistence;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
@@ -41,6 +28,18 @@ import org.opensingular.form.persistence.relational.RelationalColumn;
 import org.opensingular.form.persistence.relational.RelationalData;
 import org.opensingular.form.persistence.relational.RelationalSQL;
 import org.opensingular.form.persistence.relational.RelationalSQLCommmand;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Form persistence based on relational database managers.
@@ -172,17 +171,21 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 		}
 		for (SType<?> field : mainType.getContainedTypes()) {
 			if (RelationalSQL.isListWithTableBound(field)) {
-				SIList<SIComposite> listInstance = mainInstance.getFieldList(field.getNameSimple(), SIComposite.class);
-				for (SType<?> detail : field.getLocalTypes()) {
-					STypeComposite<?> detailType = (STypeComposite<?>) detail.getSuperType();
-					query = RelationalSQL.select(detailType.getContainedTypes()).where(mainType, key);
-					for (RelationalSQLCommmand command : query.toSQLScript()) {
-						executeSelectCommandIntoSIList(command, listInstance);
-					}
-				}
+				executeSelectField(key, mainInstance, mainType, field);
 			}
 		}
 		return mainInstance;
+	}
+
+	protected void executeSelectField(@Nonnull FormKey key, INSTANCE mainInstance, TYPE mainType, SType<?> field) {
+		RelationalSQL query;SIList<SIComposite> listInstance = mainInstance.getFieldList(field.getNameSimple(), SIComposite.class);
+		for (SType<?> detail : field.getLocalTypes()) {
+            STypeComposite<?> detailType = (STypeComposite<?>) detail.getSuperType();
+            query = RelationalSQL.select(detailType.getContainedTypes()).where(mainType, key);
+            for (RelationalSQLCommmand command : query.toSQLScript()) {
+                executeSelectCommandIntoSIList(command, listInstance);
+            }
+        }
 	}
 
 	@Nonnull
@@ -216,25 +219,29 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 			Integer inclusionActor) {
 		for (SInstance field : instance.getAllChildren()) {
 			if (RelationalSQL.isListWithTableBound(field.getType())) {
-				SIList<SIComposite> listInstance = instance.getFieldList(field.getType().getNameSimple(),
-						SIComposite.class);
-				SIList<SIComposite> previousListInstance = previousPersistedInstance
-						.getFieldList(field.getType().getNameSimple(), SIComposite.class);
-				for (SIComposite item : listInstance.getChildren()) {
-					if (FormKey.containsKey(item))
-						updateInternal(instance, locate(FormKey.fromInstance(item), previousListInstance),
-								inclusionActor);
-					else
-						insertInternal(instance, inclusionActor);
-				}
-				for (SIComposite item : detectIntancesToDelete(field.getType(), instance, previousPersistedInstance)) {
-					deleteInternal(item.getType(), FormKey.fromInstance(item));
-				}
+				updateFieldInternal(instance, previousPersistedInstance, inclusionActor, field);
 			}
 		}
 		if (execScript(RelationalSQL.update(instance, previousPersistedInstance).toSQLScript()) == 0) {
 			throw new SingularFormNotFoundException(FormKey.fromInstance(instance));
 		}
+	}
+
+	protected void updateFieldInternal(@Nonnull SIComposite instance, SIComposite previousPersistedInstance, Integer inclusionActor, SInstance field) {
+		SIList<SIComposite> listInstance = instance.getFieldList(field.getType().getNameSimple(),
+                SIComposite.class);
+		SIList<SIComposite> previousListInstance = previousPersistedInstance
+                .getFieldList(field.getType().getNameSimple(), SIComposite.class);
+		for (SIComposite item : listInstance.getChildren()) {
+            if (FormKey.containsKey(item))
+                updateInternal(instance, locate(FormKey.fromInstance(item), previousListInstance),
+                        inclusionActor);
+            else
+                insertInternal(instance, inclusionActor);
+        }
+		for (SIComposite item : detectIntancesToDelete(field.getType(), instance, previousPersistedInstance)) {
+            deleteInternal(item.getType(), FormKey.fromInstance(item));
+        }
 	}
 
 	private SIComposite locate(FormKey key, SIList<SIComposite> previousListInstance) {

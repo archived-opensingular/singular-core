@@ -141,7 +141,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
     }
 
     private void builContent(BSContainer<?> content, Form<?> form, IModel<SIList<SInstance>> list,
-        WicketBuildContext ctx, SViewListByTable view, boolean isEdition) {
+                             WicketBuildContext ctx, SViewListByTable view, boolean isEdition) {
 
         final String markup = ""
             + " <div class='list-table-empty' wicket:id='empty-content'>                                             "
@@ -244,7 +244,8 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         private final SView              view;
         private final Form<?>            form;
 
-        private TableElementsView(String id, IModel<SIList<SInstance>> model, WicketBuildContext ctx, Form<?> form, WebMarkupContainer parentContainer) {
+        private TableElementsView(String id, IModel<SIList<SInstance>> model, WicketBuildContext ctx, Form<?> form,
+                                  WebMarkupContainer parentContainer) {
             super(id, model, parentContainer);
             super.setRenderedChildFunction(c -> ((MarkupContainer) c).get("_r"));
             this.ctx = ctx;
@@ -285,16 +286,16 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
 
                 for (SType<?> ft : ct.getFields()) {
                     IModel<SInstance> fm = new SInstanceFieldModel<>(item.getModel(), ft.getNameSimple());
-                    ctx.createChild(row.newCol(), fm).setHint(HIDE_LABEL, Boolean.TRUE).build();
+                    ctx.createChild(row.newCol(), fm, ctx.getConfirmationModal()).setHint(HIDE_LABEL, Boolean.TRUE).build();
                 }
             } else {
-                ctx.createChild(row.newCol(), itemModel).setHint(HIDE_LABEL, Boolean.FALSE).build();
+                ctx.createChild(row.newCol(), itemModel, ctx.getConfirmationModal()).setHint(HIDE_LABEL, Boolean.FALSE).build();
             }
 
             if (viewListByTable.isDeleteEnabled() && ctx.getViewMode().isEdition()) {
                 final BSTDataCell actionColumn = row.newCol();
                 actionColumn.add($b.attrAppender("style", "width:20px", ";"));
-                appendRemoverButton(this, form, item, actionColumn);
+                appendRemoverButton(this, form, item, actionColumn, ctx.getConfirmationModal());
             }
 
             item.add(row);
