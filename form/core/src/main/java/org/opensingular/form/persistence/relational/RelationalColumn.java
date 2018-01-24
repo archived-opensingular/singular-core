@@ -24,42 +24,47 @@ import java.util.StringJoiner;
  * @author Edmundo Andrade
  */
 public class RelationalColumn {
-	private static final String SERIALIZATION_SEPARATOR = ":";
-	private String table;
-	private String name;
+    private static final String SERIALIZATION_SEPARATOR = ":";
+    private String table;
+    private String name;
 
-	public static RelationalColumn fromStringPersistence(String value, String defaultTable) {
-		String parts[] = value.split(SERIALIZATION_SEPARATOR);
-		if (parts.length < 2)
-			return new RelationalColumn(defaultTable, parts[0]);
-		return new RelationalColumn(parts[0], parts[1]);
-	}
+    public static RelationalColumn fromStringPersistence(String value, String defaultTable) {
+        String parts[] = value.split(SERIALIZATION_SEPARATOR);
+        if (parts.length < 2)
+            return new RelationalColumn(defaultTable, parts[0]);
+        return new RelationalColumn(parts[0], parts[1]);
+    }
 
-	public RelationalColumn(String table, String name) {
-		this.table = table;
-		this.name = name;
-	}
+    public RelationalColumn(String table, String name) {
+        this.table = table;
+        this.name = name;
+    }
 
-	public String getTable() {
-		return table;
-	}
+    public String getTable() {
+        return table;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String toStringPersistence() {
-		StringJoiner sj = new StringJoiner(SERIALIZATION_SEPARATOR);
-		sj.add(table);
-		sj.add(name);
-		return sj.toString();
-	}
+    public String toStringPersistence() {
+        StringJoiner sj = new StringJoiner(SERIALIZATION_SEPARATOR);
+        sj.add(table);
+        sj.add(name);
+        return sj.toString();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof RelationalColumn)
-			return ((RelationalColumn) obj).getTable().equals(getTable())
-					&& ((RelationalColumn) obj).getName().equals(getName());
-		return super.equals(obj);
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof RelationalColumn)
+            return ((RelationalColumn) obj).getTable().equals(getTable())
+                    && ((RelationalColumn) obj).getName().equals(getName());
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return getTable().hashCode() * 13 + getName().hashCode() * 3 + 5;
+    }
 }
