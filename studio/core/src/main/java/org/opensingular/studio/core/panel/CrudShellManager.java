@@ -38,7 +38,7 @@ public class CrudShellManager implements Serializable {
     public CrudShellManager(StudioDefinition studioDefinition, CrudShell crudShell) {
         this.studioDefinition = studioDefinition;
         this.crudShell = crudShell;
-        this.crudShellContent = studioDefinition.makeStartContent(this);
+        this.crudShellContent = studioDefinition.buildStartContent(this);
     }
 
     public void replaceContent(AjaxRequestTarget ajaxRequestTarget, CrudShellContent newContent) {
@@ -83,11 +83,11 @@ public class CrudShellManager implements Serializable {
     }
 
     public CrudEditContent makeEditContent(CrudShellContent previousContent, IModel<SInstance> instance) {
-        return studioDefinition.makeEditContent(this, previousContent, instance);
+        return studioDefinition.buildEditContent(this, previousContent, instance);
     }
 
     public CrudListContent makeListContent() {
-        return studioDefinition.makeListContent(this);
+        return studioDefinition.buildListContent(this);
     }
 
 }
