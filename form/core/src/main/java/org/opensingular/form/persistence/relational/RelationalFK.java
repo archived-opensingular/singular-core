@@ -30,66 +30,71 @@ import org.opensingular.form.SType;
  * @author Edmundo Andrade
  */
 public class RelationalFK {
-	private static final String SERIALIZATION_SEPARATOR = "|";
-	private String table;
-	private List<RelationalColumn> keyColumns;
-	private SType<?> foreignType;
+    private static final String SERIALIZATION_SEPARATOR = "|";
+    private String table;
+    private List<RelationalColumn> keyColumns;
+    private SType<?> foreignType;
 
-	public static RelationalFK fromStringPersistence(String value, SDictionary dictionary) {
-		String parts[] = value.split(Pattern.quote(SERIALIZATION_SEPARATOR));
-		return new RelationalFK(parts[0], parseColumns(parts[1], ""), dictionary.getType(parts[2]));
-	}
+    public static RelationalFK fromStringPersistence(String value, SDictionary dictionary) {
+        String parts[] = value.split(Pattern.quote(SERIALIZATION_SEPARATOR));
+        return new RelationalFK(parts[0], parseColumns(parts[1], ""), dictionary.getType(parts[2]));
+    }
 
-	private static List<RelationalColumn> parseColumns(String value, String defaultTable) {
-		List<RelationalColumn> columns = new ArrayList<>();
-		String parts[] = value.split(",");
-		for (String part : parts)
-			columns.add(RelationalColumn.fromStringPersistence(part, defaultTable));
-		return columns;
-	}
+    private static List<RelationalColumn> parseColumns(String value, String defaultTable) {
+        List<RelationalColumn> columns = new ArrayList<>();
+        String parts[] = value.split(",");
+        for (String part : parts)
+            columns.add(RelationalColumn.fromStringPersistence(part, defaultTable));
+        return columns;
+    }
 
-	public RelationalFK(String table, String keyColumns, SType<?> foreignType) {
-		this(table, parseColumns(keyColumns, table), foreignType);
-	}
+    public RelationalFK(String table, String keyColumns, SType<?> foreignType) {
+        this(table, parseColumns(keyColumns, table), foreignType);
+    }
 
-	public RelationalFK(String table, List<RelationalColumn> keyColumns, SType<?> foreignType) {
-		this.table = table;
-		this.keyColumns = keyColumns;
-		this.foreignType = foreignType;
-	}
+    public RelationalFK(String table, List<RelationalColumn> keyColumns, SType<?> foreignType) {
+        this.table = table;
+        this.keyColumns = keyColumns;
+        this.foreignType = foreignType;
+    }
 
-	public String getTable() {
-		return table;
-	}
+    public String getTable() {
+        return table;
+    }
 
-	public List<RelationalColumn> getKeyColumns() {
-		return keyColumns;
-	}
+    public List<RelationalColumn> getKeyColumns() {
+        return keyColumns;
+    }
 
-	public SType<?> getForeignType() {
-		return foreignType;
-	}
+    public SType<?> getForeignType() {
+        return foreignType;
+    }
 
-	public String toStringPersistence() {
-		StringJoiner sj = new StringJoiner(SERIALIZATION_SEPARATOR);
-		sj.add(getTable());
-		sj.add(toStringPersistence(getKeyColumns()));
-		sj.add(getForeignType().getName());
-		return sj.toString();
-	}
+    public String toStringPersistence() {
+        StringJoiner sj = new StringJoiner(SERIALIZATION_SEPARATOR);
+        sj.add(getTable());
+        sj.add(toStringPersistence(getKeyColumns()));
+        sj.add(getForeignType().getName());
+        return sj.toString();
+    }
 
-	private String toStringPersistence(List<RelationalColumn> columns) {
-		StringJoiner sj = new StringJoiner(",");
-		columns.forEach(column -> sj.add(column.toStringPersistence()));
-		return sj.toString();
-	}
+    private String toStringPersistence(List<RelationalColumn> columns) {
+        StringJoiner sj = new StringJoiner(",");
+        columns.forEach(column -> sj.add(column.toStringPersistence()));
+        return sj.toString();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof RelationalFK)
-			return ((RelationalFK) obj).getTable().equals(getTable())
-					&& ((RelationalFK) obj).getKeyColumns().equals(getKeyColumns())
-					&& ((RelationalFK) obj).getForeignType().equals(getForeignType());
-		return super.equals(obj);
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof RelationalFK)
+            return ((RelationalFK) obj).getTable().equals(getTable())
+                    && ((RelationalFK) obj).getKeyColumns().equals(getKeyColumns())
+                    && ((RelationalFK) obj).getForeignType().equals(getForeignType());
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return getTable().hashCode() * 11 + getKeyColumns().hashCode() * 7 + getForeignType().hashCode() * 3 + 1;
+    }
 }

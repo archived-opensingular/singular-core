@@ -25,9 +25,11 @@ import static org.opensingular.form.persistence.relational.RelationalSQLAggregat
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.StringJoiner;
 
 import org.opensingular.form.SIComposite;
@@ -189,7 +191,7 @@ public abstract class RelationalSQL {
         return null;
     }
 
-    protected List<SType<?>> targetTables = new ArrayList<>();
+    protected Set<SType<?>> targetTables = new LinkedHashSet<>();
 
     public abstract List<RelationalSQLCommmand> toSQLScript();
 
@@ -220,9 +222,7 @@ public abstract class RelationalSQL {
     protected void collectKeyColumns(SType<?> type, List<RelationalColumn> keyColumns) {
         SType<?> tableContext = tableContext(type);
         String tableName = table(tableContext);
-        if (!targetTables.contains(tableContext)) {
-            targetTables.add(tableContext);
-        }
+        targetTables.add(tableContext);
         List<String> pk = tablePK(tableContext);
         if (pk != null) {
             for (String columnName : pk) {
@@ -250,9 +250,7 @@ public abstract class RelationalSQL {
             columnName = foreignColumn.getForeignColumn();
         }
         String tableName = table(tableContext);
-        if (!targetTables.contains(tableContext)) {
-            targetTables.add(tableContext);
-        }
+        targetTables.add(tableContext);
         RelationalColumn column = new RelationalColumn(tableName, columnName);
         mapColumnToField.put(column.toStringPersistence(), field);
         if (!targetColumns.contains(column) && !keyColumns.contains(column)) {

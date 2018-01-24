@@ -30,88 +30,88 @@ import org.opensingular.form.SInstance;
  * @author Edmundo Andrade
  */
 public class FormKeyRelational extends AbstractFormKey<HashMap<String, Object>> {
-	private static final long serialVersionUID = 1L;
-	private static final String SERIALIZATION_SEPARATOR = "___";
-	private static final String IMPLICIT_JAVA_PACKAGE = "java.lang.";
+    private static final long serialVersionUID = 1L;
+    private static final String SERIALIZATION_SEPARATOR = "___";
+    private static final String IMPLICIT_JAVA_PACKAGE = "java.lang.";
 
-	public FormKeyRelational(@Nonnull String persistenceString) {
-		super(persistenceString);
-	}
+    public FormKeyRelational(@Nonnull String persistenceString) {
+        super(persistenceString);
+    }
 
-	public FormKeyRelational(@Nonnull HashMap<String, Object> keyValue) {
-		super(keyValue);
-	}
+    public FormKeyRelational(@Nonnull HashMap<String, Object> keyValue) {
+        super(keyValue);
+    }
 
-	public Object getColumnValue(String keyColumn) {
-		return getValue().get(keyColumn);
-	}
+    public Object getColumnValue(String keyColumn) {
+        return getValue().get(keyColumn);
+    }
 
-	/**
-	 * Returns the column value present in the persistence key assigned to a given
-	 * SInstance.
-	 */
-	public static Object columnValuefromInstance(String keyColumn, @Nonnull SInstance instance) {
-		Objects.requireNonNull(instance);
-		return ((FormKeyRelational) FormKey.fromInstance(instance)).getColumnValue(keyColumn);
-	}
+    /**
+     * Returns the column value present in the persistence key assigned to a given
+     * SInstance.
+     */
+    public static Object columnValuefromInstance(String keyColumn, @Nonnull SInstance instance) {
+        Objects.requireNonNull(instance);
+        return ((FormKeyRelational) FormKey.fromInstance(instance)).getColumnValue(keyColumn);
+    }
 
-	/**
-	 * Method responsible to convert objects to a valid FormKeyRelational instance.
-	 * 
-	 * This method is intended to be called by {@link FormKeyManager}.
-	 * 
-	 * @param objectValueToBeConverted
-	 *            non-null object to be converted
-	 * @return a valid FormKeyRelational instance
-	 */
-	@SuppressWarnings("unchecked")
-	public static FormKeyRelational convertToKey(Object objectValueToBeConverted) {
-		if (objectValueToBeConverted == null) {
-			throw new SingularFormPersistenceException("Null value cannot be converted to a valid FormKey.");
-		} else if (objectValueToBeConverted instanceof FormKeyRelational) {
-			return (FormKeyRelational) objectValueToBeConverted;
-		} else if (objectValueToBeConverted instanceof HashMap<?, ?>) {
-			return new FormKeyRelational((HashMap<String, Object>) objectValueToBeConverted);
-		} else if (objectValueToBeConverted instanceof String) {
-			return new FormKeyRelational((String) objectValueToBeConverted);
-		}
-		throw new SingularFormPersistenceException("The given value cannot be converted to a valid FormKey.")
-				.add("value", objectValueToBeConverted).add("value type", objectValueToBeConverted.getClass());
-	}
+    /**
+     * Method responsible to convert objects to a valid FormKeyRelational instance.
+     * 
+     * This method is intended to be called by {@link FormKeyManager}.
+     * 
+     * @param objectValueToBeConverted
+     *            non-null object to be converted
+     * @return a valid FormKeyRelational instance
+     */
+    @SuppressWarnings("unchecked")
+    public static FormKeyRelational convertToKey(Object objectValueToBeConverted) {
+        if (objectValueToBeConverted == null) {
+            throw new SingularFormPersistenceException("Null value cannot be converted to a valid FormKey.");
+        } else if (objectValueToBeConverted instanceof FormKeyRelational) {
+            return (FormKeyRelational) objectValueToBeConverted;
+        } else if (objectValueToBeConverted instanceof HashMap<?, ?>) {
+            return new FormKeyRelational((HashMap<String, Object>) objectValueToBeConverted);
+        } else if (objectValueToBeConverted instanceof String) {
+            return new FormKeyRelational((String) objectValueToBeConverted);
+        }
+        throw new SingularFormPersistenceException("The given value cannot be converted to a valid FormKey.")
+                .add("value", objectValueToBeConverted).add("value type", objectValueToBeConverted.getClass());
+    }
 
-	@Override
-	protected HashMap<String, Object> parseValuePersistenceString(String persistenceString) {
-		HashMap<String, Object> result = new HashMap<>();
-		String[] pairs = persistenceString.split(SERIALIZATION_SEPARATOR);
-		for (String pair : pairs) {
-			String[] parts = pair.split("\\$", 3);
-			result.put(parts[0], columnValue(parts[1], parts[2]));
-		}
-		return result;
-	}
+    @Override
+    protected HashMap<String, Object> parseValuePersistenceString(String persistenceString) {
+        HashMap<String, Object> result = new HashMap<>();
+        String[] pairs = persistenceString.split(SERIALIZATION_SEPARATOR);
+        for (String pair : pairs) {
+            String[] parts = pair.split("\\$", 3);
+            result.put(parts[0], columnValue(parts[1], parts[2]));
+        }
+        return result;
+    }
 
-	@Override
-	public String toStringPersistence() {
-		StringJoiner sj = new StringJoiner(SERIALIZATION_SEPARATOR);
-		getValue().keySet().forEach(
-				column -> sj.add(column + "$" + className(getValue().get(column)) + "$" + getValue().get(column)));
-		return sj.toString();
-	}
+    @Override
+    public String toStringPersistence() {
+        StringJoiner sj = new StringJoiner(SERIALIZATION_SEPARATOR);
+        getValue().keySet().forEach(
+                column -> sj.add(column + "$" + className(getValue().get(column)) + "$" + getValue().get(column)));
+        return sj.toString();
+    }
 
-	private Object columnValue(String className, String value) {
-		try {
-			return Class.forName(resolveClassName(className)).getConstructor(String.class).newInstance(value);
-		} catch (ReflectiveOperationException e) {
-			throw new SingularFormPersistenceException("A column value defined in FormKey cannot be deserialized.")
-					.add("className", className).add("value", value);
-		}
-	}
+    private Object columnValue(String className, String value) {
+        try {
+            return Class.forName(resolveClassName(className)).getConstructor(String.class).newInstance(value);
+        } catch (ReflectiveOperationException e) {
+            throw new SingularFormPersistenceException("A column value defined in FormKey cannot be deserialized.", e)
+                    .add("className", className).add("value", value);
+        }
+    }
 
-	private String className(Object value) {
-		return value.getClass().getName().replace(IMPLICIT_JAVA_PACKAGE, "");
-	}
+    private String className(Object value) {
+        return value.getClass().getName().replace(IMPLICIT_JAVA_PACKAGE, "");
+    }
 
-	private String resolveClassName(String className) {
-		return className.contains(".") ? className : IMPLICIT_JAVA_PACKAGE + className;
-	}
+    private String resolveClassName(String className) {
+        return className.contains(".") ? className : IMPLICIT_JAVA_PACKAGE + className;
+    }
 }
