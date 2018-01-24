@@ -25,25 +25,19 @@ import java.util.Iterator;
 /**
  * Data provider for Singular Studio listings of relational data
  */
-public interface StudioTableDataProvider {
-
+public interface StudioTableDataProvider<T extends SInstance> {
 
     /**
      * An iterator of results.
-     * @param first
-     *  the first row to return
-     * @param count
-     *  the number of rows to return
-     * @return
-     * An iterator of results.
-     */
-    Iterator<SInstance> iterator(long first, long count);
-
-    /**
      *
-     * @return
-     * The total number of records.
+     * @param first the first row to return
+     * @param count the number of rows to return
+     * @return An iterator of results.
+     */
+    Iterator<T> iterator(long first, long count);
+
+    /**
+     * @return The total number of records.
      */
     long size();
-
 }
