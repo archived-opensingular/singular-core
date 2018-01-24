@@ -18,8 +18,6 @@
 
 package org.opensingular.studio.core.definition;
 
-import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
-import org.opensingular.form.SInstance;
 import org.opensingular.form.studio.StudioCRUDPermissionStrategy;
 import org.opensingular.studio.core.panel.CrudListContent;
 import org.opensingular.studio.core.panel.CrudShellManager;
@@ -29,12 +27,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Optional;
 
 public class StudioTableDefinition implements Serializable {
 
-    private LinkedHashMap<String, String> columns = new LinkedHashMap<>();
-    private List<CrudListContent.ListAction> actions = new ArrayList<>();
+    private LinkedHashMap<String, String>    columns                 = new LinkedHashMap<>();
+    private List<CrudListContent.ListAction> actions                 = new ArrayList<>();
+    private StudioTableDataProvider          studioTableDataProvider = null;
 
     public StudioTableDefinition(StudioDefinition studioDefinition, CrudShellManager crudShellManager) {
         StudioCRUDPermissionStrategy permissionStrategy = studioDefinition.getPermissionStrategy();
@@ -58,13 +56,21 @@ public class StudioTableDefinition implements Serializable {
     }
 
     /**
-     * Override this method to supply a customized version of data provider.
-     * @return
-     * a null return is ignored and the default provider is used instead.
+     * @return a null return is ignored and the default provider is used instead.
      */
     @Nullable
-    public StudioTableDataProvider getDataProvider(){
-        return null;
+    public StudioTableDataProvider getDataProvider() {
+        return studioTableDataProvider;
+    }
+
+    /**
+     * allows the substitution of the default data provider by the given {@param studioTableDataProvider}
+     * data provider.
+     *
+     * @param studioTableDataProvider Studio data provider replacement
+     */
+    public void setDataProvider(StudioTableDataProvider studioTableDataProvider) {
+        this.studioTableDataProvider = studioTableDataProvider;
     }
 
     public LinkedHashMap<String, String> getColumns() {
