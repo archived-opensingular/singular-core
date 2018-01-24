@@ -37,19 +37,19 @@ import org.opensingular.lib.wicket.util.datatable.column.BSActionPanel;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 import org.opensingular.studio.core.definition.StudioDefinition;
+import org.opensingular.studio.core.definition.StudioTableDataProvider;
 import org.opensingular.studio.core.definition.StudioTableDefinition;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+import java.util.Optional;
 
 public class CrudListContent extends CrudShellContent {
 
-    private IModel<Icon> iconModel = new Model<>();
-    private IModel<String> titleModel = new Model<>();
+    private IModel<Icon>            iconModel          = new Model<>();
+    private IModel<String>          titleModel         = new Model<>();
     private List<HeaderRightButton> headerRightButtons = new ArrayList<>();
 
     public CrudListContent(CrudShellManager crudShellManager) {
@@ -74,7 +74,7 @@ public class CrudListContent extends CrudShellContent {
     }
 
     private void addTable() {
-        BSDataTableBuilder<SInstance, String, IColumn<SInstance, String>> tableBuilder = new BSDataTableBuilder<>(new Provider());
+        BSDataTableBuilder<SInstance, String, IColumn<SInstance, String>> tableBuilder = new BSDataTableBuilder<>(resolveProvider());
         tableBuilder.setBorderedTable(false);
         StudioTableDefinition configuredStudioTable = getConfiguredStudioTable();
         configuredStudioTable.getColumns()
@@ -88,6 +88,11 @@ public class CrudListContent extends CrudShellContent {
                 }));
 
         add(tableBuilder.build("table"));
+    }
+
+    private SortableDataProvider<SInstance, String> resolveProvider() {
+        StudioTableDataProvider dataProvider = Optional.ofNullable(getConfiguredStudioTable().getDataProvider()).orElse(new DefaultStudioTableDataProvider());
+        return new StudioDataProviderAdapter(dataProvider, getFormPersistence()::load);
     }
 
     private BSActionPanel.ActionConfig<SInstance> newConfig() {
@@ -189,7 +194,7 @@ public class CrudListContent extends CrudShellContent {
         }
     }
 
-    private class Provider extends SortableDataProvider<SInstance, String> {
+    private class DefaultStudioTableDataProvider implements StudioTableDataProvider {
         @Override
         public Iterator<SInstance> iterator(long first, long count) {
             return getFormPersistence().loadAll(first, count).iterator();
@@ -199,13 +204,8 @@ public class CrudListContent extends CrudShellContent {
         public long size() {
             return getFormPersistence().countAll();
         }
-
-        @Override
-        public IModel<SInstance> model(SInstance object) {
-            final FormKey key = FormKey.from(object);
-            return $m.loadable(object, () -> getFormPersistence().load(key));
-        }
     }
+
 
     public interface ListAction extends Serializable {
         void configure(BSActionPanel.ActionConfig<SInstance> config);

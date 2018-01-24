@@ -18,14 +18,18 @@
 
 package org.opensingular.studio.core.definition;
 
+import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
+import org.opensingular.form.SInstance;
 import org.opensingular.form.studio.StudioCRUDPermissionStrategy;
 import org.opensingular.studio.core.panel.CrudListContent;
 import org.opensingular.studio.core.panel.CrudShellManager;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 
 public class StudioTableDefinition implements Serializable {
 
@@ -51,6 +55,16 @@ public class StudioTableDefinition implements Serializable {
 
     public void add(CrudListContent.ListAction listAction) {
         actions.add(listAction);
+    }
+
+    /**
+     * Override this method to supply a customized version of data provider.
+     * @return
+     * a null return is ignored and the default provider is used instead.
+     */
+    @Nullable
+    public StudioTableDataProvider getDataProvider(){
+        return null;
     }
 
     public LinkedHashMap<String, String> getColumns() {
