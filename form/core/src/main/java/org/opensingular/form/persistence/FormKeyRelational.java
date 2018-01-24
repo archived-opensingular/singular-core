@@ -102,8 +102,10 @@ public class FormKeyRelational extends AbstractFormKey<HashMap<String, Object>> 
         try {
             return Class.forName(resolveClassName(className)).getConstructor(String.class).newInstance(value);
         } catch (ReflectiveOperationException e) {
-            throw new SingularFormPersistenceException("A column value defined in FormKey cannot be deserialized.", e)
-                    .add("className", className).add("value", value);
+            SingularFormPersistenceException ex = new SingularFormPersistenceException(
+                    "A column value defined in FormKey cannot be deserialized.", e);
+            ex.add("className", className).add("value", value);
+            throw ex;
         }
     }
 
