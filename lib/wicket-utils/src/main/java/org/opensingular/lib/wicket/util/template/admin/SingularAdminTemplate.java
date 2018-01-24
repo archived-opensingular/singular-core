@@ -18,6 +18,7 @@
 
 package org.opensingular.lib.wicket.util.template.admin;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
@@ -33,12 +34,20 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.wicket.util.jquery.JQuery;
+import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public abstract class SingularAdminTemplate extends SingularTemplate {
     protected MarkupContainer pageBody;
@@ -59,6 +68,7 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
         addPageContent();
         addPageContentTitle();
         addPageContentSubtitle();
+        addPageHelpTextIcon();
         addFooter();
     }
 
@@ -126,6 +136,33 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
         pageContent.add(subttile);
     }
 
+    private void addPageHelpTextIcon() {
+        WebMarkupContainer iconMarkup = new WebMarkupContainer("help-icon") {
+            @Override
+            public boolean isVisible() {
+                return StringUtils.isNotBlank(getHelpText().getObject());
+            }
+        };
+        iconMarkup.add(WicketUtils.$b.classAppender(DefaultIcons.QUESTION_CIRCLE.getCssClass()));
+        pageContent.add(iconMarkup);
+
+        iconMarkup.add(WicketUtils.$b.onReadyScript(
+            component -> "var $helpIcon = " + JQuery.$(component) + ";"
+                    + "$helpIcon"
+                    + "  .data('content', '" + getHelpText().getObject() + "')"
+                    + "  .popover({"
+                    + "    'container':'body',"
+                    + "    'html':true,"
+                    + "    'placement':'auto right',"
+                    + "    'trigger':'manual'"
+                    + "  });"
+                    + "$helpIcon"
+                    + "  .hover("
+                    + "    function(){ $helpIcon.popover('show'); },"
+                    + "    function(){ $helpIcon.popover('hide'); });"
+        ));
+    }
+
     private void addFooter() {
         pageFooter = getSingularAdminApp()
                 .map(app -> app.buildPageFooter("app-footer"))
@@ -175,6 +212,10 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
     protected abstract IModel<String> getContentTitle();
 
     protected abstract IModel<String> getContentSubtitle();
+
+    public IModel<String> getHelpText() {
+        return $m.ofValue("");
+    }
 
     protected abstract boolean isWithMenu();
 }

@@ -72,7 +72,8 @@ public class ListMasterDetailMapper implements IWicketComponentMapper, ISInstanc
 
         currentExternal.appendTag("div", true, null, modal);
 
-        ctx.getContainer().appendTag("div", true, null, new MasterDetailPanel("panel", ctx, model, modal, view, instanceActionsProviders));
+        MasterDetailPanel masterDetailPanel = new MasterDetailPanel("panel", ctx, model, modal, view, instanceActionsProviders);
+        ctx.getContainer().appendTag("div", true, null, masterDetailPanel);
 
         modal.add($b.onEnterDelegate(modal.addButton, SINGULAR_PROCESS_EVENT));
 

@@ -42,7 +42,8 @@ jQuery(document).ready(function () {
 
     $(window).resize(configureDynamicAnnotations);
     $(window).ready(configureDynamicAnnotations);
-    Wicket.Event.subscribe("/ajax/call/complete", configureDynamicAnnotations);
+    // This execution has some delay to let some javascript that changes the HTML run, e.g. open a modal
+    Wicket.Event.subscribe("/ajax/call/complete", function() {setTimeout(configureDynamicAnnotations, 500);});
 
     function align(selector) {
         var fieldsByTopPosition = {};

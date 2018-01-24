@@ -31,7 +31,6 @@ import java.util.List;
 public class ProviderLoader {
 
     private boolean enableDanglingValues;
-    ;
     private ISupplier<SInstance> instanceISupplier;
 
     public ProviderLoader(ISupplier<SInstance> instanceISupplier, boolean enableDanglingValues) {
@@ -69,20 +68,28 @@ public class ProviderLoader {
                     selectedInstances.add(instance);
                 }
 
-                for (int i = 0; i < selectedInstances.size(); i += 1) {
-                    SInstance          ins       = selectedInstances.get(i);
-                    final Serializable converted = converter.toObject(ins);
-                    if (converted != null && !ids.contains(idFunction.apply(converted))) {
-                        if (!enableDanglingValues) {
-                            instance.clearInstance();
-                        } else {
-                            values.add(i, converted);
-                        }
-                    }
-                }
+                collectSelectedInstances(instance, values, converter, ids, idFunction, selectedInstances);
             }
         }
         return values;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void collectSelectedInstances(SInstance instance, List<Serializable> values, SInstanceConverter converter,
+                                         List<Object> ids, IFunction<Object, Object> idFunction,
+                                         List<SInstance> selectedInstances) {
+
+        for (int i = 0; i < selectedInstances.size(); i += 1) {
+            SInstance          ins       = selectedInstances.get(i);
+            final Serializable converted = converter.toObject(ins);
+            if (converted != null && !ids.contains(idFunction.apply(converted))) {
+                if (!enableDanglingValues) {
+                    instance.clearInstance();
+                } else {
+                    values.add(i, converted);
+                }
+            }
+        }
     }
 
 

@@ -19,8 +19,10 @@ package org.opensingular.flow.core.entity;
 import org.opensingular.flow.core.SUser;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface IEntityFlowInstance extends IEntityByCod<Integer> {
 
@@ -67,4 +69,42 @@ public interface IEntityFlowInstance extends IEntityByCod<Integer> {
     default IEntityVariableInstance getVariable(String ref) {
         return getVariables().stream().filter(var -> var.getName().equalsIgnoreCase(ref)).findAny().orElse(null);
     }
+
+    /**
+     * This method should be used only with forked instances, otherwise it will always return a single element list.
+     * If not forked use {@link #getCurrentTask()} instead.
+     *
+     * @return a list of active tasks.
+     */
+    default List<IEntityTaskInstance> getCurrentTasks() {
+        List<IEntityTaskInstance>           currentTasks = new ArrayList<>();
+        List<? extends IEntityTaskInstance> list         = getTasks();
+        for (int i = list.size() - 1; i != -1; i--) {
+            IEntityTaskInstance task = list.get(i);
+            if (task.isActive()) {
+                currentTasks.add(task);
+            }
+        }
+        return currentTasks;
+    }
+
+
+    /**
+     * Returns the current task ie: the most recent task (ordered by begin date) that is currently active according
+     * to {@link IEntityTaskInstance#isActive()} method.
+     *
+     * @return
+     */
+    @Nonnull
+    default Optional<IEntityTaskInstance> getCurrentTask() {
+        List<? extends IEntityTaskInstance> list = getTasks();
+        for (int i = list.size() - 1; i != -1; i--) {
+            IEntityTaskInstance task = list.get(i);
+            if (task.isActive()) {
+                return Optional.of(task);
+            }
+        }
+        return Optional.empty();
+    }
+
 }

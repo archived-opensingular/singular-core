@@ -20,10 +20,10 @@ import org.apache.commons.collections.Factory;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.DefaultItemReuseStrategy;
-import org.apache.wicket.markup.repeater.IItemFactory;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
@@ -33,6 +33,8 @@ import org.opensingular.form.SType;
 import org.opensingular.form.view.AbstractSViewListWithControls;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.feedback.SValidationFeedbackPanel;
+import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.form.wicket.repeater.PathInstanceItemReuseStrategy;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
@@ -44,6 +46,7 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
+import org.opensingular.lib.wicket.util.util.Shortcuts;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,7 +55,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public abstract class AbstractListMapper implements IWicketComponentMapper {
 
@@ -83,8 +86,10 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         return btn;
     }
 
-    protected static RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, Item<SInstance> item, BSContainer<?> cell) {
-        RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item);
+    protected static RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, Item<SInstance> item,
+                                                       BSContainer<?> cell, ConfirmationModal confirmationModal) {
+        RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item, confirmationModal);
+
         cell
                 .newTemplateTag(tp -> ""
                         + "<button wicket:id='_remover_' class='singular-remove-btn'>"
@@ -101,6 +106,11 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                                       WicketBuildContext ctx) {
         Factory createAddButton = () -> new AddButton("_add", form, (IModel<SIList<SInstance>>) ctx.getModel());
         buildFooter(footer, ctx, createAddButton);
+
+        SValidationFeedbackPanel feedback = ctx.createFeedbackPanel("feedback").setShowBox(true);
+        AttributeAppender style = Shortcuts.$b.attrAppender("style", "margin-top: 15px", ";");
+        feedback.add(style);
+        footer.appendTag("div", feedback);
     }
 
     public static void buildFooter(BSContainer<?> footer, WicketBuildContext ctx, Factory createAddButton) {
@@ -304,22 +314,33 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
     protected static class RemoverButton extends ActionAjaxButton {
         private final ElementsView elementsView;
         private final Item<SInstance> item;
+        private final ConfirmationModal confirmationModal;
 
-        protected RemoverButton(String id, Form<?> form, ElementsView elementsView, Item<SInstance> item) {
+        protected RemoverButton(String id, Form<?> form, ElementsView elementsView, Item<SInstance> item, ConfirmationModal confirmationModal) {
             super(id, form);
             this.setDefaultFormProcessing(false);
             this.elementsView = elementsView;
             this.item = item;
             add($b.attr("title", "Remover Linha"));
+
+            this.confirmationModal = confirmationModal;
         }
 
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
+            confirmationModal.show(target, this::removeItem);
+        }
+
+        private void removeItem(AjaxRequestTarget target) {
             elementsView.removeItem(target, item);
             target.appendJavaScript(JQuery.$(this).append(".prop('disabled',true);"));
             if (elementsView.getModelObject().isEmpty()) {
-                target.add(form);
+                target.add(this.getForm());
             }
+        }
+
+        public ConfirmationModal getConfirmationModal() {
+            return confirmationModal;
         }
     }
 
