@@ -24,6 +24,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * View to customize the render of an {@link SType}
+ * With this view is possible to split several groups
+ * of the {@link SType}'s fields on diferent tabs for the user.
+ *
+ * The order of the added tabs is the order that is showed
+ * to the user.
+ */
 public class SViewTab extends SView {
 
     private STab defaultTab;
@@ -34,7 +42,8 @@ public class SViewTab extends SView {
     private Integer navColSm;
     private Integer navColMd;
     private Integer navColLg;
-    
+
+    /** {@inheritDoc} */
     @Override
     public boolean isApplicableFor(SType<?> type) {
         return type.isComposite();
@@ -48,6 +57,13 @@ public class SViewTab extends SView {
         return defaultTab;
     }
 
+    /**
+     * Add a new tab to the view tab.
+     *
+     * @param id the id of the tab
+     * @param title the title of the tab
+     * @return the new tab created
+     */
     public STab addTab(String id, String title) {
         STab tab = new STab(this, id, title);
         if (defaultTab == null) {
@@ -58,43 +74,66 @@ public class SViewTab extends SView {
         return tab;
     }
 
-    public STab addTab(SType<?> type, String label) {
-        return addTab(type.getNameSimple(), label)
+    /**
+     * Add a new tab to the view tab.
+     *
+     * @param type the type of the field added to the tab
+     * @param title the title of the tab
+     * @return the new tab created
+     */
+    public STab addTab(SType<?> type, String title) {
+        return addTab(type.getNameSimple(), title)
             .add(type);
     }
 
+    /**
+     * Add a new tab to the view tab.
+     * The title of the tab is the same of the {@link SType}
+     * @param type the type of the field added to the tab
+     * @return the new tab created
+     */
     public STab addTab(SType<?> type) {
         return addTab(type, type.asAtr().getLabel());
     }
+
     /**
-     * Configura o tamanho geral da coluna de navegação das abas
+     * Configure the column preference size to the navigation bar of the tabs
+     * to all device sizes
      */
     public SViewTab navColPreference(Integer value) {
         return navColLg(value).navColMd(value).navColSm(value).navColXs(value);
     }
+
     /**
-     * Configura o tamanho da coluna de navegação das abas em modo Smallest
+     * Configure the column preference size to the navigation bar of the tabs
+     * to extra small devices
      */
     public SViewTab navColXs(Integer value) {
         this.navColXs = value;
         return this;
     }
+
     /**
-     * Configura o tamanho da coluna de navegação das abas em modo Small
+     * Configure the column preference size to the navigation bar of the tabs
+     * to small devices
      */
     public SViewTab navColSm(Integer value) {
         this.navColSm = value;
         return this;
     }
+
     /**
-     * Configura o tamanho da coluna de navegação das abas em modo Medium
+     * Configure the column preference size to the navigation bar of the tabs
+     * to medium devices
      */
     public SViewTab navColMd(Integer value) {
         this.navColMd = value;
         return this;
     }
+
     /**
-     * Configura o tamanho da coluna de navegação das abas em modo Large
+     * Configure the column preference size to the navigation bar of the tabs
+     * to large devices
      */
     public SViewTab navColLg(Integer value) {
         this.navColLg = value;
@@ -117,6 +156,10 @@ public class SViewTab extends SView {
         return navColLg;
     }
 
+    /**
+     * Each tab defined on {@link SViewTab} is represented by this class.
+     *
+     */
     public final static class STab implements Serializable {
 
         private final SViewTab tabView;
@@ -132,6 +175,14 @@ public class SViewTab extends SView {
             typesNames = new ArrayList<>();
         }
 
+        /**
+         * Add a type to be rendered by this tab.
+         * This method can be called multiple times
+         * adding multiple fields.
+         *
+         * @param field the field to be rendered on this tab
+         * @return this
+         */
         public STab add(SType<?> field) {
             typesNames.add(field.getNameSimple());
             return this;
@@ -154,6 +205,14 @@ public class SViewTab extends SView {
             return this;
         }
 
+        /**
+         * Used to define if this STab should be visible or not.
+         * The default value is to be always visible. You should assume
+         * that this will be evaluated only before the form is opened.
+         *
+         * @param visible code to evaluate if the STab should be visible
+         * @return this
+         */
         public STab visible(IPredicate<SInstance> visible) {
             this.visible = visible;
             return this;
