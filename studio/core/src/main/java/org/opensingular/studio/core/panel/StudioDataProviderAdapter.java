@@ -23,7 +23,6 @@ import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.lib.commons.lambda.IFunction;
-import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.studio.core.definition.StudioTableDataProvider;
 
 import java.util.Iterator;
@@ -32,10 +31,10 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 public class StudioDataProviderAdapter extends SortableDataProvider<SInstance, String> {
 
-    private StudioTableDataProvider studioTableDataProvider;
+    private StudioTableDataProvider<?> studioTableDataProvider;
     private IFunction<FormKey, SInstance> instanceLoader;
 
-    public StudioDataProviderAdapter(StudioTableDataProvider studioTableDataProvider, IFunction<FormKey, SInstance> instanceLoader) {
+    public StudioDataProviderAdapter(StudioTableDataProvider<?> studioTableDataProvider, IFunction<FormKey, SInstance> instanceLoader) {
         this.studioTableDataProvider = studioTableDataProvider;
         this.instanceLoader = instanceLoader;
     }

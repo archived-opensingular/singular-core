@@ -20,12 +20,13 @@ package org.opensingular.studio.core.definition;
 
 import org.opensingular.form.SInstance;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
 /**
  * Data provider for Singular Studio listings of relational data
  */
-public interface StudioTableDataProvider<T extends SInstance> {
+public interface StudioTableDataProvider<T extends SInstance> extends Serializable {
 
     /**
      * An iterator of results.
