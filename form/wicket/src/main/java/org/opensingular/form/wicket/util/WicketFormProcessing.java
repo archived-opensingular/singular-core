@@ -22,6 +22,7 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.event.Broadcast;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
@@ -31,9 +32,10 @@ import org.apache.wicket.util.visit.Visits;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormProcessing;
 import org.opensingular.form.document.SDocument;
-import org.opensingular.form.event.ISInstanceListener.EventCollector;
 import org.opensingular.form.validation.InstanceValidationContext;
 import org.opensingular.form.validation.ValidationErrorLevel;
+import org.opensingular.form.view.SView;
+import org.opensingular.form.view.SViewTab;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.lib.commons.util.Loggable;
@@ -184,6 +186,22 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
         boolean skipValidation = isSkipValidationOnRequest();
 
         Set<SInstance> instancesToUpdateComponents = executeFieldProcessLifecycle(instance, skipValidation);
+
+        SView view = instance.getRoot().getType().getView();
+        if (view instanceof SViewTab) {
+            SViewTab viewTab = (SViewTab) view;
+            for (SViewTab.STab sTab : viewTab.getTabs()) {
+                for (SInstance instanceToUpdate : instancesToUpdateComponents) {
+                    String updateTypeName = instanceToUpdate.getType().getNameSimple();
+
+                    for (String typeName : sTab.getTypesNames()) {
+                        if (typeName.equalsIgnoreCase(updateTypeName)) {
+                            component.send(component, Broadcast.BUBBLE, "updateTab");
+                        }
+                    }
+                }
+            }
+        }
 
         if (!skipValidation) {
             WicketBuildContext

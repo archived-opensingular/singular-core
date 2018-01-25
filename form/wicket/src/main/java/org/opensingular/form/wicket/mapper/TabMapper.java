@@ -103,6 +103,8 @@ public class TabMapper implements IWicketComponentMapper {
                     for (BSTab tab : panel.getTabs().values())
                         if (instance.isDescendantOf(tab.getModelObject()))
                             target.add(panel.getTabItem(tab));
+                } else if (event.getPayload() instanceof String && ((String) event.getPayload()).equalsIgnoreCase("updateTab")) {
+                    target.add(panel);
                 }
             }
         });

@@ -29,6 +29,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
+import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.lib.commons.lambda.IBiFunction;
@@ -146,8 +147,23 @@ public abstract class BSPanelGrid extends Panel {
             @Override
             protected Iterator<IModel<String>> getItemModels() {
                 return tabMap.keySet().stream()
+                        .filter(this::isAnyChildrenVisible)
                     .map(it -> (IModel<String>) $m.ofValue(it))
                     .iterator();
+            }
+
+            private boolean isAnyChildrenVisible(String tabId) {
+                BSTab bsTab = tabMap.get(tabId);
+                SInstance instance = bsTab.getModelObject();
+                if ((instance instanceof SIComposite) && instance.asAtr().exists() && instance.asAtr().isVisible()) {
+                    for (String typeName : bsTab.getSubtree()) {
+                        SInstance field = instance.getField(typeName);
+                        if (field.asAtr().exists() && field.asAtr().isVisible()) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
             }
 
             @Override

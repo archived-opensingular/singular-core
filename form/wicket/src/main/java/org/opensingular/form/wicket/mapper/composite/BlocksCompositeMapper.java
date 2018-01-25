@@ -225,7 +225,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             SInstance instance = ctx.getCurrentInstance();
             if ((instance instanceof SIComposite) && instance.asAtr().exists() && instance.asAtr().isVisible()) {
                 for (String typeName : block.getTypes()) {
-                    SInstance field = ((SIComposite) instance).getField(typeName);
+                    SInstance field = instance.getField(typeName);
                     if (field.asAtr().exists() && field.asAtr().isVisible()) {
                         return true;
                     }
