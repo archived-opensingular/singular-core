@@ -92,7 +92,7 @@ public class CrudListContent extends CrudShellContent {
 
     private SortableDataProvider<SInstance, String> resolveProvider() {
         StudioTableDataProvider dataProvider = Optional.ofNullable(getConfiguredStudioTable().getDataProvider()).orElse(new DefaultStudioTableDataProvider());
-        return new StudioDataProviderAdapter(dataProvider, getFormPersistence()::load);
+        return new StudioDataProviderAdapter(dataProvider, formKey -> getFormPersistence().load(formKey));
     }
 
     private BSActionPanel.ActionConfig<SInstance> newConfig() {
