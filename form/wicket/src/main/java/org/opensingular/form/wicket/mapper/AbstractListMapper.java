@@ -107,8 +107,8 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         Factory createAddButton = () -> new AddButton("_add", form, (IModel<SIList<SInstance>>) ctx.getModel());
         buildFooter(footer, ctx, createAddButton);
 
-        SValidationFeedbackPanel feedback = ctx.createFeedbackPanel("feedback").setShowBox(true);
-        AttributeAppender style = Shortcuts.$b.attrAppender("style", "margin-top: 15px", ";");
+        SValidationFeedbackPanel feedback = ctx.createFeedbackPanel("feedback");
+        AttributeAppender style = Shortcuts.$b.attrAppender("style", "margin-top: 15px; color: #e73d4a", ";");
         feedback.add(style);
         footer.appendTag("div", feedback);
     }
