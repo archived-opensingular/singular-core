@@ -1,19 +1,14 @@
-package org.opensingular.form.persistence.relational;
+package org.opensingular.form.persistence;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SInfoType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.TypeBuilder;
-import org.opensingular.form.sample.FormTestPackage;
+import org.opensingular.form.*;
 import org.opensingular.form.support.TestFormSupport;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -22,11 +17,11 @@ import static org.junit.Assert.assertNotNull;
 @FixMethodOrder
 public class RelationalMultilevelSQLTest extends TestFormSupport {
 
-    @Inject
-    private PostoAtendimentoRepository postoAtendimentoRepository;
+    private FormPersistenceInRelationalDB<STypePostoAtendimento, SIComposite> postoAtendimentoRepository;
 
     @Before
     public void setUp() {
+        postoAtendimentoRepository = new FormPersistenceInRelationalDB<>(db, documentFactory, RelationalMultilevelSQLTest.STypePostoAtendimento.class);
         assertNotNull(postoAtendimentoRepository);
     }
 
@@ -133,6 +128,17 @@ public class RelationalMultilevelSQLTest extends TestFormSupport {
             cnpj.asSQL().column("NU_CNPJ");
         }
 
+    }
+
+    @SInfoPackage(name = FormTestPackage.PACKAGE_NAME)
+    public static class FormTestPackage extends SPackage {
+
+        public static final String PACKAGE_NAME = "form.sample";
+
+        @Override
+        protected void onLoadPackage(@Nonnull PackageBuilder pb) {
+            pb.loadPackage(SPackageFormPersistence.class);
+        }
     }
 
 }

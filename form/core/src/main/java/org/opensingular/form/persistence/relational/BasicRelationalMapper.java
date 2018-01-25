@@ -28,49 +28,49 @@ import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy
  * @author Edmundo Andrade
  */
 public class BasicRelationalMapper implements RelationalMapper {
-	public SType<?> tableContext(SType<?> type) {
-		SType<?> result = type;
-		while (table(result) == null && !result.getParentScope().equals(result.getPackage())) {
-			result = result.getDictionary().getType(result.getParentScope().getName());
-		}
-		return result;
-	}
+    public SType<?> tableContext(SType<?> type) {
+        SType<?> result = type;
+        while (table(result) == null && !result.getParentScope().equals(result.getPackage())) {
+            result = result.getDictionary().getType(result.getParentScope().getName());
+        }
+        return result;
+    }
 
-	public String table(SType<?> type) {
-		return type.asSQL().getTable();
-	}
+    public String table(SType<?> type) {
+        return type.asSQL().getTable();
+    }
 
-	public List<String> tablePK(SType<?> type) {
-		String pk = type.asSQL().getTablePK();
-		if (pk == null) {
-			return null;
-		}
-		List<String> result = new ArrayList<>();
-		for (String key : pk.split(",")) {
-			result.add(key.trim());
-		}
-		return result;
-	}
+    public List<String> tablePK(SType<?> type) {
+        String pk = type.asSQL().getTablePK();
+        if (pk == null) {
+            return null;
+        }
+        List<String> result = new ArrayList<>();
+        for (String key : pk.split(",")) {
+            result.add(key.trim());
+        }
+        return result;
+    }
 
-	public List<RelationalFK> tableFKs(SType<?> field) {
-		return field.asSQL().getTableFKs();
-	}
+    public List<RelationalFK> tableFKs(SType<?> field) {
+        return field.asSQL().getTableFKs();
+    }
 
-	public String column(SType<?> field) {
-		return field.asSQL().getColumn();
-	}
+    public String column(SType<?> field) {
+        return field.asSQL().getColumn();
+    }
 
-	public RelationalForeignColumn foreignColumn(SType<?> field) {
-		return field.asSQL().getForeignColumn();
-	}
+    public RelationalForeignColumn foreignColumn(SType<?> field) {
+        return field.asSQL().getForeignColumn();
+    }
 
-	public PersistenceStrategy persistenceStrategy(SType<?> field) {
-		PersistenceStrategy result = PersistenceStrategy.COLUMN;
-		if (column(field) == null && foreignColumn(field) == null || field.isComposite()) {
-			if (table(field) != null || RelationalSQL.isListWithTableBound(field)) {
-				result = PersistenceStrategy.TABLE;
-			}
-		}
-		return result;
-	}
+    public PersistenceStrategy persistenceStrategy(SType<?> field) {
+        PersistenceStrategy result = PersistenceStrategy.COLUMN;
+        if (column(field) == null && foreignColumn(field) == null) {
+            if (table(field) != null || RelationalSQL.isListWithTableBound(field)) {
+                result = PersistenceStrategy.TABLE;
+            }
+        }
+        return result;
+    }
 }

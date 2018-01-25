@@ -1,59 +1,37 @@
 package org.opensingular.form.persistence;
 
 import org.apache.commons.io.IOUtils;
-import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInfoPackage;
-import org.opensingular.form.SInfoType;
-import org.opensingular.form.SPackage;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.*;
 import org.opensingular.form.document.RefType;
-import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.io.HashUtil;
 import org.opensingular.form.persistence.FormPersistenceInRelationalDBHibernateTest.TestPackage.Form;
 import org.opensingular.form.persistence.FormPersistenceInRelationalDBHibernateTest.TestPackage.Master;
 import org.opensingular.form.persistence.relational.BLOBConverter;
 import org.opensingular.form.persistence.relational.CLOBConverter;
+import org.opensingular.form.support.TestFormSupport;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import static java.util.Arrays.*;
-import static org.junit.Assert.*;
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author Edmundo Andrade
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:relational/applicationContext.xml")
-@Rollback
-@Transactional
-public class FormPersistenceInRelationalDBHibernateTest {
-    @Inject
-    protected SessionFactory                                     sessionFactory;
-    @Inject
-    private   SDocumentFactory                                   documentFactory;
-    @Inject
-    private   RelationalDatabase                                 db;
+public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport {
+
     private   FormPersistenceInRelationalDB<Form, SIComposite>   repoForm;
     private   FormPersistenceInRelationalDB<Master, SIComposite> repoMaster;
 

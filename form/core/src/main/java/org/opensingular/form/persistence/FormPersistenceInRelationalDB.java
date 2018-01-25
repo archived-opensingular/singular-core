@@ -16,6 +16,19 @@
 
 package org.opensingular.form.persistence;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
@@ -29,337 +42,325 @@ import org.opensingular.form.persistence.relational.RelationalData;
 import org.opensingular.form.persistence.relational.RelationalSQL;
 import org.opensingular.form.persistence.relational.RelationalSQLCommmand;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 /**
  * Form persistence based on relational database managers.
  *
  * @author Edmundo Andrade
  */
 public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>, INSTANCE extends SIComposite>
-		implements FormRespository<TYPE, INSTANCE> {
-	protected RelationalDatabase db;
-	private final SDocumentFactory documentFactory;
-	private final Class<TYPE> type;
-	private FormKeyManager<FormKeyRelational> formKeyManager;
+        implements FormRespository<TYPE, INSTANCE> {
+    protected RelationalDatabase db;
+    private final SDocumentFactory documentFactory;
+    private final Class<TYPE> type;
+    private FormKeyManager<FormKeyRelational> formKeyManager;
 
-	public FormPersistenceInRelationalDB(RelationalDatabase db, SDocumentFactory documentFactory, Class<TYPE> type) {
-		this.db = db;
-		this.documentFactory = documentFactory;
-		this.type = type;
-	}
+    public FormPersistenceInRelationalDB(RelationalDatabase db, SDocumentFactory documentFactory, Class<TYPE> type) {
+        this.db = db;
+        this.documentFactory = documentFactory;
+        this.type = type;
+    }
 
-	@Nonnull
-	public FormKey keyFromObject(@Nonnull Object objectValueToBeConverted) {
-		return getFormKeyManager().keyFromObject(objectValueToBeConverted);
-	}
+    @Nonnull
+    public FormKey keyFromObject(@Nonnull Object objectValueToBeConverted) {
+        return getFormKeyManager().keyFromObject(objectValueToBeConverted);
+    }
 
-	@Nonnull
-	public FormKey insert(@Nonnull INSTANCE instance, Integer inclusionActor) {
-		return insertInternal(instance, inclusionActor);
-	}
+    @Nonnull
+    public FormKey insert(@Nonnull INSTANCE instance, Integer inclusionActor) {
+        return insertInternal(instance, inclusionActor);
+    }
 
-	public void delete(@Nonnull FormKey key) {
-		INSTANCE mainInstance = load(key);
-		for (SInstance field : mainInstance.getAllChildren()) {
-			if (RelationalSQL.isListWithTableBound(field.getType())) {
-				SIList<SIComposite> listInstance = mainInstance.getFieldList(field.getType().getNameSimple(),
-						SIComposite.class);
-				for (SIComposite item : listInstance.getChildren()) {
-					deleteInternal(item.getType(), FormKey.fromInstance(item));
-				}
-			}
-		}
-		deleteInternal(createType(), key);
-	}
+    public void delete(@Nonnull FormKey key) {
+        INSTANCE mainInstance = load(key);
+        for (SInstance field : mainInstance.getAllChildren()) {
+            if (RelationalSQL.isListWithTableBound(field.getType())) {
+                SIList<SIComposite> listInstance = mainInstance.getFieldList(field.getType().getNameSimple(),
+                        SIComposite.class);
+                for (SIComposite item : listInstance.getChildren()) {
+                    deleteInternal(item.getType(), FormKey.fromInstance(item));
+                }
+            }
+        }
+        deleteInternal(createType(), key);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Nonnull
-	private TYPE createType() {
-		return (TYPE) RefType.of(type).get();
-	}
+    @SuppressWarnings("unchecked")
+    @Nonnull
+    private TYPE createType() {
+        return (TYPE) RefType.of(type).get();
+    }
 
-	public void update(@Nonnull INSTANCE instance, Integer inclusionActor) {
-		updateInternal(instance, load(FormKey.fromInstance(instance)), inclusionActor);
-	}
+    public void update(@Nonnull INSTANCE instance, Integer inclusionActor) {
+        updateInternal(instance, load(FormKey.fromInstance(instance)), inclusionActor);
+    }
 
-	@Nonnull
-	public FormKey insertOrUpdate(@Nonnull INSTANCE instance, Integer inclusionActor) {
-		if (isPersistent(instance)) {
-			update(instance, inclusionActor);
-			return FormKey.fromInstance(instance);
-		}
-		return insert(instance, inclusionActor);
-	}
+    @Nonnull
+    public FormKey insertOrUpdate(@Nonnull INSTANCE instance, Integer inclusionActor) {
+        if (isPersistent(instance)) {
+            update(instance, inclusionActor);
+            return FormKey.fromInstance(instance);
+        }
+        return insert(instance, inclusionActor);
+    }
 
-	public boolean isPersistent(@Nonnull INSTANCE instance) {
-		return FormKey.containsKey(instance);
-	}
+    public boolean isPersistent(@Nonnull INSTANCE instance) {
+        return FormKey.containsKey(instance);
+    }
 
-	@Nonnull
-	public FormKey newVersion(@Nonnull INSTANCE instance, Integer inclusionActor, boolean keepAnnotations) {
-		throw new SingularFormException("Method not implemented.");
-	}
+    @Nonnull
+    public FormKey newVersion(@Nonnull INSTANCE instance, Integer inclusionActor, boolean keepAnnotations) {
+        throw new SingularFormException("Method not implemented.");
+    }
 
-	@Nonnull
-	public INSTANCE load(@Nonnull FormKey key) {
-		return loadOpt(key).orElseThrow(() -> new SingularFormNotFoundException(key));
-	}
+    @Nonnull
+    public INSTANCE load(@Nonnull FormKey key) {
+        return loadOpt(key).orElseThrow(() -> new SingularFormNotFoundException(key));
+    }
 
-	@Nonnull
-	public Optional<INSTANCE> loadOpt(@Nonnull FormKey key) {
-		return Optional.ofNullable(loadInternal(key));
-	}
+    @Nonnull
+    public Optional<INSTANCE> loadOpt(@Nonnull FormKey key) {
+        return Optional.ofNullable(loadInternal(key));
+    }
 
-	@Nonnull
-	public List<INSTANCE> loadAll(long first, long max) {
-		return loadAllInternal(first, max);
-	}
+    @Nonnull
+    public List<INSTANCE> loadAll(long first, long max) {
+        return loadAllInternal(first, max);
+    }
 
-	@Nonnull
-	public List<INSTANCE> loadAll() {
-		return loadAllInternal(null, null);
-	}
+    @Nonnull
+    public List<INSTANCE> loadAll() {
+        return loadAllInternal(null, null);
+    }
 
-	public long countAll() {
-		long result = 0;
-		RelationalSQL query = RelationalSQL.selectCount(createType());
-		for (RelationalSQLCommmand command : query.toSQLScript()) {
-			result += (long) db.query(command.getSQL(), command.getParameters()).get(0)[0];
-		}
-		return result;
-	}
+    public long countAll() {
+        long result = 0;
+        RelationalSQL query = RelationalSQL.selectCount(createType());
+        for (RelationalSQLCommmand command : query.toSQLScript()) {
+            result += (long) db.query(command.getSQL(), command.getParameters()).get(0)[0];
+        }
+        return result;
+    }
 
-	@SuppressWarnings("unchecked")
-	public INSTANCE createInstance() {
-		return (INSTANCE) documentFactory.createInstance(RefType.of(type));
-	}
+    @SuppressWarnings("unchecked")
+    public INSTANCE createInstance() {
+        return (INSTANCE) documentFactory.createInstance(RefType.of(type));
+    }
 
-	@Nonnull
-	public FormKeyManager<FormKeyRelational> getFormKeyManager() {
-		if (formKeyManager == null) {
-			formKeyManager = new FormKeyManager<>(FormKeyRelational.class, e -> addInfo(e));
-		}
-		return formKeyManager;
-	}
+    @Nonnull
+    public FormKeyManager<FormKeyRelational> getFormKeyManager() {
+        if (formKeyManager == null) {
+            formKeyManager = new FormKeyManager<>(FormKeyRelational.class, e -> addInfo(e));
+        }
+        return formKeyManager;
+    }
 
-	@Nonnull
-	protected SingularFormPersistenceException addInfo(@Nonnull SingularFormPersistenceException exception) {
-		return exception.add("persistence", toString());
-	}
+    @Nonnull
+    protected SingularFormPersistenceException addInfo(@Nonnull SingularFormPersistenceException exception) {
+        return exception.add("persistence", toString());
+    }
 
-	@Nullable
-	protected INSTANCE loadInternal(@Nonnull FormKey key) {
-		INSTANCE mainInstance = null;
-		TYPE mainType = createType();
-		RelationalSQL query = RelationalSQL.select(mainType.getContainedTypes()).where(mainType, key);
-		for (RelationalSQLCommmand command : query.toSQLScript()) {
-			for (INSTANCE instance : executeSelectCommand(command)) {
-				mainInstance = instance;
-				break;
-			}
-		}
-		for (SType<?> field : mainType.getContainedTypes()) {
-			if (RelationalSQL.isListWithTableBound(field)) {
-				executeSelectField(key, mainInstance, mainType, field);
-			}
-		}
-		return mainInstance;
-	}
+    @Nullable
+    protected INSTANCE loadInternal(@Nonnull FormKey key) {
+        INSTANCE mainInstance = null;
+        TYPE mainType = createType();
+        RelationalSQL query = RelationalSQL.select(mainType.getContainedTypes()).where(mainType, key);
+        for (RelationalSQLCommmand command : query.toSQLScript()) {
+            for (INSTANCE instance : executeSelectCommand(command)) {
+                mainInstance = instance;
+                break;
+            }
+        }
+        for (SType<?> field : mainType.getContainedTypes()) {
+            if (RelationalSQL.isListWithTableBound(field)) {
+                executeSelectField(key, mainInstance, mainType, field);
+            }
+        }
+        return mainInstance;
+    }
 
-	protected void executeSelectField(@Nonnull FormKey key, INSTANCE mainInstance, TYPE mainType, SType<?> field) {
-		RelationalSQL query;SIList<SIComposite> listInstance = mainInstance.getFieldList(field.getNameSimple(), SIComposite.class);
-		for (SType<?> detail : field.getLocalTypes()) {
+    protected void executeSelectField(@Nonnull FormKey key, INSTANCE mainInstance, TYPE mainType, SType<?> field) {
+        RelationalSQL query;
+        SIList<SIComposite> listInstance = mainInstance.getFieldList(field.getNameSimple(), SIComposite.class);
+        for (SType<?> detail : field.getLocalTypes()) {
             STypeComposite<?> detailType = (STypeComposite<?>) detail.getSuperType();
             query = RelationalSQL.select(detailType.getContainedTypes()).where(mainType, key);
             for (RelationalSQLCommmand command : query.toSQLScript()) {
                 executeSelectCommandIntoSIList(command, listInstance);
             }
         }
-	}
+    }
 
-	@Nonnull
-	protected List<INSTANCE> loadAllInternal(Long first, Long max) {
-		List<INSTANCE> result = new ArrayList<>();
-		RelationalSQL query = RelationalSQL.select(createType().getContainedTypes()).limit(first, max);
-		for (RelationalSQLCommmand command : query.toSQLScript()) {
-			result.addAll(executeSelectCommand(command));
-		}
-		return result;
-	}
+    @Nonnull
+    protected List<INSTANCE> loadAllInternal(Long first, Long max) {
+        List<INSTANCE> result = new ArrayList<>();
+        RelationalSQL query = RelationalSQL.select(createType().getContainedTypes()).limit(first, max);
+        for (RelationalSQLCommmand command : query.toSQLScript()) {
+            result.addAll(executeSelectCommand(command));
+        }
+        return result;
+    }
 
-	protected FormKey insertInternal(@Nonnull SIComposite instance, Integer inclusionActor) {
-		List<RelationalData> toList = new ArrayList<>();
-		RelationalSQL.persistenceStrategy(instance.getType()).save(instance, toList);
-		List<SIComposite> targets = new ArrayList<>();
-		toList.forEach(data -> {
-			if (!targets.contains(data.getTupleKeyRef())) {
-				targets.add((SIComposite) data.getTupleKeyRef());
-			}
-		});
-		for (SIComposite target : targets) {
-			for (RelationalSQLCommmand command : RelationalSQL.insert(target).toSQLScript()) {
-				executeInsertCommand(command);
-			}
-		}
-		return FormKey.fromInstance(instance);
-	}
+    protected FormKey insertInternal(@Nonnull SIComposite instance, Integer inclusionActor) {
+        List<RelationalData> toList = new ArrayList<>();
+        RelationalSQL.persistenceStrategy(instance.getType()).save(instance, toList);
+        List<SIComposite> targets = new ArrayList<>();
+        toList.forEach(data -> {
+            if (!targets.contains(data.getTupleKeyRef())) {
+                targets.add((SIComposite) data.getTupleKeyRef());
+            }
+        });
+        for (SIComposite target : targets) {
+            for (RelationalSQLCommmand command : RelationalSQL.insert(target).toSQLScript()) {
+                executeInsertCommand(command);
+            }
+        }
+        return FormKey.fromInstance(instance);
+    }
 
-	protected void updateInternal(@Nonnull SIComposite instance, SIComposite previousPersistedInstance,
-			Integer inclusionActor) {
-		for (SInstance field : instance.getAllChildren()) {
-			if (RelationalSQL.isListWithTableBound(field.getType())) {
-				updateFieldInternal(instance, previousPersistedInstance, inclusionActor, field);
-			}
-		}
-		if (execScript(RelationalSQL.update(instance, previousPersistedInstance).toSQLScript()) == 0) {
-			throw new SingularFormNotFoundException(FormKey.fromInstance(instance));
-		}
-	}
+    protected void updateInternal(@Nonnull SIComposite instance, SIComposite previousPersistedInstance,
+            Integer inclusionActor) {
+        for (SInstance field : instance.getAllChildren()) {
+            if (RelationalSQL.isListWithTableBound(field.getType())) {
+                updateFieldInternal(instance, previousPersistedInstance, inclusionActor, field);
+            }
+        }
+        if (execScript(RelationalSQL.update(instance, previousPersistedInstance).toSQLScript()) == 0) {
+            throw new SingularFormNotFoundException(FormKey.fromInstance(instance));
+        }
+    }
 
-	protected void updateFieldInternal(@Nonnull SIComposite instance, SIComposite previousPersistedInstance, Integer inclusionActor, SInstance field) {
-		SIList<SIComposite> listInstance = instance.getFieldList(field.getType().getNameSimple(),
-                SIComposite.class);
-		SIList<SIComposite> previousListInstance = previousPersistedInstance
+    protected void updateFieldInternal(@Nonnull SIComposite instance, SIComposite previousPersistedInstance,
+            Integer inclusionActor, SInstance field) {
+        SIList<SIComposite> listInstance = instance.getFieldList(field.getType().getNameSimple(), SIComposite.class);
+        SIList<SIComposite> previousListInstance = previousPersistedInstance
                 .getFieldList(field.getType().getNameSimple(), SIComposite.class);
-		for (SIComposite item : listInstance.getChildren()) {
+        for (SIComposite item : listInstance.getChildren()) {
             if (FormKey.containsKey(item))
-                updateInternal(instance, locate(FormKey.fromInstance(item), previousListInstance),
-                        inclusionActor);
+                updateInternal(instance, locate(FormKey.fromInstance(item), previousListInstance), inclusionActor);
             else
                 insertInternal(instance, inclusionActor);
         }
-		for (SIComposite item : detectIntancesToDelete(field.getType(), instance, previousPersistedInstance)) {
+        for (SIComposite item : detectIntancesToDelete(field.getType(), instance, previousPersistedInstance)) {
             deleteInternal(item.getType(), FormKey.fromInstance(item));
         }
-	}
+    }
 
-	private SIComposite locate(FormKey key, SIList<SIComposite> previousListInstance) {
-		String keyString = key.toStringPersistence();
-		for (SIComposite item : previousListInstance) {
-			if (FormKey.fromInstance(item).toStringPersistence().equals(keyString)) {
-				return item;
-			}
-		}
-		return null;
-	}
+    private SIComposite locate(FormKey key, SIList<SIComposite> previousListInstance) {
+        String keyString = key.toStringPersistence();
+        for (SIComposite item : previousListInstance) {
+            if (FormKey.fromInstance(item).toStringPersistence().equals(keyString)) {
+                return item;
+            }
+        }
+        return null;
+    }
 
-	private Collection<SIComposite> detectIntancesToDelete(SType<?> listField, SIComposite instance,
-			SIComposite previousInstance) {
-		String fieldName = listField.getNameSimple();
-		Map<String, SIComposite> previousKeys = new HashMap<>();
-		for (SIComposite item : previousInstance.getFieldList(fieldName, SIComposite.class).getChildren()) {
-			previousKeys.put(FormKey.fromInstance(item).toStringPersistence(), item);
-		}
-		for (SIComposite item : instance.getFieldList(fieldName, SIComposite.class).getChildren()) {
-			FormKey keyToPreserve = FormKey.fromInstance(item);
-			if (keyToPreserve != null) {
-				previousKeys.remove(keyToPreserve.toStringPersistence());
-			}
-		}
-		return previousKeys.values();
-	}
+    private Collection<SIComposite> detectIntancesToDelete(SType<?> listField, SIComposite instance,
+            SIComposite previousInstance) {
+        String fieldName = listField.getNameSimple();
+        Map<String, SIComposite> previousKeys = new HashMap<>();
+        for (SIComposite item : previousInstance.getFieldList(fieldName, SIComposite.class).getChildren()) {
+            previousKeys.put(FormKey.fromInstance(item).toStringPersistence(), item);
+        }
+        for (SIComposite item : instance.getFieldList(fieldName, SIComposite.class).getChildren()) {
+            Optional<FormKey> keyToPreserve = FormKey.fromInstanceOpt(item);
+            if (keyToPreserve.isPresent()) {
+                previousKeys.remove(keyToPreserve.get().toStringPersistence());
+            }
+        }
+        return previousKeys.values();
+    }
 
-	protected int deleteInternal(STypeComposite<?> type, FormKey formKey) {
-		return execScript(RelationalSQL.delete(type, formKey).toSQLScript());
-	}
+    protected int deleteInternal(STypeComposite<?> type, FormKey formKey) {
+        return execScript(RelationalSQL.delete(type, formKey).toSQLScript());
+    }
 
-	protected List<INSTANCE> executeSelectCommand(RelationalSQLCommmand command) {
-		return db.query(command.getSQL(), command.getParameters(), command.getLimitOffset(), command.getLimitRows(),
-				rs -> {
-					INSTANCE instance = createInstance();
-					command.setInstance(instance);
-					FormKey.setOnInstance(instance, tupleKey(rs, RelationalSQL.tablePK(instance.getType())));
-					RelationalSQL.persistenceStrategy(instance.getType()).load(instance, tuple(rs, command));
-					return instance;
-				});
-	}
+    protected List<INSTANCE> executeSelectCommand(RelationalSQLCommmand command) {
+        return db.query(command.getSQL(), command.getParameters(), command.getLimitOffset(), command.getLimitRows(),
+                rs -> {
+                    INSTANCE instance = createInstance();
+                    command.setInstance(instance);
+                    FormKey.setOnInstance(instance, tupleKey(rs, RelationalSQL.tablePK(instance.getType())));
+                    RelationalSQL.persistenceStrategy(instance.getType()).load(instance, tuple(rs, command));
+                    return instance;
+                });
+    }
 
-	protected List<SIComposite> executeSelectCommandIntoSIList(RelationalSQLCommmand command,
-			SIList<SIComposite> listInstance) {
-		return db.query(command.getSQL(), command.getParameters(), command.getLimitOffset(), command.getLimitRows(),
-				rs -> {
-					SIComposite instance = listInstance.addNew();
-					command.setInstance(instance);
-					List<String> pk = RelationalSQL.tablePK(RelationalSQL.tableContext(instance.getType()));
-					FormKey.setOnInstance(instance, tupleKey(rs, pk));
-					RelationalSQL.persistenceStrategy(instance.getType()).load(instance, tuple(rs, command));
-					return instance;
-				});
-	}
+    protected List<SIComposite> executeSelectCommandIntoSIList(RelationalSQLCommmand command,
+            SIList<SIComposite> listInstance) {
+        return db.query(command.getSQL(), command.getParameters(), command.getLimitOffset(), command.getLimitRows(),
+                rs -> {
+                    SIComposite instance = listInstance.addNew();
+                    command.setInstance(instance);
+                    List<String> pk = RelationalSQL.tablePK(RelationalSQL.tableContext(instance.getType()));
+                    FormKey.setOnInstance(instance, tupleKey(rs, pk));
+                    RelationalSQL.persistenceStrategy(instance.getType()).load(instance, tuple(rs, command));
+                    return instance;
+                });
+    }
 
-	protected int executeInsertCommand(RelationalSQLCommmand command) {
-		List<String> pk = RelationalSQL.tablePK(RelationalSQL.tableContext(command.getInstance().getType()));
-		HashMap<String, Object> key = new LinkedHashMap<>();
-		pk.forEach(columnName -> key.put(columnName, parameterValue(columnName, command)));
-		List<String> generatedColumns = serverSideGeneratedPKColumns(pk, command);
-		int result = db.execReturningGenerated(command.getSQL(), command.getParameters(), generatedColumns, rs -> {
-			for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
-				key.put(generatedColumns.get(i), rs.getObject(i + 1));
-			}
-			return null;
-		});
-		FormKey.setOnInstance(command.getInstance(), new FormKeyRelational(key));
-		return result;
-	}
+    protected int executeInsertCommand(RelationalSQLCommmand command) {
+        List<String> pk = RelationalSQL.tablePK(RelationalSQL.tableContext(command.getInstance().getType()));
+        HashMap<String, Object> key = new LinkedHashMap<>();
+        pk.forEach(columnName -> key.put(columnName, parameterValue(columnName, command)));
+        List<String> generatedColumns = serverSideGeneratedPKColumns(pk, command);
+        int result = db.execReturningGenerated(command.getSQL(), command.getParameters(), generatedColumns, rs -> {
+            for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
+                key.put(generatedColumns.get(i), rs.getObject(i + 1));
+            }
+            return null;
+        });
+        FormKey.setOnInstance(command.getInstance(), new FormKeyRelational(key));
+        return result;
+    }
 
-	protected FormKey tupleKey(ResultSet rs, List<String> pk) throws SQLException {
-		HashMap<String, Object> key = new LinkedHashMap<>();
-		for (String keyColumn : pk) {
-			key.put(keyColumn, rs.getObject(keyColumn));
-		}
-		return new FormKeyRelational(key);
-	}
+    protected FormKey tupleKey(ResultSet rs, List<String> pk) throws SQLException {
+        HashMap<String, Object> key = new LinkedHashMap<>();
+        for (String keyColumn : pk) {
+            key.put(keyColumn, rs.getObject(keyColumn));
+        }
+        return new FormKeyRelational(key);
+    }
 
-	protected List<RelationalData> tuple(ResultSet rs, RelationalSQLCommmand command) throws SQLException {
-		List<RelationalData> tuple = new ArrayList<>();
-		int index = 1;
-		for (RelationalColumn column : command.getColumns()) {
-			tuple.add(new RelationalData(column.getTable(), command.getInstance(), column.getName(),
-					rs.getObject(index)));
-			index++;
-		}
-		return tuple;
-	}
+    protected List<RelationalData> tuple(ResultSet rs, RelationalSQLCommmand command) throws SQLException {
+        List<RelationalData> tuple = new ArrayList<>();
+        int index = 1;
+        for (RelationalColumn column : command.getColumns()) {
+            tuple.add(new RelationalData(column.getTable(), command.getInstance(), column.getName(),
+                    rs.getObject(index)));
+            index++;
+        }
+        return tuple;
+    }
 
-	protected int execScript(Collection<? extends RelationalSQLCommmand> script) {
-		int result = 0;
-		for (RelationalSQLCommmand command : script) {
-			result += db.exec(command.getSQL(), command.getParameters());
-		}
-		return result;
-	}
+    protected int execScript(Collection<? extends RelationalSQLCommmand> script) {
+        int result = 0;
+        for (RelationalSQLCommmand command : script) {
+            result += db.exec(command.getSQL(), command.getParameters());
+        }
+        return result;
+    }
 
-	protected List<String> serverSideGeneratedPKColumns(List<String> pk, RelationalSQLCommmand command) {
-		List<String> result = new ArrayList<>();
-		pk.forEach(columnName -> {
-			if (parameterValue(columnName, command) == null) {
-				result.add(columnName);
-			}
-		});
-		return result;
-	}
+    protected List<String> serverSideGeneratedPKColumns(List<String> pk, RelationalSQLCommmand command) {
+        List<String> result = new ArrayList<>();
+        pk.forEach(columnName -> {
+            if (parameterValue(columnName, command) == null) {
+                result.add(columnName);
+            }
+        });
+        return result;
+    }
 
-	private Object parameterValue(String columnName, RelationalSQLCommmand command) {
-		Object result = null;
-		int paramIndex = 0;
-		for (RelationalColumn column : command.getColumns()) {
-			if (column.getName().equals(columnName)) {
-				result = command.getParameters().get(paramIndex);
-				break;
-			}
-			paramIndex++;
-		}
-		return result;
-	}
+    private Object parameterValue(String columnName, RelationalSQLCommmand command) {
+        Object result = null;
+        int paramIndex = 0;
+        for (RelationalColumn column : command.getColumns()) {
+            if (column.getName().equals(columnName)) {
+                result = command.getParameters().get(paramIndex);
+                break;
+            }
+            paramIndex++;
+        }
+        return result;
+    }
 }

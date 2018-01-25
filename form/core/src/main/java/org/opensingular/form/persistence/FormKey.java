@@ -69,17 +69,27 @@ public interface FormKey extends Serializable {
     @Nonnull
     static Optional<FormKey> fromOpt(SDocument document) {
         Objects.requireNonNull(document);
-        return Optional.ofNullable((FormKey) document.getRoot().getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY));
+        return Optional.ofNullable(document.getRoot().getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY));
     }
 
-	/**
-	 * Returns the persistence key assigned to a given SInstance. This key is
-	 * assigned by the persistence mechanism after loading/saving an instance.
-	 */
+    /**
+     * Returns the persistence {@link FormKey} assigned to a given SInstance.
+     * An exception will be thrown if there is no key assigned yet.
+     * The key is assigned by the persistence mechanism after loading/saving an instance.
+     */
     @Nonnull
     public static FormKey fromInstance(@Nonnull SInstance instance) {
+        return fromInstanceOpt(instance).orElseThrow(() -> new SingularNoFormKeyException(instance));
+    }
+
+    /**
+     * Returns the persistence {@link FormKey} assigned to a given SInstance.
+     * The key is assigned by the persistence mechanism after loading/saving an instance.
+     */
+    @Nonnull
+    public static Optional<FormKey> fromInstanceOpt(@Nonnull SInstance instance) {
         Objects.requireNonNull(instance);
-        return instance.getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY);
+        return Optional.ofNullable(instance.getAttributeValue(SPackageFormPersistence.ATR_FORM_KEY));
     }
 
 	/**
