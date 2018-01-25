@@ -49,6 +49,8 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
     private FormPersistenceInRelationalDB<Form, SIComposite> repoForm;
     private FormPersistenceInRelationalDB<Master, SIComposite> repoMaster;
     private FormPersistenceInRelationalDB<Category, SIComposite> repoCategory;
+    private FormPersistenceInRelationalDB<Customer, SIComposite> repoCustomer;
+    private FormPersistenceInRelationalDB<Phone, SIComposite> repoPhone;
 
     @Before
     public void setUp() {
@@ -56,6 +58,8 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
         repoMaster = new FormPersistenceInRelationalDB<>(db, documentFactory, Master.class);
         repoCategory = new FormPersistenceInRelationalDB<>(db, documentFactory, Category.class);
         categoryRepository = repoCategory;
+        repoCustomer = new FormPersistenceInRelationalDB<>(db, documentFactory, Customer.class);
+        repoPhone = new FormPersistenceInRelationalDB<>(db, documentFactory, Phone.class);
     }
 
     @Test
@@ -149,6 +153,27 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
         assertEquals(0, repoMaster.loadAll().size());
     }
 
+    @Test
+    public void manyToManyPersistence() {
+        db.exec("CREATE TABLE CUSTOMER (ID INT IDENTITY, NAME VARCHAR(200) NOT NULL, PRIMARY KEY (ID))");
+        db.exec("CREATE TABLE PHONE (ID INT IDENTITY, NUMBER VARCHAR(20) NOT NULL, PRIMARY KEY (ID))");
+        db.exec("CREATE TABLE CUSTOMER_PHONE (CustomerId INT NOT NULL, PhoneId INT NOT NULL, PRIMARY KEY (CustomerId, PhoneId), FOREIGN KEY (CustomerId) REFERENCES CUSTOMER(ID), FOREIGN KEY (PhoneId) REFERENCES PHONE(ID))");
+        //
+        SIComposite customer = (SIComposite) documentFactory.createInstance(RefType.of(Customer.class));
+        customer.setValue("name", "Robert");
+        addPhone("+55 (61) 99999-9999", customer);
+        addPhone("+55 (85) 99999-9999", customer);
+        FormKey insertedKey = repoCustomer.insert(customer, null);
+        assertEquals(1, repoCustomer.countAll());
+        assertEquals(2, repoPhone.countAll());
+        //
+        Object code = ((FormKeyRelational) insertedKey).getColumnValue("ID");
+        List<Object[]> tuples = db.query("SELECT B.NUMBER FROM CUSTOMER_PHONE A INNER JOIN PHONE B ON A.PhoneId=B.ID WHERE A.CustomerId = ?", asList(code));
+        assertEquals(2, tuples.size());
+        assertEquals("+55 (61) 99999-9999", tuples.get(0)[0]);
+        assertEquals("+55 (85) 99999-9999", tuples.get(1)[0]);
+    }
+
     private SIComposite createCategoryInstance(String name) {
         SIComposite instance = (SIComposite) documentFactory.createInstance(RefType.of(Category.class));
         instance.setValue("name", name);
@@ -193,6 +218,10 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
 
     private SIComposite addDetail(String item, SIComposite master) {
         return master.getFieldList("details", SIComposite.class).addNew(instance -> instance.setValue("item", item));
+    }
+
+    private SIComposite addPhone(String number, SIComposite customer) {
+        return customer.getFieldList("phones", SIComposite.class).addNew(instance -> instance.setValue("number", number));
     }
 
     @SInfoPackage(name = "testPackage")
@@ -300,6 +329,37 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
                 item.asSQL().column();
                 masterDisplay.asSQL().foreignColumn("name", "MASTER", Master.class);
             }
+        }
+    }
+
+    @SInfoType(name = "Customer", spackage = TestPackage.class)
+    public static final class Customer extends STypeComposite<SIComposite> {
+        public STypeString name;
+        public STypeList<Phone, SIComposite> phones;
+
+        @Override
+        protected void onLoadType(TypeBuilder tb) {
+            asAtr().label("Customer");
+            name = addFieldString("name");
+            phones = addFieldListOf("phones", Phone.class);
+            // relational mapping
+            asSQL().table().tablePK("ID");
+            name.asSQL().column();
+            phones.asSQL().manyToMany("CUSTOMER_PHONE", "customerId", "phoneId");
+        }
+    }
+
+    @SInfoType(name = "Phone", spackage = TestPackage.class)
+    public static final class Phone extends STypeComposite<SIComposite> {
+        public STypeString number;
+
+        @Override
+        protected void onLoadType(TypeBuilder tb) {
+            asAtr().label("Phone");
+            number = addFieldString("number");
+            // relational mapping
+            asSQL().table().tablePK("ID");
+            number.asSQL().column();
         }
     }
 }

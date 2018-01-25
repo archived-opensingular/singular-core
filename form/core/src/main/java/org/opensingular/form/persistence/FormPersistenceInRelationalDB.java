@@ -212,9 +212,39 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
         for (SIComposite target : targets) {
             for (RelationalSQLCommmand command : RelationalSQL.insert(target).toSQLScript()) {
                 executeInsertCommand(command);
+                String manyToManyTable = manyToManyTable(command);
+                if (manyToManyTable != null) {
+                    FormKeyRelational sourceKey = (FormKeyRelational) FormKey.fromInstance(instance);
+                    FormKeyRelational targetKey = (FormKeyRelational) FormKey.fromInstance(command.getInstance());
+                    List<Object> params = new ArrayList<>();
+                    String sqlManyToMany = "INSERT INTO " + manyToManyTable + "(";
+                    sqlManyToMany += command.getInstance().getParent().asSQL().getManyToManyFromKeyColumns();
+                    sqlManyToMany += ", " + command.getInstance().getParent().asSQL().getManyToManyToKeyColumns();
+                    sqlManyToMany += ") VALUES (";
+                    String delim = "";
+                    for (String pkColumn : RelationalSQL.tablePK(instance.getType())) {
+                        params.add(sourceKey.getColumnValue(pkColumn));
+                        sqlManyToMany += delim + "?";
+                        delim = ", ";
+                    }
+                    for (String pkColumn : RelationalSQL.tablePK(command.getInstance().getType())) {
+                        params.add(targetKey.getColumnValue(pkColumn));
+                        sqlManyToMany += delim + "?";
+                        delim = ", ";
+                    }
+                    sqlManyToMany += ")";
+                    db.exec(sqlManyToMany, params);
+                }
             }
         }
         return FormKey.fromInstance(instance);
+    }
+
+    private String manyToManyTable(RelationalSQLCommmand command) {
+        if (command.getInstance().getParent() == null) {
+            return null;
+        }
+        return command.getInstance().getParent().asSQL().getManyToManyTable();
     }
 
     protected void updateInternal(@Nonnull SIComposite instance, SIComposite previousPersistedInstance,
