@@ -78,7 +78,7 @@ public class TabMapper implements IWicketComponentMapper {
             if (tab.isVisible(instance)) {
                 defineTabIconCss(ctx, instance, tab.getTypesNames());
                 IModel<SInstance> baseInstanceModel = (IModel<SInstance>) ctx.getModel();
-                BSPanelGrid.BSTab t = panel.addTab(tab.getId(), tab.getTitle(), tab.getTypesNames(), baseInstanceModel);
+                BSPanelGrid.BSTab t = panel.addTab(tab.getId(), tab.getTitle(), tab.getTypesNames(), baseInstanceModel, tab.isDefault());
                 t.iconClass((t1, m) -> defineTabIconCss(ctx, (SIComposite) m.getObject(), t1.getSubtree()));
             }
         }

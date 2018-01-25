@@ -205,6 +205,10 @@ public class SViewTab extends SView {
             return this;
         }
 
+        public boolean isDefault() {
+            return tabView.defaultTab == this;
+        }
+
         /**
          * Used to define if this STab should be visible or not.
          * The default value is to be always visible. You should assume
