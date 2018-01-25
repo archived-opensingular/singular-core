@@ -64,6 +64,10 @@ public final class ConversorToolkit {
         return getCalendar(getDateFromData(data));
     }
 
+    public static Calendar getTime(String data) {
+        return getCalendar(getTimeFromData(data));
+    }
+
     public static Calendar getCalendar(java.util.Date data) {
         Calendar dt = Calendar.getInstance(LOCALE);
         dt.setLenient(false);
@@ -106,6 +110,17 @@ public final class ConversorToolkit {
         } catch (ParseException e) {
             throw SingularException.rethrow(
                     "Data inválida (" + data + "): Erro na posição " + e.getErrorOffset(), e);
+        }
+    }
+
+    public static java.util.Date getTimeFromData(String time) {
+        try {
+            verifyNull(time);
+            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
+            return sdf.parse(time);
+        } catch (ParseException e) {
+            throw SingularException.rethrow(
+                    "Hora inválida (" + time + ")", e);
         }
     }
 
