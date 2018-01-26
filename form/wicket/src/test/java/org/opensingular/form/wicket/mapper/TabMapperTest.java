@@ -16,6 +16,7 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import org.apache.wicket.util.tester.TagTester;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opensingular.form.STypeComposite;
@@ -61,6 +62,19 @@ public class TabMapperTest {
         });
     }
 
+    @Test
+    public void testLastTabAsDefault() {
+        SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
+        ctx.getDummyPage().setTypeBuilder(TabMapperTest::createSimpleFormUsingTabDefault);
+        ctx.getDummyPage().setAsEditView();
+        ctx.startDummyPage();
+
+        AssertionsWComponent assertionsTab = getAssertionsTab(ctx);
+        assertTabMenuActive(ctx, "experiencia", true);
+        assertTabMenuActive(ctx, "informacoes", false);
+        assertTabContent(assertionsTab, "experiencia");
+    }
+
     public void testTab(Consumer<SingularFormDummyPageTester> config) {
         SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
         ctx.getDummyPage().setTypeBuilder(TabMapperTest::createSimpleForm);
@@ -68,18 +82,28 @@ public class TabMapperTest {
         ctx.startDummyPage();
 
         AssertionsWComponent assertionsTab = getAssertionsTab(ctx);
+        assertTabMenuActive(ctx, "informacoes", true);
         assertTabContent(assertionsTab, "nome", "idade");
 
         clickOnTab(ctx, assertionsTab, 1);
+        assertTabMenuActive(ctx, "experiencia", true);
         assertTabContent(assertionsTab, "experiencia");
 
         clickOnTab(ctx, assertionsTab, 0);
+        assertTabMenuActive(ctx, "informacoes", true);
         assertTabContent(assertionsTab, "nome", "idade");
     }
 
     private void clickOnTab(SingularFormDummyPageTester ctx, AssertionsWComponent assertionsTab, int tabIndex) {
         ctx.clickLink(assertionsTab.getSubComponentWithId("tab").getSubComponentsWithId("tabAnchor").element(tabIndex)
                 .getTarget());
+    }
+
+    private void assertTabMenuActive(SingularFormDummyPageTester ctx, String tabName, boolean expected) {
+        Assert.assertEquals(String.format("Tab %s is not active on the menu.", tabName), expected,
+            TagTester.createTagByAttribute(ctx.getLastResponseAsString(), "data-tab-name", tabName)
+                    .getAttributeContains("class", "active")
+        );
     }
 
     private void assertTabContent(AssertionsWComponent assertionsTab, String... expectedInstancesName) {
@@ -116,5 +140,11 @@ public class TabMapperTest {
                 .add(idade);
         tabbed.addTab(experiencia);
         testForm.withView(tabbed);
+    }
+
+    private static void createSimpleFormUsingTabDefault(STypeComposite sTypeComposite) {
+        createSimpleForm(sTypeComposite);
+        SViewTab viewTab = (SViewTab) sTypeComposite.getView();
+        viewTab.getTabs().get(1).setDefault();
     }
 }

@@ -16,11 +16,14 @@
 
 package org.opensingular.form.persistence.relational.strategy;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
+import org.opensingular.form.persistence.relational.RelationalColumn;
 import org.opensingular.form.persistence.relational.RelationalData;
+import org.opensingular.form.persistence.relational.RelationalForeignColumn;
 import org.opensingular.form.persistence.relational.RelationalSQL;
 
 /**
@@ -29,19 +32,22 @@ import org.opensingular.form.persistence.relational.RelationalSQL;
  * @author Edmundo Andrade
  */
 public class PersistenceStrategyColumn implements PersistenceStrategy {
-	public void save(SInstance instance, List<RelationalData> toList) {
-		SType<?> field = instance.getType();
-		String fieldName = RelationalSQL.column(field);
-		if (fieldName == null) {
-			return;
-		}
-		String tableName = RelationalSQL.table(RelationalSQL.tableContext(field));
-		SInstance tupleKeyRef = RelationalSQL.tupleKeyRef(instance);
-		Object fieldValue = RelationalSQL.fieldValue(instance);
-		toList.add(new RelationalData(tableName, tupleKeyRef, fieldName, fieldValue));
-	}
+    public void save(SInstance instance, List<RelationalData> toList) {
+        SType<?> field = instance.getType();
+        String fieldName = RelationalSQL.column(field);
+        if (fieldName == null) {
+            return;
+        }
+        String tableName = RelationalSQL.table(RelationalSQL.tableContext(field));
+        SInstance tupleKeyRef = RelationalSQL.tupleKeyRef(instance);
+        RelationalForeignColumn foreignColumn = RelationalSQL.foreignColumn(field);
+        List<RelationalColumn> sourceKeyColumns = foreignColumn == null ? Collections.emptyList()
+                : foreignColumn.getForeignKey().getKeyColumns();
+        Object fieldValue = RelationalSQL.fieldValue(instance);
+        toList.add(new RelationalData(tableName, tupleKeyRef, fieldName, sourceKeyColumns, fieldValue));
+    }
 
-	public void load(SInstance instance, List<RelationalData> fromList) {
-		RelationalSQL.setFieldValue(instance, fromList);
-	}
+    public void load(SInstance instance, List<RelationalData> fromList) {
+        RelationalSQL.setFieldValue(instance, fromList);
+    }
 }

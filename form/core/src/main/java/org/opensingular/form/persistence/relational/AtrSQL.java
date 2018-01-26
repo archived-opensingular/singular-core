@@ -18,6 +18,7 @@ package org.opensingular.form.persistence.relational;
 
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_COLUMN;
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_FOREIGN_COLUMN;
+import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_MANY_TO_MANY;
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE;
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE_FKS;
 import static org.opensingular.form.persistence.SPackageFormPersistence.ATR_TABLE_PK;
@@ -39,95 +40,115 @@ import org.opensingular.form.SType;
  * @author Edmundo Andrade
  */
 public class AtrSQL extends STranslatorForAttribute {
-	public AtrSQL() {
-	}
+    public AtrSQL() {
+    }
 
-	public AtrSQL(SAttributeEnabled target) {
-		super(target);
-	}
+    public AtrSQL(SAttributeEnabled target) {
+        super(target);
+    }
 
-	public AtrSQL table() {
-		return table(getType().getNameSimple());
-	}
+    public AtrSQL table() {
+        return table(getType().getNameSimple());
+    }
 
-	public AtrSQL table(String table) {
-		setAttributeValue(ATR_TABLE, table);
-		return this;
-	}
+    public AtrSQL table(String table) {
+        setAttributeValue(ATR_TABLE, table);
+        return this;
+    }
 
-	public String getTable() {
-		return getAttributeValue(ATR_TABLE);
-	}
+    public String getTable() {
+        return getAttributeValue(ATR_TABLE);
+    }
 
-	public AtrSQL tablePK(String tablePK) {
-		setAttributeValue(ATR_TABLE_PK, tablePK);
-		return this;
-	}
+    public AtrSQL tablePK(String tablePK) {
+        setAttributeValue(ATR_TABLE_PK, tablePK);
+        return this;
+    }
 
-	public String getTablePK() {
-		return getAttributeValue(ATR_TABLE_PK);
-	}
+    public String getTablePK() {
+        return getAttributeValue(ATR_TABLE_PK);
+    }
 
-	public AtrSQL addTableFK(String keyColumns, Class<? extends SType<?>> typeClass) {
-		String tableName = RelationalSQL.table(RelationalSQL.tableContext(getType()));
-		return addTableFK(new RelationalFK(tableName, keyColumns, getDictionary().getType(typeClass)));
-	}
+    public AtrSQL addTableFK(String keyColumns, Class<? extends SType<?>> typeClass) {
+        String tableName = RelationalSQL.table(RelationalSQL.tableContext(getType()));
+        return addTableFK(new RelationalFK(tableName, keyColumns, getDictionary().getType(typeClass)));
+    }
 
-	private AtrSQL addTableFK(RelationalFK fk) {
-		List<RelationalFK> list = new ArrayList<>(getTableFKs());
-		list.add(fk);
-		StringJoiner sj = new StringJoiner(";");
-		list.forEach(item -> sj.add(item.toStringPersistence()));
-		setAttributeValue(ATR_TABLE_FKS, sj.toString());
-		return this;
-	}
+    private AtrSQL addTableFK(RelationalFK fk) {
+        List<RelationalFK> list = new ArrayList<>(getTableFKs());
+        list.add(fk);
+        StringJoiner sj = new StringJoiner(";");
+        list.forEach(item -> sj.add(item.toStringPersistence()));
+        setAttributeValue(ATR_TABLE_FKS, sj.toString());
+        return this;
+    }
 
-	public List<RelationalFK> getTableFKs() {
-		String value = getAttributeValue(ATR_TABLE_FKS);
-		if (value == null) {
-			return Collections.emptyList();
-		}
-		List<RelationalFK> result = new ArrayList<>();
-		for (String item : value.split(";")) {
-			result.add(RelationalFK.fromStringPersistence(item, getDictionary()));
-		}
-		return result;
-	}
+    public List<RelationalFK> getTableFKs() {
+        String value = getAttributeValue(ATR_TABLE_FKS);
+        if (value == null) {
+            return Collections.emptyList();
+        }
+        List<RelationalFK> result = new ArrayList<>();
+        for (String item : value.split(";")) {
+            result.add(RelationalFK.fromStringPersistence(item, getDictionary()));
+        }
+        return result;
+    }
 
-	public AtrSQL foreignColumn(String column, String keyColumns, Class<? extends SType<?>> typeClass) {
-		String tableName = RelationalSQL.tableOpt(RelationalSQL.tableContext(getType())).orElse(null);
-		RelationalFK foreignKey = new RelationalFK(tableName, keyColumns, getDictionary().getType(typeClass));
-		return foreignColumn(column, foreignKey);
-	}
+    public AtrSQL foreignColumn(String column, String keyColumns, Class<? extends SType<?>> typeClass) {
+        String tableName = RelationalSQL.tableOpt(RelationalSQL.tableContext(getType())).orElse(null);
+        RelationalFK foreignKey = new RelationalFK(tableName, keyColumns, getDictionary().getType(typeClass));
+        return foreignColumn(column, foreignKey);
+    }
 
-	public AtrSQL foreignColumn(String column, RelationalFK foreignKey) {
-		setAttributeValue(ATR_FOREIGN_COLUMN, new RelationalForeignColumn(column, foreignKey).toStringPersistence());
-		return this;
-	}
+    public AtrSQL foreignColumn(String column, RelationalFK foreignKey) {
+        setAttributeValue(ATR_FOREIGN_COLUMN, new RelationalForeignColumn(column, foreignKey).toStringPersistence());
+        return this;
+    }
 
-	public RelationalForeignColumn getForeignColumn() {
-		String value = getAttributeValue(ATR_FOREIGN_COLUMN);
-		if (value == null) {
-			return null;
-		}
-		return RelationalForeignColumn.fromStringPersistence(value, getDictionary());
-	}
+    public RelationalForeignColumn getForeignColumn() {
+        String value = getAttributeValue(ATR_FOREIGN_COLUMN);
+        if (value == null) {
+            return null;
+        }
+        return RelationalForeignColumn.fromStringPersistence(value, getDictionary());
+    }
 
-	public AtrSQL column() {
-		return column(getType().getNameSimple());
-	}
+    public AtrSQL column() {
+        return column(getType().getNameSimple());
+    }
 
-	public AtrSQL column(String column) {
-		setAttributeValue(ATR_COLUMN, column);
-		return this;
-	}
+    public AtrSQL column(String column) {
+        setAttributeValue(ATR_COLUMN, column);
+        return this;
+    }
 
-	public String getColumn() {
-		return getAttributeValue(ATR_COLUMN);
-	}
+    public String getColumn() {
+        return getAttributeValue(ATR_COLUMN);
+    }
 
-	public AtrSQL columnConverter(Supplier<RelationalColumnConverter> converter) {
-		getType().setAspect(ASPECT_RELATIONAL_CONV, converter);
-		return this;
-	}
+    public AtrSQL columnConverter(Supplier<RelationalColumnConverter> converter) {
+        getType().setAspect(ASPECT_RELATIONAL_CONV, converter);
+        return this;
+    }
+
+    public AtrSQL manyToMany(String table, String fromKeyColumns, String toKeyColumns) {
+        setAttributeValue(ATR_MANY_TO_MANY, table + "|" + fromKeyColumns + "|" + toKeyColumns);
+        return this;
+    }
+
+    public String getManyToManyTable() {
+        String manyToMany = getAttributeValue(ATR_MANY_TO_MANY);
+        return manyToMany == null ? null : manyToMany.split("\\|")[0];
+    }
+
+    public String getManyToManyFromKeyColumns() {
+        String manyToMany = getAttributeValue(ATR_MANY_TO_MANY);
+        return manyToMany == null ? null : manyToMany.split("\\|")[1];
+    }
+
+    public String getManyToManyToKeyColumns() {
+        String manyToMany = getAttributeValue(ATR_MANY_TO_MANY);
+        return manyToMany == null ? null : manyToMany.split("\\|")[2];
+    }
 }

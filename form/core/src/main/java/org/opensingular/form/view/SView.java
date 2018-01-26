@@ -25,6 +25,14 @@ public class SView implements Serializable {
 
     public static final SView DEFAULT = new SView();
 
+    /**
+     * Check if this view is applicable for the {@link SType}
+     * passed as the parameter. One {@link SType} can be rendered
+     * by several different views.
+     *
+     * @param type the type to be tested for applicability
+     * @return true if this view can render the type, false otherwise
+     */
     public boolean isApplicableFor(SType<?> type) {
         return true;
     }
