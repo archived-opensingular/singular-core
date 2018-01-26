@@ -47,15 +47,15 @@ public interface StudioDefinition extends Serializable {
         return ApplicationContextProvider.get().getBean(getRepositoryClass());
     }
 
-    default CrudShellContent makeStartContent(CrudShellManager shellManager) {
-        return makeListContent(shellManager);
+    default CrudShellContent buildStartContent(CrudShellManager shellManager) {
+        return buildListContent(shellManager);
     }
 
-    default CrudEditContent makeEditContent(CrudShellManager crudShellManager, CrudShellContent previousContent, IModel<SInstance> instance) {
+    default CrudEditContent buildEditContent(CrudShellManager crudShellManager, CrudShellContent previousContent, IModel<SInstance> instance) {
         return new CrudEditContent(crudShellManager, previousContent, instance);
     }
 
-    default CrudListContent makeListContent(CrudShellManager shellManager) {
+    default CrudListContent buildListContent(CrudShellManager shellManager) {
         return new CrudListContent(shellManager);
     }
 

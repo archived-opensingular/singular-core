@@ -45,6 +45,7 @@ public class SPackageFormPersistence extends SPackage {
     public static final AtrRef<STypeString, SIString, String> ATR_TABLE_FKS = new AtrRef<>(SPackageFormPersistence.class, "tableFKs",  STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeString, SIString, String> ATR_COLUMN = new AtrRef<>(SPackageFormPersistence.class, "column", STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeString, SIString, String> ATR_FOREIGN_COLUMN = new AtrRef<>(SPackageFormPersistence.class, "foreignColumn", STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeString, SIString, String> ATR_MANY_TO_MANY = new AtrRef<>(SPackageFormPersistence.class, "manyToMany", STypeString.class, SIString.class, String.class);
 
     protected void onLoadPackage(PackageBuilder pb) {
         pb.createType(STypeFormKey.class);
@@ -56,5 +57,6 @@ public class SPackageFormPersistence extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_TABLE_FKS);
         pb.createAttributeIntoType(SType.class, ATR_COLUMN);
         pb.createAttributeIntoType(SType.class, ATR_FOREIGN_COLUMN);
+        pb.createAttributeIntoType(SType.class, ATR_MANY_TO_MANY);
     }
 }

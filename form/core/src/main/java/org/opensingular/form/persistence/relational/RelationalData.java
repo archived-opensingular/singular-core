@@ -16,6 +16,8 @@
 
 package org.opensingular.form.persistence.relational;
 
+import java.util.List;
+
 import org.opensingular.form.SInstance;
 
 /**
@@ -24,31 +26,38 @@ import org.opensingular.form.SInstance;
  * @author Edmundo Andrade
  */
 public class RelationalData {
-	private String tableName;
-	private SInstance tupleKeyRef;
-	private String fieldName;
-	private Object fieldValue;
+    private String tableName;
+    private SInstance tupleKeyRef;
+    private String fieldName;
+    private List<RelationalColumn> sourceKeyColumns;
+    private Object fieldValue;
 
-	public RelationalData(String tableName, SInstance tupleKeyRef, String fieldName, Object fieldValue) {
-		this.tableName = tableName;
-		this.tupleKeyRef = tupleKeyRef;
-		this.fieldName = fieldName;
-		this.fieldValue = fieldValue;
-	}
+    public RelationalData(String tableName, SInstance tupleKeyRef, String fieldName,
+            List<RelationalColumn> sourceKeyColumns, Object fieldValue) {
+        this.tableName = tableName;
+        this.tupleKeyRef = tupleKeyRef;
+        this.fieldName = fieldName;
+        this.sourceKeyColumns = sourceKeyColumns;
+        this.fieldValue = fieldValue;
+    }
 
-	public String getTableName() {
-		return tableName;
-	}
+    public String getTableName() {
+        return tableName;
+    }
 
-	public SInstance getTupleKeyRef() {
-		return tupleKeyRef;
-	}
+    public SInstance getTupleKeyRef() {
+        return tupleKeyRef;
+    }
 
-	public String getFieldName() {
-		return fieldName;
-	}
+    public String getFieldName() {
+        return fieldName;
+    }
 
-	public Object getFieldValue() {
-		return fieldValue;
-	}
+    public List<RelationalColumn> getSourceKeyColumns() {
+        return sourceKeyColumns;
+    }
+
+    public Object getFieldValue() {
+        return fieldValue;
+    }
 }

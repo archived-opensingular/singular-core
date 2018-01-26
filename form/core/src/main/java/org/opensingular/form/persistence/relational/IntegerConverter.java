@@ -25,19 +25,19 @@ import org.opensingular.form.SInstance;
  * @author Edmundo Andrade
  */
 public class IntegerConverter implements RelationalColumnConverter {
-	public Object toRelationalColumn(SInstance fromInstance) {
-		Object value = fromInstance.getValue();
-		if (value == null) {
-			return null;
-		}
-		return new Integer(value.toString());
-	}
+    public Object toRelationalColumn(SInstance fromInstance) {
+        Object value = fromInstance.getValue();
+        if (value == null) {
+            return null;
+        }
+        return Integer.valueOf(value.toString());
+    }
 
-	public void fromRelationalColumn(Object dbData, SInstance toInstance) {
-		if (dbData == null) {
-			toInstance.clearInstance();
-		} else {
-			toInstance.setValue(dbData.toString());
-		}
-	}
+    public void fromRelationalColumn(Object dbData, SInstance toInstance) {
+        if (dbData == null) {
+            toInstance.clearInstance();
+        } else {
+            toInstance.setValue(dbData.toString());
+        }
+    }
 }
