@@ -77,6 +77,25 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
                 SIList<SIComposite> listInstance = mainInstance.getFieldList(field.getType().getNameSimple(),
                         SIComposite.class);
                 for (SIComposite item : listInstance.getChildren()) {
+                    String manyToManyTable = manyToManyTable(item);
+                    if (manyToManyTable != null) {
+                        FormKeyRelational sourceKey = (FormKeyRelational) FormKey.fromInstance(mainInstance);
+                        FormKeyRelational targetKey = (FormKeyRelational) FormKey.fromInstance(item);
+                        String sqlManyToMany = "DELETE FROM " + manyToManyTable + " WHERE ";
+                        List<Object> params = new ArrayList<>();
+                        String delim = "";
+                        for (String pkColumn : RelationalSQL.tablePK(mainInstance.getType())) {
+                            params.add(sourceKey.getColumnValue(pkColumn));
+                            sqlManyToMany += delim + item.getParent().asSQL().getManyToManySourceKeyColumns() + " = ?";
+                            delim = " AND ";
+                        }
+                        for (String pkColumn : RelationalSQL.tablePK(item.getType())) {
+                            params.add(targetKey.getColumnValue(pkColumn));
+                            sqlManyToMany += delim + item.getParent().asSQL().getManyToManyTargetKeyColumns() + " = ?";
+                            delim = " AND ";
+                        }
+                        db.exec(sqlManyToMany, params);
+                    }
                     deleteInternal(item.getType(), FormKey.fromInstance(item));
                 }
             }
@@ -179,12 +198,11 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
     }
 
     protected void executeSelectField(@Nonnull FormKey key, INSTANCE mainInstance, TYPE mainType, SType<?> field) {
-        RelationalSQL query;
         SIList<SIComposite> listInstance = mainInstance.getFieldList(field.getNameSimple(), SIComposite.class);
         for (SType<?> detail : field.getLocalTypes()) {
             STypeComposite<?> detailType = (STypeComposite<?>) detail.getSuperType();
-            query = RelationalSQL.select(detailType.getContainedTypes()).where(mainType, key);
-            for (RelationalSQLCommmand command : query.toSQLScript()) {
+            for (RelationalSQLCommmand command : RelationalSQL.select(detailType.getContainedTypes())
+                    .where(mainType, key).toSQLScript()) {
                 executeSelectCommandIntoSIList(command, listInstance);
             }
         }
@@ -216,11 +234,11 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
                 if (manyToManyTable != null) {
                     FormKeyRelational sourceKey = (FormKeyRelational) FormKey.fromInstance(instance);
                     FormKeyRelational targetKey = (FormKeyRelational) FormKey.fromInstance(command.getInstance());
-                    List<Object> params = new ArrayList<>();
                     String sqlManyToMany = "INSERT INTO " + manyToManyTable + "(";
-                    sqlManyToMany += command.getInstance().getParent().asSQL().getManyToManyFromKeyColumns();
-                    sqlManyToMany += ", " + command.getInstance().getParent().asSQL().getManyToManyToKeyColumns();
+                    sqlManyToMany += command.getInstance().getParent().asSQL().getManyToManySourceKeyColumns();
+                    sqlManyToMany += ", " + command.getInstance().getParent().asSQL().getManyToManyTargetKeyColumns();
                     sqlManyToMany += ") VALUES (";
+                    List<Object> params = new ArrayList<>();
                     String delim = "";
                     for (String pkColumn : RelationalSQL.tablePK(instance.getType())) {
                         params.add(sourceKey.getColumnValue(pkColumn));
@@ -241,10 +259,14 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
     }
 
     private String manyToManyTable(RelationalSQLCommmand command) {
-        if (command.getInstance().getParent() == null) {
+        return manyToManyTable(command.getInstance());
+    }
+
+    private String manyToManyTable(SIComposite instance) {
+        if (instance.getParent() == null) {
             return null;
         }
-        return command.getInstance().getParent().asSQL().getManyToManyTable();
+        return instance.getParent().asSQL().getManyToManyTable();
     }
 
     protected void updateInternal(@Nonnull SIComposite instance, SIComposite previousPersistedInstance,

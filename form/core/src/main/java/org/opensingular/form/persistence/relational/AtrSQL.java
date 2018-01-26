@@ -132,8 +132,8 @@ public class AtrSQL extends STranslatorForAttribute {
         return this;
     }
 
-    public AtrSQL manyToMany(String table, String fromKeyColumns, String toKeyColumns) {
-        setAttributeValue(ATR_MANY_TO_MANY, table + "|" + fromKeyColumns + "|" + toKeyColumns);
+    public AtrSQL manyToMany(String table, String sourceKeyColumns, String targetKeyColumns) {
+        setAttributeValue(ATR_MANY_TO_MANY, table + "|" + sourceKeyColumns + "|" + targetKeyColumns);
         return this;
     }
 
@@ -142,12 +142,12 @@ public class AtrSQL extends STranslatorForAttribute {
         return manyToMany == null ? null : manyToMany.split("\\|")[0];
     }
 
-    public String getManyToManyFromKeyColumns() {
+    public String getManyToManySourceKeyColumns() {
         String manyToMany = getAttributeValue(ATR_MANY_TO_MANY);
         return manyToMany == null ? null : manyToMany.split("\\|")[1];
     }
 
-    public String getManyToManyToKeyColumns() {
+    public String getManyToManyTargetKeyColumns() {
         String manyToMany = getAttributeValue(ATR_MANY_TO_MANY);
         return manyToMany == null ? null : manyToMany.split("\\|")[2];
     }

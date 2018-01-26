@@ -196,6 +196,7 @@ public abstract class RelationalSQL {
     }
 
     protected Set<SType<?>> targetTables = new LinkedHashSet<>();
+    protected Set<String> intermediaryTables = new LinkedHashSet<>();
 
     public abstract List<RelationalSQLCommmand> toSQLScript();
 
@@ -282,17 +283,39 @@ public abstract class RelationalSQL {
         return mapColumnToValue.get(column.getName());
     }
 
-    protected String tableAlias(String table, List<RelationalColumn> targetColumns) {
-        return tableAlias(table, null, targetColumns);
+    protected String tableAlias(String table, Collection<RelationalColumn> relevantColumns) {
+        return tableAlias(table, null, relevantColumns);
     }
 
     protected String tableAlias(String table, List<RelationalColumn> sourceKeyColumns,
             Collection<RelationalColumn> relevantColumns) {
+        List<String> tables = new ArrayList<>();
+        targetTables.forEach(item -> tables.add(table(item)));
+        String result = internalTableAlias(table, sourceKeyColumns, tables, distinctJoins(table, relevantColumns), "T");
+        if (result == null) {
+            result = internalTableAlias(table, intermediaryTables, "TX");
+        }
+        return result;
+    }
+
+    private String internalTableAlias(String table, Collection<String> tables, String prefix) {
         int index = 1;
-        for (SType<?> tableContext : targetTables) {
-            for (List<RelationalColumn> join : distinctJoins(table, relevantColumns)) {
-                if (table.equals(table(tableContext)) && (sourceKeyColumns == null || sourceKeyColumns.equals(join))) {
-                    return "T" + index;
+        for (String tableName : tables) {
+            if (table.equals(tableName)) {
+                return prefix + index;
+            }
+            index++;
+        }
+        return null;
+    }
+
+    private String internalTableAlias(String table, List<RelationalColumn> sourceKeyColumns, Collection<String> tables,
+            Set<List<RelationalColumn>> joins, String prefix) {
+        int index = 1;
+        for (String tableName : tables) {
+            for (List<RelationalColumn> join : joins) {
+                if (table.equals(tableName) && (sourceKeyColumns == null || sourceKeyColumns.equals(join))) {
+                    return prefix + index;
                 }
                 index++;
             }

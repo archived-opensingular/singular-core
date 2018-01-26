@@ -34,6 +34,7 @@ import java.util.StringJoiner;
 
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.FormKeyRelational;
@@ -151,13 +152,37 @@ public class RelationalSQLQuery extends RelationalSQL {
 
     private String joinTables(Collection<RelationalColumn> relevantColumns, Map<String, RelationalFK> joinMap) {
         StringJoiner sj = new StringJoiner(" left join ");
-        List<String> joinedTables = new ArrayList<>();
+        List<RelationalFK> intermediary = Collections.emptyList();
+        Set<String> joinedTables = new LinkedHashSet<>();
         for (SType<?> tableContext : targetTables) {
             String table = RelationalSQL.table(tableContext);
-            for (List<RelationalColumn> join : distinctJoins(table, relevantColumns)) {
-                sj.add(onClause(tableContext, join, relevantColumns, joinedTables, joinMap));
+            for (List<RelationalColumn> sourceKeyColumns : distinctJoins(table, relevantColumns)) {
+                if (locateRelationship(table, sourceKeyColumns, joinedTables, joinMap) == null) {
+                    intermediary = locateIntermediaryRelationships(table, sourceKeyColumns, joinedTables, joinMap);
+                    if (!intermediary.isEmpty()) {
+                        break;
+                    }
+                }
+                joinedTables.add(table);
             }
-            joinedTables.add(table);
+            if (aggregator == COUNT || !intermediary.isEmpty()) {
+                break;
+            }
+        }
+        joinedTables.clear();
+        if (!intermediary.isEmpty()) {
+            String intermediaryTable = intermediary.get(0).getTable();
+            intermediaryTables.add(intermediaryTable);
+            joinedTables.add(intermediaryTable);
+            String intermerdiaryTableAlias = tableAlias(intermediaryTable, relevantColumns);
+            intermediary.removeIf(item -> !item.getTable().equals(intermediaryTable));
+            sj.add(intermediaryTable + " " + intermerdiaryTableAlias);
+        }
+        for (SType<?> tableContext : targetTables) {
+            String table = RelationalSQL.table(tableContext);
+            for (List<RelationalColumn> sourceKeyColumns : distinctJoins(table, relevantColumns)) {
+                addClause(tableContext, sourceKeyColumns, relevantColumns, joinedTables, joinMap, sj);
+            }
             if (aggregator == COUNT) {
                 break;
             }
@@ -165,23 +190,32 @@ public class RelationalSQLQuery extends RelationalSQL {
         return sj.toString();
     }
 
-    private String onClause(SType<?> tableContext, List<RelationalColumn> sourceKeyColumns,
-            Collection<RelationalColumn> relevantColumns, List<String> joinedTables,
-            Map<String, RelationalFK> joinMap) {
+    private void addClause(SType<?> tableContext, List<RelationalColumn> sourceKeyColumns,
+            Collection<RelationalColumn> relevantColumns, Set<String> joinedTables, Map<String, RelationalFK> joinMap,
+            StringJoiner sjResult) {
         String table = RelationalSQL.table(tableContext);
         String tableAlias = tableAlias(table, sourceKeyColumns, relevantColumns);
-        String result = table + " " + tableAlias;
-        if (joinedTables.isEmpty())
-            return result;
+        if (joinedTables.isEmpty()) {
+            joinedTables.add(table);
+            sjResult.add(table + " " + tableAlias);
+            return;
+        }
         RelationalFK relationship = locateRelationship(table, sourceKeyColumns, joinedTables, joinMap);
         if (relationship == null) {
             throw new SingularFormException(
                     "Relational mapping should provide foreign key for relevant relationships with table '" + table
                             + "'.");
         }
+        addClause(table, tableAlias, RelationalSQL.tablePK(tableContext), relationship, relevantColumns, sjResult);
+        joinedTables.add(table);
+    }
+
+    private void addClause(String table, String tableAlias, List<String> tablePK, RelationalFK relationship,
+            Collection<RelationalColumn> relevantColumns, StringJoiner sjResult) {
+        String result = table + " " + tableAlias;
         String leftTable = relationship.getTable();
         List<RelationalColumn> leftColumns = relationship.getKeyColumns();
-        List<String> rightColumns = RelationalSQL.tablePK(tableContext);
+        List<String> rightColumns = tablePK;
         if (leftColumns.size() != rightColumns.size()) {
             throw new SingularFormException(
                     "Relational mapping should provide compatible-size foreign key for the relationship between table '"
@@ -189,14 +223,14 @@ public class RelationalSQLQuery extends RelationalSQL {
         }
         StringJoiner sj = new StringJoiner(" and ");
         for (int i = 0; i < leftColumns.size(); i++) {
-            sj.add(tableAlias(leftTable, targetColumns) + "." + leftColumns.get(i).getName() + " = " + tableAlias + "."
-                    + rightColumns.get(i));
+            sj.add(tableAlias(leftTable, relevantColumns) + "." + leftColumns.get(i).getName() + " = " + tableAlias
+                    + "." + rightColumns.get(i));
         }
-        return result + " on " + sj;
+        sjResult.add(result + " on " + sj);
     }
 
     private RelationalFK locateRelationship(String table, List<RelationalColumn> sourceKeyColumns,
-            List<String> joinedTables, Map<String, RelationalFK> joinMap) {
+            Set<String> joinedTables, Map<String, RelationalFK> joinMap) {
         RelationalFK result = null;
         for (String joinedTable : joinedTables) {
             result = joinMap.get(joinedTable + ">" + table + "@" + serialize(sourceKeyColumns));
@@ -210,6 +244,16 @@ public class RelationalSQLQuery extends RelationalSQL {
             if (result != null) {
                 break;
             }
+        }
+        return result;
+    }
+
+    private List<RelationalFK> locateIntermediaryRelationships(String table, List<RelationalColumn> sourceKeyColumns,
+            Set<String> joinedTables, Map<String, RelationalFK> joinMap) {
+        List<RelationalFK> result = new ArrayList<>();
+        for (String joinedTable : joinedTables) {
+            joinMap.keySet().stream().filter(item -> item.contains(">" + table + "@" + serialize(sourceKeyColumns))
+                    || item.contains(">" + joinedTable + "@")).forEach(item -> result.add(joinMap.get(item)));
         }
         return result;
     }
@@ -229,6 +273,20 @@ public class RelationalSQLQuery extends RelationalSQL {
                 result.put(relationship.getTable() + ">" + RelationalSQL.table(relationship.getForeignType()) + "@"
                         + serialize(sourceKeyColumns), relationship);
             }
+            ((STypeComposite<?>) tableContext).getContainedTypes().stream()
+                    .filter(item -> item.asSQL().getManyToManyTable() != null).forEach(item -> {
+                        RelationalFK sourceRelationship = new RelationalFK(item.asSQL().getManyToManyTable(),
+                                item.asSQL().getManyToManySourceKeyColumns(), tableContext);
+                        result.put(sourceRelationship.getTable() + ">"
+                                + RelationalSQL.table(sourceRelationship.getForeignType()) + "@"
+                                + serialize(sourceRelationship.getKeyColumns()), sourceRelationship);
+                        SType<?> targetType = ((STypeList<?, ?>) item).getElementsType();
+                        RelationalFK targetRelationship = new RelationalFK(item.asSQL().getManyToManyTable(),
+                                item.asSQL().getManyToManyTargetKeyColumns(), targetType);
+                        result.put(targetRelationship.getTable() + ">"
+                                + RelationalSQL.table(targetRelationship.getForeignType()) + "@"
+                                + serialize(targetRelationship.getKeyColumns()), targetRelationship);
+                    });
         }
         return result;
     }
