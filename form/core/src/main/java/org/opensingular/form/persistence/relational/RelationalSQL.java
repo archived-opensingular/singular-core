@@ -25,6 +25,7 @@ import static org.opensingular.form.persistence.relational.RelationalSQLAggregat
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -160,16 +161,19 @@ public abstract class RelationalSQL {
         SType<?> field = instance.getType();
         SType<?> tableContext;
         String fieldName;
+        List<RelationalColumn> sourceKeyColumns;
         RelationalForeignColumn foreignColumn = foreignColumn(field);
         if (foreignColumn == null) {
             tableContext = tableContext(field);
             fieldName = column(field);
+            sourceKeyColumns = Collections.emptyList();
         } else {
             tableContext = tableContext(foreignColumn.getForeignKey().getForeignType());
             fieldName = foreignColumn.getForeignColumn();
+            sourceKeyColumns = foreignColumn.getForeignKey().getKeyColumns();
         }
         String tableName = table(tableContext);
-        Object value = getFieldValue(tableName, tupleKeyRef(instance), fieldName, fromList);
+        Object value = getFieldValue(tableName, tupleKeyRef(instance), fieldName, sourceKeyColumns, fromList);
         Optional<RelationalColumnConverter> converter = aspectRelationalColumnConverter(instance.getType());
         if (converter.isPresent()) {
             converter.get().fromRelationalColumn(value, instance);
@@ -181,10 +185,10 @@ public abstract class RelationalSQL {
     }
 
     static Object getFieldValue(String tableName, SInstance tupleKeyRef, String fieldName,
-            List<RelationalData> fromList) {
+            List<RelationalColumn> sourceKeyColumns, List<RelationalData> fromList) {
         for (RelationalData data : fromList) {
             if (data.getTableName().equals(tableName) && data.getTupleKeyRef().equals(tupleKeyRef)
-                    && data.getFieldName().equals(fieldName)) {
+                    && data.getFieldName().equals(fieldName) && data.getSourceKeyColumns().equals(sourceKeyColumns)) {
                 return data.getFieldValue();
             }
         }
@@ -239,19 +243,22 @@ public abstract class RelationalSQL {
         if (field.isList()) {
             return;
         }
-        String columnName;
         SType<?> tableContext;
+        String columnName;
+        List<RelationalColumn> sourceKeyColumns;
         RelationalForeignColumn foreignColumn = foreignColumn(field);
         if (foreignColumn == null) {
             tableContext = tableContext(field);
             columnName = column(field);
+            sourceKeyColumns = Collections.emptyList();
         } else {
             tableContext = tableContext(foreignColumn.getForeignKey().getForeignType());
             columnName = foreignColumn.getForeignColumn();
+            sourceKeyColumns = foreignColumn.getForeignKey().getKeyColumns();
         }
         String tableName = table(tableContext);
         targetTables.add(tableContext);
-        RelationalColumn column = new RelationalColumn(tableName, columnName);
+        RelationalColumn column = new RelationalColumn(tableName, columnName, sourceKeyColumns);
         mapColumnToField.put(column.toStringPersistence(), field);
         if (!targetColumns.contains(column) && !keyColumns.contains(column)) {
             targetColumns.add(column);
@@ -259,11 +266,12 @@ public abstract class RelationalSQL {
     }
 
     protected String where(String table, List<RelationalColumn> filterColumns, Map<String, Object> mapColumnToValue,
-            List<Object> params) {
+            Collection<RelationalColumn> relevantColumns, List<Object> params) {
         StringJoiner sj = new StringJoiner(" and ");
         filterColumns.forEach(column -> {
             if (column.getTable().equals(table)) {
-                sj.add(tableAlias(table) + "." + column.getName() + " = ?");
+                sj.add(tableAlias(table, column.getSourceKeyColumns(), relevantColumns) + "." + column.getName()
+                        + " = ?");
                 params.add(columnValue(column, mapColumnToValue));
             }
         });
@@ -274,15 +282,29 @@ public abstract class RelationalSQL {
         return mapColumnToValue.get(column.getName());
     }
 
-    protected String tableAlias(String table) {
+    protected String tableAlias(String table, List<RelationalColumn> targetColumns) {
+        return tableAlias(table, null, targetColumns);
+    }
+
+    protected String tableAlias(String table, List<RelationalColumn> sourceKeyColumns,
+            Collection<RelationalColumn> relevantColumns) {
         int index = 1;
         for (SType<?> tableContext : targetTables) {
-            if (table.equals(table(tableContext))) {
-                return "T" + index;
+            for (List<RelationalColumn> join : distinctJoins(table, relevantColumns)) {
+                if (table.equals(table(tableContext)) && (sourceKeyColumns == null || sourceKeyColumns.equals(join))) {
+                    return "T" + index;
+                }
+                index++;
             }
-            index++;
         }
         return null;
+    }
+
+    protected Set<List<RelationalColumn>> distinctJoins(String table, Collection<RelationalColumn> relevantColumns) {
+        Set<List<RelationalColumn>> distinctJoins = new LinkedHashSet<>();
+        relevantColumns.stream().filter(column -> column.getTable().equals(table))
+                .forEach(column -> distinctJoins.add(column.getSourceKeyColumns()));
+        return distinctJoins;
     }
 
     protected Object fieldValue(SIComposite instance, SType<?> field) {

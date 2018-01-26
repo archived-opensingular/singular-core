@@ -10,8 +10,6 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,13 +63,15 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
     @Test
     public void basicPersistenceWithGeneratedKey() {
         db.exec("CREATE TABLE CATEGORY (ID INT IDENTITY, NAME VARCHAR(200) NOT NULL, PRIMARY KEY (ID))");
-        db.exec("CREATE TABLE FORM (CODE INT IDENTITY, NAME VARCHAR(200) NOT NULL, CATEGORY INT NOT NULL, OBS CLOB, ATTACHMENT BLOB, TEXT_FILE CLOB, PRIMARY KEY (CODE), FOREIGN KEY (CATEGORY) REFERENCES CATEGORY(ID))");
+        db.exec("CREATE TABLE FORM (CODE INT IDENTITY, NAME VARCHAR(200) NOT NULL, MAJORCATEGORY INT, MINORCATEGORY INT, OBS CLOB, ATTACHMENT BLOB, TEXT_FILE CLOB, PRIMARY KEY (CODE), FOREIGN KEY (MAJORCATEGORY) REFERENCES CATEGORY(ID), FOREIGN KEY (MINORCATEGORY) REFERENCES CATEGORY(ID))");
         //
         SIComposite categoryA1 = createCategoryInstance("Category A1");
         repoCategory.insert(categoryA1, null);
+        SIComposite categoryA2 = createCategoryInstance("Category A2");
+        repoCategory.insert(categoryA2, null);
         //
-        FormKey firstKey = repoForm
-                .insert(createFormInstance("My form", "Observaçãozinha", categoryA1, "test.pdf", "test.txt"), null);
+        FormKey firstKey = repoForm.insert(
+                createFormInstance("My form", "Observaçãozinha", categoryA1, categoryA2, "test.pdf", "test.txt"), null);
         assertEquals("CODE$Integer$1", firstKey.toStringPersistence());
         assertEquals(1, repoForm.countAll());
         assertEquals(1, repoForm.loadAll().size());
@@ -81,8 +81,10 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
         //
         SIComposite loaded = repoForm.load(firstKey);
         assertEquals("My form", loaded.getValue("name"));
-        assertEquals("1", loaded.getField("category").getValue("key"));
-        assertEquals("Category A1", loaded.getField("category").getValue("display"));
+        assertEquals("1", loaded.getField("majorCategory").getValue("key"));
+        assertEquals("Category A1", loaded.getField("majorCategory").getValue("display"));
+        assertEquals("2", loaded.getField("minorCategory").getValue("key"));
+        assertEquals("Category A2", loaded.getField("minorCategory").getValue("display"));
         IAttachmentRef attachmentRef = ((SIAttachment) loaded.getField("attachment")).getAttachmentRef();
         assertEquals(8, attachmentRef.getSize());
         try {
@@ -102,8 +104,8 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
         assertEquals("My document", loaded.getValue("name"));
         assertNull(((SIAttachment) loaded.getField("attachment")).getAttachmentRef());
         //
-        repoForm.insert(createFormInstance("Second form", null, categoryA1, null, null), null);
-        repoForm.insert(createFormInstance("Third form", null, categoryA1, null, null), null);
+        repoForm.insert(createFormInstance("Second form", null, categoryA1, categoryA2, null, null), null);
+        repoForm.insert(createFormInstance("Third form", null, categoryA1, categoryA2, null, null), null);
         assertEquals(3, repoForm.countAll());
         List<SIComposite> page1 = repoForm.loadAll(0, 2);
         assertEquals(2, page1.size());
@@ -168,7 +170,9 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
         assertEquals(2, repoPhone.countAll());
         //
         Object code = ((FormKeyRelational) insertedKey).getColumnValue("ID");
-        List<Object[]> tuples = db.query("SELECT B.NUMBER FROM CUSTOMER_PHONE A INNER JOIN PHONE B ON A.PhoneId=B.ID WHERE A.CustomerId = ?", asList(code));
+        List<Object[]> tuples = db.query(
+                "SELECT B.NUMBER FROM CUSTOMER_PHONE A INNER JOIN PHONE B ON A.PhoneId=B.ID WHERE A.CustomerId = ?",
+                asList(code));
         assertEquals(2, tuples.size());
         assertEquals("+55 (61) 99999-9999", tuples.get(0)[0]);
         assertEquals("+55 (85) 99999-9999", tuples.get(1)[0]);
@@ -180,17 +184,23 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
         return instance;
     }
 
-    private SIComposite createFormInstance(String name, String observation, SIComposite category,
-            String attachmentFileName, String textAttachmentFileName) {
-        Category categoryType = (Category) category.getType();
-        Integer categoryId = (Integer) ((FormKeyRelational) FormKey.fromInstance(category)).getColumnValue("ID");
-        String categoryName = (String) category.getValue(categoryType.name);
+    private SIComposite createFormInstance(String name, String observation, SIComposite majorCategory,
+            SIComposite minorCategory, String attachmentFileName, String textAttachmentFileName) {
+        Category categoryType = (Category) majorCategory.getType();
+        Integer majorCategoryId = (Integer) ((FormKeyRelational) FormKey.fromInstance(majorCategory))
+                .getColumnValue("ID");
+        String majorCategoryName = (String) majorCategory.getValue(categoryType.name);
+        Integer minorCategoryId = (Integer) ((FormKeyRelational) FormKey.fromInstance(minorCategory))
+                .getColumnValue("ID");
+        String minorCategoryName = (String) minorCategory.getValue(categoryType.name);
         SIComposite formInstance = (SIComposite) documentFactory.createInstance(RefType.of(Form.class));
         Form formType = (Form) formInstance.getType();
         formInstance.setValue(formType.name, name);
         formInstance.setValue(formType.observation, observation);
-        formInstance.getField(formType.category).setValue(formType.category.key, categoryId);
-        formInstance.getField(formType.category).setValue(formType.category.display, categoryName);
+        formInstance.getField(formType.majorCategory).setValue(formType.majorCategory.key, majorCategoryId);
+        formInstance.getField(formType.majorCategory).setValue(formType.majorCategory.display, majorCategoryName);
+        formInstance.getField(formType.minorCategory).setValue(formType.minorCategory.key, minorCategoryId);
+        formInstance.getField(formType.minorCategory).setValue(formType.minorCategory.display, minorCategoryName);
         if (attachmentFileName != null) {
             SIAttachment attachmentField = ((SIAttachment) formInstance.getField("attachment"));
             TempFileProvider.create(this, tempFileProvider -> {
@@ -221,7 +231,8 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
     }
 
     private SIComposite addPhone(String number, SIComposite customer) {
-        return customer.getFieldList("phones", SIComposite.class).addNew(instance -> instance.setValue("number", number));
+        return customer.getFieldList("phones", SIComposite.class)
+                .addNew(instance -> instance.setValue("number", number));
     }
 
     @SInfoPackage(name = "testPackage")
@@ -257,12 +268,10 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
                 return categoryRepository.loadAll();
             }
 
-            @Override
-            protected void onLoadType(@Nonnull TypeBuilder tb) {
-                super.onLoadType(tb);
+            public void bindForeignColumn(String keyColumn) {
                 // relational mapping
-                key.asSQL().column("category").columnConverter(IntegerConverter::new);
-                display.asSQL().foreignColumn("name", "category", Category.class);
+                key.asSQL().column(keyColumn).columnConverter(IntegerConverter::new);
+                display.asSQL().foreignColumn("name", keyColumn, Category.class);
             }
         }
 
@@ -270,7 +279,8 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
         public static final class Form extends STypeComposite<SIComposite> {
             public STypeString name;
             public STypeString observation;
-            public CategoryRef category;
+            public CategoryRef majorCategory;
+            public CategoryRef minorCategory;
             public STypeAttachment attachment;
             public STypeAttachment bigTextFile;
 
@@ -279,16 +289,19 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
                 asAtr().label("Formulary");
                 name = addFieldString("name");
                 observation = addFieldString("observation");
-                category = addField("category", CategoryRef.class);
+                majorCategory = addField("majorCategory", CategoryRef.class);
+                minorCategory = addField("minorCategory", CategoryRef.class);
                 attachment = addField("attachment", STypeAttachment.class);
                 attachment.asAtr().allowedFileTypes("pdf", "docx", "xlsx", "jpeg", "png", "mp3", "mp4");
                 bigTextFile = addFieldAttachment("bigTextFile");
-
                 // relational mapping
                 asSQL().table("FORM").tablePK("CODE");
+                asSQL().addTableFK("majorCategory", Category.class);
+                asSQL().addTableFK("minorCategory", Category.class);
                 name.asSQL().column();
                 observation.asSQL().column("OBS").columnConverter(CLOBConverter::new);
-                asSQL().addTableFK("category", Category.class);
+                majorCategory.bindForeignColumn("MAJORCATEGORY");
+                minorCategory.bindForeignColumn("MINORCATEGORY");
                 attachment.asSQL().column().columnConverter(BLOBConverter::new);
                 bigTextFile.asSQL().column("TEXT_FILE").columnConverter(CLOBConverter::new);
                 // TODO

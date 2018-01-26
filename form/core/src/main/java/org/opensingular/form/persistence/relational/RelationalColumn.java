@@ -16,6 +16,8 @@
 
 package org.opensingular.form.persistence.relational;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.StringJoiner;
 
 /**
@@ -27,6 +29,7 @@ public class RelationalColumn {
     private static final String SERIALIZATION_SEPARATOR = ":";
     private String table;
     private String name;
+    private List<RelationalColumn> sourceKeyColumns;
 
     public static RelationalColumn fromStringPersistence(String value, String defaultTable) {
         String parts[] = value.split(SERIALIZATION_SEPARATOR);
@@ -38,6 +41,13 @@ public class RelationalColumn {
     public RelationalColumn(String table, String name) {
         this.table = table;
         this.name = name;
+        this.sourceKeyColumns = Collections.emptyList();
+    }
+
+    public RelationalColumn(String table, String name, List<RelationalColumn> sourceKeyColumns) {
+        this.table = table;
+        this.name = name;
+        this.sourceKeyColumns = sourceKeyColumns;
     }
 
     public String getTable() {
@@ -46,6 +56,10 @@ public class RelationalColumn {
 
     public String getName() {
         return name;
+    }
+
+    public List<RelationalColumn> getSourceKeyColumns() {
+        return sourceKeyColumns;
     }
 
     public String toStringPersistence() {
@@ -59,12 +73,13 @@ public class RelationalColumn {
     public boolean equals(Object obj) {
         if (obj instanceof RelationalColumn)
             return ((RelationalColumn) obj).getTable().equals(getTable())
-                    && ((RelationalColumn) obj).getName().equals(getName());
+                    && ((RelationalColumn) obj).getName().equals(getName())
+                    && ((RelationalColumn) obj).getSourceKeyColumns().equals(getSourceKeyColumns());
         return super.equals(obj);
     }
 
     @Override
     public int hashCode() {
-        return getTable().hashCode() * 13 + getName().hashCode() * 3 + 5;
+        return getTable().hashCode() * 11 + getName().hashCode() * 7 + getSourceKeyColumns().hashCode() * 3 + 5;
     }
 }
