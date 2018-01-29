@@ -31,28 +31,31 @@ import org.opensingular.form.persistence.FormKeyRelational;
  * @author Edmundo Andrade
  */
 public class RelationalSQLDelete extends RelationalSQL {
-	private List<RelationalColumn> keyColumns;
-	private Map<String, Object> mapColumnToValue;
+    private List<RelationalColumn> keyColumns;
+    private Map<String, Object> mapColumnToValue;
 
-	public RelationalSQLDelete(STypeComposite<?> type, FormKey formKey) {
-		this.keyColumns = new ArrayList<>();
-		for (SType<?> field : type.getFields()) {
-			if (!field.isComposite()) {
-				collectKeyColumns(field, keyColumns);
-			}
-		}
-		mapColumnToValue = ((FormKeyRelational) formKey).getValue();
-	}
+    public RelationalSQLDelete(STypeComposite<?> type, FormKey formKey) {
+        this.keyColumns = new ArrayList<>();
+        for (SType<?> field : type.getFields()) {
+            if (!field.isComposite()) {
+                collectKeyColumns(field, keyColumns);
+            }
+        }
+        mapColumnToValue = ((FormKeyRelational) formKey).getValue();
+    }
 
-	@Override
-	public List<RelationalSQLCommmand> toSQLScript() {
-		List<RelationalSQLCommmand> lines = new ArrayList<>();
-		for (SType<?> tableContext : targetTables) {
-			String tableName = RelationalSQL.table(tableContext);
-			List<Object> params = new ArrayList<>();
-			lines.add(new RelationalSQLCommmand("delete from " + tableName + " " + tableAlias(tableName) + " where "
-					+ where(tableName, keyColumns, mapColumnToValue, params), params, null, null));
-		}
-		return lines;
-	}
+    @Override
+    public List<RelationalSQLCommmand> toSQLScript() {
+        List<RelationalSQLCommmand> lines = new ArrayList<>();
+        for (SType<?> tableContext : targetTables) {
+            String tableName = RelationalSQL.table(tableContext);
+            List<Object> params = new ArrayList<>();
+            lines.add(
+                    new RelationalSQLCommmand(
+                            "delete from " + tableName + " " + tableAlias(tableName, keyColumns) + " where "
+                                    + where(tableName, keyColumns, mapColumnToValue, keyColumns, params),
+                            params, null, null));
+        }
+        return lines;
+    }
 }

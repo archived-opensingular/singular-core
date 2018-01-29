@@ -22,6 +22,7 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.event.Broadcast;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
@@ -31,7 +32,6 @@ import org.apache.wicket.util.visit.Visits;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormProcessing;
 import org.opensingular.form.document.SDocument;
-import org.opensingular.form.event.ISInstanceListener.EventCollector;
 import org.opensingular.form.validation.InstanceValidationContext;
 import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
@@ -196,6 +196,7 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
         }
 
         updateBoundedComponents(component.getPage(), target, instancesToUpdateComponents);
+        component.send(component.getPage(), Broadcast.BREADTH, new SingularFormProcessingPayload(instancesToUpdateComponents));
     }
 
     private static boolean isSkipValidationOnRequest() {
@@ -204,7 +205,6 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
 
     public static void refreshComponentOrCellContainer(AjaxRequestTarget target, Component component) {
         if (target != null && component != null) {
-            component.getRequestCycle().setMetaData(MDK_FIELD_UPDATED, Boolean.TRUE);
             Component compToBeUpdated = ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component);
             target.add(WicketFormUtils.findUpdatableComponentInHierarchy(compToBeUpdated));
         }

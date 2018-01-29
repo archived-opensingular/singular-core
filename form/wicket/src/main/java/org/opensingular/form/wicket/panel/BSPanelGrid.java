@@ -16,17 +16,6 @@
 
 package org.opensingular.form.wicket.panel;
 
-import static com.google.common.collect.Lists.*;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
-
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MetaDataKey;
@@ -40,12 +29,25 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
+import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.component.SingularFormWicket;
 import org.opensingular.lib.commons.lambda.IBiFunction;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public abstract class BSPanelGrid extends Panel {
 
@@ -65,9 +67,12 @@ public abstract class BSPanelGrid extends Panel {
         super(id);
     }
 
-    public BSTab addTab(String id, String headerText, List<String> subtree, IModel<SInstance> model) {
+    public BSTab addTab(String id, String headerText, List<String> subtree, IModel<SInstance> model, boolean active) {
         BSTab tab = new BSTab(headerText, subtree, model);
         tabMap.put(id, tab);
+        if (active) {
+            activeTab = tab;
+        }
         return tab;
     }
 
@@ -142,8 +147,23 @@ public abstract class BSPanelGrid extends Panel {
             @Override
             protected Iterator<IModel<String>> getItemModels() {
                 return tabMap.keySet().stream()
+                        .filter(this::isAnyChildrenVisible)
                     .map(it -> (IModel<String>) $m.ofValue(it))
                     .iterator();
+            }
+
+            private boolean isAnyChildrenVisible(String tabId) {
+                BSTab bsTab = tabMap.get(tabId);
+                SInstance instance = bsTab.getModelObject();
+                if ((instance instanceof SIComposite) && instance.asAtr().exists() && instance.asAtr().isVisible()) {
+                    for (String typeName : bsTab.getSubtree()) {
+                        SInstance field = instance.getField(typeName);
+                        if (field.asAtr().exists() && field.asAtr().isVisible()) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
             }
 
             @Override

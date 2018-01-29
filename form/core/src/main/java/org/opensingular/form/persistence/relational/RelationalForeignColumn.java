@@ -28,40 +28,45 @@ import org.opensingular.form.SDictionary;
  * @author Edmundo Andrade
  */
 public class RelationalForeignColumn {
-	private static final String SERIALIZATION_SEPARATOR = ";";
-	private String foreignColumn;
-	private RelationalFK foreignKey;
+    private static final String SERIALIZATION_SEPARATOR = ";";
+    private String foreignColumn;
+    private RelationalFK foreignKey;
 
-	public static RelationalForeignColumn fromStringPersistence(String value, SDictionary dictionary) {
-		String parts[] = value.split(Pattern.quote(SERIALIZATION_SEPARATOR));
-		return new RelationalForeignColumn(parts[0], RelationalFK.fromStringPersistence(parts[1], dictionary));
-	}
+    public static RelationalForeignColumn fromStringPersistence(String value, SDictionary dictionary) {
+        String parts[] = value.split(Pattern.quote(SERIALIZATION_SEPARATOR));
+        return new RelationalForeignColumn(parts[0], RelationalFK.fromStringPersistence(parts[1], dictionary));
+    }
 
-	public RelationalForeignColumn(String foreignColumn, RelationalFK foreignKey) {
-		this.foreignColumn = foreignColumn;
-		this.foreignKey = foreignKey;
-	}
+    public RelationalForeignColumn(String foreignColumn, RelationalFK foreignKey) {
+        this.foreignColumn = foreignColumn;
+        this.foreignKey = foreignKey;
+    }
 
-	public String getForeignColumn() {
-		return foreignColumn;
-	}
+    public String getForeignColumn() {
+        return foreignColumn;
+    }
 
-	public RelationalFK getForeignKey() {
-		return foreignKey;
-	}
+    public RelationalFK getForeignKey() {
+        return foreignKey;
+    }
 
-	public String toStringPersistence() {
-		StringJoiner sj = new StringJoiner(SERIALIZATION_SEPARATOR);
-		sj.add(getForeignColumn());
-		sj.add(getForeignKey().toStringPersistence());
-		return sj.toString();
-	}
+    public String toStringPersistence() {
+        StringJoiner sj = new StringJoiner(SERIALIZATION_SEPARATOR);
+        sj.add(getForeignColumn());
+        sj.add(getForeignKey().toStringPersistence());
+        return sj.toString();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof RelationalForeignColumn)
-			return ((RelationalForeignColumn) obj).getForeignColumn().equals(getForeignColumn())
-					&& ((RelationalForeignColumn) obj).getForeignKey().equals(getForeignKey());
-		return super.equals(obj);
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof RelationalForeignColumn)
+            return ((RelationalForeignColumn) obj).getForeignColumn().equals(getForeignColumn())
+                    && ((RelationalForeignColumn) obj).getForeignKey().equals(getForeignKey());
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return getForeignColumn().hashCode() * 13 + getForeignKey().hashCode() * 3 + 7;
+    }
 }
