@@ -16,6 +16,7 @@
 
 package org.opensingular.form.io;
 
+import com.sun.istack.internal.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.ICompositeType;
@@ -54,7 +55,7 @@ import java.util.Set;
  */
 public final class SFormXMLUtil {
 
-    public static final String ID_ATTRIBUTE = "id";
+    public static final String ID_ATTRIBUTE      = "id";
     public static final String LAST_ID_ATTRIBUTE = "lastId";
 
     private SFormXMLUtil() {
@@ -101,21 +102,44 @@ public final class SFormXMLUtil {
 
     @Nonnull
     public static <T extends SInstance> void fromXML(@Nonnull T instance, @Nullable String xml) {
-        fromXMLInterno(instance, parseXml(xml));
+        fromXML(instance, xml, false);
+    }
+
+    /**
+     *
+     * @param instance
+     * *  {@see SFormXMLUtil#fromXML(? extends SInstance, String)}
+     * @param xml
+     *  {@see SFormXMLUtil#fromXML(? extends SInstance, String)}
+     * @param generateFormIds
+     *  if true new ids will be generated for the entire form, used to read an instance from an raw xml not managed
+     *  by Singular Form
+     * @param <T>
+     */
+    @Nonnull
+    public static <T extends SInstance> void fromXML(@Nonnull T instance, @Nullable String xml, boolean generateFormIds) {
+        boolean restoreMode = !generateFormIds;
+        fromXMLInterno(instance, parseXml(xml), restoreMode);
+    }
+
+    private static <T extends SInstance> T fromXMLInterno(@Nonnull T newInstance, @Nullable MElement xml) {
+        return fromXMLInterno(newInstance, xml, true);
     }
 
     /**
      * Preenche a instância criada com o xml fornecido.
      */
     @Nonnull
-    private static <T extends SInstance> T fromXMLInterno(@Nonnull T newInstance, @Nullable MElement xml) {
+    private static <T extends SInstance> T fromXMLInterno(@Nonnull T newInstance, @Nullable MElement xml, @NotNull boolean restoreMode) {
         Integer lastId = 0;
         if (xml != null) {
             lastId = xml.getInteger("@" + LAST_ID_ATTRIBUTE);
         }
 
         // Colocar em modo de não geraçao de IDs
-        newInstance.getDocument().initRestoreMode();
+        if (restoreMode) {
+            newInstance.getDocument().initRestoreMode();
+        }
         fromXML(newInstance, xml);
 
         int maxId = verifyIds(newInstance, new HashSet<>());
@@ -124,7 +148,9 @@ public final class SFormXMLUtil {
         } else {
             newInstance.getDocument().setLastId(lastId);
         }
-        newInstance.getDocument().finishRestoreMode();
+        if (restoreMode) {
+            newInstance.getDocument().finishRestoreMode();
+        }
         return newInstance;
     }
 
@@ -427,15 +453,15 @@ public final class SFormXMLUtil {
     private static MElement toXML(ConfXMLGeneration conf, SInstance instance) {
         MElement newElement = null;
         if (instance instanceof SISimple<?>) {
-            SISimple<?> iSimples = (SISimple<?>) instance;
-            String sPersistence = iSimples.toStringPersistence();
+            SISimple<?> iSimples     = (SISimple<?>) instance;
+            String      sPersistence = iSimples.toStringPersistence();
             if (sPersistence != null) {
                 newElement = conf.createMElementWithValue(instance, sPersistence);
             } else if (conf.isPersistNull() || instance.as(AtrXML::new).getKeepNodePredicate().test(instance)) {
                 newElement = conf.createMElement(instance);
             }
         } else if (instance instanceof ICompositeInstance) {
-            if (instance.as(AtrXML::new).getKeepNodePredicate().test(instance)){
+            if (instance.as(AtrXML::new).getKeepNodePredicate().test(instance)) {
                 newElement = conf.createMElement(instance);
             }
             newElement = toXMLChildren(conf, instance, newElement, ((ICompositeInstance) instance).getChildren());
