@@ -16,7 +16,6 @@
 
 package org.opensingular.form.io;
 
-import com.sun.istack.internal.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.ICompositeType;
@@ -130,7 +129,7 @@ public final class SFormXMLUtil {
      * Preenche a instância criada com o xml fornecido.
      */
     @Nonnull
-    private static <T extends SInstance> T fromXMLInterno(@Nonnull T newInstance, @Nullable MElement xml, @NotNull boolean restoreMode) {
+    private static <T extends SInstance> T fromXMLInterno(@Nonnull T newInstance, @Nullable MElement xml, @Nonnull boolean restoreMode) {
         Integer lastId = 0;
         if (xml != null) {
             lastId = xml.getInteger("@" + LAST_ID_ATTRIBUTE);
