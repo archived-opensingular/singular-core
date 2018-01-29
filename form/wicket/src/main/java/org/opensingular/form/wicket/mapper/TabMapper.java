@@ -38,12 +38,14 @@ import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.panel.BSPanelGrid;
 import org.opensingular.form.wicket.panel.BSPanelGrid.BSTab;
+import org.opensingular.form.wicket.util.SingularFormProcessingPayload;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
@@ -97,14 +99,26 @@ public class TabMapper implements IWicketComponentMapper {
         ctx.getContainer().add(new Behavior() {
             @Override
             public void onEvent(Component component, IEvent<?> event) {
+                super.onEvent(component, event);
+
                 final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                if (event.getPayload() instanceof SInstance) {
-                    final SInstance instance = (SInstance) event.getPayload();
+                Object payload = event.getPayload();
+                if (payload instanceof SInstance) {
+                    final SInstance instance = (SInstance) payload;
                     for (BSTab tab : panel.getTabs().values())
                         if (instance.isDescendantOf(tab.getModelObject()))
                             target.add(panel.getTabItem(tab));
-                } else if (event.getPayload() instanceof String && ((String) event.getPayload()).equalsIgnoreCase("updateTab")) {
-                    target.add(panel);
+                } else if (payload instanceof SingularFormProcessingPayload) {
+                    SingularFormProcessingPayload singularPayload = (SingularFormProcessingPayload) payload;
+                    Set<String> typeNames = tabView.getTabs()
+                            .stream()
+                            .map(SViewTab.STab::getTypesNames)
+                            .flatMap(List::stream)
+                            .collect(Collectors.toSet());
+
+                    if (singularPayload.hasUpdatedType(typeNames)) {
+                        target.add(panel);
+                    }
                 }
             }
         });

@@ -38,7 +38,7 @@ import org.opensingular.form.wicket.feedback.SValidationFeedbackPanel;
 import org.opensingular.form.wicket.mapper.behavior.RequiredBehaviorUtil;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
-import org.opensingular.form.wicket.util.WicketFormProcessing;
+import org.opensingular.form.wicket.util.SingularFormProcessingPayload;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSCol;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
@@ -237,21 +237,19 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
         @Override
         public void onEvent(IEvent<?> event) {
             super.onEvent(event);
-            if (!AjaxRequestTarget.class.isAssignableFrom(event.getPayload().getClass())) {
+            if (!SingularFormProcessingPayload.class.isAssignableFrom(event.getPayload().getClass())) {
                 return;
             }
-            Boolean isAnyFieldUpdated = getRequestCycle().getMetaData(WicketFormProcessing.MDK_FIELD_UPDATED);
-            if (isAnyFieldUpdated != null && isAnyFieldUpdated) {
-                AjaxRequestTarget payload    = (AjaxRequestTarget) event.getPayload();
-                boolean           newVisible = isAnyChildrenVisible();
-                if (newVisible != visible) {
-                    if (newVisible) {
-                        payload.appendJavaScript("$('#" + this.getMarkupId() + "').css('display', 'block');");
-                    } else {
-                        payload.appendJavaScript("$('#" + this.getMarkupId() + "').css('display', 'none');");
-                    }
-                    visible = newVisible;
+
+            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+            boolean           newVisible = isAnyChildrenVisible();
+            if (newVisible != visible) {
+                if (newVisible) {
+                    target.appendJavaScript("$('#" + this.getMarkupId() + "').css('display', 'block');");
+                } else {
+                    target.appendJavaScript("$('#" + this.getMarkupId() + "').css('display', 'none');");
                 }
+                visible = newVisible;
             }
         }
 

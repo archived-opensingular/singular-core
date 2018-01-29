@@ -34,8 +34,6 @@ import org.opensingular.form.SingularFormProcessing;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.validation.InstanceValidationContext;
 import org.opensingular.form.validation.ValidationErrorLevel;
-import org.opensingular.form.view.SView;
-import org.opensingular.form.view.SViewTab;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.lib.commons.util.Loggable;
@@ -187,22 +185,6 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
 
         Set<SInstance> instancesToUpdateComponents = executeFieldProcessLifecycle(instance, skipValidation);
 
-        SView view = instance.getRoot().getType().getView();
-        if (view instanceof SViewTab) {
-            SViewTab viewTab = (SViewTab) view;
-            for (SViewTab.STab sTab : viewTab.getTabs()) {
-                for (SInstance instanceToUpdate : instancesToUpdateComponents) {
-                    String updateTypeName = instanceToUpdate.getType().getNameSimple();
-
-                    for (String typeName : sTab.getTypesNames()) {
-                        if (typeName.equalsIgnoreCase(updateTypeName)) {
-                            component.send(component, Broadcast.BUBBLE, "updateTab");
-                        }
-                    }
-                }
-            }
-        }
-
         if (!skipValidation) {
             WicketBuildContext
                     .findNearest(component)
@@ -214,6 +196,7 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
         }
 
         updateBoundedComponents(component.getPage(), target, instancesToUpdateComponents);
+        component.send(component.getPage(), Broadcast.BREADTH, new SingularFormProcessingPayload(instancesToUpdateComponents));
     }
 
     private static boolean isSkipValidationOnRequest() {
@@ -222,7 +205,6 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
 
     public static void refreshComponentOrCellContainer(AjaxRequestTarget target, Component component) {
         if (target != null && component != null) {
-            component.getRequestCycle().setMetaData(MDK_FIELD_UPDATED, Boolean.TRUE);
             Component compToBeUpdated = ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component);
             target.add(WicketFormUtils.findUpdatableComponentInHierarchy(compToBeUpdated));
         }
