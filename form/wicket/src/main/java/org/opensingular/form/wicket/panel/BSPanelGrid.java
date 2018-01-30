@@ -196,10 +196,10 @@ public abstract class BSPanelGrid extends Panel {
 
                 };
 
-                link.add(new Label("header-text", tab.getHeaderText()));
                 Label label = new Label("header-icon", "");
                 label.add(new AttributeModifier("class", $m.get(() -> "tab-header-icon " + tab.iconClass())));
                 link.add(label);
+                link.add(new Label("header-text", tab.getHeaderText()));
 
                 item.add(link);
 
