@@ -47,12 +47,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
+import static java.util.stream.Collectors.*;
+import static org.apache.commons.lang3.ObjectUtils.*;
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
 
 public class TabMapper implements IWicketComponentMapper {
 
@@ -105,9 +103,11 @@ public class TabMapper implements IWicketComponentMapper {
                 Object payload = event.getPayload();
                 if (payload instanceof SInstance) {
                     final SInstance instance = (SInstance) payload;
-                    for (BSTab tab : panel.getTabs().values())
-                        if (instance.isDescendantOf(tab.getModelObject()))
-                            target.add(panel.getTabItem(tab));
+                    for (BSTab tab : panel.getTabs().values()) {
+                        if (instance.isDescendantOf(tab.getModelObject())) {
+                            panel.getTabItem(tab).ifPresent(target::add);
+                        }
+                    }
                 } else if (payload instanceof SingularFormProcessingPayload) {
                     SingularFormProcessingPayload singularPayload = (SingularFormProcessingPayload) payload;
                     Set<String> typeNames = tabView.getTabs()

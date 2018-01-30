@@ -44,6 +44,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
@@ -120,14 +121,14 @@ public abstract class BSPanelGrid extends Panel {
     }
 
     @SuppressWarnings("unchecked")
-    public Item<String> getTabItem(BSTab tab) {
+    public Optional<Item<String>> getTabItem(BSTab tab) {
         if (tabRepeater != null) {
             for (Component item : tabRepeater) {
                 if (item.getMetaData(TAB_KEY) == tab)
-                    return (Item<String>) item;
+                    return Optional.of((Item<String>) item);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     private void rebuildForm() {
@@ -195,10 +196,10 @@ public abstract class BSPanelGrid extends Panel {
 
                 };
 
-                link.add(new Label("header-text", tab.getHeaderText()));
                 Label label = new Label("header-icon", "");
                 label.add(new AttributeModifier("class", $m.get(() -> "tab-header-icon " + tab.iconClass())));
                 link.add(label);
+                link.add(new Label("header-text", tab.getHeaderText()));
 
                 item.add(link);
 
