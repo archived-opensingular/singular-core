@@ -72,41 +72,44 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 
     public void delete(@Nonnull FormKey key) {
         INSTANCE mainInstance = load(key);
-        for (SInstance field : mainInstance.getAllChildren()) {
-            if (RelationalSQL.isListWithTableBound(field.getType())) {
-                SIList<SIComposite> listInstance = mainInstance.getFieldList(field.getType().getNameSimple(),
-                        SIComposite.class);
-                for (SIComposite item : listInstance.getChildren()) {
-                    String manyToManyTable = manyToManyTable(item);
-                    if (manyToManyTable != null) {
-                        FormKeyRelational sourceKey = (FormKeyRelational) FormKey.fromInstance(mainInstance);
-                        FormKeyRelational targetKey = (FormKeyRelational) FormKey.fromInstance(item);
-                        StringBuilder sqlBuilder = new StringBuilder("DELETE FROM ");
-                        sqlBuilder.append(manyToManyTable);
-                        sqlBuilder.append(" WHERE ");
-                        List<Object> params = new ArrayList<>();
-                        String delim = "";
-                        for (String pkColumn : RelationalSQL.tablePK(mainInstance.getType())) {
-                            params.add(sourceKey.getColumnValue(pkColumn));
-                            sqlBuilder.append(delim);
-                            sqlBuilder.append(item.getParent().asSQL().getManyToManySourceKeyColumns());
-                            sqlBuilder.append(" = ?");
-                            delim = " AND ";
+        mainInstance.getAllChildren().stream().filter(field -> RelationalSQL.isListWithTableBound(field.getType()))
+                .forEach(field -> {
+                    SIList<SIComposite> listInstance = mainInstance.getFieldList(field.getType().getNameSimple(),
+                            SIComposite.class);
+                    for (SIComposite item : listInstance.getChildren()) {
+                        String manyToManyTable = manyToManyTable(item);
+                        if (manyToManyTable != null) {
+                            executeManyToManyDelete(mainInstance, item, manyToManyTable);
                         }
-                        for (String pkColumn : RelationalSQL.tablePK(item.getType())) {
-                            params.add(targetKey.getColumnValue(pkColumn));
-                            sqlBuilder.append(delim);
-                            sqlBuilder.append(item.getParent().asSQL().getManyToManyTargetKeyColumns());
-                            sqlBuilder.append(" = ?");
-                            delim = " AND ";
-                        }
-                        db.exec(sqlBuilder.toString(), params);
+                        deleteInternal(item.getType(), FormKey.fromInstance(item));
                     }
-                    deleteInternal(item.getType(), FormKey.fromInstance(item));
-                }
-            }
-        }
+                });
         deleteInternal(createType(), key);
+    }
+
+    private void executeManyToManyDelete(INSTANCE sourceInstance, SIComposite targetInstance, String manyToManyTable) {
+        FormKeyRelational sourceKey = (FormKeyRelational) FormKey.fromInstance(sourceInstance);
+        FormKeyRelational targetKey = (FormKeyRelational) FormKey.fromInstance(targetInstance);
+        StringBuilder sqlBuilder = new StringBuilder("DELETE FROM ");
+        sqlBuilder.append(manyToManyTable);
+        sqlBuilder.append(" WHERE ");
+        List<Object> params = new ArrayList<>();
+        String delim = "";
+        for (String pkColumn : RelationalSQL.tablePK(sourceInstance.getType())) {
+            params.add(sourceKey.getColumnValue(pkColumn));
+            sqlBuilder.append(delim);
+            sqlBuilder.append(targetInstance.getParent().asSQL().getManyToManySourceKeyColumns());
+            sqlBuilder.append(" = ?");
+            delim = " AND ";
+        }
+        for (String pkColumn : RelationalSQL.tablePK(targetInstance.getType())) {
+            params.add(targetKey.getColumnValue(pkColumn));
+            sqlBuilder.append(delim);
+            sqlBuilder.append(targetInstance.getParent().asSQL().getManyToManyTargetKeyColumns());
+            sqlBuilder.append(" = ?");
+            delim = " AND ";
+        }
+        db.exec(sqlBuilder.toString(), params);
     }
 
     @SuppressWarnings("unchecked")
