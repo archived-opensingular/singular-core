@@ -310,7 +310,7 @@ public abstract class RelationalSQL {
     }
 
     private String internalTableAlias(String table, List<RelationalColumn> sourceKeyColumns, Collection<String> tables,
-            Set<List<RelationalColumn>> joins, String prefix) {
+            List<List<RelationalColumn>> joins, String prefix) {
         int index = 1;
         for (String tableName : tables) {
             for (List<RelationalColumn> join : joins) {
@@ -323,9 +323,10 @@ public abstract class RelationalSQL {
         return null;
     }
 
-    protected Set<List<RelationalColumn>> distinctJoins(String table, Collection<RelationalColumn> relevantColumns) {
-        Set<List<RelationalColumn>> distinctJoins = new LinkedHashSet<>();
-        relevantColumns.stream().filter(column -> column.getTable().equals(table))
+    protected List<List<RelationalColumn>> distinctJoins(String table, Collection<RelationalColumn> relevantColumns) {
+        List<List<RelationalColumn>> distinctJoins = new ArrayList<>();
+        relevantColumns.stream().filter(
+                column -> column.getTable().equals(table) && !distinctJoins.contains(column.getSourceKeyColumns()))
                 .forEach(column -> distinctJoins.add(column.getSourceKeyColumns()));
         return distinctJoins;
     }

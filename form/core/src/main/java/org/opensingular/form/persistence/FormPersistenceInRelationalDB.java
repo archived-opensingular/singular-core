@@ -234,24 +234,29 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
                 if (manyToManyTable != null) {
                     FormKeyRelational sourceKey = (FormKeyRelational) FormKey.fromInstance(instance);
                     FormKeyRelational targetKey = (FormKeyRelational) FormKey.fromInstance(command.getInstance());
-                    String sqlManyToMany = "INSERT INTO " + manyToManyTable + "(";
-                    sqlManyToMany += command.getInstance().getParent().asSQL().getManyToManySourceKeyColumns();
-                    sqlManyToMany += ", " + command.getInstance().getParent().asSQL().getManyToManyTargetKeyColumns();
-                    sqlManyToMany += ") VALUES (";
+                    StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
+                    sqlBuilder.append(manyToManyTable);
+                    sqlBuilder.append("(");
+                    sqlBuilder.append(command.getInstance().getParent().asSQL().getManyToManySourceKeyColumns());
+                    sqlBuilder.append(", ");
+                    sqlBuilder.append(command.getInstance().getParent().asSQL().getManyToManyTargetKeyColumns());
+                    sqlBuilder.append(") VALUES (");
                     List<Object> params = new ArrayList<>();
                     String delim = "";
                     for (String pkColumn : RelationalSQL.tablePK(instance.getType())) {
                         params.add(sourceKey.getColumnValue(pkColumn));
-                        sqlManyToMany += delim + "?";
+                        sqlBuilder.append(delim);
+                        sqlBuilder.append("?");
                         delim = ", ";
                     }
                     for (String pkColumn : RelationalSQL.tablePK(command.getInstance().getType())) {
                         params.add(targetKey.getColumnValue(pkColumn));
-                        sqlManyToMany += delim + "?";
+                        sqlBuilder.append(delim);
+                        sqlBuilder.append("?");
                         delim = ", ";
                     }
-                    sqlManyToMany += ")";
-                    db.exec(sqlManyToMany, params);
+                    sqlBuilder.append(")");
+                    db.exec(sqlBuilder.toString(), params);
                 }
             }
         }
