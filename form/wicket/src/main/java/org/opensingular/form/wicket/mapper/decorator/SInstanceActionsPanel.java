@@ -18,15 +18,6 @@
 
 package org.opensingular.form.wicket.mapper.decorator;
 
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
-
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -45,6 +36,15 @@ import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
+
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 /**
  * Componente que encapsula o layout de ícones para ações sobre campos.
@@ -205,6 +205,19 @@ public class SInstanceActionsPanel extends TemplatePanel {
                     internalContextListProvider));
             } else {
                 link = new ActionAjaxLink<SInstanceAction>("link", itemModel) {
+
+                    /**
+                     * The link for the actions panel ignores the enabled hierarchy, because
+                     * we must be able to disable some chunks of the form and the action
+                     * should be indepent.
+                     *
+                     * @return
+                     */
+                    @Override
+                    public boolean isEnabledInHierarchy() {
+                        return ActionsView.this.isEnabled() && ActionsView.this.isEnableAllowed();
+                    }
+
                     @Override
                     protected void onAction(AjaxRequestTarget target) {
                         SInstanceAction instanceAction = this.getModelObject();

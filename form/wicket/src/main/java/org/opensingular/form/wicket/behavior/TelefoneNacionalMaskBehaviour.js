@@ -57,7 +57,7 @@
     window.Singular.applyTelefoneNacionalMask = function (id) {
 
         var input = $('#' + id),
-            bypassKeys = new ArrayWrapper([8, 9, 37, 39]),
+            bypassKeys = new ArrayWrapper([8, 37, 39]),
             numberKeys = new ArrayWrapper([48, 49, 50, 51, 52, 53, 54, 55, 56, 57]),
             removeKeys = new ArrayWrapper([8, 46]);
 
@@ -111,8 +111,11 @@
             return event.which || event.keyCode;
         }
 
-        function onKeyPress(event) {
+        function onKeyDown(event) {
             var keyCode = getKeyCode(event);
+            if (keyCode === 9) {
+                return true;
+            }
             if (bypassKeys.contains(keyCode) && !event.shiftKey || event.ctrlKey) {
                 return true;
             }
@@ -131,7 +134,10 @@
                 }
                 return true;
             }
-            if (bypassKeys.contains(keyCode) || event.ctrlKey) {
+            if (keyCode === 9) {
+                return true;
+            }
+            if (bypassKeys.contains(keyCode) && !event.shiftKey || event.ctrlKey) {
                 return true;
             }
             if (currentValueLength() > 10) {
@@ -141,7 +147,7 @@
             }
         }
 
-        input.on('keypress', onKeyPress);
+        input.on('keydown', onKeyDown);
         input.on('keyup', onKeyUp);
 
     };
