@@ -176,6 +176,18 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
         assertEquals(2, tuples.size());
         assertEquals("+55 (61) 99999-9999", tuples.get(0)[0]);
         assertEquals("+55 (85) 99999-9999", tuples.get(1)[0]);
+        //
+        SIComposite loaded = repoCustomer.load(insertedKey);
+        assertEquals("Robert", loaded.getValue("name"));
+        assertEquals(insertedKey, FormKey.fromInstance(loaded));
+        SIList<?> phones = loaded.getFieldList("phones");
+        assertEquals(2, phones.size());
+        assertEquals("+55 (61) 99999-9999", phones.get(0).getValue("number"));
+        assertEquals("+55 (85) 99999-9999", phones.get(1).getValue("number"));
+        //
+        repoCustomer.delete(insertedKey);
+        assertEquals(0, repoCustomer.countAll());
+        assertEquals(0, repoPhone.countAll());
     }
 
     private SIComposite createCategoryInstance(String name) {
