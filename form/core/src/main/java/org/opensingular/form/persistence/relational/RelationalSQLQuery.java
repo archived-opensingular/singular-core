@@ -178,17 +178,26 @@ public class RelationalSQLQuery extends RelationalSQL {
         for (SType<?> tableContext : targetTables) {
             String table = RelationalSQL.table(tableContext);
             for (List<RelationalColumn> sourceKeyColumns : distinctJoins(table, relevantColumns)) {
-                if (locateRelationship(table, sourceKeyColumns, joinedTables, joinMap) == null) {
-                    List<RelationalFK> intermediary = locateIntermediaryRelationships(table, sourceKeyColumns,
-                            joinedTables, joinMap);
-                    if (!intermediary.isEmpty()) {
-                        return intermediary.get(0).getTable();
-                    }
+                String result = detectIntermediaryTable(table, sourceKeyColumns, joinedTables, joinMap);
+                if (result != null) {
+                    return result;
                 }
                 joinedTables.add(table);
             }
             if (aggregator == COUNT) {
                 break;
+            }
+        }
+        return null;
+    }
+
+    private String detectIntermediaryTable(String table, List<RelationalColumn> sourceKeyColumns,
+            Set<String> joinedTables, Map<String, RelationalFK> joinMap) {
+        if (locateRelationship(table, sourceKeyColumns, joinedTables, joinMap) == null) {
+            List<RelationalFK> intermediary = locateIntermediaryRelationships(table, sourceKeyColumns, joinedTables,
+                    joinMap);
+            if (!intermediary.isEmpty()) {
+                return intermediary.get(0).getTable();
             }
         }
         return null;
