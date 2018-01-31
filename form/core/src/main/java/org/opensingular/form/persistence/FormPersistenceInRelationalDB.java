@@ -81,20 +81,26 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
                     if (manyToManyTable != null) {
                         FormKeyRelational sourceKey = (FormKeyRelational) FormKey.fromInstance(mainInstance);
                         FormKeyRelational targetKey = (FormKeyRelational) FormKey.fromInstance(item);
-                        String sqlManyToMany = "DELETE FROM " + manyToManyTable + " WHERE ";
+                        StringBuilder sqlBuilder = new StringBuilder("DELETE FROM ");
+                        sqlBuilder.append(manyToManyTable);
+                        sqlBuilder.append(" WHERE ");
                         List<Object> params = new ArrayList<>();
                         String delim = "";
                         for (String pkColumn : RelationalSQL.tablePK(mainInstance.getType())) {
                             params.add(sourceKey.getColumnValue(pkColumn));
-                            sqlManyToMany += delim + item.getParent().asSQL().getManyToManySourceKeyColumns() + " = ?";
+                            sqlBuilder.append(delim);
+                            sqlBuilder.append(item.getParent().asSQL().getManyToManySourceKeyColumns());
+                            sqlBuilder.append(" = ?");
                             delim = " AND ";
                         }
                         for (String pkColumn : RelationalSQL.tablePK(item.getType())) {
                             params.add(targetKey.getColumnValue(pkColumn));
-                            sqlManyToMany += delim + item.getParent().asSQL().getManyToManyTargetKeyColumns() + " = ?";
+                            sqlBuilder.append(delim);
+                            sqlBuilder.append(item.getParent().asSQL().getManyToManyTargetKeyColumns());
+                            sqlBuilder.append(" = ?");
                             delim = " AND ";
                         }
-                        db.exec(sqlManyToMany, params);
+                        db.exec(sqlBuilder.toString(), params);
                     }
                     deleteInternal(item.getType(), FormKey.fromInstance(item));
                 }
@@ -236,7 +242,7 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
                     FormKeyRelational targetKey = (FormKeyRelational) FormKey.fromInstance(command.getInstance());
                     StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
                     sqlBuilder.append(manyToManyTable);
-                    sqlBuilder.append("(");
+                    sqlBuilder.append('(');
                     sqlBuilder.append(command.getInstance().getParent().asSQL().getManyToManySourceKeyColumns());
                     sqlBuilder.append(", ");
                     sqlBuilder.append(command.getInstance().getParent().asSQL().getManyToManyTargetKeyColumns());
@@ -246,16 +252,16 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
                     for (String pkColumn : RelationalSQL.tablePK(instance.getType())) {
                         params.add(sourceKey.getColumnValue(pkColumn));
                         sqlBuilder.append(delim);
-                        sqlBuilder.append("?");
+                        sqlBuilder.append('?');
                         delim = ", ";
                     }
                     for (String pkColumn : RelationalSQL.tablePK(command.getInstance().getType())) {
                         params.add(targetKey.getColumnValue(pkColumn));
                         sqlBuilder.append(delim);
-                        sqlBuilder.append("?");
+                        sqlBuilder.append('?');
                         delim = ", ";
                     }
-                    sqlBuilder.append(")");
+                    sqlBuilder.append(')');
                     db.exec(sqlBuilder.toString(), params);
                 }
             }
