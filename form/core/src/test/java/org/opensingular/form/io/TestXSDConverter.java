@@ -11,8 +11,8 @@ import org.opensingular.form.type.util.STypeLatitudeLongitude;
 public class TestXSDConverter {
 	@Test
 	public void testXsdConverter() {
-		XSDConverter conversor = new XSDConverter();
-		conversor.conversor(STypeExemplo.class);
-		conversor.getXsd();
+		XSDConverter converter = new XSDConverter();
+		converter.converter(STypeExemplo.class);
+		converter.getXsd();
 	}
 }

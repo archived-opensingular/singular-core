@@ -25,57 +25,57 @@ public class XSDConverter {
 	private String xsd = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
 			"<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n";
 	
-	public void conversor(Class<? extends SType<?>> sType) {		
-		lerStype(sType, null);
+	public void converter(Class<? extends SType<?>> sType) {		
+		readStype(sType, null);
 		xsd = xsd + "</xs:schema>";
 	}
 	
-	private void lerStype(Class<? extends SType<?>> sType, String pai) {
-		Field[] atributos = sType.getDeclaredFields();
-		List<Field> atributosSType = new ArrayList<>();
+	private void readStype(Class<? extends SType<?>> sType, String superClass) {
+		Field[] attributes = sType.getDeclaredFields();
+		List<Field> stypeAttributes = new ArrayList<>();
 		
-		for (Field atributo : atributos) {
-			if (SType.class.isAssignableFrom(atributo.getType())) {
-				atributosSType.add(atributo);	
+		for (Field attribute : attributes) {
+			if (SType.class.isAssignableFrom(attribute.getType())) {
+				stypeAttributes.add(attribute);	
 			}
 		}
 		
-		if (!atributosSType.isEmpty()) {
-			preencherXsd(atributosSType, pai, sType);
-			atributosSType.forEach(a -> lerStype((Class<? extends SType<?>>) a.getType(), a.getType().getSimpleName()));
+		if (!stypeAttributes.isEmpty()) {
+			writeXsd(stypeAttributes, superClass, sType);
+			stypeAttributes.forEach(a -> readStype((Class<? extends SType<?>>) a.getType(), a.getType().getSimpleName()));
 		}
 	}
 	
-	private void preencherXsd(List<Field> atributosSType, String pai, Class<? extends SType<?>> sType) {
-		xsd = (pai == null) ? xsd + xsdElement(sType.getSimpleName(), sType.getSimpleName()) : xsd;
-		xsdComplexType(pai == null ? sType.getSimpleName() : pai, atributosSType);
+	private void writeXsd(List<Field> stypeAttributes, String superClass, Class<? extends SType<?>> sType) {
+		xsd = (superClass == null) ? xsd + xsdElement(sType.getSimpleName(), sType.getSimpleName()) : xsd;
+		xsdComplexType(superClass == null ? sType.getSimpleName() : superClass, stypeAttributes);
 	}
 
 	
-	private String xsdElement(String nome, String classe) {
-		return "\t<xs:element name=\""+ nome +"\" type=\""+ classe +"\" />\n";
+	private String xsdElement(String name, String type) {
+		return "\t<xs:element name=\""+ name +"\" type=\""+ type +"\" />\n";
 	}
 	
-	private void xsdComplexType(String classe, List<Field> atributosSType) {
-		xsd = xsd + "\t<xs:complexType name=\""+ classe +"\">\n" +
+	private void xsdComplexType(String type, List<Field> stypeAttributes) {
+		xsd = xsd + "\t<xs:complexType name=\""+ type +"\">\n" +
 				"\t\t<xs:sequence>\n";
 		
-		atributosSType.forEach(a -> xsd = xsd + "\t\t"+ xsdElement(a.getName(), getType(a)));
+		stypeAttributes.forEach(a -> xsd = xsd + "\t\t"+ xsdElement(a.getName(), getType(a)));
 		
 		xsd = xsd + "\t\t</xs:sequence>\n" +
 				"\t</xs:complexType>\n";
 		
 	}
 	
-	private String getType(Field atributo) {
-		Class<?> classe = atributo.getType();
-		String type = STypeSimple.class.isAssignableFrom(atributo.getType()) ? "xs:"+getSimpleType(classe) : classe.getSimpleName();
+	private String getType(Field attribute) {
+		Class<?> typeClass = attribute.getType();
+		String type = STypeSimple.class.isAssignableFrom(attribute.getType()) ? "xs:"+getSimpleType(typeClass) : typeClass.getSimpleName();
 		
 		return type;
 	}
 	
-	private String getSimpleType(Class<?> classe) {
-		switch (classe.getSimpleName()) {
+	private String getSimpleType(Class<?> typeClass) {
+		switch (typeClass.getSimpleName()) {
 			case "STypeString":
 				return "string";
 			case "STypeLong":
@@ -93,7 +93,7 @@ public class XSDConverter {
 			case "STypeTime":
 				return "time";
 			default:
-				return getSimpleType(classe.getSuperclass());
+				return getSimpleType(typeClass.getSuperclass());
 		}
 		
 	}
