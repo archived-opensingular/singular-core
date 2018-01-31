@@ -152,30 +152,12 @@ public class RelationalSQLQuery extends RelationalSQL {
 
     private String joinTables(Collection<RelationalColumn> relevantColumns, Map<String, RelationalFK> joinMap) {
         StringJoiner sj = new StringJoiner(" left join ");
-        List<RelationalFK> intermediary = Collections.emptyList();
         Set<String> joinedTables = new LinkedHashSet<>();
-        for (SType<?> tableContext : targetTables) {
-            String table = RelationalSQL.table(tableContext);
-            for (List<RelationalColumn> sourceKeyColumns : distinctJoins(table, relevantColumns)) {
-                if (locateRelationship(table, sourceKeyColumns, joinedTables, joinMap) == null) {
-                    intermediary = locateIntermediaryRelationships(table, sourceKeyColumns, joinedTables, joinMap);
-                    if (!intermediary.isEmpty()) {
-                        break;
-                    }
-                }
-                joinedTables.add(table);
-            }
-            if (aggregator == COUNT || !intermediary.isEmpty()) {
-                break;
-            }
-        }
-        joinedTables.clear();
-        if (!intermediary.isEmpty()) {
-            String intermediaryTable = intermediary.get(0).getTable();
+        String intermediaryTable = detectIntermediaryTable(relevantColumns, joinMap);
+        if (intermediaryTable != null) {
             intermediaryTables.add(intermediaryTable);
             joinedTables.add(intermediaryTable);
             String intermerdiaryTableAlias = tableAlias(intermediaryTable, relevantColumns);
-            intermediary.removeIf(item -> !item.getTable().equals(intermediaryTable));
             sj.add(intermediaryTable + " " + intermerdiaryTableAlias);
         }
         for (SType<?> tableContext : targetTables) {
@@ -188,6 +170,28 @@ public class RelationalSQLQuery extends RelationalSQL {
             }
         }
         return sj.toString();
+    }
+
+    private String detectIntermediaryTable(Collection<RelationalColumn> relevantColumns,
+            Map<String, RelationalFK> joinMap) {
+        Set<String> joinedTables = new LinkedHashSet<>();
+        for (SType<?> tableContext : targetTables) {
+            String table = RelationalSQL.table(tableContext);
+            for (List<RelationalColumn> sourceKeyColumns : distinctJoins(table, relevantColumns)) {
+                if (locateRelationship(table, sourceKeyColumns, joinedTables, joinMap) == null) {
+                    List<RelationalFK> intermediary = locateIntermediaryRelationships(table, sourceKeyColumns,
+                            joinedTables, joinMap);
+                    if (!intermediary.isEmpty()) {
+                        return intermediary.get(0).getTable();
+                    }
+                }
+                joinedTables.add(table);
+            }
+            if (aggregator == COUNT) {
+                break;
+            }
+        }
+        return null;
     }
 
     private void addClause(SType<?> tableContext, List<RelationalColumn> sourceKeyColumns,
