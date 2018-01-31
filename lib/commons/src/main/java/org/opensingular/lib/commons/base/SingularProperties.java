@@ -44,6 +44,7 @@ public interface SingularProperties {
     String HIBERNATE_SEQUENCE_PROPERTY_PATTERN = "flow.persistence.%s.sequence";
     String SINGULAR_EAGER_LOAD_FLOW_DEFINITIONS = "singular.flow.eager.load";
     String SINGULAR_SEND_EMAIL = "singular.send.email";
+    String SINGULAR_EMAIL_TEST_RECPT = "singular.email.rcpt.test";
 
     String SINGULAR_DEV_MODE = "singular.development";
     String SINGULAR_SERVER_ADDR = "singular.server.address";
