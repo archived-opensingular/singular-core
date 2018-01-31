@@ -19,12 +19,15 @@ import org.opensingular.form.type.country.brazil.STypeCEP;
 /*
  * Author: Thais N. Pereira
  */
-
+//TODO thais -  ao invés de utilizar concatenação de strings com o '+' utilize um StringBuilder e vá fazendo appends. Utilizar apenas uma instância de StringBuilder
+//TODO thais - lembre-se de alterar todo o código para inglês: nomes de métodos e nomes de variáveis.
 public class XSDConverter {
 	
 	private String xsd = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
 			"<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n";
-	
+
+
+	//TODO thais -  crie uma sobrecarga desse método em que possa escolher se o xsd retornado será ou não formatado (sem formatação seria sem quebras de linhas, tabulações e espaços)
 	public void conversor(Class<? extends SType<?>> sType) {		
 		lerStype(sType, null);
 		xsd = xsd + "</xs:schema>";
@@ -73,7 +76,8 @@ public class XSDConverter {
 		
 		return type;
 	}
-	
+
+	//TODO thais - substituir as constantes String abaixo pelo class name das classes. Ex: STypeString.class.getName()
 	private String getSimpleType(Class<?> classe) {
 		switch (classe.getSimpleName()) {
 			case "STypeString":
@@ -97,7 +101,8 @@ public class XSDConverter {
 		}
 		
 	}
-	
+
+	//TODO thais -  ao final retorne a String ao invés de dar print no console. Para fazer isso no StringBuilder basta chamar o toString()
 	public void getXsd() {
 		System.out.println(xsd);
 	}
