@@ -18,6 +18,8 @@
 
 package org.opensingular.form.wicket.mapper.datetime;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.visit.IVisit;
@@ -32,9 +34,13 @@ import org.opensingular.form.view.SViewDateTime;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DateTimeContainerTest implements Serializable {
 
@@ -62,33 +68,59 @@ public class DateTimeContainerTest implements Serializable {
         dateTime.withView(SViewDateTime::new);
     }
 
-
-    @Test
-    public void dateTimeContainerMapper() {
+    /**
+     * Par nome do campo, valor do campo em string
+     *
+     * @param
+     */
+    private void setValues(Pair<String, String> value1, Pair<String, String> value2) {
+        Map<String, Component> components =new HashMap<>();
         formTester.getForm().visitChildren(TextField.class, new IVisitor<TextField, Object>() {
             @Override
             public void component(TextField object, IVisit<Object> visit) {
-                if ("date".equals(object.getId())) {
-                    formTester.setValue(object, "12/12/2012");
-
-                } else if ("time".equals(object.getId())) {
-                    formTester.setValue(object, "8:00");
-                }
+                components.put(object.getId(), object);
             }
         });
+        formTester.setValue(components.get(value1.getKey()), value1.getValue());
+        formTester.setValue(components.get(value2.getKey()), value2.getValue());
+
         formTester.submit();
+    }
+
+
+    @Test
+    public void setDdateThenTime() {
+        setValues(Pair.of("date", "25/11/2012"), Pair.of("time", "8:15"));
 
         Calendar calendar = GregorianCalendar.getInstance();
         calendar.clear();
         calendar.set(Calendar.YEAR, 2012);
-        calendar.set(Calendar.MONTH, 12);
-        calendar.set(Calendar.DAY_OF_MONTH, 12);
+        calendar.set(Calendar.MONTH, Calendar.NOVEMBER);
+        calendar.set(Calendar.DAY_OF_MONTH, 25);
         calendar.set(Calendar.HOUR, 8);
-        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.MINUTE, 15);
 
         Date expectedDate = calendar.getTime();
 
         Assert.assertEquals(expectedDate, getRootInstance().getField("teste").getValue());
     }
+
+    @Test
+    public void setTimeThenDate() {
+        setValues(Pair.of("time", "8:15"), Pair.of("date", "25/11/2012"));
+
+        Calendar calendar = GregorianCalendar.getInstance();
+        calendar.clear();
+        calendar.set(Calendar.YEAR, 2012);
+        calendar.set(Calendar.MONTH, Calendar.NOVEMBER);
+        calendar.set(Calendar.DAY_OF_MONTH, 25);
+        calendar.set(Calendar.HOUR, 8);
+        calendar.set(Calendar.MINUTE, 15);
+
+        Date expectedDate = calendar.getTime();
+
+        Assert.assertEquals(expectedDate, getRootInstance().getField("teste").getValue());
+    }
+
 
 }
