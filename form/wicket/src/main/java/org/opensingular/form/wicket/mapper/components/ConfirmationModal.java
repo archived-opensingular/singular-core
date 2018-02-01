@@ -27,6 +27,9 @@ import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public class ConfirmationModal extends Panel {
@@ -38,6 +41,7 @@ public class ConfirmationModal extends Panel {
     protected AjaxButton confirmButton;
     protected AjaxButton cancelButton;
     protected IConsumer<AjaxRequestTarget> confirmationAction;
+    protected List<IConsumer<AjaxRequestTarget>> listeners = new ArrayList<>();
 
     public ConfirmationModal(String id) {
         super(id);
@@ -83,6 +87,10 @@ public class ConfirmationModal extends Panel {
 
     protected void onConfirm(AjaxRequestTarget target) {
         confirmationAction.accept(target);
+
+        for (IConsumer<AjaxRequestTarget> listener : listeners) {
+            listener.accept(target);
+        }
     }
 
     protected String getCancelButtonLabel() {
@@ -105,5 +113,9 @@ public class ConfirmationModal extends Panel {
         this.confirmationAction = confirmationAction;
         border.show(target);
         target.appendJavaScript(Scripts.multipleModalBackDrop());
+    }
+
+    public void registerListener(IConsumer<AjaxRequestTarget> listener) {
+        listeners.add(listener);
     }
 }

@@ -125,7 +125,7 @@
                 var params = {'lat': event.latLng.lat(), 'lng': event.latLng.lng()};
                 Wicket.Ajax.post({u: callbackUrl, ep: params});
 
-                var marker = createMarker(map,  event.latLng, polygon, readOnly);
+                var marker = createMarker(map,  event.latLng, polygon, readOnly, true);
                 markers.push(marker);
                 draw(map,  polygon,  markers);
             });
@@ -138,19 +138,30 @@
             .find('.list-table-body table tbody tr')
             .each(function () {
                 var latLongElements = $(this).find('input[type=text]');
-                var latLng = buildGmapsLatLong(latLongElements[0].value, latLongElements[1].value);
+                var latLng;
+                if (isLatLongNotEmpty(latLongElements[0], latLongElements[1])) {
+                    latLng = buildGmapsLatLong(latLongElements[0].value, latLongElements[1].value);
+                }
+
                 markers.push(createMarker(map, latLng, polygon, readOnly));
             })
         ;
     }
 
-    function createMarker(map, latLng, polygon, readOnly) {
+    function createMarker(map, latLng, polygon, readOnly, animate) {
         var marker = new google.maps.Marker({
-            position: latLng,
-            draggable: false,
-            animation: google.maps.Animation.DROP,
-            map: map
+            map: map,
+            visible: false
         });
+
+        if (latLng) {
+            marker.setPosition(latLng);
+            marker.setVisible(true);
+        }
+
+        if (animate) {
+            marker.setAnimation(google.maps.Animation.DROP);
+        }
 
         if (!readOnly) {
             marker.addListener('click', function () {
@@ -186,8 +197,9 @@
     }
 
     function draw(map, polygon, markers) {
-        if (markers.length > 2) {
-            var coords = markers.map(function (m) {
+        var visibleMarkers = markers.filter(function (m) { return m.getVisible();});
+        if (visibleMarkers.length > 2) {
+            var coords = visibleMarkers.map(function (m) {
                 return {lat: m.getPosition().lat(), lng: m.getPosition().lng()};
             });
 
@@ -208,13 +220,14 @@
                 var latElement = latLongElements[0];
                 var lngElement = latLongElements[1];
                 var marker = markers[index];
+                var center = markers.length === 1;
 
                 $(latElement).on('change', function () {
-                    defineMarkerPositionManual(latElement, lngElement, map, marker, false);
+                    defineMarkerPositionManual(latElement, lngElement, map, marker, center);
                     draw(map, polygon,  markers);
                 });
                 $(lngElement).on('change', function () {
-                    defineMarkerPositionManual(latElement, lngElement, map, marker, false);
+                    defineMarkerPositionManual(latElement, lngElement, map, marker, center);
                     draw(map, polygon,  markers);
                 });
 

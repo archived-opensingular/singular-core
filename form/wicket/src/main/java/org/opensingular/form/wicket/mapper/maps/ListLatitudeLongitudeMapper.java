@@ -18,9 +18,9 @@ package org.opensingular.form.wicket.mapper.maps;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.visit.IVisit;
@@ -35,6 +35,7 @@ import org.opensingular.form.wicket.mapper.TableListMapper;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 public class ListLatitudeLongitudeMapper extends TableListMapper {
 
@@ -59,12 +60,24 @@ public class ListLatitudeLongitudeMapper extends TableListMapper {
             }
         });
 
+        WicketUtils.findFirstChild(pointsCtx.getContainer(), AddButton.class)
+            .ifPresent(button -> button.add(new AjaxEventBehavior("click") {
+                @Override
+                protected void onEvent(AjaxRequestTarget target) {
+                    WicketUtils.findFirstChild(ctx.getContainer(), MarkableGoogleMapsPanel.class)
+                            .ifPresent(target::add);
+                }
+            }));
+
+        ctx.getConfirmationModal().registerListener(target -> {
+            WicketUtils.findFirstChild(ctx.getContainer(), MarkableGoogleMapsPanel.class)
+                    .ifPresent(m -> m.updateJS(target));
+        });
+
         AbstractDefaultAjaxBehavior addPoint = createBehaviorAddPoint(points, pointsCtx.getContainer());
         ctx.getContainer().add(addPoint);
 
-        final IModel<? extends SInstance> model = ctx.getModel();
-
-        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, model, ctx.getView(), ctx.getViewMode().isVisualization());
+        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, ctx.getModel(), ctx.getView(), ctx.getViewMode().isVisualization());
         googleMapsPanel.enableMultipleMarkers(addPoint.getCallbackUrl().toString(), pointsCtx.getContainer().getMarkupId());
         ctx.getContainer().newGrid().newFormGroup().appendDiv(googleMapsPanel);
     }
