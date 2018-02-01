@@ -17,44 +17,72 @@
 package org.opensingular.form.wicket.mapper.maps;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
+import org.opensingular.form.type.util.STypeListLatitudeLongitude;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.TableListMapper;
+import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 
 public class ListLatitudeLongitudeMapper extends TableListMapper {
 
     @Override
     public void buildView(WicketBuildContext ctx) {
-        super.buildView(ctx);
+        SInstanceFieldModel<SInstance> points = new SInstanceFieldModel<>(ctx.getModel(), STypeListLatitudeLongitude.FIELD_POINTS);
+        WicketBuildContext pointsCtx = ctx.createChild(ctx.getContainer().newGrid(), ctx.getExternalContainer(), points, ctx.getConfirmationModal());
+        pointsCtx.build();
+        SInstanceFieldModel<SInstance> zoom = new SInstanceFieldModel<>(ctx.getModel(), STypeListLatitudeLongitude.FIELD_ZOOM);
+        WicketBuildContext zoomCtx = ctx.createChild(ctx.getContainer().newGrid(), ctx.getExternalContainer(), zoom, ctx.getConfirmationModal());
+        zoomCtx.build();
 
         LatLongMarkupIds ids = new LatLongMarkupIds();
 
-        ctx.getContainer().visitChildren((TextField.class), new IVisitor<Component, Object>() {
+        zoomCtx.getContainer().visitChildren((TextField.class), new IVisitor<Component, Object>() {
             @Override
             public void component(Component object, IVisit<Object> visit) {
                 String nameSimple = ((SInstanceValueModel)object.getDefaultModel()).getSInstance().getType().getNameSimple();
-                if (nameSimple.equals(STypeLatitudeLongitude.FIELD_LATITUDE)) {
-                    ids.latitudeId = object.getMarkupId();
-                }
-                if (nameSimple.equals(STypeLatitudeLongitude.FIELD_LONGITUDE)) {
-                    ids.longitudeId = object.getMarkupId();
-                }
                 if (nameSimple.equals(STypeLatitudeLongitude.FIELD_ZOOM)) {
                     ids.zoomId = object.getMarkupId();
                 }
             }
         });
 
+        AbstractDefaultAjaxBehavior addPoint = createBehaviorAddPoint(points, pointsCtx.getContainer());
+        ctx.getContainer().add(addPoint);
+
         final IModel<? extends SInstance> model = ctx.getModel();
 
         final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, model, ctx.getView(), ctx.getViewMode().isVisualization());
-        ctx.getContainer().newFormGroup().appendDiv(googleMapsPanel);
+        googleMapsPanel.enableMultipleMarkers(addPoint.getCallbackUrl().toString(), pointsCtx.getContainer().getMarkupId());
+        ctx.getContainer().newGrid().newFormGroup().appendDiv(googleMapsPanel);
+    }
+
+    private AbstractDefaultAjaxBehavior createBehaviorAddPoint(final SInstanceFieldModel<SInstance> points, BSContainer<?> container) {
+        return new AbstractDefaultAjaxBehavior() {
+            @Override
+            protected void respond(AjaxRequestTarget target) {
+                SIList list = (SIList) points.getObject();
+                SIComposite sInstance = (SIComposite) list.addNew();
+                StringValue lat = RequestCycle.get().getRequest().getRequestParameters().getParameterValue("lat");
+                StringValue lng = RequestCycle.get().getRequest().getRequestParameters().getParameterValue("lng");
+                sInstance.setValue(STypeLatitudeLongitude.FIELD_LATITUDE, lat.toString("").replaceAll("\\.", ","));
+                sInstance.setValue(STypeLatitudeLongitude.FIELD_LONGITUDE, lng.toString("").replaceAll("\\.", ","));
+
+                target.add(container);
+            }
+        };
     }
 
 }

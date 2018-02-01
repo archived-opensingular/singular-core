@@ -52,7 +52,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class MarkableGoogleMapsPanel<T> extends BSContainer {
 
@@ -76,6 +76,9 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
     private IModel<SInstance> latitudeModel;
     private IModel<SInstance> longitudeModel;
     private IModel<SInstance> zoomModel;
+    private boolean           multipleMarkers;
+    private String            callbackUrl;
+    private String            tableContainerId;
 
     private final Button       clearButton;
     private final Button       currentLocationButton;
@@ -145,7 +148,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         }));
     }
 
-    private void populateMataData() {
+    private void populateMetaData() {
         final Map<String, Object> properties = new HashMap<>();
         try (final PackageTextTemplate metadataJSON = new PackageTextTemplate(getClass(), METADATA_JSON)) {
             properties.put("idClearButton", clearButton.getMarkupId(true));
@@ -155,6 +158,9 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
             properties.put("idLng", ids.longitudeId);
             properties.put("idZoom", ids.zoomId);
             properties.put("readOnly", isReadOnly());
+            properties.put("tableContainerId", tableContainerId);
+            properties.put("callbackUrl", callbackUrl);
+            properties.put("multipleMarkers", multipleMarkers);
             metadataJSON.interpolate(properties);
             metaDataModel.setObject(metadataJSON.getString());
             metadataJSON.close();
@@ -209,7 +215,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
     @Override
     protected void onConfigure() {
         super.onConfigure();
-        populateMataData();
+        populateMetaData();
 
         visitChildren(FormComponent.class, (comp, visit) -> comp.setEnabled(!isVisualization()));
         this.add(WicketUtils.$b.attrAppender("style", "height: " + getHeight() + "px;", ""));
@@ -243,8 +249,14 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         return truth;
     }
 
+    public void enableMultipleMarkers(String callbackUrl, String tableContainerId) {
+        this.multipleMarkers = true;
+        this.callbackUrl = callbackUrl;
+        this.tableContainerId = tableContainerId;
+    }
 
-    private class ImgMap extends WebComponent {
+
+    private static class ImgMap extends WebComponent {
         public ImgMap(String id, IModel<?> model) {
             super(id, model);
         }

@@ -5,5 +5,8 @@
   "idZoom": "${idZoom}",
   "readOnly" : "${readOnly}",
   "idClearButton" : "${idClearButton}",
-  "idCurrentLocationButton" : "${idCurrentLocationButton}"
+  "idCurrentLocationButton" : "${idCurrentLocationButton}",
+  "callbackUrl" : "${callbackUrl}",
+  "tableContainerId" : "${tableContainerId}",
+  "multipleMarkers" : "${multipleMarkers}"
 }

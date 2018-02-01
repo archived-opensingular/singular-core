@@ -21,6 +21,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeHiddenString;
+import org.opensingular.form.view.SViewListByTable;
 
 @SInfoType(name = "ListLatitudeLongitude", spackage = SPackageUtil.class)
 public class STypeListLatitudeLongitude extends STypeComposite<SIListLatitudeLongitude> {
@@ -40,6 +41,8 @@ public class STypeListLatitudeLongitude extends STypeComposite<SIListLatitudeLon
     @Override
     protected void onLoadType(TypeBuilder tb) {
         points = addFieldListOf(FIELD_POINTS, STypeLatitudeLongitude.class);
+        points.withView(new SViewListByTable());
+
         zoom = addField(FIELD_ZOOM, STypeHiddenString.class);
 
         zoom.withInitListener(ins -> {
