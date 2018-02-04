@@ -19,6 +19,7 @@ package org.opensingular.form.persistence.relational;
 import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.COUNT;
 import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.DISTINCT;
 import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.NONE;
+import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.emptyCriteria;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,6 +87,13 @@ public class RelationalSQLQuery extends RelationalSQL {
         keyFormColumnMap = ((FormKeyRelational) formKey).getValue();
         keyFormColumns = new ArrayList<>();
         collectKeyColumns(type, keyFormColumns);
+        return this;
+    }
+
+    public RelationalSQLQuery where(RelationalSQLCriteria criteria) {
+        if (criteria != emptyCriteria()) {
+            // TODO
+        }
         return this;
     }
 

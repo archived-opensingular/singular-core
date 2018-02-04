@@ -16,6 +16,8 @@
 
 package org.opensingular.form.persistence;
 
+import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.emptyCriteria;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -41,6 +43,7 @@ import org.opensingular.form.persistence.relational.RelationalColumn;
 import org.opensingular.form.persistence.relational.RelationalData;
 import org.opensingular.form.persistence.relational.RelationalSQL;
 import org.opensingular.form.persistence.relational.RelationalSQLCommmand;
+import org.opensingular.form.persistence.relational.RelationalSQLCriteria;
 
 /**
  * Form persistence based on relational database managers.
@@ -152,12 +155,17 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 
     @Nonnull
     public List<INSTANCE> loadAll(long first, long max) {
-        return loadAllInternal(first, max);
+        return loadAllInternal(first, max, emptyCriteria());
     }
 
     @Nonnull
     public List<INSTANCE> loadAll() {
-        return loadAllInternal(null, null);
+        return loadAllInternal(null, null, emptyCriteria());
+    }
+
+    @Nonnull
+    public List<INSTANCE> loadByCriteria(RelationalSQLCriteria criteria) {
+        return loadAllInternal(null, null, criteria);
     }
 
     public long countAll() {
@@ -218,9 +226,9 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
     }
 
     @Nonnull
-    protected List<INSTANCE> loadAllInternal(Long first, Long max) {
+    protected List<INSTANCE> loadAllInternal(Long first, Long max, RelationalSQLCriteria criteria) {
         List<INSTANCE> result = new ArrayList<>();
-        RelationalSQL query = RelationalSQL.select(createType().getContainedTypes()).limit(first, max);
+        RelationalSQL query = RelationalSQL.select(createType().getContainedTypes()).where(criteria).limit(first, max);
         for (RelationalSQLCommmand command : query.toSQLScript()) {
             result.addAll(executeSelectCommand(command));
         }
