@@ -30,6 +30,12 @@ import org.opensingular.form.SType;
  */
 public class RelationalSQLCriteria {
     private static RelationalSQLCriteria emptyCriteria = new RelationalSQLCriteria();
+    private Object[] operands;
+    Collection<SType<?>> referencedFields;
+
+    public RelationalSQLCriteria(Object... operands) {
+        this.operands = operands;
+    }
 
     public static RelationalSQLCriteria emptyCriteria() {
         return emptyCriteria;
@@ -108,13 +114,6 @@ public class RelationalSQLCriteria {
         return new RelationalSQLCriteria(operand1, new RelationalSQLOperator(" NOT LIKE "), operand2);
     }
 
-    private Object[] operands;
-    Collection<SType<?>> referencedFields;
-
-    public RelationalSQLCriteria(Object... operands) {
-        this.operands = operands;
-    }
-
     public Collection<SType<?>> getReferencedFields() {
         if (referencedFields == null) {
             referencedFields = new ArrayList<>();
@@ -137,7 +136,7 @@ public class RelationalSQLCriteria {
             } else if (operand instanceof RelationalSQLCriteria) {
                 builder.append(((RelationalSQLCriteria) operand).toSQL(fieldToColumnMap, params));
             } else {
-                builder.append("?");
+                builder.append('?');
                 params.add(operand);
             }
         }
