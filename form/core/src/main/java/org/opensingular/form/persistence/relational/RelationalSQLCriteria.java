@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.opensingular.form.SType;
+import org.opensingular.form.SingularFormException;
 
 /**
  * Class for matching criteria in relational SQL queries.
@@ -120,6 +121,8 @@ public class RelationalSQLCriteria {
             for (Object operand : operands) {
                 if (operand instanceof SType) {
                     referencedFields.add((SType<?>) operand);
+                } else if (operand instanceof RelationalSQLCriteria) {
+                    referencedFields.addAll(((RelationalSQLCriteria) operand).getReferencedFields());
                 }
             }
         }
@@ -130,7 +133,12 @@ public class RelationalSQLCriteria {
         StringBuilder builder = new StringBuilder();
         for (Object operand : operands) {
             if (operand instanceof SType) {
-                builder.append(fieldToColumnMap.get(operand));
+                String column = fieldToColumnMap.get(operand);
+                if (column == null) {
+                    throw new SingularFormException("Relational mapping should provide column name for the field '"
+                            + ((SType<?>) operand).getName() + "'.");
+                }
+                builder.append(column);
             } else if (operand instanceof RelationalSQLOperator) {
                 builder.append(((RelationalSQLOperator) operand).toSQL());
             } else if (operand instanceof RelationalSQLCriteria) {

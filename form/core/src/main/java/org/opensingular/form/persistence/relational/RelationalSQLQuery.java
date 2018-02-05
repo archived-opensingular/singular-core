@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,8 @@ public class RelationalSQLQuery extends RelationalSQL {
     private Collection<SType<?>> targetFields = new ArrayList<>();
     private List<RelationalColumn> keyColumns;
     private List<RelationalColumn> targetColumns;
+    private RelationalSQLCriteria criteria;
+    private List<RelationalColumn> criteriaColumns = new ArrayList<>();
     private Map<String, SType<?>> mapColumnToField;
     private List<RelationalColumn> orderingColumns = new ArrayList<>();
     private String keyFormTable;
@@ -77,8 +80,9 @@ public class RelationalSQLQuery extends RelationalSQL {
 
     public RelationalSQLQuery orderBy(SType<?>... fields) {
         orderingColumns.clear();
-        for (SType<?> field : fields)
+        for (SType<?> field : fields) {
             collectTargetColumn(field, orderingColumns, Collections.emptyList(), mapColumnToField);
+        }
         return this;
     }
 
@@ -92,7 +96,9 @@ public class RelationalSQLQuery extends RelationalSQL {
 
     public RelationalSQLQuery where(RelationalSQLCriteria criteria) {
         if (criteria != emptyCriteria()) {
-            // TODO
+            this.criteria = criteria;
+            criteria.getReferencedFields().forEach(
+                    field -> collectTargetColumn(field, criteriaColumns, Collections.emptyList(), mapColumnToField));
         }
         return this;
     }
@@ -112,12 +118,16 @@ public class RelationalSQLQuery extends RelationalSQL {
         List<RelationalColumn> selected = selectedColumns();
         Set<RelationalColumn> relevant = new LinkedHashSet<>(selected);
         relevant.addAll(keyFormColumns);
+        relevant.addAll(criteriaColumns);
         Map<String, RelationalFK> joinMap = createJoinMap();
         reorderTargetTables(joinMap);
         List<Object> params = new ArrayList<>();
         String wherePart = "";
         if (keyFormTable != null) {
             wherePart += " where " + where(keyFormTable, keyFormColumns, keyFormColumnMap, relevant, params);
+        } else if (criteria != null) {
+            wherePart += " where " + criteria
+                    .toSQL(fieldToColumnMap(criteria.getReferencedFields(), criteriaColumns, relevant), params);
         }
         String orderPart = "";
         if (!orderingColumns.isEmpty()) {
@@ -150,11 +160,18 @@ public class RelationalSQLQuery extends RelationalSQL {
         return new ArrayList<>(result);
     }
 
+    private Map<SType<?>, String> fieldToColumnMap(Collection<SType<?>> fields, List<RelationalColumn> columns,
+            Collection<RelationalColumn> relevantColumns) {
+        Iterator<RelationalColumn> iterator = columns.iterator();
+        Map<SType<?>, String> result = new HashMap<>();
+        fields.forEach(field -> result.put(field, toSQLColumn(iterator.next(), relevantColumns)));
+        return result;
+    }
+
     private String concatenateColumnNames(List<RelationalColumn> columns, String separator,
             Collection<RelationalColumn> relevantColumns) {
         StringJoiner sj = new StringJoiner(separator);
-        columns.forEach(column -> sj.add(
-                tableAlias(column.getTable(), column.getSourceKeyColumns(), relevantColumns) + "." + column.getName()));
+        columns.forEach(column -> sj.add(toSQLColumn(column, relevantColumns)));
         return sj.toString();
     }
 
@@ -281,9 +298,12 @@ public class RelationalSQLQuery extends RelationalSQL {
 
     private String concatenateOrderingColumns(String separator, Set<RelationalColumn> relevantColumns) {
         StringJoiner sj = new StringJoiner(separator);
-        orderingColumns.forEach(column -> sj.add(
-                tableAlias(column.getTable(), column.getSourceKeyColumns(), relevantColumns) + "." + column.getName()));
+        orderingColumns.forEach(column -> sj.add(toSQLColumn(column, relevantColumns)));
         return sj.toString();
+    }
+
+    private String toSQLColumn(RelationalColumn column, Collection<RelationalColumn> relevantColumns) {
+        return tableAlias(column.getTable(), column.getSourceKeyColumns(), relevantColumns) + "." + column.getName();
     }
 
     private Map<String, RelationalFK> createJoinMap() {

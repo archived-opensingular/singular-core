@@ -31,7 +31,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -114,10 +113,13 @@ public class FormPersistenceInRelationalDBTest extends TestCaseForm {
     }
 
     @Test
-    @Ignore
     public void loadByCriteria() {
+        when(db.query(eq(
+                "select T1.name, T1.customer, T2.name, T1.CODE from FORM T1 left join CUST T2 on T1.customer = T2.ID where T1.name LIKE ?"),
+                eq(Arrays.asList("%Document X%")), isNull(), isNull(), any()))
+                        .thenReturn(Arrays.asList(form.newInstance(), form.newInstance()));
         List<SIComposite> list = ((FormPersistenceInRelationalDB<Form, SIComposite>) repo)
-                .loadByCriteria(RelationalSQLCriteria.isLike(form.name, "%Requirement%"));
+                .loadByCriteria(RelationalSQLCriteria.isLike(form.name, "%Document X%"));
         assertEquals(2, list.size());
     }
 

@@ -17,6 +17,7 @@
 package org.opensingular.form.persistence.relational;
 
 import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.and;
+import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.emptyCriteria;
 import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.isBetween;
 import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.isEqualTo;
 import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.isGreaterThan;
@@ -58,6 +59,7 @@ public class RelationalSQLCriteriaTest extends TestCaseForm {
     private SDictionary dictionary;
     private MasterEntity master;
     private Map<SType<?>, String> fieldToColumnMap;
+    private List<Object> params;
 
     public RelationalSQLCriteriaTest(TestFormConfig testFormConfig) {
         super(testFormConfig);
@@ -71,17 +73,17 @@ public class RelationalSQLCriteriaTest extends TestCaseForm {
         fieldToColumnMap.put(master.name, "T1.name");
         fieldToColumnMap.put(master.observation, "T1.obs");
         fieldToColumnMap.put(master.maxItems, "T1.max");
+        params = new ArrayList<>();
     }
 
     @Test
     public void emptyCriteriaSingleton() {
-        assertTrue(RelationalSQLCriteria.emptyCriteria() == RelationalSQLCriteria.emptyCriteria());
-        assertEquals("", RelationalSQLCriteria.emptyCriteria().toSQL(null, null));
+        assertSame(emptyCriteria(), emptyCriteria());
+        assertEquals("", emptyCriteria().toSQL(fieldToColumnMap, params));
     }
 
     @Test
     public void isEqualToCriteria() {
-        List<Object> params = new ArrayList<>();
         String sql = isEqualTo(master.name, "Albert").toSQL(fieldToColumnMap, params);
         assertEquals("T1.name = ?", sql);
         assertEquals(1, params.size());
@@ -90,7 +92,6 @@ public class RelationalSQLCriteriaTest extends TestCaseForm {
 
     @Test
     public void isNullCriteria() {
-        List<Object> params = new ArrayList<>();
         String sql = isNull(master.observation).toSQL(fieldToColumnMap, params);
         assertEquals("T1.obs IS NULL", sql);
         assertEquals(0, params.size());
@@ -98,7 +99,6 @@ public class RelationalSQLCriteriaTest extends TestCaseForm {
 
     @Test
     public void isBetweenCriteria() {
-        List<Object> params = new ArrayList<>();
         String sql = isBetween(master.maxItems, 1, 9).toSQL(fieldToColumnMap, params);
         assertEquals("T1.max BETWEEN ? AND ?", sql);
         assertEquals(2, params.size());
@@ -108,7 +108,6 @@ public class RelationalSQLCriteriaTest extends TestCaseForm {
 
     @Test
     public void isLessThanCriteria() {
-        List<Object> params = new ArrayList<>();
         String sql = isLessThan(master.maxItems, 42).toSQL(fieldToColumnMap, params);
         assertEquals("T1.max < ?", sql);
         assertEquals(1, params.size());
@@ -117,7 +116,6 @@ public class RelationalSQLCriteriaTest extends TestCaseForm {
 
     @Test
     public void isGreaterThanCriteria() {
-        List<Object> params = new ArrayList<>();
         String sql = isGreaterThan(master.maxItems, 7).toSQL(fieldToColumnMap, params);
         assertEquals("T1.max > ?", sql);
         assertEquals(1, params.size());
@@ -126,7 +124,6 @@ public class RelationalSQLCriteriaTest extends TestCaseForm {
 
     @Test
     public void multipleCriteria() {
-        List<Object> params = new ArrayList<>();
         RelationalSQLCriteria criteria = and(isNotLike(master.name, "Antony%"), isNotNull(master.observation),
                 or(isLessThanOrEqualTo(master.maxItems, 3), not(isBetween(master.maxItems, 7, 15))));
         String sql = criteria.toSQL(fieldToColumnMap, params);

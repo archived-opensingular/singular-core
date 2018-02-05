@@ -16,7 +16,9 @@
 
 package org.opensingular.form.persistence;
 
+import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.and;
 import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.emptyCriteria;
+import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.isEqualTo;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -166,6 +168,23 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
     @Nonnull
     public List<INSTANCE> loadByCriteria(RelationalSQLCriteria criteria) {
         return loadAllInternal(null, null, criteria);
+    }
+
+    @Nonnull
+    public List<INSTANCE> loadByExample(SIComposite example) {
+        List<RelationalSQLCriteria> operands = new ArrayList<>();
+        RelationalSQL.getFields(example).forEach(field -> {
+            Object value = fieldValue(example, field);
+            if (value != null) {
+                operands.add(isEqualTo(field, value));
+            }
+        });
+        return loadByCriteria(and(operands.toArray(new RelationalSQLCriteria[operands.size()])));
+    }
+
+    private Object fieldValue(SIComposite instance, SType<?> field) {
+        String fieldPath = field.getName().replaceFirst(instance.getType().getName() + ".", "");
+        return RelationalSQL.fieldValue(instance.getField(fieldPath));
     }
 
     public long countAll() {
