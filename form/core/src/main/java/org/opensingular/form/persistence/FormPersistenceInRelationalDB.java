@@ -424,7 +424,7 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
         List<RelationalData> tuple = new ArrayList<>();
         int index = 1;
         for (RelationalColumn column : command.getColumns()) {
-            tuple.add(new RelationalData(column.getTable(), command.getInstance(), column.getName(),
+            tuple.add(new RelationalData(column.getTable(), command.getTupleKeyRef(), column.getName(),
                     column.getSourceKeyColumns(), rs.getObject(index)));
             index++;
         }

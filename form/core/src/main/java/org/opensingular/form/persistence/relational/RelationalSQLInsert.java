@@ -71,10 +71,18 @@ public class RelationalSQLInsert extends RelationalSQL {
             List<Object> params = new ArrayList<>();
             Map<String, Object> containerKeyColumns = new HashMap<>();
             List<RelationalColumn> inserted = insertedColumns(tableName, containerKeyColumns);
+            SIComposite tableInstance = instance;
+            if (tableContext != tableContext(instance.getType())) {
+                Optional<SInstance> found = instance.getFields().stream()
+                        .filter(field -> tableContext == tableContext(field.getType())).findFirst();
+                if (found.isPresent()) {
+                    tableInstance = (SIComposite) found.get();
+                }
+            }
             lines.add(new RelationalSQLCommmand(
                     "insert into " + tableName + " (" + concatenateColumnNames(inserted, ", ") + ") values ("
                             + concatenateColumnValues(inserted, ", ", containerKeyColumns, params) + ")",
-                    params, instance, inserted));
+                    params, tableInstance, inserted));
         }
         return lines;
     }

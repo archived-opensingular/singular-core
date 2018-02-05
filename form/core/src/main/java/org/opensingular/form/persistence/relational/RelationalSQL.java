@@ -48,6 +48,12 @@ import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy
  * @author Edmundo Andrade
  */
 public abstract class RelationalSQL {
+    static BasicRelationalMapper singletonBasicRelationalMapper = new BasicRelationalMapper();
+    protected Set<SType<?>> targetTables = new LinkedHashSet<>();
+    protected Set<String> intermediaryTables = new LinkedHashSet<>();
+
+    public abstract List<RelationalSQLCommmand> toSQLScript();
+
     @SafeVarargs
     public static RelationalSQLQuery select(Collection<SType<?>>... fieldCollections) {
         return new RelationalSQLQuery(NONE, fieldCollections);
@@ -106,8 +112,6 @@ public abstract class RelationalSQL {
     public static PersistenceStrategy persistenceStrategy(SType<?> field) {
         return aspectRelationalMap(field).persistenceStrategy(field);
     }
-
-    static BasicRelationalMapper singletonBasicRelationalMapper = new BasicRelationalMapper();
 
     public static RelationalMapper aspectRelationalMap(SType<?> type) {
         Optional<RelationalMapper> mapper = type.getAspect(ASPECT_RELATIONAL_MAP);
@@ -194,11 +198,6 @@ public abstract class RelationalSQL {
         }
         return null;
     }
-
-    protected Set<SType<?>> targetTables = new LinkedHashSet<>();
-    protected Set<String> intermediaryTables = new LinkedHashSet<>();
-
-    public abstract List<RelationalSQLCommmand> toSQLScript();
 
     public static List<SType<?>> getFields(SIComposite instance) {
         List<SType<?>> list = new ArrayList<>();
