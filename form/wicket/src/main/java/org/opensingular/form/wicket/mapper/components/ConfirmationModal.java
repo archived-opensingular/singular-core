@@ -24,8 +24,8 @@ import java.util.List;
 
 public class ConfirmationModal extends AbstractConfirmationModal {
 
-    protected IConsumer<AjaxRequestTarget> confirmationAction;
-    protected List<IConsumer<AjaxRequestTarget>> listeners = new ArrayList<>();
+    private IConsumer<AjaxRequestTarget> confirmationAction;
+    private List<IConsumer<AjaxRequestTarget>> listeners = new ArrayList<>();
 
     public ConfirmationModal(String id) {
         super(id);
@@ -47,5 +47,14 @@ public class ConfirmationModal extends AbstractConfirmationModal {
 
     public void registerListener(IConsumer<AjaxRequestTarget> listener) {
         listeners.add(listener);
+    }
+
+
+    protected IConsumer<AjaxRequestTarget> getConfirmationAction() {
+        return confirmationAction;
+    }
+
+    protected List<IConsumer<AjaxRequestTarget>> getListeners() {
+        return listeners;
     }
 }
