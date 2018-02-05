@@ -200,23 +200,23 @@ public abstract class RelationalSQL {
 
     public abstract List<RelationalSQLCommmand> toSQLScript();
 
-    protected List<SType<?>> getFields(SIComposite instance) {
+    public static List<SType<?>> getFields(SIComposite instance) {
         List<SType<?>> list = new ArrayList<>();
         instance.getAllChildren().forEach(child -> addFieldToList(child.getType(), list));
         return list;
     }
 
-    protected List<SType<?>> getFields(STypeComposite<?> type) {
+    public static List<SType<?>> getFields(STypeComposite<?> type) {
         List<SType<?>> list = new ArrayList<>();
         addFieldsToList(type.getFields(), list);
         return list;
     }
 
-    protected void addFieldsToList(Collection<SType<?>> fields, List<SType<?>> list) {
+    protected static void addFieldsToList(Collection<SType<?>> fields, List<SType<?>> list) {
         fields.forEach(field -> addFieldToList(field, list));
     }
 
-    protected void addFieldToList(SType<?> field, List<SType<?>> list) {
+    protected static void addFieldToList(SType<?> field, List<SType<?>> list) {
         if (column(field) != null || foreignColumn(field) != null) {
             list.add(field);
         } else if (field.isComposite()) {
@@ -227,7 +227,7 @@ public abstract class RelationalSQL {
     protected void collectKeyColumns(SType<?> type, List<RelationalColumn> keyColumns) {
         SType<?> tableContext = tableContext(type);
         String tableName = table(tableContext);
-        targetTables.add(tableContext);
+        addTargetTable(tableContext);
         List<String> pk = tablePK(tableContext);
         if (pk != null) {
             for (String columnName : pk) {
@@ -258,11 +258,17 @@ public abstract class RelationalSQL {
             sourceKeyColumns = foreignColumn.getForeignKey().getKeyColumns();
         }
         String tableName = table(tableContext);
-        targetTables.add(tableContext);
+        addTargetTable(tableContext);
         RelationalColumn column = new RelationalColumn(tableName, columnName, sourceKeyColumns);
         mapColumnToField.put(column.toStringPersistence(), field);
         if (!targetColumns.contains(column) && !keyColumns.contains(column)) {
             targetColumns.add(column);
+        }
+    }
+
+    private void addTargetTable(SType<?> tableContext) {
+        if (targetTables.stream().noneMatch(item -> item.getName().equals(tableContext.getName()))) {
+            targetTables.add(tableContext);
         }
     }
 

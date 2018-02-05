@@ -19,9 +19,13 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ConfirmationModal extends AbstractConfirmationModal {
 
     protected IConsumer<AjaxRequestTarget> confirmationAction;
+    protected List<IConsumer<AjaxRequestTarget>> listeners = new ArrayList<>();
 
     public ConfirmationModal(String id) {
         super(id);
@@ -29,11 +33,19 @@ public class ConfirmationModal extends AbstractConfirmationModal {
 
     protected void onConfirm(AjaxRequestTarget target) {
         confirmationAction.accept(target);
+
+        for (IConsumer<AjaxRequestTarget> listener : listeners) {
+            listener.accept(target);
+        }
     }
 
     public void show(AjaxRequestTarget target, IConsumer<AjaxRequestTarget> confirmationAction) {
         this.confirmationAction = confirmationAction;
         border.show(target);
         target.appendJavaScript(Scripts.multipleModalBackDrop());
+    }
+
+    public void registerListener(IConsumer<AjaxRequestTarget> listener) {
+        listeners.add(listener);
     }
 }

@@ -3,6 +3,7 @@ package org.opensingular.form.persistence;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.opensingular.form.persistence.Criteria.isLike;
 
 import java.io.File;
 import java.io.IOException;
@@ -154,6 +155,15 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
         assertEquals(3, details.size());
         assertEquals("Item 1", details.get(0).getValue("item"));
         assertEquals("Master X", details.get(0).getValue("masterDisplay"));
+        //
+        SIComposite masterExample = (SIComposite) documentFactory.createInstance(RefType.of(Master.class));
+        masterExample.setValue("name", "Master Y");
+        assertEquals(0, repoMaster.list(masterExample).size());
+        masterExample.setValue("name", "Master X");
+        assertEquals(1, repoMaster.list(masterExample).size());
+        Master masterType = (Master) masterExample.getType();
+        assertEquals(0, repoMaster.list(isLike(masterType.name, "% Y")).size());
+        assertEquals(1, repoMaster.list(isLike(masterType.name, "% X")).size());
         //
         repoMaster.delete(insertedKey);
         assertEquals(0, repoMaster.countAll());

@@ -16,6 +16,10 @@
 
 package org.opensingular.form.persistence;
 
+import static org.opensingular.form.persistence.Criteria.and;
+import static org.opensingular.form.persistence.Criteria.emptyCriteria;
+import static org.opensingular.form.persistence.Criteria.isEqualTo;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -152,12 +156,34 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 
     @Nonnull
     public List<INSTANCE> loadAll(long first, long max) {
-        return loadAllInternal(first, max);
+        return loadAllInternal(first, max, emptyCriteria());
     }
 
     @Nonnull
     public List<INSTANCE> loadAll() {
-        return loadAllInternal(null, null);
+        return loadAllInternal(null, null, emptyCriteria());
+    }
+
+    @Nonnull
+    public List<INSTANCE> list(Criteria criteria, OrderByField... orderBy) {
+        return loadAllInternal(null, null, criteria, orderBy);
+    }
+
+    @Nonnull
+    public List<INSTANCE> list(SIComposite example, OrderByField... orderBy) {
+        List<Criteria> operands = new ArrayList<>();
+        RelationalSQL.getFields(example).forEach(field -> {
+            Object value = fieldValue(example, field);
+            if (value != null) {
+                operands.add(isEqualTo(field, value));
+            }
+        });
+        return list(and(operands.toArray(new Criteria[operands.size()])), orderBy);
+    }
+
+    private Object fieldValue(SIComposite instance, SType<?> field) {
+        String fieldPath = field.getName().replaceFirst(instance.getType().getName() + ".", "");
+        return RelationalSQL.fieldValue(instance.getField(fieldPath));
     }
 
     public long countAll() {
@@ -218,9 +244,10 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
     }
 
     @Nonnull
-    protected List<INSTANCE> loadAllInternal(Long first, Long max) {
+    protected List<INSTANCE> loadAllInternal(Long first, Long max, Criteria criteria, OrderByField... orderBy) {
         List<INSTANCE> result = new ArrayList<>();
-        RelationalSQL query = RelationalSQL.select(createType().getContainedTypes()).limit(first, max);
+        RelationalSQL query = RelationalSQL.select(createType().getContainedTypes()).where(criteria).limit(first, max)
+                .orderBy(orderBy);
         for (RelationalSQLCommmand command : query.toSQLScript()) {
             result.addAll(executeSelectCommand(command));
         }
