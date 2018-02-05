@@ -22,7 +22,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.composite.DefaultCompositeMapper;
@@ -54,7 +53,7 @@ public class LatitudeLongitudeMapper extends DefaultCompositeMapper {
 
         final IModel<? extends SInstance> model = ctx.getModel();
 
-        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, model, ctx.getView(), ctx.getViewMode().isVisualization());
+        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, model, ctx.getView(), ctx.getViewMode().isVisualization(), false);
         ctx.getContainer().newFormGroup().appendDiv(googleMapsPanel);
     }
 
