@@ -77,7 +77,7 @@ public class ListLatitudeLongitudeMapper extends TableListMapper {
         AbstractDefaultAjaxBehavior addPoint = createBehaviorAddPoint(points, pointsCtx.getContainer());
         ctx.getContainer().add(addPoint);
 
-        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, ctx.getModel(), ctx.getView(), ctx.getViewMode().isVisualization());
+        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, ctx.getModel(), ctx.getView(), ctx.getViewMode().isVisualization(), true);
         googleMapsPanel.enableMultipleMarkers(addPoint.getCallbackUrl().toString(), pointsCtx.getContainer().getMarkupId());
         ctx.getContainer().newGrid().newFormGroup().appendDiv(googleMapsPanel);
     }
