@@ -49,6 +49,9 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
     private FormPersistenceInRelationalDB<Category, SIComposite> repoCategory;
     private FormPersistenceInRelationalDB<Customer, SIComposite> repoCustomer;
     private FormPersistenceInRelationalDB<Phone, SIComposite> repoPhone;
+    private FormPersistenceInRelationalDB<CustomerOneToMany, SIComposite> repoOneToManyCustomer;
+    private FormPersistenceInRelationalDB<PhoneOneToMany, SIComposite> repoOneToManyPhone;
+
 
     @Before
     public void setUp() {
@@ -58,6 +61,8 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
         categoryRepository = repoCategory;
         repoCustomer = new FormPersistenceInRelationalDB<>(db, documentFactory, Customer.class);
         repoPhone = new FormPersistenceInRelationalDB<>(db, documentFactory, Phone.class);
+        repoOneToManyCustomer = new FormPersistenceInRelationalDB<>(db, documentFactory, CustomerOneToMany.class);
+        repoOneToManyPhone = new FormPersistenceInRelationalDB<>(db, documentFactory, PhoneOneToMany.class);
     }
 
     @Test
@@ -189,6 +194,41 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
         assertEquals(0, repoCustomer.countAll());
         assertEquals(0, repoPhone.countAll());
     }
+
+
+    @Test
+    public void oneToManyPersistence() {
+        db.exec("CREATE TABLE ENDERECO (ID INT AUTO_INCREMENT, NUMBER VARCHAR(200), PRIMARY KEY (ID))");
+        db.exec("CREATE TABLE CUSTOMER (ID VARCHAR(100), NAME VARCHAR(200) NOT NULL, CO_ENDERECO INT, PRIMARY KEY (ID), fOREIGN KEY (CO_ENDERECO) REFERENCES ENDERECO(ID))");
+        db.exec("CREATE TABLE PHONE (ID INT IDENTITY, NUMBER VARCHAR(20) NOT NULL, CustomerId VARCHAR(100) NOT NULL,  PRIMARY KEY (ID), fOREIGN KEY (CustomerId) REFERENCES CUSTOMER(ID))");
+
+        //
+        SIComposite customer = (SIComposite) documentFactory.createInstance(RefType.of(CustomerOneToMany.class));
+        customer.setValue("name", "Robert");
+        customer.setValue("endereco.number", "1");
+        addPhone("+55 (61) 99999-9999", customer);
+        addPhone("+55 (85) 99999-9999", customer);
+
+        customer.setValue("id", "e525899b-4302-4112-a41b-aa30e82cee91");
+        FormKey insertedKey = repoOneToManyCustomer.insert(customer, null);
+        assertEquals("ID$String$e525899b-4302-4112-a41b-aa30e82cee91", insertedKey.toStringPersistence());
+        assertEquals(1, repoOneToManyCustomer.countAll());
+        assertEquals(2, repoOneToManyPhone.countAll());
+        //
+        SIComposite loaded = repoOneToManyCustomer.load(insertedKey);
+        assertEquals("Robert", loaded.getValue("name"));
+        assertEquals(insertedKey, FormKey.fromInstance(loaded));
+        SIList<?> phones = loaded.getFieldList("phones");
+        assertEquals(2, phones.size());
+        assertEquals("+55 (61) 99999-9999", phones.get(0).getValue("number"));
+        assertEquals("+55 (85) 99999-9999", phones.get(1).getValue("number"));
+        assertEquals("1", loaded.getValue("endereco.number"));
+        //
+        repoOneToManyCustomer.delete(insertedKey);
+        assertEquals(0, repoOneToManyCustomer.countAll());
+        assertEquals(0, repoOneToManyPhone.countAll());
+    }
+
 
     private SIComposite createCategoryInstance(String name) {
         SIComposite instance = (SIComposite) documentFactory.createInstance(RefType.of(Category.class));
@@ -385,6 +425,62 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
             // relational mapping
             asSQL().table().tablePK("ID");
             number.asSQL().column();
+        }
+    }
+
+    @SInfoType(name = "CustomerOneToMany", spackage = TestPackage.class)
+    public static final class CustomerOneToMany extends STypeComposite<SIComposite> {
+        public STypeString id;
+        public STypeString name;
+        public STypeList<PhoneOneToMany, SIComposite> phones;
+        public EnderecoOneToMany endereco;
+
+        @Override
+        protected void onLoadType(TypeBuilder tb) {
+            asAtr().label("Customer");
+            id = addFieldString("id");
+            id.withInitListener(x -> x.setValue("BY_TRIGGER_TIB_TB_VIAJANTE"));
+            id.asAtr().visible(false);
+            name = addFieldString("name");
+            phones = addFieldListOf("phones", PhoneOneToMany.class);
+            endereco = addField("endereco", EnderecoOneToMany.class);
+            // relational mapping
+            asSQL()
+                    .table("CUSTOMER")
+                    .tablePK("ID")
+                    .addTableFK("CO_ENDERECO", EnderecoOneToMany.class);
+            id.asSQL().column("ID");
+            name.asSQL().column();
+        }
+    }
+
+    @SInfoType(name = "PhoneOneToMany", spackage = TestPackage.class)
+    public static final class PhoneOneToMany extends STypeComposite<SIComposite> {
+        public STypeString number;
+
+        @Override
+        protected void onLoadType(TypeBuilder tb) {
+            asAtr().label("Phone");
+            number = addFieldString("number");
+            // relational mapping
+            asSQL().table("PHONE")
+                    .tablePK("ID")
+                    .addTableFK("CustomerId", CustomerOneToMany.class);
+            number.asSQL().column();
+        }
+    }
+
+    @SInfoType(name = "EnderecoOneToMany", spackage = TestPackage.class)
+    public static final class EnderecoOneToMany extends STypeComposite<SIComposite> {
+        public STypeString number;
+
+        @Override
+        protected void onLoadType(TypeBuilder tb) {
+            asAtr().label("Number");
+            number = addFieldString("number");
+            // relational mapping
+            asSQL().table("ENDERECO").tablePK("ID");
+            number.asSQL().column("NUMBER");
         }
     }
 }
