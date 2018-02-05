@@ -19,7 +19,6 @@ package org.opensingular.form.wicket.mapper.maps;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
@@ -35,7 +34,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.json.JSONObject;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.view.SView;
@@ -49,12 +48,17 @@ import org.opensingular.lib.wicket.util.util.WicketUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
-public class MarkableGoogleMapsPanel<T> extends BSContainer {
+public class MultipleMarkableGoogleMapsPanel<T> extends BSContainer {
 
-    private static final Logger LOGGER        = LoggerFactory.getLogger(MarkableGoogleMapsPanel.class);
+    private static final Logger LOGGER        = LoggerFactory.getLogger(MultipleMarkableGoogleMapsPanel.class);
     private static final String PANEL_SCRIPT  = "MarkableGoogleMapsPanel.js";
+    private static final String METADATA_JSON = "MarkableGoogleMapsPanelMetadata.json";
 
     private static final String SINGULAR_GOOGLEMAPS_JS_KEY     = "singular.googlemaps.js.key";
     private static final String SINGULAR_GOOGLEMAPS_STATIC_KEY = "singular.googlemaps.static.key";
@@ -72,9 +76,6 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
     private IModel<SInstance> latitudeModel;
     private IModel<SInstance> longitudeModel;
     private IModel<SInstance> zoomModel;
-    private boolean           multipleMarkers;
-    private String            callbackUrl;
-    private String            tableContainerId;
 
     private final Button       clearButton;
     private final Button       currentLocationButton;
@@ -93,13 +94,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         }
     }
 
-    public void updateJS(AjaxRequestTarget target) {
-        if (StringUtils.isNotBlank(singularKeyMapStatic) && StringUtils.isNotBlank(singularKeyMaps)) {
-            target.appendJavaScript("window.setTimeout(function () {console.log('teste');Singular.createSingularMap(" + stringfyId(metaData) + ", '" + singularKeyMaps + "');}, 500);");
-        }
-    }
-
-    public MarkableGoogleMapsPanel(LatLongMarkupIds ids, IModel<? extends SInstance> model, SView view, boolean visualization) {
+    public MultipleMarkableGoogleMapsPanel(LatLongMarkupIds ids, IModel<? extends SInstance> model, SView view, boolean visualization) {
         super(model.getObject().getName());
         this.visualization = visualization;
         this.ids = ids;
@@ -150,19 +145,22 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         }));
     }
 
-    private void populateMetaData() {
-        JSONObject json = new JSONObject();
-        json.put("idClearButton", clearButton.getMarkupId(true));
-        json.put("idCurrentLocationButton", currentLocationButton.getMarkupId(true));
-        json.put("idMap", map.getMarkupId(true));
-        json.put("idLat", ids.latitudeId);
-        json.put("idLng", ids.longitudeId);
-        json.put("idZoom", ids.zoomId);
-        json.put("readOnly", isReadOnly());
-        json.put("tableContainerId", tableContainerId);
-        json.put("callbackUrl", callbackUrl);
-        json.put("multipleMarkers", multipleMarkers);
-        metaDataModel.setObject(json.toString());
+    private void populateMataData() {
+        final Map<String, Object> properties = new HashMap<>();
+        try (final PackageTextTemplate metadataJSON = new PackageTextTemplate(getClass(), METADATA_JSON)) {
+            properties.put("idClearButton", clearButton.getMarkupId(true));
+            properties.put("idCurrentLocationButton", currentLocationButton.getMarkupId(true));
+            properties.put("idMap", map.getMarkupId(true));
+            properties.put("idLat", ids.latitudeId);
+            properties.put("idLng", ids.longitudeId);
+            properties.put("idZoom", ids.zoomId);
+            properties.put("readOnly", isReadOnly());
+            metadataJSON.interpolate(properties);
+            metaDataModel.setObject(metadataJSON.getString());
+            metadataJSON.close();
+        } catch (IOException e) {
+            LOGGER.error("Erro ao fechar stream", e);
+        }
     }
 
     @Override
@@ -211,13 +209,13 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
     @Override
     protected void onConfigure() {
         super.onConfigure();
-        populateMetaData();
+        populateMataData();
 
         visitChildren(FormComponent.class, (comp, visit) -> comp.setEnabled(!isVisualization()));
         this.add(WicketUtils.$b.attrAppender("style", "height: " + getHeight() + "px;", ""));
 
         map.setVisible(!isVisualization());
-        clearButton.setVisible(!multipleMarkers && !isVisualization());
+        clearButton.setVisible(!isVisualization());
         currentLocationButton.setVisible(SViewCurrentLocation.class.isInstance(view) && !isVisualization());
 
 
@@ -245,14 +243,8 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         return truth;
     }
 
-    public void enableMultipleMarkers(String callbackUrl, String tableContainerId) {
-        this.multipleMarkers = true;
-        this.callbackUrl = callbackUrl;
-        this.tableContainerId = tableContainerId;
-    }
 
-
-    private static class ImgMap extends WebComponent {
+    private class ImgMap extends WebComponent {
         public ImgMap(String id, IModel<?> model) {
             super(id, model);
         }

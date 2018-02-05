@@ -59,10 +59,6 @@
             var lngElement = document.getElementById(metadados.idLng);
             var zoomElement = document.getElementById(metadados.idZoom);
             configureMap(latElement, lngElement, zoomElement, metadados.idMap, metadados.idClearButton, JSON.parse(metadados.readOnly), metadados.idCurrentLocationButton);
-        } else if (metadados.multipleMarkers) {
-            var tableContainerElement = document.getElementById(metadados.tableContainerId);
-            var zoomElement = document.getElementById(metadados.idZoom);
-            configureMapMultipleMarkers(tableContainerElement, zoomElement, metadados.idMap, metadados.idClearButton, JSON.parse(metadados.readOnly), metadados.callbackUrl);
         } else {
             document.getElementById(metadados.idMap).style.visibility = "hidden";
         }
@@ -94,146 +90,6 @@
             });
         }
         return map;
-    }
-
-    function configureMapMultipleMarkers(tableContainerElement, zoomElement, idMap, idClearButton, readOnly, callbackUrl) {
-        var markers = [];
-        var latLong = buildGmapsLatLong();
-        var polygon = new google.maps.Polygon({
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: '#FF0000',
-            fillOpacity: 0.35
-        });
-
-        var map = new google.maps.Map(document.getElementById(idMap), {
-            zoom: Number(zoomElement.value),
-            center: latLong
-        });
-
-        map.addListener('zoom_changed', function () {
-            zoomElement.value = map.zoom;
-        });
-
-        configureMarkers(tableContainerElement, map, readOnly, markers, polygon);
-        draw(map,  polygon,  markers);
-        configureMultipleFieldsEvents(tableContainerElement, map, markers, polygon);
-
-        if (!readOnly) {
-            map.addListener('click', function (event) {
-                var params = {'lat': event.latLng.lat(), 'lng': event.latLng.lng()};
-                Wicket.Ajax.post({u: callbackUrl, ep: params});
-
-                var marker = createMarker(map,  event.latLng, polygon, readOnly, true);
-                markers.push(marker);
-                draw(map,  polygon,  markers);
-            });
-        }
-        return map;
-    }
-
-    function configureMarkers(tableContainerElement, map, readOnly, markers, polygon) {
-        jQuery(tableContainerElement)
-            .find('.list-table-body table tbody tr')
-            .each(function () {
-                var latLongElements = $(this).find('input[type=text]');
-                var latLng;
-                if (isLatLongNotEmpty(latLongElements[0], latLongElements[1])) {
-                    latLng = buildGmapsLatLong(latLongElements[0].value, latLongElements[1].value);
-                }
-
-                markers.push(createMarker(map, latLng, polygon, readOnly));
-            })
-        ;
-    }
-
-    function createMarker(map, latLng, polygon, readOnly, animate) {
-        var marker = new google.maps.Marker({
-            map: map,
-            visible: false
-        });
-
-        if (latLng) {
-            marker.setPosition(latLng);
-            marker.setVisible(true);
-        }
-
-        if (animate) {
-            marker.setAnimation(google.maps.Animation.DROP);
-        }
-
-        if (!readOnly) {
-            marker.addListener('click', function () {
-                marker.setMap(null);
-
-                for (var i = 0; i < markers.length; ++i) {
-                    if (markers[i].getPosition().equals(marker.getPosition())) {
-                        markers.splice(i, 1);
-                        break;
-                    }
-                }
-
-                draw(map, polygon, markers);
-            });
-        }
-
-        return marker;
-    }
-
-    function findLatLongRow(tableContainerElement, markers, marker) {
-        var i = 0;
-
-        while (i < markers.length) {
-            if (markers[i].getPosition().equals(marker.getPosition())) {
-                break;
-            }
-            i++;
-        }
-
-        var line = jQuery(tableContainerElement)
-            .find('.list-table-body table tbody tr')[i];
-        return jQuery(line).find('input[type=text]');
-    }
-
-    function draw(map, polygon, markers) {
-        var visibleMarkers = markers.filter(function (m) { return m.getVisible();});
-        if (visibleMarkers.length > 2) {
-            var coords = visibleMarkers.map(function (m) {
-                return {lat: m.getPosition().lat(), lng: m.getPosition().lng()};
-            });
-
-            polygon.setPaths(coords);
-            polygon.setMap(map);
-
-        } else {
-            polygon.setMap(null);
-        }
-    }
-
-    function configureMultipleFieldsEvents(tableContainerElement, map, markers, polygon) {
-
-        jQuery(tableContainerElement)
-            .find('.list-table-body table tbody tr')
-            .each(function (index) {
-                var latLongElements = $(this).find('input[type=text]');
-                var latElement = latLongElements[0];
-                var lngElement = latLongElements[1];
-                var marker = markers[index];
-                var center = markers.length === 1;
-
-                $(latElement).on('change', function () {
-                    defineMarkerPositionManual(latElement, lngElement, map, marker, center);
-                    draw(map, polygon,  markers);
-                });
-                $(lngElement).on('change', function () {
-                    defineMarkerPositionManual(latElement, lngElement, map, marker, center);
-                    draw(map, polygon,  markers);
-                });
-
-            })
-        ;
-
     }
 
     function configureMarker(latLong, latElement, lngElement, map, readOnly) {
@@ -285,10 +141,10 @@
             $(lngElement).addClass('disabled');
         }
         $(latElement).on('change', function () {
-            defineMarkerPositionManual(latElement, lngElement, map, marker, true);
+            defineMarkerPositionManual(latElement, lngElement, map, marker);
         });
         $(lngElement).on('change', function () {
-            defineMarkerPositionManual(latElement, lngElement, map, marker, true);
+            defineMarkerPositionManual(latElement, lngElement, map, marker);
         });
         $("#" + idClearButton).on('click', function () {
             latElement.value = null;
@@ -318,15 +174,13 @@
         return valLat !== null && valLng !== "" && valLat && valLng !== "";
     }
 
-    function defineMarkerPositionManual(latElement, lngElement, map, marker, center) {
+    function defineMarkerPositionManual(latElement, lngElement, map, marker) {
         if (isLatLongNotEmpty(latElement, lngElement)) {
             var latLong = buildGmapsLatLong(latElement.value, lngElement.value);
+            map.setCenter(latLong);
             marker.setPosition(latLong);
             if (!marker.getVisible()) {
                 marker.setVisible(true);
-            }
-            if (center) {
-                map.setCenter(latLong);
             }
         } else {
             marker.setVisible(false);
