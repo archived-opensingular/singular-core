@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.persistence.relational;
+package org.opensingular.form.persistence;
 
 /**
  * Operator used for matching criteria in relational SQL queries.
  *
  * @author Edmundo Andrade
  */
-public class RelationalSQLOperator {
+public class Operator {
     private String token;
 
-    public RelationalSQLOperator(String token) {
+    public Operator(String token) {
         this.token = token;
     }
 

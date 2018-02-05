@@ -16,9 +16,9 @@
 
 package org.opensingular.form.persistence;
 
-import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.and;
-import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.emptyCriteria;
-import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.isEqualTo;
+import static org.opensingular.form.persistence.Criteria.and;
+import static org.opensingular.form.persistence.Criteria.emptyCriteria;
+import static org.opensingular.form.persistence.Criteria.isEqualTo;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,7 +45,6 @@ import org.opensingular.form.persistence.relational.RelationalColumn;
 import org.opensingular.form.persistence.relational.RelationalData;
 import org.opensingular.form.persistence.relational.RelationalSQL;
 import org.opensingular.form.persistence.relational.RelationalSQLCommmand;
-import org.opensingular.form.persistence.relational.RelationalSQLCriteria;
 
 /**
  * Form persistence based on relational database managers.
@@ -166,20 +165,20 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
     }
 
     @Nonnull
-    public List<INSTANCE> loadByCriteria(RelationalSQLCriteria criteria) {
-        return loadAllInternal(null, null, criteria);
+    public List<INSTANCE> list(Criteria criteria, OrderByField... orderBy) {
+        return loadAllInternal(null, null, criteria, orderBy);
     }
 
     @Nonnull
-    public List<INSTANCE> loadByExample(SIComposite example) {
-        List<RelationalSQLCriteria> operands = new ArrayList<>();
+    public List<INSTANCE> list(SIComposite example, OrderByField... orderBy) {
+        List<Criteria> operands = new ArrayList<>();
         RelationalSQL.getFields(example).forEach(field -> {
             Object value = fieldValue(example, field);
             if (value != null) {
                 operands.add(isEqualTo(field, value));
             }
         });
-        return loadByCriteria(and(operands.toArray(new RelationalSQLCriteria[operands.size()])));
+        return list(and(operands.toArray(new Criteria[operands.size()])), orderBy);
     }
 
     private Object fieldValue(SIComposite instance, SType<?> field) {
@@ -245,9 +244,10 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
     }
 
     @Nonnull
-    protected List<INSTANCE> loadAllInternal(Long first, Long max, RelationalSQLCriteria criteria) {
+    protected List<INSTANCE> loadAllInternal(Long first, Long max, Criteria criteria, OrderByField... orderBy) {
         List<INSTANCE> result = new ArrayList<>();
-        RelationalSQL query = RelationalSQL.select(createType().getContainedTypes()).where(criteria).limit(first, max);
+        RelationalSQL query = RelationalSQL.select(createType().getContainedTypes()).where(criteria).limit(first, max)
+                .orderBy(orderBy);
         for (RelationalSQLCommmand command : query.toSQLScript()) {
             result.addAll(executeSelectCommand(command));
         }

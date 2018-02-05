@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.persistence.relational;
+package org.opensingular.form.persistence;
 
-import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.and;
-import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.emptyCriteria;
-import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.isBetween;
-import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.isEqualTo;
-import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.isGreaterThan;
-import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.isLessThan;
-import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.isLessThanOrEqualTo;
-import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.isNotLike;
-import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.isNotNull;
-import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.isNull;
-import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.not;
-import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.or;
+import static org.opensingular.form.persistence.Criteria.and;
+import static org.opensingular.form.persistence.Criteria.emptyCriteria;
+import static org.opensingular.form.persistence.Criteria.isBetween;
+import static org.opensingular.form.persistence.Criteria.isEqualTo;
+import static org.opensingular.form.persistence.Criteria.isGreaterThan;
+import static org.opensingular.form.persistence.Criteria.isLessThan;
+import static org.opensingular.form.persistence.Criteria.isLessThanOrEqualTo;
+import static org.opensingular.form.persistence.Criteria.isNotLike;
+import static org.opensingular.form.persistence.Criteria.isNotNull;
+import static org.opensingular.form.persistence.Criteria.isNull;
+import static org.opensingular.form.persistence.Criteria.not;
+import static org.opensingular.form.persistence.Criteria.or;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +47,7 @@ import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.TypeBuilder;
-import org.opensingular.form.persistence.relational.RelationalSQLCriteriaTest.TestPackage.MasterEntity;
+import org.opensingular.form.persistence.CriteriaTest.TestPackage.MasterEntity;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 
@@ -55,13 +55,13 @@ import org.opensingular.form.type.core.STypeString;
  * @author Edmundo Andrade
  */
 @RunWith(Parameterized.class)
-public class RelationalSQLCriteriaTest extends TestCaseForm {
+public class CriteriaTest extends TestCaseForm {
     private SDictionary dictionary;
     private MasterEntity master;
     private Map<SType<?>, String> fieldToColumnMap;
     private List<Object> params;
 
-    public RelationalSQLCriteriaTest(TestFormConfig testFormConfig) {
+    public CriteriaTest(TestFormConfig testFormConfig) {
         super(testFormConfig);
     }
 
@@ -124,7 +124,7 @@ public class RelationalSQLCriteriaTest extends TestCaseForm {
 
     @Test
     public void multipleCriteria() {
-        RelationalSQLCriteria criteria = and(isNotLike(master.name, "Antony%"), isNotNull(master.observation),
+        Criteria criteria = and(isNotLike(master.name, "Antony%"), isNotNull(master.observation),
                 or(isLessThanOrEqualTo(master.maxItems, 3), not(isBetween(master.maxItems, 7, 15))));
         String sql = criteria.toSQL(fieldToColumnMap, params);
         assertEquals("T1.name NOT LIKE ? AND T1.obs IS NOT NULL AND (T1.max <= ? OR NOT (T1.max BETWEEN ? AND ?))",

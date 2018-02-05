@@ -16,10 +16,10 @@
 
 package org.opensingular.form.persistence.relational;
 
+import static org.opensingular.form.persistence.Criteria.emptyCriteria;
 import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.COUNT;
 import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.DISTINCT;
 import static org.opensingular.form.persistence.relational.RelationalSQLAggregator.NONE;
-import static org.opensingular.form.persistence.relational.RelationalSQLCriteria.emptyCriteria;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,8 +38,10 @@ import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.SingularFormException;
+import org.opensingular.form.persistence.Criteria;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.FormKeyRelational;
+import org.opensingular.form.persistence.OrderByField;
 
 /**
  * Builder for SQL queries on Relational DBMS.
@@ -51,7 +53,7 @@ public class RelationalSQLQuery extends RelationalSQL {
     private Collection<SType<?>> targetFields = new ArrayList<>();
     private List<RelationalColumn> keyColumns;
     private List<RelationalColumn> targetColumns;
-    private RelationalSQLCriteria criteria;
+    private Criteria criteria;
     private List<RelationalColumn> criteriaColumns = new ArrayList<>();
     private Map<String, SType<?>> mapColumnToField;
     private List<RelationalColumn> orderingColumns = new ArrayList<>();
@@ -78,10 +80,10 @@ public class RelationalSQLQuery extends RelationalSQL {
         }
     }
 
-    public RelationalSQLQuery orderBy(SType<?>... fields) {
+    public RelationalSQLQuery orderBy(OrderByField... fields) {
         orderingColumns.clear();
-        for (SType<?> field : fields) {
-            collectTargetColumn(field, orderingColumns, Collections.emptyList(), mapColumnToField);
+        for (OrderByField orderedField : fields) {
+            collectTargetColumn(orderedField.getField(), orderingColumns, Collections.emptyList(), mapColumnToField);
         }
         return this;
     }
@@ -94,7 +96,7 @@ public class RelationalSQLQuery extends RelationalSQL {
         return this;
     }
 
-    public RelationalSQLQuery where(RelationalSQLCriteria criteria) {
+    public RelationalSQLQuery where(Criteria criteria) {
         if (criteria != emptyCriteria()) {
             this.criteria = criteria;
             criteria.getReferencedFields().forEach(

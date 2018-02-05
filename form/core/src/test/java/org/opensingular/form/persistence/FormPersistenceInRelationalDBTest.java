@@ -43,7 +43,6 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.persistence.FormPersistenceInRelationalDBTest.TestPackage.Form;
-import org.opensingular.form.persistence.relational.RelationalSQLCriteria;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 
@@ -113,14 +112,26 @@ public class FormPersistenceInRelationalDBTest extends TestCaseForm {
     }
 
     @Test
-    public void loadByCriteria() {
+    public void listByCriteriaOrdering() {
         when(db.query(eq(
-                "select T1.name, T1.customer, T2.name, T1.CODE from FORM T1 left join CUST T2 on T1.customer = T2.ID where T1.name LIKE ?"),
+                "select T1.name, T1.customer, T2.name, T1.CODE from FORM T1 left join CUST T2 on T1.customer = T2.ID where T1.name LIKE ? order by T1.name"),
                 eq(Arrays.asList("%Document X%")), isNull(), isNull(), any()))
                         .thenReturn(Arrays.asList(form.newInstance(), form.newInstance()));
         List<SIComposite> list = ((FormPersistenceInRelationalDB<Form, SIComposite>) repo)
-                .loadByCriteria(RelationalSQLCriteria.isLike(form.name, "%Document X%"));
+                .list(Criteria.isLike(form.name, "%Document X%"), OrderByField.asc(form.name));
         assertEquals(2, list.size());
+    }
+
+    @Test
+    public void listByExample() {
+        SIComposite formExample = form.newInstance();
+        formExample.setValue("name", "Requirement 1/2008");
+        when(db.query(eq(
+                "select T1.name, T1.customer, T2.name, T1.CODE from FORM T1 left join CUST T2 on T1.customer = T2.ID where T1.name = ?"),
+                eq(Arrays.asList("Requirement 1/2008")), isNull(), isNull(), any()))
+                        .thenReturn(Arrays.asList(form.newInstance()));
+        List<SIComposite> list = ((FormPersistenceInRelationalDB<Form, SIComposite>) repo).list(formExample);
+        assertEquals(1, list.size());
     }
 
     private List<Object[]> querySingleResult(Object value) {
