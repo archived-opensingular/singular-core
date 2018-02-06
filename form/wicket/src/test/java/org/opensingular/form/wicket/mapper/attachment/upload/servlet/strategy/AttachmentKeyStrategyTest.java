@@ -1,0 +1,153 @@
+package org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
+import org.opensingular.form.wicket.mapper.attachment.upload.*;
+import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
+@RunWith(org.mockito.junit.MockitoJUnitRunner.class)
+public class AttachmentKeyStrategyTest {
+
+    private String        keyValue      = "123456";
+    private AttachmentKey attachmentKey = new AttachmentKey(keyValue);
+
+    @Mock
+    private HttpServletRequest request;
+
+    @Mock
+    private HttpSession session;
+
+    @Mock
+    private HttpServletResponse response;
+
+    @Mock
+    private AttachmentKeyFactory attachmentKeyFactory;
+
+    @Mock
+    private UploadInfo uploadInfo;
+
+    @Mock
+    private FileUploadManager uploadManager;
+
+    @Mock
+    private FileUploadProcessor uploadProcessor;
+
+    @Mock
+    private FileUploadManagerFactory fileUploadManagerFactory;
+
+    @Mock
+    private FileUploadConfig fileUploadConfig;
+
+    @Mock
+    private UploadResponseWriter uploadResponseWriter;
+
+    @Mock
+    private ServletFileUploadFactory servletFileUploadFactory;
+
+    @Mock
+    private ServletFileUpload servletFileUpload;
+
+    @Spy
+    private AttachmentKeyStrategy attachmentKeyStrategy;
+
+    @Before
+    public void setUp() {
+        Mockito.when(attachmentKeyStrategy.makeAttachmentKeyFactory()).thenReturn(attachmentKeyFactory);
+        Mockito.when(attachmentKeyStrategy.makeFileUploadConfig()).thenReturn(fileUploadConfig);
+        Mockito.when(attachmentKeyStrategy.makeFileUploadManagerFactory()).thenReturn(fileUploadManagerFactory);
+        Mockito.when(attachmentKeyStrategy.makeServletFileUploadFactory()).thenReturn(servletFileUploadFactory);
+        Mockito.when(attachmentKeyStrategy.makeFileUploadProcessor()).thenReturn(uploadProcessor);
+        Mockito.when(attachmentKeyStrategy.makeUploadResponseWriter()).thenReturn(uploadResponseWriter);
+        attachmentKeyStrategy.init();
+    }
+
+    @Test
+    public void getUploadUrl() throws Exception {
+        ServletContext servletContext = mock(ServletContext.class);
+        String         contextpath    = "http://localhost:8080";
+        when(request.getServletContext()).thenReturn(servletContext);
+        when(servletContext.getContextPath()).thenReturn(contextpath);
+        assertEquals(contextpath + AttachmentKeyStrategy.UPLOAD_URL + "/" + keyValue, AttachmentKeyStrategy.getUploadUrl(request, attachmentKey));
+    }
+
+    @Test
+    public void testDoPostWithMultipartNullKey() throws Exception {
+        mockAttachmentKeyFactoryResult(null);
+        attachmentKeyStrategy.process(request, response);
+        verify(attachmentKeyFactory).makeFromRequestPathOrNull(eq(request));
+        verify(response).sendError(eq(HttpServletResponse.SC_BAD_REQUEST), any());
+    }
+
+    @Test
+    public void testDoPostWithMultipartValidKey() throws Exception {
+
+        Map<String, List<FileItem>> params = new HashMap<>();
+
+        List<FileItem> fileItems = new ArrayList<>();
+        FileItem       fileItem1 = mock(FileItem.class);
+        FileItem       fileItem2 = mock(FileItem.class);
+
+        fileItems.add(fileItem1);
+        fileItems.add(fileItem2);
+
+        params.put(AttachmentKeyStrategy.PARAM_NAME, fileItems);
+
+        mockFactories();
+        mockKeySessionAndFileUploadManager(attachmentKey);
+
+        when(uploadManager.findUploadInfoByAttachmentKey(eq(attachmentKey))).thenReturn(Optional.of(uploadInfo));
+        when(servletFileUpload.parseParameterMap(eq(request))).thenReturn(params);
+
+        attachmentKeyStrategy.process(request, response);
+
+        verify(attachmentKeyFactory).makeFromRequestPathOrNull(eq(request));
+        verify(uploadProcessor).process(eq(fileItem1), eq(uploadInfo), eq(uploadManager));
+        verify(uploadProcessor).process(eq(fileItem2), eq(uploadInfo), eq(uploadManager));
+    }
+
+    @Test
+    public void testDoPostWithMultipartValidKeyWithoutInfo() throws Exception {
+        mockFactories();
+        mockKeySessionAndFileUploadManager(attachmentKey);
+        when(uploadManager.findUploadInfoByAttachmentKey(eq(attachmentKey))).thenReturn(Optional.empty());
+        attachmentKeyStrategy.process(request, response);
+        verify(attachmentKeyFactory).makeFromRequestPathOrNull(eq(request));
+        verify(response).sendError(eq(HttpServletResponse.SC_NOT_FOUND), any());
+    }
+
+    private void mockFactories() {
+        when(fileUploadManagerFactory.getFileUploadManagerFromSessionOrMakeAndAttach(eq(session))).thenReturn(uploadManager);
+        when(servletFileUploadFactory.makeServletFileUpload(eq(uploadInfo))).thenReturn(servletFileUpload);
+    }
+
+    private void mockKeySessionAndFileUploadManager(AttachmentKey myKey) throws IOException {
+        mockAttachmentKeyFactoryResult(myKey);
+        mockSessionAndFileUploadManager();
+    }
+
+    private void mockAttachmentKeyFactoryResult(AttachmentKey myKey) throws IOException {
+        when(attachmentKeyFactory.makeFromRequestPathOrNull(eq(request))).thenReturn(myKey);
+    }
+
+    private void mockSessionAndFileUploadManager() {
+        when(request.getSession()).thenReturn(session);
+    }
+}
