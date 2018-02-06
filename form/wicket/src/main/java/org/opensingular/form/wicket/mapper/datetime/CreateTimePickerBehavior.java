@@ -39,19 +39,24 @@ public class CreateTimePickerBehavior extends Behavior {
     }
 
     public CreateTimePickerBehavior() {
-        params.put("defaultTime", false);
-        params.put("showMeridian", false);
+        this.params.put("defaultTime", false);
+        this.params.put("showMeridian", false);
     }
 
     @Override
     public void renderHead(Component component, IHeaderResponse response) {
         super.renderHead(component, response);
-        final String script = String.format("$('#%s').timepicker(%s); ", component.getMarkupId(true), getJSONParams())
-                + "$('#" + component.getMarkupId(true) + "').on('keydown', " +
+        String markupId = component.getMarkupId(true);
+        final String script = String.format("$('#%s').timepicker(%s); ", markupId, getJSONParams())
+                + "$('#" + markupId + "').on('keydown', " +
                 "   function(e){"
                 + "     switch (e.keyCode) { " +
                 "           case 9: $(this).timepicker('hideWidget'); " +
                 "       }"
+                + " });"
+                + "$('#" + markupId + "').on('remove', " +
+                "   function(e){" +
+                "       $(this).timepicker('remove'); "
                 + " });";
 
         response.render(OnDomReadyHeaderItem.forScript(script));
