@@ -1,99 +1,147 @@
 package org.opensingular.form.io;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
 import org.opensingular.form.STypeSimple;
+import org.opensingular.form.type.core.STypeBoolean;
+import org.opensingular.form.type.core.STypeDate;
+import org.opensingular.form.type.core.STypeDateTime;
+import org.opensingular.form.type.core.STypeDecimal;
+import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.core.STypeLong;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.core.STypeTime;
 
 /*
  * Author: Thais N. Pereira
  */
-//TODO thais -  ao invés de utilizar concatenação de strings com o '+' utilize um StringBuilder e vá fazendo appends. Utilizar apenas uma instância de StringBuilder
-//TODO thais - lembre-se de alterar todo o código para inglês: nomes de métodos e nomes de variáveis.
+
 public class XSDConverter {
 	
-	private String xsd = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
-			"<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n";
+	private StringBuilder xsd = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
+			"<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n");
 
-	//TODO thais -  crie uma sobrecarga desse método em que possa escolher se o xsd retornado será ou não formatado (sem formatação seria sem quebras de linhas, tabulações e espaços)
-	public void converter(Class<? extends SType<?>> sType) {		
-		readStype(sType, null);
-		xsd = xsd + "</xs:schema>";
+	public void converter(SType<?> sType) {		
+		toXsdFromSType(sType, null);
+		xsd.append("</xs:schema>");
+
+		System.out.println(getXsd());
 	}
 	
-	private void readStype(Class<? extends SType<?>> sType, String superClass) {
-		Field[] attributes = sType.getDeclaredFields();
-		List<Field> stypeAttributes = new ArrayList<>();
+	public void toXsd(SType<?> sType, Boolean noFormatting) {		
+		toXsdFromSType(sType, null);
+		xsd.append("</xs:schema>");
+		
+		if (noFormatting) {
+			xsd.replace(0, xsd.length(), xsd.toString().replaceAll("[\n|\t]", ""));
+		}
+		
+		System.out.println(getXsd());
+	}
+	
+	private void toXsdFromSType(SType<?> sType, String parent) {
+		Field[] attributes = sType.getClass().getDeclaredFields();
+		List<Field> sTypeAttributes = new ArrayList<>();
 		
 		for (Field attribute : attributes) {
+			
 			if (SType.class.isAssignableFrom(attribute.getType())) {
-				stypeAttributes.add(attribute);	
+				sTypeAttributes.add(attribute);	
 			}
 		}
 		
-		if (!stypeAttributes.isEmpty()) {
-			writeXsd(stypeAttributes, superClass, sType);
-			stypeAttributes.forEach(a -> readStype((Class<? extends SType<?>>) a.getType(), a.getType().getSimpleName()));
+		if (!sTypeAttributes.isEmpty()) {		
+			if (sType instanceof STypeSimple) {
+//				toXsdFromSimple((STypeSimple<?, ?>) sType);
+			} else if (sType instanceof STypeList) {
+				Collection<SType<?>> attr = toXsdFromList((STypeList<?, ?>) sType, parent);
+				attr.forEach(s -> toXsdFromSType(s, s.getClass().getSimpleName()));
+			} else if (sType instanceof STypeComposite) {
+				Collection<SType<?>> attr = toXsdFromComposite((STypeComposite<?>) sType, parent);
+				attr.forEach(s -> toXsdFromSType(s, s.getClass().getSimpleName()));
+			}
+		}
+	}
+
+	private Collection<SType<?>> toXsdFromList(STypeList<?, ?> sType, String parent) {
+		Collection<SType<?>> attributes = new ArrayList<>();
+
+		if (STypeComposite.class.isAssignableFrom(sType.getElementsType().getClass())) {
+			attributes = toXsdFromComposite((STypeComposite<?>) sType.getElementsType(), sType.getElementsType().getClass().getSimpleName());
+		}
+		
+		return attributes;
+	}
+
+	private Collection<SType<?>> toXsdFromComposite(STypeComposite<?> sType, String parent) {
+		String name = (parent == null) ? sType.getNameSimple() : parent;
+		
+		if (parent == null) {
+			xsd.append("\t<xs:element name=\""+ sType.getNameSimple() +"\" type=\""+ sType.getNameSimple() +"\"/>\n");
+		} 
+
+		xsd.append("\t<xs:complexType name=" + name + ">\n");
+		xsd.append("\t\t<xs:sequence>\n");
+
+//		xsdComplexType(parent == null ? sType.getNameSimple() : parent, sTypeAttributes);
+		
+		sType.getFields().forEach(s -> addElement(s, parent));
+
+//		sTypeAttributes.forEach(a -> xsd.append("\t\t"+ xsdElement(a.getName(), getType(a))));
+
+		xsd.append("\t\t</xs:sequence>\n");
+		xsd.append("\t</xs:complexType>\n");
+
+//		sType.getFields().forEach(s -> toXsdFromSType(s, s.getClass().getSimpleName()));
+		
+		return sType.getFields();
+
+	}
+	
+	private void addElement(SType<?> sType, String parent) {
+		
+		if (sType.isList()) {
+			xsd.append("\t\t\t<xs:element maxOccurs=\"unbounded\" name=\""+ sType.getNameSimple() +"\" type=\""+ getType(((STypeList<?, ?>) sType).getElementsType()) +"\"/>\n");
+		} else {
+			xsd.append("\t\t\t<xs:element name=\""+ sType.getNameSimple() +"\" type=\""+ getType(sType) +"\"/>\n");
 		}
 	}
 	
-	private void writeXsd(List<Field> stypeAttributes, String superClass, Class<? extends SType<?>> sType) {
-		xsd = (superClass == null) ? xsd + xsdElement(sType.getSimpleName(), sType.getSimpleName()) : xsd;
-		xsdComplexType(superClass == null ? sType.getSimpleName() : superClass, stypeAttributes);
-	}
+	private String getType(SType<?> sType) {
+		String name = sType.getClass().getSimpleName();
 
-	
-	private String xsdElement(String name, String type) {
-		return "\t<xs:element name=\""+ name +"\" type=\""+ type +"\" />\n";
-	}
-	
-	private void xsdComplexType(String type, List<Field> stypeAttributes) {
-		xsd = xsd + "\t<xs:complexType name=\""+ type +"\">\n" +
-				"\t\t<xs:sequence>\n";
-		
-		stypeAttributes.forEach(a -> xsd = xsd + "\t\t"+ xsdElement(a.getName(), getType(a)));
-		
-		xsd = xsd + "\t\t</xs:sequence>\n" +
-				"\t</xs:complexType>\n";
-		
-	}
-	
-	private String getType(Field attribute) {
-		Class<?> typeClass = attribute.getType();
-		String type = STypeSimple.class.isAssignableFrom(attribute.getType()) ? "xs:"+getSimpleType(typeClass) : typeClass.getSimpleName();
-		
-		return type;
-	}
-	
-	//TODO thais - substituir as constantes String abaixo pelo class name das classes. Ex: STypeString.class.getName()
-	private String getSimpleType(Class<?> typeClass) {
-		switch (typeClass.getSimpleName()) {
-			case "STypeString":
-				return "string";
-			case "STypeLong":
-				return "long";
-			case "STypeInteger":
-				return "integer";
-			case "STypeBoolean":
-				return "boolean";
-			case "STypeDecimal":
-				return "decimal";
-			case "STypeDate":
-				return "date";
-			case "STypeDateTime":
-				return "dateTime";
-			case "STypeTime":
-				return "time";
-			default:
-				return getSimpleType(typeClass.getSuperclass());
+		if (name.equals(STypeString.class.getSimpleName()) || name.equals(String.class.getSimpleName()))
+			return "xs:string";
+		if (name.equals(STypeLong.class.getSimpleName()) || name.equals(Long.class.getSimpleName()))
+			return "xs:long";
+		if (name.equals(STypeInteger.class.getSimpleName()) || name.equals(Integer.class.getSimpleName()))
+			return "xs:integer";
+		if (name.equals(STypeBoolean.class.getSimpleName()) || name.equals(Boolean.class.getSimpleName()))
+			return "xs:boolean";
+		if (name.equals(STypeDecimal.class.getSimpleName()) || name.equals(BigDecimal.class.getSimpleName()))
+			return "xs:decimal";
+		if (name.equals(STypeDate.class.getSimpleName()) || name.equals(Date.class.getSimpleName()))
+			return "xs:date";
+		if (name.equals(STypeDateTime.class.getSimpleName()))
+			return "xs:dateTime";
+		if (name.equals(STypeTime.class.getSimpleName()))
+			return "xs:time";
+		if (sType instanceof STypeSimple<?, ?>) {
+			return getType(sType.getSuperType());
 		}
-		
+		return name;
 	}
 
-	//TODO thais -  ao final retorne a String ao invés de dar print no console. Para fazer isso no StringBuilder basta chamar o toString()
-	public void getXsd() {
-		System.out.println(xsd);
+	public String getXsd() {
+		return xsd.toString();
 	}
+
 }
