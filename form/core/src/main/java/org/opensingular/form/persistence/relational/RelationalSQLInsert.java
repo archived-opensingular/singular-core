@@ -47,8 +47,10 @@ public class RelationalSQLInsert extends RelationalSQL {
         this.keyColumns = new ArrayList<>();
         this.targetColumns = new ArrayList<>();
         this.mapColumnToField = new HashMap<>();
+        SType<?> tableContext = tableContext(instance.getType());
         for (SType<?> field : getFields(instance.getType())) {
-            if (RelationalSQL.foreignColumn(field) == null && fieldValue(instance, field) != null) {
+            if (tableContext(field) == tableContext && foreignColumn(field) == null
+                    && fieldValue(instance, field) != null) {
                 collectKeyColumns(field, keyColumns);
                 collectTargetColumn(field, targetColumns, keyColumns, mapColumnToField);
             }
@@ -61,11 +63,9 @@ public class RelationalSQLInsert extends RelationalSQL {
 
     @Override
     public List<RelationalSQLCommmand> toSQLScript() {
-        Map<String, RelationalFK> joinMap = createJoinMap();
-        reorderTargetTables(joinMap, true);
         List<RelationalSQLCommmand> lines = new ArrayList<>();
         for (SType<?> tableContext : targetTables) {
-            String tableName = RelationalSQL.table(tableContext);
+            String tableName = table(tableContext);
             List<Object> params = new ArrayList<>();
             Map<String, Object> containerKeyColumns = new HashMap<>();
             List<RelationalColumn> inserted = insertedColumns(tableName, containerKeyColumns);
@@ -99,8 +99,8 @@ public class RelationalSQLInsert extends RelationalSQL {
         });
         getContainerInstances(instance).stream().filter(FormKey::containsKey).forEach(container -> {
             FormKeyRelational containerKey = (FormKeyRelational) FormKey.fromInstance(container);
-            List<String> containerPK = RelationalSQL.tablePK(container.getType());
-            for (RelationalFK fk : RelationalSQL.tableFKs(instance.getType())) {
+            List<String> containerPK = tablePK(container.getType());
+            for (RelationalFK fk : tableFKs(instance.getType())) {
                 if (fk.getForeignType() == container.getType()
                         || fk.getForeignType() == container.getType().getSuperType()) {
                     collectColumnIfNecessary(containerKeyColumns, result, containerKey, containerPK, fk);

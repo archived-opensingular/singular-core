@@ -208,7 +208,7 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
     public void oneToManyPersistence() {
         db.exec("CREATE TABLE ADDRESS1M (ID INT AUTO_INCREMENT, NUMBER VARCHAR(200), PRIMARY KEY (ID))");
         db.exec("CREATE TABLE CUSTOMER1M (ID VARCHAR(100), NAME VARCHAR(200) NOT NULL, ADDRESS INT, PRIMARY KEY (ID), FOREIGN KEY (ADDRESS) REFERENCES ADDRESS1M(ID))");
-        db.exec("CREATE TABLE PHONE1M (ID INT IDENTITY, NUMBER VARCHAR(20) NOT NULL, CustomerId VARCHAR(100) NOT NULL,  PRIMARY KEY (ID), FOREIGN KEY (CustomerId) REFERENCES CUSTOMER1M(ID))");
+        db.exec("CREATE TABLE PHONE1M (ID INT IDENTITY, NUMBER VARCHAR(20) NOT NULL, CustomerId VARCHAR(100) NOT NULL, PRIMARY KEY (ID), FOREIGN KEY (CustomerId) REFERENCES CUSTOMER1M(ID))");
         //
         SIComposite customer = (SIComposite) documentFactory.createInstance(RefType.of(CustomerOneToMany.class));
         customer.setValue("name", "Robert");
@@ -228,7 +228,7 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
         assertEquals(2, phones.size());
         assertEquals("+55 (61) 99999-9999", phones.get(0).getValue("number"));
         assertEquals("+55 (85) 99999-9999", phones.get(1).getValue("number"));
-        // assertEquals("1", loaded.getValue("address.number"));
+        assertEquals("1", loaded.getValue("address.number"));
         //
         repoOneToManyCustomer.delete(insertedKey);
         assertEquals(0, repoOneToManyCustomer.countAll());

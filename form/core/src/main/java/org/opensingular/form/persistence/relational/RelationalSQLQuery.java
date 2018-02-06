@@ -88,7 +88,7 @@ public class RelationalSQLQuery extends RelationalSQL {
     }
 
     public RelationalSQLQuery where(STypeComposite<?> type, FormKey formKey) {
-        keyFormTable = RelationalSQL.table(type);
+        keyFormTable = table(type);
         keyFormColumnMap = ((FormKeyRelational) formKey).getValue();
         keyFormColumns = new ArrayList<>();
         collectKeyColumns(type, keyFormColumns);
@@ -120,8 +120,8 @@ public class RelationalSQLQuery extends RelationalSQL {
         Set<RelationalColumn> relevant = new LinkedHashSet<>(selected);
         relevant.addAll(keyFormColumns);
         relevant.addAll(criteriaColumns);
-        Map<String, RelationalFK> joinMap = createJoinMap();
-        reorderTargetTables(joinMap, false);
+        Map<String, RelationalFK> joinMap = createJoinMap(targetTables);
+        reorderTargetTables(joinMap);
         List<Object> params = new ArrayList<>();
         String wherePart = "";
         if (keyFormTable != null) {
@@ -187,7 +187,7 @@ public class RelationalSQLQuery extends RelationalSQL {
             sj.add(intermediaryTable + " " + intermerdiaryTableAlias);
         }
         for (SType<?> tableContext : targetTables) {
-            String table = RelationalSQL.table(tableContext);
+            String table = table(tableContext);
             for (List<RelationalColumn> sourceKeyColumns : distinctJoins(table, relevantColumns)) {
                 addClause(tableContext, sourceKeyColumns, relevantColumns, joinedTables, joinMap, sj);
             }
@@ -202,7 +202,7 @@ public class RelationalSQLQuery extends RelationalSQL {
             Map<String, RelationalFK> joinMap) {
         Set<String> joinedTables = new LinkedHashSet<>();
         for (SType<?> tableContext : targetTables) {
-            String table = RelationalSQL.table(tableContext);
+            String table = table(tableContext);
             for (List<RelationalColumn> sourceKeyColumns : distinctJoins(table, relevantColumns)) {
                 String result = detectIntermediaryTable(table, sourceKeyColumns, joinedTables, joinMap);
                 if (result != null) {
@@ -232,7 +232,7 @@ public class RelationalSQLQuery extends RelationalSQL {
     private void addClause(SType<?> tableContext, List<RelationalColumn> sourceKeyColumns,
             Collection<RelationalColumn> relevantColumns, Set<String> joinedTables, Map<String, RelationalFK> joinMap,
             StringJoiner sjResult) {
-        String table = RelationalSQL.table(tableContext);
+        String table = table(tableContext);
         String tableAlias = tableAlias(table, sourceKeyColumns, relevantColumns);
         if (joinedTables.isEmpty()) {
             joinedTables.add(table);
@@ -245,7 +245,7 @@ public class RelationalSQLQuery extends RelationalSQL {
                     "Relational mapping should provide foreign key for relevant relationships with table '" + table
                             + "'.");
         }
-        addClause(table, tableAlias, RelationalSQL.tablePK(tableContext), relationship, relevantColumns, sjResult);
+        addClause(table, tableAlias, tablePK(tableContext), relationship, relevantColumns, sjResult);
         joinedTables.add(table);
     }
 
