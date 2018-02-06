@@ -180,12 +180,15 @@ public class RelationalSQLTest extends TestCaseForm {
         assertEquals(33, script.get(0).getParameters().get(1));
         assertEquals(itemInstance, script.get(0).getInstance());
         //
+        FormKey.setOnInstance(itemInstance, itemKey(33, "My mnemo"));
         SIComposite itemDetailInstance = addItemDetail("My title", itemInstance);
         RelationalSQL insertItemDetail = insert(itemDetailInstance);
         script = insertItemDetail.toSQLScript();
-        assertEquals("insert into ItemDetailEntity (title) values (?)", script.get(0).getSQL());
-        assertEquals(1, script.get(0).getParameters().size());
+        assertEquals("insert into ItemDetailEntity (title, masterID, mnemo) values (?, ?, ?)", script.get(0).getSQL());
+        assertEquals(3, script.get(0).getParameters().size());
         assertEquals("My title", script.get(0).getParameters().get(0));
+        assertEquals(33, script.get(0).getParameters().get(1));
+        assertEquals("My mnemo", script.get(0).getParameters().get(2));
         assertEquals(itemDetailInstance, script.get(0).getInstance());
     }
 
@@ -222,6 +225,13 @@ public class RelationalSQLTest extends TestCaseForm {
     private FormKey masterKey(int id) {
         HashMap<String, Object> key = new LinkedHashMap<>();
         key.put("id", id);
+        return new FormKeyRelational(key);
+    }
+
+    private FormKey itemKey(int masterId, String mnemo) {
+        HashMap<String, Object> key = new LinkedHashMap<>();
+        key.put("masterID", masterId);
+        key.put("mnemo", mnemo);
         return new FormKeyRelational(key);
     }
 
@@ -340,7 +350,7 @@ public class RelationalSQLTest extends TestCaseForm {
                 title = addFieldString("title");
                 // relational mapping
                 asSQL().table().tablePK("id");
-                asSQL().addTableFK("itemID", ItemEntity.class);
+                asSQL().addTableFK("masterID, mnemo", ItemEntity.class);
                 title.asSQL().column();
             }
         }

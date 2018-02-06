@@ -26,9 +26,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -257,12 +259,8 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
     protected FormKey insertInternal(@Nonnull SIComposite instance, Integer inclusionActor) {
         List<RelationalData> toList = new ArrayList<>();
         RelationalSQL.persistenceStrategy(instance.getType()).save(instance, toList);
-        List<SIComposite> targets = new ArrayList<>();
-        toList.forEach(data -> {
-            if (!targets.contains(data.getTupleKeyRef())) {
-                targets.add((SIComposite) data.getTupleKeyRef());
-            }
-        });
+        Set<SIComposite> targets = new LinkedHashSet<>();
+        toList.forEach(data -> targets.add((SIComposite) data.getTupleKeyRef()));
         for (SIComposite target : targets) {
             for (RelationalSQLCommmand command : RelationalSQL.insert(target).toSQLScript()) {
                 executeInsertCommand(command);

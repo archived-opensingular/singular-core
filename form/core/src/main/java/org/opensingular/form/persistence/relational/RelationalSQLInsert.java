@@ -18,9 +18,11 @@ package org.opensingular.form.persistence.relational;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.StringJoiner;
 
 import org.opensingular.form.SIComposite;
@@ -36,18 +38,12 @@ import org.opensingular.form.persistence.FormKeyRelational;
  */
 public class RelationalSQLInsert extends RelationalSQL {
     private SIComposite instance;
-    private Optional<SInstance> containerInstance;
     private List<RelationalColumn> keyColumns;
     private List<RelationalColumn> targetColumns;
     private Map<String, SType<?>> mapColumnToField;
 
     public RelationalSQLInsert(SIComposite instance) {
         this.instance = instance;
-        if (instance.getParent() == null) {
-            this.containerInstance = Optional.empty();
-        } else {
-            this.containerInstance = Optional.ofNullable(instance.getParent().getParent());
-        }
         this.keyColumns = new ArrayList<>();
         this.targetColumns = new ArrayList<>();
         this.mapColumnToField = new HashMap<>();
@@ -65,6 +61,8 @@ public class RelationalSQLInsert extends RelationalSQL {
 
     @Override
     public List<RelationalSQLCommmand> toSQLScript() {
+        Map<String, RelationalFK> joinMap = createJoinMap();
+        reorderTargetTables(joinMap, true);
         List<RelationalSQLCommmand> lines = new ArrayList<>();
         for (SType<?> tableContext : targetTables) {
             String tableName = RelationalSQL.table(tableContext);
@@ -88,7 +86,7 @@ public class RelationalSQLInsert extends RelationalSQL {
     }
 
     private List<RelationalColumn> insertedColumns(String table, Map<String, Object> containerKeyColumns) {
-        List<RelationalColumn> result = new ArrayList<>();
+        Set<RelationalColumn> result = new LinkedHashSet<>();
         keyColumns.forEach(column -> {
             if (column.getTable().equals(table) && resolveColumnValue(column, containerKeyColumns) != null) {
                 result.add(column);
@@ -99,27 +97,25 @@ public class RelationalSQLInsert extends RelationalSQL {
                 result.add(column);
             }
         });
-        if (containerInstance.isPresent() && FormKey.containsKey(containerInstance.get())) {
-            SInstance container = containerInstance.get();
+        getContainerInstances(instance).stream().filter(FormKey::containsKey).forEach(container -> {
             FormKeyRelational containerKey = (FormKeyRelational) FormKey.fromInstance(container);
             List<String> containerPK = RelationalSQL.tablePK(container.getType());
             for (RelationalFK fk : RelationalSQL.tableFKs(instance.getType())) {
-                if (fk.getForeignType().equals(container.getType())) {
+                if (fk.getForeignType() == container.getType()
+                        || fk.getForeignType() == container.getType().getSuperType()) {
                     collectColumnIfNecessary(containerKeyColumns, result, containerKey, containerPK, fk);
                 }
             }
-        }
-        return result;
+        });
+        return new ArrayList<>(result);
     }
 
-    private void collectColumnIfNecessary(Map<String, Object> containerKeyColumns, List<RelationalColumn> result,
+    private void collectColumnIfNecessary(Map<String, Object> containerKeyColumns, Set<RelationalColumn> inserted,
             FormKeyRelational containerKey, List<String> containerPK, RelationalFK fk) {
         for (int i = 0; i < fk.getKeyColumns().size(); i++) {
             RelationalColumn keyColumn = fk.getKeyColumns().get(i);
-            if (!result.contains(keyColumn)) {
-                containerKeyColumns.put(keyColumn.getName(), containerKey.getColumnValue(containerPK.get(i)));
-                result.add(keyColumn);
-            }
+            inserted.add(keyColumn);
+            containerKeyColumns.put(keyColumn.getName(), containerKey.getColumnValue(containerPK.get(i)));
         }
     }
 

@@ -206,13 +206,13 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
 
     @Test
     public void oneToManyPersistence() {
-        db.exec("CREATE TABLE ENDERECO (ID INT AUTO_INCREMENT, NUMBER VARCHAR(200), PRIMARY KEY (ID))");
-        db.exec("CREATE TABLE CUSTOMER (ID VARCHAR(100), NAME VARCHAR(200) NOT NULL, CO_ENDERECO INT, PRIMARY KEY (ID), FOREIGN KEY (CO_ENDERECO) REFERENCES ENDERECO(ID))");
-        db.exec("CREATE TABLE PHONE (ID INT IDENTITY, NUMBER VARCHAR(20) NOT NULL, CustomerId VARCHAR(100) NOT NULL,  PRIMARY KEY (ID), fOREIGN KEY (CustomerId) REFERENCES CUSTOMER(ID))");
+        db.exec("CREATE TABLE ADDRESS1M (ID INT AUTO_INCREMENT, NUMBER VARCHAR(200), PRIMARY KEY (ID))");
+        db.exec("CREATE TABLE CUSTOMER1M (ID VARCHAR(100), NAME VARCHAR(200) NOT NULL, ADDRESS INT, PRIMARY KEY (ID), FOREIGN KEY (ADDRESS) REFERENCES ADDRESS1M(ID))");
+        db.exec("CREATE TABLE PHONE1M (ID INT IDENTITY, NUMBER VARCHAR(20) NOT NULL, CustomerId VARCHAR(100) NOT NULL,  PRIMARY KEY (ID), FOREIGN KEY (CustomerId) REFERENCES CUSTOMER1M(ID))");
         //
         SIComposite customer = (SIComposite) documentFactory.createInstance(RefType.of(CustomerOneToMany.class));
         customer.setValue("name", "Robert");
-        customer.setValue("endereco.number", "1");
+        customer.setValue("address.number", "1");
         addPhone("+55 (61) 99999-9999", customer);
         addPhone("+55 (85) 99999-9999", customer);
         customer.setValue("id", "e525899b-4302-4112-a41b-aa30e82cee91");
@@ -228,7 +228,7 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
         assertEquals(2, phones.size());
         assertEquals("+55 (61) 99999-9999", phones.get(0).getValue("number"));
         assertEquals("+55 (85) 99999-9999", phones.get(1).getValue("number"));
-        // assertEquals("1", loaded.getValue("endereco.number"));
+        // assertEquals("1", loaded.getValue("address.number"));
         //
         repoOneToManyCustomer.delete(insertedKey);
         assertEquals(0, repoOneToManyCustomer.countAll());
@@ -438,7 +438,7 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
         public STypeString id;
         public STypeString name;
         public STypeList<PhoneOneToMany, SIComposite> phones;
-        public EnderecoOneToMany endereco;
+        public AddressOneToMany address;
 
         @Override
         protected void onLoadType(TypeBuilder tb) {
@@ -448,9 +448,9 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
             id.asAtr().visible(false);
             name = addFieldString("name");
             phones = addFieldListOf("phones", PhoneOneToMany.class);
-            endereco = addField("endereco", EnderecoOneToMany.class);
+            address = addField("address", AddressOneToMany.class);
             // relational mapping
-            asSQL().table("CUSTOMER").tablePK("ID").addTableFK("CO_ENDERECO", EnderecoOneToMany.class);
+            asSQL().table("CUSTOMER1M").tablePK("ID").addTableFK("ADDRESS", AddressOneToMany.class);
             id.asSQL().column("ID");
             name.asSQL().column();
         }
@@ -465,13 +465,13 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
             asAtr().label("Phone");
             number = addFieldString("number");
             // relational mapping
-            asSQL().table("PHONE").tablePK("ID").addTableFK("CustomerId", CustomerOneToMany.class);
+            asSQL().table("PHONE1M").tablePK("ID").addTableFK("CustomerId", CustomerOneToMany.class);
             number.asSQL().column();
         }
     }
 
-    @SInfoType(name = "EnderecoOneToMany", spackage = TestPackage.class)
-    public static final class EnderecoOneToMany extends STypeComposite<SIComposite> {
+    @SInfoType(name = "AddressOneToMany", spackage = TestPackage.class)
+    public static final class AddressOneToMany extends STypeComposite<SIComposite> {
         public STypeString number;
 
         @Override
@@ -479,7 +479,7 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
             asAtr().label("Number");
             number = addFieldString("number");
             // relational mapping
-            asSQL().table("ENDERECO").tablePK("ID");
+            asSQL().table("ADDRESS1M").tablePK("ID");
             number.asSQL().column("NUMBER");
         }
     }

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -339,5 +340,88 @@ public abstract class RelationalSQL {
     protected Object fieldValue(SIComposite instance, SType<?> field) {
         String fieldPath = field.getName().replaceFirst(instance.getType().getName() + ".", "");
         return fieldValue(instance.getField(fieldPath));
+    }
+
+    protected String serialize(List<RelationalColumn> columns) {
+        StringJoiner sj = new StringJoiner(",");
+        columns.forEach(column -> sj.add(column.toStringPersistence()));
+        return sj.toString().toUpperCase();
+    }
+
+    protected Map<String, RelationalFK> createJoinMap() {
+        Map<String, RelationalFK> result = new HashMap<>();
+        for (SType<?> tableContext : targetTables) {
+            for (RelationalFK relationship : RelationalSQL.tableFKs(tableContext)) {
+                List<RelationalColumn> sourceKeyColumns = relationship.getKeyColumns();
+                result.put(relationship.getTable() + ">" + RelationalSQL.table(relationship.getForeignType()) + "@"
+                        + serialize(sourceKeyColumns), relationship);
+            }
+            ((STypeComposite<?>) tableContext).getContainedTypes().stream()
+                    .filter(item -> item.asSQL().getManyToManyTable() != null).forEach(item -> {
+                        RelationalFK sourceRelationship = new RelationalFK(item.asSQL().getManyToManyTable(),
+                                item.asSQL().getManyToManySourceKeyColumns(), tableContext);
+                        result.put(sourceRelationship.getTable() + ">"
+                                + RelationalSQL.table(sourceRelationship.getForeignType()) + "@"
+                                + serialize(sourceRelationship.getKeyColumns()), sourceRelationship);
+                        SType<?> targetType = ((STypeList<?, ?>) item).getElementsType();
+                        RelationalFK targetRelationship = new RelationalFK(item.asSQL().getManyToManyTable(),
+                                item.asSQL().getManyToManyTargetKeyColumns(), targetType);
+                        result.put(targetRelationship.getTable() + ">"
+                                + RelationalSQL.table(targetRelationship.getForeignType()) + "@"
+                                + serialize(targetRelationship.getKeyColumns()), targetRelationship);
+                    });
+        }
+        return result;
+    }
+
+    protected void reorderTargetTables(Map<String, RelationalFK> joinMap, boolean insertMode) {
+        List<SType<?>> tables = new ArrayList<>(targetTables);
+        for (int i = 0; i < tables.size() - 1; i++) {
+            String tableLeft = RelationalSQL.table(tables.get(i));
+            for (int j = i + 1; j < tables.size(); j++) {
+                String tableRight = RelationalSQL.table(tables.get(j));
+                String info = insertMode ? tableLeft + '>' + tableRight + "@" : tableRight + '>' + tableLeft + "@";
+                if (joinMap.keySet().stream().anyMatch(item -> item.startsWith(info))) {
+                    SType<?> newRight = tables.get(i);
+                    SType<?> newLeft = tables.get(j);
+                    tables.set(i, newLeft);
+                    tables.set(j, newRight);
+                    i--;
+                    break;
+                }
+            }
+        }
+        targetTables.clear();
+        targetTables.addAll(tables);
+    }
+
+    protected List<SInstance> getContainerInstances(SIComposite instance) {
+        List<SInstance> result = new ArrayList<>();
+        for (RelationalFK fk : RelationalSQL.tableFKs(instance.getType())) {
+            Optional<SInstance> containerInstance = findAncestor(instance, fk.getForeignType());
+            if (!containerInstance.isPresent()) {
+                containerInstance = findDescendant(instance, fk.getForeignType());
+            }
+            containerInstance.ifPresent(result::add);
+        }
+        return result;
+    }
+
+    protected Optional<SInstance> findAncestor(SIComposite instance, SType<?> type) {
+        for (SInstance current = instance.getParent(); current != null; current = current.getParent()) {
+            if (current.getType().getSuperType() == type || current.getType() == type) {
+                return Optional.of(current);
+            }
+        }
+        return Optional.empty();
+    }
+
+    protected Optional<SInstance> findDescendant(SIComposite instance, SType<?> type) {
+        for (SInstance current : instance.getAllChildren()) {
+            if (current.getType().getSuperType() == type) {
+                return Optional.of(current);
+            }
+        }
+        return Optional.empty();
     }
 }

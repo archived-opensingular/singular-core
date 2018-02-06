@@ -36,7 +36,6 @@ import java.util.StringJoiner;
 
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.persistence.Criteria;
 import org.opensingular.form.persistence.FormKey;
@@ -122,7 +121,7 @@ public class RelationalSQLQuery extends RelationalSQL {
         relevant.addAll(keyFormColumns);
         relevant.addAll(criteriaColumns);
         Map<String, RelationalFK> joinMap = createJoinMap();
-        reorderTargetTables(joinMap);
+        reorderTargetTables(joinMap, false);
         List<Object> params = new ArrayList<>();
         String wherePart = "";
         if (keyFormTable != null) {
@@ -306,57 +305,5 @@ public class RelationalSQLQuery extends RelationalSQL {
 
     private String toSQLColumn(RelationalColumn column, Collection<RelationalColumn> relevantColumns) {
         return tableAlias(column.getTable(), column.getSourceKeyColumns(), relevantColumns) + "." + column.getName();
-    }
-
-    private Map<String, RelationalFK> createJoinMap() {
-        Map<String, RelationalFK> result = new HashMap<>();
-        for (SType<?> tableContext : targetTables) {
-            for (RelationalFK relationship : RelationalSQL.tableFKs(tableContext)) {
-                List<RelationalColumn> sourceKeyColumns = relationship.getKeyColumns();
-                result.put(relationship.getTable() + ">" + RelationalSQL.table(relationship.getForeignType()) + "@"
-                        + serialize(sourceKeyColumns), relationship);
-            }
-            ((STypeComposite<?>) tableContext).getContainedTypes().stream()
-                    .filter(item -> item.asSQL().getManyToManyTable() != null).forEach(item -> {
-                        RelationalFK sourceRelationship = new RelationalFK(item.asSQL().getManyToManyTable(),
-                                item.asSQL().getManyToManySourceKeyColumns(), tableContext);
-                        result.put(sourceRelationship.getTable() + ">"
-                                + RelationalSQL.table(sourceRelationship.getForeignType()) + "@"
-                                + serialize(sourceRelationship.getKeyColumns()), sourceRelationship);
-                        SType<?> targetType = ((STypeList<?, ?>) item).getElementsType();
-                        RelationalFK targetRelationship = new RelationalFK(item.asSQL().getManyToManyTable(),
-                                item.asSQL().getManyToManyTargetKeyColumns(), targetType);
-                        result.put(targetRelationship.getTable() + ">"
-                                + RelationalSQL.table(targetRelationship.getForeignType()) + "@"
-                                + serialize(targetRelationship.getKeyColumns()), targetRelationship);
-                    });
-        }
-        return result;
-    }
-
-    private String serialize(List<RelationalColumn> columns) {
-        StringJoiner sj = new StringJoiner(",");
-        columns.forEach(column -> sj.add(column.toStringPersistence()));
-        return sj.toString().toUpperCase();
-    }
-
-    private void reorderTargetTables(Map<String, RelationalFK> joinMap) {
-        List<SType<?>> tables = new ArrayList<>(targetTables);
-        for (int i = 0; i < tables.size() - 1; i++) {
-            String tableLeft = RelationalSQL.table(tables.get(i));
-            for (int j = i + 1; j < tables.size(); j++) {
-                String tableRight = RelationalSQL.table(tables.get(j));
-                if (joinMap.keySet().stream().anyMatch(item -> item.startsWith(tableRight + ">" + tableLeft + "@"))) {
-                    SType<?> newRight = tables.get(i);
-                    SType<?> newLeft = tables.get(j);
-                    tables.set(i, newLeft);
-                    tables.set(j, newRight);
-                    i--;
-                    break;
-                }
-            }
-        }
-        targetTables.clear();
-        targetTables.addAll(tables);
     }
 }
