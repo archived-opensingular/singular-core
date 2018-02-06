@@ -42,7 +42,7 @@ public class RelationalFK {
 
     private static List<RelationalColumn> parseColumns(String value, String defaultTable) {
         List<RelationalColumn> columns = new ArrayList<>();
-        String parts[] = value.split(",");
+        String parts[] = value.split("\\s*,\\s*");
         for (String part : parts)
             columns.add(RelationalColumn.fromStringPersistence(part, defaultTable));
         return columns;
