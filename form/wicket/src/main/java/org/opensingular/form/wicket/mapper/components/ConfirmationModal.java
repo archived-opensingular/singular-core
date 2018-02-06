@@ -49,7 +49,6 @@ public class ConfirmationModal extends AbstractConfirmationModal {
         listeners.add(listener);
     }
 
-
     protected IConsumer<AjaxRequestTarget> getConfirmationAction() {
         return confirmationAction;
     }

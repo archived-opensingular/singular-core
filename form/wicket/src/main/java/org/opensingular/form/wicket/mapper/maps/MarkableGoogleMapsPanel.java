@@ -78,7 +78,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
 
     private final Button       clearButton;
     private final Button       currentLocationButton;
-    private final ExternalLink verNoMaps;
+    private final WebMarkupContainer verNoMaps;
     private final ImgMap       mapStatic;
     private final WebMarkupContainer  map      = new WebMarkupContainer(MAP_ID);
     private final HiddenField<String> metaData = new HiddenField<>("metadados", metaDataModel);
@@ -99,7 +99,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         }
     }
 
-    public MarkableGoogleMapsPanel(LatLongMarkupIds ids, IModel<? extends SInstance> model, SView view, boolean visualization) {
+    public MarkableGoogleMapsPanel(LatLongMarkupIds ids, IModel<? extends SInstance> model, SView view, boolean visualization, boolean multipleMarkers) {
         super(model.getObject().getName());
         this.visualization = visualization;
         this.ids = ids;
@@ -110,23 +110,27 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         latitudeModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitude.FIELD_LATITUDE));
         longitudeModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitude.FIELD_LONGITUDE));
         zoomModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitude.FIELD_ZOOM));
+        if (!multipleMarkers) {
 
-        LoadableDetachableModel<String> googleMapsLinkModel = $m.loadable(() -> {
-            if (latitudeModel.getObject() != null && longitudeModel.getObject() != null) {
-                String localization = latitudeModel.getObject() + "," + longitudeModel.getObject() + "/@" + latitudeModel.getObject() + "," + longitudeModel.getObject();
-                return "https://www.google.com.br/maps/place/" + localization + "," + zoomModel.getObject() + "z";
-            } else {
-                return "https://www.google.com.br/maps/search/-15.7481632,-47.8872134,15";
-            }
-        });
+            LoadableDetachableModel<String> googleMapsLinkModel = $m.loadable(() -> {
+                if (latitudeModel.getObject() != null && longitudeModel.getObject() != null) {
+                    String localization = latitudeModel.getObject() + "," + longitudeModel.getObject() + "/@" + latitudeModel.getObject() + "," + longitudeModel.getObject();
+                    return "https://www.google.com.br/maps/place/" + localization + "," + zoomModel.getObject() + "z";
+                } else {
+                    return "https://www.google.com.br/maps/search/-15.7481632,-47.8872134,15";
+                }
+            });
 
-        verNoMaps = new ExternalLink("verNoMaps", googleMapsLinkModel, $m.ofValue("Visualizar no Google Maps")) {
-            @Override
-            protected void onComponentTag(ComponentTag tag) {
-                super.onComponentTag(tag);
-                tag.put("target", "_blank");
-            }
-        };
+            verNoMaps = new ExternalLink("verNoMaps", googleMapsLinkModel, $m.ofValue("Visualizar no Google Maps")) {
+                @Override
+                protected void onComponentTag(ComponentTag tag) {
+                    super.onComponentTag(tag);
+                    tag.put("target", "_blank");
+                }
+            };
+        } else {
+            verNoMaps = new WebMarkupContainer("verNoMaps");
+        }
 
         clearButton.setDefaultFormProcessing(false);
         currentLocationButton.setDefaultFormProcessing(false);
@@ -216,13 +220,12 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         visitChildren(FormComponent.class, (comp, visit) -> comp.setEnabled(!isVisualization()));
         this.add(WicketUtils.$b.attrAppender("style", "height: " + getHeight() + "px;", ""));
 
-        map.setVisible(!isVisualization());
+        map.setVisible(multipleMarkers || !isVisualization());
         clearButton.setVisible(!multipleMarkers && !isVisualization());
         currentLocationButton.setVisible(SViewCurrentLocation.class.isInstance(view) && !isVisualization());
 
-
-        mapStatic.setVisible(isVisualization());
-        verNoMaps.setVisible(isVisualization());
+        mapStatic.setVisible(!multipleMarkers && isVisualization();
+        verNoMaps.setVisible(!multipleMarkers && isVisualization());
     }
 
     protected Integer getHeight() {

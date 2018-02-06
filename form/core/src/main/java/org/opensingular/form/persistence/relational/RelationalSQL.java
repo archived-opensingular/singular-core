@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,12 @@ import org.opensingular.form.persistence.relational.strategy.PersistenceStrategy
  * @author Edmundo Andrade
  */
 public abstract class RelationalSQL {
+    static BasicRelationalMapper singletonBasicRelationalMapper = new BasicRelationalMapper();
+    protected Set<SType<?>> targetTables = new LinkedHashSet<>();
+    protected Set<String> intermediaryTables = new LinkedHashSet<>();
+
+    public abstract List<RelationalSQLCommmand> toSQLScript();
+
     @SafeVarargs
     public static RelationalSQLQuery select(Collection<SType<?>>... fieldCollections) {
         return new RelationalSQLQuery(NONE, fieldCollections);
@@ -107,8 +114,6 @@ public abstract class RelationalSQL {
         return aspectRelationalMap(field).persistenceStrategy(field);
     }
 
-    static BasicRelationalMapper singletonBasicRelationalMapper = new BasicRelationalMapper();
-
     public static RelationalMapper aspectRelationalMap(SType<?> type) {
         Optional<RelationalMapper> mapper = type.getAspect(ASPECT_RELATIONAL_MAP);
         if (mapper.isPresent()) {
@@ -137,16 +142,9 @@ public abstract class RelationalSQL {
     }
 
     public static SInstance tupleKeyRef(SInstance instance) {
-        SInstance tableInstance = null;
-        for (SInstance current = instance; current != null; current = current.getParent()) {
-            if (tableOpt(current.getType()).isPresent()) {
-                tableInstance = current;
-                if (current.getParent() != null && current.getParent().getType() instanceof STypeList) {
-                    break;
-                }
-            }
-        }
-        return tableInstance;
+        return findAncestor(instance, tableContext(instance.getType())).orElseThrow(() -> new SingularFormException(
+                "Relational mapping should provide table name for an ancestor type of the instance '"
+                        + instance.getName() + "'."));
     }
 
     public static Object fieldValue(SInstance instance) {
@@ -187,36 +185,64 @@ public abstract class RelationalSQL {
     static Object getFieldValue(String tableName, SInstance tupleKeyRef, String fieldName,
             List<RelationalColumn> sourceKeyColumns, List<RelationalData> fromList) {
         for (RelationalData data : fromList) {
-            if (data.getTableName().equals(tableName) && data.getTupleKeyRef().equals(tupleKeyRef)
-                    && data.getFieldName().equals(fieldName) && data.getSourceKeyColumns().equals(sourceKeyColumns)) {
+            if (data.getTableName().equalsIgnoreCase(tableName) && data.getTupleKeyRef().equals(tupleKeyRef)
+                    && data.getFieldName().equalsIgnoreCase(fieldName)
+                    && data.getSourceKeyColumns().equals(sourceKeyColumns)) {
                 return data.getFieldValue();
             }
         }
         return null;
     }
 
-    protected Set<SType<?>> targetTables = new LinkedHashSet<>();
-    protected Set<String> intermediaryTables = new LinkedHashSet<>();
-
-    public abstract List<RelationalSQLCommmand> toSQLScript();
-
-    protected List<SType<?>> getFields(SIComposite instance) {
+    public static List<SType<?>> getFields(SIComposite instance) {
         List<SType<?>> list = new ArrayList<>();
         instance.getAllChildren().forEach(child -> addFieldToList(child.getType(), list));
         return list;
     }
 
-    protected List<SType<?>> getFields(STypeComposite<?> type) {
+    public static List<SType<?>> getFields(STypeComposite<?> type) {
         List<SType<?>> list = new ArrayList<>();
         addFieldsToList(type.getFields(), list);
         return list;
     }
 
-    protected void addFieldsToList(Collection<SType<?>> fields, List<SType<?>> list) {
+    public static Map<String, RelationalFK> createJoinMap(Collection<SType<?>> targets) {
+        Map<String, RelationalFK> result = new HashMap<>();
+        for (SType<?> tableContext : targets) {
+            for (RelationalFK relationship : RelationalSQL.tableFKs(tableContext)) {
+                List<RelationalColumn> sourceKeyColumns = relationship.getKeyColumns();
+                result.put(relationship.getTable() + ">" + RelationalSQL.table(relationship.getForeignType()) + "@"
+                        + serialize(sourceKeyColumns), relationship);
+            }
+            ((STypeComposite<?>) tableContext).getContainedTypes().stream()
+                    .filter(item -> item.asSQL().getManyToManyTable() != null).forEach(item -> {
+                        RelationalFK sourceRelationship = new RelationalFK(item.asSQL().getManyToManyTable(),
+                                item.asSQL().getManyToManySourceKeyColumns(), tableContext);
+                        result.put(sourceRelationship.getTable() + ">"
+                                + RelationalSQL.table(sourceRelationship.getForeignType()) + "@"
+                                + serialize(sourceRelationship.getKeyColumns()), sourceRelationship);
+                        SType<?> targetType = ((STypeList<?, ?>) item).getElementsType();
+                        RelationalFK targetRelationship = new RelationalFK(item.asSQL().getManyToManyTable(),
+                                item.asSQL().getManyToManyTargetKeyColumns(), targetType);
+                        result.put(targetRelationship.getTable() + ">"
+                                + RelationalSQL.table(targetRelationship.getForeignType()) + "@"
+                                + serialize(targetRelationship.getKeyColumns()), targetRelationship);
+                    });
+        }
+        return result;
+    }
+
+    protected static String serialize(List<RelationalColumn> columns) {
+        StringJoiner sj = new StringJoiner(",");
+        columns.forEach(column -> sj.add(column.toStringPersistence()));
+        return sj.toString().toUpperCase();
+    }
+
+    protected static void addFieldsToList(Collection<SType<?>> fields, List<SType<?>> list) {
         fields.forEach(field -> addFieldToList(field, list));
     }
 
-    protected void addFieldToList(SType<?> field, List<SType<?>> list) {
+    protected static void addFieldToList(SType<?> field, List<SType<?>> list) {
         if (column(field) != null || foreignColumn(field) != null) {
             list.add(field);
         } else if (field.isComposite()) {
@@ -224,10 +250,28 @@ public abstract class RelationalSQL {
         }
     }
 
+    protected static Optional<SInstance> findAncestor(SInstance instance, SType<?> type) {
+        for (SInstance current = instance; current != null; current = current.getParent()) {
+            if (current.getType().getSuperType() == type || current.getType() == type) {
+                return Optional.of(current);
+            }
+        }
+        return Optional.empty();
+    }
+
+    protected static Optional<SInstance> findDescendant(SIComposite instance, SType<?> type) {
+        for (SInstance current : instance.getAllChildren()) {
+            if (current.getType().getSuperType() == type) {
+                return Optional.of(current);
+            }
+        }
+        return Optional.empty();
+    }
+
     protected void collectKeyColumns(SType<?> type, List<RelationalColumn> keyColumns) {
         SType<?> tableContext = tableContext(type);
         String tableName = table(tableContext);
-        targetTables.add(tableContext);
+        addTargetTable(tableContext);
         List<String> pk = tablePK(tableContext);
         if (pk != null) {
             for (String columnName : pk) {
@@ -258,11 +302,17 @@ public abstract class RelationalSQL {
             sourceKeyColumns = foreignColumn.getForeignKey().getKeyColumns();
         }
         String tableName = table(tableContext);
-        targetTables.add(tableContext);
+        addTargetTable(tableContext);
         RelationalColumn column = new RelationalColumn(tableName, columnName, sourceKeyColumns);
         mapColumnToField.put(column.toStringPersistence(), field);
         if (!targetColumns.contains(column) && !keyColumns.contains(column)) {
             targetColumns.add(column);
+        }
+    }
+
+    private void addTargetTable(SType<?> tableContext) {
+        if (targetTables.stream().noneMatch(item -> item.getName().equals(tableContext.getName()))) {
+            targetTables.add(tableContext);
         }
     }
 
@@ -334,5 +384,37 @@ public abstract class RelationalSQL {
     protected Object fieldValue(SIComposite instance, SType<?> field) {
         String fieldPath = field.getName().replaceFirst(instance.getType().getName() + ".", "");
         return fieldValue(instance.getField(fieldPath));
+    }
+
+    protected void reorderTargetTables(Map<String, RelationalFK> joinMap) {
+        List<SType<?>> tables = new ArrayList<>(targetTables);
+        for (int i = 0; i < tables.size() - 1; i++) {
+            String tableLeft = RelationalSQL.table(tables.get(i));
+            for (int j = i + 1; j < tables.size(); j++) {
+                String tableRight = RelationalSQL.table(tables.get(j));
+                String info = tableRight + '>' + tableLeft + "@";
+                if (joinMap.keySet().stream().anyMatch(item -> item.startsWith(info))) {
+                    SType<?> newLeft = tables.get(j);
+                    tables.remove(j);
+                    tables.add(i, newLeft);
+                    i--;
+                    break;
+                }
+            }
+        }
+        targetTables.clear();
+        targetTables.addAll(tables);
+    }
+
+    protected List<SInstance> getContainerInstances(SIComposite instance) {
+        List<SInstance> result = new ArrayList<>();
+        for (RelationalFK fk : RelationalSQL.tableFKs(instance.getType())) {
+            Optional<SInstance> containerInstance = findAncestor(instance, fk.getForeignType());
+            if (!containerInstance.isPresent()) {
+                containerInstance = findDescendant(instance, fk.getForeignType());
+            }
+            containerInstance.ifPresent(result::add);
+        }
+        return result;
     }
 }

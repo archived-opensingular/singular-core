@@ -118,7 +118,9 @@
 
         configureMarkers(tableContainerElement, map, readOnly, markers, polygon);
         draw(map,  polygon,  markers);
-        configureMultipleFieldsEvents(tableContainerElement, map, markers, polygon);
+        if (!readOnly) {
+            configureMultipleFieldsEvents(tableContainerElement, map, markers, polygon);
+        }
 
         if (!readOnly) {
             map.addListener('click', function (event) {
@@ -137,10 +139,20 @@
         jQuery(tableContainerElement)
             .find('.list-table-body table tbody tr')
             .each(function () {
-                var latLongElements = $(this).find('input[type=text]');
+                var valLat;
+                var valLng;
+                if (readOnly) {
+                    var latLongElements = $(this).find('td');
+                    valLat = $.trim($(latLongElements[0]).text());
+                    valLng = $.trim($(latLongElements[1]).text());
+                } else {
+                    var latLongElements = $(this).find('input[type=text]');
+                    valLat = latLongElements[0].value;
+                    valLng = latLongElements[1].value;
+                }
                 var latLng;
-                if (isLatLongNotEmpty(latLongElements[0], latLongElements[1])) {
-                    latLng = buildGmapsLatLong(latLongElements[0].value, latLongElements[1].value);
+                if (isLatLongNotEmpty(valLat, valLng)) {
+                    latLng = buildGmapsLatLong(valLat, valLng);
                 }
 
                 markers.push(createMarker(map, latLng, polygon, readOnly));
@@ -245,7 +257,7 @@
         if (readOnly) {
             marker.setVisible(false);
         } else {
-            if (isLatLongNotEmpty(latElement, lngElement)) {
+            if (isLatLongNotEmpty(latElement.value, lngElement.value)) {
                 marker.setPosition(latLong);
                 marker.setVisible(true);
             } else {
@@ -312,14 +324,12 @@
         });
     }
 
-    function isLatLongNotEmpty(latElement, lngElement) {
-        var valLat = latElement.value;
-        var valLng = lngElement.value;
+    function isLatLongNotEmpty(valLat, valLng) {
         return valLat !== null && valLng !== "" && valLat && valLng !== "";
     }
 
     function defineMarkerPositionManual(latElement, lngElement, map, marker, center) {
-        if (isLatLongNotEmpty(latElement, lngElement)) {
+        if (isLatLongNotEmpty(latElement.value, lngElement.value)) {
             var latLong = buildGmapsLatLong(latElement.value, lngElement.value);
             marker.setPosition(latLong);
             if (!marker.getVisible()) {
