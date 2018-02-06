@@ -224,7 +224,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         clearButton.setVisible(!multipleMarkers && !isVisualization());
         currentLocationButton.setVisible(SViewCurrentLocation.class.isInstance(view) && !isVisualization());
 
-        mapStatic.setVisible(!multipleMarkers && isVisualization();
+        mapStatic.setVisible(!multipleMarkers && isVisualization());
         verNoMaps.setVisible(!multipleMarkers && isVisualization());
     }
 
