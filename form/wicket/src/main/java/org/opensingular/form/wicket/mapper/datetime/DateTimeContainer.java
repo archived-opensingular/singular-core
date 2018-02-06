@@ -62,14 +62,7 @@ public class DateTimeContainer extends BSContainer<DateTimeContainer> {
 
     protected TextField<String> buildTimeField() {
         final TextField<String> time = new TextField<>("time", new SIDateTimeModel.TimeModel(model));
-        time.add(new Behavior() {
-            @Override
-            public void renderHead(Component component, IHeaderResponse response) {
-                super.renderHead(component, response);
-                final String script = String.format("$('#%s').timepicker(%s)", component.getMarkupId(true), getJSONParams());
-                response.render(OnDomReadyHeaderItem.forScript(script));
-            }
-        });
+        time.add(new CreateTimePickerBehavior(getParams()));
         time.add(new InputMaskBehavior(Masks.TIME));
         return time;
     }
@@ -83,7 +76,9 @@ public class DateTimeContainer extends BSContainer<DateTimeContainer> {
             templateBuildr.append("      data-date-end-date='31/12/2999' data-date-start-view='days' ");
             templateBuildr.append("      data-date-min-view-mode='days'> ");
             templateBuildr.append("    <span class='input-group-addon' style='width: 0; padding: 0; border: none;'></span> ");
-            templateBuildr.append("    <input wicket:id='time' type='text' class='form-control timepicker'> ");
+            templateBuildr.append("    <span>");
+            templateBuildr.append("         <input wicket:id='time' type='text' class='form-control timepicker'> ");
+            templateBuildr.append("    </span> ");
             templateBuildr.append(" </div> ");
             return templateBuildr.toString();
         });
@@ -98,14 +93,6 @@ public class DateTimeContainer extends BSContainer<DateTimeContainer> {
             params.put("minuteStep", dateTimerView.getMinuteStep());
         }
         return params;
-    }
-
-    private String getJSONParams() {
-        final JSONObject jsonObject = new JSONObject();
-        for (Map.Entry<String, Object> entry : getParams().entrySet()) {
-            jsonObject.put(entry.getKey(), entry.getValue());
-        }
-        return jsonObject.toString();
     }
 
 }
