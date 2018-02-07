@@ -32,15 +32,15 @@ import java.util.TreeMap;
  */
 public class CreateTimePickerBehavior extends Behavior {
 
-    private Map<String, Object> params = new TreeMap<>();
+    private TreeMap<String, Object> params = new TreeMap<>();
 
     public CreateTimePickerBehavior(Map<String, Object> params) {
         this.params.putAll(params);
     }
 
     public CreateTimePickerBehavior() {
-        this.params.put("defaultTime", false);
-        this.params.put("showMeridian", false);
+        this.params.put("defaultTime", Boolean.FALSE);
+        this.params.put("showMeridian", Boolean.FALSE);
     }
 
     @Override
