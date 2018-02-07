@@ -13,7 +13,7 @@ public class TestXSDConverter {
 	public void testXsdConverter() {
 		STypeExemplo e = SDictionary.create().getType(STypeExemplo.class);
 		XSDConverter converter = new XSDConverter();
-		converter.converter(e);
+		converter.toXsd(e).printTabulado();
 
 		//TODO thais -  fazer uma assertiva sobre o resultado. Ex: verificar se o xsd retornado é o esperado.
 	}

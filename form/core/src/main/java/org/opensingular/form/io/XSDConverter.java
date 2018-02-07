@@ -19,6 +19,7 @@ import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeLong;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.STypeTime;
+import org.opensingular.internal.lib.commons.xml.MElement;
 
 /*
  * Author: Thais N. Pereira
@@ -26,28 +27,22 @@ import org.opensingular.form.type.core.STypeTime;
 
 public class XSDConverter {
 	
-	private StringBuilder xsd = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
-			"<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n");
-
-	public void converter(SType<?> sType) {		
-		toXsdFromSType(sType, null);
-		xsd.append("</xs:schema>");
-
-		System.out.println(getXsd());
-	}
+	public static final String XSD_SINGULAR_NAMESPACE_URI = "http://opensingular.org/FormSchema";
+    public static final String XSD_NAMESPACE_URI = "http://www.w3.org/2001/XMLSchema";
+    public static final String XSD_NAMESPACE_PREFIX = "xs";
+    private static final String XSD_SCHEMA = XSD_NAMESPACE_PREFIX + ":schema";
+    private static final String XSD_ELEMENT = XSD_NAMESPACE_PREFIX + ":element";
+    private static final String XSD_COMPLEX_TYPE = XSD_NAMESPACE_PREFIX + ":complexType";
+    private static final String XSD_SEQUENCE = XSD_NAMESPACE_PREFIX + ":sequence";
 	
-	public void toXsd(SType<?> sType, Boolean noFormatting) {		
-		toXsdFromSType(sType, null);
-		xsd.append("</xs:schema>");
-		
-		if (noFormatting) {
-			xsd.replace(0, xsd.length(), xsd.toString().replaceAll("[\n|\t]", ""));
-		}
-		
-		System.out.println(getXsd());
-	}
+    public MElement toXsd(SType<?> sType) {
+    	MElement element = MElement.newInstance(XSD_NAMESPACE_URI, XSD_SCHEMA);
+    	toXsdFromSType(sType, null, element);
+    	
+    	return element;
+    }
 	
-	private void toXsdFromSType(SType<?> sType, String parent) {
+	private void toXsdFromSType(SType<?> sType, String typeName, MElement parent) {
 		Field[] attributes = sType.getClass().getDeclaredFields();
 		List<Field> sTypeAttributes = new ArrayList<>();
 		
@@ -59,60 +54,59 @@ public class XSDConverter {
 		}
 		
 		if (!sTypeAttributes.isEmpty()) {		
-			if (sType instanceof STypeSimple) {
-//				toXsdFromSimple((STypeSimple<?, ?>) sType);
-			} else if (sType instanceof STypeList) {
-				Collection<SType<?>> attr = toXsdFromList((STypeList<?, ?>) sType, parent);
-				attr.forEach(s -> toXsdFromSType(s, s.getClass().getSimpleName()));
+			if (sType instanceof STypeList) {
+				Collection<SType<?>> attr = toXsdFromList((STypeList<?, ?>) sType, typeName, parent);
+				attr.forEach(s -> toXsdFromSType(s, s.getClass().getSimpleName(), parent));
 			} else if (sType instanceof STypeComposite) {
-				Collection<SType<?>> attr = toXsdFromComposite((STypeComposite<?>) sType, parent);
-				attr.forEach(s -> toXsdFromSType(s, s.getClass().getSimpleName()));
+				Collection<SType<?>> attr = toXsdFromComposite((STypeComposite<?>) sType, typeName, parent);
+				attr.forEach(s -> toXsdFromSType(s, s.getClass().getSimpleName(), parent));
 			}
 		}
 	}
 
-	private Collection<SType<?>> toXsdFromList(STypeList<?, ?> sType, String parent) {
+	private Collection<SType<?>> toXsdFromList(STypeList<?, ?> sType, String typeName, MElement parent) {
 		Collection<SType<?>> attributes = new ArrayList<>();
 
 		if (STypeComposite.class.isAssignableFrom(sType.getElementsType().getClass())) {
-			attributes = toXsdFromComposite((STypeComposite<?>) sType.getElementsType(), sType.getElementsType().getClass().getSimpleName());
+			attributes = toXsdFromComposite((STypeComposite<?>) sType.getElementsType(), sType.getElementsType().getClass().getSimpleName(), parent);
 		}
 		
 		return attributes;
 	}
 
-	private Collection<SType<?>> toXsdFromComposite(STypeComposite<?> sType, String parent) {
-		String name = (parent == null) ? sType.getNameSimple() : parent;
+	private Collection<SType<?>> toXsdFromComposite(STypeComposite<?> sType, String typeName, MElement parent) {
+		String name = (typeName == null) ? sType.getNameSimple() : typeName;
 		
-		if (parent == null) {
-			xsd.append("\t<xs:element name=\""+ sType.getNameSimple() +"\" type=\""+ sType.getNameSimple() +"\"/>\n");
+		if (typeName == null) {
+			MElement element = parent.addElementNS(XSD_NAMESPACE_URI, XSD_ELEMENT);
+			element.setAttribute("name", sType.getNameSimple());
+			element.setAttribute("type", sType.getNameSimple());
 		} 
 
-		xsd.append("\t<xs:complexType name=" + name + ">\n");
-		xsd.append("\t\t<xs:sequence>\n");
+		MElement element = parent.addElementNS(XSD_NAMESPACE_URI, XSD_COMPLEX_TYPE);
+		element.setAttribute("name", name);
+		element = element.addElementNS(XSD_NAMESPACE_URI, XSD_SEQUENCE);
 
-//		xsdComplexType(parent == null ? sType.getNameSimple() : parent, sTypeAttributes);
-		
-		sType.getFields().forEach(s -> addElement(s, parent));
-
-//		sTypeAttributes.forEach(a -> xsd.append("\t\t"+ xsdElement(a.getName(), getType(a))));
-
-		xsd.append("\t\t</xs:sequence>\n");
-		xsd.append("\t</xs:complexType>\n");
-
-//		sType.getFields().forEach(s -> toXsdFromSType(s, s.getClass().getSimpleName()));
+		for (SType<?> child : sType.getFields()) {
+			addElement(child, element);
+		}
 		
 		return sType.getFields();
-
 	}
 	
-	private void addElement(SType<?> sType, String parent) {
+	private MElement addElement(SType<?> sType, MElement parent) {
+		MElement element = parent.addElementNS(XSD_NAMESPACE_URI, XSD_ELEMENT);
 		
 		if (sType.isList()) {
-			xsd.append("\t\t\t<xs:element maxOccurs=\"unbounded\" name=\""+ sType.getNameSimple() +"\" type=\""+ getType(((STypeList<?, ?>) sType).getElementsType()) +"\"/>\n");
+			element.setAttribute("name", sType.getNameSimple());
+			element.setAttribute("type", getType(((STypeList<?, ?>) sType).getElementsType()));
+			element.setAttribute("maxOccurs", "unbounded");
 		} else {
-			xsd.append("\t\t\t<xs:element name=\""+ sType.getNameSimple() +"\" type=\""+ getType(sType) +"\"/>\n");
+			element.setAttribute("name", sType.getNameSimple());
+			element.setAttribute("type", getType(sType));
 		}
+		
+		return element;
 	}
 	
 	private String getType(SType<?> sType) {
@@ -137,11 +131,7 @@ public class XSDConverter {
 		if (sType instanceof STypeSimple<?, ?>) {
 			return getType(sType.getSuperType());
 		}
+		
 		return name;
 	}
-
-	public String getXsd() {
-		return xsd.toString();
-	}
-
 }
