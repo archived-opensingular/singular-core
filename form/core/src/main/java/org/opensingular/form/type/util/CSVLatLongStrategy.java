@@ -16,21 +16,18 @@
 
 package org.opensingular.form.type.util;
 
-import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
 
-import java.math.BigDecimal;
+public class CSVLatLongStrategy extends AbstractLatlongStrategy {
 
-/**
- * Created by danilo.mesquita on 04/01/2016.
- */
-public class SILatitudeLongitude extends SIComposite {
+    @Override
+    public SILatitudeLongitude parseLine(SIList<SILatitudeLongitude> latLongs, String line) {
+        String[] values = line.split(";");
+        SILatitudeLongitude latitudeLongitude = latLongs.addNew();
+        latitudeLongitude.setLatitude(parseValue(values[0]));
+        latitudeLongitude.setLongitude(parseValue(values[1]));
 
-    public void setLongitude(BigDecimal longitude) {
-        this.setValue(STypeLatitudeLongitude.FIELD_LONGITUDE, longitude);
-    }
-
-    public void setLatitude(BigDecimal latitude) {
-        this.setValue(STypeLatitudeLongitude.FIELD_LATITUDE, latitude);
+        return latitudeLongitude;
     }
 
 }
