@@ -58,3 +58,15 @@
 .btn-default:focus {
     color: #333;
 }
+
+.page-content .form-actions .btn-group .dropdown-menu .btn {
+    border-color: #ffffff;
+    margin-left: 0px;
+    text-align: left;
+    float: none;
+    width: 100%;
+}
+
+.page-content .form-actions .btn-group .dropdown-menu .btn:hover {
+    background-color: #f2f2f2;
+}

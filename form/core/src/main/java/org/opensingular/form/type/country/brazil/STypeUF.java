@@ -44,6 +44,7 @@ public class STypeUF extends STypeComposite<SIComposite> implements Loggable {
                 .id(sigla)
                 .display("${nome!} - ${sigla!}")
                 .simpleProvider(listBuilder -> {
+                    fillAL(listBuilder.add().get());
                     fillAC(listBuilder.add().get());
                     fillAP(listBuilder.add().get());
                     fillAM(listBuilder.add().get());
@@ -73,6 +74,13 @@ public class STypeUF extends STypeComposite<SIComposite> implements Loggable {
 
                 });
     }
+
+    public SIComposite fillAL(SIComposite AC) {
+        AC.setValue(nome, "Alagoas");
+        AC.setValue(sigla, "AL");
+        return AC;
+    }
+
 
     public SIComposite fillAC(SIComposite AC) {
         AC.setValue(nome, "Acre");
