@@ -14,23 +14,11 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.type.util;
+package org.opensingular.form.view;
 
-import org.opensingular.form.SIComposite;
+import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.lib.commons.lambda.IConsumer;
 
-import java.math.BigDecimal;
-
-/**
- * Created by danilo.mesquita on 04/01/2016.
- */
-public class SILatitudeLongitude extends SIComposite {
-
-    public void setLongitude(BigDecimal longitude) {
-        this.setValue(STypeLatitudeLongitude.FIELD_LONGITUDE, longitude);
-    }
-
-    public void setLatitude(BigDecimal latitude) {
-        this.setValue(STypeLatitudeLongitude.FIELD_LATITUDE, latitude);
-    }
+public interface FileEventListener extends IConsumer<SIAttachment> {
 
 }

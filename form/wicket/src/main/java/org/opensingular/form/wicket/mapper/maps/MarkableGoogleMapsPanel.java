@@ -38,6 +38,7 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 import org.json.JSONObject;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
+import org.opensingular.form.type.util.STypeLatitudeLongitudeGMaps;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewCurrentLocation;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
@@ -95,7 +96,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
 
     public void updateJS(AjaxRequestTarget target) {
         if (StringUtils.isNotBlank(singularKeyMapStatic) && StringUtils.isNotBlank(singularKeyMaps)) {
-            target.appendJavaScript("window.setTimeout(function () {console.log('teste');Singular.createSingularMap(" + stringfyId(metaData) + ", '" + singularKeyMaps + "');}, 500);");
+            target.appendJavaScript("window.setTimeout(function () {Singular.createSingularMap(" + stringfyId(metaData) + ", '" + singularKeyMaps + "');}, 500);");
         }
     }
 
@@ -109,7 +110,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
 
         latitudeModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitude.FIELD_LATITUDE));
         longitudeModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitude.FIELD_LONGITUDE));
-        zoomModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitude.FIELD_ZOOM));
+        zoomModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitudeGMaps.FIELD_ZOOM));
         if (!multipleMarkers) {
 
             LoadableDetachableModel<String> googleMapsLinkModel = $m.loadable(() -> {

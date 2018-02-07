@@ -225,7 +225,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             }
         }
 
-        tableFooter.setVisible(!(view.isNewEnabled() && isEdition));
+        tableFooter.add($b.onConfigure(c -> c.setVisible(!(view.isNewEnabled(list.getObject()) && isEdition))));
 
         template
             .add(notEmptyContent
@@ -292,10 +292,10 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                 ctx.createChild(row.newCol(), itemModel, ctx.getConfirmationModal()).setHint(HIDE_LABEL, Boolean.FALSE).build();
             }
 
-            if (viewListByTable.isDeleteEnabled() && ctx.getViewMode().isEdition()) {
+            if (ctx.getViewMode().isEdition()) {
                 final BSTDataCell actionColumn = row.newCol();
                 actionColumn.add($b.attrAppender("style", "width:20px", ";"));
-                appendRemoverButton(this, form, item, actionColumn, ctx.getConfirmationModal());
+                appendRemoverButton(this, form, item, actionColumn, ctx.getConfirmationModal(), viewListByTable);
             }
 
             item.add(row);
