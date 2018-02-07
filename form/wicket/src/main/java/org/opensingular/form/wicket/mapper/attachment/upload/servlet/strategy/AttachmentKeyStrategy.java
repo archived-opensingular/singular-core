@@ -63,7 +63,7 @@ public class AttachmentKeyStrategy implements ServletFileUploadStrategy {
             keyFactory = new AttachmentKeyFactory();
         }
 
-        return new AttachmentKeyFactory();
+        return keyFactory;
     }
 
     protected ServletFileUploadFactory makeServletFileUploadFactory() {
