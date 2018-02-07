@@ -59,6 +59,10 @@ public class AttachmentKeyStrategy implements ServletFileUploadStrategy {
     }
 
     protected AttachmentKeyFactory makeAttachmentKeyFactory() {
+        if (keyFactory == null) {
+            keyFactory = new AttachmentKeyFactory();
+        }
+
         return new AttachmentKeyFactory();
     }
 
@@ -119,6 +123,6 @@ public class AttachmentKeyStrategy implements ServletFileUploadStrategy {
      */
     @Override
     public boolean accept(HttpServletRequest request) {
-        return keyFactory.isRawKeyPresent(request);
+        return makeAttachmentKeyFactory().isRawKeyPresent(request);
     }
 }

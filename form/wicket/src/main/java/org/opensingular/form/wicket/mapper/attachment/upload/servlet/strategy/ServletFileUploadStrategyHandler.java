@@ -30,6 +30,13 @@ import java.util.List;
 
 /**
  * Singleton that handles upload strategies from a {@link javax.servlet.Servlet} instance.
+ * <p>
+ * Process lifecycle:
+ * <ul>
+ * <li>{@link ServletFileUploadStrategy#accept(HttpServletRequest)}</li>
+ * <li>{@link ServletFileUploadStrategy#init()}</li>
+ * <li>{@link ServletFileUploadStrategy#process(HttpServletRequest, HttpServletResponse)}</li>
+ * </ul>
  */
 public final class ServletFileUploadStrategyHandler implements Loggable {
 
@@ -51,11 +58,6 @@ public final class ServletFileUploadStrategyHandler implements Loggable {
 
     /**
      * It processes a strategy instance according to the chosen instance.
-     * Process steps:
-     * <ul>
-     * <li>{@link ServletFileUploadStrategy#init()}</li>
-     * <li>{@link ServletFileUploadStrategy#process(HttpServletRequest, HttpServletResponse)}</li>
-     * </ul>
      *
      * @param request  instace of a servlet request.
      * @param response request instace of a servlet response.

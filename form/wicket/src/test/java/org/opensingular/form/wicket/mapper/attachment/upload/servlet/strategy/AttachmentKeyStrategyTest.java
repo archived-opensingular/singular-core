@@ -145,7 +145,7 @@ public class AttachmentKeyStrategyTest {
         ServletFileUploadStrategy strategy = Mockito.spy(AttachmentKeyStrategy.class);
         strategy.init();
         when(request.getRequestURL()).thenReturn(new StringBuffer(""));
-        assertFalse(attachmentKeyStrategy.accept(request));
+        assertFalse(strategy.accept(request));
         String requestPath = mockRequestPath();
         when(request.getRequestURL()).thenReturn(new StringBuffer(requestPath));
         assertTrue(strategy.accept(request));

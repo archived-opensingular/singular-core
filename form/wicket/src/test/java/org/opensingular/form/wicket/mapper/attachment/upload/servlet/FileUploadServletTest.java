@@ -20,7 +20,6 @@ package org.opensingular.form.wicket.mapper.attachment.upload.servlet;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Spy;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,10 +30,10 @@ import static org.mockito.Mockito.*;
 @RunWith(org.mockito.junit.MockitoJUnitRunner.class)
 public class FileUploadServletTest {
 
-    @Mock
+    @Spy
     private HttpServletRequest request;
 
-    @Mock
+    @Spy
     private HttpServletResponse response;
 
     @Spy
@@ -48,10 +47,9 @@ public class FileUploadServletTest {
 
     @Test
     public void testDelegateProcess() throws Exception {
-        //TODO douglas.silva - reescrever teste
-//        mockMultipartAndPost();
-//        when(request.getRequestURL()).thenReturn(new StringBuffer(""));
-//        uploadServlet.doPost(request, response);
+        mockMultipartAndPost();
+        when(request.getRequestURL()).thenReturn(new StringBuffer(""));
+        uploadServlet.doPost(request, response);
     }
 
     private void mockMultipartAndPost() {
