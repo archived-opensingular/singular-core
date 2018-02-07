@@ -41,8 +41,11 @@ public class AttachmentKeyStrategy implements ServletFileUploadStrategy {
     private ServletFileUploadFactory servletFileUploadFactory;
     private FileUploadProcessor upProcessor;
     private UploadResponseWriter upResponseWriter;
-    private AttachmentKey attachmentKey;
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void init() {
         this.uploadManagerFactory = makeFileUploadManagerFactory();
         this.keyFactory = makeAttachmentKeyFactory();
@@ -79,8 +82,12 @@ public class AttachmentKeyStrategy implements ServletFileUploadStrategy {
         return req.getServletContext().getContextPath() + UPLOAD_URL + "/" + attachmentKey.asString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void process(HttpServletRequest req, HttpServletResponse resp) throws IOException, FileUploadException {
+        AttachmentKey attachmentKey = keyFactory.makeFromRequestPathOrNull(req);
 
         if (attachmentKey == null) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unidentifiable upload");
@@ -107,8 +114,11 @@ public class AttachmentKeyStrategy implements ServletFileUploadStrategy {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean accept(HttpServletRequest request) {
-        return keyFactory.makeFromRequestPathOrNull(request) != null;
+        return keyFactory.isRawKeyPresent(request);
     }
 }

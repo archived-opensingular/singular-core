@@ -18,7 +18,9 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -26,7 +28,7 @@ import static org.mockito.Mockito.*;
 @RunWith(org.mockito.junit.MockitoJUnitRunner.class)
 public class AttachmentKeyStrategyTest {
 
-    private String        keyValue      = "123456";
+    private String keyValue = "123456";
     private AttachmentKey attachmentKey = new AttachmentKey(keyValue);
 
     @Mock
@@ -70,22 +72,27 @@ public class AttachmentKeyStrategyTest {
 
     @Before
     public void setUp() {
-        Mockito.when(attachmentKeyStrategy.makeAttachmentKeyFactory()).thenReturn(attachmentKeyFactory);
-        Mockito.when(attachmentKeyStrategy.makeFileUploadConfig()).thenReturn(fileUploadConfig);
-        Mockito.when(attachmentKeyStrategy.makeFileUploadManagerFactory()).thenReturn(fileUploadManagerFactory);
-        Mockito.when(attachmentKeyStrategy.makeServletFileUploadFactory()).thenReturn(servletFileUploadFactory);
-        Mockito.when(attachmentKeyStrategy.makeFileUploadProcessor()).thenReturn(uploadProcessor);
-        Mockito.when(attachmentKeyStrategy.makeUploadResponseWriter()).thenReturn(uploadResponseWriter);
+        when(attachmentKeyStrategy.makeAttachmentKeyFactory()).thenReturn(attachmentKeyFactory);
+        when(attachmentKeyStrategy.makeFileUploadConfig()).thenReturn(fileUploadConfig);
+        when(attachmentKeyStrategy.makeFileUploadManagerFactory()).thenReturn(fileUploadManagerFactory);
+        when(attachmentKeyStrategy.makeServletFileUploadFactory()).thenReturn(servletFileUploadFactory);
+        when(attachmentKeyStrategy.makeFileUploadProcessor()).thenReturn(uploadProcessor);
+        when(attachmentKeyStrategy.makeUploadResponseWriter()).thenReturn(uploadResponseWriter);
         attachmentKeyStrategy.init();
     }
 
     @Test
-    public void getUploadUrl() throws Exception {
+    public void getUploadUrl() {
+        String requestPath = mockRequestPath();
+        assertEquals(requestPath, AttachmentKeyStrategy.getUploadUrl(request, attachmentKey));
+    }
+
+    private String mockRequestPath() {
         ServletContext servletContext = mock(ServletContext.class);
-        String         contextpath    = "http://localhost:8080";
+        String contextpath = "http://localhost:8080";
         when(request.getServletContext()).thenReturn(servletContext);
         when(servletContext.getContextPath()).thenReturn(contextpath);
-        assertEquals(contextpath + AttachmentKeyStrategy.UPLOAD_URL + "/" + keyValue, AttachmentKeyStrategy.getUploadUrl(request, attachmentKey));
+        return contextpath + AttachmentKeyStrategy.UPLOAD_URL + "/" + keyValue;
     }
 
     @Test
@@ -102,8 +109,8 @@ public class AttachmentKeyStrategyTest {
         Map<String, List<FileItem>> params = new HashMap<>();
 
         List<FileItem> fileItems = new ArrayList<>();
-        FileItem       fileItem1 = mock(FileItem.class);
-        FileItem       fileItem2 = mock(FileItem.class);
+        FileItem fileItem1 = mock(FileItem.class);
+        FileItem fileItem2 = mock(FileItem.class);
 
         fileItems.add(fileItem1);
         fileItems.add(fileItem2);
@@ -131,6 +138,17 @@ public class AttachmentKeyStrategyTest {
         attachmentKeyStrategy.process(request, response);
         verify(attachmentKeyFactory).makeFromRequestPathOrNull(eq(request));
         verify(response).sendError(eq(HttpServletResponse.SC_NOT_FOUND), any());
+    }
+
+    @Test
+    public void testAcceptRequest() {
+        ServletFileUploadStrategy strategy = Mockito.spy(AttachmentKeyStrategy.class);
+        strategy.init();
+        when(request.getRequestURL()).thenReturn(new StringBuffer(""));
+        assertFalse(attachmentKeyStrategy.accept(request));
+        String requestPath = mockRequestPath();
+        when(request.getRequestURL()).thenReturn(new StringBuffer(requestPath));
+        assertTrue(strategy.accept(request));
     }
 
     private void mockFactories() {

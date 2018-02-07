@@ -27,7 +27,9 @@ import org.mockito.Mockito;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 @RunWith(Parameterized.class)
 public class AttachmentKeyFactoryTest {
@@ -41,8 +43,7 @@ public class AttachmentKeyFactoryTest {
 
     @Parameters
     public static Object[] paths() {
-        return new Object[]{"D:" + File.separator + "Temp" + File.separator + "MyFiles" + File.separator + "" + KEY,
-                File.separator + "home" + File.separator + "user" + File.separator + "temp" + File.separator + KEY};
+        return new Object[]{"http://localhost:8080/upload/" + KEY};
     }
 
     @Before
@@ -52,10 +53,26 @@ public class AttachmentKeyFactoryTest {
 
     @Test
     public void testGet() throws Exception {
-        HttpServletRequest httpServletRequest = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(httpServletRequest.getPathTranslated()).thenReturn(path);
+        HttpServletRequest httpServletRequest = mockHttpServletRequest();
+        mockPath(httpServletRequest);
         assertEquals(KEY, attachmentKeyFactory.makeFromRequestPathOrNull(httpServletRequest).asString());
     }
 
+    @Test
+    public void testIfRawKeyIsPresent() {
+        HttpServletRequest httpServletRequest = mockHttpServletRequest();
+        Mockito.when(httpServletRequest.getRequestURL()).thenReturn(new StringBuffer(""));
+        assertFalse(attachmentKeyFactory.isRawKeyPresent(httpServletRequest));
+        mockPath(httpServletRequest);
+        assertTrue(attachmentKeyFactory.isRawKeyPresent(httpServletRequest));
+    }
+
+    private HttpServletRequest mockHttpServletRequest() {
+        return Mockito.mock(HttpServletRequest.class);
+    }
+
+    private void mockPath(HttpServletRequest httpServletRequest) {
+        Mockito.when(httpServletRequest.getRequestURL()).thenReturn(new StringBuffer(path));
+    }
 
 }

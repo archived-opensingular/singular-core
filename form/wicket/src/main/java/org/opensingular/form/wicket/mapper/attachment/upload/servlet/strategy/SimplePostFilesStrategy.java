@@ -29,16 +29,25 @@ import java.io.IOException;
  */
 public class SimplePostFilesStrategy implements ServletFileUploadStrategy {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init() {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, FileUploadException {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean accept(HttpServletRequest request) {
         return false;

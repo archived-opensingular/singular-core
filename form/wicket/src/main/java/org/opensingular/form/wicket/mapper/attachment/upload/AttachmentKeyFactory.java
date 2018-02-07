@@ -17,27 +17,46 @@
 package org.opensingular.form.wicket.mapper.attachment.upload;
 
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.lib.commons.util.Loggable;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.Serializable;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.substringAfterLast;
 
-public class AttachmentKeyFactory  implements Serializable {
+public class AttachmentKeyFactory implements Serializable, Loggable {
 
     public AttachmentKey make() {
         return new AttachmentKey(UUID.randomUUID().toString());
     }
 
     public AttachmentKey makeFromRequestPathOrNull(HttpServletRequest req) {
-        String rawKey = substringAfterLast(defaultString(req.getPathTranslated()), File.separator);
-        if(!StringUtils.isBlank(rawKey)){
-            return new AttachmentKey(rawKey);
+        if (isRawKeyPresent(req)) {
+            return new AttachmentKey(retrieveRawKeyFromRequest(req));
         }
         return null;
+    }
+
+    /**
+     * Utility method to check if the raw key is present in the request.
+     *
+     * @param req servlet request.
+     * @return <code>true</code> if present.
+     */
+    public boolean isRawKeyPresent(HttpServletRequest req) {
+        return !StringUtils.isBlank(retrieveRawKeyFromRequest(req));
+    }
+
+    /**
+     * Retrieves the raw key from {@link HttpServletRequest}.
+     *
+     * @param req servlet request.
+     * @return the raw key or blank if not present.
+     */
+    protected String retrieveRawKeyFromRequest(HttpServletRequest req) {
+        return substringAfterLast(defaultString(req.getRequestURL().toString()), "/");
     }
 
 }
