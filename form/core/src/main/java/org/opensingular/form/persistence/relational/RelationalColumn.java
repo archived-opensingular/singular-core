@@ -72,14 +72,15 @@ public class RelationalColumn {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof RelationalColumn)
-            return ((RelationalColumn) obj).getTable().equals(getTable())
-                    && ((RelationalColumn) obj).getName().equals(getName())
+            return ((RelationalColumn) obj).getTable().equalsIgnoreCase(getTable())
+                    && ((RelationalColumn) obj).getName().equalsIgnoreCase(getName())
                     && ((RelationalColumn) obj).getSourceKeyColumns().equals(getSourceKeyColumns());
         return super.equals(obj);
     }
 
     @Override
     public int hashCode() {
-        return getTable().hashCode() * 11 + getName().hashCode() * 7 + getSourceKeyColumns().hashCode() * 3 + 5;
+        return getTable().toLowerCase().hashCode() * 11 + getName().toLowerCase().hashCode() * 7
+                + getSourceKeyColumns().hashCode() * 3 + 5;
     }
 }

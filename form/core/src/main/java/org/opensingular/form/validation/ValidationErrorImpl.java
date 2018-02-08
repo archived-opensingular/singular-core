@@ -18,9 +18,12 @@ package org.opensingular.form.validation;
 
 public class ValidationErrorImpl implements ValidationError {
 
-    private final Integer              instanceId;
-    private final ValidationErrorLevel errorLevel;
-    private final String               message;
+    private Integer              instanceId;
+    private ValidationErrorLevel errorLevel;
+    private String               message;
+
+    public ValidationErrorImpl() {
+    }
 
     public ValidationErrorImpl(Integer instanceId, ValidationErrorLevel level, String message) {
         this.instanceId = instanceId;
@@ -46,13 +49,13 @@ public class ValidationErrorImpl implements ValidationError {
     @Override
     public String toString() {
         return String.format("(%s %d '%s')",
-            getErrorLevel(), getInstanceId(), getMessage());
+                getErrorLevel(), getInstanceId(), getMessage());
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
+        final int prime  = 31;
+        int       result = 1;
         result = prime * result + ((errorLevel == null) ? 0 : errorLevel.hashCode());
         result = prime * result + ((instanceId == null) ? 0 : instanceId);
         result = prime * result + ((message == null) ? 0 : message.hashCode());

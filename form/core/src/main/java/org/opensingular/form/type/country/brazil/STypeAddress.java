@@ -34,7 +34,6 @@ public class STypeAddress extends STypeComposite<SIComposite> implements Loggabl
     public STypeString  numero;
     public STypeUF      estado;
     public STypeString  bairro;
-    public STypeString  pais;
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -64,8 +63,5 @@ public class STypeAddress extends STypeComposite<SIComposite> implements Loggabl
 
         estado = this.addField("estado", STypeUF.class);
 
-        pais = addFieldString("pais");
-        pais.asAtr().label("País");
-        pais.asAtrBootstrap().colPreference(2);
     }
 }

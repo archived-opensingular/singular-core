@@ -37,7 +37,6 @@ public class STypeAddressTest {
         address.estado.fillDF(siAddress1.getField(address.estado));
         siAddress1.setValue(address.complemento, "nada");
         siAddress1.setValue(address.logradouro, "muito louco");
-        siAddress1.setValue(address.pais, "brasil");
 
         siAddress2.setValue(siAddress1);
 

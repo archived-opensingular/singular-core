@@ -28,6 +28,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.type.core.STypeTime;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior;
+import org.opensingular.form.wicket.mapper.datetime.CreateTimePickerBehavior;
 import org.opensingular.form.wicket.model.SIDateTimeModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
@@ -44,18 +45,7 @@ public class TimeMapper extends AbstractControlsFieldComponentMapper {
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final TextField<String> time = new TextField<>("time",
                 new SIDateTimeModel.TimeModel(new SInstanceValueModel<>(ctx.getModel())));
-        time.add(new Behavior() {
-            @Override
-            public void renderHead(Component component, IHeaderResponse response) {
-                super.renderHead(component, response);
-                final String script = String.format("$('#%s').timepicker(%s); ", component.getMarkupId(true), getJSONParams())
-                        + "$('#"+component.getMarkupId(true)+"').on('keydown', function(e){"
-                        + "  switch (e.keyCode) { case 9: $(this).timepicker('hideWidget'); }"
-                        + "});"
-                        ;
-                response.render(OnDomReadyHeaderItem.forScript(script));
-            }
-        });
+        time.add(new CreateTimePickerBehavior());
         time.add(new InputMaskBehavior(InputMaskBehavior.Masks.TIME));
         formGroup.appendInputText(time);
         return time;
@@ -70,10 +60,4 @@ public class TimeMapper extends AbstractControlsFieldComponentMapper {
         return StringUtils.EMPTY;
     }
 
-    private String getJSONParams() {
-        final JSONObject jsonObject = new JSONObject();
-        jsonObject.put("defaultTime", false);
-        jsonObject.put("showMeridian", false);
-        return jsonObject.toString();
-    }
 }

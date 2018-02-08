@@ -90,9 +90,7 @@ public class SearchModalPanel extends Panel {
             modal.hide(target);
             target.add(valueField);
             valueField.getBehaviors(AjaxUpdateInputBehavior.class)
-                    .stream()
-                    .findFirst().
-                    ifPresent(ajax -> ajax.onUpdate(target));
+                    .forEach(ajax -> ajax.onUpdate(target));
         }));
         ctx.getRootContainer().appendTag("div", modal);
     }

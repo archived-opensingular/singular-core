@@ -18,16 +18,22 @@
 
 package org.opensingular.form.io;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInfoPackage;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.SPackage;
 import org.opensingular.form.SType;
+import org.opensingular.form.STypeAttachmentList;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TestCaseForm;
+import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.helpers.AssertionsSType;
 import org.opensingular.form.helpers.AssertionsXML;
 import org.opensingular.form.type.core.STypeBoolean;
@@ -39,6 +45,8 @@ import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeLong;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.STypeTime;
+
+import javax.annotation.Nonnull;
 
 /**
  * Testa se o correto funcionamento da conversão de um XSD em Stype. Mais
@@ -55,8 +63,8 @@ public class TestFormXSDUtil extends TestCaseForm {
 
     @Test
     public void toXsdSimpleType() {
-        SDictionary dictionary = createTestDictionary();
-        AssertionsXML xml = toXsd(dictionary.getType(STypeString.class));
+        SDictionary   dictionary = createTestDictionary();
+        AssertionsXML xml        = toXsd(dictionary.getType(STypeString.class));
         xml = xml.getOnlyChild("xs:element");
         xml.hasAttributes(3).isAttribute("name", "String").isAttribute("type", "xs:string").isAttribute("xsf:maxLength",
                 "100").hasNoChildren();
@@ -101,7 +109,7 @@ public class TestFormXSDUtil extends TestCaseForm {
 
     @Test
     public void toXsdCompositeType() {
-        PackageBuilder pkg = createTestPackage();
+        PackageBuilder              pkg   = createTestPackage();
         STypeComposite<SIComposite> order = pkg.createCompositeType("order");
         order.addFieldString("description").asAtr().required();
         order.addFieldString("observation");
@@ -140,9 +148,9 @@ public class TestFormXSDUtil extends TestCaseForm {
 
     @Test
     public void toXsdListTypeOfComposite() {
-        PackageBuilder pkg = createTestPackage();
+        PackageBuilder                                      pkg   = createTestPackage();
         STypeList<STypeComposite<SIComposite>, SIComposite> items = pkg.createListOfNewCompositeType("items", "item");
-        STypeComposite<SIComposite> item = items.getElementsType();
+        STypeComposite<SIComposite>                         item  = items.getElementsType();
         item.addFieldString("name").asAtr().required();
 
         AssertionsXML xml = toXsd(items);
@@ -193,19 +201,19 @@ public class TestFormXSDUtil extends TestCaseForm {
     public void testSimpleCase() {
         //@formatter:off
         String xsd =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
-        "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n" +
-        "<xs:element name=\"shipto\">" +
-        "  <xs:complexType>" +
-        "    <xs:sequence>" +
-        "      <xs:element name=\"name\" type=\"xs:string\" minOccurs=\"0\"/>" +
-        "      <xs:element name=\"address\" type=\"xs:string\"/>" +
-        "      <xs:element name=\"city\" type=\"xs:positiveInteger\"/>" +
-        "      <xs:element name=\"country\" type=\"xs:decimal\"/>" +
-        "    </xs:sequence>" +
-        "  </xs:complexType>" +
-        "</xs:element>" +
-        "</xs:schema>";
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
+                        "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n" +
+                        "<xs:element name=\"shipto\">" +
+                        "  <xs:complexType>" +
+                        "    <xs:sequence>" +
+                        "      <xs:element name=\"name\" type=\"xs:string\" minOccurs=\"0\"/>" +
+                        "      <xs:element name=\"address\" type=\"xs:string\"/>" +
+                        "      <xs:element name=\"city\" type=\"xs:positiveInteger\"/>" +
+                        "      <xs:element name=\"country\" type=\"xs:decimal\"/>" +
+                        "    </xs:sequence>" +
+                        "  </xs:complexType>" +
+                        "</xs:element>" +
+                        "</xs:schema>";
         //@formatter:on
 
         AssertionsSType type = parseXsd(xsd);
@@ -221,39 +229,39 @@ public class TestFormXSDUtil extends TestCaseForm {
     public void testLongCase() {
         //@formatter:off
         String xsd =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
-        "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n" +
-        "\n" +
-        "<xs:element name=\"shiporder\">\n" +
-        "  <xs:complexType>\n" +
-        "    <xs:sequence>\n" +
-        "      <xs:element name=\"orderperson\" type=\"xs:string\"/>\n" +
-        "      <xs:element name=\"shipto\">\n" +
-        "        <xs:complexType>\n" +
-        "          <xs:sequence>\n" +
-        "            <xs:element name=\"name\" type=\"xs:string\"/>\n" +
-        "            <xs:element name=\"address\" type=\"xs:string\"/>\n" +
-        "            <xs:element name=\"city\" type=\"xs:string\"/>\n" +
-        "            <xs:element name=\"country\" type=\"xs:string\"/>\n" +
-        "          </xs:sequence>\n" +
-        "        </xs:complexType>\n" +
-        "      </xs:element>\n" +
-        "      <xs:element name=\"item\" maxOccurs=\"unbounded\">\n" +
-        "        <xs:complexType>\n" +
-        "          <xs:sequence>\n" +
-        "            <xs:element name=\"title\" type=\"xs:string\"/>\n" +
-        "            <xs:element name=\"note\" type=\"xs:string\" minOccurs=\"0\"/>\n" +
-        "            <xs:element name=\"quantity\" type=\"xs:positiveInteger\"/>\n" +
-        "            <xs:element name=\"price\" type=\"xs:decimal\"/>\n" +
-        "          </xs:sequence>\n" +
-        "        </xs:complexType>\n" +
-        "      </xs:element>\n" +
-        "    </xs:sequence>\n" +
-        "    <xs:attribute name=\"orderid\" type=\"xs:string\" use=\"required\"/>\n" +
-        "    <xs:attribute name=\"orderPriority\" type=\"xs:string\"/>\n" +
-        "  </xs:complexType>\n" +
-        "</xs:element>\n" +
-        "</xs:schema>";
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
+                        "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n" +
+                        "\n" +
+                        "<xs:element name=\"shiporder\">\n" +
+                        "  <xs:complexType>\n" +
+                        "    <xs:sequence>\n" +
+                        "      <xs:element name=\"orderperson\" type=\"xs:string\"/>\n" +
+                        "      <xs:element name=\"shipto\">\n" +
+                        "        <xs:complexType>\n" +
+                        "          <xs:sequence>\n" +
+                        "            <xs:element name=\"name\" type=\"xs:string\"/>\n" +
+                        "            <xs:element name=\"address\" type=\"xs:string\"/>\n" +
+                        "            <xs:element name=\"city\" type=\"xs:string\"/>\n" +
+                        "            <xs:element name=\"country\" type=\"xs:string\"/>\n" +
+                        "          </xs:sequence>\n" +
+                        "        </xs:complexType>\n" +
+                        "      </xs:element>\n" +
+                        "      <xs:element name=\"item\" maxOccurs=\"unbounded\">\n" +
+                        "        <xs:complexType>\n" +
+                        "          <xs:sequence>\n" +
+                        "            <xs:element name=\"title\" type=\"xs:string\"/>\n" +
+                        "            <xs:element name=\"note\" type=\"xs:string\" minOccurs=\"0\"/>\n" +
+                        "            <xs:element name=\"quantity\" type=\"xs:positiveInteger\"/>\n" +
+                        "            <xs:element name=\"price\" type=\"xs:decimal\"/>\n" +
+                        "          </xs:sequence>\n" +
+                        "        </xs:complexType>\n" +
+                        "      </xs:element>\n" +
+                        "    </xs:sequence>\n" +
+                        "    <xs:attribute name=\"orderid\" type=\"xs:string\" use=\"required\"/>\n" +
+                        "    <xs:attribute name=\"orderPriority\" type=\"xs:string\"/>\n" +
+                        "  </xs:complexType>\n" +
+                        "</xs:element>\n" +
+                        "</xs:schema>";
         //@formatter:on
 
         AssertionsSType type = parseXsd(xsd);
@@ -280,7 +288,57 @@ public class TestFormXSDUtil extends TestCaseForm {
 
     private AssertionsSType parseXsd(String xsd) {
         PackageBuilder sPackage = createTestPackage();
-        SType<?> type = FormXSDUtil.xsdToSType(sPackage, xsd);
+        SType<?>       type     = FormXSDUtil.xsdToSType(sPackage, xsd);
         return new AssertionsSType(type).isNotNull();
+    }
+
+    @SInfoPackage(name = TestXSDPackage.PACKAGE_NAME)
+    public static class TestXSDPackage extends SPackage {
+
+        public static final String PACKAGE_NAME = "org.TestXSDPackage.form";
+
+    }
+
+
+    @SInfoType(spackage = TestXSDPackage.class)
+    public static class STypeTestXSDWithLists extends STypeComposite<SIComposite> {
+
+
+        public STypeString         nomeMae;
+        public STypeAttachmentList documentos;
+
+
+        @Override
+        protected void onLoadType(@Nonnull TypeBuilder tb) {
+            this.asAtr().label("Dados Pessoais");
+            this.asAtrAnnotation().setAnnotated();
+
+
+            nomeMae = addField("nomeMae", STypeString.class);
+
+
+            nomeMae.asAtr().label("Nome Mãe").asAtrBootstrap().colPreference(6);
+
+            documentos = this.addFieldListOfAttachment("documentos", "documento");
+            documentos.asAtr().label("Documentos");
+            documentos.withMaximumSizeOf(10);
+            documentos.withMiniumSizeOf(0);
+            documentos.asAtr().required(false);
+
+
+        }
+    }
+
+    @Test
+    public void toAndFromXSDWithListsTest() {
+        SDictionary           dictionary = SDictionary.create();
+        STypeTestXSDWithLists form       = dictionary.getType(STypeTestXSDWithLists.class);
+        String                xsd        = FormXSDUtil.toXsd(form, FormToXSDConfig.newForWebServiceDefinition()).toString();
+        System.out.println(xsd);
+        PackageBuilder pb          = SDictionary.create().createNewPackage(form.getPackage().getName());
+        SType<?>       formXSD     = FormXSDUtil.xsdToSType(pb, xsd);
+        String         xsdFromForm = FormXSDUtil.toXsd(formXSD, FormToXSDConfig.newForWebServiceDefinition()).toString();
+        System.out.println(xsdFromForm);
+        Assert.assertEquals(xsd, xsdFromForm);
     }
 }

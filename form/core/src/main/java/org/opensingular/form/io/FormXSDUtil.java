@@ -32,22 +32,25 @@ import javax.annotation.Nonnull;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class FormXSDUtil {
 
-    public static final String XSD_SINGULAR_NAMESPACE_URI = "http://opensingular.org/FormSchema";
-    public static final String XSD_NAMESPACE_URI = "http://www.w3.org/2001/XMLSchema";
-    public static final String XSD_NAMESPACE_PREFIX = "xs";
-    private static final String XSD_SCHEMA = XSD_NAMESPACE_PREFIX + ":schema";
-    private static final String XSD_ELEMENT = XSD_NAMESPACE_PREFIX + ":element";
-    private static final String XSD_COMPLEX_TYPE = XSD_NAMESPACE_PREFIX + ":complexType";
-    private static final String XSD_SEQUENCE = XSD_NAMESPACE_PREFIX + ":sequence";
+    public static final  String XSD_SINGULAR_NAMESPACE_URI = "http://opensingular.org/FormSchema";
+    public static final  String XSD_NAMESPACE_URI          = "http://www.w3.org/2001/XMLSchema";
+    public static final  String XSD_NAMESPACE_PREFIX       = "xs";
+    private static final String XSD_SCHEMA                 = XSD_NAMESPACE_PREFIX + ":schema";
+    private static final String XSD_ELEMENT                = XSD_NAMESPACE_PREFIX + ":element";
+    private static final String XSD_COMPLEX_TYPE           = XSD_NAMESPACE_PREFIX + ":complexType";
+    private static final String XSD_SEQUENCE               = XSD_NAMESPACE_PREFIX + ":sequence";
 
     private static XsdTypeMapping typeMapping;
 
@@ -61,7 +64,9 @@ public class FormXSDUtil {
         return typeMapping;
     }
 
-    /** Converts a {@link SType} definition to a XSD format.*/
+    /**
+     * Converts a {@link SType} definition to a XSD format.
+     */
     @Nonnull
     public static MElement toXsd(@Nonnull SType<?> type, @Nonnull FormToXSDConfig config) {
         Objects.requireNonNull(type);
@@ -111,6 +116,7 @@ public class FormXSDUtil {
 
         MElement element = composite.addElementNS(XSD_NAMESPACE_URI, XSD_COMPLEX_TYPE);
         element = element.addElementNS(XSD_NAMESPACE_URI, XSD_SEQUENCE);
+        element.setAttribute("minOccurs", "0");
         for (SType<?> child : type.getFields()) {
             toXsdFromSType(element, child, config);
         }
@@ -118,8 +124,8 @@ public class FormXSDUtil {
     }
 
     private static MElement toXsdFromSimple(MElement parent, STypeSimple<?, ?> type, @Nonnull FormToXSDConfig config) {
-        MElement simple = createXsdElement(parent, type);
-        String xsdType = getMapping().findXsdType(type);
+        MElement simple  = createXsdElement(parent, type);
+        String   xsdType = getMapping().findXsdType(type);
         simple.setAttribute("type", XSD_NAMESPACE_PREFIX + ":" + xsdType);
         if (!type.isRequired() && !XSD_SCHEMA.equals(parent.getNodeName())) {
             simple.setAttribute("minOccurs", "0");
@@ -158,8 +164,8 @@ public class FormXSDUtil {
 
     private static SType<?> xsdToSType(PackageBuilder packageForNewTypes, MElement root) {
 
-        XsdContext xsdContext = new XsdContext(packageForNewTypes);
-        ElementReader element = new ElementReader(xsdContext, root);
+        XsdContext    xsdContext = new XsdContext(packageForNewTypes);
+        ElementReader element    = new ElementReader(xsdContext, root);
 
         if (!element.isTagXsdSchema()) {
             throw new SingularFormException(
@@ -192,37 +198,35 @@ public class FormXSDUtil {
     }
 
     private static void readXsdElementDefinition(SType<?> typeContext, ElementReader parent, ElementReader element, boolean generateLabel) {
-        String name = element.getAttrRequired("name");
+        String   name          = element.getAttrRequired("name");
         SType<?> typeOfNewType = detectType(element);
         SType<?> newType;
         if (typeContext == null) {
-            if (element.isList()) {
+            if (typeOfNewType.isList()) {
                 throw new SingularFormException(element.errorMsg("Tipo raiz não esperado como lista"));
             }
             newType = parent.getPkg().createType(name, typeOfNewType);
-            if(generateLabel){
+            if (generateLabel) {
                 newType.asAtr().label(StringUtils.capitalize(name));
             }
             readXsd(newType, element);
         } else if (typeContext.isComposite()) {
-            if (element.isList()) {
-                if (typeOfNewType.getClass() == STypeComposite.class) {
-                    newType = ((STypeComposite) typeContext).addFieldListOfComposite(name + "List", name);
-                } else {
-                    newType = ((STypeComposite) typeContext).addFieldListOf(name, typeOfNewType);
-                }
-                if(generateLabel){
+            if (typeOfNewType.isList()) {
+                ElementReader listElementType = findListElement(element);
+                newType = ((STypeComposite) typeContext).addFieldListOfComposite(name, listElementType.getAttr("name"));
+                if (generateLabel) {
                     newType.asAtr().label(StringUtils.capitalize(name));
                 }
-                readXsd(((STypeList) newType).getElementsType(), element);
+                SType<?> elementType = ((STypeList<?, ?>) newType).getElementsType();
+                readXsd(elementType, findNextComplexType(listElementType));
             } else {
                 newType = ((STypeComposite) typeContext).addField(name, typeOfNewType);
-                if(generateLabel){
+                if (generateLabel) {
                     newType.asAtr().label(StringUtils.capitalize(name));
                 }
                 readXsd(newType, element);
             }
-            
+
         } else {
             element.checkUnexpectedNodeFor(typeContext);
             return;
@@ -230,19 +234,37 @@ public class FormXSDUtil {
         readXsdOwnAttributes(element, newType);
     }
 
+    private static ElementReader findNextComplexType(ElementReader listElementType) {
+        return listElementType
+                .streamChildren()
+                .filter(ElementReader::isTagComplexType)
+                .findFirst()
+                .orElseThrow(() -> new SingularFormException(listElementType.errorMsg(" Could no get the underlying complex type")));
+    }
+
+    private static ElementReader findListElement(ElementReader element) {
+        return element
+                .streamChildren()
+                .filter(ElementReader::isTagComplexType)
+                .findFirst()
+                .map(FormXSDUtil::lookAheadForListElementType)
+                .map(Optional::get)
+                .orElseThrow(() -> new SingularFormException(element.errorMsg(" Could not identify the list elements type ")));
+    }
+
     private static void readXsdAtributeDefinition(ElementReader element, SType<?> typeContext) {
         if (!typeContext.isComposite()) {
             element.checkUnexpectedNodeFor(typeContext);
             return;
         }
-        String name = element.getAttrRequired("name");
+        String   name          = element.getAttrRequired("name");
         SType<?> typeOfNewType = detectType(element, element.getAttrRequired("type"));
-        SType<?> newType = ((STypeComposite) typeContext).addField(name, typeOfNewType);
+        SType<?> newType       = ((STypeComposite) typeContext).addField(name, typeOfNewType);
         readXsdOwnAttributes(element, newType);
     }
 
     private static void readXsdOwnAttributes(ElementReader element, SType<?> newType) {
-        if (element.isTagAttribute() ) {
+        if (element.isTagAttribute()) {
             String value = element.getAttr("use");
             if (value != null) {
                 newType.asAtr().required("required".equals(value));
@@ -255,7 +277,7 @@ public class FormXSDUtil {
 
     private static void readXsdOwnAttributeMinOccurs(ElementReader element, SType<?> newType) {
         Integer minOccurs = element.getAttrInteger("minOccurs");
-        if (minOccurs == null || minOccurs.intValue() == 1) {
+        if (minOccurs == null || minOccurs == 1) {
             newType.asAtr().required();
             if (newType.isList()) {
                 ((STypeList) newType).withMiniumSizeOf(1);
@@ -290,16 +312,71 @@ public class FormXSDUtil {
         if (!StringUtils.isBlank(xsdTypeName)) {
             return detectType(element, xsdTypeName);
         }
-        if (element.streamChildren().anyMatch(e -> e.isTagComplexType())) {
-            return element.getXsdContext().getType(STypeComposite.class);
+        Optional<ElementReader> complexTypeChildrenOpt = element.streamChildren().filter(ElementReader::isTagComplexType).findFirst();
+        if (complexTypeChildrenOpt.isPresent()) {
+            ElementReader complexTypeChildren = complexTypeChildrenOpt.get();
+            if (isList(complexTypeChildren)) {
+                return element.getXsdContext().getType(STypeList.class);
+            } else {
+                return element.getXsdContext().getType(STypeComposite.class);
+            }
         }
         throw new SingularFormException(element.errorMsg("Não preparado para detectar o tipo"));
+    }
+
+    /**
+     * Look ahead of the current complexTypeElement in search of a list pattern like the xsd excerpt below:
+     * <p>
+     * &lt;xs:element name=&quot;documentos&quot;&gt;
+     * &lt;xs:complexType&gt;
+     * &lt;xs:sequence&gt;
+     * &lt;xs:element maxOccurs=&quot;10&quot; minOccurs=&quot;0&quot; name=&quot;documento&quot;&gt;
+     * &lt;xs:complexType&gt;
+     * &lt;xs:sequence minOccurs=&quot;0&quot;&gt;
+     * &lt;xs:element minOccurs=&quot;0&quot; name=&quot;fileId&quot; type=&quot;xs:string&quot;/&gt;
+     * &lt;xs:element minOccurs=&quot;0&quot; name=&quot;name&quot; type=&quot;xs:string&quot;/&gt;
+     * &lt;xs:element minOccurs=&quot;0&quot; name=&quot;hashSHA1&quot; type=&quot;xs:string&quot;/&gt;
+     * &lt;xs:element minOccurs=&quot;0&quot; name=&quot;fileSize&quot; type=&quot;xs:integer&quot;/&gt;
+     * &lt;/xs:sequence&gt;
+     * &lt;/xs:complexType&gt;
+     * &lt;/xs:element&gt;
+     * &lt;/xs:sequence&gt;
+     * &lt;/xs:complexType&gt;
+     * &lt;/xs:element&gt;
+     * <p>
+     * the xsd above represent a list of attachment called 'documentos' whose each element is called 'documento'
+     *
+     * @param complexTypeElement
+     * @return
+     */
+    private static boolean isList(ElementReader complexTypeElement) {
+        if (!complexTypeElement.isTagComplexType()) {
+            throw new SingularFormException(complexTypeElement.errorMsg(" this type is not a complex type, therefore we can not look ahead for list pattern"));
+        }
+        return lookAheadForListElementType(complexTypeElement).isPresent();
+    }
+
+    private static Optional<ElementReader> lookAheadForListElementType(ElementReader complexTypeElement) {
+        if (!complexTypeElement.isTagComplexType()) {
+            throw new SingularFormException(complexTypeElement.errorMsg(" this type is not a complex type, therefore we can not look ahead for list pattern"));
+        }
+        List<ElementReader> typeList = complexTypeElement
+                .streamChildren()
+                .filter(ElementReader::isTagSequence)
+                .flatMap(ElementReader::streamChildren)
+                .filter(ElementReader::isTagXsdElement)
+                .filter(e -> e.getAttrMaxOccurs() > 1).collect(Collectors.toList());
+        if (typeList.size() > 1) {
+            throw new SingularFormException(complexTypeElement.errorMsg(" this type should not have two childrens "));
+        } else {
+            return typeList.stream().findFirst();
+        }
     }
 
     private static SType<?> detectType(ElementReader node, String xsdTypeName) {
         XsdContext xsdContext = node.getXsdContext();
         if (xsdContext.isXsdType(xsdTypeName)) {
-            String name = getTypeNameWithoutNamespace(xsdTypeName);
+            String                    name = getTypeNameWithoutNamespace(xsdTypeName);
             Class<? extends SType<?>> type = getMapping().findSType(name);
             if (type != null) {
                 return xsdContext.getType(type);
@@ -356,7 +433,7 @@ public class FormXSDUtil {
     private static class ElementReader implements Iterable<ElementReader> {
 
         private final XsdContext xsdContext;
-        private final MElement element;
+        private final MElement   element;
 
         private ElementReader(XsdContext xsdContext, MElement element) {
             this.xsdContext = xsdContext;
@@ -381,10 +458,6 @@ public class FormXSDUtil {
 
         public boolean isTagAttribute() {
             return xsdContext.isNodeXsd(element, "attribute");
-        }
-
-        public boolean isList() {
-            return getAttrMaxOccurs() > 1;
         }
 
         public String getNodeName() {
