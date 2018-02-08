@@ -43,6 +43,7 @@ public class XSDConverter {
     }
 	
 	private void toXsdFromSType(SType<?> sType, String typeName, MElement parent) {
+    	//TODO não pode ser assim, pois o tipo pode ser todo dinâmico.
 		Field[] attributes = sType.getClass().getDeclaredFields();
 		List<Field> sTypeAttributes = new ArrayList<>();
 		
