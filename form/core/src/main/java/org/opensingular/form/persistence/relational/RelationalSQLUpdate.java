@@ -46,7 +46,7 @@ public class RelationalSQLUpdate extends RelationalSQL {
         this.keyColumns = new ArrayList<>();
         this.targetColumns = new ArrayList<>();
         this.mapColumnToField = new HashMap<>();
-        getFields(instance).stream().filter(field -> RelationalSQL.foreignColumn(field) == null).forEach(field -> {
+        getFields(instance).stream().filter(field -> foreignColumn(field) == null).forEach(field -> {
             if (previousInstance == null
                     || !Objects.equals(fieldValue(instance, field), fieldValue(previousInstance, field))) {
                 collectKeyColumns(field, keyColumns);
@@ -64,7 +64,7 @@ public class RelationalSQLUpdate extends RelationalSQL {
     public List<RelationalSQLCommmand> toSQLScript() {
         List<RelationalSQLCommmand> lines = new ArrayList<>();
         for (SType<?> tableContext : targetTables) {
-            String tableName = RelationalSQL.table(tableContext);
+            String tableName = table(tableContext);
             List<Object> params = new ArrayList<>();
             lines.add(new RelationalSQLCommmand(
                     "update " + tableName + " " + tableAlias(tableName, targetColumns) + " set "

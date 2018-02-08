@@ -16,8 +16,6 @@
 
 package org.opensingular.form.persistence.relational.strategy;
 
-import static org.opensingular.form.persistence.relational.RelationalSQL.tupleKeyRef;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -45,7 +43,8 @@ public class PersistenceStrategyColumn implements PersistenceStrategy {
         List<RelationalColumn> sourceKeyColumns = foreignColumn == null ? Collections.emptyList()
                 : foreignColumn.getForeignKey().getKeyColumns();
         Object fieldValue = RelationalSQL.fieldValue(instance);
-        toList.add(new RelationalData(tableName, tupleKeyRef(instance), fieldName, sourceKeyColumns, fieldValue));
+        toList.add(new RelationalData(tableName, RelationalSQL.tupleKeyRef(instance), fieldName, sourceKeyColumns,
+                fieldValue));
     }
 
     public void load(SInstance instance, List<RelationalData> fromList) {
