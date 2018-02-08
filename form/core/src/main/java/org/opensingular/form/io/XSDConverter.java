@@ -1,11 +1,9 @@
 package org.opensingular.form.io;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
@@ -36,55 +34,41 @@ public class XSDConverter {
     private static final String XSD_SEQUENCE = XSD_NAMESPACE_PREFIX + ":sequence";
 	
     public MElement toXsd(SType<?> sType) {
-    	MElement element = MElement.newInstance(XSD_NAMESPACE_URI, XSD_SCHEMA);
-    	toXsdFromSType(sType, null, element);
+    	MElement root = MElement.newInstance(XSD_NAMESPACE_URI, XSD_SCHEMA);
+
+		MElement element = root.addElementNS(XSD_NAMESPACE_URI, XSD_ELEMENT);
+		element.setAttribute("name", sType.getNameSimple());
+		element.setAttribute("type", sType.getNameSimple());
+		
+    	toXsdFromSType(sType, root);
     	
-    	return element;
+    	return root;
     }
 	
-	private void toXsdFromSType(SType<?> sType, String typeName, MElement parent) {
-		Field[] attributes = sType.getClass().getDeclaredFields();
-		List<Field> sTypeAttributes = new ArrayList<>();
-		
-		for (Field attribute : attributes) {
-			
-			if (SType.class.isAssignableFrom(attribute.getType())) {
-				sTypeAttributes.add(attribute);	
-			}
-		}
-		
-		if (!sTypeAttributes.isEmpty()) {		
-			if (sType instanceof STypeList) {
-				Collection<SType<?>> attr = toXsdFromList((STypeList<?, ?>) sType, typeName, parent);
-				attr.forEach(s -> toXsdFromSType(s, s.getClass().getSimpleName(), parent));
-			} else if (sType instanceof STypeComposite) {
-				Collection<SType<?>> attr = toXsdFromComposite((STypeComposite<?>) sType, typeName, parent);
-				attr.forEach(s -> toXsdFromSType(s, s.getClass().getSimpleName(), parent));
-			}
+	private void toXsdFromSType(SType<?> sType, MElement parent) {
+		if (sType.isList()) {
+			Collection<SType<?>> attr = toXsdFromList((STypeList<?, ?>) sType, parent);
+			attr.forEach(s -> toXsdFromSType(s, parent));
+		} else if (sType.isComposite()) {
+			Collection<SType<?>> attr = toXsdFromComposite((STypeComposite<?>) sType, parent);
+			attr.forEach(s -> toXsdFromSType(s, parent));
 		}
 	}
 
-	private Collection<SType<?>> toXsdFromList(STypeList<?, ?> sType, String typeName, MElement parent) {
+	private Collection<SType<?>> toXsdFromList(STypeList<?, ?> sType, MElement parent) {
 		Collection<SType<?>> attributes = new ArrayList<>();
 
-		if (STypeComposite.class.isAssignableFrom(sType.getElementsType().getClass())) {
-			attributes = toXsdFromComposite((STypeComposite<?>) sType.getElementsType(), sType.getElementsType().getClass().getSimpleName(), parent);
+		if (sType.getElementsType().isComposite()) {
+			attributes = toXsdFromComposite((STypeComposite<?>) sType.getElementsType(), parent);
 		}
 		
 		return attributes;
 	}
 
-	private Collection<SType<?>> toXsdFromComposite(STypeComposite<?> sType, String typeName, MElement parent) {
-		String name = (typeName == null) ? sType.getNameSimple() : typeName;
-		
-		if (typeName == null) {
-			MElement element = parent.addElementNS(XSD_NAMESPACE_URI, XSD_ELEMENT);
-			element.setAttribute("name", sType.getNameSimple());
-			element.setAttribute("type", sType.getNameSimple());
-		} 
-
+	private Collection<SType<?>> toXsdFromComposite(STypeComposite<?> sType, MElement parent) {
+		 
 		MElement element = parent.addElementNS(XSD_NAMESPACE_URI, XSD_COMPLEX_TYPE);
-		element.setAttribute("name", name);
+		element.setAttribute("name", sType.getSuperType().getNameSimple());
 		element = element.addElementNS(XSD_NAMESPACE_URI, XSD_SEQUENCE);
 
 		for (SType<?> child : sType.getFields()) {
@@ -110,7 +94,8 @@ public class XSDConverter {
 	}
 	
 	private String getType(SType<?> sType) {
-		String name = sType.getClass().getSimpleName();
+
+		String name = sType.getSuperType().getNameSimple();
 
 		if (name.equals(STypeString.class.getSimpleName()) || name.equals(String.class.getSimpleName()))
 			return "xs:string";
@@ -134,4 +119,5 @@ public class XSDConverter {
 		
 		return name;
 	}
+
 }
