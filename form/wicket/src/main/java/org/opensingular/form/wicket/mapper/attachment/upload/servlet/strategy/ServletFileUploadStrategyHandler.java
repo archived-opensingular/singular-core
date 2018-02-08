@@ -41,7 +41,7 @@ import java.util.List;
 public final class ServletFileUploadStrategyHandler implements Loggable {
 
     private static final ServletFileUploadStrategyHandler INSTANCE = new ServletFileUploadStrategyHandler();
-    private final ServletFileUploadStrategy DEFAULT_STRATEGY = new AttachmentKeyStrategy();
+    protected final ServletFileUploadStrategy DEFAULT_STRATEGY = new AttachmentKeyStrategy();
 
     private ServletFileUploadStrategyHandler() {
         // Default constructor
@@ -66,20 +66,19 @@ public final class ServletFileUploadStrategyHandler implements Loggable {
      * @throws IOException         I/O exception.
      */
     public void processFileUpload(HttpServletRequest request, HttpServletResponse response) throws ServletException, FileUploadException, IOException {
-        ServletFileUploadStrategy strategy = chooseStrategy(request, response);
+        ServletFileUploadStrategy strategy = chooseStrategy(request);
         strategy.init();
         strategy.process(request, response);
     }
 
     /**
-     * Choose the strategy to be applied to upload a file based on request parameter called (TODO ver com o Bud).
+     * Chooses the strategy to be applied to upload a file based on request parameter called (TODO ver com o Bud).
      * If there is no strategy available, returns the default one.
      *
-     * @param request  instace of a servlet request.
-     * @param response request instace of a servlet response.
+     * @param request instace of a servlet request.
      * @return an implementation of {@link ServletFileUploadStrategy}.
      */
-    private ServletFileUploadStrategy chooseStrategy(HttpServletRequest request, HttpServletResponse response) {
+    protected ServletFileUploadStrategy chooseStrategy(HttpServletRequest request) {
         for (ServletFileUploadStrategy strategy : listAvailableStrategies()) {
             if (strategy.accept(request)) {
                 return strategy;
@@ -96,7 +95,7 @@ public final class ServletFileUploadStrategyHandler implements Loggable {
      *
      * @return list of available strategies.
      */
-    private List<ServletFileUploadStrategy> listAvailableStrategies() {
+    protected List<ServletFileUploadStrategy> listAvailableStrategies() {
         return Arrays.asList(new ServletFileUploadStrategy[]{
                 new AttachmentKeyStrategy(),
                 new SimplePostFilesStrategy()});

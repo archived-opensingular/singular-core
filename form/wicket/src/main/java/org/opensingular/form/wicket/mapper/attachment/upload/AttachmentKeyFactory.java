@@ -17,7 +17,7 @@
 package org.opensingular.form.wicket.mapper.attachment.upload;
 
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.lib.commons.util.Loggable;
+import org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.AttachmentKeyStrategy;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
@@ -26,7 +26,7 @@ import java.util.UUID;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.substringAfterLast;
 
-public class AttachmentKeyFactory implements Serializable, Loggable {
+public class AttachmentKeyFactory implements Serializable {
 
     public AttachmentKey make() {
         return new AttachmentKey(UUID.randomUUID().toString());
@@ -56,7 +56,7 @@ public class AttachmentKeyFactory implements Serializable, Loggable {
      * @return the raw key or blank if not present.
      */
     protected String retrieveRawKeyFromRequest(HttpServletRequest req) {
-        return substringAfterLast(defaultString(req.getRequestURL().toString()), "/");
+        return substringAfterLast(defaultString(req.getRequestURL().toString()), AttachmentKeyStrategy.UPLOAD_URL + "/");
     }
 
 }
