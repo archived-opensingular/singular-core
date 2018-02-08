@@ -39,12 +39,12 @@ public class PersistenceStrategyColumn implements PersistenceStrategy {
             return;
         }
         String tableName = RelationalSQL.table(RelationalSQL.tableContext(field));
-        SInstance tupleKeyRef = RelationalSQL.tupleKeyRef(instance);
         RelationalForeignColumn foreignColumn = RelationalSQL.foreignColumn(field);
         List<RelationalColumn> sourceKeyColumns = foreignColumn == null ? Collections.emptyList()
                 : foreignColumn.getForeignKey().getKeyColumns();
         Object fieldValue = RelationalSQL.fieldValue(instance);
-        toList.add(new RelationalData(tableName, tupleKeyRef, fieldName, sourceKeyColumns, fieldValue));
+        toList.add(new RelationalData(tableName, RelationalSQL.tupleKeyRef(instance), fieldName, sourceKeyColumns,
+                fieldValue));
     }
 
     public void load(SInstance instance, List<RelationalData> fromList) {

@@ -116,7 +116,7 @@ public final class ConversorToolkit {
     public static java.util.Date getTimeFromData(String time) {
         try {
             verifyNull(time);
-            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
             return sdf.parse(time);
         } catch (ParseException e) {
             throw SingularException.rethrow(

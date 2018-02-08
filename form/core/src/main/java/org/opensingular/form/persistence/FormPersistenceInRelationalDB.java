@@ -16,15 +16,21 @@
 
 package org.opensingular.form.persistence;
 
+import static org.opensingular.form.persistence.Criteria.and;
+import static org.opensingular.form.persistence.Criteria.emptyCriteria;
+import static org.opensingular.form.persistence.Criteria.isEqualTo;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,6 +45,7 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.persistence.relational.RelationalColumn;
 import org.opensingular.form.persistence.relational.RelationalData;
+import org.opensingular.form.persistence.relational.RelationalFK;
 import org.opensingular.form.persistence.relational.RelationalSQL;
 import org.opensingular.form.persistence.relational.RelationalSQLCommmand;
 
@@ -72,16 +79,44 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 
     public void delete(@Nonnull FormKey key) {
         INSTANCE mainInstance = load(key);
-        for (SInstance field : mainInstance.getAllChildren()) {
-            if (RelationalSQL.isListWithTableBound(field.getType())) {
-                SIList<SIComposite> listInstance = mainInstance.getFieldList(field.getType().getNameSimple(),
-                        SIComposite.class);
-                for (SIComposite item : listInstance.getChildren()) {
-                    deleteInternal(item.getType(), FormKey.fromInstance(item));
-                }
-            }
-        }
+        mainInstance.getAllChildren().stream().filter(field -> RelationalSQL.isListWithTableBound(field.getType()))
+                .forEach(field -> {
+                    SIList<SIComposite> listInstance = mainInstance.getFieldList(field.getType().getNameSimple(),
+                            SIComposite.class);
+                    for (SIComposite item : listInstance.getChildren()) {
+                        String manyToManyTable = manyToManyTable(item);
+                        if (manyToManyTable != null) {
+                            executeManyToManyDelete(mainInstance, item, manyToManyTable);
+                        }
+                        deleteInternal(item.getType(), FormKey.fromInstance(item));
+                    }
+                });
         deleteInternal(createType(), key);
+    }
+
+    private void executeManyToManyDelete(INSTANCE sourceInstance, SIComposite targetInstance, String manyToManyTable) {
+        FormKeyRelational sourceKey = (FormKeyRelational) FormKey.fromInstance(sourceInstance);
+        FormKeyRelational targetKey = (FormKeyRelational) FormKey.fromInstance(targetInstance);
+        StringBuilder sqlBuilder = new StringBuilder("DELETE FROM ");
+        sqlBuilder.append(manyToManyTable);
+        sqlBuilder.append(" WHERE ");
+        List<Object> params = new ArrayList<>();
+        String delim = "";
+        for (String pkColumn : RelationalSQL.tablePK(sourceInstance.getType())) {
+            params.add(sourceKey.getColumnValue(pkColumn));
+            sqlBuilder.append(delim);
+            sqlBuilder.append(targetInstance.getParent().asSQL().getManyToManySourceKeyColumns());
+            sqlBuilder.append(" = ?");
+            delim = " AND ";
+        }
+        for (String pkColumn : RelationalSQL.tablePK(targetInstance.getType())) {
+            params.add(targetKey.getColumnValue(pkColumn));
+            sqlBuilder.append(delim);
+            sqlBuilder.append(targetInstance.getParent().asSQL().getManyToManyTargetKeyColumns());
+            sqlBuilder.append(" = ?");
+            delim = " AND ";
+        }
+        db.exec(sqlBuilder.toString(), params);
     }
 
     @SuppressWarnings("unchecked")
@@ -124,12 +159,34 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
 
     @Nonnull
     public List<INSTANCE> loadAll(long first, long max) {
-        return loadAllInternal(first, max);
+        return loadAllInternal(first, max, emptyCriteria());
     }
 
     @Nonnull
     public List<INSTANCE> loadAll() {
-        return loadAllInternal(null, null);
+        return loadAllInternal(null, null, emptyCriteria());
+    }
+
+    @Nonnull
+    public List<INSTANCE> list(Criteria criteria, OrderByField... orderBy) {
+        return loadAllInternal(null, null, criteria, orderBy);
+    }
+
+    @Nonnull
+    public List<INSTANCE> list(SIComposite example, OrderByField... orderBy) {
+        List<Criteria> operands = new ArrayList<>();
+        RelationalSQL.getFields(example).forEach(field -> {
+            Object value = fieldValue(example, field);
+            if (value != null) {
+                operands.add(isEqualTo(field, value));
+            }
+        });
+        return list(and(operands.toArray(new Criteria[operands.size()])), orderBy);
+    }
+
+    private Object fieldValue(SIComposite instance, SType<?> field) {
+        String fieldPath = field.getName().replaceFirst(instance.getType().getName() + ".", "");
+        return RelationalSQL.fieldValue(instance.getField(fieldPath));
     }
 
     public long countAll() {
@@ -179,21 +236,21 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
     }
 
     protected void executeSelectField(@Nonnull FormKey key, INSTANCE mainInstance, TYPE mainType, SType<?> field) {
-        RelationalSQL query;
         SIList<SIComposite> listInstance = mainInstance.getFieldList(field.getNameSimple(), SIComposite.class);
         for (SType<?> detail : field.getLocalTypes()) {
             STypeComposite<?> detailType = (STypeComposite<?>) detail.getSuperType();
-            query = RelationalSQL.select(detailType.getContainedTypes()).where(mainType, key);
-            for (RelationalSQLCommmand command : query.toSQLScript()) {
+            for (RelationalSQLCommmand command : RelationalSQL.select(detailType.getContainedTypes())
+                    .where(mainType, key).toSQLScript()) {
                 executeSelectCommandIntoSIList(command, listInstance);
             }
         }
     }
 
     @Nonnull
-    protected List<INSTANCE> loadAllInternal(Long first, Long max) {
+    protected List<INSTANCE> loadAllInternal(Long first, Long max, Criteria criteria, OrderByField... orderBy) {
         List<INSTANCE> result = new ArrayList<>();
-        RelationalSQL query = RelationalSQL.select(createType().getContainedTypes()).limit(first, max);
+        RelationalSQL query = RelationalSQL.select(createType().getContainedTypes()).where(criteria).limit(first, max)
+                .orderBy(orderBy);
         for (RelationalSQLCommmand command : query.toSQLScript()) {
             result.addAll(executeSelectCommand(command));
         }
@@ -203,48 +260,82 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
     protected FormKey insertInternal(@Nonnull SIComposite instance, Integer inclusionActor) {
         List<RelationalData> toList = new ArrayList<>();
         RelationalSQL.persistenceStrategy(instance.getType()).save(instance, toList);
-        List<SIComposite> targets = new ArrayList<>();
-        toList.forEach(data -> {
-            if (!targets.contains(data.getTupleKeyRef())) {
-                targets.add((SIComposite) data.getTupleKeyRef());
-            }
-        });
+        Set<SIComposite> targets = new LinkedHashSet<>();
+        toList.forEach(data -> targets.add((SIComposite) data.getTupleKeyRef()));
+        reorderTargets(targets);
         for (SIComposite target : targets) {
             for (RelationalSQLCommmand command : RelationalSQL.insert(target).toSQLScript()) {
                 executeInsertCommand(command);
                 String manyToManyTable = manyToManyTable(command);
                 if (manyToManyTable != null) {
-                    FormKeyRelational sourceKey = (FormKeyRelational) FormKey.fromInstance(instance);
-                    FormKeyRelational targetKey = (FormKeyRelational) FormKey.fromInstance(command.getInstance());
-                    List<Object> params = new ArrayList<>();
-                    String sqlManyToMany = "INSERT INTO " + manyToManyTable + "(";
-                    sqlManyToMany += command.getInstance().getParent().asSQL().getManyToManyFromKeyColumns();
-                    sqlManyToMany += ", " + command.getInstance().getParent().asSQL().getManyToManyToKeyColumns();
-                    sqlManyToMany += ") VALUES (";
-                    String delim = "";
-                    for (String pkColumn : RelationalSQL.tablePK(instance.getType())) {
-                        params.add(sourceKey.getColumnValue(pkColumn));
-                        sqlManyToMany += delim + "?";
-                        delim = ", ";
-                    }
-                    for (String pkColumn : RelationalSQL.tablePK(command.getInstance().getType())) {
-                        params.add(targetKey.getColumnValue(pkColumn));
-                        sqlManyToMany += delim + "?";
-                        delim = ", ";
-                    }
-                    sqlManyToMany += ")";
-                    db.exec(sqlManyToMany, params);
+                    executeManyToManyInsert(instance, command.getInstance(), manyToManyTable);
                 }
             }
         }
         return FormKey.fromInstance(instance);
     }
 
+    private void reorderTargets(Set<SIComposite> targets) {
+        List<SType<?>> tableTargets = new ArrayList<>();
+        targets.forEach(target -> tableTargets.add(RelationalSQL.tableContext(target.getType())));
+        Map<String, RelationalFK> joinMap = RelationalSQL.createJoinMap(tableTargets);
+        List<SIComposite> instances = new ArrayList<>(targets);
+        for (int i = 0; i < instances.size() - 1; i++) {
+            String tableLeft = RelationalSQL.table(RelationalSQL.tableContext(instances.get(i).getType()));
+            for (int j = i + 1; j < instances.size(); j++) {
+                String tableRight = RelationalSQL.table(RelationalSQL.tableContext(instances.get(j).getType()));
+                String info = tableLeft + '>' + tableRight + "@";
+                if (joinMap.keySet().stream().anyMatch(item -> item.startsWith(info))) {
+                    SIComposite newLeft = instances.get(j);
+                    instances.remove(j);
+                    instances.add(i, newLeft);
+                    i--;
+                    break;
+                }
+            }
+        }
+        targets.clear();
+        targets.addAll(instances);
+    }
+
+    private void executeManyToManyInsert(SIComposite sourceInstance, SIComposite targetInstance,
+            String manyToManyTable) {
+        FormKeyRelational sourceKey = (FormKeyRelational) FormKey.fromInstance(sourceInstance);
+        FormKeyRelational targetKey = (FormKeyRelational) FormKey.fromInstance(targetInstance);
+        StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
+        sqlBuilder.append(manyToManyTable);
+        sqlBuilder.append('(');
+        sqlBuilder.append(targetInstance.getParent().asSQL().getManyToManySourceKeyColumns());
+        sqlBuilder.append(", ");
+        sqlBuilder.append(targetInstance.getParent().asSQL().getManyToManyTargetKeyColumns());
+        sqlBuilder.append(") VALUES (");
+        List<Object> params = new ArrayList<>();
+        String delim = "";
+        for (String pkColumn : RelationalSQL.tablePK(sourceInstance.getType())) {
+            params.add(sourceKey.getColumnValue(pkColumn));
+            sqlBuilder.append(delim);
+            sqlBuilder.append('?');
+            delim = ", ";
+        }
+        for (String pkColumn : RelationalSQL.tablePK(targetInstance.getType())) {
+            params.add(targetKey.getColumnValue(pkColumn));
+            sqlBuilder.append(delim);
+            sqlBuilder.append('?');
+            delim = ", ";
+        }
+        sqlBuilder.append(')');
+        db.exec(sqlBuilder.toString(), params);
+    }
+
     private String manyToManyTable(RelationalSQLCommmand command) {
-        if (command.getInstance().getParent() == null) {
+        return manyToManyTable(command.getInstance());
+    }
+
+    private String manyToManyTable(SIComposite instance) {
+        if (instance.getParent() == null) {
             return null;
         }
-        return command.getInstance().getParent().asSQL().getManyToManyTable();
+        return instance.getParent().asSQL().getManyToManyTable();
     }
 
     protected void updateInternal(@Nonnull SIComposite instance, SIComposite previousPersistedInstance,
@@ -356,11 +447,39 @@ public class FormPersistenceInRelationalDB<TYPE extends STypeComposite<INSTANCE>
         List<RelationalData> tuple = new ArrayList<>();
         int index = 1;
         for (RelationalColumn column : command.getColumns()) {
-            tuple.add(new RelationalData(column.getTable(), command.getInstance(), column.getName(),
-                    column.getSourceKeyColumns(), rs.getObject(index)));
+            SInstance tupleKeyRef = null;
+            if (!RelationalSQL.table(RelationalSQL.tableContext(command.getTupleKeyRef().getType()))
+                    .equalsIgnoreCase(column.getTable())) {
+                tupleKeyRef = getTupleKeyRef(command.getTupleKeyRef(), column);
+            }
+            if (tupleKeyRef == null) {
+                tupleKeyRef = command.getTupleKeyRef();
+            }
+            tuple.add(new RelationalData(column.getTable(), tupleKeyRef, column.getName(), column.getSourceKeyColumns(),
+                    rs.getObject(index)));
             index++;
         }
         return tuple;
+    }
+
+    private SInstance getTupleKeyRef(SInstance instance, RelationalColumn column) {
+        if (instance.getType().isComposite()) {
+            for (SInstance field : ((SIComposite) instance).getAllChildren()) {
+                String fieldTable = RelationalSQL.table(RelationalSQL.tableContext(field.getType()));
+                String fieldColunm = RelationalSQL.column(field.getType());
+                if (fieldTable != null && fieldColunm != null && fieldTable.equalsIgnoreCase(column.getTable())
+                        && fieldColunm.equalsIgnoreCase(column.getName())) {
+                    return RelationalSQL.tupleKeyRef(field);
+                }
+            }
+            for (SInstance field : ((SIComposite) instance).getAllChildren()) {
+                SInstance current = getTupleKeyRef(field, column);
+                if (current != null) {
+                    return current;
+                }
+            }
+        }
+        return null;
     }
 
     protected int execScript(Collection<? extends RelationalSQLCommmand> script) {

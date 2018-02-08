@@ -29,22 +29,22 @@ import org.opensingular.form.persistence.relational.RelationalSQL;
  * @author Edmundo Andrade
  */
 public class PersistenceStrategyTable implements PersistenceStrategy {
-	public void save(SInstance instance, List<RelationalData> toList) {
-		for (SInstance item : getChildren(instance)) {
-			RelationalSQL.persistenceStrategy(item.getType()).save(item, toList);
-		}
-	}
+    public void save(SInstance instance, List<RelationalData> toList) {
+        for (SInstance item : getChildren(instance)) {
+            RelationalSQL.persistenceStrategy(item.getType()).save(item, toList);
+        }
+    }
 
-	public void load(SInstance instance, List<RelationalData> fromList) {
-		for (SInstance item : getChildren(instance)) {
-			RelationalSQL.persistenceStrategy(item.getType()).load(item, fromList);
-		}
-	}
+    public void load(SInstance instance, List<RelationalData> fromList) {
+        for (SInstance item : getChildren(instance)) {
+            RelationalSQL.persistenceStrategy(item.getType()).load(item, fromList);
+        }
+    }
 
-	protected List<? extends SInstance> getChildren(SInstance instance) {
-		if (instance instanceof ICompositeInstance) {
-			return ((ICompositeInstance) instance).getAllChildren();
-		}
-		return instance.getChildren();
-	}
+    protected List<? extends SInstance> getChildren(SInstance instance) {
+        if (instance instanceof ICompositeInstance) {
+            return ((ICompositeInstance) instance).getAllChildren();
+        }
+        return instance.getChildren();
+    }
 }

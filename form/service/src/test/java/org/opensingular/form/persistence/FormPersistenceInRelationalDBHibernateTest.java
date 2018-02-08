@@ -3,6 +3,7 @@ package org.opensingular.form.persistence;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.opensingular.form.persistence.Criteria.isLike;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,6 +50,8 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
     private FormPersistenceInRelationalDB<Category, SIComposite> repoCategory;
     private FormPersistenceInRelationalDB<Customer, SIComposite> repoCustomer;
     private FormPersistenceInRelationalDB<Phone, SIComposite> repoPhone;
+    private FormPersistenceInRelationalDB<CustomerOneToMany, SIComposite> repoOneToManyCustomer;
+    private FormPersistenceInRelationalDB<PhoneOneToMany, SIComposite> repoOneToManyPhone;
 
     @Before
     public void setUp() {
@@ -58,6 +61,8 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
         categoryRepository = repoCategory;
         repoCustomer = new FormPersistenceInRelationalDB<>(db, documentFactory, Customer.class);
         repoPhone = new FormPersistenceInRelationalDB<>(db, documentFactory, Phone.class);
+        repoOneToManyCustomer = new FormPersistenceInRelationalDB<>(db, documentFactory, CustomerOneToMany.class);
+        repoOneToManyPhone = new FormPersistenceInRelationalDB<>(db, documentFactory, PhoneOneToMany.class);
     }
 
     @Test
@@ -150,6 +155,15 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
         assertEquals("Item 1", details.get(0).getValue("item"));
         assertEquals("Master X", details.get(0).getValue("masterDisplay"));
         //
+        SIComposite masterExample = (SIComposite) documentFactory.createInstance(RefType.of(Master.class));
+        masterExample.setValue("name", "Master Y");
+        assertEquals(0, repoMaster.list(masterExample).size());
+        masterExample.setValue("name", "Master X");
+        assertEquals(1, repoMaster.list(masterExample).size());
+        Master masterType = (Master) masterExample.getType();
+        assertEquals(0, repoMaster.list(isLike(masterType.name, "% Y")).size());
+        assertEquals(1, repoMaster.list(isLike(masterType.name, "% X")).size());
+        //
         repoMaster.delete(insertedKey);
         assertEquals(0, repoMaster.countAll());
         assertEquals(0, repoMaster.loadAll().size());
@@ -176,6 +190,49 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
         assertEquals(2, tuples.size());
         assertEquals("+55 (61) 99999-9999", tuples.get(0)[0]);
         assertEquals("+55 (85) 99999-9999", tuples.get(1)[0]);
+        //
+        SIComposite loaded = repoCustomer.load(insertedKey);
+        assertEquals("Robert", loaded.getValue("name"));
+        assertEquals(insertedKey, FormKey.fromInstance(loaded));
+        SIList<?> phones = loaded.getFieldList("phones");
+        assertEquals(2, phones.size());
+        assertEquals("+55 (61) 99999-9999", phones.get(0).getValue("number"));
+        assertEquals("+55 (85) 99999-9999", phones.get(1).getValue("number"));
+        //
+        repoCustomer.delete(insertedKey);
+        assertEquals(0, repoCustomer.countAll());
+        assertEquals(0, repoPhone.countAll());
+    }
+
+    @Test
+    public void oneToManyPersistence() {
+        db.exec("CREATE TABLE ADDRESS1M (ID INT AUTO_INCREMENT, NUMBER VARCHAR(200), PRIMARY KEY (ID))");
+        db.exec("CREATE TABLE CUSTOMER1M (ID VARCHAR(100), NAME VARCHAR(200) NOT NULL, ADDRESS INT, PRIMARY KEY (ID), FOREIGN KEY (ADDRESS) REFERENCES ADDRESS1M(ID))");
+        db.exec("CREATE TABLE PHONE1M (ID INT IDENTITY, NUMBER VARCHAR(20) NOT NULL, CustomerId VARCHAR(100) NOT NULL, PRIMARY KEY (ID), FOREIGN KEY (CustomerId) REFERENCES CUSTOMER1M(ID))");
+        //
+        SIComposite customer = (SIComposite) documentFactory.createInstance(RefType.of(CustomerOneToMany.class));
+        customer.setValue("name", "Robert");
+        customer.setValue("address.number", "1");
+        addPhone("+55 (61) 99999-9999", customer);
+        addPhone("+55 (85) 99999-9999", customer);
+        customer.setValue("id", "e525899b-4302-4112-a41b-aa30e82cee91");
+        FormKey insertedKey = repoOneToManyCustomer.insert(customer, null);
+        assertEquals("ID$String$e525899b-4302-4112-a41b-aa30e82cee91", insertedKey.toStringPersistence());
+        assertEquals(1, repoOneToManyCustomer.countAll());
+        assertEquals(2, repoOneToManyPhone.countAll());
+        //
+        SIComposite loaded = repoOneToManyCustomer.load(insertedKey);
+        assertEquals("Robert", loaded.getValue("name"));
+        assertEquals(insertedKey, FormKey.fromInstance(loaded));
+        SIList<?> phones = loaded.getFieldList("phones");
+        assertEquals(2, phones.size());
+        assertEquals("+55 (61) 99999-9999", phones.get(0).getValue("number"));
+        assertEquals("+55 (85) 99999-9999", phones.get(1).getValue("number"));
+        assertEquals("1", loaded.getValue("address.number"));
+        //
+        repoOneToManyCustomer.delete(insertedKey);
+        assertEquals(0, repoOneToManyCustomer.countAll());
+        assertEquals(0, repoOneToManyPhone.countAll());
     }
 
     private SIComposite createCategoryInstance(String name) {
@@ -373,6 +430,57 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
             // relational mapping
             asSQL().table().tablePK("ID");
             number.asSQL().column();
+        }
+    }
+
+    @SInfoType(name = "CustomerOneToMany", spackage = TestPackage.class)
+    public static final class CustomerOneToMany extends STypeComposite<SIComposite> {
+        public STypeString id;
+        public STypeString name;
+        public STypeList<PhoneOneToMany, SIComposite> phones;
+        public AddressOneToMany address;
+
+        @Override
+        protected void onLoadType(TypeBuilder tb) {
+            asAtr().label("Customer");
+            id = addFieldString("id");
+            id.withInitListener(x -> x.setValue("BY_TRIGGER_TIB_TB_VIAJANTE"));
+            id.asAtr().visible(false);
+            name = addFieldString("name");
+            phones = addFieldListOf("phones", PhoneOneToMany.class);
+            address = addField("address", AddressOneToMany.class);
+            // relational mapping
+            asSQL().table("CUSTOMER1M").tablePK("ID").addTableFK("ADDRESS", AddressOneToMany.class);
+            id.asSQL().column("ID");
+            name.asSQL().column();
+        }
+    }
+
+    @SInfoType(name = "PhoneOneToMany", spackage = TestPackage.class)
+    public static final class PhoneOneToMany extends STypeComposite<SIComposite> {
+        public STypeString number;
+
+        @Override
+        protected void onLoadType(TypeBuilder tb) {
+            asAtr().label("Phone");
+            number = addFieldString("number");
+            // relational mapping
+            asSQL().table("PHONE1M").tablePK("ID").addTableFK("CustomerId", CustomerOneToMany.class);
+            number.asSQL().column();
+        }
+    }
+
+    @SInfoType(name = "AddressOneToMany", spackage = TestPackage.class)
+    public static final class AddressOneToMany extends STypeComposite<SIComposite> {
+        public STypeString number;
+
+        @Override
+        protected void onLoadType(TypeBuilder tb) {
+            asAtr().label("Number");
+            number = addFieldString("number");
+            // relational mapping
+            asSQL().table("ADDRESS1M").tablePK("ID");
+            number.asSQL().column("NUMBER");
         }
     }
 }
