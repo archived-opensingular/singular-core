@@ -47,10 +47,6 @@ public class FormEntity extends BaseEntity<Long> {
     @JoinColumn(name = "CO_TIPO_FORMULARIO")
     private FormTypeEntity formType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_COLECAO")
-    private CollectionEntity collection;
-
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "CO_VERSAO_ATUAL")
     private FormVersionEntity currentFormVersionEntity;
@@ -72,14 +68,6 @@ public class FormEntity extends BaseEntity<Long> {
 
     public void setFormType(FormTypeEntity formType) {
         this.formType = formType;
-    }
-
-    public CollectionEntity getCollection() {
-        return collection;
-    }
-
-    public void setCollection(CollectionEntity collection) {
-        this.collection = collection;
     }
 
     public FormVersionEntity getCurrentFormVersionEntity() {
