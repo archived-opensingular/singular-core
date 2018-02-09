@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -63,6 +64,40 @@ public class FormPersistenceInRelationalDBHibernateTest extends TestFormSupport 
         repoPhone = new FormPersistenceInRelationalDB<>(db, documentFactory, Phone.class);
         repoOneToManyCustomer = new FormPersistenceInRelationalDB<>(db, documentFactory, CustomerOneToMany.class);
         repoOneToManyPhone = new FormPersistenceInRelationalDB<>(db, documentFactory, PhoneOneToMany.class);
+    }
+
+    @Test
+    public void updateErrorOneToManyUpdateTest(){
+        db.exec("CREATE TABLE ADDRESS1M (ID INT AUTO_INCREMENT, NUMBER VARCHAR(200), PRIMARY KEY (ID))");
+        db.exec("CREATE TABLE CUSTOMER1M (ID VARCHAR(100), NAME VARCHAR(200) NOT NULL, ADDRESS INT, PRIMARY KEY (ID), FOREIGN KEY (ADDRESS) REFERENCES ADDRESS1M(ID))");
+        db.exec("CREATE TABLE PHONE1M (ID INT IDENTITY, NUMBER VARCHAR(20) NOT NULL, CustomerId VARCHAR(100) NOT NULL, PRIMARY KEY (ID), FOREIGN KEY (CustomerId) REFERENCES CUSTOMER1M(ID))");
+        //
+        SIComposite customer = (SIComposite) documentFactory.createInstance(RefType.of(CustomerOneToMany.class));
+        customer.setValue("name", "Robert");
+        customer.setValue("address.number", "1");
+        addPhone("+55 (61) 99999-9999", customer);
+        addPhone("+55 (85) 99999-9999", customer);
+        customer.setValue("id", "e525899b-4302-4112-a41b-aa30e82cee91");
+        FormKey insertedKey = repoOneToManyCustomer.insert(customer, null);
+
+        SIComposite customerLoaded = repoOneToManyCustomer.load(insertedKey);
+        customerLoaded.setValue("name", "João");
+        repoOneToManyCustomer.update(customerLoaded, null);
+    }
+
+    @Test
+    public void updateErrorAddElementAndUpdateTest(){
+        db.exec("CREATE TABLE ADDRESS1M (ID INT AUTO_INCREMENT, NUMBER VARCHAR(200), PRIMARY KEY (ID))");
+        db.exec("CREATE TABLE CUSTOMER1M (ID VARCHAR(100), NAME VARCHAR(200) NOT NULL, ADDRESS INT, PRIMARY KEY (ID), FOREIGN KEY (ADDRESS) REFERENCES ADDRESS1M(ID))");
+        db.exec("CREATE TABLE PHONE1M (ID INT IDENTITY, NUMBER VARCHAR(20) NOT NULL, CustomerId VARCHAR(100) NOT NULL, PRIMARY KEY (ID), FOREIGN KEY (CustomerId) REFERENCES CUSTOMER1M(ID))");
+        //
+        db.exec("INSERT INTO CUSTOMER1M (ID, NAME) VALUES ('e525899b-4302-4112-a41b-aa30e82cee91', 'Robert')");
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("ID", "e525899b-4302-4112-a41b-aa30e82cee91");
+        SIComposite customerLoaded = repoOneToManyCustomer.load(new FormKeyRelational(map));
+
+        addPhone("+55 (61) 99999-9999", customerLoaded);
+        repoOneToManyCustomer.update(customerLoaded, null);
     }
 
     @Test
