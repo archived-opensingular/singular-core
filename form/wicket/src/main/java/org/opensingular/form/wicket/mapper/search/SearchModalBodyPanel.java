@@ -161,7 +161,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         }
 
         builder.appendActionColumn(Model.of(), (actionColumn) -> actionColumn
-                .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(DefaultIcons.HAND_UP)).titleFunction(m -> "Filtrar"),
+                .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(DefaultIcons.ARROW_RIGHT)).titleFunction(m -> "Selecionar"),
                         (IBSAction<Object>) (target, model) ->
                         {
                             SInstanceConverter converter = getInstance().asAtrProvider().getConverter();

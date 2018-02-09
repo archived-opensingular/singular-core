@@ -16,9 +16,12 @@
 
 package org.opensingular.form.persistence.relational;
 
+import static org.opensingular.form.persistence.relational.RelationalSQL.tupleKeyRef;
+
 import java.util.List;
 
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
 
 /**
  * Relational SQL command, including its parameters.
@@ -26,53 +29,57 @@ import org.opensingular.form.SIComposite;
  * @author Edmundo Andrade
  */
 public class RelationalSQLCommmand {
-	private String sql;
-	private List<Object> parameters;
-	private SIComposite instance;
-	private List<RelationalColumn> columns;
-	private Long limitOffset;
-	private Long limitRows;
+    private String sql;
+    private List<Object> parameters;
+    private SIComposite instance;
+    private List<RelationalColumn> columns;
+    private Long limitOffset;
+    private Long limitRows;
 
-	public RelationalSQLCommmand(String sql, List<Object> parameters, SIComposite instance,
-			List<RelationalColumn> columns) {
-		this.sql = sql;
-		this.parameters = parameters;
-		this.instance = instance;
-		this.columns = columns;
-	}
+    public RelationalSQLCommmand(String sql, List<Object> parameters, SIComposite instance,
+            List<RelationalColumn> columns) {
+        this.sql = sql;
+        this.parameters = parameters;
+        this.instance = instance;
+        this.columns = columns;
+    }
 
-	public RelationalSQLCommmand(String sql, List<Object> parameters, SIComposite instance,
-			List<RelationalColumn> columns, Long limitOffset, Long limitRows) {
-		this(sql, parameters, instance, columns);
-		this.limitOffset = limitOffset;
-		this.limitRows = limitRows;
-	}
+    public RelationalSQLCommmand(String sql, List<Object> parameters, SIComposite instance,
+            List<RelationalColumn> columns, Long limitOffset, Long limitRows) {
+        this(sql, parameters, instance, columns);
+        this.limitOffset = limitOffset;
+        this.limitRows = limitRows;
+    }
 
-	public String getSQL() {
-		return sql;
-	}
+    public String getSQL() {
+        return sql;
+    }
 
-	public List<Object> getParameters() {
-		return parameters;
-	}
+    public List<Object> getParameters() {
+        return parameters;
+    }
 
-	public SIComposite getInstance() {
-		return instance;
-	}
+    public SIComposite getInstance() {
+        return instance;
+    }
 
-	public void setInstance(SIComposite instance) {
-		this.instance = instance;
-	}
+    public SInstance getTupleKeyRef() {
+        return tupleKeyRef(instance);
+    }
 
-	public List<RelationalColumn> getColumns() {
-		return columns;
-	}
+    public void setInstance(SIComposite instance) {
+        this.instance = instance;
+    }
 
-	public Long getLimitOffset() {
-		return limitOffset;
-	}
+    public List<RelationalColumn> getColumns() {
+        return columns;
+    }
 
-	public Long getLimitRows() {
-		return limitRows;
-	}
+    public Long getLimitOffset() {
+        return limitOffset;
+    }
+
+    public Long getLimitRows() {
+        return limitRows;
+    }
 }

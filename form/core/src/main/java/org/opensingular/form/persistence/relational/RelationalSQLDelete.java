@@ -48,7 +48,7 @@ public class RelationalSQLDelete extends RelationalSQL {
     public List<RelationalSQLCommmand> toSQLScript() {
         List<RelationalSQLCommmand> lines = new ArrayList<>();
         for (SType<?> tableContext : targetTables) {
-            String tableName = RelationalSQL.table(tableContext);
+            String tableName = table(tableContext);
             List<Object> params = new ArrayList<>();
             lines.add(
                     new RelationalSQLCommmand(
