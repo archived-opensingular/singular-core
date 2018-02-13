@@ -18,6 +18,15 @@ package org.opensingular.form.type.util;
 
 import org.opensingular.form.SIComposite;
 
-public class SIListLatitudeLongitude extends SIComposite {
+public class SILatitudeLongitudeList extends SIComposite {
 
+    @Override
+    public STypeLatitudeLongitudeList getType() {
+        return (STypeLatitudeLongitudeList) super.getType();
+    }
+
+    public boolean hasFile() {
+        STypeLatitudeLongitudeList type = getType();
+        return !getField(type.file).isEmptyOfData();
+    }
 }

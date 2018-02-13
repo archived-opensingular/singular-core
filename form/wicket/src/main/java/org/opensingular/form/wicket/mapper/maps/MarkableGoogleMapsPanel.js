@@ -32,7 +32,7 @@
         } else {
             //carregar o script do gmaps apenas uma vez e recriar os demais mapas
             if (window.SingularMaps.length === 0) {
-                $.getScript('https://maps.googleapis.com/maps/api/js?key=' + googleMapsKey)
+                $.getScript('https://maps.googleapis.com/maps/api/js?key=' + googleMapsKey + '&language=pt-BR')
                     .done(function () {
                         for (var i = 0; i < window.SingularMaps.length; i++) {
                             window.SingularMaps[i]();
@@ -112,9 +112,11 @@
             center: latLong
         });
 
-        map.addListener('zoom_changed', function () {
-            zoomElement.value = map.zoom;
-        });
+        if (!readOnly) {
+            map.addListener('zoom_changed', function () {
+                zoomElement.value = map.zoom;
+            });
+        }
 
         configureMarkers(tableContainerElement, map, readOnly, markers, polygon);
         draw(map,  polygon,  markers);
@@ -127,7 +129,8 @@
                 var params = {'lat': event.latLng.lat(), 'lng': event.latLng.lng()};
                 Wicket.Ajax.post({u: callbackUrl, ep: params});
 
-                var marker = createMarker(map,  event.latLng, polygon, readOnly, true);
+                var number = countMarkers(tableContainerElement);
+                var marker = createMarker(map,  event.latLng, polygon, readOnly, true, number+1);
                 markers.push(marker);
                 draw(map,  polygon,  markers);
             });
@@ -138,7 +141,7 @@
     function configureMarkers(tableContainerElement, map, readOnly, markers, polygon) {
         jQuery(tableContainerElement)
             .find('.list-table-body table tbody tr')
-            .each(function () {
+            .each(function (index) {
                 var valLat;
                 var valLng;
                 if (readOnly) {
@@ -155,15 +158,16 @@
                     latLng = buildGmapsLatLong(valLat, valLng);
                 }
 
-                markers.push(createMarker(map, latLng, polygon, readOnly));
+                markers.push(createMarker(map, latLng, polygon, readOnly, false, index+1));
             })
         ;
     }
 
-    function createMarker(map, latLng, polygon, readOnly, animate) {
+    function createMarker(map, latLng, polygon, readOnly, animate, number) {
         var marker = new google.maps.Marker({
             map: map,
-            visible: false
+            visible: false,
+            label: number.toString()
         });
 
         if (latLng) {
@@ -175,22 +179,13 @@
             marker.setAnimation(google.maps.Animation.DROP);
         }
 
-        if (!readOnly) {
-            marker.addListener('click', function () {
-                marker.setMap(null);
-
-                for (var i = 0; i < markers.length; ++i) {
-                    if (markers[i].getPosition().equals(marker.getPosition())) {
-                        markers.splice(i, 1);
-                        break;
-                    }
-                }
-
-                draw(map, polygon, markers);
-            });
-        }
-
         return marker;
+    }
+
+    function countMarkers(tableContainerElement) {
+        return jQuery(tableContainerElement)
+            .find('.list-table-body table tbody tr')
+            .length;
     }
 
     function findLatLongRow(tableContainerElement, markers, marker) {

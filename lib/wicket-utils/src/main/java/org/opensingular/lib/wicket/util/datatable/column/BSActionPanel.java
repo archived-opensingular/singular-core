@@ -98,6 +98,8 @@ public class BSActionPanel<T> extends Panel {
             link.add($b.attr("title", actionConfig.labelModel));
         }
 
+        link.add($b.onConfigure(c -> c.setVisible(actionConfig.visibleFor.apply(getModel()))));
+
         return this;
     }
 
@@ -117,7 +119,7 @@ public class BSActionPanel<T> extends Panel {
                 @Override
                 protected void onConfigure() {
                     super.onConfigure();
-                    this.setVisible(action.isVisible(this.getModel()));
+                    this.setVisible(action.isVisible(this.getModel()) && action.isVisible(this.getModel()));
                     this.setEnabled(action.isEnabled(this.getModel()));
                 }
 

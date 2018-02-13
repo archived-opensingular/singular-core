@@ -29,22 +29,22 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
-import org.opensingular.form.type.util.STypeListLatitudeLongitude;
+import org.opensingular.form.type.util.STypeLatitudeLongitudeList;
+import org.opensingular.form.view.FileEventListener;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.TableListMapper;
+import org.opensingular.form.wicket.mapper.attachment.single.FileUploadPanel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
-public class ListLatitudeLongitudeMapper extends TableListMapper {
+public class LatitudeLongitudeListMapper extends TableListMapper {
 
     @Override
     public void buildView(WicketBuildContext ctx) {
-        SInstanceFieldModel<SInstance> points = new SInstanceFieldModel<>(ctx.getModel(), STypeListLatitudeLongitude.FIELD_POINTS);
-        WicketBuildContext pointsCtx = ctx.createChild(ctx.getContainer().newGrid(), ctx.getExternalContainer(), points, ctx.getConfirmationModal());
-        pointsCtx.build();
-        SInstanceFieldModel<SInstance> zoom = new SInstanceFieldModel<>(ctx.getModel(), STypeListLatitudeLongitude.FIELD_ZOOM);
+        SInstanceFieldModel<SInstance> zoom = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeList.FIELD_ZOOM);
         WicketBuildContext zoomCtx = ctx.createChild(ctx.getContainer().newGrid(), ctx.getExternalContainer(), zoom, ctx.getConfirmationModal());
         zoomCtx.build();
 
@@ -54,32 +54,47 @@ public class ListLatitudeLongitudeMapper extends TableListMapper {
             @Override
             public void component(Component object, IVisit<Object> visit) {
                 String nameSimple = ((SInstanceValueModel)object.getDefaultModel()).getSInstance().getType().getNameSimple();
-                if (nameSimple.equals(STypeLatitudeLongitude.FIELD_ZOOM)) {
+                if (nameSimple.equals(STypeLatitudeLongitudeList.FIELD_ZOOM)) {
                     ids.zoomId = object.getMarkupId();
                 }
             }
         });
 
-        WicketUtils.findFirstChild(pointsCtx.getContainer(), AddButton.class)
-            .ifPresent(button -> button.add(new AjaxEventBehavior("click") {
-                @Override
-                protected void onEvent(AjaxRequestTarget target) {
-                    WicketUtils.findFirstChild(ctx.getContainer(), MarkableGoogleMapsPanel.class)
-                            .ifPresent(target::add);
-                }
-            }));
+        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, ctx.getModel(), ctx.getView(), ctx.getViewMode().isVisualization(), true);
+        BSGrid gridGoogleMaps = ctx.getContainer().newGrid();
+        gridGoogleMaps.newFormGroup().appendDiv(googleMapsPanel);
 
-        ctx.getConfirmationModal().registerListener(target -> {
-            WicketUtils.findFirstChild(ctx.getContainer(), MarkableGoogleMapsPanel.class)
-                    .ifPresent(m -> m.updateJS(target));
-        });
+        SInstanceFieldModel<SInstance> points = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeList.FIELD_POINTS);
+        WicketBuildContext pointsCtx = ctx.createChild(gridGoogleMaps, ctx.getExternalContainer(), points, ctx.getConfirmationModal());
+        pointsCtx.build();
+
+        SInstanceFieldModel<SInstance> file = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeList.FIELD_FILE);
+        WicketBuildContext fileCtx = ctx.createChild(ctx.getContainer().newGrid(), ctx.getExternalContainer(), file, ctx.getConfirmationModal());
+        fileCtx.build();
+
+        WicketUtils.findFirstChild(fileCtx.getContainer(), FileUploadPanel.class)
+                .ifPresent(panel -> panel.registerFileRemovedListener((FileEventListener) attachment -> {
+                    points.getObject().clearInstance();
+                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+                    target.add(gridGoogleMaps);
+                }));
 
         AbstractDefaultAjaxBehavior addPoint = createBehaviorAddPoint(points, pointsCtx.getContainer());
         ctx.getContainer().add(addPoint);
 
-        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, ctx.getModel(), ctx.getView(), ctx.getViewMode().isVisualization(), true);
         googleMapsPanel.enableMultipleMarkers(addPoint.getCallbackUrl().toString(), pointsCtx.getContainer().getMarkupId());
-        ctx.getContainer().newGrid().newFormGroup().appendDiv(googleMapsPanel);
+
+        WicketUtils.findFirstChild(pointsCtx.getContainer(), AddButton.class)
+                .ifPresent(button -> button.add(new AjaxEventBehavior("click") {
+                    @Override
+                    protected void onEvent(AjaxRequestTarget target) {
+                        target.add(googleMapsPanel);
+                    }
+                }));
+
+        ctx.getConfirmationModal().registerListener(googleMapsPanel::updateJS);
+
+
     }
 
     private AbstractDefaultAjaxBehavior createBehaviorAddPoint(final SInstanceFieldModel<SInstance> points, BSContainer<?> container) {
