@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2018 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy;
 
 import org.apache.commons.fileupload.FileItem;
@@ -12,6 +28,7 @@ import org.opensingular.form.wicket.mapper.attachment.upload.*;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
 
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -122,12 +139,14 @@ public class AttachmentKeyStrategyTest {
 
         when(uploadManager.findUploadInfoByAttachmentKey(eq(attachmentKey))).thenReturn(Optional.of(uploadInfo));
         when(servletFileUpload.parseParameterMap(eq(request))).thenReturn(params);
+        when(attachmentKeyStrategy.toFileUploadItem(fileItem1)).thenReturn(mock(FileUploadItem.class));
+        when(attachmentKeyStrategy.toFileUploadItem(fileItem2)).thenReturn(mock(FileUploadItem.class));
 
         attachmentKeyStrategy.process(request, response);
 
         verify(attachmentKeyFactory).makeFromRequestPathOrNull(eq(request));
-        verify(uploadProcessor).process(eq(fileItem1), eq(uploadInfo), eq(uploadManager));
-        verify(uploadProcessor).process(eq(fileItem2), eq(uploadInfo), eq(uploadManager));
+        verify(uploadProcessor).process(eq(attachmentKeyStrategy.toFileUploadItem(fileItem1)), eq(uploadInfo), eq(uploadManager));
+        verify(uploadProcessor).process(eq(attachmentKeyStrategy.toFileUploadItem(fileItem2)), eq(uploadInfo), eq(uploadManager));
     }
 
     @Test
@@ -141,7 +160,7 @@ public class AttachmentKeyStrategyTest {
     }
 
     @Test
-    public void testAcceptRequest() {
+    public void testAcceptRequest() throws IOException, ServletException {
         ServletFileUploadStrategy strategy = Mockito.spy(AttachmentKeyStrategy.class);
         strategy.init();
         when(request.getRequestURL()).thenReturn(new StringBuffer(""));

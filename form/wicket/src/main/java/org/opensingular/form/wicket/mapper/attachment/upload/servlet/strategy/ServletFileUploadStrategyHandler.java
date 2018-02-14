@@ -77,8 +77,10 @@ public final class ServletFileUploadStrategyHandler implements Loggable {
      *
      * @param request instace of a servlet request.
      * @return an implementation of {@link ServletFileUploadStrategy}.
+     * @throws IOException      I/O exception.
+     * @throws ServletException servlet exception.
      */
-    protected ServletFileUploadStrategy chooseStrategy(HttpServletRequest request) {
+    protected ServletFileUploadStrategy chooseStrategy(HttpServletRequest request) throws IOException, ServletException {
         for (ServletFileUploadStrategy strategy : listAvailableStrategies()) {
             if (strategy.accept(request)) {
                 return strategy;

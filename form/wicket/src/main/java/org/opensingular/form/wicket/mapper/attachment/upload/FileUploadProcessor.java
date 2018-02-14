@@ -17,7 +17,6 @@
 package org.opensingular.form.wicket.mapper.attachment.upload;
 
 import com.google.common.base.Joiner;
-import org.apache.commons.fileupload.FileItem;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.FileUploadInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
@@ -37,12 +36,11 @@ import static org.opensingular.form.wicket.mapper.attachment.upload.info.UploadR
 public class FileUploadProcessor implements Serializable {
 
 
-    public List<UploadResponseInfo> process(FileItem item, UploadInfo upInfo, FileUploadManager upManager) throws SingularException {
+    public List<UploadResponseInfo> process(FileUploadItem item, UploadInfo upInfo, FileUploadManager upManager) throws SingularException {
 
         final List<UploadResponseInfo> responses = new ArrayList<>();
 
         if (!item.isFormField()) {
-
             // Garante que virar apenas o nome do arquivo sem path
             final String originalFilename = checkValidName(item);
             final String contentType = lowerCase(item.getContentType());
@@ -67,7 +65,7 @@ public class FileUploadProcessor implements Serializable {
         return responses;
     }
 
-    private String checkValidName(FileItem item) {
+    private String checkValidName(FileUploadItem item) {
         String n = item.getName();
         if (n != null) {
             if (n.indexOf('\'') != -1 || n.indexOf('/') != -1) {

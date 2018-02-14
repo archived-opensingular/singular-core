@@ -26,6 +26,7 @@ import org.opensingular.lib.commons.base.SingularProperties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,50 +37,19 @@ import java.util.Optional;
  */
 public class AttachmentKeyStrategy implements ServletFileUploadStrategy {
 
-    private FileUploadManagerFactory uploadManagerFactory;
-    private AttachmentKeyFactory keyFactory;
-    private ServletFileUploadFactory servletFileUploadFactory;
-    private FileUploadProcessor upProcessor;
-    private UploadResponseWriter upResponseWriter;
+    protected FileUploadManagerFactory uploadManagerFactory;
+    protected AttachmentKeyFactory keyFactory;
+    protected ServletFileUploadFactory servletFileUploadFactory;
+    protected FileUploadProcessor upProcessor;
+    protected UploadResponseWriter upResponseWriter;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void init() {
         this.uploadManagerFactory = makeFileUploadManagerFactory();
-        this.keyFactory = makeAttachmentKeyFactory();
+        this.keyFactory = getAttachmentKeyFactory();
         this.servletFileUploadFactory = makeServletFileUploadFactory();
         this.upProcessor = makeFileUploadProcessor();
         this.upResponseWriter = makeUploadResponseWriter();
-    }
-
-    protected FileUploadManagerFactory makeFileUploadManagerFactory() {
-        return new FileUploadManagerFactory();
-    }
-
-    protected AttachmentKeyFactory makeAttachmentKeyFactory() {
-        if (keyFactory == null) {
-            keyFactory = new AttachmentKeyFactory();
-        }
-
-        return keyFactory;
-    }
-
-    protected ServletFileUploadFactory makeServletFileUploadFactory() {
-        return new ServletFileUploadFactory(makeFileUploadConfig());
-    }
-
-    protected FileUploadProcessor makeFileUploadProcessor() {
-        return new FileUploadProcessor();
-    }
-
-    protected UploadResponseWriter makeUploadResponseWriter() {
-        return new UploadResponseWriter();
-    }
-
-    protected FileUploadConfig makeFileUploadConfig() {
-        return new FileUploadConfig(SingularProperties.get());
     }
 
     public static String getUploadUrl(HttpServletRequest req, AttachmentKey attachmentKey) {
@@ -105,13 +75,13 @@ public class AttachmentKeyStrategy implements ServletFileUploadStrategy {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unregistered upload");
             return;
         }
+
         UploadInfo uploadInfo = uploadInfoOptional.get();
         List<UploadResponseInfo> responses = new ArrayList<>();
-
         try {
             Map<String, List<FileItem>> params = servletFileUploadFactory.makeServletFileUpload(uploadInfo).parseParameterMap(req);
             for (FileItem item : params.get(PARAM_NAME)) {
-                responses.addAll(upProcessor.process(item, uploadInfo, fileUploadManager));
+                responses.addAll(upProcessor.process(toFileUploadItem(item), uploadInfo, fileUploadManager));
             }
         } finally {
             upResponseWriter.writeJsonArrayResponseTo(resp, responses);
@@ -123,6 +93,63 @@ public class AttachmentKeyStrategy implements ServletFileUploadStrategy {
      */
     @Override
     public boolean accept(HttpServletRequest request) {
-        return makeAttachmentKeyFactory().isRawKeyPresent(request);
+        return getAttachmentKeyFactory().isRawKeyPresent(request);
     }
+
+    /**
+     * Creates a wrapper for a file to be processed.
+     *
+     * @param item item to be wrapped.
+     * @return an instance of {@link FileUploadItem} that holds the item.
+     */
+    public FileUploadItem<FileItem> toFileUploadItem(final FileItem item) {
+        return new FileUploadItem<FileItem>() {
+            @Override
+            public InputStream getInputStream() throws IOException {
+                return item.getInputStream();
+            }
+
+            @Override
+            public boolean isFormField() {
+                return item.isFormField();
+            }
+
+            @Override
+            public String getContentType() {
+                return item.getContentType();
+            }
+
+            @Override
+            public long getSize() {
+                return item.getSize();
+            }
+
+            @Override
+            public String getName() {
+                return item.getName();
+            }
+
+            @Override
+            public FileItem getWrapped() {
+                return item;
+            }
+        };
+    }
+
+    protected AttachmentKeyFactory getAttachmentKeyFactory() {
+        if (keyFactory == null) {
+            keyFactory = makeAttachmentKeyFactory();
+        }
+
+        return keyFactory;
+    }
+
+    protected ServletFileUploadFactory makeServletFileUploadFactory() {
+        return new ServletFileUploadFactory(makeFileUploadConfig());
+    }
+
+    protected FileUploadConfig makeFileUploadConfig() {
+        return new FileUploadConfig(SingularProperties.get());
+    }
+
 }

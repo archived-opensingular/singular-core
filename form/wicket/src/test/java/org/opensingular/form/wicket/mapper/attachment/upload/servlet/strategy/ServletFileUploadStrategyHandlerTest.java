@@ -48,7 +48,7 @@ public class ServletFileUploadStrategyHandlerTest {
     }
 
     @Test
-    public void testNonDefaultStrategy() {
+    public void testNonDefaultStrategy() throws IOException, ServletException {
         mockPath(request, "http://localhost:8080" + ServletFileUploadStrategy.UPLOAD_URL + "/123456");
         assertTrue(StringUtils.isNotBlank(substringAfterLast(defaultString(request.getRequestURL().toString()), AttachmentKeyStrategy.UPLOAD_URL + "/")));
         ServletFileUploadStrategy servletFileUploadStrategy = servletFileUploadStrategyHandler.chooseStrategy(request);

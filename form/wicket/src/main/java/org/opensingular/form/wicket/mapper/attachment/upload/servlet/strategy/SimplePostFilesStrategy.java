@@ -17,11 +17,24 @@
 package org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy;
 
 import org.apache.commons.fileupload.FileUploadException;
+import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.form.type.core.attachment.handlers.InMemoryAttachmentPersistenceHandler;
+import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadItem;
+import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManager;
+import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadProcessor;
+import org.opensingular.form.wicket.mapper.attachment.upload.UploadResponseWriter;
+import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
+import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This strategy retrieves a list of files from a {@link HttpServletRequest}.
@@ -43,13 +56,77 @@ public class SimplePostFilesStrategy implements ServletFileUploadStrategy {
     @Override
     public void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, FileUploadException {
 
+        List<UploadResponseInfo> responses = new ArrayList<>();
+        FileUploadManager fileUploadManager = makeFileUploadManagerFactory().getFileUploadManagerFromSessionOrMakeAndAttach(request.getSession());
+        UploadInfo uploadInfo = fileUploadManager.createUploadInfo(
+                null, null, null,
+                this::getAttachmentPersistenceTemporaryHandler, makeAttachmentKeyFactory().make());
+        FileUploadProcessor uploadProcessor = makeFileUploadProcessor();
+        UploadResponseWriter responseWriter = makeUploadResponseWriter();
+
+        try {
+            for (Part part : request.getParts()) {
+                responses.addAll(uploadProcessor.process(toFileUploadItem(part), uploadInfo, fileUploadManager));
+            }
+        } finally {
+            responseWriter.writeJsonArrayResponseTo(response, responses);
+        }
+    }
+
+    /**
+     * Gets the persistence handler that will be used to store the uploaded file.
+     *
+     * @return an instance of {@link IAttachmentPersistenceHandler} to store the uploaded file.
+     */
+    private IAttachmentPersistenceHandler<? extends IAttachmentRef> getAttachmentPersistenceTemporaryHandler() {
+        return new InMemoryAttachmentPersistenceHandler();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean accept(HttpServletRequest request) {
-        return false;
+    public boolean accept(HttpServletRequest request) throws IOException, ServletException {
+        return !request.getParts().isEmpty();
+    }
+
+    /**
+     * Creates a wrapper for a file to be processed.
+     *
+     * @param part part to be wrapped.
+     * @return an instance of {@link FileUploadItem} that holds the part.
+     */
+    private FileUploadItem<Part> toFileUploadItem(final Part part) {
+        return new FileUploadItem<Part>() {
+            @Override
+            public InputStream getInputStream() throws IOException {
+                return part.getInputStream();
+            }
+
+            @Override
+            public boolean isFormField() {
+                return false;
+            }
+
+            @Override
+            public String getContentType() {
+                return part.getContentType();
+            }
+
+            @Override
+            public long getSize() {
+                return part.getSize();
+            }
+
+            @Override
+            public String getName() {
+                return part.getName();
+            }
+
+            @Override
+            public Part getWrapped() {
+                return part;
+            }
+        };
     }
 }

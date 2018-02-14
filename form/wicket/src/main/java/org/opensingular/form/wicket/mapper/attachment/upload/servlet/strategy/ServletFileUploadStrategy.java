@@ -17,6 +17,11 @@
 package org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy;
 
 import org.apache.commons.fileupload.FileUploadException;
+import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKeyFactory;
+import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManagerFactory;
+import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadProcessor;
+import org.opensingular.form.wicket.mapper.attachment.upload.UploadResponseWriter;
+import org.opensingular.lib.commons.util.Loggable;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +31,7 @@ import java.io.IOException;
 /**
  * The contract for file upload strategies from {@link javax.servlet.Servlet}.
  */
-public interface ServletFileUploadStrategy {
+public interface ServletFileUploadStrategy extends Loggable {
 
     String UPLOAD_URL = "/upload";
     String PARAM_NAME = "FILE-UPLOAD";
@@ -52,6 +57,44 @@ public interface ServletFileUploadStrategy {
      *
      * @param request servlet request.
      * @return <code>true</code> if it is able to process.
+     * @throws IOException      I/O exception.
+     * @throws ServletException servlet exception.
      */
-    boolean accept(HttpServletRequest request);
+    boolean accept(HttpServletRequest request) throws IOException, ServletException;
+
+    /**
+     * Makes a new instance of {@link UploadResponseWriter}.
+     *
+     * @return a new instance.
+     */
+    default UploadResponseWriter makeUploadResponseWriter() {
+        return new UploadResponseWriter();
+    }
+
+    /**
+     * Makes a new instance of {@link FileUploadManagerFactory}.
+     *
+     * @return a new instance.
+     */
+    default FileUploadManagerFactory makeFileUploadManagerFactory() {
+        return new FileUploadManagerFactory();
+    }
+
+    /**
+     * Makes a new instance of {@link AttachmentKeyFactory}.
+     *
+     * @return a new instance.
+     */
+    default AttachmentKeyFactory makeAttachmentKeyFactory() {
+        return new AttachmentKeyFactory();
+    }
+
+    /**
+     * Makes a new instance of {@link FileUploadProcessor}.
+     *
+     * @return a new instance.
+     */
+    default FileUploadProcessor makeFileUploadProcessor() {
+        return new FileUploadProcessor();
+    }
 }
