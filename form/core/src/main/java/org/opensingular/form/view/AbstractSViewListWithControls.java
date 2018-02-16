@@ -16,23 +16,27 @@
 
 package org.opensingular.form.view;
 
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.lib.commons.lambda.IFunction;
+
 import java.util.Optional;
 
 public class AbstractSViewListWithControls<SELF extends AbstractSViewList> extends AbstractSViewList {
 
-    private boolean newEnabled = true;
+    private IFunction<SIList, Boolean> newEnabled = list -> true;
+    private IFunction<SInstance, Boolean> deleteEnabled = si -> true;
     private boolean insertEnabled = false;
-    private boolean deleteEnabled = true;
     private int initialLines;
     private String label;
 
 
-    public final boolean isNewEnabled() {
-        return newEnabled;
+    public final boolean isNewEnabled(SIList list) {
+        return newEnabled.apply(list);
     }
 
-    public final boolean isDeleteEnabled() {
-        return deleteEnabled;
+    public final boolean isDeleteEnabled(SInstance instance) {
+        return deleteEnabled.apply(instance);
     }
 
     public final boolean isInsertEnabled() {
@@ -59,12 +63,12 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
         return setNewEnabled(false);
     }
 
-    public final SELF disableDelete() {
-        return setDeleteEnabled(false);
-    }
-
     public final SELF disableInsert() {
         return setInsertEnabled(false);
+    }
+
+    public final SELF disableDelete() {
+        return setDeleteEnabled(false);
     }
 
     /**
@@ -78,11 +82,21 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
     }
 
     public final SELF setNewEnabled(boolean newEnabled) {
-        this.newEnabled = newEnabled;
+        this.newEnabled = list -> newEnabled;
+        return (SELF) this;
+    }
+
+    public final SELF setNewEnabled(IFunction<SIList, Boolean> enabledFunction) {
+        this.newEnabled = enabledFunction;
         return (SELF) this;
     }
 
     public final SELF setDeleteEnabled(boolean deleteEnabled) {
+        this.deleteEnabled = list -> deleteEnabled;
+        return (SELF) this;
+    }
+
+    public final SELF setDeleteEnabled(IFunction<SInstance, Boolean> deleteEnabled) {
         this.deleteEnabled = deleteEnabled;
         return (SELF) this;
     }
