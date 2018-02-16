@@ -27,6 +27,7 @@ import org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.Se
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.mockito.Mockito.*;
 
 @RunWith(org.mockito.junit.MockitoJUnitRunner.class)

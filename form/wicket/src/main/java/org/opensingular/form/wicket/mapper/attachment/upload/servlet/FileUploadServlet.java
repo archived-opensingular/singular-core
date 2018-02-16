@@ -22,6 +22,7 @@ import org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.At
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.ServletFileUploadStrategyHandler;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +35,7 @@ import java.util.logging.Logger;
  * Servlet responsável pelo upload de arquivos de forma assíncrona.
  */
 @WebServlet(urlPatterns = {AttachmentKeyStrategy.UPLOAD_URL + "/*"})
+@MultipartConfig
 public class FileUploadServlet extends HttpServlet {
 
     @Override

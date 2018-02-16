@@ -99,7 +99,7 @@ public final class ServletFileUploadStrategyHandler implements Loggable {
      */
     protected List<ServletFileUploadStrategy> listAvailableStrategies() {
         return Arrays.asList(new ServletFileUploadStrategy[]{
-                new AttachmentKeyStrategy(),
+                DEFAULT_STRATEGY,
                 new SimplePostFilesStrategy()});
     }
 }

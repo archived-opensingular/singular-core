@@ -42,6 +42,9 @@ import java.util.List;
  */
 public class SimplePostFilesStrategy implements ServletFileUploadStrategy {
 
+    public static final String UPLOAD_URL = "/rest/publicUpload";
+    public static final String URL_PATTERN = UPLOAD_URL + "/*";
+
     /**
      * {@inheritDoc}
      */
