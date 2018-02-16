@@ -27,7 +27,6 @@ import org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.Se
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.mockito.Mockito.*;
 
 @RunWith(org.mockito.junit.MockitoJUnitRunner.class)
@@ -51,10 +50,10 @@ public class FileUploadServletTest {
     @Test
     public void testDelegateProcess() throws Exception {
         mockMultipartAndPost();
-        when(request.getRequestURL()).thenReturn(new StringBuffer(""));
+        ServletFileUploadStrategyHandler strategyHandler = mock(ServletFileUploadStrategyHandler.class);
+        when(uploadServlet.makeServletUploadStrategyHandler()).thenReturn(strategyHandler);
         uploadServlet.doPost(request, response);
-        //TODO rever teste
-        verify(response).sendError(eq(HttpServletResponse.SC_BAD_REQUEST), any());
+        verify(strategyHandler).processFileUpload(request, response);
     }
 
     private void mockMultipartAndPost() {

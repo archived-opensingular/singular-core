@@ -47,10 +47,14 @@ public class FileUploadServlet extends HttpServlet {
                 return;
             }
 
-            ServletFileUploadStrategyHandler.getInstance().processFileUpload(req, resp);
+            makeServletUploadStrategyHandler().processFileUpload(req, resp);
         } catch (Exception e) {
             dealWithException(e);
         }
+    }
+
+    protected ServletFileUploadStrategyHandler makeServletUploadStrategyHandler() {
+        return ServletFileUploadStrategyHandler.getInstance();
     }
 
     private void dealWithException(Exception e) {
