@@ -1,7 +1,6 @@
 package org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy;
 
 import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -10,10 +9,10 @@ import org.mockito.Spy;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import java.io.IOException;
+import java.util.Arrays;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.apache.commons.lang3.StringUtils.substringAfterLast;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
@@ -49,8 +48,11 @@ public class ServletFileUploadStrategyHandlerTest {
 
     @Test
     public void testNonDefaultStrategy() throws IOException, ServletException {
-        mockPath(request, "http://localhost:8080" + ServletFileUploadStrategy.UPLOAD_URL + "/123456");
-        assertTrue(StringUtils.isNotBlank(substringAfterLast(defaultString(request.getRequestURL().toString()), AttachmentKeyStrategy.UPLOAD_URL + "/")));
+        mockPath(request, "http://localhost:8080" + ServletFileUploadStrategy.UPLOAD_URL);
+
+        Part part = mock(Part.class);
+        when(request.getParts()).thenReturn(Arrays.asList(part));
+
         ServletFileUploadStrategy servletFileUploadStrategy = servletFileUploadStrategyHandler.chooseStrategy(request);
         assertTrue(servletFileUploadStrategy != servletFileUploadStrategyHandler.DEFAULT_STRATEGY);
     }
