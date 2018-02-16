@@ -32,14 +32,14 @@ import java.util.function.Predicate;
 @SuppressWarnings("unchecked")
 public class SPackagePersistence extends SPackage {
 
-    public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_PERSISTENT = new AtrRef<>(SPackagePersistence.class, "persistent", STypeBoolean.class, SIBoolean.class, Boolean.class);
-    public static final AtrRef<STypeString, SIString, String>                     ATR_ALIAS      = new AtrRef<>(SPackagePersistence.class, "alias", STypeString.class, SIString.class, String.class);
-    public static final AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> ATR_XML        = new AtrRef(SPackagePersistence.class, "xmlOpts", STypePredicate.class, SIPredicate.class, Predicate.class);
+    public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_INDEXED = new AtrRef<>(SPackagePersistence.class, "indexed", STypeBoolean.class, SIBoolean.class, Boolean.class);
+    public static final AtrRef<STypeString, SIString, String>                     ATR_INDEX_ALIAS   = new AtrRef<>(SPackagePersistence.class, "indexAlias", STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> ATR_XML     = new AtrRef(SPackagePersistence.class, "xmlOpts", STypePredicate.class, SIPredicate.class, Predicate.class);
 
     @Override
     protected void onLoadPackage(@Nonnull PackageBuilder pb) {
-        pb.createAttributeIntoType(SType.class, ATR_PERSISTENT);
+        pb.createAttributeIntoType(SType.class, ATR_INDEXED);
         pb.createAttributeIntoType(SType.class, ATR_XML);
-        pb.createAttributeIntoType(SType.class, ATR_ALIAS);
+        pb.createAttributeIntoType(SType.class, ATR_INDEX_ALIAS);
     }
 }

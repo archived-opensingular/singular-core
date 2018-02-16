@@ -17,32 +17,23 @@
 package org.opensingular.form.type.util;
 
 import org.opensingular.form.SInfoType;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeHiddenString;
-import org.opensingular.form.view.SViewListByTable;
 
-@SInfoType(name = "ListLatitudeLongitude", spackage = SPackageUtil.class)
-public class STypeListLatitudeLongitude extends STypeComposite<SIListLatitudeLongitude> {
+/**
+ * Created by danilo.mesquita on 04/01/2016.
+ */
+@SInfoType(name = "LatitudeLongitudeGMpas", spackage = SPackageUtil.class)
+public class STypeLatitudeLongitudeGMaps extends STypeLatitudeLongitude {
 
     private static final Integer DEFAULT_ZOOM = 4;
 
-    public static final String FIELD_POINTS = "points";
     public static final String FIELD_ZOOM = "zoom";
 
-    public STypeList<STypeLatitudeLongitude, SILatitudeLongitude> points;
     public STypeHiddenString zoom;
-
-    public STypeListLatitudeLongitude() {
-        super(SIListLatitudeLongitude.class);
-    }
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        points = addFieldListOf(FIELD_POINTS, STypeLatitudeLongitude.class);
-        points.withView(new SViewListByTable());
-
         zoom = addField(FIELD_ZOOM, STypeHiddenString.class);
 
         zoom.withInitListener(ins -> {

@@ -18,16 +18,16 @@ package org.opensingular.form.wicket.mapper.attachment.single;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
-
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.view.FileEventListener;
+import org.opensingular.form.view.SViewAttachment;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
 import org.opensingular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
-import org.opensingular.form.wicket.IAjaxUpdateListener;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSWellBorder;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
@@ -39,8 +39,21 @@ public class AttachmentMapper extends AbstractControlsFieldComponentMapper {
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
         final FileUploadPanel container = new FileUploadPanel("container", (IModel<SIAttachment>) model, ViewMode.EDIT);
+        registerListeners(ctx, container);
         formGroup.appendDiv(container);
         return container.getUploadField();
+    }
+
+    private void registerListeners(WicketBuildContext ctx, FileUploadPanel container) {
+        if (ctx.getView() instanceof SViewAttachment) {
+            SViewAttachment viewAttachment = (SViewAttachment) ctx.getView();
+            for (FileEventListener uploadListener : viewAttachment.getFileUploadedListeners()) {
+                container.registerFileUploadedListener(uploadListener);
+            }
+            for (FileEventListener removedListener : viewAttachment.getFileRemovedListeners()) {
+                container.registerFileRemovedListener(removedListener);
+            }
+        }
     }
 
     @Override

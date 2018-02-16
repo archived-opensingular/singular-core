@@ -16,21 +16,13 @@
 
 package org.opensingular.form.type.util;
 
-import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
 
-import java.math.BigDecimal;
+import java.io.InputStream;
+import java.io.Serializable;
 
-/**
- * Created by danilo.mesquita on 04/01/2016.
- */
-public class SILatitudeLongitude extends SIComposite {
+public interface LatlongStrategy extends Serializable {
 
-    public void setLongitude(BigDecimal longitude) {
-        this.setValue(STypeLatitudeLongitude.FIELD_LONGITUDE, longitude);
-    }
-
-    public void setLatitude(BigDecimal latitude) {
-        this.setValue(STypeLatitudeLongitude.FIELD_LATITUDE, latitude);
-    }
+    void parseFile(InputStream inputStream, SIList<SILatitudeLongitude> latLongs);
 
 }
