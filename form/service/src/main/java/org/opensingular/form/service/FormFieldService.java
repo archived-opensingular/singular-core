@@ -95,7 +95,7 @@ public class FormFieldService implements IFormFieldService {
         List<SInstance> fieldsInInstance = ((SIComposite) instance).getFields();
 
         for (SInstance field : fieldsInInstance) {
-            if (! field.asAtrIndex().isPersistent() || field instanceof SIAttachment){
+            if (! field.asAtrIndex().isIndexed() || field instanceof SIAttachment){
                 continue;
             }
 

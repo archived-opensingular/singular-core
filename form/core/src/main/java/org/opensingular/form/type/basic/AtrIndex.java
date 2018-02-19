@@ -37,22 +37,22 @@ public class AtrIndex extends STranslatorForAttribute {
         return AtrIndex::new;
     }
 
-    public AtrIndex persistent(Boolean persistent) {
-        setAttributeValue(SPackagePersistence.ATR_PERSISTENT, persistent);
+    public AtrIndex indexed(Boolean persistent) {
+        setAttributeValue(SPackagePersistence.ATR_INDEXED, persistent);
         return this;
     }
 
     public AtrIndex alias(String alias) {
-        setAttributeValue(SPackagePersistence.ATR_ALIAS, alias);
+        setAttributeValue(SPackagePersistence.ATR_INDEX_ALIAS, alias);
         return this;
     }
 
 
-    public Boolean isPersistent() {
-        return getAttributeValue(SPackagePersistence.ATR_PERSISTENT) == null ? Boolean.FALSE: getAttributeValue(SPackagePersistence.ATR_PERSISTENT);
+    public Boolean isIndexed() {
+        return getAttributeValue(SPackagePersistence.ATR_INDEXED) == null ? Boolean.FALSE: getAttributeValue(SPackagePersistence.ATR_INDEXED);
     }
 
     public String getAlias() {
-        return getAttributeValue(SPackagePersistence.ATR_ALIAS);
+        return getAttributeValue(SPackagePersistence.ATR_INDEX_ALIAS);
     }
 }
