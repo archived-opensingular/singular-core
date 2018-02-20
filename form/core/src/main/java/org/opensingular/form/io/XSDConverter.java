@@ -39,7 +39,7 @@ import org.w3c.dom.Node;
 /*
  * Author: Thais N. Pereira
  */
-
+//TODO thais remover códigos comentados e méotodos e variáveis não utilizados
 public class XSDConverter {
 	
 	public static final String XSD_SINGULAR_NAMESPACE_URI = "http://opensingular.org/FormSchema";
@@ -128,6 +128,7 @@ public class XSDConverter {
 	}
 	
 	private String getType(SType<?> sType) {
+        //TODO thais utilizar o método XsdTypeMapping#findXsdType ao invés do código abaixo.
 //		System.out.println(sType);
 		String name = sType.getSuperType().getNameSimple();
 
