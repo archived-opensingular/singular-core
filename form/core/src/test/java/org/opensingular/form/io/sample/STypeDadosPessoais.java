@@ -18,31 +18,24 @@
 
 package org.opensingular.form.io.sample;
 
-import javax.annotation.Nonnull;
-
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
 import org.opensingular.form.TypeBuilder;
-import org.opensingular.form.type.core.SIString;
-import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.core.STypeTime;
 import org.opensingular.form.type.country.brazil.STypeAddress;
-import org.opensingular.form.type.country.brazil.STypeCEP;
-import org.opensingular.form.type.country.brazil.STypeUF;
+
+import javax.annotation.Nonnull;
 
 @SInfoType(spackage = SPackageExemplo.class)
-public class STypeExemplo extends STypeComposite<SIComposite> {
+public class STypeDadosPessoais extends STypeComposite<SIComposite> {
 
-	public STypeAddress endereco;
-    public STypeList<STypeUF, SIComposite> teste;
-    public STypeDadosPessoais dadosPessoais;
+    public STypeAddress endereco;
+    public STypeTime    time;
 
     @Override
     protected void onLoadType(@Nonnull TypeBuilder tb) {
         endereco = this.addField("endereco", STypeAddress.class);
-        dadosPessoais = this.addField("dadosPessoais", STypeDadosPessoais.class);
-        
-        teste = this.addFieldListOf("teste", STypeUF.class);
+        time = this.addField("time", STypeTime.class);
     }
 }
