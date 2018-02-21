@@ -66,22 +66,24 @@ public class XSDConverter {
 	
 	private void toXsdFromSType(SType<?> sType, MElement parent) {
 		if (sType.isList()) {
-			Collection<SType<?>> attr = toXsdFromList((STypeList<?, ?>) sType, parent);
-			attr.forEach(s -> toXsdFromSType(s, parent));
+			Collection<SType<?>> attributesType = toXsdFromList((STypeList<?, ?>) sType, parent);
+			attributesType.forEach(type -> toXsdFromSType(type, parent));
 		} else if (sType.isComposite()) {
-			Collection<SType<?>> attr = toXsdFromComposite((STypeComposite<?>) sType, parent);
-			attr.forEach(s -> toXsdFromSType(s, parent));
+			Collection<SType<?>> attributesType = toXsdFromComposite((STypeComposite<?>) sType, parent);
+			attributesType.forEach(type -> toXsdFromSType(type, parent));
 		}
 	}
 
 	private Collection<SType<?>> toXsdFromList(STypeList<?, ?> sType, MElement parent) {
-		Collection<SType<?>> attributes = new ArrayList<>();
+		Collection<SType<?>> attributesType = new ArrayList<>();
 
+		// TODO O que fazer caso a lista seja de um tipo simples??
+		
 		if (sType.getElementsType().isComposite()) {
-			attributes = toXsdFromComposite((STypeComposite<?>) sType.getElementsType(), parent);
+			attributesType = toXsdFromComposite((STypeComposite<?>) sType.getElementsType(), parent);
 		}
 		
-		return attributes;
+		return attributesType;
 	}
 
 	private Collection<SType<?>> toXsdFromComposite(STypeComposite<?> sType, MElement parent) {
@@ -110,8 +112,6 @@ public class XSDConverter {
 		
 		if (sType.isList()) {
 			element.setAttribute("name", sType.getNameSimple());
-//			element.setAttribute("type", getType(((STypeList<?, ?>) sType).getElementsType()));
-//			element.setAttribute("maxOccurs", "unbounded");
 			element = element.addElementNS(XSD_NAMESPACE_URI, XSD_COMPLEX_TYPE);
 			element = element.addElementNS(XSD_NAMESPACE_URI, XSD_SEQUENCE);
 			element = element.addElementNS(XSD_NAMESPACE_URI, XSD_ELEMENT);
@@ -128,7 +128,7 @@ public class XSDConverter {
 	}
 	
 	private String getType(SType<?> sType) {
-//		System.out.println(sType);
+		
 		String name = sType.getSuperType().getNameSimple();
 
 		if (name.equals(STypeString.class.getSimpleName()) || name.equals(String.class.getSimpleName()))
@@ -251,23 +251,6 @@ public class XSDConverter {
 //        readXsdOwnAttributes(element, newType);
     }
     
-    private static <T extends STypeComposite<?>> void addAttributes(T type, ElementReader root) {
-    	ElementReader tagComplexType = findNextComplexTypeWithAttrName(root, type.getNameSimple());
-    	ElementReader tagSequence = tagComplexType.streamChildren().findFirst().get();
-    	
-//    	System.out.println(element.getPkg().getPackage().getLocalTypes());
-    	
-//    	findComplexTypeElements(tagSequence).forEach(e -> type.addField(e.getAttr("name"), detectType(e)));
-    	findComplexTypeElements(tagSequence).forEach(e -> {
-    		SType<?> eType = detectType(e, root);
-    		if (eType.isList()) {
-    			type.addFieldListOf(e.getAttr("name"), detectTypeOfListElement(e, root));
-    		} else {
-    			type.addField(e.getAttr("name"), eType);
-    		}
-    	});
-    }
-    
     private static SType<?> detectType(ElementReader element, ElementReader root) {
     	String xsdTypeName = element.getAttr("type");
     	if (!StringUtils.isBlank(xsdTypeName)) {
@@ -299,6 +282,53 @@ public class XSDConverter {
     	throw new SingularFormException(element.errorMsg("Não preparado para tratar o tipo '" + xsdTypeName + "'"));      
     }
     
+    private static String getTypeNameWithoutNamespace(String name) {
+        int pos = name.indexOf(':');
+        return pos == -1 ? name : name.substring(pos + 1);
+    }
+    
+    private static XsdTypeMapping getMapping() {
+        if (typeMapping == null) {
+            typeMapping = new XsdTypeMapping();
+        }
+        return typeMapping;
+    }
+    
+    private static <T extends STypeComposite<?>> void addAttributes(T type, ElementReader root) {
+    	ElementReader tagComplexType = findNextComplexTypeWithAttrName(root, type.getNameSimple());
+    	ElementReader tagSequence = tagComplexType.streamChildren().findFirst().get();
+    	
+//    	System.out.println(element.getPkg().getPackage().getLocalTypes());
+    	
+//    	findComplexTypeElements(tagSequence).forEach(e -> type.addField(e.getAttr("name"), detectType(e)));
+    	findComplexTypeElements(tagSequence).forEach(tagElement -> {
+    		SType<?> sType = detectType(tagElement, root);
+    		if (sType.isList()) {
+    			type.addFieldListOf(tagElement.getAttr("name"), detectTypeOfListElement(tagElement, root));
+    		} else {
+    			type.addField(tagElement.getAttr("name"), sType);
+    		}
+    	});
+    }
+    
+    private static ElementReader findNextComplexTypeWithAttrName(ElementReader root, String name) {
+    	return root
+    			.streamChildren()
+    			.filter(ElementReader::isTagComplexType)
+    			.filter(tagElement -> tagElement.getAttr("name").equals(name))
+    			.findFirst()
+    			.orElseThrow(() -> new SingularFormException(root.errorMsg(" Could no get the underlying complex type")));
+    }
+    
+    private static List<ElementReader> findComplexTypeElements(ElementReader tag) {
+    	List<ElementReader> elements = new ArrayList<>();
+    	tag.streamChildren()
+			.filter(ElementReader::isTagXsdElement)
+			.forEach(tagElement -> elements.add(tagElement));
+    			
+    	return elements;
+    }
+    
     private static SType<?> detectTypeOfListElement(ElementReader element, ElementReader root) {
     	Optional<ElementReader> complexTypeChildrenOpt = element.streamChildren().filter(ElementReader::isTagComplexType).findFirst();
         if (complexTypeChildrenOpt.isPresent()) {
@@ -315,6 +345,30 @@ public class XSDConverter {
         throw new SingularFormException(element.errorMsg("Não preparado para detectar o tipo"));
     
     }
+    
+    private static boolean isList(ElementReader complexTypeElement) {
+        if (!complexTypeElement.isTagComplexType()) {
+            throw new SingularFormException(complexTypeElement.errorMsg(" this type is not a complex type, therefore we can not look ahead for list pattern"));
+        }
+        return lookAheadForListElementType(complexTypeElement).isPresent();
+    }
+
+    private static Optional<ElementReader> lookAheadForListElementType(ElementReader complexTypeElement) {
+        if (!complexTypeElement.isTagComplexType()) {
+            throw new SingularFormException(complexTypeElement.errorMsg(" this type is not a complex type, therefore we can not look ahead for list pattern"));
+        }
+        List<ElementReader> typeList = complexTypeElement
+                .streamChildren()
+                .filter(ElementReader::isTagSequence)
+                .flatMap(ElementReader::streamChildren)
+                .filter(ElementReader::isTagXsdElement)
+                .filter(tagElement -> tagElement.getAttrMaxOccurs() > 1).collect(Collectors.toList());
+        if (typeList.size() > 1) {
+            throw new SingularFormException(complexTypeElement.errorMsg(" this type should not have two childrens "));
+        } else {
+            return typeList.stream().findFirst();
+        }
+    }
 
 //    private static ElementReader findNextComplexType(ElementReader listElementType) {
 //        return listElementType
@@ -322,26 +376,7 @@ public class XSDConverter {
 //                .filter(ElementReader::isTagComplexType)
 //                .findFirst()
 //                .orElseThrow(() -> new SingularFormException(listElementType.errorMsg(" Could no get the underlying complex type")));
-//    }
-    
-    private static ElementReader findNextComplexTypeWithAttrName(ElementReader root, String name) {
-        return root
-                .streamChildren()
-                .filter(ElementReader::isTagComplexType)
-                .filter(e -> e.getAttr("name").equals(name))
-                .findFirst()
-                .orElseThrow(() -> new SingularFormException(root.errorMsg(" Could no get the underlying complex type")));
-    }
-    
-    private static List<ElementReader> findComplexTypeElements(ElementReader tag) {
-    	List<ElementReader> elements = new ArrayList<>();
-    	tag
-			.streamChildren()
-			.filter(ElementReader::isTagXsdElement)
-			.forEach(e -> elements.add(e));
-    			
-    	return elements;
-    }
+//    } 
 
 //    private static ElementReader findListElement(ElementReader element) {
 //        return element
@@ -407,8 +442,6 @@ public class XSDConverter {
 //            }
 //        }
 //    }
-//
-    
 //    
 //    private static SType<?> detectComplexType(ElementReader element) {
 //    	Optional<ElementReader> complexTypeChildrenOpt = element.streamChildren().filter(ElementReader::isTagComplexType).findFirst();
@@ -447,37 +480,7 @@ public class XSDConverter {
 //     *
 //     * @param complexTypeElement
 //     * @return
-//     */
-    private static boolean isList(ElementReader complexTypeElement) {
-        if (!complexTypeElement.isTagComplexType()) {
-            throw new SingularFormException(complexTypeElement.errorMsg(" this type is not a complex type, therefore we can not look ahead for list pattern"));
-        }
-        return lookAheadForListElementType(complexTypeElement).isPresent();
-    }
-
-    private static Optional<ElementReader> lookAheadForListElementType(ElementReader complexTypeElement) {
-        if (!complexTypeElement.isTagComplexType()) {
-            throw new SingularFormException(complexTypeElement.errorMsg(" this type is not a complex type, therefore we can not look ahead for list pattern"));
-        }
-        List<ElementReader> typeList = complexTypeElement
-                .streamChildren()
-                .filter(ElementReader::isTagSequence)
-                .flatMap(ElementReader::streamChildren)
-                .filter(ElementReader::isTagXsdElement)
-                .filter(e -> e.getAttrMaxOccurs() > 1).collect(Collectors.toList());
-        if (typeList.size() > 1) {
-            throw new SingularFormException(complexTypeElement.errorMsg(" this type should not have two childrens "));
-        } else {
-            return typeList.stream().findFirst();
-        }
-    }
-    
-    private static XsdTypeMapping getMapping() {
-        if (typeMapping == null) {
-            typeMapping = new XsdTypeMapping();
-        }
-        return typeMapping;
-    }
+//     */   
 //
 //    private static SType<?> detectType(ElementReader node, String xsdTypeName) {
 //        XsdContext xsdContext = node.getXsdContext();
@@ -496,10 +499,7 @@ public class XSDConverter {
 //        throw new SingularFormException(node.errorMsg("Não preparado para tratar o tipo '" + xsdTypeName + "'"));
 //    }
 //
-    private static String getTypeNameWithoutNamespace(String name) {
-        int pos = name.indexOf(':');
-        return pos == -1 ? name : name.substring(pos + 1);
-    }
+    
 
     private static class XsdContext {
 
