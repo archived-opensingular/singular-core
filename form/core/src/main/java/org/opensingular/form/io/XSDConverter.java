@@ -39,7 +39,7 @@ import org.w3c.dom.Node;
 /*
  * Author: Thais N. Pereira
  */
-
+//TODO thais remover códigos comentados e méotodos e variáveis não utilizados
 public class XSDConverter {
 	
 	public static final String XSD_SINGULAR_NAMESPACE_URI = "http://opensingular.org/FormSchema";
@@ -128,7 +128,9 @@ public class XSDConverter {
 	}
 	
 	private String getType(SType<?> sType) {
-		
+
+        //TODO thais utilizar o método XsdTypeMapping#findXsdType ao invés do código abaixo.
+
 		String name = sType.getSuperType().getNameSimple();
 
 		if (name.equals(STypeString.class.getSimpleName()) || name.equals(String.class.getSimpleName()))
@@ -298,9 +300,6 @@ public class XSDConverter {
     	ElementReader tagComplexType = findNextComplexTypeWithAttrName(root, type.getNameSimple());
     	ElementReader tagSequence = tagComplexType.streamChildren().findFirst().get();
     	
-//    	System.out.println(element.getPkg().getPackage().getLocalTypes());
-    	
-//    	findComplexTypeElements(tagSequence).forEach(e -> type.addField(e.getAttr("name"), detectType(e)));
     	findComplexTypeElements(tagSequence).forEach(tagElement -> {
     		SType<?> sType = detectType(tagElement, root);
     		if (sType.isList()) {
