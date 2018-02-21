@@ -329,15 +329,20 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     }
 
     public final Object executeTask(STaskJava task) {
-        final IFlowDataService<?> dataService = task.getFlowMap().getFlowDefinition().getDataService();
-        final Collection<? extends FlowInstance> instances = dataService.retrieveAllInstancesIn(task);
-        if (task.isCalledInBlock()) {
-            return task.executarByBloco(instances);
-        } else {
-            for (final FlowInstance instance : instances) {
-                FlowEngine.executeScheduledTransition(task, instance);
+        try {
+            final IFlowDataService<?>                dataService = task.getFlowMap().getFlowDefinition().getDataService();
+            final Collection<? extends FlowInstance> instances   = dataService.retrieveAllInstancesIn(task);
+            getLogger().info("Start running job: "+ task.getName()+" "+Optional.ofNullable(instances).map(Collection::size).orElse(0)+" instances. ");
+            if (task.isCalledInBlock()) {
+                return task.executarByBloco(instances);
+            } else {
+                for (final FlowInstance instance : instances) {
+                    FlowEngine.executeScheduledTransition(task, instance);
+                }
+                return null;
             }
-            return null;
+        } finally {
+            getLogger().info("Job executed : "+ task.getName());
         }
     }
 }
