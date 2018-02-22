@@ -222,12 +222,12 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         this.add(WicketUtils.$b.attrAppender("style", "height: " + getHeight() + "px;", ""));
 
         map.setVisible(!isVisualization() || multipleMarkers);
-        clearButton.setVisible(!isVisualization() && !multipleMarkers);
         currentLocationButton.setVisible(SViewCurrentLocation.class.isInstance(view) && !isVisualization());
 
-
-        mapStatic.setVisible(isVisualization() && !multipleMarkers);
-        verNoMaps.setVisible(isVisualization() && !multipleMarkers);
+        boolean notMultipleAndNotVisualization = !multipleMarkers && !isVisualization();
+        clearButton.setVisible(notMultipleAndNotVisualization);
+        mapStatic.setVisible(notMultipleAndNotVisualization);
+        verNoMaps.setVisible(notMultipleAndNotVisualization);
     }
 
     protected Integer getHeight() {

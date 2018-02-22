@@ -119,7 +119,7 @@ public class BSActionPanel<T> extends Panel {
                 @Override
                 protected void onConfigure() {
                     super.onConfigure();
-                    this.setVisible(action.isVisible(this.getModel()) && action.isVisible(this.getModel()));
+                    this.setVisible(action.isVisible(this.getModel()));
                     this.setEnabled(action.isEnabled(this.getModel()));
                 }
 

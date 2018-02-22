@@ -24,8 +24,8 @@ import java.util.Optional;
 
 public class AbstractSViewListWithControls<SELF extends AbstractSViewList> extends AbstractSViewList {
 
-    private IFunction<SIList, Boolean> newEnabled = list -> true;
-    private IFunction<SInstance, Boolean> deleteEnabled = si -> true;
+    private IFunction<SIList, Boolean> newEnabled = list -> Boolean.TRUE;
+    private IFunction<SInstance, Boolean> deleteEnabled = si -> Boolean.TRUE;
     private boolean insertEnabled = false;
     private int initialLines;
     private String label;
