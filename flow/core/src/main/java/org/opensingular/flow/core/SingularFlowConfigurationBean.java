@@ -16,10 +16,8 @@
 
 package org.opensingular.flow.core;
 
-import net.vidageek.mirror.dsl.Mirror;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.flow.core.entity.IEntityFlowInstance;
-import org.opensingular.flow.core.renderer.IFlowRenderer;
 import org.opensingular.flow.core.service.IFlowDataService;
 import org.opensingular.flow.core.service.IFlowDefinitionEntityService;
 import org.opensingular.flow.core.service.IPersistenceService;
@@ -46,7 +44,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     public static final String PREFIXO = "SGL";
 
     private String moduleCod;
-    
+
     private List<FlowInstanceListener> notifiers = new ArrayList<>();
 
     /**
@@ -96,7 +94,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
         }
         return moduleCod;
     }
-    
+
     // ------- Método de recuperação de definições --------------------
 
     protected FlowDefinitionCache getDefinitionCache() {
@@ -132,13 +130,17 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     // ------- Método de recuperação de instâncias --------------------
 
-    /** Retorna a {@link FlowInstance} referente a código infomado ou dispara exception senão encontrar. */
+    /**
+     * Retorna a {@link FlowInstance} referente a código infomado ou dispara exception senão encontrar.
+     */
     @Nonnull
     private FlowInstance getFlowInstance(@Nonnull Integer entityCod) {
         return getFlowInstanceOpt(entityCod).orElseThrow(() -> new SingularFlowException(msgNotFound(entityCod)));
     }
 
-    /** Retorna a {@link FlowInstance} referente a entidade infomado ou dispara exception senão encontrar. */
+    /**
+     * Retorna a {@link FlowInstance} referente a entidade infomado ou dispara exception senão encontrar.
+     */
     @Nonnull
     protected FlowInstance getFlowInstance(@Nonnull IEntityFlowInstance entityFlowInstance) {
         Objects.requireNonNull(entityFlowInstance);
@@ -204,15 +206,17 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     @Nonnull
     protected <X extends FlowInstance> Optional<X> getFlowInstanceOpt(@Nonnull String flowInstanceID) {
         Objects.requireNonNull(flowInstanceID);
-        MappingId mappingId = parseId(flowInstanceID);
-        Optional<FlowInstance> instance = getFlowInstanceOpt(mappingId.cod);
+        MappingId              mappingId = parseId(flowInstanceID);
+        Optional<FlowInstance> instance  = getFlowInstanceOpt(mappingId.cod);
         if (instance.isPresent() && mappingId.abbreviation != null) {
             getFlowDefinition(mappingId.abbreviation).checkIfCompatible(instance.get());
         }
         return (Optional<X>) instance;
     }
 
-    /** Retorna a {@link FlowInstance} referente a código infomado. */
+    /**
+     * Retorna a {@link FlowInstance} referente a código infomado.
+     */
     @Nonnull
     private Optional<FlowInstance> getFlowInstanceOpt(@Nonnull Integer entityCod) {
         return getPersistenceService().retrieveFlowInstanceByCod(entityCod)
@@ -232,11 +236,11 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     // estar nesse lugar
     protected String generateID(FlowInstance instance) {
         return new StringBuilder(50)
-            .append(PREFIXO)
-            .append('.')
-            .append(instance.getFlowDefinition().getKey())
-            .append('.')
-            .append(instance.getId()).toString();
+                .append(PREFIXO)
+                .append('.')
+                .append(instance.getFlowDefinition().getKey())
+                .append('.')
+                .append(instance.getId()).toString();
     }
 
     // TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse
@@ -245,9 +249,9 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     protected String generateID(TaskInstance taskInstance) {
         FlowInstance flowInstance = taskInstance.getFlowInstance();
         return new StringBuilder(generateID(flowInstance))
-            .append('.')
-            .append(taskInstance.getId())
-            .toString();
+                .append('.')
+                .append(taskInstance.getId())
+                .toString();
     }
 
     // TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse
@@ -256,16 +260,16 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
         if (instanceID == null || instanceID.length() < 1) {
             throw SingularException.rethrow("O ID da instância não pode ser nulo ou vazio");
         }
-        String parts[] = instanceID.split("\\.");
+        String parts[]      = instanceID.split("\\.");
         String abbreviation = parts[parts.length - 2];
-        String id = parts[parts.length - 1];
+        String id           = parts[parts.length - 1];
         return new MappingId(abbreviation, Integer.parseInt(id));
     }
 
     // TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse
     // estar nesse lugar
     protected static class MappingId {
-        public final String abbreviation;
+        public final String  abbreviation;
         public final Integer cod;
 
         public MappingId(String abbreviation, int cod) {
@@ -284,7 +288,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     /**
      * Notifica os listeners registrados sobre um evento.
-     * 
+     *
      * @param operation
      */
     public void notifyListeners(Consumer<FlowInstanceListener> operation) {
@@ -295,7 +299,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     /**
      * Registra um listener para receber notificações do Engine
-     * 
+     *
      * @param p
      */
     public void addListener(FlowInstanceListener p) {
@@ -310,16 +314,6 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     // ------- Outros -------------------------------------------------
 
-    public IFlowRenderer getFlowRenderer() {
-        try {
-            Class<?> yfilesRendeder = Class.forName("com.opensingular.flow.extras.renderer");
-            return (IFlowRenderer) new Mirror().on(yfilesRendeder).invoke().method("getInstance").withoutArgs();
-        } catch (ClassNotFoundException e) {
-            getLogger().info(e.getMessage(), e);
-        }
-        return null;
-    }
-
     protected abstract IPersistenceService<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getPersistenceService();
 
     protected abstract IFlowDefinitionEntityService<?, ?, ?, ?, ?, ?, ?, ?> getFlowEntityService();
@@ -329,15 +323,20 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     }
 
     public final Object executeTask(STaskJava task) {
-        final IFlowDataService<?> dataService = task.getFlowMap().getFlowDefinition().getDataService();
-        final Collection<? extends FlowInstance> instances = dataService.retrieveAllInstancesIn(task);
-        if (task.isCalledInBlock()) {
-            return task.executarByBloco(instances);
-        } else {
-            for (final FlowInstance instance : instances) {
-                FlowEngine.executeScheduledTransition(task, instance);
+        try {
+            final IFlowDataService<?>                dataService = task.getFlowMap().getFlowDefinition().getDataService();
+            final Collection<? extends FlowInstance> instances   = dataService.retrieveAllInstancesIn(task);
+            getLogger().info("Start running job: {} - {} instances. ", task.getName(), Optional.ofNullable(instances).map(Collection::size).orElse(0));
+            if (task.isCalledInBlock()) {
+                return task.executarByBloco(instances);
+            } else {
+                for (final FlowInstance instance : instances) {
+                    FlowEngine.executeScheduledTransition(task, instance);
+                }
+                return null;
             }
-            return null;
+        } finally {
+            getLogger().info("Job executed : {}", task.getName());
         }
     }
 }

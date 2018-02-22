@@ -78,8 +78,8 @@ public abstract class FormServiceTest {
         nome = tipoPessoa.addFieldString("nome");
 
         tipoPessoa.asAtrAnnotation().setAnnotated();
-        idade.asAtrIndex().persistent(true);
-        nome.asAtrIndex().persistent(true);
+        idade.asAtrIndex().indexed(true);
+        nome.asAtrIndex().indexed(true);
 
         documentFactory = SDocumentFactory.of(doc -> {
             IAttachmentPersistenceHandler<?> tempHandler = mock(IAttachmentPersistenceHandler.class);

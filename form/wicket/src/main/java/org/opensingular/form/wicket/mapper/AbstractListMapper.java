@@ -31,6 +31,7 @@ import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.view.AbstractSViewListWithControls;
+import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackPanel;
@@ -87,7 +88,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
     }
 
     protected static RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, Item<SInstance> item,
-                                                       BSContainer<?> cell, ConfirmationModal confirmationModal) {
+                                                       BSContainer<?> cell, ConfirmationModal confirmationModal, SViewListByTable viewListByTable) {
         RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item, confirmationModal);
 
         cell
@@ -97,6 +98,10 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                         + "      style='" + MapperCommons.ICON_STYLE + " 'class='" + DefaultIcons.REMOVE + "' />"
                         + "</button>")
                 .add(btn);
+
+        if (viewListByTable != null) {
+            btn.add($b.onConfigure(c -> c.setVisible(viewListByTable.isDeleteEnabled(item.getModelObject()))));
+        }
         return btn;
     }
 
@@ -114,17 +119,14 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
     }
 
     public static void buildFooter(BSContainer<?> footer, WicketBuildContext ctx, Factory createAddButton) {
-        if (canAddItems(ctx)) {
-            final TemplatePanel template = footer.newTemplateTag(tp -> createButtonMarkup(ctx));
-            template.add((Component) createAddButton.create());
-        } else {
-            footer.setVisible(false);
-        }
+        final TemplatePanel template = footer.newTemplateTag(tp -> createButtonMarkup(ctx));
+        template.add((Component) createAddButton.create());
+        footer.add($b.onConfigure(c -> c.setVisible(canAddItems(ctx))));
         personalizeCSS(footer);
     }
 
     public static boolean canAddItems(WicketBuildContext ctx) {
-        return ((AbstractSViewListWithControls<?>) ctx.getView()).isNewEnabled()
+        return ((AbstractSViewListWithControls<?>) ctx.getView()).isNewEnabled((SIList) ctx.getModel().getObject())
                 && ctx.getViewMode().isEdition();
     }
 

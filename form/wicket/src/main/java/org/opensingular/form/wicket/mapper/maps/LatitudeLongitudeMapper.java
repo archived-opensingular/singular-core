@@ -23,6 +23,7 @@ import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
+import org.opensingular.form.type.util.STypeLatitudeLongitudeGMaps;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.composite.DefaultCompositeMapper;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
@@ -45,7 +46,7 @@ public class LatitudeLongitudeMapper extends DefaultCompositeMapper {
                 if (nameSimple.equals(STypeLatitudeLongitude.FIELD_LONGITUDE)) {
                     ids.longitudeId = object.getMarkupId();
                 }
-                if (nameSimple.equals(STypeLatitudeLongitude.FIELD_ZOOM)) {
+                if (nameSimple.equals(STypeLatitudeLongitudeGMaps.FIELD_ZOOM)) {
                     ids.zoomId = object.getMarkupId();
                 }
             }
