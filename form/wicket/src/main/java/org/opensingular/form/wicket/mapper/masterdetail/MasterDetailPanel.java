@@ -329,6 +329,7 @@ public class MasterDetailPanel extends Panel {
             .iconeModel(IReadOnlyModel.of(() -> DefaultIcons.EXCLAMATION_TRIANGLE))
             .styleClasses(Model.of("red"))
             .titleFunction(rowModel -> IMappingModel.of(rowModel).map(it -> (it.getNestedValidationErrors().size() + " erro(s) encontrado(s)")).getObject())
+            .visibleFor(rowModel -> !rowModel.getObject().getNestedValidationErrors().isEmpty())
             .style($m.ofValue(MapperCommons.BUTTON_STYLE));
     }
 
