@@ -21,30 +21,30 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
-/*
- * Author: Thais N. Pereira
+/**
+ * 
+ * @author Thais N. Pereira
+ *
  */
-
 public class TestXSDConverter  {
 
     @Test
     public void testXsdConverter() {
+    	
         STypeExemplo e         = SDictionary.create().getType(STypeExemplo.class);
-        XSDConverter converter = new XSDConverter();
 
-
-        MElement firstXSDConversion = converter.toXsd(e);
+        MElement firstXSDConversion = XSDConverter.toXsd(e);
         String   firstConversion    = firstXSDConversion.toString();
         firstXSDConversion.printTabulado();
 
         SType<?> type                = parseXsd(firstConversion);
-        MElement secondXSDConversion = converter.toXsd(type);
+        MElement secondXSDConversion = XSDConverter.toXsd(type);
         String   secondConversion    = secondXSDConversion.toString();
         secondXSDConversion.printTabulado();
 
 
         type = parseXsd(secondConversion);
-        MElement thirdXSDConversion = converter.toXsd(type);
+        MElement thirdXSDConversion = XSDConverter.toXsd(type);
         String   thirdConversion    = thirdXSDConversion.toString();
         thirdXSDConversion.printTabulado();
 
@@ -60,8 +60,7 @@ public class TestXSDConverter  {
     @Test
     public void testValidateGeneratedXSDFormat() throws IOException, SAXException {
         STypeExemplo e         = SDictionary.create().getType(STypeExemplo.class);
-        XSDConverter converter = new XSDConverter();
-        validateXSD(converter.toXsd(e).toString());
+        validateXSD(XSDConverter.toXsd(e).toString());
     }
 
     private void validateXSD(String xsd) throws IOException, SAXException {
