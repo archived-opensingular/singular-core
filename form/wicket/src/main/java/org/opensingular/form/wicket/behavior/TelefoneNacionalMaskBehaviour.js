@@ -57,7 +57,7 @@
     window.Singular.applyTelefoneNacionalMask = function (id) {
 
         var input = $('#' + id),
-            bypassKeys = new ArrayWrapper([8, 37, 39]),
+            bypassKeys = new ArrayWrapper([8, 37, 39, 91, 224]),
             numberKeysAndNumpadKeys = new ArrayWrapper([48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105]),
             removeKeys = new ArrayWrapper([8, 46]);
 
@@ -86,11 +86,16 @@
         function setEightDigitsMask() {
             clear();
             var array = new ArrayWrapper(toArray(input.val()));
-            if (input.val().trim().length > 0) {
+            var phoneLength = input.val().trim().length;
+            if (phoneLength > 0) {
                 array.addAndShift(0, '(');
+            }
+            if (phoneLength > 2) {
                 array.addAndShift(3, ')');
                 array.addAndShift(4, ' ');
-                array.addAndShift(9, '-');
+            }
+            if (phoneLength > 6) {
+                    array.addAndShift(9, '-');
             }
             input.val(array.toPlainString());
         }
@@ -98,10 +103,15 @@
         function setNineDigitsMask() {
             clear();
             var array = new ArrayWrapper(toArray(input.val()));
-            if (input.val().trim().length > 0) {
+            var phoneLength = input.val().trim().length;
+            if (phoneLength > 0) {
                 array.addAndShift(0, '(');
+            }
+            if (phoneLength > 2) {
                 array.addAndShift(3, ')');
                 array.addAndShift(4, ' ');
+            }
+            if (phoneLength > 7) {
                 array.addAndShift(10, '-');
             }
             input.val(array.toPlainString());
@@ -116,7 +126,7 @@
             if (keyCode === 9) {
                 return true;
             }
-            if (bypassKeys.contains(keyCode) && !event.shiftKey || event.ctrlKey) {
+            if (bypassKeys.contains(keyCode) && !event.shiftKey || event.ctrlKey || event.metaKey) {
                 return true;
             }
             if (currentValueLength() > 10) {
@@ -137,7 +147,7 @@
             if (keyCode === 9) {
                 return true;
             }
-            if (bypassKeys.contains(keyCode) && !event.shiftKey || event.ctrlKey) {
+            if (bypassKeys.contains(keyCode) && !event.shiftKey || event.ctrlKey || event.metaKey) {
                 return true;
             }
             if (currentValueLength() > 10) {
