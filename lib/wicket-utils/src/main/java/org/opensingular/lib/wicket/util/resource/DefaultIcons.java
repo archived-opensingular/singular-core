@@ -100,6 +100,7 @@ public enum DefaultIcons implements Icon {
     TASKS("fa fa-tasks"),
     TIMES("fa fa-times"),
     TRASH("fa fa-trash-o "),
+    THUMB_DOWN("fa fa-thumbs-o-down"),
     UNDO("icon-action-undo"),
     UPLOAD("fa fa-upload"),
     USER("fa fa-user"),
