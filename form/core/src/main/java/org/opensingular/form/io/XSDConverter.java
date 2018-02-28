@@ -3,6 +3,7 @@ package org.opensingular.form.io;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -41,9 +42,12 @@ public class XSDConverter {
     private static final String XSD_COMPLEX_TYPE = XSD_NAMESPACE_PREFIX + ":complexType";
     private static final String XSD_SEQUENCE = XSD_NAMESPACE_PREFIX + ":sequence";
     
+    private static MElement root;
+    
     private static XsdTypeMapping typeMapping;
     
     private static Map<String, STypeComposite<?>> mapOfComplexType = new HashMap<>();
+    private static Map<STypeComposite<?>, String> mapOfComposite = new HashMap<>();
     
     private XSDConverter() {
     	
@@ -57,60 +61,68 @@ public class XSDConverter {
     }
 	
     public static MElement toXsd(SType<?> sType) {
-    	MElement root = MElement.newInstance(XSD_NAMESPACE_URI, XSD_SCHEMA);
+    	root = MElement.newInstance(XSD_NAMESPACE_URI, XSD_SCHEMA);
 
-		MElement element = root.addElementNS(XSD_NAMESPACE_URI, XSD_ELEMENT);
-		element.setAttribute("name", sType.getNameSimple());
-		element.setAttribute("type", sType.getNameSimple());
+		MElement firstElement = addXsdElement(sType, root);
 		
 		mapOfComplexType.clear();
+		mapOfComposite.clear();
 		
-    	toXsdFromSType(sType, root);
+		createMapOfComposite(mapOfComposite, sType);
+		
+    	toXsdFromSType(sType, firstElement);
     	
     	return root;
     }
+    
+    private static void createMapOfComposite(Map<STypeComposite<?>, String> mapOfComposite, SType<?> sType) {
+    	
+    	if (sType.isList()) {
+    		STypeList<?, ?> sTypeList = (STypeList<?, ?>) sType;
+    		insertIntoMapOfComposite(sTypeList.getElementsType(), mapOfComposite);
+    		createMapOfComposite(mapOfComposite, sTypeList.getElementsType());
+    	} else if (sType.isComposite()) {
+    		STypeComposite<?> sTypeComposite = (STypeComposite<?>) sType;
+    		if (mapOfComposite.isEmpty()) {
+    			insertIntoMapOfComposite(sTypeComposite, mapOfComposite);
+    		}
+    		Collection<SType<?>> collection = sTypeComposite.getFields();
+    		collection.forEach(type -> {
+    			insertIntoMapOfComposite(type, mapOfComposite);
+    			createMapOfComposite(mapOfComposite, type);
+    			});
+    	}
+    }
+    
+    private static void insertIntoMapOfComposite(SType<?> sType, Map<STypeComposite<?>, String> map) {
+    	if (sType.isComposite()) {
+    		map.put((STypeComposite<?>) sType, getComplexTypeName(sType));
+    	}
+    }
 	
-	private static void toXsdFromSType(SType<?> sType, MElement parent) {
+	private static void toXsdFromSType(SType<?> sType, MElement element) {
 		if (sType.isList()) {
-			Collection<SType<?>> attributesType = toXsdFromList((STypeList<?, ?>) sType, parent);
-			attributesType.forEach(type -> toXsdFromSType(type, parent));
+			toXsdFromList((STypeList<?, ?>) sType, element);
 		} else if (sType.isComposite()) {
-			Collection<SType<?>> attributesType = toXsdFromComposite((STypeComposite<?>) sType, parent);
-			attributesType.forEach(type -> toXsdFromSType(type, parent));
+			toXsdFromComposite((STypeComposite<?>) sType, element);
 		}
 	}
 
-	private static Collection<SType<?>> toXsdFromList(STypeList<?, ?> sType, MElement parent) {
-		Collection<SType<?>> attributesType = new ArrayList<>();
-		
+	private static void toXsdFromList(STypeList<?, ?> sType, MElement element) {
 		if (sType.getElementsType().isComposite()) {
-			attributesType = toXsdFromComposite((STypeComposite<?>) sType.getElementsType(), parent);
+			toXsdFromComposite((STypeComposite<?>) sType.getElementsType(), element);
 		}
-		
-		return attributesType;
 	}
 
-	private static Collection<SType<?>> toXsdFromComposite(STypeComposite<?> sType, MElement parent) {
+	private static void toXsdFromComposite(STypeComposite<?> sType, MElement element) {
 		
 		String name = getTypeName(sType);
 		
-		if (!sType.isTypeOf(mapOfComplexType.get(name))) {
-			
-			MElement element = parent.addElementNS(XSD_NAMESPACE_URI, XSD_COMPLEX_TYPE);
-	
-			element.setAttribute("name", name);
-			element = element.addElementNS(XSD_NAMESPACE_URI, XSD_SEQUENCE);
-			
-			for (SType<?> child : sType.getFields()) {
-				addXsdElement(child, element);
-			}
-		}
-		
-		if (!mapOfComplexType.containsKey(name)) {
-			insertIntoMapOfComplexTypes(name, sType);
-		}
-		
-		return sType.getFields();
+		if (Collections.frequency(mapOfComposite.values(), name) > 1) {
+			addNotUniqueComplexType(sType, name);
+		} else {
+			addUniqueComplexType(sType, element, name);
+		}		
 	}
 	
 	private static String getTypeName(SType<?> sType) {
@@ -142,6 +154,47 @@ public class XSDConverter {
 		return name;
 	}
 	
+	private static void addNotUniqueComplexType(STypeComposite<?> sType, String name) {
+		if (!sType.isTypeOf(mapOfComplexType.get(name))) {
+			
+			MElement element = root.addElementNS(XSD_NAMESPACE_URI, XSD_COMPLEX_TYPE);
+	
+			element.setAttribute("name", name);
+			element = element.addElementNS(XSD_NAMESPACE_URI, XSD_SEQUENCE);
+			
+			addComplexTypeElements(sType, element);
+		}
+		
+		if (!mapOfComplexType.containsKey(name)) {
+			insertIntoMapOfComplexTypes(name, sType);
+		}
+	}
+	
+	private static void addUniqueComplexType(STypeComposite<?> sType, MElement parentElement, String name) {
+		MElement element = parentElement.addElementNS(XSD_NAMESPACE_URI, XSD_COMPLEX_TYPE);
+		element = element.addElementNS(XSD_NAMESPACE_URI, XSD_SEQUENCE);
+		
+		addComplexTypeElements(sType, element);
+	}
+	
+	private static void addComplexTypeElements(STypeComposite<?> sType, MElement parentComplexType) {
+		for (SType<?> type : sType.getFields()) {
+			MElement element = addXsdElement(type, parentComplexType);
+			toXsdFromSType(type, element);
+		}
+	}
+	
+	private static void insertIntoMapOfComplexTypes(String name, STypeComposite<?> sType) {
+		String sTypeCompositeName = STypeComposite.class.getSimpleName();
+		SType<?> s = sType;
+		
+		while (!s.getSuperType().getNameSimple().equals(sTypeCompositeName)) {
+			s = s.getSuperType();
+		}
+
+		mapOfComplexType.put(name, (STypeComposite<?>) s);
+	}
+	
 	private static MElement addXsdElement(SType<?> sType, MElement parent) {
 		MElement element = parent.addElementNS(XSD_NAMESPACE_URI, XSD_ELEMENT);
 		
@@ -149,8 +202,13 @@ public class XSDConverter {
 			setXsdListElementDefinition(element, sType);
 			
 		} else {
+			String typeName = getTypeName(sType);
+			
 			element.setAttribute("name", sType.getNameSimple());
-			element.setAttribute("type", getTypeName(sType));
+			
+			if (Collections.frequency(mapOfComposite.values(), typeName) > 1 || sType instanceof STypeSimple<?, ?>) {
+				element.setAttribute("type", typeName);
+			}
 		}
 		
 		return element;
@@ -177,17 +235,6 @@ public class XSDConverter {
         } else {
             element.setAttribute("maxOccurs", max.toString());
         }
-	}
-	
-	private static void insertIntoMapOfComplexTypes(String name, STypeComposite<?> sType) {
-		String sTypeCompositeName = STypeComposite.class.getSimpleName();
-		SType<?> s = sType;
-		
-		while (!s.getSuperType().getNameSimple().equals(sTypeCompositeName)) {
-			s = s.getSuperType();
-		}
-
-		mapOfComplexType.put(name, (STypeComposite<?>) s);
 	}
 	
 	public static SType<?> xsdToSType(PackageBuilder packageForNewTypes, InputStream in) {
@@ -246,7 +293,7 @@ public class XSDConverter {
     			STypeComposite<?> type = null; 
     			if (!mapOfComplexType.containsKey(xsdTypeName)) {
 	    			type = element.getPkg().createCompositeType(xsdTypeName);
-	    			addAttributes(type, root);
+	    			addAttributes(type, root, null, xsdTypeName);
 	    			insertIntoMapOfComplexTypes(xsdTypeName, type);
     			} else {
     				type = mapOfComplexType.get(xsdTypeName);
@@ -261,7 +308,12 @@ public class XSDConverter {
 
     			if (isList(complexTypeChildren)) {
     				return element.getXsdContext().getType(STypeList.class);
-    			}
+    			} else {
+                    STypeComposite<?> newType = element.getPkg().createCompositeType(element.getAttr("name"));
+                    addAttributes(newType, root, complexTypeChildren, xsdTypeName);
+                    
+                    return newType;
+                }
     		}
     		throw new SingularFormException(element.errorMsg("Não preparado para detectar o tipo"));
     	}
@@ -273,9 +325,12 @@ public class XSDConverter {
         return pos == -1 ? name : name.substring(pos + 1);
     }
     
-    private static <T extends STypeComposite<?>> void addAttributes(T type, ElementReader root) {
+    private static <T extends STypeComposite<?>> void addAttributes(T type, ElementReader root, ElementReader tagComplexType, String xsdTypeName) {
     	
-    	ElementReader tagComplexType = findNextComplexTypeWithAttrName(root, type.getNameSimple());
+    	if (!StringUtils.isBlank(xsdTypeName)) {
+    		tagComplexType = findNextComplexTypeWithAttrName(root, type.getNameSimple());
+    	}
+    	
     	ElementReader tagSequence = tagComplexType.streamChildren().findFirst().get();
     	
     	findComplexTypeElements(tagSequence).forEach(tagElement -> {
