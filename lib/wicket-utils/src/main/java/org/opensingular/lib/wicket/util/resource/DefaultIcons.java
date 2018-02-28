@@ -35,6 +35,7 @@ public enum DefaultIcons implements Icon {
     CLOCK("icon-clock"),
     CLONE("fa fa-clone"),
     CODE("fa fa-code"),
+    COG("fa fa-cog"),
     COGS("fa fa-cogs"),
     COMMENT("fa fa-comment"),
     COUNTRY("icon-globe"),
