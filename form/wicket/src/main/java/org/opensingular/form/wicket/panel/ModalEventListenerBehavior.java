@@ -32,6 +32,7 @@ import org.opensingular.form.wicket.component.BFModalWindow;
 import org.opensingular.form.wicket.panel.IOpenModalEvent.ButtonDef;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
+import org.opensingular.lib.wicket.util.scripts.Scripts;
 
 /**
  * Listener para eventos <code>IOpenModalEvent</code> e <code>ICloseModalEvent</code>,
@@ -85,6 +86,7 @@ public class ModalEventListenerBehavior extends Behavior {
             target.prependJavaScript(JQuery.$(modalItemsContainer.getParent()) + ""
                 + ".append('<div id=\"" + modal.getMarkupId() + "\"></div>');");
             target.add(modal);
+            target.appendJavaScript(Scripts.multipleModalBackDrop());
         }
 
         modal.show(target);
