@@ -29,7 +29,7 @@ public class FlowRightPK implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "CO_DEFINICAO_PROCESSO")
-    private long codFlowDefinition;
+    private Integer codFlowDefinition;
 
     @Column(name = "TP_PERMISSAO")
     private String rightType;
@@ -37,11 +37,11 @@ public class FlowRightPK implements Serializable {
     public FlowRightPK() {
     }
 
-    public long getCodFlowDefinition() {
+    public Integer getCodFlowDefinition() {
         return this.codFlowDefinition;
     }
 
-    public void setCodFlowDefinition(long codFlowDefinition) {
+    public void setCodFlowDefinition(Integer codFlowDefinition) {
         this.codFlowDefinition = codFlowDefinition;
     }
 
