@@ -281,8 +281,8 @@ public class MasterDetailPanel extends Panel {
         ViewMode vm,
         SViewListByMasterDetail view) {
         builder.appendActionColumn($m.ofValue("Ações"), ac -> {
-            if (vm.isEdition() && view.isDeleteEnabled()) {
-                ac.appendAction(buildRemoveActionConfig(), buildRemoveAction(model, ctx));
+            if (vm.isEdition()) {
+                ac.appendAction(buildRemoveActionConfig(view), buildRemoveAction(model, ctx));
             }
             ac.appendAction(buildViewOrEditActionConfig(vm, view), buildViewOrEditAction(modal, ctx));
             ac.appendAction(buildShowErrorsActionConfig(model), buildShowErrorsAction());
@@ -292,11 +292,12 @@ public class MasterDetailPanel extends Panel {
         });
     }
 
-    private BSActionPanel.ActionConfig<SInstance> buildRemoveActionConfig() {
+    private BSActionPanel.ActionConfig<SInstance> buildRemoveActionConfig(SViewListByMasterDetail view) {
         return new BSActionPanel.ActionConfig<SInstance>()
             .styleClasses(Model.of("list-detail-remove"))
             .iconeModel(Model.of(DefaultIcons.REMOVE))
-            .titleFunction(rowModel -> "Remover");
+            .titleFunction(rowModel -> "Remover")
+            .visibleFor(m -> view.isDeleteEnabled(m.getObject()));
     }
 
     private IBSAction<SInstance> buildRemoveAction(IModel<? extends SInstance> model, WicketBuildContext ctx) {
@@ -328,6 +329,7 @@ public class MasterDetailPanel extends Panel {
             .iconeModel(IReadOnlyModel.of(() -> DefaultIcons.EXCLAMATION_TRIANGLE))
             .styleClasses(Model.of("red"))
             .titleFunction(rowModel -> IMappingModel.of(rowModel).map(it -> (it.getNestedValidationErrors().size() + " erro(s) encontrado(s)")).getObject())
+            .visibleFor(rowModel -> !rowModel.getObject().getNestedValidationErrors().isEmpty())
             .style($m.ofValue(MapperCommons.BUTTON_STYLE));
     }
 

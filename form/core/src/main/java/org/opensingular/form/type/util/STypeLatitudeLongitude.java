@@ -20,7 +20,6 @@ import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeDecimal;
-import org.opensingular.form.type.core.STypeHiddenString;
 
 import java.math.BigDecimal;
 
@@ -30,15 +29,11 @@ import java.math.BigDecimal;
 @SInfoType(name = "LatitudeLongitude", spackage = SPackageUtil.class)
 public class STypeLatitudeLongitude extends STypeComposite<SILatitudeLongitude> {
 
-    private static final Integer DEFAULT_ZOOM = 4;
-
     public static final String FIELD_LATITUDE  = "latitude";
     public static final String FIELD_LONGITUDE = "longitude";
-    public static final String FIELD_ZOOM = "zoom";
 
     public STypeDecimal latitude;
     public STypeDecimal longitude;
-    public STypeHiddenString zoom;
 
     public STypeLatitudeLongitude() {
         super(SILatitudeLongitude.class);
@@ -48,7 +43,6 @@ public class STypeLatitudeLongitude extends STypeComposite<SILatitudeLongitude> 
     protected void onLoadType(TypeBuilder tb) {
         latitude = addFieldDecimal(FIELD_LATITUDE);
         longitude = addFieldDecimal(FIELD_LONGITUDE);
-        zoom = addField(FIELD_ZOOM, STypeHiddenString.class);
 
         latitude
                 .asAtr().label("Latitude").fractionalMaxLength(15)
@@ -80,9 +74,5 @@ public class STypeLatitudeLongitude extends STypeComposite<SILatitudeLongitude> 
             }
         });
 
-        zoom.withInitListener(ins -> {
-            if(ins.isEmptyOfData())
-                ins.setValue(DEFAULT_ZOOM);
-        });
     }
 }
