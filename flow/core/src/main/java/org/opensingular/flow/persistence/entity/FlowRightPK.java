@@ -16,6 +16,9 @@
 
 package org.opensingular.flow.persistence.entity;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
@@ -29,7 +32,7 @@ public class FlowRightPK implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "CO_DEFINICAO_PROCESSO")
-    private long codFlowDefinition;
+    private Integer codFlowDefinition;
 
     @Column(name = "TP_PERMISSAO")
     private String rightType;
@@ -37,11 +40,11 @@ public class FlowRightPK implements Serializable {
     public FlowRightPK() {
     }
 
-    public long getCodFlowDefinition() {
+    public Integer getCodFlowDefinition() {
         return this.codFlowDefinition;
     }
 
-    public void setCodFlowDefinition(long codFlowDefinition) {
+    public void setCodFlowDefinition(Integer codFlowDefinition) {
         this.codFlowDefinition = codFlowDefinition;
     }
 
@@ -53,25 +56,25 @@ public class FlowRightPK implements Serializable {
         this.rightType = rightType;
     }
 
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-        if (!(other instanceof FlowRightPK)) {
-            return false;
-        }
-        FlowRightPK castOther = (FlowRightPK) other;
-        return
-                (this.codFlowDefinition == castOther.codFlowDefinition)
-                        && this.rightType.equals(castOther.rightType);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (!(o instanceof FlowRightPK)) return false;
+
+        FlowRightPK that = (FlowRightPK) o;
+
+        return new EqualsBuilder()
+                .append(codFlowDefinition, that.codFlowDefinition)
+                .append(rightType, that.rightType)
+                .isEquals();
     }
 
+    @Override
     public int hashCode() {
-        final int prime = 31;
-        int hash = 17;
-        hash = hash * prime + ((int) (this.codFlowDefinition ^ (this.codFlowDefinition >>> 32)));
-        hash = hash * prime + this.rightType.hashCode();
-
-        return hash;
+        return new HashCodeBuilder(17, 37)
+                .append(codFlowDefinition)
+                .append(rightType)
+                .toHashCode();
     }
 }
