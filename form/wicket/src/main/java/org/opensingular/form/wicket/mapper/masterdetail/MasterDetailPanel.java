@@ -220,7 +220,7 @@ public class MasterDetailPanel extends Panel {
                 if (si instanceof SIList) {
                     final SIList<?> sil = (SIList<?>) si;
                     if (sil.getType().getMaximumSize() != null && sil.getType().getMaximumSize() == sil.size()) {
-                        target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
+                        target.appendJavaScript(";bootbox.alert('A quantidade máxima de valores foi atingida.');");
                         target.appendJavaScript(Scripts.multipleModalBackDrop());
                     } else {
                         modal.setOnHideCallback(t -> t.focusComponent(this));

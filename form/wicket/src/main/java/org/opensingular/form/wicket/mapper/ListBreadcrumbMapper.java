@@ -205,7 +205,7 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
                             if (si instanceof SIList) {
                                 final SIList sil = (SIList) si;
                                 if (sil.getType().getMaximumSize() != null && sil.getType().getMaximumSize() == sil.size()) {
-                                    target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
+                                    target.appendJavaScript(";bootbox.alert('A quantidade máxima de valores foi atingida.');");
                                     target.appendJavaScript(Scripts.multipleModalBackDrop());
                                 } else {
                                     adding = true;
