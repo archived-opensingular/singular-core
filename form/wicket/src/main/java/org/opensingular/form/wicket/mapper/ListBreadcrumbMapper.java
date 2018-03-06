@@ -226,7 +226,7 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
 
             target.prependJavaScript(String.format("notify|$('#%s').hide('slide', { direction: 'left' }, 500, notify);", rootContainer.getMarkupId()));
             rootContainer.getItems().removeAll();
-            WicketBuildContext childCtx = ctx.createChild(rootContainer, itemModel, ctx.getConfirmationModal());
+            WicketBuildContext childCtx = ctx.createChild(rootContainer, ctx.getExternalContainer(), itemModel);
             childCtx.setShowBreadcrumb(true);
             childCtx.build();
             BSContainer<?> childCtxRootContainer = childCtx.getRootContainer();

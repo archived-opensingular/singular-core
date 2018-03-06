@@ -39,6 +39,7 @@ import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.form.wicket.repeater.PathInstanceItemReuseStrategy;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
+import org.opensingular.form.wicket.util.WicketFormUtils;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.behavior.FadeInOnceBehavior;
@@ -320,6 +321,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
 
         protected RemoverButton(String id, Form<?> form, ElementsView elementsView, Item<SInstance> item, ConfirmationModal confirmationModal) {
             super(id, form);
+            this.setOutputMarkupId(true);
             this.setDefaultFormProcessing(false);
             this.elementsView = elementsView;
             this.item = item;
@@ -330,6 +332,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
 
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
+            target.add(WicketFormUtils.findUpdatableComponentInHierarchy(confirmationModal));
             confirmationModal.show(target, this::removeItem);
         }
 
@@ -339,10 +342,6 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
             if (elementsView.getModelObject().isEmpty()) {
                 target.add(this.getForm());
             }
-        }
-
-        public ConfirmationModal getConfirmationModal() {
-            return confirmationModal;
         }
     }
 

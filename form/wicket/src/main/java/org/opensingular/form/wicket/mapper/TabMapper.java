@@ -272,7 +272,7 @@ public class TabMapper implements IWicketComponentMapper {
     private void renderTab(List<String> typeNames, BSPanelGrid panel, WicketBuildContext ctx) {
         for (String typeName : typeNames) {
             SInstanceFieldModel<SInstance> subtree = new SInstanceFieldModel<>(ctx.getModel(), typeName);
-            WicketBuildContext childContext = ctx.createChild(panel.getContainer().newGrid().newColInRow(), subtree, ctx.getConfirmationModal());
+            WicketBuildContext childContext = ctx.createChild(panel.getContainer().newGrid().newColInRow(), ctx.getExternalContainer(), subtree);
             childContext.init(ctx.getViewMode());
             childContext.build();
             childContext.initContainerBehavior();

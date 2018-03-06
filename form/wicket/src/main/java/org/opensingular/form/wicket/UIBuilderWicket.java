@@ -73,7 +73,7 @@ public final class UIBuilderWicket {
 
             BSRow row = ctx.getContainer().newGrid().newRow();
             row.newCol().appendTag("div", panel);
-            childCtx = ctx.createChild(row.newCol(), ctx.getModel(), ctx.getConfirmationModal());
+            childCtx = ctx.createChild(row.newCol(), ctx.getExternalContainer(), ctx.getModel());
             childCtx.init(viewMode);
         }
 
