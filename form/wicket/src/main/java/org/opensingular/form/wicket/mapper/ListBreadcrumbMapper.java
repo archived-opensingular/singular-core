@@ -205,7 +205,7 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
                             if (si instanceof SIList) {
                                 final SIList sil = (SIList) si;
                                 if (sil.getType().getMaximumSize() != null && sil.getType().getMaximumSize() == sil.size()) {
-                                    target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
+                                    target.appendJavaScript(";bootbox.alert('A quantidade máxima de valores foi atingida.');");
                                     target.appendJavaScript(Scripts.multipleModalBackDrop());
                                 } else {
                                     adding = true;
@@ -226,7 +226,7 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
 
             target.prependJavaScript(String.format("notify|$('#%s').hide('slide', { direction: 'left' }, 500, notify);", rootContainer.getMarkupId()));
             rootContainer.getItems().removeAll();
-            WicketBuildContext childCtx = ctx.createChild(rootContainer, itemModel, ctx.getConfirmationModal());
+            WicketBuildContext childCtx = ctx.createChild(rootContainer, ctx.getExternalContainer(), itemModel);
             childCtx.setShowBreadcrumb(true);
             childCtx.build();
             BSContainer<?> childCtxRootContainer = childCtx.getRootContainer();
