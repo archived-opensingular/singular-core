@@ -37,5 +37,7 @@ public class STypeDadosPessoais extends STypeComposite<SIComposite> {
     protected void onLoadType(@Nonnull TypeBuilder tb) {
         endereco = this.addField("endereco", STypeAddress.class);
         time = this.addField("time", STypeTime.class);
+        
+        time.asAtr().required(true);
     }
 }

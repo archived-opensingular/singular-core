@@ -22,12 +22,14 @@ import javax.annotation.Nonnull;
 
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInfoType;
+import org.opensingular.form.STypeAttachmentList;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.country.brazil.STypeAddress;
+import org.opensingular.form.type.country.brazil.STypeBankAccount;
 import org.opensingular.form.type.country.brazil.STypeCEP;
 import org.opensingular.form.type.country.brazil.STypeUF;
 
@@ -35,7 +37,8 @@ import org.opensingular.form.type.country.brazil.STypeUF;
 public class STypeExemplo extends STypeComposite<SIComposite> {
 
 	public STypeAddress endereco;
-    public STypeList<STypeUF, SIComposite> teste;
+//    public STypeList<STypeBankAccount, SIComposite> teste;
+	public STypeAttachmentList fotos;
     public STypeDadosPessoais dadosPessoais;
 
     @Override
@@ -43,6 +46,15 @@ public class STypeExemplo extends STypeComposite<SIComposite> {
         endereco = this.addField("endereco", STypeAddress.class);
         dadosPessoais = this.addField("dadosPessoais", STypeDadosPessoais.class);
         
-        teste = this.addFieldListOf("teste", STypeUF.class);
+//        teste = this.addFieldListOf("teste", STypeBankAccount.class);
+        fotos = this.addFieldListOfAttachment("fotos", "foto");
+        fotos
+                .withMaximumSizeOf(6)
+                .asAtr()
+                .label("Fotos do ponto de atracação")
+                .asAtrBootstrap()
+                .colPreference(12)
+                .asAtrAnnotation()
+                .setAnnotated();
     }
 }

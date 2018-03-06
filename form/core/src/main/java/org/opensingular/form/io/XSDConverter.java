@@ -199,7 +199,7 @@ public class XSDConverter {
 		MElement element = parent.addElementNS(XSD_NAMESPACE_URI, XSD_ELEMENT);
 		
 		if (sType.isList()) {
-			setXsdListElementDefinition(element, sType);
+			return setXsdListElementDefinition(element, sType);
 			
 		} else {
 			String typeName = getTypeName(sType);
@@ -209,30 +209,37 @@ public class XSDConverter {
 			if (Collections.frequency(mapOfComposite.values(), typeName) > 1 || sType instanceof STypeSimple<?, ?>) {
 				element.setAttribute("type", typeName);
 			}
+			
+			if (sType instanceof STypeSimple<?, ?> && (!sType.isRequired() && !XSD_SCHEMA.equals(parent.getNodeName()))) {
+	            element.setAttribute("minOccurs", "0");
+	        }
 		}
 		
 		return element;
 	}
 	
-	private static void setXsdListElementDefinition(MElement element, SType<?> sType) {
+	private static MElement setXsdListElementDefinition(MElement element, SType<?> sType) {
 		element.setAttribute("name", sType.getNameSimple());
 		element = element.addElementNS(XSD_NAMESPACE_URI, XSD_COMPLEX_TYPE);
 		element = element.addElementNS(XSD_NAMESPACE_URI, XSD_SEQUENCE);
-		element = element.addElementNS(XSD_NAMESPACE_URI, XSD_ELEMENT);
-		element.setAttribute("name", ((STypeList<?, ?>) sType).getElementsType().getNameSimple());
-		element.setAttribute("type", getTypeName(((STypeList<?, ?>) sType).getElementsType()));
+		element = addXsdElement(((STypeList<?, ?>) sType).getElementsType(), element);
+//		element = element.addElementNS(XSD_NAMESPACE_URI, XSD_ELEMENT);
+//		element.setAttribute("name", ((STypeList<?, ?>) sType).getElementsType().getNameSimple());
+//		element.setAttribute("type", getTypeName(((STypeList<?, ?>) sType).getElementsType()));
 		setMinAndMaxOccursOfXsdListElement(element, (STypeList<?, ?>) sType);
+		
+		return element;
 	}
 	
 	private static void setMinAndMaxOccursOfXsdListElement(MElement element, STypeList<?, ?> sType) {
 		Integer min = sType.getMinimumSize();
-        if (min != null) {
+        if (min != null && min != 1) {
             element.setAttribute("minOccurs", min.toString());
         }
         Integer max = sType.getMaximumSize();
         if (max == null) {
             element.setAttribute("maxOccurs", "unbounded");
-        } else {
+        } else if (max != 1){
             element.setAttribute("maxOccurs", max.toString());
         }
 	}
@@ -263,16 +270,18 @@ public class XSDConverter {
                     "O XSD não é válido: a tag raiz é '" + element.getNodeName() + "' e deveria ser 'xs:schema'");
         }
 
-        readXsd(null, element, element);
+        readXsd(element);
 
         Collection<SType<?>> types = packageForNewTypes.getPackage().getLocalTypes();
         return types.size() >= 1 ? types.iterator().next() : null;
     }
 
-    private static void readXsd(SType<?> typeContext, ElementReader parent, ElementReader root) {
-        for (ElementReader element : parent) {
+    private static void readXsd(ElementReader root) {
+        for (ElementReader element : root) {
             if (element.isTagXsdElement()) {
-            	detectType(element, root);
+            	SType<?> sType = detectType(element, root);
+            	readXsdOwnAttributeMinOccurs(element, sType);
+	            readXsdOwnAttributeMaxOccurs(element, sType);
             } 
         }
     }
@@ -287,19 +296,24 @@ public class XSDConverter {
     			String name = getTypeNameWithoutNamespace(xsdTypeName);
     			Class<? extends SType<?>> type = getMapping().findSType(name);
     			if (type != null) {
-    				return xsdContext.getType(type);
+    				SType<?> sType = xsdContext.getType(type);
+//    				readXsdOwnAttributeMinOccurs(element, sType);
+//    	            readXsdOwnAttributeMaxOccurs(element, sType);
+    				return sType;
     			}
     		} else {
-    			STypeComposite<?> type = null; 
+    			STypeComposite<?> sType = null; 
     			if (!mapOfComplexType.containsKey(xsdTypeName)) {
-	    			type = element.getPkg().createCompositeType(xsdTypeName);
-	    			addAttributes(type, root, null, xsdTypeName);
-	    			insertIntoMapOfComplexTypes(xsdTypeName, type);
+	    			sType = element.getPkg().createCompositeType(xsdTypeName);
+	    			addAttributes(sType, root, null, xsdTypeName);
+	    			insertIntoMapOfComplexTypes(xsdTypeName, sType);
     			} else {
-    				type = mapOfComplexType.get(xsdTypeName);
+    				sType = mapOfComplexType.get(xsdTypeName);
     			}
     			
-    			return type;
+//    			readXsdOwnAttributeMinOccurs(element, sType);
+//	            readXsdOwnAttributeMaxOccurs(element, sType);
+    			return sType;
     		}
     	} else {
     		Optional<ElementReader> complexTypeChildrenOpt = element.streamChildren().filter(ElementReader::isTagComplexType).findFirst();
@@ -312,6 +326,8 @@ public class XSDConverter {
                     STypeComposite<?> newType = element.getPkg().createCompositeType(element.getAttr("name"));
                     addAttributes(newType, root, complexTypeChildren, xsdTypeName);
                     
+                    readXsdOwnAttributeMinOccurs(element, newType);
+    	            readXsdOwnAttributeMaxOccurs(element, newType);
                     return newType;
                 }
     		}
@@ -325,6 +341,38 @@ public class XSDConverter {
         return pos == -1 ? name : name.substring(pos + 1);
     }
     
+    private static void readXsdOwnAttributeMinOccurs(ElementReader element, SType<?> newType) {
+        Integer minOccurs = element.getAttrInteger("minOccurs");
+        if (minOccurs == null || minOccurs == 1) {
+            newType.asAtr().required();
+            if (newType.isList()) {
+                ((STypeList<?, ?>) newType).withMiniumSizeOf(1);
+            }
+        } else if (minOccurs.intValue() > 1) {
+            if (newType.isList()) {
+                ((STypeList<?, ?>) newType).withMiniumSizeOf(minOccurs);
+            } else {
+                throw new SingularFormException(element.errorMsgInvalidAttribute("minOccurs"), newType);
+            }
+        }
+    }
+ 
+    private static void readXsdOwnAttributeMaxOccurs(ElementReader element, SType<?> newType) {
+        String value = element.getAttr("maxOccurs");
+        if ("unbounded".equalsIgnoreCase(value)) {
+//            if (!newType.isList()) {
+//                throw new SingularFormException(element.errorMsgInvalidAttribute("maxOccurs"), newType);
+//            }
+        } else if (value != null) {
+            int maxOccurs = Integer.parseInt(value);
+            if (newType.isList()) {
+                ((STypeList<?, ?>) newType).withMaximumSizeOf(maxOccurs);
+            } //else if (maxOccurs != 1) {
+//                throw new SingularFormException(element.errorMsgInvalidAttribute("maxOccurs"), newType);
+//            }
+        }
+    }
+    
     private static <T extends STypeComposite<?>> void addAttributes(T type, ElementReader root, ElementReader tagComplexType, String xsdTypeName) {
     	
     	if (!StringUtils.isBlank(xsdTypeName)) {
@@ -335,8 +383,10 @@ public class XSDConverter {
     	
     	findComplexTypeElements(tagSequence).forEach(tagElement -> {
     		SType<?> sType = detectType(tagElement, root);
+//    		  readXsdOwnAttributeMinOccurs(tagElement, sType);
+//            readXsdOwnAttributeMaxOccurs(tagElement, sType);
     		if (sType.isList()) {
-    			type.addFieldListOf(tagElement.getAttr("name"), detectTypeOfListElement(tagElement, root));
+    			type.addFieldListOf(tagElement.getAttr("name"), detectTypeOfListElement(tagElement, root, (STypeList<?, ?>) sType));
     		} else {
     			type.addField(tagElement.getAttr("name"), sType);
     		}
@@ -361,7 +411,7 @@ public class XSDConverter {
     	return elements;
     }
     
-    private static SType<?> detectTypeOfListElement(ElementReader element, ElementReader root) {
+    private static SType<?> detectTypeOfListElement(ElementReader element, ElementReader root, STypeList<?, ?> parent) {
     	Optional<ElementReader> complexTypeChildrenOpt = element.streamChildren().filter(ElementReader::isTagComplexType).findFirst();
         if (complexTypeChildrenOpt.isPresent()) {
             ElementReader complexTypeChildren = complexTypeChildrenOpt.get();
@@ -369,6 +419,8 @@ public class XSDConverter {
             if (isList(complexTypeChildren)) {
             	ElementReader listElement = lookAheadForListElementType(complexTypeChildren).get();
           	  	SType<?> listElementType = detectType(listElement, root);
+          	  	readXsdOwnAttributeMinOccurs(listElement, parent);
+          	  	readXsdOwnAttributeMaxOccurs(listElement, parent);
           	  	
           	  	return listElementType;
             }
