@@ -34,6 +34,7 @@ import org.opensingular.form.view.FileEventListener;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.TableListMapper;
 import org.opensingular.form.wicket.mapper.attachment.single.FileUploadPanel;
+import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
@@ -45,7 +46,7 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
     @Override
     public void buildView(WicketBuildContext ctx) {
         SInstanceFieldModel<SInstance> zoom = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeList.FIELD_ZOOM);
-        WicketBuildContext zoomCtx = ctx.createChild(ctx.getContainer().newGrid(), ctx.getExternalContainer(), zoom, ctx.getConfirmationModal());
+        WicketBuildContext zoomCtx = ctx.createChild(ctx.getContainer().newGrid(), ctx.getExternalContainer(), zoom);
         zoomCtx.build();
 
         LatLongMarkupIds ids = new LatLongMarkupIds();
@@ -65,11 +66,11 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
         gridGoogleMaps.newFormGroup().appendDiv(googleMapsPanel);
 
         SInstanceFieldModel<SInstance> points = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeList.FIELD_POINTS);
-        WicketBuildContext pointsCtx = ctx.createChild(gridGoogleMaps, ctx.getExternalContainer(), points, ctx.getConfirmationModal());
+        WicketBuildContext pointsCtx = ctx.createChild(gridGoogleMaps, ctx.getExternalContainer(), points);
         pointsCtx.build();
 
         SInstanceFieldModel<SInstance> file = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeList.FIELD_FILE);
-        WicketBuildContext fileCtx = ctx.createChild(ctx.getContainer().newGrid(), ctx.getExternalContainer(), file, ctx.getConfirmationModal());
+        WicketBuildContext fileCtx = ctx.createChild(ctx.getContainer().newGrid(), ctx.getExternalContainer(), file);
         fileCtx.build();
 
         WicketUtils.findFirstChild(fileCtx.getContainer(), FileUploadPanel.class)
@@ -92,7 +93,8 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                     }
                 }));
 
-        ctx.getConfirmationModal().registerListener(googleMapsPanel::updateJS);
+        ConfirmationModal confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
+        confirmationModal.registerListener(googleMapsPanel::updateJS);
 
 
     }

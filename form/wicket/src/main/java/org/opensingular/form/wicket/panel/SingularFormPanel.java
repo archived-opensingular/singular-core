@@ -261,13 +261,8 @@ public class SingularFormPanel extends Panel {
         } else {
             externalContainer = bodyContainer;
         }
-
-        // Constrói a confirmation modal
-        final ConfirmationModal confirmationModal = new ConfirmationModal("confirmation-modal");
-        addOrReplace(confirmationModal);
-
         // Chama o builder wicket para construção do formulário
-        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), externalContainer, getInstanceModel(), confirmationModal);
+        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), externalContainer, getInstanceModel());
         ctx.setAnnotationMode(getAnnotationMode());
         ctx.setNested(nested);
         ctx.setPreFormPanelFactory(preFormPanelFactory);
