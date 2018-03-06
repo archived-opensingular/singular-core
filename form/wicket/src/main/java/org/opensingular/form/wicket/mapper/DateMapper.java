@@ -30,6 +30,7 @@ import org.opensingular.form.wicket.behavior.InputMaskBehavior;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior.Masks;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerInputGroup;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
@@ -44,8 +45,6 @@ import static org.opensingular.form.type.basic.SPackageBasic.ATR_MAX_DATE;
 
 @SuppressWarnings("serial")
 public class DateMapper extends AbstractControlsFieldComponentMapper {
-
-    private static final Logger LOGGER = Logger.getLogger(DateMapper.class.getName());
 
     @SuppressWarnings("unchecked")
     @Override
@@ -109,7 +108,7 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
     }
 
     @SuppressWarnings("rawtypes")
-    private static final class ConverterImpl implements IConverter {
+    private static final class ConverterImpl implements IConverter, Loggable {
         @Override
         public Object convertToObject(String date, Locale locale) throws ConversionException {
             if ("//".equals(date))
@@ -122,7 +121,7 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
                 String msg = String.format(
                         "Can't parse value '%s' with format '%s'.",
                         date, "dd/MM/yyyy");
-                LOGGER.log(Level.WARNING, msg, e);
+                getLogger().trace(msg, e);
                 throw new ConversionException(e);
             }
         }

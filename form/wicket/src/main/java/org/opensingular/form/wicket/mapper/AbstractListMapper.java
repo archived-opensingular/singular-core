@@ -360,7 +360,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
             final SIList<SInstance> list = listModel.getObject();
             if (list.getType().getMaximumSize() != null && list.getType().getMaximumSize() == list.size()) {
-                target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
+                target.appendJavaScript(";bootbox.alert('A quantidade máxima de valores foi atingida.');");
                 target.appendJavaScript(Scripts.multipleModalBackDrop());
             } else {
                 list.addNew();
