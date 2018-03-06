@@ -205,7 +205,17 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     @Nonnull
     public <I extends SInstance, T extends SType<I>> STypeList<T, I> addFieldListOf(@Nonnull String fieldSimpleName, @Nonnull T elementsType) {
         checkNameNewField(fieldSimpleName);
-        STypeList<T, I> newList = createTypeListOf(fieldSimpleName, elementsType);
+        STypeList<T, I> newList = createTypeListOf(fieldSimpleName, null, elementsType);
+        return addInternal(fieldSimpleName, newList);
+    }
+
+    /**
+     * Cria um novo campo lista com o nome informado e sendo o tipo de seus elementos o tipo informado e utilizando o nome de elemento informado
+     */
+    @Nonnull
+    public <I extends SInstance, T extends SType<I>> STypeList<T, I> addFieldListOf(@Nonnull String fieldSimpleName, @Nonnull String elementSimpleName, @Nonnull T elementsType) {
+        checkNameNewField(fieldSimpleName);
+        STypeList<T, I> newList = createTypeListOf(fieldSimpleName, elementSimpleName, elementsType);
         return addInternal(fieldSimpleName, newList);
     }
 
