@@ -184,11 +184,11 @@ public abstract class BSPanelGrid extends Panel {
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         activeTab = tab;
                         buildTabContent();
+                        target.add(form);
                         updateTab(tab, newArrayList(tabMap.values()));
 
                         target.appendJavaScript("$('.nav-tabs li').removeClass('active');");
                         target.appendJavaScript("$('.nav-tabs li[data-tab-name=\"" + id + "\"]').addClass('active');");
-                        target.add(form);
                         if (toUpdadeOnTab() != null) {
                             toUpdadeOnTab().forEach((c) -> target.add(c));
                         }

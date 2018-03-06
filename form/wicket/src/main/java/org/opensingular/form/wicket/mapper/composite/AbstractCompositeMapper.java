@@ -123,7 +123,7 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
             SInstance iField = mField.getObject();
             BSCol col = row.newCol();
             configureColspan(ctx, iField, col);
-            ctx.createChild(col, mField, ctx.getConfirmationModal()).build();
+            ctx.createChild(col, ctx.getExternalContainer(), mField).build();
         }
 
         protected void configureColspan(WicketBuildContext ctx, final SInstance fieldInstance, BSCol col) {

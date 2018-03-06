@@ -55,7 +55,9 @@ import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponse
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet;
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.AttachmentKeyStrategy;
 import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppender;
+import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
+import org.opensingular.form.wicket.util.WicketFormUtils;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.commons.util.Loggable;
@@ -67,8 +69,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.AttachmentKeyStrategy.PARAM_NAME;
+import static org.apache.commons.lang3.ObjectUtils.*;
+import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.AttachmentKeyStrategy.*;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
@@ -341,28 +343,30 @@ public class FileUploadListPanel extends Panel implements Loggable {
 
     private class FilesListView extends RefreshingView<SIAttachment> {
         private final WicketBuildContext ctx;
+        private final ConfirmationModal  confirmationModal;
 
         public FilesListView(String id, IModel<SIList<SIAttachment>> listModel, WicketBuildContext ctx) {
             super(id, listModel);
             this.ctx = ctx;
+            this.confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
         }
 
         @SuppressWarnings("unchecked")
-        public SIList<SIAttachment> getAttackmentList() {
+        public SIList<SIAttachment> getAttachmentList() {
             return (SIList<SIAttachment>) getDefaultModelObject();
         }
 
         @SuppressWarnings("unchecked")
-        public IModel<SIList<SIAttachment>> getAttackmentListModel() {
+        public IModel<SIList<SIAttachment>> getAttachmentListModel() {
             return (IModel<SIList<SIAttachment>>) getDefaultModel();
         }
 
         @Override
         protected Iterator<IModel<SIAttachment>> getItemModels() {
-            final SIList<SIAttachment>       objList   = this.getAttackmentList();
+            final SIList<SIAttachment>       objList   = this.getAttachmentList();
             final List<IModel<SIAttachment>> modelList = new ArrayList<>();
             for (int i = 0; i < objList.size(); i++)
-                modelList.add(new SInstanceListItemModel<>(this.getAttackmentListModel(), i));
+                modelList.add(new SInstanceListItemModel<>(this.getAttachmentListModel(), i));
             return modelList.iterator();
         }
 
@@ -385,12 +389,12 @@ public class FileUploadListPanel extends Panel implements Loggable {
                 IConsumer<AjaxRequestTarget> confirmationAction = (t) -> {
                     super.onSubmit(t, form);
                     SIAttachment file = itemModel.getObject();
-                    removeFileFrom(FilesListView.this.getAttackmentList(), file.getFileId());
+                    removeFileFrom(FilesListView.this.getAttachmentList(), file.getFileId());
                     t.add(FileUploadListPanel.this);
                     t.add(fileList);
                 };
-
-                ctx.getConfirmationModal().show(target, confirmationAction);
+                target.add(WicketFormUtils.findUpdatableComponentInHierarchy(confirmationModal));
+                confirmationModal.show(target, confirmationAction);
             }
 
             @Override
