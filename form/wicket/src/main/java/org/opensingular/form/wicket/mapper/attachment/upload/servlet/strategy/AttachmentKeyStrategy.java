@@ -18,6 +18,8 @@ package org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.opensingular.form.wicket.mapper.attachment.upload.*;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
@@ -126,7 +128,7 @@ public class AttachmentKeyStrategy implements ServletFileUploadStrategy {
 
             @Override
             public String getName() {
-                return item.getName();
+                return FilenameUtils.getName(item.getName());
             }
 
             @Override
