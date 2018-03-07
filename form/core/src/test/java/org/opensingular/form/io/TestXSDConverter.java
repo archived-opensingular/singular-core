@@ -31,7 +31,6 @@ public class TestXSDConverter  {
     @Test
     public void nada(){
         STypeExemplo e         = SDictionary.create().getType(STypeExemplo.class);
-//        System.out.println(e.endereco.bairro.isRequired());
         e.asAtr().required(true);
         e.endereco.asAtr().required(true);
         System.out.println(e.endereco.bairro.isRequired());
