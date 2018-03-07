@@ -128,7 +128,7 @@ public class AttachmentKeyStrategy implements ServletFileUploadStrategy {
 
             @Override
             public String getName() {
-                return FilenameUtils.getName(item.getName());
+                return FilenameUtils.getName(item.getName());//NOSONAR
             }
 
             @Override
