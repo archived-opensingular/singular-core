@@ -203,7 +203,7 @@ public class FormXSDUtil {
         SType<?> newType;
         if (typeContext == null) {
             if (typeOfNewType.isList()) {
-                throw new SingularFormException(element.errorMsg("Tipo raiz não esperado como lista"));
+                throw new SingularFormException(element.errorMsg("Root type can not be a list (unbounded element) and lists can not be declared unwrapped i.e without a single element that wraps only the unbounded element"));
             }
             newType = parent.getPkg().createType(name, typeOfNewType);
             if (generateLabel) {
