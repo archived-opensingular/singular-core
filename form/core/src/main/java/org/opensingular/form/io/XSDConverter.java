@@ -471,7 +471,7 @@ public class XSDConverter {
      */
     private static void readXsdOwnAttributeMaxOccurs(ElementReader element, SType<?> newType) {
         String value = element.getAttr("maxOccurs");
-        if (value != null) {
+        if (value != null && !"unbounded".equalsIgnoreCase(value)) {
             int maxOccurs = Integer.parseInt(value);
             if (newType.isList()) {
                 ((STypeList<?, ?>) newType).withMaximumSizeOf(maxOccurs);
