@@ -22,6 +22,7 @@ import org.opensingular.form.persistence.entity.FormTypeEntity;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Transactional
 public class FormTypeService  {
@@ -47,6 +48,10 @@ public class FormTypeService  {
             formTypeDAO.saveOrUpdate(formTypeEntity);
         }
         return formTypeEntity;
+    }
+
+    public List<FormTypeEntity> listAll() {
+        return formTypeDAO.listAll();
     }
 
 }

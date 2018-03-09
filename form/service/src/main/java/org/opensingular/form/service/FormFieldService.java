@@ -149,5 +149,9 @@ public class FormFieldService implements IFormFieldService {
             formCacheValueDAO.save(value);
         });
     }
+
+    public List<FormCacheFieldEntity> listAllFields() {
+        return formCacheFieldDAO.listAll();
+    }
 }
 

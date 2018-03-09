@@ -65,4 +65,11 @@ public class FormCacheFieldDAO extends BaseDAO<FormCacheFieldEntity, Long> {
         int result = query.executeUpdate();
         getLogger().info("{} itens excluidos na atualização dos campos indexados", result);
     }
+
+    @SuppressWarnings("unchecked")
+    public List<FormCacheFieldEntity> listFields(FormTypeEntity formType) {
+        Criteria criteria = getSession().createCriteria(FormCacheFieldEntity.class);
+        criteria.add(Restrictions.eq("formTypeEntity.cod", formType.getCod()));
+        return criteria.list();
+    }
 }
