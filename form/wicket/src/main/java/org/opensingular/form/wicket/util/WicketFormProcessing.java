@@ -195,6 +195,9 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
                     }));
         }
 
+        /* Recomputing instances set hashtable: instances values could be changed during validation */
+        instancesToUpdateComponents = new HashSet<>(instancesToUpdateComponents);
+
         updateBoundedComponents(component.getPage(), target, instancesToUpdateComponents);
         component.send(component.getPage(), Broadcast.BREADTH, new SingularFormProcessingPayload(instancesToUpdateComponents));
     }
