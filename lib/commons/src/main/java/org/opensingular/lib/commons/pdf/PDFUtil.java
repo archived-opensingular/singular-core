@@ -94,7 +94,7 @@ public abstract class PDFUtil implements Loggable {
      * Localiza a implementação correta para o Sistema operacional atual.
      */
     @Nonnull
-    private static PDFUtil fabric() {
+    private static PDFUtil factory() {
         if (isWindows()) {
             return new PDFUtilWin();
         }
@@ -116,7 +116,7 @@ public abstract class PDFUtil implements Loggable {
      */
     @Nonnull
     public static PDFUtil getInstance() {
-        return fabric();
+        return factory();
     }
 
     /**

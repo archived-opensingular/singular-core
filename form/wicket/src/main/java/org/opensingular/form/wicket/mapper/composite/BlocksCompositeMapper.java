@@ -167,7 +167,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             BSCol     col    = row.newCol();
             configureColspan(ctx, iField, col);
 
-            WicketBuildContext childCtx = ctx.createChild(col, mField, ctx.getConfirmationModal());
+            WicketBuildContext childCtx = ctx.createChild(col, ctx.getExternalContainer(), mField);
             childCtx.setHint(AbstractCompositeMapper.HIDE_LABEL, isBlockHandlesTitleFromChild(ctx, block));
             childCtx.build();
         }

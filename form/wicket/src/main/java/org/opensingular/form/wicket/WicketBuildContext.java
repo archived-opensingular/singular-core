@@ -21,8 +21,10 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.string.Strings;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.context.IFormBuildContext;
@@ -39,7 +41,6 @@ import org.opensingular.form.wicket.feedback.SValidationFeedbackCompactPanel;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackPanel;
 import org.opensingular.form.wicket.mapper.ListBreadcrumbMapper;
 import org.opensingular.form.wicket.mapper.TabMapper;
-import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
@@ -65,55 +66,52 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.Stream.Builder;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Lists.*;
 
 @SuppressWarnings("serial")
 public class WicketBuildContext implements Serializable, IFormBuildContext {
 
     // static final HintKey<HashMap<String, Integer>>                       COL_WIDTHS                                    = HashMap::new;
 
-    public static final MetaDataKey<WicketBuildContext>                  METADATA_KEY                                  = new MetaDataKey<WicketBuildContext>() {};
+    public static final MetaDataKey<WicketBuildContext> METADATA_KEY = new MetaDataKey<WicketBuildContext>() {
+    };
 
-    public static final HintKey<IModel<String>>                          TITLE_KEY                                     = () -> null;
+    public static final HintKey<IModel<String>> TITLE_KEY = () -> null;
     // public static final HintKey<Boolean>                                 RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY = () -> null;
 
-    private final List<WicketBuildContext>                               children                                      = newArrayList();
-    private final HashMap<HintKey<?>, Serializable>                      hints                                         = new HashMap<>();
+    private final List<WicketBuildContext>          children = newArrayList();
+    private final HashMap<HintKey<?>, Serializable> hints    = new HashMap<>();
 
-    private List<IWicketBuildListener>                                   listeners;
+    private List<IWicketBuildListener> listeners;
 
-    private final WicketBuildContext                                     parent;
-    private final BSContainer<?>                                         container;
-    private final BSContainer<?>                                         externalContainer;
-    private final ConfirmationModal                                      confirmationModal;
+    private final WicketBuildContext parent;
+    private final BSContainer<?>     container;
+    private final BSContainer<?>     externalContainer;
 
-    private IModel<? extends SInstance>                                  model;
-    private ViewMode                                                     viewMode;
+    private IModel<? extends SInstance> model;
+    private ViewMode                    viewMode;
 
-    private AnnotationMode                                               annotation                                    = AnnotationMode.NONE;
+    private AnnotationMode annotation = AnnotationMode.NONE;
 
-    private boolean                                                      nested                                        = false;
-    private boolean                                                      showBreadcrumb;
-    private List<String>                                                 breadCrumbs                                   = newArrayList();
-    private Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> breadCrumbStatus                              = newLinkedList();
-    private ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus        selectedBreadCrumbStatus;
+    private boolean nested = false;
+    private boolean showBreadcrumb;
+    private List<String>                                                 breadCrumbs      = newArrayList();
+    private Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> breadCrumbStatus = newLinkedList();
+    private ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus selectedBreadCrumbStatus;
 
-    private IBSComponentFactory<Component>                               preFormPanelFactory;
+    private IBSComponentFactory<Component> preFormPanelFactory;
 
-    private SView                                                        view;
+    private SView view;
 
-    public WicketBuildContext(BSCol container, BSContainer<?> externalContainer, IModel<? extends SInstance> model,
-                              ConfirmationModal confirmationModal) {
-        this(null, container, externalContainer, model, confirmationModal);
+    public WicketBuildContext(BSCol container, BSContainer<?> externalContainer, IModel<? extends SInstance> model) {
+        this(null, container, externalContainer, model);
         this.listeners = new ArrayList<>();
     }
 
     protected WicketBuildContext(WicketBuildContext parent,
                                  BSContainer<?> container,
                                  BSContainer<?> externalContainer,
-                                 IModel<? extends SInstance> model,
-                                 ConfirmationModal confirmationModal) {
+                                 IModel<? extends SInstance> model) {
 
         this.parent = parent;
         if (parent != null) {
@@ -123,20 +121,14 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
         this.container = container;
         this.externalContainer = externalContainer;
         this.model = model;
-        this.confirmationModal = confirmationModal;
         WicketFormUtils.markAsCellContainer(container);
         container.add(ConfigureBySInstanceAttributesBehavior.getInstance());
         container.setMetaData(METADATA_KEY, this);
     }
 
-    public WicketBuildContext createChild(BSContainer<?> childContainer, IModel<? extends SInstance> model, ConfirmationModal confirmationModal) {
-        return configureNestedContext(new WicketBuildContext(this, childContainer, getExternalContainer(), model, confirmationModal)
-            .setAnnotationMode(getAnnotationMode()));
-    }
-
-    public WicketBuildContext createChild(BSContainer<?> childContainer, BSContainer<?> externalContainer, IModel<? extends SInstance> model, ConfirmationModal confirmationModal) {
-        return configureNestedContext(new WicketBuildContext(this, childContainer, externalContainer, model, confirmationModal)
-            .setAnnotationMode(getAnnotationMode()));
+    public WicketBuildContext createChild(BSContainer<?> childContainer, BSContainer<?> externalContainer, IModel<? extends SInstance> model) {
+        return configureNestedContext(new WicketBuildContext(this, childContainer, externalContainer, model)
+                .setAnnotationMode(getAnnotationMode()));
     }
 
     private WicketBuildContext configureNestedContext(WicketBuildContext context) {
@@ -189,6 +181,7 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
 
     /**
      * Configura formComponentes, adicionando comportamentos de acordo com sua definição.
+     *
      * @param mapper        o mapper
      * @param formComponent o componente que tem como model IMInstanciaAwareModel
      */
@@ -205,9 +198,9 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
             // final SType<?> tipo = selectedModel.getSInstance().getType();
             // if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy())
             mapper.addAjaxUpdate(
-                this,
-                formComponent,
-                ISInstanceAwareModel.getInstanceModel(selectedModel), new OnFieldUpdatedListener());
+                    this,
+                    formComponent,
+                    ISInstanceAwareModel.getInstanceModel(selectedModel), new OnFieldUpdatedListener());
         }
         return formComponent;
     }
@@ -240,8 +233,8 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
 
     public static Stream<WicketBuildContext> streamParentContexts(Component comp) {
         return findNearest(comp)
-            .map(ctx -> ctx.streamParentContexts())
-            .orElse(Stream.empty());
+                .map(ctx -> ctx.streamParentContexts())
+                .orElse(Stream.empty());
     }
 
     public Stream<WicketBuildContext> streamParentContexts() {
@@ -272,8 +265,8 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
     protected static String resolveFullPathLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
         if (model instanceof ISInstanceAwareModel<?>) {
-            SInstance instance = ((ISInstanceAwareModel<?>) model).getSInstance();
-            List<String> labels = new ArrayList<>();
+            SInstance    instance = ((ISInstanceAwareModel<?>) model).getSInstance();
+            List<String> labels   = new ArrayList<>();
             while (instance != null) {
                 labels.add(instance.asAtr().getLabel());
                 instance = instance.getParent();
@@ -339,8 +332,8 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
     }
 
     private <C extends AbstractSValidationFeedbackPanel> C createFeedbackPanel(ISupplier<C> factory, Function<Component, ISValidationFeedbackHandlerListener> listenerFunc) {
-        C feedback = factory.get();
-        SValidationFeedbackHandler handler = SValidationFeedbackHandler.bindTo(feedback.getFence()).addInstanceModel(getModel());
+        C                          feedback = factory.get();
+        SValidationFeedbackHandler handler  = SValidationFeedbackHandler.bindTo(feedback.getFence()).addInstanceModel(getModel());
         if (listenerFunc != null) {
             ISValidationFeedbackHandlerListener listener = listenerFunc.apply(feedback);
             if (listener != null)
@@ -371,13 +364,15 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
 
     public List<IWicketBuildListener> getListeners() {
         return (listeners != null)
-            ? listeners
-            : getParent().getListeners();
+                ? listeners
+                : getParent().getListeners();
     }
+
     public WicketBuildContext setListeners(List<IWicketBuildListener> listeners) {
         this.listeners = listeners;
         return this;
     }
+
     public WicketBuildContext addListeners(Iterable<IWicketBuildListener> listeners) {
         if (listeners != null) {
             for (IWicketBuildListener listener : listeners)
@@ -385,6 +380,7 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
         }
         return this;
     }
+
     public WicketBuildContext addListener(IWicketBuildListener listener) {
         if (this.listeners == null)
             this.listeners = new ArrayList<>();
@@ -531,7 +527,4 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
         UIBuilderWicket.build(this, viewMode);
     }
 
-    public ConfirmationModal getConfirmationModal() {
-        return confirmationModal;
-    }
 }
