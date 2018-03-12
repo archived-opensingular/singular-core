@@ -38,7 +38,7 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 class MasterDetailModal extends BFModalWindow {
 
@@ -85,6 +85,8 @@ class MasterDetailModal extends BFModalWindow {
                 }
             }
         };
+
+        addButton.add($b.visibleIf(() -> currentInstance.getObject().asAtr().isEnabled()));
         this.addButton(BSModalBorder.ButtonStyle.EMPTY, actionLabel, addButton);
 
         if (viewMode.isEdition()) {
