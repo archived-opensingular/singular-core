@@ -95,6 +95,13 @@ public class AtrBasic extends STranslatorForAttribute {
         return this;
     }
 
+    /**
+     * For usage on attachment types only.
+     *
+     * @param value
+     *  Maximum file size in Bytes.
+     * @return
+     */
     public AtrBasic maxFileSize(Long value) {
         setAttributeValue(SPackageBasic.ATR_MAX_FILE_SIZE, value);
         return this;
