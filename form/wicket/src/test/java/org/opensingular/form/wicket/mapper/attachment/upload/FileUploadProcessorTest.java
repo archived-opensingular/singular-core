@@ -16,7 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.attachment.upload;
 
-import org.apache.commons.fileupload.FileItem;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,10 +30,7 @@ import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponse
 import java.io.InputStream;
 import java.util.List;
 
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FileUploadProcessorTest {
@@ -46,7 +42,7 @@ public class FileUploadProcessorTest {
     private FileUploadManager manager;
 
     @Mock
-    private FileItem fileItem;
+    private FileUploadItem fileItem;
 
     @InjectMocks
     private FileUploadProcessor processor;

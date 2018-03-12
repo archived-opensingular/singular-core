@@ -73,6 +73,10 @@ public interface SingularProperties {
 
     String REST_ALLOWED_COMMON_NAME = "singular.rest.allowed.common.name";
 
+    // Propriedades dos serviços soap
+    String UPLOAD_DIR_WS = "singular.ws.upload";
+    String TARGET_NAMESPACE = "singular.ws.targetnamespace";
+
     //    ParmDef<String> ADDRESS = new ParmDef<>("Asasd.ad.asda " , String.class, "dadad")
 
     static SingularProperties get() {
