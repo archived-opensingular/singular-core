@@ -68,4 +68,13 @@ public class BlockFlatViewGeneratorTest {
         blockFlatViewGenerator.doWriteOnCanvas(mockDocumentCanvas, new FlatViewContext(ipessoa));
         mockDocumentCanvas.assertTitle("Pessoa Label");
     }
+
+    @Test
+    public void shouldUseRootLabelAsTitleWhenBlockIsRoot() throws Exception {
+        pessoa.asAtr().label("Pessoa Root");
+        pessoa.withView(new SViewByBlock(), block -> block.newBlock().add(pessoaWrap));
+        SIComposite ipessoa = pessoa.newInstance();
+        blockFlatViewGenerator.doWriteOnCanvas(mockDocumentCanvas, new FlatViewContext(ipessoa));
+        mockDocumentCanvas.assertTitle("Pessoa Root");
+    }
 }

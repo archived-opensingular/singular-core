@@ -35,6 +35,13 @@ public class BlockFlatViewGenerator extends AbstractFlatViewGenerator {
         SIComposite instance = (SIComposite) context.getInstance();
         SViewByBlock viewByBlock = (SViewByBlock) ViewResolver.resolveView(instance.getType());
 
+        if(instance.getParent() == null){
+            final String label = instance.getType().asAtr().getLabel();
+            if(StringUtils.isNotEmpty(label)){
+                canvas.addSubtitle(label);
+            }
+        }
+
         for (Block block : viewByBlock.getBlocks()) {
             String blockTitle = null;
             boolean hideTitle = false;

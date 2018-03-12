@@ -133,7 +133,7 @@ public class SValidationFeedbackPanel extends AbstractSValidationFeedbackPanel {
         super.onComponentTag(tag);
         if (isShowBox()) {
             SValidationFeedbackHandler.get(getFence().getMainContainer()).findNestedErrorsMaxLevel().ifPresent(level -> {
-                new AttributeAppender("class", level.isWarning() ? "alert alert-warning" : "alert alert-danger").onComponentTag(this, tag);
+                new AttributeAppender("class", level.isWarning() ? "alert alert-warning" : "alert alert-danger", " ").onComponentTag(this, tag);
             });
         }
     }
