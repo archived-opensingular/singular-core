@@ -52,10 +52,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.opensingular.form.wicket.mapper.components.MetronicPanel.*;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 public class PanelListMapper extends AbstractListMapper implements ISInstanceActionCapable {
 
@@ -74,9 +73,9 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
 
     private MetronicPanel newPanel(String id, WicketBuildContext ctx) {
         final IModel<SIList<SInstance>> listModel = new ReadOnlyCurrentInstanceModel<>(ctx);
-        final SIList<?> iList = listModel.getObject();
-        final IModel<String> label = $m.ofValue(trimToEmpty(iList.asAtr().getLabel()));
-        final SViewListByForm view = (SViewListByForm) ctx.getView();
+        final SIList<?>                 iList     = listModel.getObject();
+        final IModel<String>            label     = $m.ofValue(trimToEmpty(iList.asAtr().getLabel()));
+        final SViewListByForm           view      = (SViewListByForm) ctx.getView();
 
         final SType<?> currentType = ctx.getCurrentInstance().getType();
 
@@ -119,28 +118,29 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
                             + "    </ul>");
 
                     final WebMarkupContainer container = new WebMarkupContainer("_u");
-                    final PanelElementsView elements = new PanelElementsView("_e", listModel, ctx, view, form, container);
-                    final WebMarkupContainer empty = new WebMarkupContainer("_empty");
+                    final PanelElementsView  elements  = new PanelElementsView("_e", listModel, ctx, view, form, container);
+                    final WebMarkupContainer empty     = new WebMarkupContainer("_empty");
 
-                list
-                    .add(container
-                        .add(elements
-                            .add($b.onConfigure(c -> c.setVisible(!listModel.getObject().isEmpty()))))
-                    .add(empty
-                        .add($b.onConfigure(c -> c.setVisible(listModel.getObject().isEmpty())))));
-                content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
-                content.getParent()
-                    .add(dependsOnModifier(listModel));
-            },
-            (f, form) -> buildFooter(f, form, ctx));
+                    list
+                            .add(container
+                                    .add(elements
+                                            .add($b.onConfigure(c -> c.setVisible(!listModel.getObject().isEmpty()))))
+                                    .add(empty
+                                            .add($b.onConfigure(c -> c.setVisible(listModel.getObject().isEmpty())))));
+                    content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
+                    content.getParent()
+                            .add(dependsOnModifier(listModel));
+                },
+                (f, form) -> buildFooter(f, form, ctx));
 
     }
 
     private static final class PanelElementsView extends ElementsView {
 
-        private final SViewListByForm view;
-        private final Form<?> form;
+        private final SViewListByForm    view;
+        private final Form<?>            form;
         private final WicketBuildContext ctx;
+        private final ConfirmationModal  confirmationModal;
 
         private PanelElementsView(String id,
                                   IModel<SIList<SInstance>> model,
@@ -152,6 +152,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
             this.ctx = ctx;
             this.view = view;
             this.form = form;
+            this.confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
         }
 
         @Override
@@ -203,7 +204,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
             final BSCol btnCell = btnGrid.newColInRow();
 
             if (ctx.getViewMode().isEdition()) {
-                appendRemoverIconButton(this, form, item, btnCell, ctx.getConfirmationModal(), view)
+                appendRemoverIconButton(this, form, item, btnCell, confirmationModal, view)
                         .add($b.classAppender("pull-right"));
             }
 
@@ -212,7 +213,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
         private void buildBody(Item<SInstance> item, BSGrid grid) {
             final BSRow body = grid.newRow();
             body.add($b.classAppender("list-item-body"));
-            ctx.createChild(body.newCol(12), item.getModel(), ctx.getConfirmationModal()).build();
+            ctx.createChild(body.newCol(12), ctx.getExternalContainer(), item.getModel()).build();
         }
     }
 

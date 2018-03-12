@@ -162,11 +162,11 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
 
             aprovado.asAtr().label("Aprovado?");
             aprovado.asAtrBootstrap().colPreference(12);
-            aprovado.setView(() -> new SViewBooleanSwitch<Boolean>()
+            aprovado.withView(() -> new SViewBooleanSwitch<Boolean>()
                     .setColorFunction(it -> (Boolean.TRUE.equals(it)) ? "success" : "danger")
                     .setTextFunction(it -> (Boolean.TRUE.equals(it)) ? "Sim" : "Não"));
 
-            justificativa.setView(SViewTextArea::new);
+            justificativa.withView(SViewTextArea::new);
             justificativa.asAtr().label("Justificativa");
 
             return anotacao;
