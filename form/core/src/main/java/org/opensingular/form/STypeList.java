@@ -181,7 +181,7 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
     }
 
     public <T extends Serializable> SelectionBuilder<T, SIList<I>, I> selectionOf(Class<T> clazz, SView view) {
-        this.setView(() -> view);
+        this.withView(() -> view);
         return new SelectionBuilder<>(this);
     }
 
@@ -206,12 +206,12 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
     }
 
     public SSelectionBuilder selection() {
-        this.setView(SMultiSelectionBySelectView::new);
+        this.withView(SMultiSelectionBySelectView::new);
         return new SSelectionBuilder(this);
     }
 
     public SSelectionBuilder autocomplete() {
-        this.setView(SMultiSelectionByPicklistView::new);
+        this.withView(SMultiSelectionByPicklistView::new);
         return new SSelectionBuilder(this);
     }
 
