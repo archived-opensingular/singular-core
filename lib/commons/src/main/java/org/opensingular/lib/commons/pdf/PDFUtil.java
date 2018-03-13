@@ -16,6 +16,7 @@
 
 package org.opensingular.lib.commons.pdf;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
@@ -180,8 +181,9 @@ public abstract class PDFUtil implements Loggable {
             List<String> commandAndArgs = new ArrayList<>(0);
             commandAndArgs.add(getHomeAbsolutePath("bin", fixExecutableName("wkhtmltopdf")));
 
-            if (additionalConfig != null) {
+            if (!CollectionUtils.isEmpty(additionalConfig)) {
                 commandAndArgs.addAll(additionalConfig);
+                addSmartBreakScript(commandAndArgs);
             } else {
                 addDefaultPDFCommandArgs(commandAndArgs);
             }

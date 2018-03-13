@@ -17,20 +17,28 @@
 package org.opensingular.lib.commons.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HtmlToPdfDTO implements Serializable {
 
     private String header;
     private String body;
     private String footer;
+    private List<String> additionalParams;
 
     public HtmlToPdfDTO() {
+
     }
 
     public HtmlToPdfDTO(String header, String body, String footer) {
         this.header = header;
         this.body = body;
         this.footer = footer;
+    }
+
+    public HtmlToPdfDTO(String body) {
+        this.body = body;
     }
 
     public String getHeader() {
@@ -55,6 +63,21 @@ public class HtmlToPdfDTO implements Serializable {
 
     public void setFooter(String footer) {
         this.footer = footer;
+    }
+
+    public List<String> getAdditionalParams() {
+        return additionalParams;
+    }
+
+    public void setAdditionalParams(List<String> additionalParams) {
+        this.additionalParams = additionalParams;
+    }
+
+    public void addParam(String param) {
+        if (additionalParams == null) {
+            additionalParams = new ArrayList<>();
+        }
+        additionalParams.add(param);
     }
 
 }

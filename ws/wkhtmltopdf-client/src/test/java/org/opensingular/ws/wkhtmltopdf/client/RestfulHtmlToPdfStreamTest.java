@@ -18,21 +18,17 @@
 
 package org.opensingular.ws.wkhtmltopdf.client;
 
+import org.apache.commons.io.IOUtils;
+import org.eclipse.jetty.server.Server;
+import org.junit.*;
+import org.opensingular.lib.commons.dto.HtmlToPdfDTO;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Optional;
-
-import org.apache.commons.io.IOUtils;
-import org.eclipse.jetty.server.Server;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.opensingular.lib.commons.dto.HtmlToPdfDTO;
 
 
 public class RestfulHtmlToPdfStreamTest {
@@ -45,11 +41,10 @@ public class RestfulHtmlToPdfStreamTest {
     public static String context = "/converthtmltopdf";
 
     @BeforeClass
-    public static void init() throws Exception {
+    public static void init() {
         // System.setProperty("singular.ws.wkhtmltopdf.url","http://10.0.0.142/wkhtmltopdf-ws");
         System.setProperty("singular.ws.wkhtmltopdf.url", "http://localhost:8080/wkhtmltopdf-ws");
-        System.setProperty("singular.wkhtml2pdf.home",
-                "C:\\Desenv\\singular-platform-1.0.0\\native\\windows\\wkhtmltopdf");
+        System.setProperty("singular.wkhtml2pdf.home", "//Users//italoferreira//Desktop//singular//ferramentas//singular-platform-1.1.0//native//macos//wkhtmltopdf//");
     
           //TODO ver uma forma de levantar um server para rodar os rest's.
          //XXX atualmente nao funcionou os rest
@@ -88,7 +83,7 @@ public class RestfulHtmlToPdfStreamTest {
         Assert.assertTrue(baos.size() > 0);
         System.out.println(baos.size() + "Kb");
     }
-    
+
     @Ignore
     @Test
     public void fileTest() throws IOException {
@@ -96,6 +91,30 @@ public class RestfulHtmlToPdfStreamTest {
 
         HtmlToPdfDTO htmlToPdfDTO = new HtmlToPdfDTO();
         htmlToPdfDTO.setBody("<html><body>Teste para geracao de pdf via stream</body></html>");
+        Optional<File> fileOpt = converter.convert(htmlToPdfDTO);
+
+        Assert.assertTrue(fileOpt.isPresent());
+        Assert.assertTrue(fileOpt.get().length() > 0);
+        System.out.println(fileOpt.get().length() + "Kb");
+    }
+
+
+    @Ignore
+    @Test
+    public void fileTestWithArgs() throws IOException {
+        RestfulHtmlToPdfConverter converter = RestfulHtmlToPdfConverter.createUsingDefaultConfig();
+
+        HtmlToPdfDTO htmlToPdfDTO = new HtmlToPdfDTO();
+
+        htmlToPdfDTO.setBody("<html><body>TESTE ITALO</body></html>");
+        htmlToPdfDTO.setHeader("<header><title>Teste stream</title></header>");
+        htmlToPdfDTO.setFooter("<footer></footer>");
+        htmlToPdfDTO.addParam("--print-media-type");
+        htmlToPdfDTO.addParam("--load-error-handling");
+        htmlToPdfDTO.addParam("ignore");
+        htmlToPdfDTO.addParam("--javascript-delay");
+        htmlToPdfDTO.addParam("500");
+
         Optional<File> fileOpt = converter.convert(htmlToPdfDTO);
 
         Assert.assertTrue(fileOpt.isPresent());
