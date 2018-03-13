@@ -23,6 +23,8 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.lib.commons.report.SingularReport;
 
+import java.util.Optional;
+
 /**
  * SingularFormReport
  * <p>
@@ -35,6 +37,6 @@ public interface SingularFormReport<S extends SInstance> extends SingularReport<
      *
      * @return the type
      */
-    SType<S> getFilterType(PackageBuilder packageBuilder);
+    Optional<SType<S>> getFilterType(PackageBuilder packageBuilder);
 
 }

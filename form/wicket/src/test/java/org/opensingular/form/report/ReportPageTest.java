@@ -30,6 +30,7 @@ import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 public class ReportPageTest extends SingularWicketTestCase {
 
@@ -53,8 +54,8 @@ public class ReportPageTest extends SingularWicketTestCase {
 
 
             @Override
-            public SType getFilterType(PackageBuilder packageBuilder) {
-                return null;
+            public Optional<SType<?>> getFilterType(PackageBuilder packageBuilder) {
+                return Optional.empty();
             }
 
             @Override

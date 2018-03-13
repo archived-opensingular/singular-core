@@ -287,7 +287,7 @@ public class SingularFormPanel extends Panel {
         super.renderHead(response);
         response.render(JavaScriptHeaderItem
             .forReference(new JQueryPluginResourceReference(SingularFormPanel.class, "SingularFormPanel.js")));
-        if (firstRender && viewMode.isEdition() && firstFieldFocusEnabled) {
+        if (firstFieldFocusEnabled && firstRender && viewMode.isEdition()) {
             response.render(
                 OnDomReadyHeaderItem.forScript("SingularFormPanel.initFocus('" + this.getMarkupId() + "');"));
             firstRender = false;
