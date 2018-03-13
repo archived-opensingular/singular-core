@@ -104,6 +104,7 @@ public abstract class SingularTemplate extends WebPage {
                         skinnableResource("/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js"),
                         skinnableResource("/global/plugins/jquery-multi-select/js/jquery.multi-select.js"),
                         skinnableResource("/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js"),
+                        skinnableResource("/global/plugins/jquerymask/jquery.mask.min.js"),
                         skinnableResource("/global/plugins/datatables/datatables.min.js"),
                         skinnableResource("/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js"),
                         skinnableResource("/global/plugins/morris/morris.min.js"),
