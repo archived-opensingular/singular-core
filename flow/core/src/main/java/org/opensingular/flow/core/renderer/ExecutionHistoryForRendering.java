@@ -17,6 +17,8 @@
 package org.opensingular.flow.core.renderer;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.STask;
@@ -148,6 +150,30 @@ public class ExecutionHistoryForRendering {
 
     private static String normalize(ITaskDefinition task) {
         return task.getKey().trim().toLowerCase();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (!(o instanceof ExecutionHistoryForRendering)) return false;
+
+        ExecutionHistoryForRendering that = (ExecutionHistoryForRendering) o;
+
+        return new EqualsBuilder()
+                .append(current, that.current)
+                .append(executedTasks, that.executedTasks)
+                .append(transitions, that.transitions)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(current)
+                .append(executedTasks)
+                .append(transitions)
+                .toHashCode();
     }
 }
 
