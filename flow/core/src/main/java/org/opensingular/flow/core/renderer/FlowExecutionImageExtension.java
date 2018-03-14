@@ -7,6 +7,6 @@ import org.opensingular.lib.commons.extension.SingularExtension;
 
 public interface FlowExecutionImageExtension extends SingularExtension, Serializable {
 
-    public byte[] generateHistoryImage(FlowInstance flowInstance);
+    byte[] generateHistoryImage(FlowInstance flowInstance);
 
 }

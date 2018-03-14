@@ -16,6 +16,13 @@
 
 package org.opensingular.flow.core.renderer;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -23,13 +30,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.STransition;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * Represents the history of execution and current state of a particular flow instance so the diagram of the flow
@@ -45,7 +45,7 @@ public class ExecutionHistoryForRendering {
 
     /** Marks this task as executed. */
     public void addExecuted(@Nonnull String taskAbbreviation) {
-        executedTasks.add(taskAbbreviation);
+        executedTasks.add(normalizeName(taskAbbreviation));
     }
 
     /** Marks this task as executed. */
@@ -102,7 +102,7 @@ public class ExecutionHistoryForRendering {
 
     /** Mark the task that is the current state of the instance. */
     public void setCurrent(@Nonnull String currentTaskAbbreviation) {
-        this.current = currentTaskAbbreviation;
+        this.current = normalizeName(currentTaskAbbreviation);
     }
 
     /** Mark the task that is the current state of the instance. */
