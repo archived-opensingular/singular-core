@@ -42,4 +42,12 @@ public class QueryUtil {
         }
         return query;
     }
+
+    public static String removePrefixFromObjectName(String objectName) {
+        if (objectName.contains(".")) {
+            return objectName.substring(objectName.lastIndexOf(".") + 1, objectName.length());
+        }
+
+        return objectName;
+    }
 }
