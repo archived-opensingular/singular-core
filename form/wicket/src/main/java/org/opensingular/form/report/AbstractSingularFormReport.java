@@ -27,9 +27,9 @@ import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
+import org.opensingular.lib.commons.lambda.ISupplier;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -48,25 +48,40 @@ public abstract class AbstractSingularFormReport<F extends SInstance> implements
         ServiceRegistryLocator.locate().lookupService(SingularInjector.class).ifPresent(s -> s.inject(AbstractSingularFormReport.this));
     }
 
-    private Optional<RefType> createRefType() {
-        RefType refType = new RefType() {
-            transient SType<?> refType = null;
+    public static class ReportRefType<F extends SInstance> extends RefType {
 
-            @Nullable
-            @Override
-            protected SType<?> retrieve() {
-                if (refType == null) {
-                    refType = getFilterType(SDictionary.create().createNewPackage(this.getClass().getName()));
-                }
-                return refType;
-            }
-        };
+        private           ISupplier<Optional<SType<F>>> supplier;
+        private transient SType<?>                      type;
 
-        if (refType.get() == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(refType);
+        ReportRefType(ISupplier<Optional<SType<F>>> supplier) {
+
+            this.supplier = supplier;
         }
+
+        private SType<?> getType() {
+            if (type == null) {
+                type = supplier.get().orElse(null);
+            }
+            return type;
+        }
+
+        public boolean isValid() {
+            return getType() != null;
+        }
+
+        @Nonnull
+        @Override
+        protected SType<?> retrieve() {
+            return getType();
+        }
+    }
+
+    private Optional<RefType> createRefType() {
+        ReportRefType<F> reportRefType = new ReportRefType<>(() -> getFilterType(SDictionary.create().createNewPackage(this.getClass().getName())));
+        if (reportRefType.isValid()){
+            return Optional.of(reportRefType);
+        }
+        return Optional.empty();
     }
 
     private Optional<SInstance> createInstance() {
@@ -84,7 +99,7 @@ public abstract class AbstractSingularFormReport<F extends SInstance> implements
     @Override
     public String dumpReportInstanceXML() {
         F value = getFilterValue();
-        if (value == null){
+        if (value == null) {
             return null;
         }
         return SFormXMLUtil.toStringXMLOrEmptyXML(value);

@@ -16,8 +16,11 @@
 
 package org.opensingular.form;
 
+import com.google.common.base.Joiner;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -136,5 +139,31 @@ public abstract class STypes {
             type = type.getParentScope();
         }
         return Optional.ofNullable(rootStype);
+    }
+
+    /**
+     * Compute the Stype path until its root SType.
+     * Stops at package declarations.
+     * Note that types referenced in different hierarchies could return different paths.
+     *
+     *
+     * @param leaf
+     * @return
+     *  dot separated path of types simple names.
+     */
+    public static String getPathFromRoot(SType<?> leaf) {
+        List<String> path = getPathToRoot(leaf);
+        Collections.reverse(path);
+        return Joiner.on(".").join(path);
+    }
+
+    private static List<String> getPathToRoot(SScope sType) {
+        List<String> s = new ArrayList<>();
+        s.add(sType.getNameSimple());
+        if (sType.getParentScope() instanceof SPackage || sType.getParentScope() == null) {
+            return s;
+        }
+        s.addAll(getPathToRoot(sType.getParentScope()));
+        return s;
     }
 }

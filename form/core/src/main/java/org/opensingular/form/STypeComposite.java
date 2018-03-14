@@ -206,7 +206,17 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     @Nonnull
     public <I extends SInstance, T extends SType<I>> STypeList<T, I> addFieldListOf(@Nonnull String fieldSimpleName, @Nonnull T elementsType) {
         checkNameNewField(fieldSimpleName);
-        STypeList<T, I> newList = createTypeListOf(fieldSimpleName, elementsType);
+        STypeList<T, I> newList = createTypeListOf(fieldSimpleName, null, elementsType);
+        return addInternal(fieldSimpleName, newList);
+    }
+
+    /**
+     * Cria um novo campo lista com o nome informado e sendo o tipo de seus elementos o tipo informado e utilizando o nome de elemento informado
+     */
+    @Nonnull
+    public <I extends SInstance, T extends SType<I>> STypeList<T, I> addFieldListOf(@Nonnull String fieldSimpleName, @Nonnull String elementSimpleName, @Nonnull T elementsType) {
+        checkNameNewField(fieldSimpleName);
+        STypeList<T, I> newList = createTypeListOf(fieldSimpleName, elementSimpleName, elementsType);
         return addInternal(fieldSimpleName, newList);
     }
 
@@ -243,7 +253,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     public STypeAttachmentList addFieldListOfAttachment(@Nonnull String listName, @Nonnull String fieldName) {
         checkNameNewField(listName);
         STypeAttachmentList newList = extendType(listName, STypeAttachmentList.class);
-        newList.setView(SViewAttachmentList::new);
+        newList.withView(SViewAttachmentList::new);
         newList.setElementsTypeFieldName(fieldName);
         return addInternal(listName, newList);
     }
@@ -417,17 +427,17 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     }
 
     public SSelectionBuilder selection() {
-        this.setView(SViewSelectionBySelect::new);
+        this.withView(SViewSelectionBySelect::new);
         return new SSelectionBuilder(this);
     }
 
     public SSelectionBuilder autocomplete() {
-        this.setView(SViewAutoComplete::new);
+        this.withView(SViewAutoComplete::new);
         return new SSelectionBuilder(this);
     }
 
     public <T extends Serializable> SelectionBuilder<T, INSTANCE_TYPE, INSTANCE_TYPE> selectionOf(Class<T> clazz, SView view) {
-        this.setView(() -> view);
+        this.withView(() -> view);
         return new SelectionBuilder<>(this);
     }
 
@@ -440,7 +450,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     }
 
     public <T extends Serializable> SelectionBuilder<T, INSTANCE_TYPE, INSTANCE_TYPE> lazyAutocompleteOf(Class<T> clasz) {
-        this.setView(() -> new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
+        this.withView(() -> new SViewAutoComplete(SViewAutoComplete.Mode.DYNAMIC));
         return new SelectionBuilder<>(this);
     }
 

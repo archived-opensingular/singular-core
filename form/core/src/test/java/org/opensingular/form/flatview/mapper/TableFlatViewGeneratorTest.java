@@ -52,7 +52,7 @@ public class TableFlatViewGeneratorTest {
             idade.asAtr().label("Idade");
             mockDocumentCanvas = new MockDocumentCanvas();
             tableFlatViewGenerator = new TableFlatViewGenerator();
-            pessoas.setView(SViewListByTable::new);
+            pessoas.withView(SViewListByTable::new);
         }
 
         @Test

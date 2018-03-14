@@ -262,13 +262,8 @@ public class SingularFormPanel extends Panel {
         } else {
             externalContainer = bodyContainer;
         }
-
-        // Constrói a confirmation modal
-        final ConfirmationModal confirmationModal = new ConfirmationModal("confirmation-modal");
-        addOrReplace(confirmationModal);
-
         // Chama o builder wicket para construção do formulário
-        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), externalContainer, getInstanceModel(), confirmationModal);
+        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), externalContainer, getInstanceModel());
         ctx.setAnnotationMode(getAnnotationMode());
         ctx.setNested(nested);
         ctx.setPreFormPanelFactory(preFormPanelFactory);
@@ -292,7 +287,7 @@ public class SingularFormPanel extends Panel {
         super.renderHead(response);
         response.render(JavaScriptHeaderItem
             .forReference(new JQueryPluginResourceReference(SingularFormPanel.class, "SingularFormPanel.js")));
-        if (firstRender && viewMode.isEdition() && firstFieldFocusEnabled) {
+        if (firstFieldFocusEnabled && firstRender && viewMode.isEdition()) {
             response.render(
                 OnDomReadyHeaderItem.forScript("SingularFormPanel.initFocus('" + this.getMarkupId() + "');"));
             firstRender = false;
