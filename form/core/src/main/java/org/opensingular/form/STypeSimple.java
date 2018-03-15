@@ -179,7 +179,7 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE extends Serializable> 
 
     @SafeVarargs
     public final STypeSimple<I, VALUE> autocompleteOf(VALUE... os) {
-        this.setView(SViewAutoComplete::new);
+        this.withView(SViewAutoComplete::new);
         new SelectionBuilder<>(this)
                 .selfIdAndDisplay()
                 .simpleProviderOf((Serializable[]) os);
@@ -207,7 +207,7 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE extends Serializable> 
     }
 
     public <T extends Serializable> SelectionBuilder<T, I, I> selectionOf(Class<T> clazz, SView view) {
-        this.setView(() -> view);
+        this.withView(() -> view);
         return new SelectionBuilder<>(this);
     }
     
