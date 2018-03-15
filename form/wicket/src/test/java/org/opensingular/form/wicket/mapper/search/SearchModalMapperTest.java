@@ -19,6 +19,7 @@
 package org.opensingular.form.wicket.mapper.search;
 
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.util.tester.TagTester;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +35,7 @@ import org.opensingular.form.util.transformer.Value;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.lib.wicket.util.datatable.BSDataTable;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -43,8 +45,8 @@ import java.util.stream.Collectors;
 
 public class SearchModalMapperTest {
 
-    private static final String BRAND      = "brand";
-    private static final String MODEL      = "model";
+    private static final String BRAND = "brand";
+    private static final String MODEL = "model";
     private static final String MULTIMEDIA = "multimedia";
 
     private static int PAGE_SIZE = 5;
@@ -79,11 +81,14 @@ public class SearchModalMapperTest {
 
         final STypeComposite<?> car = baseType.addFieldComposite("car");
 
-        final STypeString  brand      = car.addFieldString(BRAND);
-        final STypeString  model      = car.addFieldString(MODEL);
+        final STypeString brand = car.addFieldString(BRAND);
+        final STypeString model = car.addFieldString(MODEL);
         final STypeBoolean multimedia = car.addFieldBoolean(MULTIMEDIA);
 
-        car.withView(new SViewSearchModal(), (Consumer<SViewSearchModal>) view -> view.withPageSize(PAGE_SIZE));
+        car.withView(new SViewSearchModal(), (Consumer<SViewSearchModal>) view -> {
+            view.withPageSize(PAGE_SIZE);
+            view.withModalSize(BSModalBorder.Size.FULL);
+        });
 
         car.asAtrProvider().filteredProvider(new FilteredPagedProvider<Car>() {
 
@@ -109,8 +114,8 @@ public class SearchModalMapperTest {
             }
 
             private List<Car> filterByInstance(SInstance filter) {
-                String  brand         = Value.of(filter, BRAND);
-                String  model         = Value.of(filter, MODEL);
+                String brand = Value.of(filter, BRAND);
+                String model = Value.of(filter, MODEL);
                 Boolean hasMultimedia = Value.of(filter, MULTIMEDIA);
                 return carros().stream().filter(car -> {
                     boolean contains = true;
@@ -154,10 +159,26 @@ public class SearchModalMapperTest {
         Assert.assertEquals(table.getPageCount(), Math.ceil((double) carros().size() / 5), 0);
     }
 
+
+    @Test
+    public void testSizeOfModal() {
+        tester.startDummyPage();
+        openModal();
+        final BSModalBorder modal = tester.getAssertionsPage().
+                findSubComponent(component -> component instanceof BSModalBorder)
+                .getTarget(BSModalBorder.class);
+        Assert.assertNotNull(modal);
+        TagTester tagTester = tester.getTagByWicketId(modal.getId());
+        Assert.assertNotNull(tagTester);
+        final String attribute = tagTester.getChild("div").getAttribute("class");
+        Assert.assertTrue(attribute.contains("modal-full"));
+    }
+
+
     private static class Car implements Serializable {
 
-        private String  brand;
-        private String  model;
+        private String brand;
+        private String model;
         private Boolean hasMultimedia;
 
         private Car(String brand, String model, Boolean hasMultimedia) {
