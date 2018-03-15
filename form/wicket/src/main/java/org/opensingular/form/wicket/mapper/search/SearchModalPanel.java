@@ -91,7 +91,7 @@ public class SearchModalPanel extends Panel {
             target.add(valueField);
             valueField.getBehaviors(AjaxUpdateInputBehavior.class)
                     .forEach(ajax -> ajax.onUpdate(target));
-        }));
+        })).setSize(view.getSize());
         ctx.getRootContainer().appendTag("div", modal);
     }
 

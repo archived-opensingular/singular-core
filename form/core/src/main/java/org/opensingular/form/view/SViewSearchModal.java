@@ -17,33 +17,82 @@
 package org.opensingular.form.view;
 
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 
+/**
+ * The type S view search modal.
+ */
 @SuppressWarnings("serial")
 public class SViewSearchModal extends SView {
 
-    private String       title    = StringUtils.EMPTY;
-    private Integer      pageSize = 5;
+    private String title = StringUtils.EMPTY;
+    private Integer pageSize = 5;
+    private BSModalBorder.Size size = BSModalBorder.Size.NORMAL;
 
+    /**
+     * Instantiates a new S view search modal.
+     */
     public SViewSearchModal() {
     }
 
+    /**
+     * Title for modal
+     *
+     * @param title the title
+     * @return the s view search modal
+     */
     public SViewSearchModal title(String title) {
         this.title = title;
         return this;
     }
 
+    /**
+     * Set row per page for table inside modal.
+     *
+     * @param pageSize the page size
+     * @return the s view search modal
+     */
     public SViewSearchModal withPageSize(Integer pageSize) {
         this.pageSize = pageSize;
         return this;
     }
 
+    /**
+     * Set modal size.
+     *
+     * @param size the size
+     * @return the s view search modal
+     */
+    public SViewSearchModal withModalSize(BSModalBorder.Size size) {
+        this.size = size;
+        return this;
+    }
+
+    /**
+     * Gets title.
+     *
+     * @return the title
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * Gets page size.
+     *
+     * @return the page size
+     */
     public Integer getPageSize() {
         return pageSize;
     }
 
+    /**
+     * Gets size.
+     *
+     * @return the size
+     */
+    public BSModalBorder.Size getSize() {
+        return size;
+    }
 }
 
