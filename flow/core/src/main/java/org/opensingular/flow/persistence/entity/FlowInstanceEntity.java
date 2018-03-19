@@ -16,24 +16,17 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Where;
-import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
-
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.util.List;
+
+import org.opensingular.lib.support.persistence.util.Constants;
 
 /**
  * The persistent class for the flow instance database table.
  */
 @Entity
-@GenericGenerator(name = AbstractFlowInstanceEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
+@SequenceGenerator(name = AbstractFlowInstanceEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_INSTANCIA_PROCESSO", schema = Constants.SCHEMA)
 @Table(name = "TB_INSTANCIA_PROCESSO", schema = Constants.SCHEMA)
 public class FlowInstanceEntity extends
         AbstractFlowInstanceEntity<Actor, FlowVersionEntity, TaskInstanceEntity, VariableInstanceEntity, RoleInstanceEntity, ExecutionVariableEntity> {

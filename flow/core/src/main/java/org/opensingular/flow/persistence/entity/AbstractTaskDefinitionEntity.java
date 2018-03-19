@@ -16,6 +16,22 @@
 
 package org.opensingular.flow.persistence.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.opensingular.flow.core.entity.AccessStrategyType;
 import org.opensingular.flow.core.entity.IEntityFlowDefinition;
@@ -23,20 +39,6 @@ import org.opensingular.flow.core.entity.IEntityRoleTask;
 import org.opensingular.flow.core.entity.IEntityTaskDefinition;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
-
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The base persistent class for the TB_DEFINICAO_TAREFA database table.
@@ -57,11 +59,11 @@ public abstract class AbstractTaskDefinitionEntity<FLOW_DEFINITION extends IEnti
 
     @Id
     @Column(name = "CO_DEFINICAO_TAREFA")
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Integer cod;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_DEFINICAO_PROCESSO", nullable = false)
+    @JoinColumn(name = "CO_DEFINICAO_PROCESSO", nullable = false, foreignKey = @ForeignKey(name = "FK_DEFI_TAR_DEFINICAO_PROCESSO"))
     private FLOW_DEFINITION flowDefinition;
 
     @Column(name = "SG_TAREFA", length = 100, nullable = false)

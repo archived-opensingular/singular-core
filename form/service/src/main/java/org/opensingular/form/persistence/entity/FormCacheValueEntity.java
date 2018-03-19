@@ -18,7 +18,22 @@
 
 package org.opensingular.form.persistence.entity;
 
-import org.hibernate.annotations.GenericGenerator;
+import java.math.BigDecimal;
+import java.util.Date;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeSimple;
@@ -31,26 +46,12 @@ import org.opensingular.form.type.core.STypeMonetary;
 import org.opensingular.form.type.core.STypeTime;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * The persistent class for the TB_CACHE_VALOR database table.
  */
 @Entity
-@GenericGenerator(name = FormCacheValueEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
+@SequenceGenerator(name = FormCacheValueEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_CACHE_VALOR", schema = Constants.SCHEMA)
 @Table(name = "TB_CACHE_VALOR", schema = Constants.SCHEMA)
 public class FormCacheValueEntity extends BaseEntity<Long> {
 
@@ -58,15 +59,15 @@ public class FormCacheValueEntity extends BaseEntity<Long> {
 
     @Id
     @Column(name = "CO_CACHE_VALOR")
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private long cod;
 
     @ManyToOne
-    @JoinColumn(name = "CO_CACHE_CAMPO")
+    @JoinColumn(name = "CO_CACHE_CAMPO", foreignKey = @ForeignKey(name = "FK_CACHE_VALOR_CACHE_CAMPO"))
     private FormCacheFieldEntity cacheField;
 
     @ManyToOne
-    @JoinColumn(name = "CO_VERSAO_FORMULARIO")
+    @JoinColumn(name = "CO_VERSAO_FORMULARIO", foreignKey = @ForeignKey(name = "FK_CACHE_VAL_VERSAO_FORMULARIO"))
     private FormVersionEntity formVersion;
 
     @Column(name = "DS_VALOR", length = 1024)
@@ -80,7 +81,7 @@ public class FormCacheValueEntity extends BaseEntity<Long> {
     private BigDecimal numberValue;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "CO_PARENT")
+    @JoinColumn(name = "CO_PARENT", foreignKey = @ForeignKey(name = "FK_CACHE_VALOR_CO_PARENT"))
     private FormCacheValueEntity parent;
 
     public FormCacheValueEntity() {

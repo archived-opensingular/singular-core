@@ -16,21 +16,23 @@
 
 package org.opensingular.flow.persistence.entity;
 
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.opensingular.flow.core.entity.IEntityRoleDefinition;
 import org.opensingular.flow.core.entity.IEntityRoleTask;
 import org.opensingular.flow.core.entity.IEntityTaskDefinition;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
-
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Table;
 
 /**
  * The base persistent class for the RL_PAPEL_TAREFA database table.
@@ -51,7 +53,7 @@ public abstract class AbstractRoleTaskEntity<TASK_DEF extends IEntityTaskDefinit
 
     @Id
     @Column(name = "CO_PAPEL_TAREFA")
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Integer cod;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -59,7 +61,7 @@ public abstract class AbstractRoleTaskEntity<TASK_DEF extends IEntityTaskDefinit
     private ROLE_DEFINITION roleDefinition;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_DEFINICAO_TAREFA", nullable = false)
+    @JoinColumn(name = "CO_DEFINICAO_TAREFA", nullable = false, foreignKey = @ForeignKey(name = "FK_DEFINICAO_TAREFA"))
     private TASK_DEF taskDefinition;
 
     @Override

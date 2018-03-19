@@ -18,14 +18,14 @@ package org.opensingular.flow.persistence.entity;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
-
 import org.opensingular.flow.core.entity.IEntityVariableType;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 /**
  * The base persistent class for the TB_TIPO_VARIAVEL database table.
@@ -43,7 +43,7 @@ public class AbstractVariableTypeEntity extends BaseEntity<Integer> implements I
 
     @Id
     @Column(name = "CO_TIPO_VARIAVEL")
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Integer cod;
 
     @Column(name = "NO_CLASSE_JAVA")

@@ -16,18 +16,30 @@
 
 package org.opensingular.form.persistence.entity;
 
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
-import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.util.Constants;
 
 @Entity
-@GenericGenerator(name = FormVersionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
+@SequenceGenerator(name = FormVersionEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_VERSAO_FORMULARIO", schema = Constants.SCHEMA)
 @Table(name = "TB_VERSAO_FORMULARIO", schema = Constants.SCHEMA)
 public class FormVersionEntity extends BaseEntity<Long> {
 
@@ -35,11 +47,11 @@ public class FormVersionEntity extends BaseEntity<Long> {
 
     @Id
     @Column(name = "CO_VERSAO_FORMULARIO")
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Long cod;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_FORMULARIO", nullable = false)
+    @JoinColumn(name = "CO_FORMULARIO", nullable = false, foreignKey = @ForeignKey(name = "FK_VERSAO_FORMULARIO_FORMULARIO"))
     private FormEntity formEntity;
 
     @Temporal(TemporalType.TIMESTAMP)

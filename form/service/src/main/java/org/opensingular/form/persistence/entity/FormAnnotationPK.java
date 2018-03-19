@@ -16,18 +16,23 @@
 
 package org.opensingular.form.persistence.entity;
 
+import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import javax.persistence.*;
-import java.io.Serializable;
 
 @Embeddable
 public class FormAnnotationPK implements Serializable {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_VERSAO_FORMULARIO")
+    @JoinColumn(name = "CO_VERSAO_FORMULARIO", foreignKey = @ForeignKey(name = "FK_ANOT_FORM_VERSAO_FORMULARIO"))
     private FormVersionEntity formVersionEntity;
 
     @Column(name = "CO_CHAVE_ANOTACAO")

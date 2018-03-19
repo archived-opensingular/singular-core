@@ -16,20 +16,28 @@
 
 package org.opensingular.form.persistence.entity;
 
-import org.hibernate.annotations.*;
-import org.hibernate.annotations.Cache;
+import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
-
-import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import java.util.Date;
 
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
-@GenericGenerator(name = FormAnnotationVersionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
+@SequenceGenerator(name = FormAnnotationVersionEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_VERSAO_ANOTACAO", schema = Constants.SCHEMA)
 @Table(name = "TB_VERSAO_ANOTACAO_FORMULARIO", schema = Constants.SCHEMA)
 public class FormAnnotationVersionEntity extends BaseEntity<Long> {
 
@@ -37,15 +45,14 @@ public class FormAnnotationVersionEntity extends BaseEntity<Long> {
 
     @Id
     @Column(name = "CO_VERSAO_ANOTACAO")
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Long cod;
 
     @ManyToOne
-    @JoinColumns(value = {
+    @JoinColumns(foreignKey = @ForeignKey(name = "FK_VER_ANOT_FORM_CHV_ANOT"), value = {
             @JoinColumn(name = "CO_VERSAO_FORMULARIO", referencedColumnName = "CO_VERSAO_FORMULARIO"),
             @JoinColumn(name = "CO_CHAVE_ANOTACAO", referencedColumnName = "CO_CHAVE_ANOTACAO")
-    }
-    )
+    })
     private FormAnnotationEntity formAnnotationEntity;
 
     @Temporal(TemporalType.TIMESTAMP)

@@ -16,27 +16,31 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
-
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.util.List;
+import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.opensingular.lib.support.persistence.util.Constants;
 
 /**
  * The persistent class for the flow definition database table.
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
-@GenericGenerator(name = AbstractFlowDefinitionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
-@Table(name = "TB_DEFINICAO_PROCESSO", schema = Constants.SCHEMA)
+@SequenceGenerator(name = AbstractFlowDefinitionEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_DEFINICAO_PROCESSO", schema = Constants.SCHEMA)
+@Table(name = "TB_DEFINICAO_PROCESSO", schema = Constants.SCHEMA,
+        uniqueConstraints = {
+        @UniqueConstraint(name = "UK_DEFI_PROCES_KEY", columnNames = "SG_PROCESSO"),
+        @UniqueConstraint(name = "UK_DEFI_PROCES_NO_PROCESSO", columnNames = "NO_PROCESSO")
+})
 public class FlowDefinitionEntity extends
         AbstractFlowDefinitionEntity<ModuleEntity,CategoryEntity, TaskDefinitionEntity, RoleDefinitionEntity, FlowVersionEntity> {
 

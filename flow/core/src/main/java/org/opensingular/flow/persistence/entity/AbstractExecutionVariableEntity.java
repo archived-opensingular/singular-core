@@ -16,17 +16,12 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.opensingular.flow.core.entity.IEntityExecutionVariable;
-import org.opensingular.flow.core.entity.IEntityFlowInstance;
-import org.opensingular.flow.core.entity.IEntityTaskInstance;
-import org.opensingular.flow.core.entity.IEntityVariableInstance;
-import org.opensingular.flow.core.entity.IEntityVariableType;
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -34,7 +29,14 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import java.util.Date;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.opensingular.flow.core.entity.IEntityExecutionVariable;
+import org.opensingular.flow.core.entity.IEntityFlowInstance;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
+import org.opensingular.flow.core.entity.IEntityVariableType;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 /**
  * The base persistent class for the TB_VARIAVEL_EXECUCAO_TRANSICAO database
@@ -57,27 +59,27 @@ public abstract class AbstractExecutionVariableEntity<FLOW_INSTANCE extends IEnt
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_VARIAVEL_EXECUCAO_TRANSICAO";
 
     @Id
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     @Column(name = "CO_VARIAVEL_EXECUCAO_TRANSICAO")
     private Integer cod;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_INSTANCIA_PROCESSO", nullable = false, updatable = false)
+    @JoinColumn(name = "CO_INSTANCIA_PROCESSO", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_VAR_EXEC_TRANS_INST_PROCES"))
     private FLOW_INSTANCE flowInstance;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_VARIAVEL")
+    @JoinColumn(name = "CO_VARIAVEL", foreignKey = @ForeignKey(name = "FK_VAR_EXEC_TRANS_VAR"))
     private VAR_INSTANCE variable;
 
     @Column(name = "NO_VARIAVEL", nullable = false, updatable = false)
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_INSTANCIA_TAREFA_ORIGEM", nullable = true, updatable = false)
+    @JoinColumn(name = "CO_INSTANCIA_TAREFA_ORIGEM", nullable = true, updatable = false, foreignKey = @ForeignKey(name = "FK_VAR_EXEC_TRANS_TAR_ORIGEM"))
     private TASK_INSTANCE originTask;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_INSTANCIA_TAREFA_DESTINO", nullable = true, updatable = false)
+    @JoinColumn(name = "CO_INSTANCIA_TAREFA_DESTINO", nullable = true, updatable = false, foreignKey = @ForeignKey(name = "FK_VAR_EXEC_TRANS_DEST"))
     private TASK_INSTANCE destinationTask;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -88,7 +90,7 @@ public abstract class AbstractExecutionVariableEntity<FLOW_INSTANCE extends IEnt
     private String value;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_TIPO_VARIAVEL", nullable = false)
+    @JoinColumn(name = "CO_TIPO_VARIAVEL", nullable = false, foreignKey = @ForeignKey(name = "FK_VAR_EXEC_TRANS_TP_VAR"))
     private VAR_TYPE type;
 
     @Override

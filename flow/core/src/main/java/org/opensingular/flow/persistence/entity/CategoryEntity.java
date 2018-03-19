@@ -16,21 +16,20 @@
 
 package org.opensingular.flow.persistence.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
 import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
  * The persistent class for the TB_CATEGORIA database table.
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Entity
-@GenericGenerator(name = AbstractCategoryEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
+@SequenceGenerator(name = AbstractCategoryEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_CATEGORIA", schema = Constants.SCHEMA)
 @Table(name = "TB_CATEGORIA", schema = Constants.SCHEMA)
 public class CategoryEntity extends AbstractCategoryEntity<FlowDefinitionEntity> {
 

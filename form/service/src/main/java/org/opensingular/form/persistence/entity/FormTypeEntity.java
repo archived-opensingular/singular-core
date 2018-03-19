@@ -19,19 +19,18 @@ package org.opensingular.form.persistence.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
-@GenericGenerator(name = FormTypeEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
+@SequenceGenerator(name = FormTypeEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_TIPO_FORMULARIO", schema = Constants.SCHEMA)
 @Table(name = "TB_TIPO_FORMULARIO", schema = Constants.SCHEMA)
 public class FormTypeEntity extends BaseEntity<Long> {
 
@@ -39,7 +38,7 @@ public class FormTypeEntity extends BaseEntity<Long> {
 
     @Id
     @Column(name = "CO_TIPO_FORMULARIO")
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Long cod;
 
     @Column(name = "SG_TIPO_FORMULARIO")

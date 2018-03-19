@@ -16,6 +16,25 @@
 
 package org.opensingular.flow.persistence.entity;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Version;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OrderBy;
 import org.opensingular.flow.core.SUser;
@@ -26,23 +45,6 @@ import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
 import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Version;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * The base persistent class for the TB_INSTANCIA_TAREFA database table.
@@ -66,11 +68,11 @@ public abstract class AbstractTaskInstanceEntity<USER extends SUser, FLOW_INSTAN
 
     @Id
     @Column(name = "CO_INSTANCIA_TAREFA")
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Integer cod;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_INSTANCIA_PROCESSO", nullable = false)
+    @JoinColumn(name = "CO_INSTANCIA_PROCESSO", nullable = false , foreignKey = @ForeignKey(name = "FK_INST_TAR_PROCES_ATOR_CRIDR"))
     private FLOW_INSTANCE flowInstance;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -90,19 +92,19 @@ public abstract class AbstractTaskInstanceEntity<USER extends SUser, FLOW_INSTAN
     private Integer versionStamp;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_VERSAO_TAREFA", nullable = false, updatable = false)
+    @JoinColumn(name = "CO_VERSAO_TAREFA", nullable = false, updatable = false , foreignKey = @ForeignKey(name = "FK_INST_TAR_VERSAO_TAREFA"))
     private TASK_VERSION task;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_ATOR_ALOCADO")
+    @JoinColumn(name = "CO_ATOR_ALOCADO", foreignKey = @ForeignKey(name = "FK_INST_TAR_ATOR_ALOCADO"))
     private USER allocatedUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_ATOR_CONCLUSAO")
+    @JoinColumn(name = "CO_ATOR_CONCLUSAO", foreignKey = @ForeignKey(name = "FK_INST_TAR_ATOR_CONCLUSAO"))
     private USER responsibleUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_VERSAO_TRANSICAO_EXECUTADA")
+    @JoinColumn(name = "CO_VERSAO_TRANSICAO_EXECUTADA", foreignKey = @ForeignKey(name = "FK_INST_TAR_VER_TRAN_EXEC"))
     private TASK_TRANSITION_VERSION executedTransition;
 
     @OrderBy(clause = "DT_INICIO_ALOCACAO")

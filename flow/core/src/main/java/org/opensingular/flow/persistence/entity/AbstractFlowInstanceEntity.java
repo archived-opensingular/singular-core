@@ -16,6 +16,24 @@
 
 package org.opensingular.flow.persistence.entity;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OrderBy;
 import org.opensingular.flow.core.SUser;
@@ -26,22 +44,6 @@ import org.opensingular.flow.core.entity.IEntityRoleInstance;
 import org.opensingular.flow.core.entity.IEntityTaskInstance;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * The base persistent class for the flow instance database table.
@@ -67,18 +69,18 @@ public abstract class AbstractFlowInstanceEntity<USER extends SUser, FLOW_VERSIO
 
     @Id
     @Column(name = "CO_INSTANCIA_PROCESSO")
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Integer cod;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_VERSAO_PROCESSO", nullable = false)
+    @JoinColumn(name = "CO_VERSAO_PROCESSO", nullable = false, foreignKey = @ForeignKey(name = "FK_INST_PROCES_VERSAO_PROCESSO"))
     private FLOW_VERSION flowVersion;
 
     @Column(name = "DS_INSTANCIA_PROCESSO", length = 250)
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_ATOR_CRIADOR")
+    @JoinColumn(name = "CO_ATOR_CRIADOR", foreignKey = @ForeignKey(name = "FK_INST_PROCES_ATOR_CRIADOR"))
     private USER userCreator;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -90,7 +92,7 @@ public abstract class AbstractFlowInstanceEntity<USER extends SUser, FLOW_VERSIO
     private Date endDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_INSTANCIA_TAREFA_PAI")
+    @JoinColumn(name = "CO_INSTANCIA_TAREFA_PAI", foreignKey = @ForeignKey(name = "FK_INST_PROCES_INST_TAR_PAI"))
     private TASK_INSTANCE parentTask;
 
     @OneToMany(mappedBy = "flowInstance", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
