@@ -15,13 +15,13 @@
  */
 package org.opensingular.lib.support.persistence.util;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.opensingular.lib.commons.base.SingularProperties;
-
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import javax.annotation.Nonnull;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.opensingular.lib.commons.base.SingularProperties;
 
 import static org.opensingular.lib.commons.base.SingularProperties.CUSTOM_SCHEMA_NAME;
 import static org.opensingular.lib.commons.base.SingularProperties.SINGULAR_DEV_MODE;
@@ -33,6 +33,15 @@ import static org.opensingular.lib.commons.base.SingularProperties.USE_EMBEDDED_
 public class SqlUtil {
 
     private static final List<String> CRUD_OPERATIONS = Arrays.asList("SELECT", "UPDATE", "DELETE", "INSERT");
+
+    public static final String H2 = "org.hibernate.dialect.H2Dialect";
+    public static final String POSTGRE = "org.hibernate.dialect.PostgreSQLDialect";
+    public static final String ORACLE = "org.hibernate.dialect.OracleDialect";
+    public static final String ORACLE_8I = "org.hibernate.dialect.Oracle8iDialect";
+    public static final String ORACLE_9I = "org.hibernate.dialect.Oracle9iDialect";
+    public static final String ORACLE_10G = "org.hibernate.dialect.Oracle10gDialect";
+    public static final String SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
+    public static final String SQLSERVER_2012 =  "org.hibernate.dialect.SQLServer2012Dialect";
 
     private SqlUtil() {
     }
@@ -95,5 +104,17 @@ public class SqlUtil {
             return false;
         }
         return true;
+    }
+
+    public static boolean isOracleDialect(String dialect){
+        return dialect.equals(ORACLE)
+                || dialect.equals(ORACLE_8I)
+                || dialect.equals(ORACLE_9I)
+                || dialect.equals(ORACLE_10G);
+    }
+
+    public static boolean isSqlServer(String dialect) {
+        return dialect.equals(SQLSERVER)
+                || dialect.equals(SQLSERVER_2012);
     }
 }
