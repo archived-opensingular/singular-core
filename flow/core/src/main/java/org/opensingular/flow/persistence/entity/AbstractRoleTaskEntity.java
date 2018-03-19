@@ -57,7 +57,7 @@ public abstract class AbstractRoleTaskEntity<TASK_DEF extends IEntityTaskDefinit
     private Integer cod;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_DEFINICAO_PAPEL", nullable = false, foreignKey = @ForeignKey(name = "FK_PPL_TAR_DEFINICAO_TAREFA"))
+    @JoinColumn(name = "CO_DEFINICAO_PAPEL", nullable = false, foreignKey = @ForeignKey(name = "FK_PPL_TAR_DEFINICAO_PAPEL"))
     private ROLE_DEFINITION roleDefinition;
 
     @ManyToOne(fetch = FetchType.LAZY)
