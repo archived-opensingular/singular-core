@@ -19,7 +19,6 @@ package org.opensingular.form.persistence.entity;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -32,6 +31,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.ForeignKey;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
 
@@ -48,11 +48,13 @@ public class FormAnnotationVersionEntity extends BaseEntity<Long> {
     @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Long cod;
 
+    //TODO VERIFICAR FK [ESTA GERANDO UMA RANDOMICA]
     @ManyToOne
-    @JoinColumns(foreignKey = @ForeignKey(name = "FK_VER_ANOT_FORM_CHV_ANOT"), value = {
+    @JoinColumns(value = {
             @JoinColumn(name = "CO_VERSAO_FORMULARIO", referencedColumnName = "CO_VERSAO_FORMULARIO"),
             @JoinColumn(name = "CO_CHAVE_ANOTACAO", referencedColumnName = "CO_CHAVE_ANOTACAO")
     })
+    @ForeignKey(name = "FK_VER_ANOT_FORM_CHV_ANOT")
     private FormAnnotationEntity formAnnotationEntity;
 
     @Temporal(TemporalType.TIMESTAMP)

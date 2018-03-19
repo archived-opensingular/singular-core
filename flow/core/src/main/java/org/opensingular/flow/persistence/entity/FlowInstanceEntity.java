@@ -19,6 +19,7 @@ package org.opensingular.flow.persistence.entity;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.opensingular.lib.support.persistence.util.Constants;
 
@@ -27,7 +28,8 @@ import org.opensingular.lib.support.persistence.util.Constants;
  */
 @Entity
 @SequenceGenerator(name = AbstractFlowInstanceEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_INSTANCIA_PROCESSO", schema = Constants.SCHEMA)
-@Table(name = "TB_INSTANCIA_PROCESSO", schema = Constants.SCHEMA)
+@Table(name = "TB_INSTANCIA_PROCESSO", schema = Constants.SCHEMA,
+        uniqueConstraints = {@UniqueConstraint(name = "UK_INSTANCIA_PROCESSO", columnNames = "CO_VERSAO_PROCESSO")})
 public class FlowInstanceEntity extends
         AbstractFlowInstanceEntity<Actor, FlowVersionEntity, TaskInstanceEntity, VariableInstanceEntity, RoleInstanceEntity, ExecutionVariableEntity> {
     private static final long serialVersionUID = 1L;

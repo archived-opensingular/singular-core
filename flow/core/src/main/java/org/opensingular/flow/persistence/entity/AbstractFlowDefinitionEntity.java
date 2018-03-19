@@ -67,13 +67,13 @@ public abstract class AbstractFlowDefinitionEntity<MODULE extends IEntityModule,
     @JoinColumn(name = "CO_MODULO", nullable = false, foreignKey = @ForeignKey(name = "FK_DEFIN_PROCES_MODULO"))
     private MODULE module;
 
-    @Column(name = "SG_PROCESSO", length = 200, nullable = false, unique = true)
+    @Column(name = "SG_PROCESSO", length = 200, nullable = false)
     private String key;
 
-    @Column(name = "NO_PROCESSO", length = 200, nullable = false)
+    @Column(name = "NO_PROCESSO", length = 200)
     private String name;
 
-    @Column(name = "NO_CLASSE_JAVA", length = 250, nullable = false, unique = true)
+    @Column(name = "NO_CLASSE_JAVA", length = 250, nullable = false)
     private String definitionClassName;
 
     @OneToMany(mappedBy = "flowDefinition", fetch = FetchType.LAZY)

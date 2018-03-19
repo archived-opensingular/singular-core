@@ -39,7 +39,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
 @Table(name = "TB_DEFINICAO_PROCESSO", schema = Constants.SCHEMA,
         uniqueConstraints = {
         @UniqueConstraint(name = "UK_DEFI_PROCES_KEY", columnNames = "SG_PROCESSO"),
-        @UniqueConstraint(name = "UK_DEFI_PROCES_NO_PROCESSO", columnNames = "NO_PROCESSO")
+        @UniqueConstraint(name = "UK_DEFI_PROCES_NO_CLASSE_JAVA", columnNames = "NO_CLASSE_JAVA")
 })
 public class FlowDefinitionEntity extends
         AbstractFlowDefinitionEntity<ModuleEntity,CategoryEntity, TaskDefinitionEntity, RoleDefinitionEntity, FlowVersionEntity> {
