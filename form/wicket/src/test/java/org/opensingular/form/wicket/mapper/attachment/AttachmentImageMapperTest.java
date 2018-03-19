@@ -45,7 +45,7 @@ public class AttachmentImageMapperTest {
         SingularFormDummyPageTester tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(tb->{
             SType imgFile = tb.addField("imgFile", STypeAttachment.class);
-            imgFile.setView(SViewAttachmentImageTooltip::new);
+            imgFile.withView(SViewAttachmentImageTooltip::new);
         });
         tester.getDummyPage().setAsEditView();
 
