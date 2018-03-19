@@ -23,6 +23,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Check;
 import org.opensingular.lib.support.persistence.util.Constants;
 
 /**
@@ -30,6 +31,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
  */
 @Entity
 @Table(name = "RL_PERMISSAO_PROCESSO", schema = Constants.SCHEMA)
+@Check(constraints ="TP_PERMISSAO IN ('A', 'I', 'C', 'R')")
 public class FlowRight {
     private static final long serialVersionUID = 1L;
 

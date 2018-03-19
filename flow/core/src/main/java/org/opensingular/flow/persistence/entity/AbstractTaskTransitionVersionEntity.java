@@ -29,6 +29,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Check;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.GenericGenerator;
 import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
@@ -47,6 +49,7 @@ import org.opensingular.lib.support.persistence.entity.BaseEntity;
  */
 @MappedSuperclass
 @Table(name = "TB_VERSAO_TRANSICAO")
+@Check(constraints ="TP_TRANSICAO IN ('E', 'A', 'H')")
 public abstract class AbstractTaskTransitionVersionEntity<TASK_VERSION extends IEntityTaskVersion> extends BaseEntity<Integer> implements IEntityTaskTransitionVersion {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_VERSAO_TRANSICAO";
@@ -72,6 +75,7 @@ public abstract class AbstractTaskTransitionVersionEntity<TASK_VERSION extends I
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TP_TRANSICAO", nullable = false)
+    @ColumnDefault(value = "'E'")
     private TransitionType type;
 
     @Override

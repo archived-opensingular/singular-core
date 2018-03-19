@@ -25,6 +25,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Check;
 import org.opensingular.lib.support.persistence.util.Constants;
 
 /**
@@ -34,6 +35,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
 @Entity
 @SequenceGenerator(name = AbstractTaskDefinitionEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_DEFINICAO_TAREFA", schema = Constants.SCHEMA)
 @Table(name = "TB_DEFINICAO_TAREFA", schema = Constants.SCHEMA)
+@Check(constraints ="TP_ESTRATEGIA_SEGURANCA IS NULL OR (TP_ESTRATEGIA_SEGURANCA IN ('D','E'))")
 public class TaskDefinitionEntity extends AbstractTaskDefinitionEntity<FlowDefinitionEntity, TaskVersionEntity, RoleTaskEntity> {
 
     private static final long serialVersionUID = 1L;

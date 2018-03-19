@@ -60,7 +60,7 @@ public class FormCacheValueEntity extends BaseEntity<Long> {
     @Id
     @Column(name = "CO_CACHE_VALOR")
     @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
-    private long cod;
+    private Long cod;
 
     @ManyToOne
     @JoinColumn(name = "CO_CACHE_CAMPO", foreignKey = @ForeignKey(name = "FK_CACHE_VALOR_CACHE_CAMPO"))
