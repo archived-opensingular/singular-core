@@ -87,7 +87,7 @@ public class SearchModalMapperTest {
 
         car.withView(new SViewSearchModal(), (Consumer<SViewSearchModal>) view -> {
             view.withPageSize(PAGE_SIZE);
-            view.withModalSize(BSModalBorder.Size.FULL);
+            view.fullSize();
         });
 
         car.asAtrProvider().filteredProvider(new FilteredPagedProvider<Car>() {

@@ -32,6 +32,7 @@ import org.opensingular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import org.opensingular.form.wicket.component.BFModalWindow;
 import org.opensingular.form.wicket.model.AbstractSInstanceAwareModel;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 
 public class SearchModalPanel extends Panel {
 
@@ -41,7 +42,7 @@ public class SearchModalPanel extends Panel {
 
     private final WicketBuildContext           ctx;
     private final ISInstanceAwareModel<String> valueModel;
-    private final SViewSearchModal             view;
+    private final SViewSearchModal view;
 
     private TextField<String> valueField;
     private BFModalWindow     modal;
@@ -91,7 +92,7 @@ public class SearchModalPanel extends Panel {
             target.add(valueField);
             valueField.getBehaviors(AjaxUpdateInputBehavior.class)
                     .forEach(ajax -> ajax.onUpdate(target));
-        })).setSize(view.getSize());
+        })).setSize(BSModalBorder.Size.valueOf(view.getModalSize()));
         ctx.getRootContainer().appendTag("div", modal);
     }
 
