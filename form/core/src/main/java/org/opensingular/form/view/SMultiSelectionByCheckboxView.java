@@ -18,4 +18,15 @@ package org.opensingular.form.view;
 
 @SuppressWarnings("serial")
 public class SMultiSelectionByCheckboxView extends SMultiSelectionBySelectView {
+
+    private boolean inline;
+
+    public SMultiSelectionByCheckboxView inline(boolean inline) {
+        this.inline = inline;
+        return this;
+    }
+
+    public boolean isInline() {
+        return inline;
+    }
 }
