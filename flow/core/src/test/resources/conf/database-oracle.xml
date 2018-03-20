@@ -41,6 +41,7 @@
                 <prop key="hibernate.format_sql">true</prop>
                 <prop key="hibernate.cache.use_second_level_cache">false</prop>
                 <prop key="hibernate.jdbc.use_get_generated_keys">true</prop>
+                <prop key="hibernate.default_schema">DBSINGULAR</prop>
             </props>
         </property>
     </bean>
