@@ -37,7 +37,7 @@
                 <prop key="hibernate.cache.use_second_level_cache">false</prop>
                 <prop key="hibernate.show_sql">true</prop>
                 <prop key="hibernate.format_sql">true</prop>
-                <prop key="hibernate.hbm2ddl.auto">create</prop>
+                <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
             </props>
         </property>
     </bean>
@@ -49,11 +49,5 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <jdbc:initialize-database data-source="dataSource" ignore-failures="ALL">
-        <jdbc:script location="classpath:/db/ddl/drops.sql"/>
-        <jdbc:script location="classpath:/db/ddl/create-tables-form.sql"/>
-        <jdbc:script location="classpath:/db/ddl/create-sequences-form.sql"/>
-        <jdbc:script location="classpath:/db/ddl/create-constraints-form.sql"/>
-    </jdbc:initialize-database>
 
 </beans>
