@@ -44,7 +44,8 @@ public class RestfulHtmlToPdfStreamTest {
     public static void init() {
         // System.setProperty("singular.ws.wkhtmltopdf.url","http://10.0.0.142/wkhtmltopdf-ws");
         System.setProperty("singular.ws.wkhtmltopdf.url", "http://localhost:8080/wkhtmltopdf-ws");
-        System.setProperty("singular.wkhtml2pdf.home", "//Users//italoferreira//Desktop//singular//ferramentas//singular-platform-1.1.0//native//macos//wkhtmltopdf//");
+        // Coloque seu home do wkhtml2pdf aqui.
+        System.setProperty("singular.wkhtml2pdf.home", "");
     
           //TODO ver uma forma de levantar um server para rodar os rest's.
          //XXX atualmente nao funcionou os rest

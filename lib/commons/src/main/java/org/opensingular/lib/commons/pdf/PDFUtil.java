@@ -137,9 +137,9 @@ public abstract class PDFUtil implements Loggable {
     /**
      * Converte o código HTML em um arquivo PDF com o cabeçalho e rodapé especificados.
      *
-     * @param html             o código HTML.
-     * @param header           o código HTML do cabeçalho.
-     * @param footer           o código HTML do rodapé.
+     * @param rawHtml             o código HTML.
+     * @param rawHeader           o código HTML do cabeçalho.
+     * @param rawFooter           o código HTML do rodapé.
      * @param additionalConfig configurações adicionais.
      * @return O arquivo PDF retornado é temporário e deve ser apagado pelo solicitante para não deixa lixo.
      */
@@ -165,9 +165,9 @@ public abstract class PDFUtil implements Loggable {
         /**
          * Converte o código HTML em um arquivo PDF com o cabeçalho e rodapé especificados.
          *
-         * @param html             o código HTML.
-         * @param header           o código HTML do cabeçalho.
-         * @param footer           o código HTML do rodapé.
+         * @param htmlFile             o código HTML.
+         * @param headerFile           o código HTML do cabeçalho.
+         * @param footerFile           o código HTML do rodapé.
          * @param additionalConfig configurações adicionais.
          * @return O arquivo PDF retornado é temporário e deve ser apagado pelo solicitante para não deixa lixo.
          */
@@ -289,19 +289,6 @@ public abstract class PDFUtil implements Loggable {
         commandArgs.add("--print-media-type");
         commandArgs.add("--load-error-handling");
         commandArgs.add("ignore");
-
-        if (username != null) {
-            commandArgs.add("--username");
-            commandArgs.add(username);
-        }
-        if (password != null) {
-            commandArgs.add("--password");
-            commandArgs.add(password);
-        }
-        if (proxy != null) {
-            commandArgs.add("--proxy");
-            commandArgs.add(proxy);
-        }
 
         if (pageSize != null) {
             commandArgs.add("--page-size");

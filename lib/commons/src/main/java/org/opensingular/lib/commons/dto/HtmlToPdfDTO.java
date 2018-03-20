@@ -32,13 +32,22 @@ public class HtmlToPdfDTO implements Serializable {
     }
 
     public HtmlToPdfDTO(String header, String body, String footer) {
-        this.header = header;
-        this.body = body;
-        this.footer = footer;
+        this(header, body, footer, true);
     }
 
     public HtmlToPdfDTO(String body) {
+        this(null, body, null, true);
+    }
+
+    public HtmlToPdfDTO(String header, String body, String footer, boolean defaultParam) {
+        this.header = header;
         this.body = body;
+        this.footer = footer;
+        if (defaultParam) {
+            addParam("--print-media-type");
+            addParam("--load-error-handling");
+            addParam("ignore");
+        }
     }
 
     public String getHeader() {
