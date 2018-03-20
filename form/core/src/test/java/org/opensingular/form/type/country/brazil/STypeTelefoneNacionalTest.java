@@ -41,6 +41,8 @@ public class STypeTelefoneNacionalTest {
         assertEquals("(61) 98599-7893", type.format("(061)985997893"));
         assertEquals("(61) 98599-7893", type.format("(061) 985997893"));
         assertEquals("(61) 98599-7893", type.format("61985997893"));
+        assertEquals("(60) ", type.format("60"));
+        assertEquals("6", type.format("6"));
         assertEquals("(00) 00000-0000", type.format("00000000000"));
     }
 
@@ -50,6 +52,7 @@ public class STypeTelefoneNacionalTest {
         assertEquals("61", type.extractDDD("(061) 3372-5695"));
         assertEquals("61", type.extractDDD("(61) 3372-5695"));
         assertEquals("61", type.extractDDD("6133725695"));
+        assertEquals("6",  type.extractDDD("(6"));
         assertEquals("00", type.extractDDD("00000000000"));
     }
 
