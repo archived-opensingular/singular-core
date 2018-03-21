@@ -39,7 +39,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 /**
  * Implementação do conversor de html para pdf que se comunica com um serviço
@@ -54,10 +53,14 @@ public class RestfulHtmlToPdfConverter implements HtmlToPdfConverter {
     private final String endpoint;
 
     public static RestfulHtmlToPdfConverter createUsingDefaultConfig() {
+        return new RestfulHtmlToPdfConverter(getEndpointDefault());
+    }
+
+    public static String getEndpointDefault() {
         String baseURL = SingularProperties.get(HtmlToPdfConstants.ENDPOINT_WS_WKHTMLTOPDF, ENDPOINT_WS_WKHTMLTOPDF_DEFAULT_VALUE);
         LoggerFactory.getLogger(RestfulHtmlToPdfConverter.class).warn("Singular property {} not set! Defaulting to {} ", HtmlToPdfConstants.ENDPOINT_WS_WKHTMLTOPDF, ENDPOINT_WS_WKHTMLTOPDF_DEFAULT_VALUE);
         String context = HtmlToPdfConstants.CONVERT_HTML_TO_PDF_PATH;
-        return new RestfulHtmlToPdfConverter(baseURL + context);
+        return baseURL + context;
     }
 
     public RestfulHtmlToPdfConverter(String endpoint) {
