@@ -17,33 +17,73 @@
 package org.opensingular.form.view;
 
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.enums.ModalSize;
 
+/**
+ * The type S view search modal.
+ */
 @SuppressWarnings("serial")
-public class SViewSearchModal extends SView {
+public class SViewSearchModal extends SView implements ConfigurableModal<SViewSearchModal> {
 
-    private String       title    = StringUtils.EMPTY;
-    private Integer      pageSize = 5;
+    private String title = StringUtils.EMPTY;
+    private Integer pageSize = 5;
+    private ModalSize size;
 
+    /**
+     * Instantiates a new S view search modal.
+     */
     public SViewSearchModal() {
     }
 
+    /**
+     * Title for modal
+     *
+     * @param title the title
+     * @return the s view search modal
+     */
     public SViewSearchModal title(String title) {
         this.title = title;
         return this;
     }
 
+    /**
+     * Set row per page for table inside modal.
+     *
+     * @param pageSize the page size
+     * @return the s view search modal
+     */
     public SViewSearchModal withPageSize(Integer pageSize) {
         this.pageSize = pageSize;
         return this;
     }
 
+    /**
+     * Gets title.
+     *
+     * @return the title
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * Gets page size.
+     *
+     * @return the page size
+     */
     public Integer getPageSize() {
         return pageSize;
     }
 
+
+    @Override
+    public ModalSize getModalSize() {
+        return size;
+    }
+
+    @Override
+    public void setModalSize(ModalSize size) {
+        this.size = size;
+    }
 }
 
