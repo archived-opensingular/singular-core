@@ -26,9 +26,12 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.navigation.paging.IPageableItems;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
@@ -48,13 +51,19 @@ public class BSPaginationPanel extends Panel {
         add(new WebMarkupContainer("firstEllipse")
             .add($b.visibleIf($m.get(() -> (getCurrentPage() - getMiddlePagesRadius()) > 1))));
 
-        add(new ListView<Long>("pages", $m.get(() -> getMiddlePagesRange())) {
+        add(new RefreshingView<Long>("pages") {
             @Override
-            protected void populateItem(ListItem<Long> item) {
-                item
-                    .add(newNumberedPageLink(item))
-                    .add($b.classAppender("active", $m.get(() -> item.getModelObject() == getCurrentPage())));
+            protected Iterator<IModel<Long>> getItemModels() {
+                return getMiddlePagesRange().stream().map($m::ofValue).map(m -> (IModel<Long>)m).iterator();
             }
+
+            @Override
+            protected void populateItem(Item<Long> item) {
+                item
+                        .add(newNumberedPageLink(item))
+                        .add($b.classAppender("active", $m.get(() -> item.getModelObject() == getCurrentPage())));
+            }
+
         });
 
         add(new WebMarkupContainer("lastEllipse")
@@ -84,6 +93,7 @@ public class BSPaginationPanel extends Panel {
     private int getMiddlePagesRadius() {
         return 2;
     }
+
     private List<Long> getMiddlePagesRange() {
         long rangeLength = Math.min(1 + (getMiddlePagesRadius() * 2L), getPageCount());
         List<Long> list = new ArrayList<>();
