@@ -63,7 +63,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
     public static final String RESULT_TABLE_ID  = "resultTable";
 
     private final WicketBuildContext           ctx;
-    private final SViewSearchModal             view;
+    private final SViewSearchModal view;
     private final IConsumer<AjaxRequestTarget> selectCallback;
 
     private SingularFormPanel innerSingularFormPanel;

@@ -45,6 +45,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.visit.IVisitor;
+import org.opensingular.form.enums.ModalSize;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.wicket.util.ajax.AjaxErrorEventPayload;
 import org.opensingular.lib.wicket.util.feedback.BSFeedbackPanel;
@@ -92,12 +93,25 @@ public class BSModalBorder extends Border {
         }
     }
 
-    public static enum Size {
+    public enum Size {
+
         NORMAL("modal-belver"), LARGE("modal-lg"), SMALL("modal-sm"), FULL("modal-full"), FIT("modal-fit");
+
         protected final String styleClass;
 
-        private Size(String styleClass) {
+        Size(String styleClass) {
             this.styleClass = styleClass;
+        }
+
+        public static Size valueOf(ModalSize modalSize) {
+            if (modalSize != null) {
+                for (Size size : values() ) {
+                    if (size.name().equalsIgnoreCase(modalSize.name())) {
+                        return size;
+                    }
+                }
+            }
+            return NORMAL;
         }
     }
 

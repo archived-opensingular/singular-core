@@ -17,17 +17,17 @@
 package org.opensingular.form.view;
 
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+import org.opensingular.form.enums.ModalSize;
 
 /**
  * The type S view search modal.
  */
 @SuppressWarnings("serial")
-public class SViewSearchModal extends SView {
+public class SViewSearchModal extends SView implements ConfigurableModal<SViewSearchModal> {
 
     private String title = StringUtils.EMPTY;
     private Integer pageSize = 5;
-    private BSModalBorder.Size size = BSModalBorder.Size.NORMAL;
+    private ModalSize size;
 
     /**
      * Instantiates a new S view search modal.
@@ -58,17 +58,6 @@ public class SViewSearchModal extends SView {
     }
 
     /**
-     * Set modal size.
-     *
-     * @param size the size
-     * @return the s view search modal
-     */
-    public SViewSearchModal withModalSize(BSModalBorder.Size size) {
-        this.size = size;
-        return this;
-    }
-
-    /**
      * Gets title.
      *
      * @return the title
@@ -86,13 +75,15 @@ public class SViewSearchModal extends SView {
         return pageSize;
     }
 
-    /**
-     * Gets size.
-     *
-     * @return the size
-     */
-    public BSModalBorder.Size getSize() {
+
+    @Override
+    public ModalSize getModalSize() {
         return size;
+    }
+
+    @Override
+    public void setModalSize(ModalSize size) {
+        this.size = size;
     }
 }
 
