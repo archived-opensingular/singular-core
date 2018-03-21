@@ -42,11 +42,11 @@ public class CollectionEntity extends BaseEntity<Long> {
     @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Long cod;
 
-    @Column(name = "NO_COLECAO")
+    @Column(name = "NO_COLECAO", length = 50)
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "CO_TIPO_FORMULARIO", foreignKey = @ForeignKey(name = "FK_COLECAO_TIPO_FORMULARIO"))
+    @JoinColumn(name = "CO_TIPO_FORMULARIO", foreignKey = @ForeignKey(name = "FK_COLECAO_TIPO_FORMULARIO"), nullable = false)
     private FormTypeEntity formType;
 
     @Override

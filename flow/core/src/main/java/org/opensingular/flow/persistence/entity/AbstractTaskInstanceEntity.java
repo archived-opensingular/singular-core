@@ -26,6 +26,7 @@ import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
@@ -61,7 +62,10 @@ import org.opensingular.lib.support.persistence.entity.BaseEntity;
  * @param <TASK_HISTORY>
  */
 @MappedSuperclass
-@Table(name = "TB_INSTANCIA_TAREFA")
+@Table(name = "TB_INSTANCIA_TAREFA",
+        indexes = {
+                @Index(columnList = "CO_INSTANCIA_PROCESSO ASC, DT_INICIO ASC", name = "IX_INSTANCIA_TAREFA")
+        })
 public abstract class AbstractTaskInstanceEntity<USER extends SUser, FLOW_INSTANCE extends IEntityFlowInstance, TASK_VERSION extends IEntityTaskVersion, TASK_TRANSITION_VERSION extends IEntityTaskTransitionVersion, EXECUTION_VARIABLE extends IEntityExecutionVariable, TASK_HISTORY extends IEntityTaskInstanceHistory> extends BaseEntity<Integer> implements IEntityTaskInstance {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_INSTANCIA_TAREFA";

@@ -17,6 +17,7 @@
 package org.opensingular.flow.persistence.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -27,7 +28,10 @@ import org.opensingular.lib.support.persistence.util.Constants;
  */
 @Entity
 @SequenceGenerator(name = AbstractTaskInstanceHistoryEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_HISTORICO_ALOCACAO", schema = Constants.SCHEMA)
-@Table(name = "TB_HISTORICO_INSTANCIA_TAREFA", schema = Constants.SCHEMA)
+@Table(name = "TB_HISTORICO_INSTANCIA_TAREFA", schema = Constants.SCHEMA,
+        indexes = {
+                @Index(columnList = "CO_INSTANCIA_TAREFA ASC, DT_INICIO_ALOCACAO ASC", name = "IX_HISTORICO_INSTANCIA_TAREFA")
+        })
 public class TaskInstanceHistoryEntity extends AbstractTaskInstanceHistoryEntity<Actor, TaskInstanceEntity, TaskHistoricTypeEntity> {
     private static final long serialVersionUID = 1L;
 

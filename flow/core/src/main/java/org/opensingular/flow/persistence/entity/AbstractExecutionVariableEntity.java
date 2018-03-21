@@ -71,22 +71,22 @@ public abstract class AbstractExecutionVariableEntity<FLOW_INSTANCE extends IEnt
     @JoinColumn(name = "CO_VARIAVEL", foreignKey = @ForeignKey(name = "FK_VAR_EXEC_TRANS_VAR"))
     private VAR_INSTANCE variable;
 
-    @Column(name = "NO_VARIAVEL", nullable = false, updatable = false)
+    @Column(name = "NO_VARIAVEL", nullable = false, updatable = false, length = 100)
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_INSTANCIA_TAREFA_ORIGEM", nullable = true, updatable = false, foreignKey = @ForeignKey(name = "FK_VAR_EXEC_TRANS_TAR_ORIGEM"))
+    @JoinColumn(name = "CO_INSTANCIA_TAREFA_ORIGEM", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_VAR_EXEC_TRANS_TAR_ORIGEM"))
     private TASK_INSTANCE originTask;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_INSTANCIA_TAREFA_DESTINO", nullable = true, updatable = false, foreignKey = @ForeignKey(name = "FK_VAR_EXEC_TRANS_DEST"))
+    @JoinColumn(name = "CO_INSTANCIA_TAREFA_DESTINO", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_VAR_EXEC_TRANS_DEST"))
     private TASK_INSTANCE destinationTask;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_HISTORICO", nullable = false, updatable = false)
     private Date date;
 
-    @Column(name = "VL_NOVO", nullable = false, length = 1000)
+    @Column(name = "VL_NOVO", length = 8000)
     private String value;
 
     @ManyToOne(fetch = FetchType.LAZY)

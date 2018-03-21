@@ -61,7 +61,7 @@ public abstract class AbstractRoleDefinitionEntity<FLOW_DEFINITION extends IEnti
     @JoinColumn(name = "CO_DEFINICAO_PROCESSO", nullable = false, foreignKey = @ForeignKey(name = "FK_DEFI_PPL_DEFINICAO_PROCESSO"))
     private FLOW_DEFINITION flowDefinition;
 
-    @Column(name = "NO_PAPEL", length = 100, nullable = false)
+    @Column(name = "NO_PAPEL", length = 300, nullable = false)
     private String name;
 
     @Column(name = "SG_PAPEL", length = 100, nullable = false)

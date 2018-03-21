@@ -46,10 +46,10 @@ public class AbstractVariableTypeEntity extends BaseEntity<Integer> implements I
     @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Integer cod;
 
-    @Column(name = "NO_CLASSE_JAVA")
+    @Column(name = "NO_CLASSE_JAVA", nullable = false, length = 300)
     private String typeClassName;
 
-    @Column(name = "DS_TIPO_VARIAVEL")
+    @Column(name = "DS_TIPO_VARIAVEL", nullable = false, length = 100)
     private String description;
 
     @Override

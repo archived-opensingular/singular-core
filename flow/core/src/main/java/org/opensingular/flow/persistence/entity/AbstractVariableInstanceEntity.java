@@ -60,15 +60,15 @@ public abstract class AbstractVariableInstanceEntity<FLOW_INSTANCE extends IEnti
     @JoinColumn(name = "CO_INSTANCIA_PROCESSO", nullable = false, foreignKey = @ForeignKey(name = "FK_VARIAVEL_INSTANCIA_PROCESSO"))
     private FLOW_INSTANCE flowInstance;
 
-    @Column(name = "NO_VARIAVEL", nullable = false)
+    @Column(name = "NO_VARIAVEL", nullable = false, length = 100)
     private String name;
 
     @Lob
-    @Column(name = "VL_VARIAVEL", length = 1000)
+    @Column(name = "VL_VARIAVEL", length = 8000)
     private String value;
 
     @ManyToOne
-    @JoinColumn(name = "CO_TIPO_VARIAVEL", foreignKey = @ForeignKey(name = "FK_VARIAVEL_TIPO_VARIAVEL"))
+    @JoinColumn(name = "CO_TIPO_VARIAVEL", foreignKey = @ForeignKey(name = "FK_VARIAVEL_TIPO_VARIAVEL"),  nullable = false)
     private VAR_TYPE type;
 
     @Override

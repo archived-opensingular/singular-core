@@ -79,7 +79,7 @@ public abstract class AbstractTaskInstanceHistoryEntity<USER extends SUser, TASK
     @JoinColumn(name = "CO_ATOR_ALOCADOR", foreignKey = @ForeignKey(name = "FK_HIST_INST_TAR_ATOR_ALOCADOR"))
     private USER allocatorUser;
 
-    @Column(name = "DS_COMPLEMENTO")
+    @Column(name = "DS_COMPLEMENTO", length = 8000)
     private String description;
 
     @Override

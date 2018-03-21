@@ -32,10 +32,10 @@ public class FormAnnotationPK implements Serializable {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_VERSAO_FORMULARIO", foreignKey = @ForeignKey(name = "FK_ANOT_FORM_VERSAO_FORMULARIO"))
+    @JoinColumn(name = "CO_VERSAO_FORMULARIO", foreignKey = @ForeignKey(name = "FK_ANOT_FORM_VERSAO_FORMULARIO"), nullable = false)
     private FormVersionEntity formVersionEntity;
 
-    @Column(name = "CO_CHAVE_ANOTACAO")
+    @Column(name = "CO_CHAVE_ANOTACAO", length = 200, nullable = false)
     private String classifier;
 
 

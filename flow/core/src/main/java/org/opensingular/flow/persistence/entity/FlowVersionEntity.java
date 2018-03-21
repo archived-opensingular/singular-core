@@ -17,6 +17,7 @@
 package org.opensingular.flow.persistence.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -30,7 +31,10 @@ import org.opensingular.lib.support.persistence.util.Constants;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
 @SequenceGenerator(name = AbstractFlowVersionEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_PROCESSO", schema = Constants.SCHEMA)
-@Table(name = "TB_VERSAO_PROCESSO", schema = Constants.SCHEMA)
+@Table(name = "TB_VERSAO_PROCESSO", schema = Constants.SCHEMA,
+        indexes = {
+                @Index(columnList = "CO_DEFINICAO_PROCESSO ASC, DT_VERSAO ASC", name = "IX_PROCESSO")
+        })
 public class FlowVersionEntity extends AbstractFlowVersionEntity<FlowDefinitionEntity, TaskVersionEntity> {
     private static final long serialVersionUID = 1L;
 

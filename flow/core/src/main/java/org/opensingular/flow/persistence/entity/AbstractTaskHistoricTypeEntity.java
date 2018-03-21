@@ -46,7 +46,7 @@ public abstract class AbstractTaskHistoricTypeEntity extends BaseEntity<Integer>
     @Column(name = "CO_TIPO_HISTORICO_TAREFA")
     private Integer cod;
 
-    @Column(name = "DS_TIPO_HISTORICO_TAREFA", length = 50)
+    @Column(name = "DS_TIPO_HISTORICO_TAREFA", length = 100, nullable = false)
     private String description;
 
     @Override

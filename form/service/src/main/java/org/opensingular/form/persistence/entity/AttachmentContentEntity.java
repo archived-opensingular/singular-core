@@ -44,10 +44,10 @@ public class AttachmentContentEntity extends BaseEntity<Long> {
     @Column(name = "CO_CONTEUDO_ARQUIVO")
     private Long cod;
 
-    @Column(name = "TX_SHA1", nullable = false)
+    @Column(name = "TX_SHA1", nullable = false, length = 40)
     private String hashSha1;
 
-    @Column(name = "NU_BYTES")
+    @Column(name = "NU_BYTES", nullable = false)
     private long size;
 
     @Temporal(TemporalType.TIMESTAMP)

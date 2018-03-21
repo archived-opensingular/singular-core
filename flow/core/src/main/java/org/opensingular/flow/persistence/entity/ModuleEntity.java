@@ -17,6 +17,7 @@
 package org.opensingular.flow.persistence.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -34,6 +35,10 @@ import org.opensingular.lib.support.persistence.util.Constants;
         uniqueConstraints = {
                 @UniqueConstraint(name = "UK_MODULO_URL_CONEXAO", columnNames = "URL_CONEXAO"),
                 @UniqueConstraint(name = "UK_MODULO_NO_MODULO", columnNames = "NO_MODULO")
+        },
+        indexes = {
+                @Index(columnList = "NO_MODULO ASC", name = "IX_GRUPO_NOME"),
+                @Index(columnList = "URL_CONEXAO ASC", name = "IX_GRUPO_CONEXAO")
         })
 public class ModuleEntity extends AbstractModuleEntity {
 

@@ -76,7 +76,7 @@ public abstract class AbstractFlowInstanceEntity<USER extends SUser, FLOW_VERSIO
     @JoinColumn(name = "CO_VERSAO_PROCESSO", nullable = false, foreignKey = @ForeignKey(name = "FK_INST_PROCES_VERSAO_PROCESSO"))
     private FLOW_VERSION flowVersion;
 
-    @Column(name = "DS_INSTANCIA_PROCESSO", length = 250)
+    @Column(name = "DS_INSTANCIA_PROCESSO", length = 300)
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)

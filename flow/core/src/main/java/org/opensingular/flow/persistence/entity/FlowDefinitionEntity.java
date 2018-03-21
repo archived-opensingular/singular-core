@@ -19,6 +19,7 @@ package org.opensingular.flow.persistence.entity;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
@@ -38,18 +39,21 @@ import org.opensingular.lib.support.persistence.util.Constants;
 @SequenceGenerator(name = AbstractFlowDefinitionEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_DEFINICAO_PROCESSO", schema = Constants.SCHEMA)
 @Table(name = "TB_DEFINICAO_PROCESSO", schema = Constants.SCHEMA,
         uniqueConstraints = {
-        @UniqueConstraint(name = "UK_DEFI_PROCES_KEY", columnNames = "SG_PROCESSO"),
-        @UniqueConstraint(name = "UK_DEFI_PROCES_NO_CLASSE_JAVA", columnNames = "NO_CLASSE_JAVA")
-})
+                @UniqueConstraint(name = "UK_DEFI_PROCES_KEY", columnNames = "SG_PROCESSO"),
+                @UniqueConstraint(name = "UK_DEFI_PROCES_NO_CLASSE_JAVA", columnNames = "NO_CLASSE_JAVA")
+        },
+        indexes = {
+                @Index(columnList = "NO_CLASSE_JAVA ASC", name = "IX_CLASSE_DEFINICAO")
+        })
 public class FlowDefinitionEntity extends
-        AbstractFlowDefinitionEntity<ModuleEntity,CategoryEntity, TaskDefinitionEntity, RoleDefinitionEntity, FlowVersionEntity> {
+        AbstractFlowDefinitionEntity<ModuleEntity, CategoryEntity, TaskDefinitionEntity, RoleDefinitionEntity, FlowVersionEntity> {
 
     private static final long serialVersionUID = 1L;
-    
+
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(schema = Constants.SCHEMA, name = "TB_VERSAO_PROCESSO", 
-        joinColumns = @JoinColumn(name = "CO_DEFINICAO_PROCESSO", referencedColumnName = "CO_DEFINICAO_PROCESSO"),
-        inverseJoinColumns = @JoinColumn(name = "CO_VERSAO_PROCESSO", referencedColumnName = "CO_VERSAO_PROCESSO"))
+    @JoinTable(schema = Constants.SCHEMA, name = "TB_VERSAO_PROCESSO",
+            joinColumns = @JoinColumn(name = "CO_DEFINICAO_PROCESSO", referencedColumnName = "CO_DEFINICAO_PROCESSO"),
+            inverseJoinColumns = @JoinColumn(name = "CO_VERSAO_PROCESSO", referencedColumnName = "CO_VERSAO_PROCESSO"))
     private List<FlowInstanceEntity> flowInstances;
 
     public List<FlowInstanceEntity> getFlowInstances() {

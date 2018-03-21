@@ -48,21 +48,20 @@ public class FormAnnotationVersionEntity extends BaseEntity<Long> {
     @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Long cod;
 
-    //TODO VERIFICAR FK [ESTA GERANDO UMA RANDOMICA]
-    @ManyToOne
+    @ManyToOne()
     @JoinColumns(value = {
-            @JoinColumn(name = "CO_VERSAO_FORMULARIO", referencedColumnName = "CO_VERSAO_FORMULARIO"),
-            @JoinColumn(name = "CO_CHAVE_ANOTACAO", referencedColumnName = "CO_CHAVE_ANOTACAO")
+            @JoinColumn(name = "CO_VERSAO_FORMULARIO", referencedColumnName = "CO_VERSAO_FORMULARIO", nullable = false),
+            @JoinColumn(name = "CO_CHAVE_ANOTACAO", referencedColumnName = "CO_CHAVE_ANOTACAO", nullable = false)
     })
     @ForeignKey(name = "FK_VER_ANOT_FORM_CHV_ANOT")
     private FormAnnotationEntity formAnnotationEntity;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "DT_INCLUSAO")
+    @Column(name = "DT_INCLUSAO", nullable = false)
     private Date inclusionDate;
 
     @Lob
-    @Column(name = "XML_ANOTACAO")
+    @Column(name = "XML_ANOTACAO", nullable = false)
     private String xml;
 
     @Column(name = "CO_AUTOR_INCLUSAO")

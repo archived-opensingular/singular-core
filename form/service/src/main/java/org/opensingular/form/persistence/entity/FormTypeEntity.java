@@ -21,6 +21,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -28,10 +29,14 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
+
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
 @SequenceGenerator(name = FormTypeEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_TIPO_FORMULARIO", schema = Constants.SCHEMA)
-@Table(name = "TB_TIPO_FORMULARIO", schema = Constants.SCHEMA)
+@Table(name = "TB_TIPO_FORMULARIO", schema = Constants.SCHEMA,
+        indexes = {
+                @Index(columnList = "SG_TIPO_FORMULARIO ASC", name = "IX_TIPO_FORMULARIO")
+        })
 public class FormTypeEntity extends BaseEntity<Long> {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_TIPO_FORMULARIO";
@@ -41,13 +46,13 @@ public class FormTypeEntity extends BaseEntity<Long> {
     @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Long cod;
 
-    @Column(name = "SG_TIPO_FORMULARIO")
+    @Column(name = "SG_TIPO_FORMULARIO", nullable = false, length = 200)
     private String abbreviation;
 
-    @Column(name = "NO_LABEL_FORMULARIO")
+    @Column(name = "NO_LABEL_FORMULARIO", length = 200)
     private String label;
 
-    @Column(name = "NU_VERSAO_CACHE")
+    @Column(name = "NU_VERSAO_CACHE", nullable = false)
     private Long cacheVersionNumber;
 
     @Override

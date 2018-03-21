@@ -74,7 +74,7 @@ public abstract class AbstractTaskTransitionVersionEntity<TASK_VERSION extends I
     private String abbreviation;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "TP_TRANSICAO", nullable = false)
+    @Column(name = "TP_TRANSICAO", nullable = false, length = 1)
     @ColumnDefault(value = "'E'")
     private TransitionType type;
 

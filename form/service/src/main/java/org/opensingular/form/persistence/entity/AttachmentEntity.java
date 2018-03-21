@@ -42,20 +42,20 @@ public class AttachmentEntity extends BaseEntity<Long> {
     @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Long cod;
 
-    @Column(name = "NO_ARQUIVO")
+    @Column(name = "NO_ARQUIVO", length = 200, nullable = false)
     private String name;
 
-    @Column(name = "CO_CONTEUDO_ARQUIVO")
+    @Column(name = "CO_CONTEUDO_ARQUIVO", nullable = false)
     private Long codContent;
 
-    @Column(name = "TX_SHA1")
+    @Column(name = "TX_SHA1", length = 40, nullable = false)
     private String hashSha1;
 
-    @Column(name = "NU_BYTES")
+    @Column(name = "NU_BYTES", nullable = false)
     private long size;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "DT_CRIACAO")
+    @Column(name = "DT_CRIACAO", nullable = false)
     private Date creationDate;
 
     @Override
