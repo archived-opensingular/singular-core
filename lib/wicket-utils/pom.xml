@@ -58,7 +58,6 @@
     <dependency>
       <groupId>org.opensingular</groupId>
       <artifactId>singular-form-core</artifactId>
-      <version>${singular.version}</version>
     </dependency>
 
     <dependency>
