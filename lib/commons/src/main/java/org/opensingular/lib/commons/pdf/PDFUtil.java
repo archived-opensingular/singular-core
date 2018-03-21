@@ -20,6 +20,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
+import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.commons.util.Loggable;
 
 import javax.annotation.Nonnull;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Classe utilitária para a manipulação de PDF's.
@@ -518,12 +520,12 @@ public abstract class PDFUtil implements Loggable {
 
     protected static final @Nonnull File getWkhtml2pdfHome() {
         if (wkhtml2pdfHome == null) {
-            String prop = System.getProperty(SINGULAR_WKHTML2PDF_HOME);
+            Optional<String> prop = SingularProperties.get().getPropertyOpt(SINGULAR_WKHTML2PDF_HOME);
 
-            if (prop == null) {
+            if (!prop.isPresent()) {
                 throw new SingularPDFException("property 'singular.wkhtml2pdf.home' not set");
             }
-            File file = new File(prop);
+            File file = new File(prop.get());
             if (! file.exists()) {
                 throw new SingularPDFException(
                         "property '" + SINGULAR_WKHTML2PDF_HOME + "' configured for a directory that nos exists: " +
