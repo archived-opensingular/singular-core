@@ -70,3 +70,9 @@
 .page-content .form-actions .btn-group .dropdown-menu .btn:hover {
     background-color: #f2f2f2;
 }
+
+.list-table-body td .singular-remove-btn  {
+    top: 5px;
+    position: relative;
+    background-color: white;
+}

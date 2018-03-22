@@ -57,6 +57,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.opensingular</groupId>
+      <artifactId>singular-form-core</artifactId>
+      <version>${singular.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.wicket</groupId>
       <artifactId>wicket-core</artifactId>
       <version>${wicket.version}</version>

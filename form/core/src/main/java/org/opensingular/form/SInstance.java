@@ -26,6 +26,7 @@ import org.opensingular.form.event.SInstanceListeners;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.io.PersistenceBuilderXML;
 import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.validation.ValidationError;
 import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.lib.commons.lambda.IConsumer;
@@ -665,15 +666,32 @@ public abstract class SInstance implements SAttributeEnabled {
         return SInstances.findNearest(this, targetTypeClass);
     }
 
+
+    /**
+     * Returns the nearest instance value for the given type or throws an Exception if it is not found.
+     * This method works exactly as the {@link this#findNearestValue(SType)}
+     * @param targetType
+     * @param <V>
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public <V> V findNearestValueOrException(SType<?> targetType){
+        return (V) findNearestOrException(targetType).getValueWithDefault();
+    }
+
+    /**
+     * Do the same search as in {@link this#findNearest(SType)} but return {@link SInstance#getValue} instead of the SInstance
+     * @param targetType
+     * @param <V>
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public <V> Optional<V> findNearestValue(SType<?> targetType) {
-        Optional<? extends SInstance> nearest = SInstances.findNearest(this, targetType);
-        return (Optional<V>) nearest.map(it -> it.getValueWithDefault());
+        return (Optional<V>) findNearest(targetType).map(SInstance::getValueWithDefault);
     }
 
     public <V> Optional<V> findNearestValue(SType<?> targetType, Class<V> valueClass) {
-        Optional<? extends SInstance> nearest = SInstances.findNearest(this, targetType);
-        return nearest.map(it -> valueClass.cast(it.getValueWithDefault(valueClass)));
+        return findNearest(targetType).map(it -> valueClass.cast(it.getValueWithDefault(valueClass)));
     }
 
     public boolean isDescendantOf(SInstance ancestor) {
@@ -960,5 +978,4 @@ public abstract class SInstance implements SAttributeEnabled {
         List<SInstance> ascendants = SInstances.listAscendants(this);
         return ascendants.stream().anyMatch(parent -> parent.getType().getClass().equals(candidate));
     }
-
 }
