@@ -19,6 +19,7 @@ package org.opensingular.flow.persistence.entity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -35,6 +36,7 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.opensingular.flow.core.entity.IEntityFlowDefinition;
+import org.opensingular.flow.core.entity.IEntityFlowInstance;
 import org.opensingular.flow.core.entity.IEntityFlowVersion;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
@@ -52,7 +54,7 @@ import org.opensingular.lib.support.persistence.entity.BaseEntity;
  */
 @MappedSuperclass
 @Table(name = "TB_VERSAO_PROCESSO")
-public abstract class AbstractFlowVersionEntity<FLOW_DEFINITION extends IEntityFlowDefinition, TASK_VERSION extends IEntityTaskVersion> extends BaseEntity<Integer> implements
+public abstract class AbstractFlowVersionEntity<FLOW_DEFINITION extends IEntityFlowDefinition, TASK_VERSION extends IEntityTaskVersion,  FLOW_INSTANCE extends IEntityFlowInstance> extends BaseEntity<Integer> implements
         IEntityFlowVersion {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_VERSAO_PROCESSO";
@@ -73,6 +75,10 @@ public abstract class AbstractFlowVersionEntity<FLOW_DEFINITION extends IEntityF
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "flowVersion")
     private List<TASK_VERSION> versionTasks = new ArrayList<>();
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "flowVersion", cascade = CascadeType.REMOVE)
+    private List<FLOW_INSTANCE> flowInstances = new ArrayList<>();
+
+
     @Override
     public Integer getCod() {
         return cod;
@@ -88,6 +94,14 @@ public abstract class AbstractFlowVersionEntity<FLOW_DEFINITION extends IEntityF
 
     public void setFlowDefinition(FLOW_DEFINITION flowDefinition) {
         this.flowDefinition = flowDefinition;
+    }
+
+    public List<FLOW_INSTANCE> getFlowInstances() {
+        return flowInstances;
+    }
+
+    public void setFlowInstances(List<FLOW_INSTANCE> flowInstances) {
+        this.flowInstances = flowInstances;
     }
 
     @Override

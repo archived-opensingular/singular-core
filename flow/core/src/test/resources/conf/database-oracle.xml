@@ -42,6 +42,7 @@
                 <prop key="hibernate.cache.use_second_level_cache">false</prop>
                 <prop key="hibernate.jdbc.use_get_generated_keys">true</prop>
                 <prop key="hibernate.default_schema">DBSINGULAR</prop>
+                <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
             </props>
         </property>
     </bean>
@@ -61,7 +62,6 @@
         <jdbc:script location="classpath:/db/ddl/create-tables-form.sql"/>
         <jdbc:script location="classpath:/db/ddl/create-constraints.sql"/>
         <jdbc:script location="classpath:/db/dml/load-data.sql" encoding="UTF-8"/>
-        <jdbc:script location="classpath:/db/dml/load-data-ator.sql" encoding="UTF-8"/>
         <jdbc:script location="classpath:/db/ddl/create-oracle.sql"/>
     </jdbc:initialize-database>
 

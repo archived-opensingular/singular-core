@@ -78,7 +78,6 @@ public class FormCacheValueEntity extends BaseEntity<Long> {
     private Date dateValue;
 
     @Column(name = "NU_VALOR")
-    //TODO VERIFICAR, É BIGDECIMAL, POR ISSO É NUMERIC...
     private BigDecimal numberValue;
 
     @ManyToOne(cascade = CascadeType.ALL)

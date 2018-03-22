@@ -35,7 +35,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
         indexes = {
                 @Index(columnList = "CO_DEFINICAO_PROCESSO ASC, DT_VERSAO ASC", name = "IX_PROCESSO")
         })
-public class FlowVersionEntity extends AbstractFlowVersionEntity<FlowDefinitionEntity, TaskVersionEntity> {
+public class FlowVersionEntity extends AbstractFlowVersionEntity<FlowDefinitionEntity, TaskVersionEntity, FlowInstanceEntity> {
     private static final long serialVersionUID = 1L;
 
 }
