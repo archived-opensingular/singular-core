@@ -6,7 +6,7 @@
 
 @import '_variables'; // theme level variables
 
-@import '../../_overrides_theme_01';
+@import '../../singular_variables';
 
 @import 'layout/_print'; // print layout
 
@@ -28,7 +28,7 @@
 @import 'layout/_fileinput';
 @import 'layout/_server-error.scss';
 
-@import '../../quick-sidebar/_quick-sidebar';  // quick sidebar content
+@import '../../lib/quick-sidebar/_quick-sidebar';  // quick sidebar content
 
 /***
 Page Loading
@@ -45,6 +45,6 @@ Page Loading
     transition: all 2s;
   }
 }
-@import '../../pages/login';
+@import '../../lib/pages/login';
 
-@import "../../_components";
+@import "../../lib/_components";

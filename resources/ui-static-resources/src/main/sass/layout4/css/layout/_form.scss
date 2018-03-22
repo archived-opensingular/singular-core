@@ -1,5 +1,5 @@
-@import '../../../_overrides_theme_01';
-@import '../../../../../sass-svg-uri/svg-uri';
+@import '../../../singular_variables';
+@import '../../../lib/sass-svg-uri/svg-uri';
 
 @mixin btn-with-icon($image-url) {
   &::before {

@@ -1,7 +1,11 @@
 /***
 Page Header
 ***/
-@import '../../../_overrides_theme_01';
+@import '../../../singular_variables';
+
+.page-header{
+  border-top: $page-header-border-top;
+}
 
 .page-header.navbar {
   width: 100%;
