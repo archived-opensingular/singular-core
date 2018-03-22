@@ -1,0 +1,64 @@
+.worklist {
+  padding: 15px;
+
+  thead tr {
+
+    th {
+      border-bottom: 1px solid #dfdfdf;
+      font-size: 12px;
+      vertical-align: middle;
+      background-color: #fff;
+    }
+  }
+
+  th {
+    border: 0 !important;
+    text-transform: uppercase;
+
+    a {
+      font-size: 12px;
+      color: rgba(74, 74, 74, 0.7);
+      font-weight: 600;
+      &:hover {
+        color: rgba(77, 77, 77, 1);
+        text-decoration: none;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      &:hover {
+        color: rgba(102, 102, 102, 1);
+        background-color: rgba(242, 242, 242, 1);
+      }
+    }
+  }
+
+  tr {
+    color: $color-grey-03;
+
+    &:first-child {
+      td {
+        border-top: 1px solid $color-grey-03 !important;
+      }
+    }
+
+    td {
+      border: 0 !important;
+    }
+  }
+
+  .label {
+    box-shadow: none;
+  }
+}
+
+.worklist-action-btn {
+  color: rgba(179, 179, 179, 1);
+  margin: 2px 8px;
+  &:hover {
+    color: rgba(128, 128, 128, 1);
+    text-decoration: none;
+  }
+}
