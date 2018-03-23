@@ -76,18 +76,6 @@
             <version>${singular.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.github.warmuuh</groupId>
-            <artifactId>libsass-maven-plugin</artifactId>
-            <version>0.2.7-libsass_3.4.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.samaxes.maven</groupId>
-            <artifactId>minify-maven-plugin</artifactId>
-            <version>1.7.6</version>
-        </dependency>
     </dependencies>
 
 </project>
