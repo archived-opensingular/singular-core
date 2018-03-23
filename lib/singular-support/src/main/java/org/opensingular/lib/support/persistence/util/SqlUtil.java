@@ -34,14 +34,6 @@ public class SqlUtil {
 
     private static final List<String> CRUD_OPERATIONS = Arrays.asList("SELECT", "UPDATE", "DELETE", "INSERT");
 
-    public static final String H2 = "org.hibernate.dialect.H2Dialect";
-    public static final String POSTGRE = "org.hibernate.dialect.PostgreSQLDialect";
-    public static final String ORACLE = "org.hibernate.dialect.OracleDialect";
-    public static final String ORACLE_8I = "org.hibernate.dialect.Oracle8iDialect";
-    public static final String ORACLE_9I = "org.hibernate.dialect.Oracle9iDialect";
-    public static final String ORACLE_10G = "org.hibernate.dialect.Oracle10gDialect";
-    public static final String SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
-    public static final String SQLSERVER_2012 =  "org.hibernate.dialect.SQLServer2012Dialect";
 
     private SqlUtil() {
     }
@@ -95,7 +87,9 @@ public class SqlUtil {
         return true;
     }
 
-    /** Verifies if should use embedded database (usually while running a test or in development mode). */
+    /**
+     * Verifies if should use embedded database (usually while running a test or in development mode).
+     */
     public static boolean useEmbeddedDatabase() {
         //In the future, this code should be move to Embedded Database helper class
         if (SingularProperties.getOpt(USE_EMBEDDED_DATABASE).isPresent()) {
@@ -104,17 +98,5 @@ public class SqlUtil {
             return false;
         }
         return true;
-    }
-
-    public static boolean isOracleDialect(String dialect){
-        return dialect.equals(ORACLE)
-                || dialect.equals(ORACLE_8I)
-                || dialect.equals(ORACLE_9I)
-                || dialect.equals(ORACLE_10G);
-    }
-
-    public static boolean isSqlServer(String dialect) {
-        return dialect.equals(SQLSERVER)
-                || dialect.equals(SQLSERVER_2012);
     }
 }
