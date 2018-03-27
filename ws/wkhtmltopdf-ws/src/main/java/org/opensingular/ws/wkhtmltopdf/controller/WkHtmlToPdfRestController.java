@@ -16,20 +16,16 @@
 
 package org.opensingular.ws.wkhtmltopdf.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-
 import org.opensingular.lib.commons.dto.HtmlToPdfDTO;
 import org.opensingular.lib.commons.pdf.PDFUtil;
 import org.opensingular.lib.commons.util.Loggable;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.File;
+import java.io.FileInputStream;
 
 import static org.opensingular.ws.wkhtmltopdf.constains.HtmlToPdfConstants.CONVERT_HTML_TO_PDF_PATH;
 
@@ -40,7 +36,7 @@ public class WkHtmlToPdfRestController implements Loggable {
     @RequestMapping(value = CONVERT_HTML_TO_PDF_PATH, method = RequestMethod.POST, produces = "application/pdf")
     public ResponseEntity<InputStreamResource> convertHtmlToPdf(@RequestBody HtmlToPdfDTO dto) {
         try {
-            File file = PDFUtil.getInstance().convertHTML2PDF(dto.getBody(), dto.getHeader(), dto.getFooter());
+            File file = PDFUtil.getInstance().convertHTML2PDF(dto.getBody(), dto.getHeader(), dto.getFooter(), dto.getAdditionalParams());
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType("application/octet-stream"))
                     .contentLength(file.length())

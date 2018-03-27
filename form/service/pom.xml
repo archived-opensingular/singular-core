@@ -37,31 +37,26 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-form-core</artifactId>
-            <version>${singular.version}</version>
         </dependency>
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-support</artifactId>
-            <version>${singular.version}</version>
         </dependency>
 
         <!-- HIBERNATE -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.194</version>
         </dependency>
 
         <dependency>
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-jpa</artifactId>
-            <version>4.1.4</version>
         </dependency>
 
         <dependency>
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-apt</artifactId>
-            <version>4.1.4</version>
             <scope>provided</scope>
         </dependency>
 

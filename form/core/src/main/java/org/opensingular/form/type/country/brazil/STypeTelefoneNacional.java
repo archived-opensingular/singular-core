@@ -16,6 +16,7 @@
 
 package org.opensingular.form.type.country.brazil;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeString;
@@ -30,7 +31,7 @@ import java.util.regex.Pattern;
 public class STypeTelefoneNacional extends STypeString implements Loggable {
 
     private static final Pattern NOT_NUMBER_PATTERN = Pattern.compile("[^\\d]");
-    private static final Pattern PHONE_PATTERN      = Pattern.compile("(\\d{2})(\\d{1,4}|\\d{5}){0,1}(\\d{1,4}){0,1}");
+    private static final Pattern PHONE_PATTERN = Pattern.compile("(\\d{2})(\\d{1,4}|\\d{5}){0,1}(\\d{1,4}){0,1}");
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -52,7 +53,11 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
         if (value == null) {
             return null;
         }
-        return "(" + extractDDD(value) + ") " + extractNumber(value);
+        String dddExtraido = extractDDD(value);
+        if (StringUtils.isNotEmpty(dddExtraido) && dddExtraido.length() == 2) {
+            return "(" + dddExtraido + ") " + extractNumber(value);
+        }
+        return dddExtraido;
     }
 
     private Matcher getPhoneMatcher(String number) {
@@ -74,7 +79,8 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
         if (phoneMatcher.matches()) {
             return phoneMatcher.group(1);
         }
-        return value;
+        //Nesse caso significa que o DD não foi informado completo.
+        return unformat(value);
     }
 
     String extractNumber(String value) {
@@ -85,8 +91,8 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
         if (phoneMatcher.matches()) {
             String number = "";
             String secondGroup = phoneMatcher.group(2);
-            if (phoneMatcher.groupCount() >= 2 && secondGroup  != null) {
-                number = secondGroup ;
+            if (phoneMatcher.groupCount() >= 2 && secondGroup != null) {
+                number = secondGroup;
             }
             String thirdGroup = phoneMatcher.group(3);
             if (phoneMatcher.groupCount() == 3 && thirdGroup != null) {
@@ -99,6 +105,7 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
 
     /**
      * Verica se o dd está no padrao de 3 digitos, exemplos 061, revemondo o 0 a esquerda
+     *
      * @param unformated numero sem formatação
      * @return numero ajustado
      */
