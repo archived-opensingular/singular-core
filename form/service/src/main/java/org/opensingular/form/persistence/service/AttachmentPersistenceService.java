@@ -16,6 +16,19 @@
 
 package org.opensingular.form.persistence.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.document.SDocument;
@@ -29,19 +42,6 @@ import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.base.SingularUtil;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Transactional
 public class AttachmentPersistenceService<T extends AttachmentEntity, C extends AttachmentContentEntity> implements IAttachmentPersistenceHandler<AttachmentRef> {
@@ -108,10 +108,10 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
         return attachmentDao.findOrException(Long.valueOf(id));
     }
 
-    public void loadAttachmentContent(Long codContent, OutputStream fos) {
-        Optional<C> content = attachmentContentDao.find(codContent);
+    public void loadAttachmentContent(AttachmentContentEntity codContent, OutputStream fos) {
+        Optional<C> content = attachmentContentDao.find(codContent.getCod());
         if (! content.isPresent()) {
-            throw SingularException.rethrow("Attachment Content not found id=" + codContent);
+            throw SingularException.rethrow("Attachment Content not found id=" + codContent.getCod());
         }
         try (InputStream in = content.get().getContent().getBinaryStream()) {
             IOUtils.copy(in, fos);

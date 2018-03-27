@@ -15,6 +15,11 @@
  */
 package org.opensingular.form.persistence.dto;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.io.CompressionUtil;
 import org.opensingular.form.io.IOUtil;
@@ -26,17 +31,11 @@ import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.lib.commons.util.TempFileUtils;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 public class AttachmentRef implements IAttachmentRef {
 
     private final String id;
 
-    private final Long codContent;
+    private final AttachmentContentEntity codContent;
 
     private final String hashSha1;
 
@@ -50,7 +49,7 @@ public class AttachmentRef implements IAttachmentRef {
         this(attachmentEntity.getCod().toString(), attachmentEntity.getCodContent(), attachmentEntity.getHashSha1(), attachmentEntity.getSize(), attachmentEntity.getName());
     }
 
-    public AttachmentRef(String id, Long codContent, String hashSha1, long size, String name) {
+    public AttachmentRef(String id, AttachmentContentEntity codContent, String hashSha1, long size, String name) {
         super();
         this.id = id;
         this.codContent = codContent;
