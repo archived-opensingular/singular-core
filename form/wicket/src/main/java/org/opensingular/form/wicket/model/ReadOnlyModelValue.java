@@ -10,9 +10,6 @@ import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * Created by italoferreira on 20/03/18 - 19:25
- */
 public class ReadOnlyModelValue implements IReadOnlyModel<List<Serializable>> {
 
     private IModel<? extends SInstance> model;
