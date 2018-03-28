@@ -31,6 +31,7 @@ import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.view.AbstractSViewListWithControls;
+import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackPanel;
@@ -38,6 +39,7 @@ import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.form.wicket.repeater.PathInstanceItemReuseStrategy;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
+import org.opensingular.form.wicket.util.WicketFormUtils;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.behavior.FadeInOnceBehavior;
@@ -87,7 +89,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
     }
 
     protected static RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, Item<SInstance> item,
-                                                       BSContainer<?> cell, ConfirmationModal confirmationModal) {
+                                                       BSContainer<?> cell, ConfirmationModal confirmationModal, SViewListByTable viewListByTable) {
         RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item, confirmationModal);
 
         cell
@@ -97,6 +99,10 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                         + "      style='" + MapperCommons.ICON_STYLE + " 'class='" + DefaultIcons.REMOVE + "' />"
                         + "</button>")
                 .add(btn);
+
+        if (viewListByTable != null) {
+            btn.add($b.onConfigure(c -> c.setVisible(viewListByTable.isDeleteEnabled(item.getModelObject()))));
+        }
         return btn;
     }
 
@@ -114,17 +120,14 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
     }
 
     public static void buildFooter(BSContainer<?> footer, WicketBuildContext ctx, Factory createAddButton) {
-        if (canAddItems(ctx)) {
-            final TemplatePanel template = footer.newTemplateTag(tp -> createButtonMarkup(ctx));
-            template.add((Component) createAddButton.create());
-        } else {
-            footer.setVisible(false);
-        }
+        final TemplatePanel template = footer.newTemplateTag(tp -> createButtonMarkup(ctx));
+        template.add((Component) createAddButton.create());
+        footer.add($b.onConfigure(c -> c.setVisible(canAddItems(ctx))));
         personalizeCSS(footer);
     }
 
     public static boolean canAddItems(WicketBuildContext ctx) {
-        return ((AbstractSViewListWithControls<?>) ctx.getView()).isNewEnabled()
+        return ((AbstractSViewListWithControls<?>) ctx.getView()).isNewEnabled((SIList) ctx.getModel().getObject())
                 && ctx.getViewMode().isEdition();
     }
 
@@ -318,6 +321,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
 
         protected RemoverButton(String id, Form<?> form, ElementsView elementsView, Item<SInstance> item, ConfirmationModal confirmationModal) {
             super(id, form);
+            this.setOutputMarkupId(true);
             this.setDefaultFormProcessing(false);
             this.elementsView = elementsView;
             this.item = item;
@@ -328,6 +332,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
 
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
+            target.add(WicketFormUtils.findUpdatableComponentInHierarchy(confirmationModal));
             confirmationModal.show(target, this::removeItem);
         }
 
@@ -337,10 +342,6 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
             if (elementsView.getModelObject().isEmpty()) {
                 target.add(this.getForm());
             }
-        }
-
-        public ConfirmationModal getConfirmationModal() {
-            return confirmationModal;
         }
     }
 
@@ -358,7 +359,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
             final SIList<SInstance> list = listModel.getObject();
             if (list.getType().getMaximumSize() != null && list.getType().getMaximumSize() == list.size()) {
-                target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
+                target.appendJavaScript(";bootbox.alert('A quantidade máxima de valores foi atingida.');");
                 target.appendJavaScript(Scripts.multipleModalBackDrop());
             } else {
                 list.addNew();

@@ -49,6 +49,7 @@ import org.opensingular.form.wicket.mapper.AbstractListMapper;
 import org.opensingular.form.wicket.mapper.MapperCommons;
 import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppender;
 import org.opensingular.form.wicket.mapper.common.util.ColumnType;
+import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
@@ -103,6 +104,7 @@ public class MasterDetailPanel extends Panel {
     private AjaxLink<?>                     addButton;
     private Label                           addButtonLabel;
     private SValidationFeedbackCompactPanel feedback;
+    private ConfirmationModal confirmationModal;
 
     public MasterDetailPanel(String id, WicketBuildContext ctx, IModel<SIList<SInstance>> list, MasterDetailModal modal,
                              SViewListByMasterDetail view, SInstanceActionsProviders instanceActionsProviders) {
@@ -164,6 +166,7 @@ public class MasterDetailPanel extends Panel {
         addButtonLabel = new Label("addButtonLabel", Model.of(AbstractListMapper.defineLabel(ctx)));
         table = newTable("table");
         feedback = ctx.createFeedbackCompactPanel("feedback");
+        confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
 
     }
 
@@ -220,7 +223,7 @@ public class MasterDetailPanel extends Panel {
                 if (si instanceof SIList) {
                     final SIList<?> sil = (SIList<?>) si;
                     if (sil.getType().getMaximumSize() != null && sil.getType().getMaximumSize() == sil.size()) {
-                        target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
+                        target.appendJavaScript(";bootbox.alert('A quantidade máxima de valores foi atingida.');");
                         target.appendJavaScript(Scripts.multipleModalBackDrop());
                     } else {
                         modal.setOnHideCallback(t -> t.focusComponent(this));
@@ -281,22 +284,22 @@ public class MasterDetailPanel extends Panel {
         ViewMode vm,
         SViewListByMasterDetail view) {
         builder.appendActionColumn($m.ofValue("Ações"), ac -> {
-            if (vm.isEdition() && view.isDeleteEnabled()) {
-                ac.appendAction(buildRemoveActionConfig(), buildRemoveAction(model, ctx));
-            }
             ac.appendAction(buildViewOrEditActionConfig(vm, view), buildViewOrEditAction(modal, ctx));
+            if (vm.isEdition()) {
+                ac.appendAction(buildRemoveActionConfig(view), buildRemoveAction(model, ctx));
+            }
             ac.appendAction(buildShowErrorsActionConfig(model), buildShowErrorsAction());
-
             if (ctx.getAnnotationMode().enabled())
                 ac.appendAction(buildShowAnnotationsActionConfig(), buildViewOrEditAction(modal, ctx));
         });
     }
 
-    private BSActionPanel.ActionConfig<SInstance> buildRemoveActionConfig() {
+    private BSActionPanel.ActionConfig<SInstance> buildRemoveActionConfig(SViewListByMasterDetail view) {
         return new BSActionPanel.ActionConfig<SInstance>()
             .styleClasses(Model.of("list-detail-remove"))
             .iconeModel(Model.of(DefaultIcons.REMOVE))
-            .titleFunction(rowModel -> "Remover");
+            .titleFunction(rowModel -> "Remover")
+            .visibleFor(m -> view.isDeleteEnabled(m.getObject()));
     }
 
     private IBSAction<SInstance> buildRemoveAction(IModel<? extends SInstance> model, WicketBuildContext ctx) {
@@ -307,7 +310,8 @@ public class MasterDetailPanel extends Panel {
                 t.add(ctx.getContainer());
                 WicketFormProcessing.onFieldProcess(MasterDetailPanel.this.form, t, model);
             };
-            ctx.getConfirmationModal().show(target, confirmationAction);
+//            target.add(confirmationModal);
+            confirmationModal.show(target, confirmationAction);
         };
     }
 
@@ -328,6 +332,7 @@ public class MasterDetailPanel extends Panel {
             .iconeModel(IReadOnlyModel.of(() -> DefaultIcons.EXCLAMATION_TRIANGLE))
             .styleClasses(Model.of("red"))
             .titleFunction(rowModel -> IMappingModel.of(rowModel).map(it -> (it.getNestedValidationErrors().size() + " erro(s) encontrado(s)")).getObject())
+            .visibleFor(rowModel -> !rowModel.getObject().getNestedValidationErrors().isEmpty())
             .style($m.ofValue(MapperCommons.BUTTON_STYLE));
     }
 

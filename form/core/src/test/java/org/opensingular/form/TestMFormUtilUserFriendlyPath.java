@@ -84,6 +84,13 @@ public class TestMFormUtilUserFriendlyPath extends TestCaseForm {
     }
 
     @Test
+    public void testFindNearestFromSimpleTypeInstanceToSameInstanceWithoutOptional(){
+        SInstance descricao = evento.findNearestOrException(_descricao);
+        Assert.assertEquals(descricao.findNearestOrException(_descricao), descricao);
+    }
+
+
+    @Test
     public void generateUserFriendlyPath_no_parentContext() {
         //@formatter:off
         Assert.assertEquals("Evento"                                , SFormUtil.generateUserFriendlyPath(evento));

@@ -222,6 +222,7 @@ public class InputMaskBehavior extends Behavior {
         options.put("showMaskOnHover", Boolean.FALSE);
         options.put("showMaskOnFocus", Boolean.FALSE);
         options.put("greedy", Boolean.FALSE);
+        options.put("rightAlign", Boolean.FALSE);
     }
 
     private void setJsonOptions(Map<String, Object> options) {

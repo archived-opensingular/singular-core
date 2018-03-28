@@ -26,6 +26,7 @@ import org.opensingular.form.event.SInstanceListeners;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.io.PersistenceBuilderXML;
 import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.validation.ValidationError;
 import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.lib.commons.lambda.IConsumer;
@@ -73,9 +74,9 @@ public abstract class SInstance implements SAttributeEnabled {
     /**
      * Informações encontradas na persitência, mas sem correspondência no tipo na instância atual.
      */
-    private List<MElement> unreadInfo;
+    private List<MElement>                     unreadInfo;
     private InstanceSerializableRef<SInstance> serializableRef;
-    private ISInstanceListener.EventCollector eventCollector;
+    private ISInstanceListener.EventCollector  eventCollector;
 
     @Nonnull
     public SType<?> getType() {
@@ -345,8 +346,8 @@ public abstract class SInstance implements SAttributeEnabled {
             throw new SingularInvalidTypeException(this, rootTypeClass);
         }
         final RI rootInstance = (RI) this;
-        final RT rootType = (RT) rootInstance.getType();
-        final TT targetType = targetTypeFunction.apply(rootType);
+        final RT rootType     = (RT) rootInstance.getType();
+        final TT targetType   = targetTypeFunction.apply(rootType);
 
         if (!STypes.listAscendants(targetType, true).contains(rootType)) {
             throw new SingularInvalidFieldTypeException(rootType, targetType);
@@ -418,7 +419,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     final <T> T getValue(@Nonnull PathReader pathReader, @Nullable Class<T> resultClass) {
-        SInstance instance = this;
+        SInstance  instance    = this;
         PathReader currentPath = pathReader;
         while (true) {
             if (currentPath.isEmpty()) {
@@ -636,23 +637,61 @@ public abstract class SInstance implements SAttributeEnabled {
         return SInstances.findAncestor(this, ancestorType);
     }
 
-    public <A extends SInstance> Optional<A> findNearest(SType<A> targetType) {
+    /**
+     * Returns the nearest SInstance for the given type in the form SInstance tree.
+     * The search is performed like described in {@link SInstances#findNearest(SInstance, SType)}
+     *
+     * @param targetType the SType to look for
+     * @param <A>
+     * @return An optional instance of the given type
+     */
+    public <A extends SInstance> Optional<A> findNearest(@Nonnull SType<A> targetType) {
         return SInstances.findNearest(this, targetType);
     }
 
-    public <A extends SInstance> Optional<A> findNearest(Class<? extends SType<A>> targetTypeClass) {
+    /**
+     * Returns the nearest instance for the given type or throws an Exception if it is not found.
+     * This method works exactly as the {@link this#findNearest(SType)}
+     *
+     * @param targetType
+     * @param <A>
+     * @return
+     */
+    @Nonnull
+    public <A extends SInstance> A findNearestOrException(@Nonnull SType<A> targetType) {
+        return findNearest(targetType).orElseThrow(() -> new SingularFormException(String.format("O tipo %s não foi encontrado", targetType.getName())));
+    }
+
+    public <A extends SInstance> Optional<A> findNearest(@Nonnull Class<? extends SType<A>> targetTypeClass) {
         return SInstances.findNearest(this, targetTypeClass);
     }
 
+
+    /**
+     * Returns the nearest instance value for the given type or throws an Exception if it is not found.
+     * This method works exactly as the {@link this#findNearestValue(SType)}
+     * @param targetType
+     * @param <V>
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public <V> V findNearestValueOrException(SType<?> targetType){
+        return (V) findNearestOrException(targetType).getValueWithDefault();
+    }
+
+    /**
+     * Do the same search as in {@link this#findNearest(SType)} but return {@link SInstance#getValue} instead of the SInstance
+     * @param targetType
+     * @param <V>
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public <V> Optional<V> findNearestValue(SType<?> targetType) {
-        Optional<? extends SInstance> nearest = SInstances.findNearest(this, targetType);
-        return (Optional<V>) nearest.map(it -> it.getValueWithDefault());
+        return (Optional<V>) findNearest(targetType).map(SInstance::getValueWithDefault);
     }
 
     public <V> Optional<V> findNearestValue(SType<?> targetType, Class<V> valueClass) {
-        Optional<? extends SInstance> nearest = SInstances.findNearest(this, targetType);
-        return nearest.map(it -> valueClass.cast(it.getValueWithDefault(valueClass)));
+        return findNearest(targetType).map(it -> valueClass.cast(it.getValueWithDefault(valueClass)));
     }
 
     public boolean isDescendantOf(SInstance ancestor) {
@@ -830,8 +869,8 @@ public abstract class SInstance implements SAttributeEnabled {
      * escrevendo-o.
      */
     StringBuilder toStringInternal() {
-        StringBuilder sb = new StringBuilder();
-        String name = getClass().getName();
+        StringBuilder sb   = new StringBuilder();
+        String        name = getClass().getName();
         if (name.startsWith(SInstance.class.getPackage().getName())) {
             sb.append(getClass().getSimpleName());
         } else {
@@ -931,6 +970,7 @@ public abstract class SInstance implements SAttributeEnabled {
 
     /**
      * Check if this types is child in any level of the candidate type class
+     *
      * @param candidate the candidate
      * @return if is descendant
      */
@@ -938,5 +978,4 @@ public abstract class SInstance implements SAttributeEnabled {
         List<SInstance> ascendants = SInstances.listAscendants(this);
         return ascendants.stream().anyMatch(parent -> parent.getType().getClass().equals(candidate));
     }
-
 }

@@ -185,7 +185,7 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
         protected void buildHeading(BSContainer<?> heading, Form<?> form) {
             heading.appendTag("span", new Label("_title", listLabel));
             heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(listLabel.getObject()))));
-            if (viewMode.isEdition() && view.isNewEnabled()) {
+            if (viewMode.isEdition() && view.isNewEnabled(listModel.getObject())) {
                 appendAddButton(heading, ctx.getModel(), ctx);
             }
         }
@@ -205,7 +205,7 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
                             if (si instanceof SIList) {
                                 final SIList sil = (SIList) si;
                                 if (sil.getType().getMaximumSize() != null && sil.getType().getMaximumSize() == sil.size()) {
-                                    target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
+                                    target.appendJavaScript(";bootbox.alert('A quantidade máxima de valores foi atingida.');");
                                     target.appendJavaScript(Scripts.multipleModalBackDrop());
                                 } else {
                                     adding = true;
@@ -226,7 +226,7 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
 
             target.prependJavaScript(String.format("notify|$('#%s').hide('slide', { direction: 'left' }, 500, notify);", rootContainer.getMarkupId()));
             rootContainer.getItems().removeAll();
-            WicketBuildContext childCtx = ctx.createChild(rootContainer, itemModel, ctx.getConfirmationModal());
+            WicketBuildContext childCtx = ctx.createChild(rootContainer, ctx.getExternalContainer(), itemModel);
             childCtx.setShowBreadcrumb(true);
             childCtx.build();
             BSContainer<?> childCtxRootContainer = childCtx.getRootContainer();
@@ -356,8 +356,11 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
                                           SViewBreadcrumb view) {
 
             builder.appendActionColumn($m.ofValue(""), actionColumn -> {
-                if (viewMode.isEdition() && view.isDeleteEnabled()) {
-                    actionColumn.appendAction(new BSActionPanel.ActionConfig()
+                if (viewMode.isEdition()) {
+
+                    IFunction<IModel<?>, Boolean> visibleFor = m -> view.isDeleteEnabled((SInstance) m.getObject());
+
+                    actionColumn.appendAction(new BSActionPanel.ActionConfig().visibleFor(visibleFor)
                                     .iconeModel(Model.of(DefaultIcons.MINUS), Model.of(MapperCommons.ICON_STYLE))
                                     .styleClasses(Model.of("red"))
                                     .style($m.ofValue(MapperCommons.BUTTON_STYLE)),

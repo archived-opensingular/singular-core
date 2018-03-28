@@ -1,18 +1,25 @@
 package org.opensingular.form.persistence;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.opensingular.form.*;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInfoPackage;
+import org.opensingular.form.SInfoType;
+import org.opensingular.form.SPackage;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.support.TestFormSupport;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
-
-import javax.annotation.Nonnull;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @FixMethodOrder
 public class RelationalMultilevelSQLTest extends TestFormSupport {
@@ -21,7 +28,8 @@ public class RelationalMultilevelSQLTest extends TestFormSupport {
 
     @Before
     public void setUp() {
-        postoAtendimentoRepository = new FormPersistenceInRelationalDB<>(db, documentFactory, RelationalMultilevelSQLTest.STypePostoAtendimento.class);
+        postoAtendimentoRepository = new FormPersistenceInRelationalDB<>(db, documentFactory,
+                RelationalMultilevelSQLTest.STypePostoAtendimento.class);
         assertNotNull(postoAtendimentoRepository);
     }
 
@@ -31,20 +39,20 @@ public class RelationalMultilevelSQLTest extends TestFormSupport {
         assertEquals(1, siComposites.size());
 
         SIComposite postoAtendimentoInstance = siComposites.get(0);
-        assertEquals(postoAtendimentoInstance.getField("id").getValue(), 1);
-        assertEquals(postoAtendimentoInstance.getField("email").getValue(), "cov@anvisa.gov.br");
+        assertEquals(1, postoAtendimentoInstance.getField("id").getValue());
+        assertEquals("cov@anvisa.gov.br", postoAtendimentoInstance.getField("email").getValue());
 
         SIComposite enderecoInstance = (SIComposite) postoAtendimentoInstance.getField("endereco");
-        assertEquals(enderecoInstance.getField("id").getValue(), 1);
-        assertEquals(enderecoInstance.getField("cep").getValue(), "72260856");
+        assertEquals(1, enderecoInstance.getField("id").getValue());
+        assertEquals("72260856", enderecoInstance.getField("cep").getValue());
 
         SIComposite postoExternoInstance = (SIComposite) postoAtendimentoInstance.getField("postoExterno");
-        assertEquals(postoExternoInstance.getField("idPostoAtendimento").getValue(), 1);
-        assertEquals(postoExternoInstance.getField("idPessoaJuridica").getValue(), 15);
+        assertEquals(1, postoExternoInstance.getField("idPostoAtendimento").getValue());
+        assertEquals(15, postoExternoInstance.getField("pessoaJuridica.id").getValue());
 
         SIComposite pessoaJuridicaInstance = (SIComposite) postoExternoInstance.getField("pessoaJuridica");
-        assertEquals(pessoaJuridicaInstance.getField("id").getValue(), 15);
-        assertEquals(pessoaJuridicaInstance.getField("cnpj").getValue(), "28177688000107");
+        assertEquals(15, pessoaJuridicaInstance.getField("id").getValue());
+        assertEquals("28177688000107", pessoaJuridicaInstance.getField("cnpj").getValue());
     }
 
     @SInfoType(spackage = FormTestPackage.class)
@@ -58,8 +66,7 @@ public class RelationalMultilevelSQLTest extends TestFormSupport {
             id = addFieldInteger("id");
             cep = addFieldString("cep");
 
-            this.asSQL().table("DBFORM.TB_ENDERECO")
-                    .tablePK("CO_SEQ_ENDERECO");
+            this.asSQL().table("DBFORM.TB_ENDERECO").tablePK("CO_SEQ_ENDERECO");
             id.asSQL().column("CO_SEQ_ENDERECO");
             cep.asSQL().column("NO_CEP");
         }
@@ -69,23 +76,18 @@ public class RelationalMultilevelSQLTest extends TestFormSupport {
     public static final class STypePostoExterno extends STypeComposite<SIComposite> {
 
         public STypeInteger idPostoAtendimento;
-        public STypeInteger idPessoaJuridica;
         public STypePessoaJuridica pessoaJuridica;
 
         @Override
         protected void onLoadType(@Nonnull TypeBuilder tb) {
             idPostoAtendimento = addFieldInteger("idPostoAtendimento");
-            idPessoaJuridica = addFieldInteger("idPessoaJuridica");
             pessoaJuridica = addField("pessoaJuridica", STypePessoaJuridica.class);
 
-            this.asSQL().table("DBFORM.TB_POSTO_EXTERNO")
-                    .tablePK("CO_POSTO_ATENDIMENTO")
-                    .tablePK("ID_PESSOA_JURIDICA")
+            this.asSQL().table("DBFORM.TB_POSTO_EXTERNO").tablePK("CO_POSTO_ATENDIMENTO, ID_PESSOA_JURIDICA")
                     .addTableFK("CO_POSTO_ATENDIMENTO", STypePostoAtendimento.class)
                     .addTableFK("ID_PESSOA_JURIDICA", pessoaJuridica.getClass());
 
             idPostoAtendimento.asSQL().column("CO_POSTO_ATENDIMENTO");
-            idPessoaJuridica.asSQL().column("ID_PESSOA_JURIDICA");
         }
     }
 
@@ -104,8 +106,7 @@ public class RelationalMultilevelSQLTest extends TestFormSupport {
             endereco = addField("endereco", STypeEndereco.class);
             postoExterno = addField("postoExterno", STypePostoExterno.class);
 
-            this.asSQL().table("DBFORM.TB_POSTO_ATENDIMENTO")
-                    .tablePK("CO_SEQ_POSTO_ATENDIMENTO")
+            this.asSQL().table("DBFORM.TB_POSTO_ATENDIMENTO").tablePK("CO_SEQ_POSTO_ATENDIMENTO")
                     .addTableFK("CO_SEQ_ENDERECO", endereco.getClass());
             id.asSQL().column("CO_SEQ_POSTO_ATENDIMENTO");
             email.asSQL().column("DS_EMAIL");

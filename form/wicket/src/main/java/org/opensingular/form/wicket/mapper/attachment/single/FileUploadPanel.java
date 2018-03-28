@@ -42,6 +42,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.servlet.MimeTypes;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.view.FileEventListener;
 import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavior;
@@ -59,11 +60,12 @@ import org.opensingular.lib.commons.util.Loggable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet.*;
+import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet.PARAM_NAME;
 
 public class FileUploadPanel extends Panel implements Loggable {
 
@@ -88,6 +90,10 @@ public class FileUploadPanel extends Panel implements Loggable {
     private WebMarkupContainer preview;
 
     private AbstractDefaultAjaxBehavior previewCallBack;
+
+    private List<FileEventListener> fileUploadedListeners = new ArrayList<>();
+
+    private List<FileEventListener> fileRemovedListeners = new ArrayList<>();
 
     public FileUploadPanel(String id, IModel<SIAttachment> model, ViewMode viewMode) {
         super(id, model);
@@ -130,8 +136,6 @@ public class FileUploadPanel extends Panel implements Loggable {
 
 
     protected void buildFileUploadInput() {
-
-
         adder = new AddFileBehavior();
         add(adder);
 
@@ -277,6 +281,16 @@ public class FileUploadPanel extends Panel implements Loggable {
         return fileField;
     }
 
+    public FileUploadPanel registerFileUploadedListener(FileEventListener fileUploadedListener) {
+        this.fileUploadedListeners.add(fileUploadedListener);
+        return this;
+    }
+
+    public FileUploadPanel registerFileRemovedListener(FileEventListener fileRemovedListener) {
+        this.fileRemovedListeners.add(fileRemovedListener);
+        return this;
+    }
+
     private final class UploadButton extends WebMarkupContainer {
         private UploadButton(String id) {
             super(id);
@@ -319,6 +333,10 @@ public class FileUploadPanel extends Panel implements Loggable {
         @Override
         protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
             super.onSubmit(target, form);
+            for (FileEventListener fileRemovedListener : fileRemovedListeners) {
+                fileRemovedListener.accept(self.getModelObject());
+            }
+
             self.getModelObject().clearInstance();
             if (self.getModelObject().getParent() instanceof SIList) {
                 final SIList<?> parent = (SIList<?>) self.getModelObject().getParent();
@@ -350,6 +368,9 @@ public class FileUploadPanel extends Panel implements Loggable {
                 Optional<UploadResponseInfo> responseInfo = getFileUploadManager().consumeFile(pFileId, attachment -> {
                     final SIAttachment si = (SIAttachment) FileUploadPanel.this.getDefaultModel().getObject();
                     si.update(attachment);
+                    for (FileEventListener fileUploadedListener : fileUploadedListeners) {
+                        fileUploadedListener.accept(si);
+                    }
                     return new UploadResponseInfo(si);
                 });
 

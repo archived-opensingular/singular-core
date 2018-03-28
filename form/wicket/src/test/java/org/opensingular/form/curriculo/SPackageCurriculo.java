@@ -212,7 +212,7 @@ public class SPackageCurriculo extends SPackage {
 
         // Formatação
         // ---------------------------------------------------------------------------------------------
-        SViewTab tabbed = curriculo.setView(SViewTab::new);
+        SViewTab tabbed = new SViewTab();
         tabbed.addTab("dados", "Dados")
                 .add(informacoesPessoais)
                 .add(referencia)
@@ -221,56 +221,7 @@ public class SPackageCurriculo extends SPackage {
                 .add(formacao)
                 .add(certificacoes);
         tabbed.addTab(experiencias);
+        curriculo.withView(tabbed);
 
-        // Comportamentos
-        // ---------------------------------------------------------------------------------------------
-        //        refTemNaEmpresa.withCode("onChange", (temRefNaMepresa) -> {
-        //            temRefNaMepresa.getIrmao(refQuemNaEmpresa).asAtrBasic().visible(isTrue(temRefNaMepresa));
-        //        });
-
-        // Ou
-
-        //        refTemNaEmpresa.withOnChange((temRefNaMepresa) -> {
-        //            temRefNaMepresa.getIrmao(refQuemNaEmpresa).asAtrBasic().visible(isTrue(temRefNaMepresa));
-        //        });
-
-        // Ou
-
-        //        refQuemNaEmpresa.withFunction("visivelControle", (MIString refQuem) -> isTrue(refQuem.getIrmao(refTemNaEmpresa)));
-
-        // Validacoes
-        // ---------------------------------------------------------------------------------------------
-        // dtNasc.addValidacao(MTipoData.validadorBuilder().entre(Period.ofYears(-100), Period.ofYears(-14)).build());
-
-//        informacoesPessoais.addValidacao((IValidatable<MIComposto> validatable) -> {
-//            //            if (validatable.getValue().isCampoNull("telefoneFixo") && validatable.getValue().isCampoNull("telefoneCelular")) {
-//            //                validatable.error(new ValidationErrorImpl("Ao menos um telefone deve ser preenchido."));
-//            //            }
-//        });
-
-        //        academicoMesConclusao.addValidacao((IValidatable<MInstancia> validatable) -> {
-        //            MIAnoMes mesConclusao = academicoMesConclusao.castInstancia(validatable.getValue());
-        //            YearMonth conclusao = mesConclusao.getJavaYearMonth();
-        //            YearMonth maximo = YearMonth.now().plus(4, ChronoUnit.YEARS);
-        //            if (conclusao.isAfter(maximo)) {
-        //                validatable.error(new ValidationErrorImpl("O mês de conclusão pode ser no máximpo até " + maximo));
-        //            } else {
-        //                MIData dt = mesConclusao.getParent(curriculo).getFilho(dtNasc);
-        //                if (isNotNull(dt)) {
-        //                    YearMonth minimo = dt.getJavaYearMonth().plus(14, ChronoUnit.YEARS);
-        //                    if (conclusao.isBefore(minimo)) {
-        //                        validatable.error(new ValidationErrorImpl("O mês de conclusão deve ser posterior a " + minimo));
-        //                    }
-        //                }
-        //            }
-        //        });
-
-        //        dtFimExperiencia.addValidacao((IValidatable<MIAnoMes> validatable) -> {
-        //            MIAnoMes fim = validatable.getValue();
-        //            MIAnoMes inicio = fim.getIrmao(dtInicioExperiencia);
-        //            if (isNotNull(inicio) && isNotNull(fim) && inicio.isAfter(fim)) {
-        //                validatable.error(new ValidationErrorImpl("O mês de conclusão não pode ser anterior ao início"));
-        //            }
-        //        });
     }
 }

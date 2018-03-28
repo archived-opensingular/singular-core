@@ -32,7 +32,13 @@ import java.io.File;
 public class FileDownloadLink extends Link<File> {
 
     private final ContentDisposition contentDisposition;
-    private final String             fileName;
+    private final String fileName;
+
+    public FileDownloadLink(String id, ContentDisposition contentDisposition, String fileName) {
+        super(id);
+        this.contentDisposition = contentDisposition;
+        this.fileName = fileName;
+    }
 
     public FileDownloadLink(String id, IModel<File> model, ContentDisposition contentDisposition, String fileName) {
         super(id, model);
@@ -42,7 +48,19 @@ public class FileDownloadLink extends Link<File> {
 
     @Override
     public void onClick() {
-        final File            file           = getModelObject();
+        final File file = getModelObject();
+        downloadFile(file);
+    }
+
+    @Override
+    protected void onComponentTag(ComponentTag tag) {
+        super.onComponentTag(tag);
+        if (ContentDisposition.INLINE == contentDisposition) {
+            tag.put("target", "_blank");
+        }
+    }
+
+    protected void downloadFile(File file) {
         final IResourceStream resourceStream = new FileResourceStream(new org.apache.wicket.util.file.File(file));
 
         getRequestCycle().scheduleRequestHandlerAfterCurrent(
@@ -56,13 +74,5 @@ public class FileDownloadLink extends Link<File> {
                         .setFileName(fileName)
                         .setCacheDuration(Duration.NONE)
                         .setContentDisposition(contentDisposition));
-    }
-
-    @Override
-    protected void onComponentTag(ComponentTag tag) {
-        super.onComponentTag(tag);
-        if (ContentDisposition.INLINE == contentDisposition) {
-            tag.put("target", "_blank");
-        }
     }
 }

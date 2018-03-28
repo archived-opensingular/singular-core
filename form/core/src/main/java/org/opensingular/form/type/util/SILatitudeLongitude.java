@@ -18,9 +18,19 @@ package org.opensingular.form.type.util;
 
 import org.opensingular.form.SIComposite;
 
+import java.math.BigDecimal;
+
 /**
  * Created by danilo.mesquita on 04/01/2016.
  */
 public class SILatitudeLongitude extends SIComposite {
+
+    public void setLongitude(BigDecimal longitude) {
+        this.setValue(STypeLatitudeLongitude.FIELD_LONGITUDE, longitude);
+    }
+
+    public void setLatitude(BigDecimal latitude) {
+        this.setValue(STypeLatitudeLongitude.FIELD_LATITUDE, latitude);
+    }
 
 }

@@ -68,7 +68,8 @@ public class FormIndexService {
      * Recupera todos os formularios e a partir do seu tipo encontra a classe de seu SType no classpath.
      * Com a classe do SType carrega uma SInstance que é passada para o serviço FormFieldService para indexação
      */
-    public void indexAllForms() {
+    public void
+    indexAllForms() {
         LOGGER.info("Iniciando a indexação total da base");
 
         long                  startNanos       = System.nanoTime();

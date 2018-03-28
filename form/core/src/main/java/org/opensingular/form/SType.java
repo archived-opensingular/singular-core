@@ -545,7 +545,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return this;
     }
 
-    public final <T extends SView> T setView(Supplier<T> factory) {
+    private final <T extends SView> T setView(Supplier<T> factory) {
         T v = factory.get();
         setView(v);
         return v;

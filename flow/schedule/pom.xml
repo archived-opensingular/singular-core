@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-flow</artifactId>
-        <version>1.7.0</version>
+        <version>1.7.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-flow-schedule</artifactId>
@@ -17,23 +17,11 @@
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-commons</artifactId>
-            <version>${singular.version}</version>
         </dependency>
         <!-- Quartz framework -->
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
-            <version>2.2.3</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>c3p0</artifactId>
-                    <groupId>c3p0</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 

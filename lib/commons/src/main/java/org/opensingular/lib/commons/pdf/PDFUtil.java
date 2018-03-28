@@ -16,9 +16,11 @@
 
 package org.opensingular.lib.commons.pdf;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
+import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.commons.util.Loggable;
 
 import javax.annotation.Nonnull;
@@ -29,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Classe utilitária para a manipulação de PDF's.
@@ -94,7 +97,7 @@ public abstract class PDFUtil implements Loggable {
      * Localiza a implementação correta para o Sistema operacional atual.
      */
     @Nonnull
-    private static PDFUtil fabric() {
+    private static PDFUtil factory() {
         if (isWindows()) {
             return new PDFUtilWin();
         }
@@ -116,7 +119,7 @@ public abstract class PDFUtil implements Loggable {
      */
     @Nonnull
     public static PDFUtil getInstance() {
-        return fabric();
+        return factory();
     }
 
     /**
@@ -136,9 +139,9 @@ public abstract class PDFUtil implements Loggable {
     /**
      * Converte o código HTML em um arquivo PDF com o cabeçalho e rodapé especificados.
      *
-     * @param html             o código HTML.
-     * @param header           o código HTML do cabeçalho.
-     * @param footer           o código HTML do rodapé.
+     * @param rawHtml             o código HTML.
+     * @param rawHeader           o código HTML do cabeçalho.
+     * @param rawFooter           o código HTML do rodapé.
      * @param additionalConfig configurações adicionais.
      * @return O arquivo PDF retornado é temporário e deve ser apagado pelo solicitante para não deixa lixo.
      */
@@ -164,9 +167,9 @@ public abstract class PDFUtil implements Loggable {
         /**
          * Converte o código HTML em um arquivo PDF com o cabeçalho e rodapé especificados.
          *
-         * @param html             o código HTML.
-         * @param header           o código HTML do cabeçalho.
-         * @param footer           o código HTML do rodapé.
+         * @param htmlFile             o código HTML.
+         * @param headerFile           o código HTML do cabeçalho.
+         * @param footerFile           o código HTML do rodapé.
          * @param additionalConfig configurações adicionais.
          * @return O arquivo PDF retornado é temporário e deve ser apagado pelo solicitante para não deixa lixo.
          */
@@ -180,8 +183,9 @@ public abstract class PDFUtil implements Loggable {
             List<String> commandAndArgs = new ArrayList<>(0);
             commandAndArgs.add(getHomeAbsolutePath("bin", fixExecutableName("wkhtmltopdf")));
 
-            if (additionalConfig != null) {
+            if (!CollectionUtils.isEmpty(additionalConfig)) {
                 commandAndArgs.addAll(additionalConfig);
+                addSmartBreakScript(commandAndArgs);
             } else {
                 addDefaultPDFCommandArgs(commandAndArgs);
             }
@@ -287,19 +291,6 @@ public abstract class PDFUtil implements Loggable {
         commandArgs.add("--print-media-type");
         commandArgs.add("--load-error-handling");
         commandArgs.add("ignore");
-
-        if (username != null) {
-            commandArgs.add("--username");
-            commandArgs.add(username);
-        }
-        if (password != null) {
-            commandArgs.add("--password");
-            commandArgs.add(password);
-        }
-        if (proxy != null) {
-            commandArgs.add("--proxy");
-            commandArgs.add(proxy);
-        }
 
         if (pageSize != null) {
             commandArgs.add("--page-size");
@@ -529,12 +520,12 @@ public abstract class PDFUtil implements Loggable {
 
     protected static final @Nonnull File getWkhtml2pdfHome() {
         if (wkhtml2pdfHome == null) {
-            String prop = System.getProperty(SINGULAR_WKHTML2PDF_HOME);
+            Optional<String> prop = SingularProperties.get().getPropertyOpt(SINGULAR_WKHTML2PDF_HOME);
 
-            if (prop == null) {
+            if (!prop.isPresent()) {
                 throw new SingularPDFException("property 'singular.wkhtml2pdf.home' not set");
             }
-            File file = new File(prop);
+            File file = new File(prop.get());
             if (! file.exists()) {
                 throw new SingularPDFException(
                         "property '" + SINGULAR_WKHTML2PDF_HOME + "' configured for a directory that nos exists: " +

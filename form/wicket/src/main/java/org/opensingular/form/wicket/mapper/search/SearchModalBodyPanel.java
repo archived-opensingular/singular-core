@@ -63,7 +63,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
     public static final String RESULT_TABLE_ID  = "resultTable";
 
     private final WicketBuildContext           ctx;
-    private final SViewSearchModal             view;
+    private final SViewSearchModal view;
     private final IConsumer<AjaxRequestTarget> selectCallback;
 
     private SingularFormPanel innerSingularFormPanel;
@@ -161,7 +161,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         }
 
         builder.appendActionColumn(Model.of(), (actionColumn) -> actionColumn
-                .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(DefaultIcons.HAND_UP)).titleFunction(m -> "Filtrar"),
+                .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(DefaultIcons.ARROW_RIGHT)).titleFunction(m -> "Selecionar"),
                         (IBSAction<Object>) (target, model) ->
                         {
                             SInstanceConverter converter = getInstance().asAtrProvider().getConverter();

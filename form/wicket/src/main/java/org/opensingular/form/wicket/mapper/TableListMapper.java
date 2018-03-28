@@ -19,7 +19,9 @@ package org.opensingular.form.wicket.mapper;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -42,6 +44,7 @@ import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
+import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
@@ -87,10 +90,11 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         }
 
         ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, Boolean.TRUE);
-        ctx.getContainer().appendComponent((String id) -> buildPanel(ctx, id));
+        ConfirmationModal  confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
+        ctx.getContainer().appendComponent((String id) -> buildPanel(ctx, confirmationModal, id));
     }
 
-    private TableListPanel buildPanel(WicketBuildContext ctx, String id) {
+    private TableListPanel buildPanel(WicketBuildContext ctx, ConfirmationModal confirmationModal, String id) {
 
         final IModel<SIList<SInstance>> list        = new ReadOnlyCurrentInstanceModel<>(ctx);
         final SViewListByTable          view        = (SViewListByTable) ctx.getView();
@@ -103,7 +107,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
 
         return TableListPanel.TableListPanelBuilder.build(id,
                 (h, form) -> buildHeader(h, form, list, ctx, view, isEdition),
-                (c, form) -> builContent(c, form, list, ctx, view, isEdition),
+                (c, form) -> builContent(c, form, list, ctx, view, isEdition, confirmationModal),
                 (f, form) -> buildFooter(f, form, ctx));
     }
 
@@ -141,7 +145,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
     }
 
     private void builContent(BSContainer<?> content, Form<?> form, IModel<SIList<SInstance>> list,
-                             WicketBuildContext ctx, SViewListByTable view, boolean isEdition) {
+                             WicketBuildContext ctx, SViewListByTable view, boolean isEdition, ConfirmationModal confirmationModal) {
 
         final String markup = ""
                 + " <div class='list-table-empty' wicket:id='empty-content'>                                             "
@@ -170,13 +174,12 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         template.add(emptyContent);
 
         final WebMarkupContainer notEmptyContent = new WebMarkupContainer("not-empty-content");
-
-        final BSTSection         tableHeader  = new BSTSection("_h").setTagName("thead");
-        final WebMarkupContainer tableBody    = new WebMarkupContainer("_b");
-        final ElementsView       tableRows    = new TableElementsView("_e", list, ctx, form, tableBody);
-        final WebMarkupContainer tableFooter  = new WebMarkupContainer("_ft");
-        final BSContainer<?>     footerBody   = new BSContainer<>("_fb");
-        final SType<SInstance>   elementsType = list.getObject().getElementsType();
+        final BSTSection         tableHeader       = new BSTSection("_h").setTagName("thead");
+        final WebMarkupContainer tableBody         = new WebMarkupContainer("_b");
+        final ElementsView       tableRows         = new TableElementsView("_e", list, ctx, form, tableBody, confirmationModal);
+        final WebMarkupContainer tableFooter       = new WebMarkupContainer("_ft");
+        final BSContainer<?>     footerBody        = new BSContainer<>("_fb");
+        final SType<SInstance>   elementsType      = list.getObject().getElementsType();
 
         notEmptyContent.add($b.onConfigure(c -> c.setVisible(!list.getObject().isEmpty())));
 
@@ -228,7 +231,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             }
         }
 
-        tableFooter.setVisible(!(view.isNewEnabled() && isEdition));
+        tableFooter.add($b.onConfigure(c -> c.setVisible(!(view.isNewEnabled(list.getObject()) && isEdition))));
 
         template
                 .add(notEmptyContent
@@ -254,10 +257,12 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         private final WicketBuildContext ctx;
         private final SView              view;
         private final Form<?>            form;
+        private final ConfirmationModal  confirmationModal;
 
         private TableElementsView(String id, IModel<SIList<SInstance>> model, WicketBuildContext ctx, Form<?> form,
-                                  WebMarkupContainer parentContainer) {
+                                  WebMarkupContainer parentContainer, ConfirmationModal confirmationModal) {
             super(id, model, parentContainer);
+            this.confirmationModal = confirmationModal;
             super.setRenderedChildFunction(c -> ((MarkupContainer) c).get("_r"));
             this.ctx = ctx;
             this.view = ctx.getView();
@@ -297,16 +302,16 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
 
                 for (SType<?> ft : ct.getFields()) {
                     IModel<SInstance> fm = new SInstanceFieldModel<>(item.getModel(), ft.getNameSimple());
-                    ctx.createChild(row.newCol(), fm, ctx.getConfirmationModal()).setHint(HIDE_LABEL, Boolean.TRUE).build();
+                    ctx.createChild(row.newCol(), ctx.getExternalContainer(), fm).setHint(HIDE_LABEL, Boolean.TRUE).build();
                 }
             } else {
-                ctx.createChild(row.newCol(), itemModel, ctx.getConfirmationModal()).setHint(HIDE_LABEL, Boolean.FALSE).build();
+                ctx.createChild(row.newCol(), ctx.getExternalContainer(), itemModel).setHint(HIDE_LABEL, Boolean.FALSE).build();
             }
 
-            if (viewListByTable.isDeleteEnabled() && ctx.getViewMode().isEdition()) {
+            if (ctx.getViewMode().isEdition()) {
                 final BSTDataCell actionColumn = row.newCol();
                 actionColumn.add($b.attrAppender("style", "width:20px", ";"));
-                appendRemoverButton(this, form, item, actionColumn, ctx.getConfirmationModal());
+                appendRemoverButton(this, form, item, actionColumn, confirmationModal, viewListByTable);
             }
 
             item.add(row);

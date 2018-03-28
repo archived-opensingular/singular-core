@@ -46,15 +46,13 @@ public class RelationalSQLUpdate extends RelationalSQL {
         this.keyColumns = new ArrayList<>();
         this.targetColumns = new ArrayList<>();
         this.mapColumnToField = new HashMap<>();
-        for (SType<?> field : getFields(instance)) {
-            if (RelationalSQL.foreignColumn(field) == null) {
-                if (previousInstance == null
-                        || !Objects.equals(fieldValue(instance, field), fieldValue(previousInstance, field))) {
-                    collectKeyColumns(field, keyColumns);
-                    collectTargetColumn(field, targetColumns, keyColumns, mapColumnToField);
-                }
+        getFields(instance).stream().filter(field -> foreignColumn(field) == null).forEach(field -> {
+            if (previousInstance == null
+                    || !Objects.equals(fieldValue(instance, field), fieldValue(previousInstance, field))) {
+                collectKeyColumns(field, keyColumns);
+                collectTargetColumn(field, targetColumns, keyColumns, mapColumnToField);
             }
-        }
+        });
         mapColumnToValue = ((FormKeyRelational) FormKey.from((SInstance) instance)).getValue();
     }
 
@@ -66,7 +64,7 @@ public class RelationalSQLUpdate extends RelationalSQL {
     public List<RelationalSQLCommmand> toSQLScript() {
         List<RelationalSQLCommmand> lines = new ArrayList<>();
         for (SType<?> tableContext : targetTables) {
-            String tableName = RelationalSQL.table(tableContext);
+            String tableName = table(tableContext);
             List<Object> params = new ArrayList<>();
             lines.add(new RelationalSQLCommmand(
                     "update " + tableName + " " + tableAlias(tableName, targetColumns) + " set "

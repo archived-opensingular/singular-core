@@ -155,13 +155,13 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         addInstanceValidator(validatable -> {
             final Integer minimumSize = validatable.getInstance().asAtr().getAttributeValue(SPackageBasic.ATR_MINIMUM_SIZE);
             if (minimumSize != null && validatable.getInstance().getValue().size() < minimumSize) {
-                validatable.error("A Quantidade mínima de " + getLabel(validatable.getInstance()) + " é " + minimumSize);
+                validatable.error("A quantidade mínima de " + getLabel(validatable.getInstance()) + " é " + minimumSize);
             }
         });
         addInstanceValidator(validatable -> {
             final Integer maximumSize = validatable.getInstance().asAtr().getAttributeValue(SPackageBasic.ATR_MAXIMUM_SIZE);
             if (maximumSize != null && validatable.getInstance().getValue().size() > maximumSize) {
-                validatable.error("A Quantidade máxima " + getLabel(validatable.getInstance()) + " é " + maximumSize);
+                validatable.error("A quantidade máxima " + getLabel(validatable.getInstance()) + " é " + maximumSize);
             }
         });
     }
@@ -181,7 +181,7 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
     }
 
     public <T extends Serializable> SelectionBuilder<T, SIList<I>, I> selectionOf(Class<T> clazz, SView view) {
-        this.setView(() -> view);
+        this.withView(() -> view);
         return new SelectionBuilder<>(this);
     }
 
@@ -206,12 +206,12 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
     }
 
     public SSelectionBuilder selection() {
-        this.setView(SMultiSelectionBySelectView::new);
+        this.withView(SMultiSelectionBySelectView::new);
         return new SSelectionBuilder(this);
     }
 
     public SSelectionBuilder autocomplete() {
-        this.setView(SMultiSelectionByPicklistView::new);
+        this.withView(SMultiSelectionByPicklistView::new);
         return new SSelectionBuilder(this);
     }
 
