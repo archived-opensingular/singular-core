@@ -19,12 +19,9 @@ package org.opensingular.form.persistence.entity;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -48,9 +45,8 @@ public class AttachmentEntity extends BaseEntity<Long> {
     @Column(name = "NO_ARQUIVO", length = 200, nullable = false)
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "CO_CONTEUDO_ARQUIVO", foreignKey = @ForeignKey(name = "FK_ARQUIVO_CONTEUDO_ARQUIVO"))
-    private AttachmentContentEntity codContent;
+    @Column(name = "CO_CONTEUDO_ARQUIVO", nullable = false)
+    private Long codContent;
 
     @Column(name = "TX_SHA1", length = 40, nullable = false)
     private String hashSha1;
@@ -103,11 +99,12 @@ public class AttachmentEntity extends BaseEntity<Long> {
         this.creationDate = creationDate;
     }
 
-    public AttachmentContentEntity getCodContent() {
+    public Long getCodContent() {
         return codContent;
     }
 
-    public void setCodContent(AttachmentContentEntity codContent) {
+    public void setCodContent(Long codContent) {
         this.codContent = codContent;
     }
+    
 }

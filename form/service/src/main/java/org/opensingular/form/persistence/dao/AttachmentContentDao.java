@@ -16,6 +16,14 @@
 
 package org.opensingular.form.persistence.dao;
 
+import org.apache.commons.io.IOUtils;
+import org.opensingular.form.persistence.entity.AttachmentContentEntity;
+import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.io.TempFileInputStream;
+import org.opensingular.lib.support.persistence.BaseDAO;
+
+import javax.annotation.Nonnull;
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -23,14 +31,6 @@ import java.util.Date;
 import java.util.function.Consumer;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterInputStream;
-import javax.annotation.Nonnull;
-import javax.transaction.Transactional;
-
-import org.apache.commons.io.IOUtils;
-import org.opensingular.form.persistence.entity.AttachmentContentEntity;
-import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.lib.commons.io.TempFileInputStream;
-import org.opensingular.lib.support.persistence.BaseDAO;
 
 @SuppressWarnings({"serial", "unchecked"})
 @Transactional(Transactional.TxType.MANDATORY)
@@ -77,11 +77,9 @@ public class AttachmentContentDao<T extends AttachmentContentEntity> extends Bas
             try (FileOutputStream fos = new FileOutputStream(file)) {
                 IOUtils.copy(inZip, fos);
             }
-            //FIXME se utilziar o tempFileStream retorna
-            // rg.h2.jdbc.JdbcSQLException: IO Exception: "java.io.IOException: Stream Closed"
             try (TempFileInputStream tempFileStream = new TempFileInputStream(file)) {
                 T fileEntity = createInstance();
-                fileEntity.setContent(getSession().getLobHelper().createBlob(in, file.length()));
+                fileEntity.setContent(getSession().getLobHelper().createBlob(tempFileStream, file.length()));
                 fileEntity.setHashSha1(hashSha1);
                 fileEntity.setSize(length);
                 fileEntity.setInclusionDate(new Date());

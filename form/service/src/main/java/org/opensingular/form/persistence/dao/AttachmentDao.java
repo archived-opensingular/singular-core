@@ -16,13 +16,6 @@
 
 package org.opensingular.form.persistence.dao;
 
-import java.io.InputStream;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -32,6 +25,13 @@ import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.support.persistence.BaseDAO;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @SuppressWarnings("serial")
 @Transactional(Transactional.TxType.MANDATORY)
@@ -55,7 +55,6 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
 
     public T insert(InputStream is, long length, String name, String hashSha1) {
         C content = attachmentContentDao.insert(is, length, hashSha1);
-        attachmentContentDao.flush();
         return insert(createAttachment(content, name));
     }
 
@@ -63,7 +62,7 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
         Optional<T> t = get(id);
         if (t.isPresent()) {
             T    entity     = t.get();
-            Long codContent = entity.getCodContent().getCod();
+            Long codContent = entity.getCodContent();
             delete(entity);
             attachmentContentDao.delete(codContent);
         }
@@ -77,7 +76,7 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
     protected T createAttachment(C content, String name) {
 
         T fileEntity = createInstance();
-        fileEntity.setCodContent(content);
+        fileEntity.setCodContent(content.getCod());
         fileEntity.setHashSha1(content.getHashSha1());
         fileEntity.setSize(content.getSize());
         fileEntity.setCreationDate(new Date());
