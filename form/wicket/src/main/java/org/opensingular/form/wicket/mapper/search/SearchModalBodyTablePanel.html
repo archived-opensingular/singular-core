@@ -17,14 +17,8 @@
 
 <html xmlns:wicket="http://wicket.apache.org">
 <body>
-<wicket:panel>
-    <div>
-        <div wicket:id="formPanel"/>
-    </div>
-    <div align="right">
-        <input type="button" wicket:id="filterButton" class="btn" value="Filtrar" title="Filtrar"/>
-    </div>
-    <wicket:child />
-</wicket:panel>
+<wicket:extend>
+    <table wicket:id="resultTable"/>
+</wicket:extend>
 </body>
 </html>

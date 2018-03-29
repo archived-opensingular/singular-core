@@ -17,6 +17,7 @@
 package org.opensingular.form.wicket.mapper.search;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Button;
@@ -26,10 +27,12 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.util.lang.Objects;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.enums.ViewMode;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import org.opensingular.form.wicket.component.BFModalWindow;
+import org.opensingular.form.wicket.mapper.tree.SearchModalBodyTreePanel;
 import org.opensingular.form.wicket.model.AbstractSInstanceAwareModel;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
@@ -87,12 +90,13 @@ public class SearchModalPanel extends Panel {
     private void buildAndAppendModalToRootContainer() {
         modal = new BFModalWindow(ctx.getRootContainer().newChildId(), false, false);
         modal.setTitleText(Model.of(Objects.defaultIfNull(view.getTitle(), StringUtils.EMPTY)));
-        modal.setBody(new SearchModalBodyPanel(SELECT_INPUT_MODAL_CONTENT_ID, ctx, (target) -> {
-            modal.hide(target);
-            target.add(valueField);
-            valueField.getBehaviors(AjaxUpdateInputBehavior.class)
-                    .forEach(ajax -> ajax.onUpdate(target));
-        })).setSize(BSModalBorder.Size.valueOf(view.getModalSize()));
+        Component modalBody;
+        if (ViewMode.LIST == view.getViewMode()) {
+            modalBody = new SearchModalBodyTablePanel(SELECT_INPUT_MODAL_CONTENT_ID, ctx, this::accept);
+        } else {
+            modalBody = new SearchModalBodyTreePanel(SELECT_INPUT_MODAL_CONTENT_ID, ctx, this::accept);
+        }
+        modal.setBody(modalBody).setSize(BSModalBorder.Size.valueOf(view.getModalSize()));
         ctx.getRootContainer().appendTag("div", modal);
     }
 
@@ -107,4 +111,10 @@ public class SearchModalPanel extends Panel {
         return modalTrigger;
     }
 
+    private void accept(AjaxRequestTarget target) {
+        modal.hide(target);
+        target.add(valueField);
+        valueField.getBehaviors(AjaxUpdateInputBehavior.class)
+                .forEach(ajax -> ajax.onUpdate(target));
+    }
 }

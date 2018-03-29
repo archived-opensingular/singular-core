@@ -16,60 +16,42 @@
 
 package org.opensingular.form.wicket.mapper.search;
 
-import org.apache.commons.lang3.text.WordUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.Model;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
-import org.opensingular.form.converter.SInstanceConverter;
-import org.opensingular.form.converter.SimpleSInstanceConverter;
 import org.opensingular.form.document.RefType;
-import org.opensingular.form.provider.Config;
-import org.opensingular.form.provider.Config.Column;
-import org.opensingular.form.provider.FilteredPagedProvider;
-import org.opensingular.form.provider.FilteredProvider;
-import org.opensingular.form.provider.InMemoryFilteredPagedProviderDecorator;
-import org.opensingular.form.provider.ProviderContext;
+import org.opensingular.form.provider.*;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.util.Loggable;
-import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
-import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
-import org.opensingular.lib.wicket.util.datatable.IBSAction;
-import org.opensingular.lib.wicket.util.datatable.column.BSActionPanel;
-import org.opensingular.lib.wicket.util.resource.DefaultIcons;
-
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Iterator;
 
 import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 
 @SuppressWarnings("unchecked")
-class SearchModalBodyPanel extends Panel implements Loggable {
+public abstract class SearchModalBodyPanel extends Panel implements Loggable {
 
     public static final String FILTER_BUTTON_ID = "filterButton";
-    public static final String FORM_PANEL_ID    = "formPanel";
-    public static final String RESULT_TABLE_ID  = "resultTable";
+    public static final String FORM_PANEL_ID = "formPanel";
+    protected static final String RESULT_TABLE_ID  = "resultTable";
 
-    private final WicketBuildContext           ctx;
+    private final WicketBuildContext ctx;
     private final SViewSearchModal view;
     private final IConsumer<AjaxRequestTarget> selectCallback;
 
     private SingularFormPanel innerSingularFormPanel;
-    private MarkupContainer   resultTable;
+    private MarkupContainer resultTable;
 
-    SearchModalBodyPanel(String id, WicketBuildContext ctx, IConsumer<AjaxRequestTarget> selectCallback) {
+    protected SearchModalBodyPanel(String id, WicketBuildContext ctx, IConsumer<AjaxRequestTarget> selectCallback) {
         super(id);
         this.ctx = ctx;
         this.view = (SViewSearchModal) ctx.getView();
@@ -105,98 +87,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
 
     }
 
-    private Config getConfig() {
-        Config config = new Config();
-        getFilteredProvider().configureProvider(config);
-        return config;
-    }
-
-    private FilteredPagedProvider getFilteredProvider() {
-        FilteredProvider provider = getInstance().asAtrProvider().getFilteredProvider();
-
-        if (!(provider instanceof FilteredPagedProvider)) {
-            provider = new InMemoryFilteredPagedProviderDecorator<>(provider);
-        }
-        return (FilteredPagedProvider) provider;
-    }
-
-    private AjaxButton buildFilterButton() {
-        return new AjaxButton(FILTER_BUTTON_ID) {
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                super.onSubmit(target, form);
-                target.add(resultTable);
-            }
-        };
-    }
-
-    private WebMarkupContainer buildResultTable(Config config) {
-
-        final BSDataTableBuilder<Object, ?, ?> builder = new BSDataTableBuilder(new BaseDataProvider() {
-            @Override
-            public long size() {
-                ProviderContext providerContext = new ProviderContext();
-                providerContext.setInstance(ctx.getRootContext().getCurrentInstance());
-                providerContext.setFilterInstance(innerSingularFormPanel.getInstance());
-                return getFilteredProvider().getSize(providerContext);
-            }
-
-            @Override
-            public Iterator iterator(int first, int count, Object sortProperty, boolean ascending) {
-                ProviderContext providerContext = new ProviderContext();
-                providerContext.setInstance(ctx.getRootContext().getCurrentInstance());
-                providerContext.setFilterInstance(innerSingularFormPanel.getInstance());
-                providerContext.setFirst(first);
-                providerContext.setCount(count);
-                providerContext.setSortProperty(sortProperty);
-                providerContext.setAscending(ascending);
-                return getFilteredProvider().load(providerContext).iterator();
-            }
-        });
-
-        builder.setRowsPerPage(view.getPageSize());
-
-        for (Object o : config.result().getColumns()) {
-            configureColumns(builder, (Column) o);
-        }
-
-        builder.appendActionColumn(Model.of(), (actionColumn) -> actionColumn
-                .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(DefaultIcons.ARROW_RIGHT)).titleFunction(m -> "Selecionar"),
-                        (IBSAction<Object>) (target, model) ->
-                        {
-                            SInstanceConverter converter = getInstance().asAtrProvider().getConverter();
-                            if (converter == null && !(getInstance() instanceof SIComposite || getInstance() instanceof SIList)) {
-                                converter = new SimpleSInstanceConverter<>();
-                            }
-                            if (converter != null) {
-                                converter.fillInstance(getInstance(), (Serializable) model.getObject());
-                            }
-                            selectCallback.accept(target);
-                        })
-        );
-
-        return builder.build(RESULT_TABLE_ID);
-    }
-
-    private void configureColumns(BSDataTableBuilder<Object, ?, ?> builder, Column o) {
-        final Column column = o;
-        builder.appendPropertyColumn(Model.of(column.getLabel()), object -> {
-            try {
-                if (column.getProperty() != null) {
-                    final Method getter = object.getClass().getMethod("get" + WordUtils.capitalize(column.getProperty()));
-                    getter.setAccessible(true);
-                    return getter.invoke(object);
-                } else {
-                    return object;
-                }
-            } catch (Exception ex) {
-                getLogger().debug(null, ex);
-                throw new SingularFormException("Não foi possivel recuperar a propriedade '" + column.getProperty() + "' via metodo get na classe " + object.getClass());
-            }
-        });
-    }
-
-    private SingularFormPanel buildInnerSingularFormPanel() {
+    protected SingularFormPanel buildInnerSingularFormPanel() {
 
         final SingularFormPanel parentSingularFormPanel = this.visitParents(SingularFormPanel.class,
                 (parent, visit) -> visit.stop(parent));
@@ -208,8 +99,51 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         return p;
     }
 
-    private SInstance getInstance() {
+    public Config getConfig() {
+        Config config = new Config();
+        getFilteredProvider().configureProvider(config);
+        return config;
+    }
+
+    protected SInstance getInstance() {
         return ctx.getModel().getObject();
     }
 
+    protected FilteredPagedProvider getFilteredProvider() {
+        FilteredProvider provider = getInstance().asAtrProvider().getFilteredProvider();
+
+        if (!(provider instanceof FilteredPagedProvider)) {
+            provider = new InMemoryFilteredPagedProviderDecorator<>(provider);
+        }
+        return (FilteredPagedProvider) provider;
+    }
+
+    protected AjaxButton buildFilterButton() {
+        return new AjaxButton(FILTER_BUTTON_ID) {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                super.onSubmit(target, form);
+                target.add(resultTable);
+            }
+        };
+    }
+
+    public abstract WebMarkupContainer buildResultTable(Config config);
+
+    public WicketBuildContext getCtx() {
+        return ctx;
+    }
+
+    public SViewSearchModal getView() {
+        return view;
+    }
+
+    protected IConsumer<AjaxRequestTarget> getSelectCallback() {
+        return selectCallback;
+    }
+
+    protected SingularFormPanel getInnerSingularFormPanel() {
+        return innerSingularFormPanel;
+    }
 }
+

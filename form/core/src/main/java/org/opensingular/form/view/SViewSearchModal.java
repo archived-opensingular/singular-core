@@ -18,6 +18,7 @@ package org.opensingular.form.view;
 
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.enums.ModalSize;
+import org.opensingular.form.enums.ViewMode;
 
 /**
  * The type S view search modal.
@@ -28,6 +29,7 @@ public class SViewSearchModal extends SView implements ConfigurableModal<SViewSe
     private String title = StringUtils.EMPTY;
     private Integer pageSize = 5;
     private ModalSize size;
+    private ViewMode viewMode = ViewMode.LIST;
 
     /**
      * Instantiates a new S view search modal.
@@ -58,6 +60,26 @@ public class SViewSearchModal extends SView implements ConfigurableModal<SViewSe
     }
 
     /**
+     * Set a visualisation mode of result inside modal
+     *
+     * @param viewMode
+     * @return
+     */
+    public SViewSearchModal withViewMode(ViewMode viewMode) {
+        this.viewMode = viewMode;
+        return this;
+    }
+
+    /**
+     * Gets de view mode
+     *
+     * @return the view mode
+     */
+    public ViewMode getViewMode() {
+        return viewMode;
+    }
+
+    /**
      * Gets title.
      *
      * @return the title
@@ -74,7 +96,6 @@ public class SViewSearchModal extends SView implements ConfigurableModal<SViewSe
     public Integer getPageSize() {
         return pageSize;
     }
-
 
     @Override
     public ModalSize getModalSize() {
