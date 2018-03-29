@@ -167,7 +167,7 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
                     .setTextFunction(it -> (Boolean.TRUE.equals(it)) ? "Sim" : "Não"));
 
             justificativa.setView(SViewTextArea::new);
-            justificativa.asAtr().label("Justificativa");
+            justificativa.asAtr().label("Justificativa").maxLength(5000);
 
             return anotacao;
         }
