@@ -16,17 +16,24 @@
  *
  */
 
-package org.opensingular.lib.support.persistence.entity;
+package org.opensingular.lib.support.persistence;
 
-import org.hibernate.EmptyInterceptor;
-import org.opensingular.lib.support.persistence.util.SqlUtil;
+public class DatabaseSchemaReplacement {
 
-@SuppressWarnings("serial")
-public class SingularEntityInterceptor extends EmptyInterceptor {
+    private String originalSchema;
+    private String schemaReplacement;
 
-    @Override
-    public String onPrepareStatement(String sql) {
-        return SqlUtil.replaceSingularSchemaName(sql);
+    public DatabaseSchemaReplacement(String originalSchema, String schemaReplacement) {
+        this.originalSchema = originalSchema;
+        this.schemaReplacement = schemaReplacement;
+    }
+
+    public String getOriginalSchema() {
+        return originalSchema;
+    }
+
+    public String getSchemaReplacement() {
+        return schemaReplacement;
     }
 
 }

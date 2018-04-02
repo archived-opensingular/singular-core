@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 /**
  * Data Source wrapping to workaround the unsupported setBinaryStream issue
  * of jtds and hibernate combination.
- * This wrapper redirects calls that use the long size version of setBinaryStream to the int versio n.
+ * This wrapper redirects calls that use the long size version of setBinaryStream to the int version.
  */
 public class JTDSHibernateDataSourceWrapper implements DataSource, Loggable {
 
