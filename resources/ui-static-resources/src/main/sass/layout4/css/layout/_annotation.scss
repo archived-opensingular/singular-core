@@ -1,0 +1,112 @@
+.annotation-toggle-container, .annotation-toggle-container.open {
+  .theme-panel {
+    padding: 10px;
+    margin-top: 10px;
+  }
+
+  hr {
+    margin: 10px 0;
+  }
+
+  .btn-info, .btn-danger, .btn-default {
+    height: 30px;
+    width: 30px;
+    padding-top: 7px;
+    border: 0;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+  }
+
+  .btn, .btn:hover, .btn:focus {
+    border-color: $color-grey-03;
+    color: $color-grey-03;
+    position: relative;
+    margin-top: -10px;
+    z-index: 1;
+  }
+
+  .btn-danger,  .btn-danger:focus{
+    background-image: url("../img/rejected-comment.svg");
+    border: 0;
+  }
+
+  .btn-info , .btn-info:focus{
+    background-image: url("../img/accepted-comment.svg");
+    color: $color-success-green;
+  }
+
+  .btn-default , .btn-default:focus{
+    background-image: url("../img/add-comment.svg");
+  }
+}
+
+.annotation-icon {
+  display: inline-block;
+  height: 1em;
+  width: 1em;
+  border: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  background-size: 1em;
+  background-position-y: .05em;
+}
+
+.annotation-icon.annotation-icon-empty {
+  background-image: url("../img/add-comment.svg");
+}
+.annotation-icon.annotation-icon-approved {
+  background-image: url("../img/accepted-comment.svg");
+  color: $color-success-green;
+}
+.annotation-icon.annotation-icon-rejected {
+  background-image: url("../img/rejected-comment.svg");
+}
+
+.actions-lg .annotation-icon {
+  font-size: 2em;
+}
+
+.annotation-title {
+  display: inline;
+  font-weight: 600;
+}
+
+.annotation-actions {
+  float: right;
+  margin-right: 10px;
+}
+
+.annotation-action-edit, .annotation-action-remove {
+  color: $color-grey-03;
+  margin-left: 10px;
+}
+
+.annotation-action-remove:hover {
+  color: $brand-danger;
+}
+
+.annotation-text {
+  font-size: 12px;
+  margin: 10px 0;
+}
+
+.annotation-status {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.annotation-status-rejected {
+  color: $brand-danger;
+}
+
+.annotation-status-approved {
+  color: $color-success-green;
+}
+
+.nav-tabs .tabs-left .annotation-icon {
+    top: 13px;
+    right: 4px;
+    position: absolute;
+}
