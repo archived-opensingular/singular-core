@@ -50,7 +50,7 @@
                 <executions>
                     <execution>
                         <id>default-minify</id>
-                        <phase>generate-resources</phase>
+                        <phase>package</phase>
                         <configuration>
                             <cssSourceDir>resources/singular/global/plugins/bootstrap/css</cssSourceDir>
                             <cssSourceFiles>
