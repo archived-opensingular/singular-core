@@ -18,7 +18,9 @@
 
 package org.opensingular.lib.support.persistence;
 
-public class DatabaseObjectNameReplacement {
+import java.io.Serializable;
+
+public class DatabaseObjectNameReplacement implements Serializable{
 
     private String originalObjectName;
     private String objectNameReplacement;
