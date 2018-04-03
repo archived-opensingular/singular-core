@@ -26,7 +26,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
  * The persistent class for the TB_INSTANCIA_TAREFA database table.
  */
 @Entity
-@SequenceGenerator(name = AbstractTaskInstanceEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_INSTANCIA_TAREFA", schema = Constants.SCHEMA)
+@SequenceGenerator(name = AbstractTaskInstanceEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_INSTANCIA_TAREFA", schema = Constants.SCHEMA)
 @Table(name = "TB_INSTANCIA_TAREFA", schema = Constants.SCHEMA)
 public class TaskInstanceEntity extends AbstractTaskInstanceEntity<Actor, FlowInstanceEntity, TaskVersionEntity, TaskTransitionVersionEntity, ExecutionVariableEntity, TaskInstanceHistoryEntity> {
     private static final long serialVersionUID = 1L;

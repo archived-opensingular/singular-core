@@ -30,7 +30,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
-@SequenceGenerator(name = AbstractEntityTaskVersion.PK_GENERATOR_NAME, sequenceName = "SQ_CO_TAREFA", schema = Constants.SCHEMA)
+@SequenceGenerator(name = AbstractEntityTaskVersion.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_TAREFA", schema = Constants.SCHEMA)
 @Table(name = "TB_VERSAO_TAREFA", schema = Constants.SCHEMA)
 public class TaskVersionEntity extends AbstractEntityTaskVersion<FlowVersionEntity, TaskDefinitionEntity, TaskTransitionVersionEntity, TaskType> {
     private static final long serialVersionUID = 1L;

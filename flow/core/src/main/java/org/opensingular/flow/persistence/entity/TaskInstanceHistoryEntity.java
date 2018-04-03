@@ -27,7 +27,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
  * The persistent class for the TB_HISTORICO_INSTANCIA_TAREFA database table.
  */
 @Entity
-@SequenceGenerator(name = AbstractTaskInstanceHistoryEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_HISTORICO_ALOCACAO", schema = Constants.SCHEMA)
+@SequenceGenerator(name = AbstractTaskInstanceHistoryEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_HISTORICO_ALOCACAO", schema = Constants.SCHEMA)
 @Table(name = "TB_HISTORICO_INSTANCIA_TAREFA", schema = Constants.SCHEMA,
         indexes = {
                 @Index(columnList = "CO_INSTANCIA_TAREFA ASC, DT_INICIO_ALOCACAO ASC", name = "IX_HISTORICO_INSTANCIA_TAREFA")

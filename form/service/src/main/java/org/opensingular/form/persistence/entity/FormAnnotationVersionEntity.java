@@ -37,7 +37,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
 
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
-@SequenceGenerator(name = FormAnnotationVersionEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_VERSAO_ANOTACAO", schema = Constants.SCHEMA)
+@SequenceGenerator(name = FormAnnotationVersionEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_VERSAO_ANOTACAO", schema = Constants.SCHEMA)
 @Table(name = "TB_VERSAO_ANOTACAO_FORMULARIO", schema = Constants.SCHEMA)
 public class FormAnnotationVersionEntity extends BaseEntity<Long> {
 

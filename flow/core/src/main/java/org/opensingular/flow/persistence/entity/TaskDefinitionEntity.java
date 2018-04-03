@@ -33,7 +33,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
-@SequenceGenerator(name = AbstractTaskDefinitionEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_DEFINICAO_TAREFA", schema = Constants.SCHEMA)
+@SequenceGenerator(name = AbstractTaskDefinitionEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_DEFINICAO_TAREFA", schema = Constants.SCHEMA)
 @Table(name = "TB_DEFINICAO_TAREFA", schema = Constants.SCHEMA)
 @Check(constraints ="TP_ESTRATEGIA_SEGURANCA IS NULL OR (TP_ESTRATEGIA_SEGURANCA IN ('D','E'))")
 public class TaskDefinitionEntity extends AbstractTaskDefinitionEntity<FlowDefinitionEntity, TaskVersionEntity, RoleTaskEntity> {

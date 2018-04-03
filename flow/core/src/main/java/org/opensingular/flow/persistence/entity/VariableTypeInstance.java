@@ -27,7 +27,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_TIPO_VARIAVEL", schema = Constants.SCHEMA)
-@SequenceGenerator(name = AbstractVariableTypeEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_TIPO_VARIAVEL", schema = Constants.SCHEMA)
+@SequenceGenerator(name = AbstractVariableTypeEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_TIPO_VARIAVEL", schema = Constants.SCHEMA)
 public class VariableTypeInstance extends AbstractVariableTypeEntity {
     private static final long serialVersionUID = 1L;
 

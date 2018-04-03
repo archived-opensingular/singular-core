@@ -32,7 +32,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
 
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
-@SequenceGenerator(name = FormTypeEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_TIPO_FORMULARIO", schema = Constants.SCHEMA)
+@SequenceGenerator(name = FormTypeEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_TIPO_FORMULARIO", schema = Constants.SCHEMA)
 @Table(name = "TB_TIPO_FORMULARIO", schema = Constants.SCHEMA,
         indexes = {
                 @Index(columnList = "SG_TIPO_FORMULARIO ASC", name = "IX_TIPO_FORMULARIO")

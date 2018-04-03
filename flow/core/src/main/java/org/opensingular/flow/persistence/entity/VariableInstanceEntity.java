@@ -26,7 +26,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
  * The persistent class for the TB_VARIAVEL database table.
  */
 @Entity
-@SequenceGenerator(name = AbstractVariableInstanceEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_VARIAVEL", schema = Constants.SCHEMA)
+@SequenceGenerator(name = AbstractVariableInstanceEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_VARIAVEL", schema = Constants.SCHEMA)
 @Table(name = "TB_VARIAVEL", schema = Constants.SCHEMA)
 public class VariableInstanceEntity extends AbstractVariableInstanceEntity<FlowInstanceEntity, VariableTypeInstance> {
     private static final long serialVersionUID = 1L;

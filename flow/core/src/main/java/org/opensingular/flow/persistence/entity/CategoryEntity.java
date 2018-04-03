@@ -29,7 +29,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Entity
-@SequenceGenerator(name = AbstractCategoryEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_CATEGORIA", schema = Constants.SCHEMA)
+@SequenceGenerator(name = AbstractCategoryEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_CATEGORIA", schema = Constants.SCHEMA)
 @Table(name = "TB_CATEGORIA", schema = Constants.SCHEMA)
 public class CategoryEntity extends AbstractCategoryEntity<FlowDefinitionEntity> {
 

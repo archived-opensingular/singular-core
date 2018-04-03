@@ -27,7 +27,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
  * The persistent class for the flow instance database table.
  */
 @Entity
-@SequenceGenerator(name = AbstractFlowInstanceEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_INSTANCIA_PROCESSO", schema = Constants.SCHEMA)
+@SequenceGenerator(name = AbstractFlowInstanceEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_INSTANCIA_PROCESSO", schema = Constants.SCHEMA)
 @Table(name = "TB_INSTANCIA_PROCESSO", schema = Constants.SCHEMA,
         indexes = {
                 @Index(columnList = "CO_VERSAO_PROCESSO ASC, DT_INICIO ASC", name = "IX_INSTANCIA_PROCESSO")

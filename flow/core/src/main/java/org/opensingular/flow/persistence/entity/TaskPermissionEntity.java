@@ -26,7 +26,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
  * The persistent class for the TaskPermissionEntity database table.
  */
 @Entity
-@SequenceGenerator(name = AbstractTaskPermissionEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_PERMISSAO_TAREFA", schema = Constants.SCHEMA)
+@SequenceGenerator(name = AbstractTaskPermissionEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_PERMISSAO_TAREFA", schema = Constants.SCHEMA)
 @Table(name = "RL_PERMISSAO_TAREFA", schema = Constants.SCHEMA)
 public class TaskPermissionEntity extends AbstractTaskPermissionEntity<TaskDefinitionEntity> {
     private static final long serialVersionUID = 1L;

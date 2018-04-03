@@ -26,7 +26,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
  * The persistent class for the TB_VARIAVEL_EXECUCAO_TRANSICAO database table.
  */
 @Entity
-@SequenceGenerator(name = ExecutionVariableEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_VARIAVEL_EXECUCAO_TRANSICAO", schema = Constants.SCHEMA)
+@SequenceGenerator(name = ExecutionVariableEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_VARIAVEL_EXECUCAO_TRANSICAO", schema = Constants.SCHEMA)
 @Table(name = "TB_VARIAVEL_EXECUCAO_TRANSICAO", schema = Constants.SCHEMA)
 public class ExecutionVariableEntity extends AbstractExecutionVariableEntity<FlowInstanceEntity, TaskInstanceEntity, VariableInstanceEntity, VariableTypeInstance> {
     private static final long serialVersionUID = 1L;

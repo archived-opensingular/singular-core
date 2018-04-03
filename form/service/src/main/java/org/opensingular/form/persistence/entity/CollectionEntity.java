@@ -31,7 +31,7 @@ import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
 
 @Entity
-@SequenceGenerator(name = CollectionEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_COLECAO", schema = Constants.SCHEMA)
+@SequenceGenerator(name = CollectionEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_COLECAO", schema = Constants.SCHEMA)
 @Table(name = "TB_COLECAO", schema = Constants.SCHEMA)
 public class CollectionEntity extends BaseEntity<Long> {
 

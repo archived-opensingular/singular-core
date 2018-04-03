@@ -29,7 +29,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
-@SequenceGenerator(name = AbstractRoleDefinitionEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_PAPEL", schema = Constants.SCHEMA)
+@SequenceGenerator(name = AbstractRoleDefinitionEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_PAPEL", schema = Constants.SCHEMA)
 @Table(name = "TB_DEFINICAO_PAPEL", schema = Constants.SCHEMA)
 public class RoleDefinitionEntity extends AbstractRoleDefinitionEntity<FlowDefinitionEntity, RoleTaskEntity> {
     private static final long serialVersionUID = 1L;

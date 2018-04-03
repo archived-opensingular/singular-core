@@ -51,7 +51,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
  * The persistent class for the TB_CACHE_VALOR database table.
  */
 @Entity
-@SequenceGenerator(name = FormCacheValueEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_CACHE_VALOR", schema = Constants.SCHEMA)
+@SequenceGenerator(name = FormCacheValueEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_CACHE_VALOR", schema = Constants.SCHEMA)
 @Table(name = "TB_CACHE_VALOR", schema = Constants.SCHEMA)
 public class FormCacheValueEntity extends BaseEntity<Long> {
 

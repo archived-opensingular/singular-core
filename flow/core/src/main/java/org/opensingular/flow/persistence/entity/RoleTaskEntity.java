@@ -26,7 +26,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
  * The persistent class for the RL_PAPEL_TAREFA database table.
  */
 @Entity
-@SequenceGenerator(name = AbstractRoleTaskEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_PAPEL_TAREFA", schema = Constants.SCHEMA)
+@SequenceGenerator(name = AbstractRoleTaskEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_PAPEL_TAREFA", schema = Constants.SCHEMA)
 @Table(name = "RL_PAPEL_TAREFA", schema = Constants.SCHEMA)
 public class RoleTaskEntity extends AbstractRoleTaskEntity<TaskDefinitionEntity, RoleDefinitionEntity> {
     private static final long serialVersionUID = 1L;

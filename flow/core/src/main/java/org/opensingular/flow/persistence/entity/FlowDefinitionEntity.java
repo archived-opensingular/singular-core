@@ -33,7 +33,7 @@ import org.opensingular.lib.support.persistence.util.Constants;
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
-@SequenceGenerator(name = AbstractFlowDefinitionEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_DEFINICAO_PROCESSO", schema = Constants.SCHEMA)
+@SequenceGenerator(name = AbstractFlowDefinitionEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_DEFINICAO_PROCESSO", schema = Constants.SCHEMA)
 @Table(name = "TB_DEFINICAO_PROCESSO", schema = Constants.SCHEMA,
         indexes = {
                 @Index(columnList = "NO_CLASSE_JAVA ASC", name = "IX_CLASSE_DEFINICAO")

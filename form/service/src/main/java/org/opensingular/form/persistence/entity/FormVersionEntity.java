@@ -39,7 +39,7 @@ import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
 
 @Entity
-@SequenceGenerator(name = FormVersionEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_VERSAO_FORMULARIO", schema = Constants.SCHEMA)
+@SequenceGenerator(name = FormVersionEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_VERSAO_FORMULARIO", schema = Constants.SCHEMA)
 @Table(name = "TB_VERSAO_FORMULARIO", schema = Constants.SCHEMA)
 public class FormVersionEntity extends BaseEntity<Long> {
 

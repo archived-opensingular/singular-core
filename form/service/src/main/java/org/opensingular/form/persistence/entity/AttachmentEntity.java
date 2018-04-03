@@ -31,7 +31,7 @@ import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
 
 @Entity
-@SequenceGenerator(name = AttachmentEntity.PK_GENERATOR_NAME, sequenceName = "SQ_CO_ARQUIVO", schema = Constants.SCHEMA)
+@SequenceGenerator(name = AttachmentEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_ARQUIVO", schema = Constants.SCHEMA)
 @Table(name = "TB_ARQUIVO", schema = Constants.SCHEMA)
 public class AttachmentEntity extends BaseEntity<Long> {
 
