@@ -20,7 +20,13 @@ var treeView = function () {
             $('#tree').jstree({
                 'core': {
                     'data': data
-                }
+                },
+                'types' : {
+                    "leaf" : {
+                        "icon" : "fa fa-file-text"
+                    }
+                },
+                'plugins' : ["types", "search"]
             });
         },
 

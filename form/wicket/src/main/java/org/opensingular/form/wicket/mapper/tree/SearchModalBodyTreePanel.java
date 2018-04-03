@@ -27,6 +27,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.util.ListModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.json.JSONObject;
+import org.opensingular.form.SInstance;
 import org.opensingular.form.provider.Config;
 import org.opensingular.form.provider.ProviderContext;
 import org.opensingular.form.wicket.WicketBuildContext;
@@ -61,7 +62,8 @@ public class SearchModalBodyTreePanel extends SearchModalBodyPanel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 super.onSubmit(target, form);
-                target.appendJavaScript("treeView.find(" + "Singular" + ")");
+                IModel<? extends SInstance> instanceModel = getInnerSingularFormPanel().getInstanceModel();
+                target.appendJavaScript("treeView.find('" + instanceModel.getObject().getField("nome").getValue() + "')");
             }
         };
     }
@@ -90,10 +92,12 @@ public class SearchModalBodyTreePanel extends SearchModalBodyPanel {
             List<JSONObject> childs = new ArrayList<>();
             node.getChildrens().forEach(t -> childs.add(toJsonTree(t)));
             json.put("children", childs);
+        } else if (node.isLeaf()) {
+            json.put("type", "leaf");
         }
         json.put("id", node.getId());
         json.put("text", node.getDisplayLabel());
-        json.put("state", new JSONObject().put("opened", true).toString());
+        json.put("state", new JSONObject().put("opened", "true").toString());
         return json;
     }
 
