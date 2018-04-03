@@ -12,7 +12,7 @@ CKEDITOR.plugins.add('finishAndClose',
                 exec: function () {
                     editor.config.savePlugin.onSave(editor.getData());
                     window.close();
-                }, readOnly: 1, modes: {wysiwyg: 1}
+                }
             });
         }
     });
