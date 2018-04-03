@@ -1,6 +1,6 @@
 package org.opensingular.form.enums;
 
-public enum ViewMode {
+public enum ModalViewMode {
 
     TREE, LIST
 

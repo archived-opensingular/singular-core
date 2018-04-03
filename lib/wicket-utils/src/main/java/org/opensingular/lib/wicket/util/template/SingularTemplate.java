@@ -77,6 +77,7 @@ public abstract class SingularTemplate extends WebPage {
                 skinnableResource("/global/plugins/typeahead/typeahead.css"),
                 skinnableResource("/layout4/css/custom.css"),
                 skinnableResource("/css/custom.css"),
+                skinnableResource("/global/plugins/jstree/dist/themes/default/style.min.css"),
                 skinnableResource("/layout4/css/themes/default.css"),
                 "resources/custom/css/custom.css")
                 .map(CssHeaderItem::forUrl).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
@@ -123,6 +124,7 @@ public abstract class SingularTemplate extends WebPage {
                         skinnableResource("/layout4/scripts/layout.min.js"),
                         skinnableResource("/global/plugins/bootstrap-toastr/toastr.min.js"),
                         skinnableResource("/global/plugins/typeahead/typeahead.bundle.min.js"),
+                        skinnableResource("/global/plugins/jstree/dist/jstree.min.js"),
                         commonResource("/plugins/stringjs/string.min.js"),
                         commonResource("/plugins/jquery-maskmoney/dist/jquery.maskMoney.min.js"),
                         commonResource("/plugins/ckeditor/ckeditor.js")

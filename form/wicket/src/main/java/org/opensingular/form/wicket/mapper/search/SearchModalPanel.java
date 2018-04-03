@@ -27,7 +27,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.util.lang.Objects;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.enums.ViewMode;
+import org.opensingular.form.enums.ModalViewMode;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.AjaxUpdateInputBehavior;
@@ -91,7 +91,7 @@ public class SearchModalPanel extends Panel {
         modal = new BFModalWindow(ctx.getRootContainer().newChildId(), false, false);
         modal.setTitleText(Model.of(Objects.defaultIfNull(view.getTitle(), StringUtils.EMPTY)));
         Component modalBody;
-        if (ViewMode.LIST == view.getViewMode()) {
+        if (ModalViewMode.LIST == view.getModalViewMode()) {
             modalBody = new SearchModalBodyTablePanel(SELECT_INPUT_MODAL_CONTENT_ID, ctx, this::accept);
         } else {
             modalBody = new SearchModalBodyTreePanel(SELECT_INPUT_MODAL_CONTENT_ID, ctx, this::accept);
