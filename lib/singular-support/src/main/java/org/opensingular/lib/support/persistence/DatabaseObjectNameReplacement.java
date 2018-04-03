@@ -18,22 +18,22 @@
 
 package org.opensingular.lib.support.persistence;
 
-public class DatabaseSchemaReplacement {
+public class DatabaseObjectNameReplacement {
 
-    private String originalSchema;
-    private String schemaReplacement;
+    private String originalObjectName;
+    private String objectNameReplacement;
 
-    public DatabaseSchemaReplacement(String originalSchema, String schemaReplacement) {
-        this.originalSchema = originalSchema;
-        this.schemaReplacement = schemaReplacement;
+    public DatabaseObjectNameReplacement(String originalObjectName, String objectNameReplacement) {
+        this.originalObjectName = originalObjectName;
+        this.objectNameReplacement = objectNameReplacement;
     }
 
-    public String getOriginalSchema() {
-        return originalSchema;
+    public String getOriginalObjectName() {
+        return originalObjectName;
     }
 
-    public String getSchemaReplacement() {
-        return schemaReplacement;
+    public String getObjectNameReplacement() {
+        return objectNameReplacement;
     }
 
 }

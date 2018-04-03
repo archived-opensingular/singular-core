@@ -33,11 +33,11 @@ import static org.opensingular.lib.commons.base.SingularProperties.*;
 @SuppressWarnings("serial")
 public class SingularEntityInterceptor extends EmptyInterceptor {
 
-    private List<DatabaseSchemaReplacement> schemaReplacements = new ArrayList<>();
+    private List<DatabaseObjectNameReplacement> schemaReplacements = new ArrayList<>();
 
-    public SingularEntityInterceptor(List<DatabaseSchemaReplacement> replacements) {
+    public SingularEntityInterceptor(List<DatabaseObjectNameReplacement> replacements) {
         Optional<String> schemaName = SingularProperties.getOpt(CUSTOM_SCHEMA_NAME);
-        schemaName.ifPresent(s -> schemaReplacements.add(new DatabaseSchemaReplacement(Constants.SCHEMA, s)));
+        schemaName.ifPresent(s -> schemaReplacements.add(new DatabaseObjectNameReplacement(Constants.SCHEMA, s)));
         schemaReplacements.addAll(replacements);
     }
 
@@ -48,8 +48,8 @@ public class SingularEntityInterceptor extends EmptyInterceptor {
     @Override
     public String onPrepareStatement(String sql) {
         String result = sql;
-        for (DatabaseSchemaReplacement schemaReplacement : schemaReplacements) {
-            result = SqlUtil.replaceSchemaName(result, schemaReplacement.getOriginalSchema(), schemaReplacement.getSchemaReplacement());
+        for (DatabaseObjectNameReplacement schemaReplacement : schemaReplacements) {
+            result = SqlUtil.replaceSchemaName(result, schemaReplacement.getOriginalObjectName(), schemaReplacement.getObjectNameReplacement());
         }
         return result;
     }
