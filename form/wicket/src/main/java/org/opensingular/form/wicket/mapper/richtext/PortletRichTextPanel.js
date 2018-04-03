@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-(function (label, htmlContainer, hiddenInput, html) {
+(function (label, htmlContainer, hiddenInput, html, isEnabled) {
 
     var newWindow;
-
     window['openNewTabWithCKEditor${hash}'] = function () {
         if (typeof newWindow !== "undefined") {
             newWindow.close();
@@ -33,8 +32,15 @@
     function appendFunctions(nw) {
         nw.createCKEditor = function () {
             nw.document.getElementById('ck-text-area').value = $('#' + htmlContainer).html();
+            var plugin;
+            if (isEnabled === "true") {
+                plugin = 'finishAndClose,cancel';
+            } else {
+                nw.CKEDITOR.config.readOnly = true;
+                plugin = 'finishAndClose';
+            }
             nw.CKEDITOR.replace("ck-text-area", {
-                extraPlugins: 'finishAndClose,cancel',
+                extraPlugins: plugin,
                 allowedContent: true,
                 skin: 'office2013',
                 language: 'pt-br',
@@ -77,7 +83,8 @@
                     }
                 }
             });
+
             nw.CKEDITOR.config.disableNativeSpellChecker = false;
         };
     }
-})('${label}', '${htmlContainer}', '${hiddenInput}', '${html}');
+})('${label}', '${htmlContainer}', '${hiddenInput}', '${html}', '${isEnabled}');
