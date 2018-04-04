@@ -16,17 +16,27 @@
 var treeView = function () {
     //noinspection JSUnusedGlobalSymbols
     return {
-        create: function (data) {
+        create: function (data, callbackUrl) {
             $('#tree').jstree({
                 'core': {
+                    'dblclick_toggle' : false,
                     'data': data
                 },
-                'types' : {
-                    "leaf" : {
-                        "icon" : "fa fa-file-text"
+                'types': {
+                    "leaf": {
+                        "icon": "fa fa-file-text"
                     }
                 },
-                'plugins' : ["types", "search"]
+                'plugins': ["types", "search"]
+            });
+            $('#tree').on("changed.jstree", function (e, data) {
+                data.instance.toggle_node(data.node);
+            });
+            $('#tree').bind("dblclick.jstree", function (event) {
+                var tree = $(this).jstree();
+                var node = tree.get_node(event.target);
+                var params = {'id': node.id, 'label': node.text};
+                Wicket.Ajax.post({u: callbackUrl, ep: params});
             });
         },
 
