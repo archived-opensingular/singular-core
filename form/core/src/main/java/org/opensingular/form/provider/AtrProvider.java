@@ -37,6 +37,10 @@ public class AtrProvider extends STranslatorForAttribute {
         return provider(value);
     }
 
+    public <T extends Serializable> AtrProvider treeProvider(TreeProvider<T> value) {
+        return provider(value);
+    }
+
     public <T extends Serializable, I extends SInstance> AtrProvider filteredOptionsProvider(TextQueryProvider<T, I> value) {
         return provider(value);
     }
@@ -51,7 +55,7 @@ public class AtrProvider extends STranslatorForAttribute {
         return this;
     }
 
-    public AtrProvider displayFunction(IFunction value) {
+    public <T extends Serializable> AtrProvider displayFunction(IFunction<T, String> value) {
         setAttributeValue(SPackageProvider.DISPLAY_FUNCTION, value);
         return this;
     }
@@ -71,6 +75,10 @@ public class AtrProvider extends STranslatorForAttribute {
 
     public FilteredProvider getFilteredProvider() {
         return (FilteredProvider) getProvider();
+    }
+
+    public TreeProvider getTreeProvider() {
+        return (TreeProvider) getProvider();
     }
 
     public <T extends Serializable, S extends SInstance> Provider<T, S> getProvider() {

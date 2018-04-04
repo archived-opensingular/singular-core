@@ -37,84 +37,31 @@ import org.opensingular.form.wicket.model.AbstractSInstanceAwareModel;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 
-public class SearchModalPanel extends Panel {
+public class SearchModalPanel extends AbstractSearchModalPanel {
 
-    public static final String VALUE_FIELD_ID = "valueField";
-    public static final String SELECT_INPUT_MODAL_CONTENT_ID = "selectInputModalContent";
-    public static final String MODAL_TRIGGER_ID = "modalTrigger";
-
-    private final WicketBuildContext           ctx;
-    private final ISInstanceAwareModel<String> valueModel;
     private final SViewSearchModal view;
 
-    private TextField<String> valueField;
     private BFModalWindow     modal;
 
     SearchModalPanel(String id, WicketBuildContext ctx) {
-        super(id);
-        this.ctx = ctx;
+        super(id, ctx);
         this.view = (SViewSearchModal) ctx.getView();
-        this.valueModel = new AbstractSInstanceAwareModel<String>() {
-            @Override
-            public String getObject() {
-                final SInstance mi = getSInstance();
-                if (mi != null && mi.getValue() != null) {
-                    if (!mi.isEmptyOfData()) {
-                        if (mi.asAtr().getDisplayString() != null) {
-                            return mi.toStringDisplay();
-                        }
-                        if (!(mi instanceof SIComposite)) {
-                            return String.valueOf(mi.getValue());
-                        }
-                        return mi.toString();
-                    }
-                }
-                return null;
-            }
-
-            @Override
-            public SInstance getSInstance() {
-                return ctx.getModel().getObject();
-            }
-        };
     }
 
-    @Override
-    protected void onInitialize() {
-        super.onInitialize();
-        buildAndAppendModalToRootContainer();
-        valueField = new TextField<>(VALUE_FIELD_ID, valueModel);
-        add(valueField, buildModelTrigger());
-    }
-
-    private void buildAndAppendModalToRootContainer() {
+    protected void buildAndAppendModalToRootContainer() {
         modal = new BFModalWindow(ctx.getRootContainer().newChildId(), false, false);
         modal.setTitleText(Model.of(Objects.defaultIfNull(view.getTitle(), StringUtils.EMPTY)));
-        Component modalBody;
-        if (ModalViewMode.LIST == view.getModalViewMode()) {
-            modalBody = new SearchModalBodyTablePanel(SELECT_INPUT_MODAL_CONTENT_ID, ctx, this::accept);
-        } else {
-            modalBody = new SearchModalBodyTreePanel(SELECT_INPUT_MODAL_CONTENT_ID, ctx, this::accept);
-        }
-        modal.setBody(modalBody).setSize(BSModalBorder.Size.valueOf(view.getModalSize()));
+        modal.setBody(new SearchModalBodyPanel(SELECT_INPUT_MODAL_CONTENT_ID, ctx, (target) -> {
+            modal.hide(target);
+            target.add(valueField);
+            valueField.getBehaviors(AjaxUpdateInputBehavior.class)
+                    .forEach(ajax -> ajax.onUpdate(target));
+        })).setSize(BSModalBorder.Size.valueOf(view.getModalSize()));
         ctx.getRootContainer().appendTag("div", modal);
     }
 
-    private Button buildModelTrigger() {
-        final Button modalTrigger = new Button(MODAL_TRIGGER_ID);
-        modalTrigger.add(new AjaxEventBehavior("click") {
-            @Override
-            protected void onEvent(AjaxRequestTarget target) {
-                modal.show(target);
-            }
-        });
-        return modalTrigger;
-    }
-
-    private void accept(AjaxRequestTarget target) {
-        modal.hide(target);
-        target.add(valueField);
-        valueField.getBehaviors(AjaxUpdateInputBehavior.class)
-                .forEach(ajax -> ajax.onUpdate(target));
+    @Override
+    protected BFModalWindow getModal() {
+        return modal;
     }
 }

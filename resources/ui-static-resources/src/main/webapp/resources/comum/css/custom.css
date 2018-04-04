@@ -76,3 +76,8 @@
     position: relative;
     background-color: white;
 }
+
+.singular-tree {
+    padding-left: 10px;
+    padding-top: 10px;
+}

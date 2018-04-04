@@ -29,7 +29,6 @@ public class SViewSearchModal extends SView implements ConfigurableModal<SViewSe
     private String title = StringUtils.EMPTY;
     private Integer pageSize = 5;
     private ModalSize size;
-    private ModalViewMode modalViewMode = ModalViewMode.LIST;
 
     /**
      * Instantiates a new S view search modal.
@@ -57,26 +56,6 @@ public class SViewSearchModal extends SView implements ConfigurableModal<SViewSe
     public SViewSearchModal withPageSize(Integer pageSize) {
         this.pageSize = pageSize;
         return this;
-    }
-
-    /**
-     * Set a visualisation mode of result inside modal
-     *
-     * @param modalViewMode
-     * @return
-     */
-    public SViewSearchModal withViewMode(ModalViewMode modalViewMode) {
-        this.modalViewMode = modalViewMode;
-        return this;
-    }
-
-    /**
-     * Gets de view mode
-     *
-     * @return the view mode
-     */
-    public ModalViewMode getModalViewMode() {
-        return modalViewMode;
     }
 
     /**

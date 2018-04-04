@@ -16,10 +16,13 @@
 var treeView = function () {
     //noinspection JSUnusedGlobalSymbols
     return {
-        create: function (data, callbackUrl) {
+        create: function (data, hidden, selectOnlyLeaf) {
             $('#tree').jstree({
+                'conditionalselect': function (node) {
+                    return (this.is_leaf(node) && selectOnlyLeaf) || (!selectOnlyLeaf) ? true : false;
+                },
                 'core': {
-                    'dblclick_toggle' : false,
+                    'dblclick_toggle': false,
                     'data': data
                 },
                 'types': {
@@ -27,16 +30,13 @@ var treeView = function () {
                         "icon": "fa fa-file-text"
                     }
                 },
-                'plugins': ["types", "search"]
+                'plugins': ["types", "search", "conditionalselect"]
             });
             $('#tree').on("changed.jstree", function (e, data) {
                 data.instance.toggle_node(data.node);
             });
-            $('#tree').bind("dblclick.jstree", function (event) {
-                var tree = $(this).jstree();
-                var node = tree.get_node(event.target);
-                var params = {'id': node.id, 'label': node.text};
-                Wicket.Ajax.post({u: callbackUrl, ep: params});
+            $('#tree').on("select_node.jstree", function (e, data) {
+                $('#'+hidden).val(data.node.id);
             });
         },
 

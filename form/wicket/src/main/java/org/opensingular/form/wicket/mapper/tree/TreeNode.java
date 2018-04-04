@@ -1,53 +1,26 @@
 package org.opensingular.form.wicket.mapper.tree;
 
-import org.springframework.util.CollectionUtils;
-
 import java.io.Serializable;
 import java.util.List;
 
 public interface TreeNode<T extends TreeNode> extends Serializable {
-    
-    default boolean isLeaf() {
-        return !hasChildren();
-    }
 
-    default boolean hasChildren() {
-        return getParent() == null
-                || !CollectionUtils.isEmpty(getChildrens());
-    }
+    boolean isLeaf();
 
-    default TreeNode getRoot() {
-        if (isRoot()) {
-            return this;
-        }
-        return getParent().getRoot();
-    }
+    boolean hasChildren();
 
-    default boolean isRoot() {
-        return getParent() == null;
-    }
+    TreeNode getRoot();
 
-    default int getLevel() {
-        if (this.isRoot()) {
-            return 0;
-        } else {
-            return getParent().getLevel() + 1;
-        }
-    }
+    boolean isRoot();
 
-    default T addChild(T child) {
-        child.setParent(this);
-        getChildrens().add(child);
-        return child;
-    }
+    int getLevel();
 
-   Long getId();
+    Serializable getId();
 
-   String getDisplayLabel();
+    String getDisplayLabel();
 
-    T getParent();
-    
-    void setParent(T parent);
-    
     List<T> getChildrens();
+
+    Serializable getValue();
+
 }
