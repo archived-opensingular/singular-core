@@ -29,7 +29,6 @@ import org.opensingular.lib.support.persistence.entity.BaseEntity;
  * <p>
  */
 @MappedSuperclass
-@Table(name = "TB_MODULO")
 public abstract class AbstractModuleEntity extends BaseEntity<String> implements IEntityModule {
 
     @Id
