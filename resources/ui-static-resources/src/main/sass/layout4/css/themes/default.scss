@@ -114,27 +114,36 @@ $footer-default-go-top-bg-color:                                		darken(#94A0B2
 $footer-default-go-top-icon-font-color:                          		lighten(#94A0B2, 40%) !default;
 $footer-fixed-bg-color: 												$bg-color !default;
 
-@import '../../../singular_variables';
+
 
 @import '_base';
 
+// Toast
+$toast-success-color: #1BBC9B !default;
+$toast-info-color: #5C9BD1 !default;
+$toast-error-color: #E35B5A !default;
+$toast-warning-color: #F7CA18 !default;
+$toast-message-color: #FAFAFA !default;
+
 .toast-success {
-  background-color: #1BBC9B;
+  background-color: $toast-success-color;
 }
 
 .toast-info {
-  background-color: #5C9BD1;
+  background-color: $toast-info-color;
 }
 
 .toast-error {
-  background-color: #E35B5A;
+  background-color: $toast-error-color;
 }
 
 .toast-warning {
-  background-color: #F7CA18;
+  background-color: $toast-warning-color;
 }
 
 .toast-message a {
-  color: #FAFAFA !important;
+  color: $toast-message-color !important;
   font-weight: bold;
 }
+
+@import '../../../singular_variables';
