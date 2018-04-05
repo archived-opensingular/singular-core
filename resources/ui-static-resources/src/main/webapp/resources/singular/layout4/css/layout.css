@@ -137,6 +137,9 @@ button {
 /***
 Page Header
 ***/
+.page-header {
+  border-top: 0px solid #40BAA7; }
+
 .page-header.navbar {
   width: 100%;
   padding: 0 20px 0 20px;

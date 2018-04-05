@@ -50,7 +50,7 @@ public abstract class SingularTemplate extends WebPage {
     }
 
     protected String commonResource(String uri) {
-        return "/singular-static/resources/comum" + uri;
+        return "/singular-static/resources/singular" + uri;
     }
 
     public List<HeaderItem> getStyles() {
