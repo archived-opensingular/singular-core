@@ -20,7 +20,7 @@ var treeView = function () {
             var tree = $('#tree');
             tree.jstree({
                 'conditionalselect': function (node) {
-                    return (this.is_leaf(node) && selectOnlyLeaf) || (!selectOnlyLeaf) ? true : false;
+                    return (this.is_leaf(node) && selectOnlyLeaf) || (!selectOnlyLeaf);
                 },
                 'core': {
                     'dblclick_toggle': false,
@@ -46,7 +46,7 @@ var treeView = function () {
             var tree = $('#tree').jstree(true);
             tree.search(value);
             var result = tree.find('.jstree-search');
-            if (result.length == 1) {
+            if (result.length === 1) {
                 tree.select_node(result.attr("id"));
             }
         }
