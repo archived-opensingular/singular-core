@@ -16,7 +16,12 @@
 var treeView = function () {
     //noinspection JSUnusedGlobalSymbols
     return {
-        create: function (data, hidden, selectOnlyLeaf) {
+        create: function (params) {
+            var selectOnlyLeaf = params.onlyLeafSelected;
+            var showOnlyMatchesChildren = params.showOnlyMatchesChildren;
+            var showOnlyMatches = params.showOnlyMatches;
+            var hidden = params.hidden;
+            var results = params.data;
             var tree = $('#tree');
             tree.jstree({
                 'conditionalselect': function (node) {
@@ -24,30 +29,35 @@ var treeView = function () {
                 },
                 'core': {
                     'dblclick_toggle': false,
-                    'data': data
+                    'data': results
                 },
                 'types': {
                     "leaf": {
                         "icon": "fa fa-file-text"
                     }
                 },
-                'search' : {"show_only_matches" : true },
+                'search' : {
+                    "show_only_matches" : showOnlyMatches,
+                    "show_only_matches_children" : showOnlyMatchesChildren
+                },
                 'plugins': ["types", "search", "conditionalselect"]
             });
             tree.on('click', '.jstree-anchor', function (e) {
-                $('#tree').jstree(true).toggle_node(e.target);
+                tree.jstree(true).toggle_node(e.target);
             });
             tree.on("select_node.jstree", function (e, data) {
-                $('#'+hidden).val(data.node.id);
+                var formatId = hidden.replace(/'/g, "");
+                $('#'+formatId).val(data.node.id);
             });
         },
 
         find: function (value) {
-            var tree = $('#tree').jstree(true);
-            tree.search(value);
+            var tree = $('#tree');
+            var treeImpl = tree.jstree(true);
+            treeImpl.search(value);
             var result = tree.find('.jstree-search');
             if (result.length === 1) {
-                tree.select_node(result.attr("id"));
+                treeImpl.select_node(result.attr("id"));
             }
         }
     }

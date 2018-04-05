@@ -53,6 +53,7 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
 
     private final IModel<List<? extends TreeNode>> nodes = new ListModel();
     private final IModel<String> nodeSelectedModel = new Model<>();
+    private final IModel<String> viewParams = new Model<>();
     private final HiddenField<String> nodeSelected = new HiddenField<>("nodeSelected", nodeSelectedModel);
     private final Map<String, TreeNode> cache = new HashMap();
     private final WicketBuildContext ctx;
@@ -75,14 +76,14 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
         super.renderHead(response);
         final PackageResourceReference customJS = new PackageResourceReference(getClass(), PANEL_SCRIPT);
         response.render(JavaScriptReferenceHeaderItem.forReference(customJS));
-        response.render(OnDomReadyHeaderItem.forScript("treeView.create(" + toJsonTree(nodes.getObject(), viewTree.isOpen()) +
-                ","+ stringfyId(nodeSelected)+"," + viewTree.isOnlyLeafSelect() + ")"));
+        response.render(OnDomReadyHeaderItem.forScript("treeView.create(" + viewParams.getObject() + ")"));
     }
 
     @Override
     protected void onInitialize() {
         super.onInitialize();
         nodes.setObject(loadTree());
+        populateParamsTree();
 
         Form form = new Form("formHidden");
         form.setOutputMarkupId(false);
@@ -91,6 +92,16 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
         add(buildSelectButton());
         add(buildClearButton());
         add(form);
+    }
+
+    private void populateParamsTree() {
+        JSONObject json = new JSONObject();
+        json.put("data", toJsonTree(nodes.getObject(), viewTree.isOpen()));
+        json.put("hidden", stringfyId(nodeSelected));
+        json.put("showOnlyMatches", viewTree.isShowOnlyMatches());
+        json.put("showOnlyMatchesChildren", viewTree.isShowOnlyMatchesChildren());
+        json.put("onlyLeafSelected", viewTree.isSelectOnlyLeafs());
+        viewParams.setObject(json.toString());
     }
 
     private Component buildClearButton() {
@@ -141,11 +152,11 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
 
     private void populateInstance(Optional<TreeNode> optional) {
         optional.ifPresent(treeNode -> {
-                SInstanceConverter converter = getInstance().asAtrProvider().getConverter();
-                if (converter != null) {
-                    converter.fillInstance(getInstance(), treeNode.getValue());
+                    SInstanceConverter converter = getInstance().asAtrProvider().getConverter();
+                    if (converter != null) {
+                        converter.fillInstance(getInstance(), treeNode.getValue());
+                    }
                 }
-            }
         );
     }
 
