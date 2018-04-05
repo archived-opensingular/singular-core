@@ -17,7 +17,8 @@ var treeView = function () {
     //noinspection JSUnusedGlobalSymbols
     return {
         create: function (data, hidden, selectOnlyLeaf) {
-            $('#tree').jstree({
+            var tree = $('#tree');
+            tree.jstree({
                 'conditionalselect': function (node) {
                     return (this.is_leaf(node) && selectOnlyLeaf) || (!selectOnlyLeaf) ? true : false;
                 },
@@ -33,19 +34,20 @@ var treeView = function () {
                 'search' : {"show_only_matches" : true },
                 'plugins': ["types", "search", "conditionalselect"]
             });
-            $('#tree').on('click', '.jstree-anchor', function (e) {
+            tree.on('click', '.jstree-anchor', function (e) {
                 $('#tree').jstree(true).toggle_node(e.target);
             });
-            $('#tree').on("select_node.jstree", function (e, data) {
+            tree.on("select_node.jstree", function (e, data) {
                 $('#'+hidden).val(data.node.id);
             });
         },
 
         find: function (value) {
-            $("#tree").jstree(true).search(value);
-            var result = $("#tree").find('.jstree-search');
+            var tree = $('#tree').jstree(true);
+            tree.search(value);
+            var result = tree.find('.jstree-search');
             if (result.length == 1) {
-                $('#tree').jstree(true).select_node(result.attr("id"));
+                tree.select_node(result.attr("id"));
             }
         }
     }

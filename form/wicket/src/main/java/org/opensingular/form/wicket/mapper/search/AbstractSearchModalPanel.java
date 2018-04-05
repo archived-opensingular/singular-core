@@ -20,7 +20,7 @@ public abstract class AbstractSearchModalPanel extends Panel {
     public static final String MODAL_TRIGGER_ID = "modalTrigger";
 
     protected final WicketBuildContext ctx;
-    private final ISInstanceAwareModel<String> valueModel;
+    protected final ISInstanceAwareModel<String> valueModel;
 
     protected TextField<String> valueField;
 

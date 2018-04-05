@@ -57,13 +57,17 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
     private final Map<String, TreeNode> cache = new HashMap();
     private final WicketBuildContext ctx;
     private final IConsumer<AjaxRequestTarget> selectCallback;
+    private final IConsumer<AjaxRequestTarget> clearCallback;
+
     private SViewTree viewTree;
 
-    SearchModalBodyTreePanel(String id, WicketBuildContext ctx, IConsumer<AjaxRequestTarget> selectCallback) {
+    SearchModalBodyTreePanel(String id, WicketBuildContext ctx, IConsumer<AjaxRequestTarget> selectCallback,
+                             IConsumer<AjaxRequestTarget> clearCallback) {
         super(id);
         this.ctx = ctx;
         this.viewTree = (SViewTree) ctx.getView();
         this.selectCallback = selectCallback;
+        this.clearCallback = clearCallback;
     }
 
     @Override
@@ -85,10 +89,11 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
         form.add(nodeSelected);
 
         add(buildSelectButton());
+        add(buildClearButton());
         add(form);
     }
 
-    private AjaxButton buildSelectButton() {
+    private Component buildClearButton() {
         return new AjaxButton("selectNode") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -97,6 +102,15 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
                     selectCallback.accept(target);
                 }
                 nodeSelectedModel.setObject(null);
+            }
+        };
+    }
+
+    private AjaxButton buildSelectButton() {
+        return new AjaxButton("clearNode") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                clearCallback.accept(target);
             }
         };
     }
