@@ -25,8 +25,10 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewSearchModal;
+import org.opensingular.form.view.SViewTree;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
+import org.opensingular.form.wicket.mapper.tree.SearchModalTreePanel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 public class SearchModalMapper extends AbstractControlsFieldComponentMapper {
@@ -38,6 +40,10 @@ public class SearchModalMapper extends AbstractControlsFieldComponentMapper {
             final SearchModalPanel selectModalBusca = new SearchModalPanel("SelectModalBusca", ctx);
             formGroup.appendDiv(selectModalBusca);
             return selectModalBusca;
+        } else if (view instanceof SViewTree) {
+            final SearchModalTreePanel treePanel = new SearchModalTreePanel("SelectTreeModalBusca", ctx);
+            formGroup.appendDiv(treePanel);
+            return treePanel;
         }
         throw new SingularFormException("SearchModalMapper only works with a MSelecaoPorModalBuscaView.");
     }
