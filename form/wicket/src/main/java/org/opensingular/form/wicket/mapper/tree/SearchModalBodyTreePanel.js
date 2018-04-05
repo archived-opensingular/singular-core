@@ -34,6 +34,12 @@ var treeView = function () {
                 'types': {
                     "leaf": {
                         "icon": "fa fa-file-text"
+                    },
+                    "open" : {
+                        "icon" : "jstree-icon jstree-themeicon fa fa-folder icon-state-warning icon-lg jstree-themeicon-custom"
+                    },
+                    "close" : {
+                        "icon" : "jstree-icon jstree-themeicon fa fa-folder icon-state-warning icon-lg jstree-themeicon-custom"
                     }
                 },
                 'search' : {
@@ -48,6 +54,12 @@ var treeView = function () {
             tree.on("select_node.jstree", function (e, data) {
                 var formatId = hidden.replace(/'/g, "");
                 $('#'+formatId).val(data.node.id);
+            });
+            tree.on("open_node.jstree", function (event, data) {
+                data.instance.set_type(data.node,'open');
+            });
+            tree.on("close_node.jstree", function (event, data) {
+                data.instance.set_type(data.node,'close');
             });
         },
 

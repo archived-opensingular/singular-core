@@ -167,6 +167,7 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
     private JSONObject toJsonTree(TreeNode<? extends TreeNode> node, boolean open) {
         JSONObject json = new JSONObject();
         if (!node.isLeaf()) {
+            json.put("type", "open");
             List<JSONObject> childs = new ArrayList<>();
             node.getChildrens().forEach(t -> childs.add(toJsonTree(t, open)));
             json.put("children", childs);
