@@ -46,15 +46,18 @@ public class H2Functions {
     public static void dropAllObjects(Connection conn) throws SQLException {
         try (Statement s2 = conn.createStatement();
              Statement s = conn.createStatement()) {
-
             s.executeUpdate("CREATE TEMPORARY table IF NOT EXISTS INITONCE (initialized BOOLEAN not null);");
-
-            ResultSet rs = s2.executeQuery(" SELECT COUNT(*) FROM INITONCE");
-            if (rs.next()) {
-                if (rs.getInt(1) == 0) {
-                    conn.createStatement().executeUpdate("DROP ALL OBJECTS");
-                    conn.createStatement().executeUpdate("CREATE TEMPORARY table IF NOT EXISTS INITONCE (initialized BOOLEAN not null);");
-                    conn.createStatement().executeUpdate("insert into initonce values (true)");
+            try (ResultSet rs = s2.executeQuery(" SELECT COUNT(*) FROM INITONCE")) {
+                if (rs.next()) {
+                    if (rs.getInt(1) == 0) {
+                        try (Statement s3 = conn.createStatement();
+                             Statement s4 = conn.createStatement();
+                             Statement s5 = conn.createStatement()) {
+                            s3.executeUpdate("DROP ALL OBJECTS");
+                            s4.executeUpdate("CREATE TEMPORARY table IF NOT EXISTS INITONCE (initialized BOOLEAN not null);");
+                            s5.executeUpdate("insert into initonce values (true)");
+                        }
+                    }
                 }
             }
         }
