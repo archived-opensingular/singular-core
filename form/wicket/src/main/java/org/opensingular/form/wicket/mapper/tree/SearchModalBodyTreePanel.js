@@ -33,8 +33,8 @@ var treeView = function () {
                 'search' : {"show_only_matches" : true },
                 'plugins': ["types", "search", "conditionalselect"]
             });
-            $('#tree').on("changed.jstree", function (e, data) {
-                data.instance.toggle_node(data.node);
+            $('#tree').on('click', '.jstree-anchor', function (e) {
+                $('#tree').jstree(true).toggle_node(e.target);
             });
             $('#tree').on("select_node.jstree", function (e, data) {
                 $('#'+hidden).val(data.node.id);
