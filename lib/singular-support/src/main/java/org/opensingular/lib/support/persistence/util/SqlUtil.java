@@ -77,7 +77,7 @@ public class SqlUtil {
      */
     @Nonnull
     public static String replaceSchemaName(@Nonnull String sql, @Nonnull String defaultSchema, @Nonnull String schemaReplacement) {
-        LOGGER.info("Running database schema replacement from  {} to {}", defaultSchema, schemaReplacement);
+        LOGGER.trace("Running database schema replacement from  {} to {}", defaultSchema, schemaReplacement);
         return SqlUtil.replaceInSQL(sql, defaultSchema, schemaReplacement);
     }
 

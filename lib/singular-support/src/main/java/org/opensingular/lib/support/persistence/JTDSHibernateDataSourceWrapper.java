@@ -20,6 +20,7 @@ package org.opensingular.lib.support.persistence;
 
 import org.opensingular.lib.commons.util.Loggable;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.io.InputStream;
 import java.io.PrintWriter;
