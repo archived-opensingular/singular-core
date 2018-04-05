@@ -30,6 +30,7 @@ var treeView = function () {
                         "icon": "fa fa-file-text"
                     }
                 },
+                'search' : {"show_only_matches" : true },
                 'plugins': ["types", "search", "conditionalselect"]
             });
             $('#tree').on("changed.jstree", function (e, data) {
@@ -42,6 +43,10 @@ var treeView = function () {
 
         find: function (value) {
             $("#tree").jstree(true).search(value);
+            var result = $("#tree").find('.jstree-search');
+            if (result.length == 1) {
+                $('#tree').jstree(true).select_node(result.attr("id"));
+            }
         }
     }
 }();

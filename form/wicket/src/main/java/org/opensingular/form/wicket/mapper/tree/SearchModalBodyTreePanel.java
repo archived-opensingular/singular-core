@@ -59,7 +59,7 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
     private final IConsumer<AjaxRequestTarget> selectCallback;
     private SViewTree viewTree;
 
-    public SearchModalBodyTreePanel(String id, WicketBuildContext ctx, IConsumer<AjaxRequestTarget> selectCallback) {
+    SearchModalBodyTreePanel(String id, WicketBuildContext ctx, IConsumer<AjaxRequestTarget> selectCallback) {
         super(id);
         this.ctx = ctx;
         this.viewTree = (SViewTree) ctx.getView();
@@ -92,8 +92,11 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
         return new AjaxButton("selectNode") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                populateInstance(Optional.of(cache.get(nodeSelectedModel.getObject())));
-                selectCallback.accept(target);
+                if (nodeSelectedModel.getObject() != null) {
+                    populateInstance(Optional.of(cache.get(nodeSelectedModel.getObject())));
+                    selectCallback.accept(target);
+                }
+                nodeSelectedModel.setObject(null);
             }
         };
     }
@@ -148,7 +151,7 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
         json.put("id", node.getId());
         json.put("text", node.getDisplayLabel());
         JSONObject opened = new JSONObject();
-        opened.put("opened", viewTree.isOpen());
+        opened.put("opened", open);
         json.put("state", opened);
         return json;
     }

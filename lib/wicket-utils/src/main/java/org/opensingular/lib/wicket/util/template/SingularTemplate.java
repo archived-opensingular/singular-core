@@ -62,6 +62,7 @@ public abstract class SingularTemplate extends WebPage {
                 skinnableResource("/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css"),
                 skinnableResource("/global/plugins/bootstrap-select/css/bootstrap-select.min.css"),
                 skinnableResource("/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css"),
+                skinnableResource("/global/plugins/jstree/dist/themes/default/style.min.css"),
                 skinnableResource("/global/plugins/jquery-multi-select/css/multi-select.css"),
                 skinnableResource("/global/plugins/ion.rangeslider/css/normalize.css"),
                 skinnableResource("/global/plugins/ion.rangeslider/css/ion.rangeSlider.css"),
@@ -77,7 +78,6 @@ public abstract class SingularTemplate extends WebPage {
                 skinnableResource("/global/plugins/typeahead/typeahead.css"),
                 skinnableResource("/layout4/css/custom.css"),
                 skinnableResource("/css/custom.css"),
-                skinnableResource("/global/plugins/jstree/dist/themes/default/style.min.css"),
                 skinnableResource("/layout4/css/themes/default.css"),
                 "resources/custom/css/custom.css")
                 .map(CssHeaderItem::forUrl).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
