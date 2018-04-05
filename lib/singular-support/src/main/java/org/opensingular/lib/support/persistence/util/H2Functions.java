@@ -36,9 +36,9 @@ public class H2Functions {
 
     /**
      * Function to trick H2 to drop all database objects using INIT script (see h2 docs) only once per database initialization.
-     * Using plain "DROP ALL OBJECTS" in the INIT connection parameter makes H2 drop the entire database every time the connection pool creates
-     * a new connections.
-     * The corresponding INIT script to be used with this functions is defined in constant {@link #DROPALLONCE_SCRIPT}
+     * Using plain "DROP ALL OBJECTS" in the INIT connection parameter would make H2 to drop the entire database every time the connection pool creates
+     * a new connection.
+     * The corresponding INIT script to be used with this function is defined in constant {@link #DROPALLONCE_SCRIPT}
      *
      * @param conn
      * @throws SQLException
@@ -55,7 +55,6 @@ public class H2Functions {
                     s3.executeUpdate("DROP ALL OBJECTS");
                     s4.executeUpdate("CREATE TEMPORARY table IF NOT EXISTS INITONCE (initialized BOOLEAN not null);");
                     s5.executeUpdate("insert into initonce values (true)");
-
                 }
             }
         }
