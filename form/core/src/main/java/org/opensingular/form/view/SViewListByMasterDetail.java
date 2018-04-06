@@ -27,6 +27,8 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
     private String editActionLabel = "Atualizar";
     private ModalSize modalSize;
 
+    private String actionColumnLabel = "Ações";
+
     public SViewListByMasterDetail disableEdit() {
         this.editEnabled = false;
         return this;
@@ -35,7 +37,12 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
     public boolean isEditEnabled() {
         return editEnabled;
     }
-    
+
+    public SViewListByMasterDetail withActionColumnLabel(String actionColumnLabel) {
+        this.actionColumnLabel = actionColumnLabel;
+        return this;
+    }
+
     public SViewListByMasterDetail withNewActionLabel(String actionLabel) {
         this.newActionLabel = actionLabel;
         return this;
@@ -54,6 +61,9 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
         return editActionLabel;
     }
 
+    public String getActionColumnLabel() {
+        return actionColumnLabel;
+    }
 
     @Override
     public ModalSize getModalSize() {

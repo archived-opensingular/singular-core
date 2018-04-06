@@ -58,9 +58,9 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 @SuppressWarnings("unchecked")
 class SearchModalBodyPanel extends Panel implements Loggable {
 
-    public static final String FILTER_BUTTON_ID = "filterButton";
-    public static final String FORM_PANEL_ID    = "formPanel";
-    public static final String RESULT_TABLE_ID  = "resultTable";
+    private static final String FILTER_BUTTON_ID = "filterButton";
+    private static final String FORM_PANEL_ID    = "formPanel";
+    private static final String RESULT_TABLE_ID  = "resultTable";
 
     private final WicketBuildContext           ctx;
     private final SViewSearchModal view;

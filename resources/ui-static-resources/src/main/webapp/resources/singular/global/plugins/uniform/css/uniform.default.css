@@ -342,7 +342,12 @@ div.selector {
 div.checker {
   margin-right: 5px; }
 
-/* Radio */
+div.checkbox-inline > label > div.checker {
+  margin-right: 0px;
+  margin-left: 5px;
+}
+
+  /* Radio */
 div.radio {
   margin-right: 3px; }
 

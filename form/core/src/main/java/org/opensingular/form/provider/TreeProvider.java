@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.wicket.mapper.selection;
+package org.opensingular.form.provider;
 
-import org.apache.wicket.Component;
-import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.model.ReadOnlyModelValue;
-import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
+import org.opensingular.form.SInstance;
 
-@SuppressWarnings("serial")
-public class PicklistMapper extends MultipleSelectMapper {
+import java.io.Serializable;
+import java.util.List;
 
-    @Override
-    protected Component appendFormGroup(BSControls formGroup, WicketBuildContext ctx) {
-        return formGroup.appendPicklist(retrieveChoices(ctx.getModel(), new ReadOnlyModelValue(ctx.getModel())));
-    }
+public interface TreeProvider<R extends Serializable> extends Provider<R, SInstance> {
+
+    List<R> loadChildren(R node);
 
 }

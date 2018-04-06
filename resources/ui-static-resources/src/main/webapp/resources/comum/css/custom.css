@@ -1,26 +1,3 @@
-.table > tbody {
-    -webkit-hyphens: auto;
-    -moz-hyphens: auto;
-    -ms-hyphens: auto;
-    hyphens: auto;
-}
-
-.ms-elem-selectable > span::after {
-    font: normal normal normal 14px/1 FontAwesome;
-    content: '\f0a9' !important;
-    float: right;
-}
-
-.ms-selected {
-    width: inherit;
-    text-align: right;
-}
-
-.ms-selected > span::before {
-    font: normal normal normal 14px/1 FontAwesome;
-    content: '\f0a8' !important;
-    float: left;
-}
 
 .ms-container {
     width: auto;
@@ -75,16 +52,4 @@
     top: 5px;
     position: relative;
     background-color: white;
-}
-
-
-.list-table-body td .singular-remove-btn  {
-    top: 5px;
-    position: relative;
-    background-color: white;
-}
-
-.singular-tree {
-    padding-left: 10px;
-    padding-top: 10px;
 }

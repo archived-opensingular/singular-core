@@ -8,22 +8,22 @@ $has-error-table-color: #fdd5df;
 .list-detail-input {
 
   .table {
-    color: #a4a4a4;
+    color: $list-element-font-color; // cor da letra dos elementos das tabelas do form
     tr {
       &:hover {
-        color: #4a4a4a;
+        color: $list-element-font-color-on-hover; // cor da letra ao passar o mouse nos elementos da tabela do form
       }
     }
 
     td {
-      border-bottom: 1px solid #dfdfdf;
+      border-bottom: 1px solid $table-line-color;
     }
 
     thead tr th {
-      border-bottom: 1px solid #dfdfdf;
+      border-bottom: 1px solid $table-line-color;
       font-size: 12px;
       vertical-align: middle;
-      color: rgba(74, 74, 74, 0.7);
+      color: $table-head-font-color; // altera cor da linha de titulo das tabelas do form
       background-color: #fff;
     }
 
@@ -114,7 +114,7 @@ $has-error-table-color: #fdd5df;
 }
 
 .list-detail-empty {
-  color: rgba(74, 74, 74, 0.7);
+  color: $table-empty-message-font-color; // altera a cor da letra da mensagem de tabela vazia no form
   background-color: $bg-color;
   .list-detail-empty-message {
     text-align:center;
