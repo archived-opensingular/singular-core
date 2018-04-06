@@ -16,6 +16,17 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import static java.util.stream.Collectors.*;
+import static org.apache.commons.lang3.ObjectUtils.*;
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -26,7 +37,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.basic.AtrBootstrap;
 import org.opensingular.form.type.core.annotation.AtrAnnotation;
 import org.opensingular.form.view.SViewTab;
@@ -42,24 +52,12 @@ import org.opensingular.form.wicket.util.SingularFormProcessingPayload;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 
-import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.*;
-import static org.apache.commons.lang3.ObjectUtils.*;
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
-
 public class TabMapper implements IWicketComponentMapper {
 
     @Override
     @SuppressWarnings("unchecked")
     public void buildView(final WicketBuildContext ctx) {
-
-        final STypeComposite<SIComposite> tComposto = (STypeComposite<SIComposite>) ctx.getModel().getObject().getType();
-        SViewTab tabView = (SViewTab) tComposto.getView();
+        final ISupplier<SViewTab> tabViewSupplier = () -> (SViewTab) ctx.getModel().getObject().getType().getView();
 
         BSPanelGrid panel = newGrid(ctx);
 
@@ -73,8 +71,11 @@ public class TabMapper implements IWicketComponentMapper {
             });
         }
 
-        SIComposite instance = (SIComposite) ctx.getModel().getObject();
-        for (SViewTab.STab tab : tabView.getTabs()) {
+        final SIComposite instance = (SIComposite) ctx.getModel().getObject();
+
+        final SViewTab.STab tabDefault = tabViewSupplier.get().getDefaultTab();
+
+        for (SViewTab.STab tab : tabViewSupplier.get().getTabs()) {
             if (tab.isVisible(instance)) {
                 defineTabIconCss(ctx, instance, tab.getTypesNames());
                 IModel<SInstance> baseInstanceModel = (IModel<SInstance>) ctx.getModel();
@@ -89,8 +90,6 @@ public class TabMapper implements IWicketComponentMapper {
         }
 
         ctx.getContainer().newTag("div", panel);
-
-        SViewTab.STab tabDefault = tabView.getDefaultTab();
 
         renderTab(tabDefault.getTypesNames(), panel, ctx);
 
@@ -110,11 +109,9 @@ public class TabMapper implements IWicketComponentMapper {
                     }
                 } else if (payload instanceof SingularFormProcessingPayload) {
                     SingularFormProcessingPayload singularPayload = (SingularFormProcessingPayload) payload;
-                    Set<String> typeNames = tabView.getTabs()
-                            .stream()
-                            .map(SViewTab.STab::getTypesNames)
-                            .flatMap(List::stream)
-                            .collect(Collectors.toSet());
+                    Set<String> typeNames = tabViewSupplier.get().getTabs().stream()
+                        .flatMap(it -> it.getTypesNames().stream())
+                        .collect(Collectors.toSet());
 
                     if (singularPayload.hasUpdatedType(typeNames)) {
                         target.add(panel);

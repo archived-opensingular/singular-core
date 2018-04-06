@@ -17,11 +17,16 @@
 package org.opensingular.lib.commons.lambda;
 
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 @FunctionalInterface
 public interface ISupplier<T> extends Supplier<T>, Serializable {
 
+    default Optional<T> optional() {
+        return Optional.ofNullable(get());
+    }
+    
     static <U> ISupplier<U> of(ISupplier<U> supplier) {
         return (supplier == null) ? () -> null : supplier;
     }
