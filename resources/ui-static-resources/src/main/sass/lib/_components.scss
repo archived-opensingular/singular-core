@@ -1,0 +1,91 @@
+.richtext-panel {
+  box-shadow: none;
+  border: 1px solid $color-gray-default;
+  border-radius: 3px
+}
+
+.has-error > div > .richtext-panel {
+  border: 1px solid $has-error-font-color;
+}
+
+.subtitle {
+	color: #bababa !important;
+	font-size: 13px !important;
+	margin-top: -10px !important;
+	margin-bottom: 10px !important;
+}
+
+.subtitle_comp { 
+	color: #bababa !important;
+	font-size: 13px !important;
+	margin-top: -6px !important;
+	margin-bottom: 10px !important;
+}
+
+.singular-composite-title {
+  display: inline-block;
+}
+
+.decorator-actions {
+  padding: 0 0 2px;
+
+  >.btn-group {
+    >.btn {
+      padding: 1px 2px 1px 2px;
+      margin: 1px 1px 1px 1px !important;
+    }
+    >.btn:hover, .btn:focus {
+      color: $color-primary;
+      background-color: $color-primary-bg;
+    }
+  }
+}
+
+.decorator-actions.align-left {
+  display: inline;
+  margin-left: 1em;
+}
+.decorator-actions.align-right {
+  float:right;
+}
+
+.annotation-icon {
+	display: table-cell;
+    vertical-align: middle;
+    float: right;
+}
+
+
+.labelBar {
+	display: table;
+	width: 100%;
+	> .control-label{
+	display: table-cell;
+    vertical-align: middle;
+	}
+}
+
+
+div.checker.disabled span  {
+  cursor: not-allowed;   
+}
+
+div.checker.disabled span input:hover  {
+  cursor: not-allowed;   
+}
+
+div.checker.disabled span {
+  background-position: -152px -260px;
+}
+
+div.checker.disabled span:hover {
+  background-position: -152px -260px;
+}
+
+div.checker.disabled span.checked {
+  background-position: -170px -260px;
+}
+
+div.checker.disabled span.checked:hover {
+  background-position: -170px -260px;
+}

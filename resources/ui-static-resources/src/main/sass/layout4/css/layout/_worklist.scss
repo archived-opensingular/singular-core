@@ -1,0 +1,66 @@
+@import '../../../singular_variables';
+
+.worklist {
+  padding: 15px;
+
+  thead tr {
+
+    th {
+      border-bottom: 1px solid #dfdfdf;
+      font-size: 12px;
+      vertical-align: middle;
+      background-color: #fff;
+    }
+  }
+
+  th {
+    border: 0 !important;
+    text-transform: uppercase;
+
+    a {
+      font-size: 12px;
+      color: $worklist-table-head-font-color; // altera a linha de titulos da tabela de listagem
+      font-weight: 600;
+      &:hover {
+        color: $worklist-table-head-font-color-on-hover; // altera a linha de titulos da tabela de listagem (cor quando passa o mouse por cima)
+        text-decoration: none;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      &:hover {
+        color: $worklist-element-font-color-on-hover;
+        background-color: $worklist-element-bg-color-on-hover;
+      }
+    }
+  }
+
+  tr {
+    color: $worklist-element-font-color; // cor dos elementos da tabela de listagem e do botão "Ações"
+
+    &:first-child {
+      td {
+        border-top: 1px solid $worklist-table-line-color !important; // cor da linha após o título da tabela de listagem
+      }
+    }
+
+    td {
+      border: 0 !important;
+    }
+  }
+
+  .label {
+    box-shadow: none;
+  }
+}
+
+.worklist-action-btn {
+  color: $worklist-action-btn-color;
+  margin: 2px 8px;
+  &:hover {
+    color: $worklist-action-btn-color-on-hover;
+    text-decoration: none;
+  }
+}
