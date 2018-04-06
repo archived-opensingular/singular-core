@@ -22,13 +22,57 @@
                 <directory>src/main/resources</directory>
             </resource>
         </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>com.github.warmuuh</groupId>
+                <artifactId>libsass-maven-plugin</artifactId>
+                <version>0.2.7-libsass_3.4.3</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <inputPath>${basedir}/src/main/sass</inputPath>
+                    <outputPath>${basedir}/src/main/webapp/resources/singular</outputPath>
+                    <generateSourceMap>false</generateSourceMap>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.samaxes.maven</groupId>
+                <artifactId>minify-maven-plugin</artifactId>
+                <version>1.7.6</version>
+                <executions>
+                    <execution>
+                        <id>default-minify</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <cssSourceDir>resources/singular/global/plugins/bootstrap/css</cssSourceDir>
+                            <cssSourceFiles>
+                                <cssSourceFile>bootstrap.css</cssSourceFile>
+                            </cssSourceFiles>
+                            <cssFinalFile>bootstrap.css</cssFinalFile>
+                        </configuration>
+                        <goals>
+                            <goal>minify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+
     </build>
 
     <dependencies>
         <dependency>
             <groupId>org.opensingular</groupId>
             <artifactId>singular-commons-test</artifactId>
-            <version>${singular.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

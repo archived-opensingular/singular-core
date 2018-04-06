@@ -1,0 +1,201 @@
+@import '../../../singular_variables';
+
+$has-error-background: rgba(226, 70, 89, .08);
+$has-error-background-hover: rgba(226, 70, 89, .08);
+$has-error-font-color: #e82724;
+$has-error-table-color: #fdd5df;
+
+.list-detail-input {
+
+  .table {
+    color: $list-element-font-color; // cor da letra dos elementos das tabelas do form
+    tr {
+      &:hover {
+        color: $list-element-font-color-on-hover; // cor da letra ao passar o mouse nos elementos da tabela do form
+      }
+    }
+
+    td {
+      border-bottom: 1px solid $table-line-color;
+    }
+
+    thead tr th {
+      border-bottom: 1px solid $table-line-color;
+      font-size: 12px;
+      vertical-align: middle;
+      color: $table-head-font-color; // altera cor da linha de titulo das tabelas do form
+      background-color: #fff;
+    }
+
+    .singular-form-table-row.has-errors {
+      background-color: $has-error-background;
+      &:hover {
+        background-color: $has-error-background-hover;
+      }
+    }
+
+  }
+
+  .table-hover > tbody > tr > td:hover, .table-hover > tbody > tr > th:hover, .table-hover > tbody > tr:hover > td, .table-hover > tbody > tr:hover > th {
+    background: $table-hover-color;
+    .has-errors:hover {
+      background-color: rgba(253, 240, 242, 1);
+    }
+  }
+
+  .table-striped {
+    > tbody > tr:nth-of-type(odd) {
+      background-color: $table-striped-bg-color;
+    }
+  }
+
+  .headers {
+    color: $color-grey-03;
+    text-transform: uppercase;
+    background-color:$color-primary-bg;
+  }
+
+  .list-table-heading {
+    // padding: 0 20px;
+  }
+
+}
+
+.list-detail-body {
+  margin-bottom: 15px;
+}
+
+.list-detail-remove {
+
+  color: #a4a4a4;
+
+  width: 24px;
+  height: 24px;
+  font-size: 15px;
+  vertical-align: middle;
+
+  margin-right: 5px;
+
+  &:hover, &:focus {
+    color: $brand-danger;
+    text-decoration: none;
+  }
+
+}
+
+.list-detail-edit {
+  color: #a4a4a4;
+
+  width: 24px;
+  height: 24px;
+  font-size: 15px;
+  vertical-align: middle;
+
+  margin-right: 5px;
+
+  &:hover, &:focus {
+    color: $brand-info;
+    text-decoration: none;
+  }
+}
+
+.list-detail-warning {
+  color: $brand-danger;
+
+  width: 24px;
+  height: 24px;
+  font-size: 15px;
+  vertical-align: middle;
+
+  &:hover, &:focus {
+    color: $brand-danger;
+    text-decoration: none;
+  }
+}
+
+.list-detail-empty {
+  color: $table-empty-message-font-color; // altera a cor da letra da mensagem de tabela vazia no form
+  background-color: $bg-color;
+  .list-detail-empty-message {
+    text-align:center;
+    line-height:48px;
+    height:48px;
+    font-size:14px;
+    margin: 0;
+  }
+
+  td {
+    div {
+      text-align: center;
+    }
+  }
+}
+
+.singular-container .list-detail-input {
+  margin-left: 0;
+  margin-right: 0;
+
+  .list-detail-footer {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.list-detail-footer {
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom:10px;
+}
+
+.has-error > .list-detail-feedback {
+  color: $has-error-font-color;
+}
+
+.has-error.list-detail-input .table thead tr th {
+  color: $has-error-font-color;
+  border-bottom: 1px solid $has-error-table-color;
+}
+
+.has-error .list-detail-body .table tfoot .list-detail-empty td {
+  border: 1px solid $has-error-table-color;
+  color: $has-error-font-color;
+  background-color: $has-error-background;
+}
+
+.list-detail-body .table tfoot .pagination .has-error > a {
+  border: 1px solid $has-error-table-color;
+  color: $has-error-font-color;
+  background-color: $has-error-background;
+}
+
+.list-detail-body .table tfoot .pagination .has-error.active > a,
+.list-detail-body .table tfoot .pagination .has-error:hover > a {
+  border: 1px solid $has-error-table-color;
+  color: $has-error-font-color;
+  background-color: $has-error-table-color;
+}
+
+.list-detail-input.has-error > .list-detail-footer > button {
+  border: 1px solid $has-error-font-color;
+  color: $has-error-font-color;
+}
+
+.list-detail-input.has-error > .list-detail-footer > button:hover {
+  border: 1px solid $has-error-font-color;
+  background-color: $has-error-background;
+}
+
+.list-detail-input.has-error > .list-detail-footer > button:focus {
+  border: 1px solid $has-error-font-color;
+  background-color: $has-error-background;
+}
+
+.has-error.list-detail-input .table tbody tr td {
+  border-bottom: 1px solid $has-error-table-color ;
+}
+
+.has-error.list-detail-input .table tbody tr td .list-detail-edit,
+.has-error.list-detail-input .table tbody tr td .list-detail-remove,
+.has-error.list-detail-input .table tbody tr td {
+  color: $has-error-font-color;
+}

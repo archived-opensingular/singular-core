@@ -1,0 +1,53 @@
+@import "../../singular_variables";
+
+.visual {
+  > i {
+    color: $color-primary !important;
+    opacity: 0.8 !important;
+  }
+}
+
+.dashboard-stat {
+  .more {
+    &:hover {
+      text-decoration: none;
+      opacity: 0.7;
+    }
+  }
+}
+
+.card-1 {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+  &:hover {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  }
+}
+
+@media (min-width: 768px) {
+  .center-wrap {
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 60%;
+    margin: 0 auto;
+    display: block;
+    overflow: hidden;
+    position: absolute;
+  }
+
+  .center-align {
+    width: 100%;
+    display: table;
+  }
+
+  .center-body {
+    text-align: center;
+    display: table-cell;
+    padding-top: 50px;
+  }
+}
+
+.fa-hover:hover {
+  color: $color-primary;
+}

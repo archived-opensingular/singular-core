@@ -50,7 +50,7 @@ public abstract class SingularTemplate extends WebPage {
     }
 
     protected String commonResource(String uri) {
-        return "/singular-static/resources/comum" + uri;
+        return "/singular-static/resources/singular" + uri;
     }
 
     public List<HeaderItem> getStyles() {
@@ -62,6 +62,7 @@ public abstract class SingularTemplate extends WebPage {
                 skinnableResource("/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css"),
                 skinnableResource("/global/plugins/bootstrap-select/css/bootstrap-select.min.css"),
                 skinnableResource("/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css"),
+                skinnableResource("/global/plugins/jstree/dist/themes/default/style.min.css"),
                 skinnableResource("/global/plugins/jquery-multi-select/css/multi-select.css"),
                 skinnableResource("/global/plugins/ion.rangeslider/css/normalize.css"),
                 skinnableResource("/global/plugins/ion.rangeslider/css/ion.rangeSlider.css"),
@@ -104,6 +105,7 @@ public abstract class SingularTemplate extends WebPage {
                         skinnableResource("/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js"),
                         skinnableResource("/global/plugins/jquery-multi-select/js/jquery.multi-select.js"),
                         skinnableResource("/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js"),
+                        skinnableResource("/global/plugins/jquerymask/jquery.mask.min.js"),
                         skinnableResource("/global/plugins/datatables/datatables.min.js"),
                         skinnableResource("/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js"),
                         skinnableResource("/global/plugins/morris/morris.min.js"),
@@ -122,6 +124,7 @@ public abstract class SingularTemplate extends WebPage {
                         skinnableResource("/layout4/scripts/layout.min.js"),
                         skinnableResource("/global/plugins/bootstrap-toastr/toastr.min.js"),
                         skinnableResource("/global/plugins/typeahead/typeahead.bundle.min.js"),
+                        skinnableResource("/global/plugins/jstree/dist/jstree.min.js"),
                         commonResource("/plugins/stringjs/string.min.js"),
                         commonResource("/plugins/jquery-maskmoney/dist/jquery.maskMoney.min.js"),
                         commonResource("/plugins/ckeditor/ckeditor.js")

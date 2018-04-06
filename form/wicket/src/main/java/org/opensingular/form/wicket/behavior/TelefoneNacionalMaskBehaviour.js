@@ -56,109 +56,20 @@
     window.Singular = window.Singular || {};
     window.Singular.applyTelefoneNacionalMask = function (id) {
 
-        var input = $('#' + id),
-            bypassKeys = new ArrayWrapper([8, 37, 39, 91, 224]),
-            numberKeysAndNumpadKeys = new ArrayWrapper([48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105]),
-            removeKeys = new ArrayWrapper([8, 46]);
+        var inputPhoneNumber = $('#' + id);
 
-        function toArray(string) {
-            return string.split('');
-        }
+        var maskBehavior = function(val) {
+            return val.replace(/\D/g, '').length === 11 ? '(00) 00000-0000'
+                : '(00) 0000-00009';
+        };
 
-        function currentValueLength() {
-            var matchArray = input.val().match(/[0-9]/g);
-            if (matchArray) {
-                return matchArray.length;
-            } else {
-                return 0;
+        var options = {
+            onKeyPress : function(val, e, field, options) {
+                field.mask(maskBehavior.apply({}, arguments), options);
             }
-        }
+        };
 
-        function clear() {
-            var numberOnly;
-            numberOnly = input.val().replace(/[^\d]/g, '');
-            if (numberOnly.length > 11) {
-                numberOnly = numberOnly.substr(0, 11);
-            }
-            input.val(numberOnly);
-        }
-
-        function setEightDigitsMask() {
-            clear();
-            var array = new ArrayWrapper(toArray(input.val()));
-            var phoneLength = input.val().trim().length;
-            if (phoneLength > 0) {
-                array.addAndShift(0, '(');
-            }
-            if (phoneLength > 2) {
-                array.addAndShift(3, ')');
-                array.addAndShift(4, ' ');
-            }
-            if (phoneLength > 6) {
-                    array.addAndShift(9, '-');
-            }
-            input.val(array.toPlainString());
-        }
-
-        function setNineDigitsMask() {
-            clear();
-            var array = new ArrayWrapper(toArray(input.val()));
-            var phoneLength = input.val().trim().length;
-            if (phoneLength > 0) {
-                array.addAndShift(0, '(');
-            }
-            if (phoneLength > 2) {
-                array.addAndShift(3, ')');
-                array.addAndShift(4, ' ');
-            }
-            if (phoneLength > 7) {
-                array.addAndShift(10, '-');
-            }
-            input.val(array.toPlainString());
-        }
-
-        function getKeyCode(event) {
-            return event.which || event.keyCode;
-        }
-
-        function onKeyDown(event) {
-            var keyCode = getKeyCode(event);
-            if (keyCode === 9) {
-                return true;
-            }
-            if (bypassKeys.contains(keyCode) && !event.shiftKey || event.ctrlKey || event.metaKey) {
-                return true;
-            }
-            if (currentValueLength() > 10) {
-                setNineDigitsMask();
-                return false;
-            }
-            return numberKeysAndNumpadKeys.contains(keyCode);
-        }
-
-        function onKeyUp(event) {
-            var keyCode = getKeyCode(event);
-            if (removeKeys.contains(keyCode)) {
-                if (currentValueLength() <= 11) {
-                    setEightDigitsMask();
-                }
-                return true;
-            }
-            if (keyCode === 9) {
-                return true;
-            }
-            if (bypassKeys.contains(keyCode) && !event.shiftKey || event.ctrlKey || event.metaKey) {
-                return true;
-            }
-            if (currentValueLength() > 10) {
-                setNineDigitsMask();
-            } else {
-                setEightDigitsMask();
-            }
-        }
-
-        input.on('keydown', onKeyDown);
-        input.on('keyup', onKeyUp);
+        inputPhoneNumber.mask(maskBehavior, options);
 
     };
 }());

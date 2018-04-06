@@ -76,3 +76,15 @@
     position: relative;
     background-color: white;
 }
+
+
+.list-table-body td .singular-remove-btn  {
+    top: 5px;
+    position: relative;
+    background-color: white;
+}
+
+.singular-tree {
+    padding-left: 10px;
+    padding-top: 10px;
+}
