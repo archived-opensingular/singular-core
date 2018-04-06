@@ -6,7 +6,7 @@
     <groupId>org.opensingular</groupId>
     <artifactId>singular</artifactId>
 
-    <version>1.7.1-SNAPSHOT</version>
+    <version>1.7.1-RC1</version>
     <name>[singular]</name>
     <description>Singular Core Technologies</description>
     <url>http://opensingular.org</url>
@@ -175,7 +175,7 @@
             <dependency>
                 <groupId>org.opensingular</groupId>
 			    <artifactId>bom</artifactId>
-			    <version>1.7.1-SNAPSHOT</version>
+			    <version>1.7.1-RC1</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
