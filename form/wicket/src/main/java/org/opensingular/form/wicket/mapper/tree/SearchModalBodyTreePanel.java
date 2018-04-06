@@ -94,7 +94,7 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
 
     private void populateParamsTree() {
         JSONObject json = new JSONObject();
-        json.put("data", toJsonTree(nodes.getObject(), viewTree.isOpen()));
+        json.put("data", treeJson(nodes.getObject(), viewTree.isOpen()));
         json.put("hidden", stringfyId(nodeSelected));
         json.put("showOnlyMatches", viewTree.isShowOnlyMatches());
         json.put("showOnlyMatchesChildren", viewTree.isShowOnlyMatchesChildren());
@@ -107,7 +107,7 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 if (nodeSelectedModel.getObject() != null) {
-                    populateInstance(Optional.of(cache.get(nodeSelectedModel.getObject())));
+                    populateInstance(cache.get(nodeSelectedModel.getObject()));
                     selectCallback.accept(target);
                 }
                 nodeSelectedModel.setObject(null);
@@ -128,7 +128,7 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
         clearCache();
         TreeProvider<Serializable> provider = getInstance().asAtrProvider().getTreeProvider();
         List<Serializable> nodes = provider.load(ProviderContext.of(getInstance()));
-        return nodes.stream().map(n -> new TreeNodeImpl(null, n, 0, getInstance().asAtrProvider().getIdFunction(),
+        return nodes.stream().map(node -> new TreeNodeImpl(null, node, 0, getInstance().asAtrProvider().getIdFunction(),
                 getInstance().asAtrProvider().getDisplayFunction(), provider::loadChildren))
                 .map(this::cacheId)
                 .collect(Collectors.toList());
@@ -148,7 +148,8 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
         }
     }
 
-    private void populateInstance(Optional<TreeNode> optional) {
+    private void populateInstance(TreeNode tree) {
+        Optional<TreeNode> optional = Optional.of(tree);
         optional.ifPresent(treeNode -> {
                     SInstanceConverter converter = getInstance().asAtrProvider().getConverter();
                     if (converter != null) {
@@ -162,27 +163,36 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
         return ctx.getModel().getObject();
     }
 
-    private JSONObject toJsonTree(TreeNode<? extends TreeNode> node, boolean open) {
+    private JSONObject treeJson(TreeNode<? extends TreeNode> node, boolean open) {
         JSONObject json = new JSONObject();
-        if (!node.isLeaf()) {
-            json.put("type", "open");
-            List<JSONObject> childs = new ArrayList<>();
-            node.getChildrens().forEach(t -> childs.add(toJsonTree(t, open)));
-            json.put("children", childs);
-        } else if (node.isLeaf()) {
-            json.put("type", "leaf");
-        }
         json.put("id", node.getId());
         json.put("text", node.getDisplayLabel());
-        JSONObject opened = new JSONObject();
-        opened.put("opened", open);
-        json.put("state", opened);
+        json.put("state", stateShowTree(open));
+        if (node.isLeaf()) {
+            json.put("type", "leaf");
+        } else {
+            json.put("type", "open");
+            List<JSONObject> childs = childrenNodes(node, open);
+            json.put("children", childs);
+        }
         return json;
     }
 
-    private List<JSONObject> toJsonTree(List<? extends TreeNode> nodes, boolean open) {
+    private List<JSONObject> childrenNodes(TreeNode<? extends TreeNode> node, boolean open) {
+        List<JSONObject> childs = new ArrayList<>();
+        node.getChildrens().forEach(t -> childs.add(treeJson(t, open)));
+        return childs;
+    }
+
+    private JSONObject stateShowTree(boolean open) {
+        JSONObject opened = new JSONObject();
+        opened.put("opened", open);
+        return opened;
+    }
+
+    private List<JSONObject> treeJson(List<? extends TreeNode> nodes, boolean open) {
         List<JSONObject> jsons = new ArrayList<>(nodes.size());
-        nodes.forEach(n -> jsons.add(toJsonTree(n, open)));
+        nodes.forEach(n -> jsons.add(treeJson(n, open)));
         return jsons;
     }
 
