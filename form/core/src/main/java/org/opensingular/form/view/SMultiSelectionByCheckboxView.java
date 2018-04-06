@@ -16,6 +16,31 @@
 
 package org.opensingular.form.view;
 
+/**
+ * The type S multi selection by checkbox view.
+ */
 @SuppressWarnings("serial")
 public class SMultiSelectionByCheckboxView extends SMultiSelectionBySelectView {
+
+    private boolean inline;
+
+    /**
+     * Indicate orientation of checkbox in view.
+     *
+     * @param inline the inline
+     * @return the s multi selection by checkbox view
+     */
+    public SMultiSelectionByCheckboxView inline(boolean inline) {
+        this.inline = inline;
+        return this;
+    }
+
+    /**
+     * Is inline boolean.
+     *
+     * @return the boolean
+     */
+    public boolean isInline() {
+        return inline;
+    }
 }
