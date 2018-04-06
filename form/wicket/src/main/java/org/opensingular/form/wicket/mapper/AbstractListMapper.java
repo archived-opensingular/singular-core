@@ -41,6 +41,7 @@ import org.opensingular.form.wicket.repeater.PathInstanceItemReuseStrategy;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.form.wicket.util.WicketFormUtils;
 import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.behavior.FadeInOnceBehavior;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
@@ -89,7 +90,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
     }
 
     protected static RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, Item<SInstance> item,
-                                                       BSContainer<?> cell, ConfirmationModal confirmationModal, SViewListByTable viewListByTable) {
+                                                       BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<SViewListByTable> viewSupplier) {
         RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item, confirmationModal);
 
         cell
@@ -100,8 +101,9 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                         + "</button>")
                 .add(btn);
 
-        if (viewListByTable != null) {
-            btn.add($b.onConfigure(c -> c.setVisible(viewListByTable.isDeleteEnabled(item.getModelObject()))));
+        SViewListByTable view = viewSupplier.get();
+        if (view != null) {
+            btn.add($b.onConfigure(c -> c.setVisible(view.isDeleteEnabled(item.getModelObject()))));
         }
         return btn;
     }
@@ -127,7 +129,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
     }
 
     public static boolean canAddItems(WicketBuildContext ctx) {
-        return ((AbstractSViewListWithControls<?>) ctx.getView()).isNewEnabled((SIList) ctx.getModel().getObject())
+        return ((AbstractSViewListWithControls<?>) ctx.getView()).isNewEnabled((SIList<?>) ctx.getModel().getObject())
                 && ctx.getViewMode().isEdition();
     }
 
@@ -159,7 +161,8 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                         .orElse("Adicionar item"));
     }
 
-    protected void addInitialNumberOfLines(SType<?> currentType, SIList<?> list, AbstractSViewListWithControls<?> view) {
+    protected void addInitialNumberOfLines(SType<?> currentType, SIList<?> list, ISupplier<? extends AbstractSViewListWithControls<?>> viewSupplier) {
+        final AbstractSViewListWithControls<?> view = viewSupplier.get();
         if (currentType.isList() && list.isEmpty()) {
             for (int i = 0; i < view.getInitialNumberOfLines(); i++) {
                 list.addNew();

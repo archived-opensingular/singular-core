@@ -24,7 +24,6 @@ import org.opensingular.form.STypeList;
  *
  * @author Daniel C. Bordin
  */
-@SuppressWarnings("serial")
 public abstract class AbstractSViewList extends SView {
 
     /** Se aplica somene se o tipo for da classe {@link STypeList} */
