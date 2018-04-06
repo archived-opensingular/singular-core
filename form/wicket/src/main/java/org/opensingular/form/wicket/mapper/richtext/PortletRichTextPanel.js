@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-(function (label, htmlContainer, hiddenInput, html) {
+(function (label, htmlContainer, hiddenInput, html, isEnabled) {
 
     var newWindow;
-
     window['openNewTabWithCKEditor${hash}'] = function () {
         if (typeof newWindow !== "undefined") {
-            newWindow.close();
+             newWindow.close();
         }
-        newWindow = window.open("", label);
+        newWindow = window.open("", "${hash}");
         newWindow.document.open();
         appendFunctions(newWindow);
         newWindow.document.write(html);
@@ -33,8 +32,17 @@
     function appendFunctions(nw) {
         nw.createCKEditor = function () {
             nw.document.getElementById('ck-text-area').value = $('#' + htmlContainer).html();
+
+            var plugin;
+            if (isEnabled === "true") {
+                plugin = 'finishAndClose,cancel';
+            } else {
+                nw.CKEDITOR.config.readOnly = true;
+                plugin = 'closed';
+            }
+
             nw.CKEDITOR.replace("ck-text-area", {
-                extraPlugins: 'finishAndClose,cancel',
+                extraPlugins: plugin,
                 allowedContent: true,
                 skin: 'office2013',
                 language: 'pt-br',
@@ -50,7 +58,7 @@
                     }
                 },
                 toolbar: [
-                    {name: 'document', items: ['FinishAndClose', 'Cancel', 'Preview', 'Print']},
+                    {name: 'document', items: ['Closed', 'FinishAndClose', 'Cancel', 'Preview', 'Print']},
                     {
                         name: 'clipboard',
                         items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']
@@ -77,7 +85,8 @@
                     }
                 }
             });
+
             nw.CKEDITOR.config.disableNativeSpellChecker = false;
         };
     }
-})('${label}', '${htmlContainer}', '${hiddenInput}', '${html}');
+})('${label}', '${htmlContainer}', '${hiddenInput}', '${html}', '${isEnabled}');

@@ -22,7 +22,6 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -43,7 +42,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
@@ -53,6 +51,7 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
 
     private final IModel<List<? extends TreeNode>> nodes = new ListModel();
     private final IModel<String> nodeSelectedModel = new Model<>();
+    private final IModel<String> viewParams = new Model<>();
     private final HiddenField<String> nodeSelected = new HiddenField<>("nodeSelected", nodeSelectedModel);
     private final Map<String, TreeNode> cache = new HashMap();
     private final WicketBuildContext ctx;
@@ -75,14 +74,14 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
         super.renderHead(response);
         final PackageResourceReference customJS = new PackageResourceReference(getClass(), PANEL_SCRIPT);
         response.render(JavaScriptReferenceHeaderItem.forReference(customJS));
-        response.render(OnDomReadyHeaderItem.forScript("treeView.create(" + toJsonTree(nodes.getObject(), viewTree.isOpen()) +
-                ","+ stringfyId(nodeSelected)+"," + viewTree.isOnlyLeafSelect() + ")"));
+        response.render(OnDomReadyHeaderItem.forScript("treeView.create(" + viewParams.getObject() + ")"));
     }
 
     @Override
     protected void onInitialize() {
         super.onInitialize();
         nodes.setObject(loadTree());
+        populateParamsTree();
 
         Form form = new Form("formHidden");
         form.setOutputMarkupId(false);
@@ -93,12 +92,22 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
         add(form);
     }
 
+    private void populateParamsTree() {
+        JSONObject json = new JSONObject();
+        json.put("data", treeJson(nodes.getObject(), viewTree.isOpen()));
+        json.put("hidden", stringfyId(nodeSelected));
+        json.put("showOnlyMatches", viewTree.isShowOnlyMatches());
+        json.put("showOnlyMatchesChildren", viewTree.isShowOnlyMatchesChildren());
+        json.put("onlyLeafSelected", viewTree.isSelectOnlyLeafs());
+        viewParams.setObject(json.toString());
+    }
+
     private Component buildClearButton() {
         return new AjaxButton("selectNode") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 if (nodeSelectedModel.getObject() != null) {
-                    populateInstance(Optional.of(cache.get(nodeSelectedModel.getObject())));
+                    populateInstance(cache.get(nodeSelectedModel.getObject()));
                     selectCallback.accept(target);
                 }
                 nodeSelectedModel.setObject(null);
@@ -119,7 +128,7 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
         clearCache();
         TreeProvider<Serializable> provider = getInstance().asAtrProvider().getTreeProvider();
         List<Serializable> nodes = provider.load(ProviderContext.of(getInstance()));
-        return nodes.stream().map(n -> new TreeNodeImpl(null, n, 0, getInstance().asAtrProvider().getIdFunction(),
+        return nodes.stream().map(node -> new TreeNodeImpl(null, node, 0, getInstance().asAtrProvider().getIdFunction(),
                 getInstance().asAtrProvider().getDisplayFunction(), provider::loadChildren))
                 .map(this::cacheId)
                 .collect(Collectors.toList());
@@ -139,13 +148,14 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
         }
     }
 
-    private void populateInstance(Optional<TreeNode> optional) {
+    private void populateInstance(TreeNode tree) {
+        Optional<TreeNode> optional = Optional.of(tree);
         optional.ifPresent(treeNode -> {
-                SInstanceConverter converter = getInstance().asAtrProvider().getConverter();
-                if (converter != null) {
-                    converter.fillInstance(getInstance(), treeNode.getValue());
+                    SInstanceConverter converter = getInstance().asAtrProvider().getConverter();
+                    if (converter != null) {
+                        converter.fillInstance(getInstance(), treeNode.getValue());
+                    }
                 }
-            }
         );
     }
 
@@ -153,26 +163,36 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
         return ctx.getModel().getObject();
     }
 
-    private JSONObject toJsonTree(TreeNode<? extends TreeNode> node, boolean open) {
+    private JSONObject treeJson(TreeNode<? extends TreeNode> node, boolean open) {
         JSONObject json = new JSONObject();
-        if (!node.isLeaf()) {
-            List<JSONObject> childs = new ArrayList<>();
-            node.getChildrens().forEach(t -> childs.add(toJsonTree(t, open)));
-            json.put("children", childs);
-        } else if (node.isLeaf()) {
-            json.put("type", "leaf");
-        }
         json.put("id", node.getId());
         json.put("text", node.getDisplayLabel());
-        JSONObject opened = new JSONObject();
-        opened.put("opened", open);
-        json.put("state", opened);
+        json.put("state", stateShowTree(open));
+        if (node.isLeaf()) {
+            json.put("type", "leaf");
+        } else {
+            json.put("type", "open");
+            List<JSONObject> childs = childrenNodes(node, open);
+            json.put("children", childs);
+        }
         return json;
     }
 
-    private List<JSONObject> toJsonTree(List<? extends TreeNode> nodes, boolean open) {
+    private List<JSONObject> childrenNodes(TreeNode<? extends TreeNode> node, boolean open) {
+        List<JSONObject> childs = new ArrayList<>();
+        node.getChildrens().forEach(t -> childs.add(treeJson(t, open)));
+        return childs;
+    }
+
+    private JSONObject stateShowTree(boolean open) {
+        JSONObject opened = new JSONObject();
+        opened.put("opened", open);
+        return opened;
+    }
+
+    private List<JSONObject> treeJson(List<? extends TreeNode> nodes, boolean open) {
         List<JSONObject> jsons = new ArrayList<>(nodes.size());
-        nodes.forEach(n -> jsons.add(toJsonTree(n, open)));
+        nodes.forEach(n -> jsons.add(treeJson(n, open)));
         return jsons;
     }
 

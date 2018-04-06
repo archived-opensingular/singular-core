@@ -23,11 +23,12 @@ public class SearchModalTreePanel extends AbstractSearchModalPanel {
 
     @Override
     protected void buildAndAppendModalToRootContainer() {
-        modal = new BFModalWindow(ctx.getRootContainer().newChildId(), false, false);
+        modal = new BFModalWindow(ctx.getExternalContainer().newChildId(), false, false);
+        modal.setOutputMarkupId(true);
         modal.setTitleText(Model.of(Objects.defaultIfNull(view.getTitle(), StringUtils.EMPTY)));
         SearchModalBodyTreePanel searchModalBody = new SearchModalBodyTreePanel(SELECT_INPUT_MODAL_CONTENT_ID, ctx, this::accept, this::clearInput);
         modal.setBody(searchModalBody).setSize(BSModalBorder.Size.valueOf(view.getModalSize()));
-        ctx.getRootContainer().appendTag("div", modal);
+        ctx.getExternalContainer().appendTag("div", modal);
     }
 
     private void clearInput(AjaxRequestTarget target) {

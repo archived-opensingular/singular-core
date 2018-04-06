@@ -17,21 +17,18 @@
 package org.opensingular.form.wicket.mapper.selection;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.enums.PhraseBreak;
-import org.opensingular.form.provider.ProviderLoader;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import org.opensingular.form.wicket.model.MultipleSelectSInstanceAwareModel;
+import org.opensingular.form.wicket.model.ReadOnlyModelValue;
 import org.opensingular.form.wicket.renderer.SingularChoiceRenderer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
-import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 
 import java.io.Serializable;
 import java.util.List;
@@ -42,31 +39,18 @@ public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {
     @Override
     @SuppressWarnings("rawtypes")
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
-        final IModel<? extends SInstance> model = ctx.getModel();
+        return appendFormGroup(formGroup, ctx);
+    }
 
-        final IModel<List<Serializable>> valuesModel = new IReadOnlyModel<List<Serializable>>() {
-            @Override
-            public List<Serializable> getObject() {
-                final RequestCycle requestCycle = RequestCycle.get();
-                boolean            ajaxRequest  = requestCycle != null && requestCycle.find(AjaxRequestTarget.class) != null;
-                /* Se for requisição Ajax, limpa o campo caso o valor não for encontrado, caso contrario mantem o valor. */
-                boolean enableDanglingValues = !ajaxRequest;
-                return new ProviderLoader(model::getObject, enableDanglingValues).load();
-            }
-        };
-
-        return formGroupAppender(formGroup, model, valuesModel);
+    protected Component appendFormGroup(BSControls formGroup, WicketBuildContext ctx) {
+        final ListMultipleChoice<?> choices = retrieveChoices(ctx.getModel(), new ReadOnlyModelValue(ctx.getModel()));
+        formGroup.appendSelect(choices.setMaxRows(5), true, false);
+        return choices;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected ListMultipleChoice<?> retrieveChoices(IModel<? extends SInstance> model, final IModel<List<Serializable>> valuesModel) {
         return new SListMultipleChoice(model.getObject().getName(), new MultipleSelectSInstanceAwareModel(model), valuesModel, renderer(model));
-    }
-
-    protected Component formGroupAppender(BSControls formGroup, IModel<? extends SInstance> model, final IModel<List<Serializable>> valuesModel) {
-        final ListMultipleChoice<?> choices = retrieveChoices(model, valuesModel);
-        formGroup.appendSelect(choices.setMaxRows(5), true, false);
-        return choices;
     }
 
     protected IChoiceRenderer<Serializable> renderer(IModel<? extends SInstance> model) {
