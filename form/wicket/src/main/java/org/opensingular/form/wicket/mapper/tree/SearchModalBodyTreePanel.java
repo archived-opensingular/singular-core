@@ -22,7 +22,6 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -43,7 +42,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
@@ -53,6 +51,7 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
 
     private final IModel<List<? extends TreeNode>> nodes = new ListModel();
     private final IModel<String> nodeSelectedModel = new Model<>();
+    private final IModel<String> viewParams = new Model<>();
     private final HiddenField<String> nodeSelected = new HiddenField<>("nodeSelected", nodeSelectedModel);
     private final Map<String, TreeNode> cache = new HashMap();
     private final WicketBuildContext ctx;
@@ -75,14 +74,14 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
         super.renderHead(response);
         final PackageResourceReference customJS = new PackageResourceReference(getClass(), PANEL_SCRIPT);
         response.render(JavaScriptReferenceHeaderItem.forReference(customJS));
-        response.render(OnDomReadyHeaderItem.forScript("treeView.create(" + toJsonTree(nodes.getObject(), viewTree.isOpen()) +
-                ","+ stringfyId(nodeSelected)+"," + viewTree.isOnlyLeafSelect() + ")"));
+        response.render(OnDomReadyHeaderItem.forScript("treeView.create(" + viewParams.getObject() + ")"));
     }
 
     @Override
     protected void onInitialize() {
         super.onInitialize();
         nodes.setObject(loadTree());
+        populateParamsTree();
 
         Form form = new Form("formHidden");
         form.setOutputMarkupId(false);
@@ -91,6 +90,16 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
         add(buildSelectButton());
         add(buildClearButton());
         add(form);
+    }
+
+    private void populateParamsTree() {
+        JSONObject json = new JSONObject();
+        json.put("data", toJsonTree(nodes.getObject(), viewTree.isOpen()));
+        json.put("hidden", stringfyId(nodeSelected));
+        json.put("showOnlyMatches", viewTree.isShowOnlyMatches());
+        json.put("showOnlyMatchesChildren", viewTree.isShowOnlyMatchesChildren());
+        json.put("onlyLeafSelected", viewTree.isSelectOnlyLeafs());
+        viewParams.setObject(json.toString());
     }
 
     private Component buildClearButton() {
@@ -141,11 +150,11 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
 
     private void populateInstance(Optional<TreeNode> optional) {
         optional.ifPresent(treeNode -> {
-                SInstanceConverter converter = getInstance().asAtrProvider().getConverter();
-                if (converter != null) {
-                    converter.fillInstance(getInstance(), treeNode.getValue());
+                    SInstanceConverter converter = getInstance().asAtrProvider().getConverter();
+                    if (converter != null) {
+                        converter.fillInstance(getInstance(), treeNode.getValue());
+                    }
                 }
-            }
         );
     }
 
@@ -156,6 +165,7 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
     private JSONObject toJsonTree(TreeNode<? extends TreeNode> node, boolean open) {
         JSONObject json = new JSONObject();
         if (!node.isLeaf()) {
+            json.put("type", "open");
             List<JSONObject> childs = new ArrayList<>();
             node.getChildrens().forEach(t -> childs.add(toJsonTree(t, open)));
             json.put("children", childs);

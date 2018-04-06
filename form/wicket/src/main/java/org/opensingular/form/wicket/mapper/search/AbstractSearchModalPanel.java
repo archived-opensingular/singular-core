@@ -73,6 +73,7 @@ public abstract class AbstractSearchModalPanel extends Panel {
         modalTrigger.add(new AjaxEventBehavior("click") {
             @Override
             protected void onEvent(AjaxRequestTarget target) {
+                target.add(ctx.getExternalContainer());
                 getModal().show(target);
             }
         });
