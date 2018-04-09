@@ -226,7 +226,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
 
         boolean notMultipleAndNotVisualization = !multipleMarkers && !isVisualization();
         clearButton.setVisible(notMultipleAndNotVisualization);
-        mapStatic.setVisible(notMultipleAndNotVisualization);
+        mapStatic.setVisible(isVisualization());
         verNoMaps.setVisible(notMultipleAndNotVisualization);
     }
 
