@@ -17,9 +17,6 @@ $color-grey-09: darken(#3B3F51, 5%);
 
 $color-gray-default: #65697c;
 
-
-//== Colors
-
 $gray-base: darken(#34495E, 20%);
 $gray-dark: lighten($gray-base, 20%);
 $gray: lighten($gray-base, 33.5%);
@@ -33,37 +30,40 @@ $brand-danger: lighten(#eb5d68, 3%); // altera as cores dos itens vermelhos
 
 
 //Form component colors
+
 $input-focus-color: $color-primary; // altera a cor em volta do campo de input quando ele tem o foco
 $color-background-cancel-button: #EDEFF3; // altera a cor do botão para cancelar form
 
 
-//Form list table
-$list-element-font-color: #a4a4a4; // cor da letra dos elementos das tabelas do form
-$list-element-font-color-on-hover: #4a4a4a; // cor da letra ao passar o mouse nos elementos da tabela do form
-$table-line-color: #dfdfdf;
-$table-head-font-color: rgba(74, 74, 74, 0.7); // altera cor da linha de titulo das tabelas do form
-$table-empty-message-font-color: rgba(74, 74, 74, 0.7); // altera a cor da letra da mensagem de tabela vazia no form
+//Form list tables
+
+$list-element-font-color: #a4a4a4; // altera a cor da fonte dos itens das tabelas do form
+$list-element-font-color-on-hover: #4a4a4a; // altera a cor da letra ao passar o mouse sobre os itens da tabela do form
+$table-line-color: #dfdfdf; // altera a cor da linha das tabelas do form
+$table-head-font-color: rgba(74, 74, 74, 0.7); // altera cor da fonte da linha de titulo das tabelas do form
+$table-empty-message-font-color: rgba(74, 74, 74, 0.7); // altera a cor da fonte da mensagem de tabela vazia no form
 
 
 //Worklist table
-$worklist-table-head-font-color: rgba(74, 74, 74, 0.7); // // altera a linha de titulos da tabela de listagem
-$worklist-table-head-font-color-on-hover: rgba(77, 77, 77, 1); // altera a linha de titulos da tabela de listagem (cor quando passa o mouse por cima)
-$worklist-element-font-color: $color-grey-03; // cor dos elementos da tabela de listagem e do botão "Ações"
-$worklist-element-font-color-on-hover: rgba(102, 102, 102, 1);
-$worklist-element-bg-color-on-hover: rgba(242, 242, 242, 1);
-$worklist-table-line-color: $color-grey-03; // cor da linha após o título da tabela de listagem
-$worklist-action-btn-color: rgba(179, 179, 179, 1);
-$worklist-action-btn-color-on-hover: rgba(128, 128, 128, 1);
+
+$worklist-table-head-font-color: rgba(74, 74, 74, 0.7); // altera a cor da fonte da linha de titulos da tabela de listagem
+$worklist-table-head-font-color-on-hover: rgba(77, 77, 77, 1); // altera a cor da fonte da linha de titulos da tabela de listagem ao passar o mouse
+$worklist-element-font-color: $color-grey-03; // altera a cor da fonte dos itens da tabela de listagem e do titulo da coluna "Ações"
+$worklist-element-font-color-on-hover: rgba(102, 102, 102, 1); // altera a cor da fonte dos itens da tabela de listagem ao passar o mouse
+$worklist-element-bg-color-on-hover: rgba(242, 242, 242, 1); // altera a cor do fundo dos itens da tabela de listagem ao passar o mouse
+$worklist-table-line-color: $color-grey-03; // altera a cor da linha após o título da tabela de listagem
+$worklist-action-btn-color: rgba(179, 179, 179, 1); // altera a cor dos botões dos itens da listagem
+$worklist-action-btn-color-on-hover: rgba(128, 128, 128, 1); // altera a cor dos botões dos itens da listagem ao passar o mouse
 
 
 //Others variables
 
 $table-striped-bg-color: $color-primary-bg;
 $table-hover-color: rgba(74, 74, 74, 0.08);
-$brand-logo-url: "/singular-static/resources/singular/img/logo_singular.png";
+$brand-logo-url: "/singular-static/resources/singular/img/logo/logo_singular.png";
 $brand-logo-width: 200px;
 $brand-logo-height: 49px;
-$page-header-border-top: 0px solid $color-primary;
+$page-header-border-top: 0px solid $color-primary; // altera a borda superior da tela, configurando sua cor e espessura
 
 
 // Theme Colors Settings
@@ -74,8 +74,8 @@ $brand-main-color:                                               		$color-primar
 $brand-main-font-color:													#ffffff;
 
 // Body and header
-$bg-color:                                                         		#e8e9f0; // altera o fundo da página
-$header-bg-color:														#FFFFFF; // altera o fundo do cabeçalho
+$bg-color:                                                         		#e8e9f0; // altera a cor do fundo da página
+$header-bg-color:														#FFFFFF; // altera a cor do fundo do cabeçalho
 $header-top-shadow:                                                     0px 1px 10px 0px rgba(50, 50, 50, 0.2);
 $header-mobile-menu-border:                                             lighten($header-bg-color, 3%);
 
@@ -88,9 +88,9 @@ $header-search-placeholder-font-color:                          		darken($header
 $header-toggler-img:                                                   'sidebar-toggle-light.png';
 
 // Toast messages
-$toast-success-color: #1BBC9B;
+$toast-success-color: #1BBC9B; // altera a cor da mensagem de sucesso
 $toast-info-color: #5C9BD1;
-$toast-error-color: #E35B5A;
+$toast-error-color: #E35B5A; // altera a cor da mensagem de erro
 $toast-warning-color: #F7CA18;
 $toast-message-color: #FAFAFA;
 
@@ -102,7 +102,7 @@ $header-top-menu-badge-font-color:                              		lighten($heade
 $header-top-menu-icon-font-color:                               		lighten($header-bg-color, 25%);
 
 // Top menu user bar
-$header-top-menu-user-font-color:                                       $color-primary;
+$header-top-menu-user-font-color:                                       $color-primary; // altera a cor do nome do usuário
 $header-top-menu-user-bg-color:                                 		none;
 
 //begin: Top Menu Extended Dropdowns

@@ -52,7 +52,7 @@ public abstract class SingularTemplate extends WebPage {
     public List<HeaderItem> getStyles() {
         return Stream.of(skinnableResource("/global/plugins/font-awesome/css/font-awesome.min.css"),
                 skinnableResource("/global/plugins/simple-line-icons/simple-line-icons.min.css"),
-                skinnableResource("/global/plugins/bootstrap/css/bootstrap.min.css"),
+                skinnableResource("/global/plugins/bootstrap/css/bootstrap.css"),
                 skinnableResource("/global/plugins/uniform/css/uniform.default.css"),
                 skinnableResource("/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css"),
                 skinnableResource("/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css"),
