@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.maps.internal.PolylineEncoding;
+import com.google.maps.model.LatLng;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -137,21 +139,24 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
             };
             mapStatic = new ImgMap(MAP_STATIC_ID, $m.loadable(() -> {
                 String latLng = generateLatLngMaker(latitudeModel, longitudeModel);
-                return configureMapToView(Arrays.asList(latLng), zoomModel);
+                return configureMapToView(Arrays.asList(latLng), zoomModel, null);
             }));
         } else {
             verNoMaps = new WebMarkupContainer("verNoMaps");
             mapStatic = new ImgMap(MAP_STATIC_ID, $m.loadable(() -> {
                 List<String> makerList = new ArrayList<>();
+                List<LatLng> latLngList = new ArrayList<>();
                 ((SILatitudeLongitudeList) model.getObject()).getPoints().forEach(m -> {
                     IModel<?> latitude = Model.of(m.getLatitude());
                     IModel<?> longitude = Model.of(m.getLongitude());
 
-                    String latLng = generateLatLngMaker(latitude, longitude);
-                    makerList.add(latLng);
+                    LatLng latLng = new LatLng(m.getLatitude().doubleValue(), m.getLongitude().doubleValue());
+                    latLngList.add(latLng);
+                    String latLngText = generateLatLngMaker(latitude, longitude);
+                    makerList.add(latLngText);
                 });
 
-                return configureMapToView(makerList, zoomModel);
+                return configureMapToView(makerList, zoomModel, latLngList);
 
             }));
         }
@@ -168,22 +173,25 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         return null;
     }
 
-    private String configureMapToView(List<String> latLngMakerList, IModel<?> zoomModel) {
+    private String configureMapToView(List<String> latLngMakerList, IModel<?> zoomModel, List<LatLng> latLngList) {
         String latLng = "-15.7922, -47.4609";
         StringBuilder marker = new StringBuilder();
         if (CollectionUtils.isNotEmpty(latLngMakerList)) {
             latLngMakerList.forEach(l -> marker.append("&markers=").append(l));
             latLng = latLngMakerList.get(0);
-
         }
 
-        String parameters = "key=" + singularKeyMapStatic
-                + "&size=1000x" + (getHeight() - 35)
-                + "&zoom=" + zoomModel.getObject()
-                + "&center=" + latLng
-                + marker.toString();
-
-        return "https://maps.googleapis.com/maps/api/staticmap?" + parameters;
+        StringBuilder parameters = new StringBuilder();
+        parameters.append("key=" ).append(singularKeyMapStatic);
+        parameters.append("&size=1000x").append(getHeight() - 35);
+        parameters.append("&zoom=").append(zoomModel.getObject());
+        parameters.append("&center=").append(latLng);
+        if(multipleMarkers) {
+            parameters.append("&path=color:0x0ea001AA|weight:0|fillcolor:0xFFB6C1BB");
+            parameters.append("|enc:").append(PolylineEncoding.encode(latLngList));
+            parameters.append(marker);
+        }
+        return "https://maps.googleapis.com/maps/api/staticmap?" + parameters.toString();
     }
 
     private void populateMetaData() {
