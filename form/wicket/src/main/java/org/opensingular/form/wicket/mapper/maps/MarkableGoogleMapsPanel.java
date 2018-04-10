@@ -181,17 +181,34 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
             latLng = latLngMakerList.get(0);
         }
 
+        latLng = getMediaOfPoints(latLngList, latLng);
+
         StringBuilder parameters = new StringBuilder();
-        parameters.append("key=" ).append(singularKeyMapStatic);
+        parameters.append("key=").append(singularKeyMapStatic);
         parameters.append("&size=1000x").append(getHeight() - 35);
         parameters.append("&zoom=").append(zoomModel.getObject());
         parameters.append("&center=").append(latLng);
-        if(multipleMarkers) {
+        if (multipleMarkers) {
             parameters.append("&path=color:0x0ea001AA|weight:0|fillcolor:0xFFB6C1BB");
             parameters.append("|enc:").append(PolylineEncoding.encode(latLngList));
-            parameters.append(marker);
         }
+        parameters.append(marker);
         return "https://maps.googleapis.com/maps/api/staticmap?" + parameters.toString();
+    }
+
+    private String getMediaOfPoints(List<LatLng> latLngList, String latLng) {
+        if (CollectionUtils.isNotEmpty(latLngList)) {
+            Model<Double> latModel = new Model<>(new Double(0));
+            Model<Double> lngModel = new Model<>(new Double(0));
+            latLngList.forEach(l -> {
+                latModel.setObject(latModel.getObject() + l.lat);
+                lngModel.setObject(lngModel.getObject() + l.lng);
+            });
+            String lat = String.valueOf(latModel.getObject() / latLngList.size());
+            String lng = String.valueOf(lngModel.getObject() / latLngList.size());
+            latLng = lat + ", " + lng;
+        }
+        return latLng;
     }
 
     private void populateMetaData() {
