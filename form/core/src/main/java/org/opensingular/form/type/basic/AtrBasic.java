@@ -16,7 +16,25 @@
 
 package org.opensingular.form.type.basic;
 
-import com.google.common.collect.Lists;
+import static java.util.stream.Collectors.*;
+import static org.apache.commons.lang3.StringUtils.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.opensingular.form.AtrRef;
 import org.opensingular.form.SAttributeEnabled;
@@ -31,27 +49,11 @@ import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.joining;
-import static org.apache.commons.lang3.StringUtils.defaultString;
+import com.google.common.collect.Lists;
 
 public class AtrBasic extends STranslatorForAttribute {
 
-    private static final String DEPENDSON_NULL_PARAM_MSG = "dependsOn do not allow null dependent types! Check if your variables are already initialized.";
+    private static final String DEPENDSON_NULL_PARAM_MSG       = "dependsOn do not allow null dependent types! Check if your variables are already initialized.";
     private static final String ALLOWED_FILE_TYPES_SPLIT_REGEX = "[,\\s\\|]";
 
     public AtrBasic() {}
@@ -88,7 +90,6 @@ public class AtrBasic extends STranslatorForAttribute {
         setAttributeValue(SPackageBasic.ATR_BASIC_MASK, mask);
         return this;
     }
-
 
     public AtrBasic maxLength(Integer value) {
         setAttributeValue(SPackageBasic.ATR_MAX_LENGTH, value);
@@ -156,6 +157,10 @@ public class AtrBasic extends STranslatorForAttribute {
         return this;
     }
 
+    public AtrBasic dependsOnAllDescendants(SType<?> field) {
+        return dependsOn(new AllDescendantsDelayedDependsOnResolversSupplier(field));
+    }
+
     /**
      * Configures the current type to depend on all STypes created from the given {@param typeClass} or its subclasses.
      * This dependency should be used with caution since it can let do unwanted dependencies and apparently unpredictable behavior.
@@ -174,12 +179,12 @@ public class AtrBasic extends STranslatorForAttribute {
         setAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION, () -> {
             Set<DelayedDependsOnResolver> union = new LinkedHashSet<>(previous.get());
             union.add((root, current) -> {
-                    final List<SType<?>> dependentTypes = new ArrayList<SType<?>>();
-                    STypes.visitAll(root, stype -> {
-                        if (typeClass.isAssignableFrom(stype.getClass())) {
-                            dependentTypes.add(typefinder.apply((T) stype));
-                        }
-                    });
+                final List<SType<?>> dependentTypes = new ArrayList<SType<?>>();
+                STypes.visitAll(root, stype -> {
+                    if (typeClass.isAssignableFrom(stype.getClass())) {
+                        dependentTypes.add(typefinder.apply((T) stype));
+                    }
+                });
                 return dependentTypes;
             });
             return union;
@@ -196,17 +201,17 @@ public class AtrBasic extends STranslatorForAttribute {
         return dependsOn(() -> Arrays.asList(types).stream().map((SType<?> t) -> (DelayedDependsOnResolver) (root, current) -> Lists.newArrayList(t)).collect(Collectors.toList()));
     }
 
-    private void assertNoNull(String msg, Object ...o){
+    private void assertNoNull(String msg, Object... o) {
         boolean paramNull = o == null;
-        if (!paramNull){
-            for (Object item : o){
-                paramNull |= item==null;
-                if (paramNull){
+        if (!paramNull) {
+            for (Object item : o) {
+                paramNull |= item == null;
+                if (paramNull) {
                     break;
                 }
             }
         }
-        if (paramNull){
+        if (paramNull) {
             throw new SingularFormException(msg);
         }
     }
@@ -380,10 +385,22 @@ public class AtrBasic extends STranslatorForAttribute {
         return getAttributeValue(SPackageBasic.ATR_UPPER_CASE_TEXT);
     }
 
-
     public interface DelayedDependsOnResolver {
 
         public List<SType<?>> resolve(SType<?> documentRoot, SType<?> current);
     }
 
+    private static final class AllDescendantsDelayedDependsOnResolversSupplier implements Supplier<Collection<DelayedDependsOnResolver>> {
+        private final SType<?> baseField;
+        private AllDescendantsDelayedDependsOnResolversSupplier(SType<?> baseField) {
+            this.baseField = baseField;
+        }
+        @Override
+        public Collection<DelayedDependsOnResolver> get() {
+            AtrBasic.DelayedDependsOnResolver resolver = (root, current) -> {
+                return STypes.streamDescendants(baseField, true).collect(toList());
+            };
+            return Arrays.asList(resolver);
+        }
+    }
 }
