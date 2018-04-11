@@ -114,6 +114,6 @@ public class SqlUtil {
      * @return
      */
     public static boolean isDropCreateDatabase() {
-        return SingularProperties.get().isTrue("singular.enabled.h2.inserts");
+        return SingularProperties.get().isTrue(SingularProperties.RECREATE_DATABASE);
     }
 }

@@ -61,7 +61,7 @@ public interface SingularProperties {
 
     // Identifica se o singular deve usar o banco em memória, ou se conectar a um banco externo.
     String USE_EMBEDDED_DATABASE = "singular.database.embbeded";
-    String JNDI_DATASOURCE = "singular.jndi.name.datasource";
+    String JNDI_DATASOURCE = "singular.jndi.datasource.name";
 
     // Identifica o nome do schema que deve ser utilizado
     String CUSTOM_SCHEMA_NAME = "singular.custom.schema.name";
@@ -72,6 +72,8 @@ public interface SingularProperties {
     String FREEMARKER_IGNORE_ERROR = "singular.form.freemarker.ignore_error";
 
     String REST_ALLOWED_COMMON_NAME = "singular.rest.allowed.common.name";
+
+    String RECREATE_DATABASE = "singular.database.recreate";
 
     //    ParmDef<String> ADDRESS = new ParmDef<>("Asasd.ad.asda " , String.class, "dadad")
 
