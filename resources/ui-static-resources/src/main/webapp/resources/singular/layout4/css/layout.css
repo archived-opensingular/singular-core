@@ -144,7 +144,6 @@ Page Header
   width: 100%;
   padding: 0 20px 0 20px;
   margin: 0;
-  border: 0px;
   padding: 0px;
   box-shadow: none;
   height: 70px;
@@ -178,7 +177,7 @@ Page Header
       transform: translateY(-50%);
       font-size: 18px; }
     .page-header.navbar .page-logo .logo-default {
-      background-image: url("/singular-static/resources/singular/img/logo_singular.png");
+      background-image: url("/singular-static/resources/singular/img/logo/logo_singular.png");
       height: 49px;
       width: 200px;
       background-repeat: no-repeat;
