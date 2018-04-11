@@ -51,7 +51,7 @@ public class FormVersionEntity extends BaseEntity<Long> {
     private Long cod;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_FORMULARIO", nullable = false, foreignKey = @ForeignKey(name = "FK_VERSAO_FORMULARIO_FORMULARIO"))
+    @JoinColumn(name = "CO_FORMULARIO", nullable = false, foreignKey = @ForeignKey(name = "FK_VER_FORM_FORMULARIO"))
     private FormEntity formEntity;
 
     @Temporal(TemporalType.TIMESTAMP)
