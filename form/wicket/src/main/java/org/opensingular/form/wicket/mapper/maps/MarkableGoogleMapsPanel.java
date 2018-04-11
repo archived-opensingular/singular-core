@@ -177,8 +177,12 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         String latLng = "-15.7922, -47.4609";
         StringBuilder marker = new StringBuilder();
         if (CollectionUtils.isNotEmpty(latLngMakerList)) {
-            latLngMakerList.forEach(l -> marker.append("&markers=").append(l));
-            latLng = latLngMakerList.get(0);
+            latLngMakerList.stream()
+                    .filter(l -> l != null && !l.isEmpty())
+                    .forEach(l -> marker.append("&markers=").append(l));
+            if(StringUtils.isNotEmpty(latLngMakerList.get(0))) {
+                latLng = latLngMakerList.get(0);
+            }
         }
 
         latLng = getMediaOfPoints(latLngList, latLng);
@@ -186,11 +190,14 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         StringBuilder parameters = new StringBuilder();
         parameters.append("key=").append(singularKeyMapStatic);
         parameters.append("&size=1000x").append(getHeight() - 35);
-        parameters.append("&zoom=").append(zoomModel.getObject());
+
+
         parameters.append("&center=").append(latLng);
         if (multipleMarkers) {
             parameters.append("&path=color:0x0ea001AA|weight:0|fillcolor:0xFFB6C1BB");
             parameters.append("|enc:").append(PolylineEncoding.encode(latLngList));
+        } else {
+            parameters.append("&zoom=").append(zoomModel.getObject());
         }
         parameters.append(marker);
         return "https://maps.googleapis.com/maps/api/staticmap?" + parameters.toString();
@@ -280,7 +287,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         boolean notMultipleAndNotVisualization = !multipleMarkers && !isVisualization();
         clearButton.setVisible(notMultipleAndNotVisualization);
         mapStatic.setVisible(isVisualization());
-        verNoMaps.setVisible(notMultipleAndNotVisualization);
+        verNoMaps.setVisible(isVisualization() && !multipleMarkers);
     }
 
     @Override

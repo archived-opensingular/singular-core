@@ -42,6 +42,7 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 
 public class LatitudeLongitudeListMapper extends TableListMapper {
 
+
     @Override
     public void buildView(WicketBuildContext ctx) {
 
@@ -90,6 +91,7 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                         target.add(googleMapsPanel);
                     }
                 }));
+
 
         ConfirmationModal confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
         confirmationModal.registerListener(googleMapsPanel::updateJS);
