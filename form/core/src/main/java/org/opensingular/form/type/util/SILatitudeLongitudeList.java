@@ -17,6 +17,7 @@
 package org.opensingular.form.type.util;
 
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
 
 public class SILatitudeLongitudeList extends SIComposite {
 
@@ -29,4 +30,9 @@ public class SILatitudeLongitudeList extends SIComposite {
         STypeLatitudeLongitudeList type = getType();
         return !getField(type.file).isEmptyOfData();
     }
+
+    public SIList<SILatitudeLongitude> getPoints(){
+        return getField(getType().points);
+    }
+
 }
