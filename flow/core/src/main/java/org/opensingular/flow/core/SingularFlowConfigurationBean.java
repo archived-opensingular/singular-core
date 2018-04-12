@@ -332,7 +332,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
         try {
             final IFlowDataService<?>                dataService = task.getFlowMap().getFlowDefinition().getDataService();
             final Collection<? extends FlowInstance> instances   = dataService.retrieveAllInstancesIn(task);
-            getLogger().info("Start running job: "+ task.getName()+" "+Optional.ofNullable(instances).map(Collection::size).orElse(0)+" instances. ");
+            getLogger().info("Start running job: {} {} instances. ", task.getName(), Optional.ofNullable(instances).map(Collection::size).orElse(0));
             if (task.isCalledInBlock()) {
                 return task.executarByBloco(instances);
             } else {
@@ -342,7 +342,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
                 return null;
             }
         } finally {
-            getLogger().info("Job executed : "+ task.getName());
+            getLogger().info("Job executed : {}", task.getName());
         }
     }
 }
