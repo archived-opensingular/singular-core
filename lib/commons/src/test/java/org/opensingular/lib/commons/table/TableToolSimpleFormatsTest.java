@@ -37,7 +37,7 @@ public class TableToolSimpleFormatsTest extends TableToolSimpleBaseTest {
     }
 
     private void generateFormats(TableTool table) {
-        generateFormats(table, "bootstrap.css");
+        generateFormats(table, "bootstrap.min.css");
         generateFormats(table, "alocpro.css");
 
         generateFormats(table, ViewOutputFormat.EXCEL);
