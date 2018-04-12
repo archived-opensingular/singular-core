@@ -20,26 +20,28 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.template.PackageTextTemplate;
-
-import static org.opensingular.lib.wicket.util.jquery.JQuery.$;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
-import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
+import org.opensingular.lib.commons.util.Loggable;
+import org.opensingular.lib.wicket.util.resource.DefaultIcons;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.opensingular.lib.wicket.util.jquery.JQuery.$;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public class PortletRichTextPanel extends Panel implements Loggable {
 
@@ -47,6 +49,8 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     private Label       htmlContent;
     private Label       label;
     private String      hash;
+    private WicketBuildContext ctx;
+    private boolean visibleMode = true;
 
     @Override
     public void renderHead(IHeaderResponse response) {
@@ -58,6 +62,7 @@ public class PortletRichTextPanel extends Panel implements Loggable {
             params.put("hiddenInput", hiddenInput.getMarkupId());
             params.put("hash", hash);
             params.put("html", richTextNewTabHtml().retrieveHtml());
+            params.put("isEnabled", String.valueOf(visibleMode));
             packageTextTemplate.interpolate(params);
             response.render(JavaScriptHeaderItem.forScript(packageTextTemplate.getString(), hash));
         } catch (IOException e) {
@@ -71,7 +76,31 @@ public class PortletRichTextPanel extends Panel implements Loggable {
 
     public PortletRichTextPanel(String id, WicketBuildContext ctx) {
         super(id);
+        this.ctx = ctx;
         hash = RandomStringUtils.random(10, true, false);
+
+    }
+
+    public WebMarkupContainer configureLabelButton(){
+        IModel<String> buttonMsg = new Model<>();
+        WebMarkupContainer containerLabel = new WebMarkupContainer("containerLabel");
+        Label labelMsg = new Label("buttonMsg", buttonMsg);
+        WebMarkupContainer iconeClass = new WebMarkupContainer("iconeClass");
+        if(visibleMode) {
+            buttonMsg.setObject("Editar");
+            iconeClass.add(new AttributeAppender("class", DefaultIcons.PENCIL));
+        } else {
+            buttonMsg.setObject("Visualizar");
+            iconeClass.add(new AttributeAppender("class", DefaultIcons.EYE));
+        }
+        containerLabel.add(iconeClass);
+        containerLabel.add(labelMsg);
+        return containerLabel;
+    }
+
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
         build(ctx);
         addBehaviours();
     }
@@ -88,14 +117,27 @@ public class PortletRichTextPanel extends Panel implements Loggable {
         add(label);
         add(htmlContent);
         add(hiddenInput);
-        add(new Button("button") {
-            @Override
-            protected String getOnClickScript() {
-                return "openNewTabWithCKEditor" + hash + "();";
-            }
-        });
+        Button buttonEditar = createButtonOpenEditor();
+        buttonEditar.add(configureLabelButton());
+        add(buttonEditar);
 
         htmlContent.setEscapeModelStrings(false);
     }
 
+    private Button createButtonOpenEditor() {
+        return new Button("button") {
+            @Override
+            protected String getOnClickScript() {
+                return "openNewTabWithCKEditor" + hash + "();";
+            }
+        };
+    }
+
+    public boolean isVisibleMode() {
+        return visibleMode;
+    }
+
+    public void setVisibleMode(boolean visibleMode) {
+        this.visibleMode = visibleMode;
+    }
 }

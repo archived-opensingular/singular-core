@@ -53,27 +53,28 @@
     <dependency>
       <groupId>org.opensingular</groupId>
       <artifactId>singular-commons</artifactId>
-      <version>${singular.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.opensingular</groupId>
+      <artifactId>singular-form-core</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.apache.wicket</groupId>
       <artifactId>wicket-core</artifactId>
-      <version>${wicket.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.wicket</groupId>
       <artifactId>wicket-extensions</artifactId>
-      <version>${wicket.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.wicketstuff</groupId>
       <artifactId>wicketstuff-annotation</artifactId>
-      <version>${wicket.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.springframework</groupId>
@@ -85,26 +86,17 @@
     <dependency>
       <groupId>de.alpharogroup</groupId>
       <artifactId>wicket-toastr</artifactId>
-      <version>${wicket.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <!-- USED IN TESTS -->
     <dependency>
       <groupId>org.opensingular</groupId>
       <artifactId>singular-commons-test</artifactId>
-      <version>${singular.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.12</version>
       <scope>compile</scope>
     </dependency>
 

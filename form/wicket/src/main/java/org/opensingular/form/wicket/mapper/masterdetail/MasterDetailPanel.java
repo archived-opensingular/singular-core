@@ -283,7 +283,7 @@ public class MasterDetailPanel extends Panel {
         WicketBuildContext ctx,
         ViewMode vm,
         SViewListByMasterDetail view) {
-        builder.appendActionColumn($m.ofValue("Ações"), ac -> {
+        builder.appendActionColumn($m.ofValue(view.getActionColumnLabel()), ac -> {
             ac.appendAction(buildViewOrEditActionConfig(vm, view), buildViewOrEditAction(modal, ctx));
             if (vm.isEdition()) {
                 ac.appendAction(buildRemoveActionConfig(view), buildRemoveAction(model, ctx));

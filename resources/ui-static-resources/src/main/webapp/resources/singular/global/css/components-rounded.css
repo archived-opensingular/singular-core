@@ -7,7 +7,7 @@ General reset
 ***/
 /* Set default body */
 body {
-  color: #333333;
+  color: #34495e;
   font-family: "Open Sans", sans-serif;
   padding: 0px !important;
   margin: 0px !important;
@@ -882,7 +882,7 @@ h6.block {
 /* Links */
 a {
   text-shadow: none;
-  color: #337ab7; }
+  color: #40BAA7; }
   a:focus, a:hover, a:active {
     outline: 0; }
 
@@ -12811,11 +12811,11 @@ Custimized Bootstrap Wells
     color: #fff;
     border: 1px solid #ebf0f6;
     padding: 3px 10px;
-    background: #337ab7; }
+    background: #40BAA7; }
     .widget-media .widget-btn-blue .widget-btn-icon {
       line-height: 1.5; }
     .widget-media .widget-btn-blue:hover {
-      color: #337ab7;
+      color: #40BAA7;
       background: #fff;
       text-decoration: none; }
   .widget-media .widget-media-body {

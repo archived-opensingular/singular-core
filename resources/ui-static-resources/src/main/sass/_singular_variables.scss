@@ -1,0 +1,257 @@
+//Component colors
+
+$color-primary: #40BAA7; // altera a cor básica do layout
+$color-primary-bg: #FDFDFD;
+$color-button: #65697C;
+$color-text: #65697C;
+$color-background-button: #D5D9E3;
+
+$color-success-green: #5AB879;
+
+$color-grey-01: darken(#FAFBFC, 5%);
+$color-grey-03: darken(#BBBFCD, 5%); // altera as cores dos itens apresentados na listagem
+
+$color-grey-05: hsl(0, 0, 50%);
+$color-grey-07: hsl(0, 0, 75%);
+$color-grey-09: darken(#3B3F51, 5%);
+
+$color-gray-default: #65697c;
+
+$gray-base: darken(#34495E, 20%);
+$gray-dark: lighten($gray-base, 20%);
+$gray: lighten($gray-base, 33.5%);
+$gray-light: lighten($gray-base, 46.7%);
+
+$brand-primary: $color-primary; // altera a cor do nome da empresa abaixo do login
+$brand-success: lighten(#32c5d2, 1%); // altera a contagem de caracteres no formulário
+$brand-info: lighten(#5893dd, 3%);
+$brand-warning: #F1C40F;
+$brand-danger: lighten(#eb5d68, 3%); // altera as cores dos itens vermelhos
+
+
+//Form component colors
+
+$input-focus-color: $color-primary; // altera a cor em volta do campo de input quando ele tem o foco
+$color-background-cancel-button: #EDEFF3; // altera a cor do botão para cancelar form
+
+
+//Form list tables
+
+$list-element-font-color: #a4a4a4; // altera a cor da fonte dos itens das tabelas do form
+$list-element-font-color-on-hover: #4a4a4a; // altera a cor da letra ao passar o mouse sobre os itens da tabela do form
+$table-line-color: #dfdfdf; // altera a cor da linha das tabelas do form
+$table-head-font-color: rgba(74, 74, 74, 0.7); // altera cor da fonte da linha de titulo das tabelas do form
+$table-empty-message-font-color: rgba(74, 74, 74, 0.7); // altera a cor da fonte da mensagem de tabela vazia no form
+
+
+//Worklist table
+
+$worklist-table-head-font-color: rgba(74, 74, 74, 0.7); // altera a cor da fonte da linha de titulos da tabela de listagem
+$worklist-table-head-font-color-on-hover: rgba(77, 77, 77, 1); // altera a cor da fonte da linha de titulos da tabela de listagem ao passar o mouse
+$worklist-element-font-color: $color-grey-03; // altera a cor da fonte dos itens da tabela de listagem e do titulo da coluna "Ações"
+$worklist-element-font-color-on-hover: rgba(102, 102, 102, 1); // altera a cor da fonte dos itens da tabela de listagem ao passar o mouse
+$worklist-element-bg-color-on-hover: rgba(242, 242, 242, 1); // altera a cor do fundo dos itens da tabela de listagem ao passar o mouse
+$worklist-table-line-color: $color-grey-03; // altera a cor da linha após o título da tabela de listagem
+$worklist-action-btn-color: rgba(179, 179, 179, 1); // altera a cor dos botões dos itens da listagem
+$worklist-action-btn-color-on-hover: rgba(128, 128, 128, 1); // altera a cor dos botões dos itens da listagem ao passar o mouse
+
+
+//Others variables
+
+$table-striped-bg-color: $color-primary-bg;
+$table-hover-color: rgba(74, 74, 74, 0.08);
+$brand-logo-url: "/singular-static/resources/singular/img/logo/logo_singular.png";
+$brand-logo-width: 200px;
+$brand-logo-height: 49px;
+$page-header-border-top: 0px solid $color-primary; // altera a borda superior da tela, configurando sua cor e espessura
+
+
+// Theme Colors Settings
+
+// Main settings
+$theme-name:                                                    		"default";
+$brand-main-color:                                               		$color-primary;
+$brand-main-font-color:													#ffffff;
+
+// Body and header
+$bg-color:                                                         		#e8e9f0; // altera a cor do fundo da página
+$header-bg-color:														#FFFFFF; // altera a cor do fundo do cabeçalho
+$header-top-shadow:                                                     0px 1px 10px 0px rgba(50, 50, 50, 0.2);
+$header-mobile-menu-border:                                             lighten($header-bg-color, 3%);
+
+// Header search
+$header-search-bg-color:                                        		$header-bg-color;
+$header-search-font-color:                                      		lighten($header-bg-color, 25%);
+$header-search-placeholder-font-color:                          		darken($header-search-font-color, 1%);
+
+// Sidebar toggler
+$header-toggler-img:                                                   'sidebar-toggle-light.png';
+
+// Toast messages
+$toast-success-color: #1BBC9B; // altera a cor da mensagem de sucesso
+$toast-info-color: #5C9BD1;
+$toast-error-color: #E35B5A; // altera a cor da mensagem de erro
+$toast-warning-color: #F7CA18;
+$toast-message-color: #FAFAFA;
+
+// Top menu
+$header-top-menu-bg-hover-color:                                		lighten($header-bg-color, 2%);
+$header-top-menu-bg-hover-color-on-dropdown-open:               		lighten($header-bg-color, 2%);
+$header-top-menu-badge-bg-color:                                		$brand-main-color;
+$header-top-menu-badge-font-color:                              		lighten($header-bg-color, 15%);
+$header-top-menu-icon-font-color:                               		lighten($header-bg-color, 25%);
+
+// Top menu user bar
+$header-top-menu-user-font-color:                                       $color-primary; // altera a cor do nome do usuário
+$header-top-menu-user-bg-color:                                 		none;
+
+//begin: Top Menu Extended Dropdowns
+$header-top-menu-extended-separator-bg-color: 							darken(#f8f9fa, 5%);
+$header-top-menu-extended-dropdown-item-bg-color-on-hover:              #f8f9fa;
+$header-top-menu-extended-dropdown-item-border-color:                   #EFF2F6;
+$header-top-menu-extended-dropdown-item-font-color:						#888888;
+
+$header-top-menu-extended-dropdown-header-bg-color:						darken($bg-color, 2%);
+$header-top-menu-extended-dropdown-border-color:                        darken($header-top-menu-extended-dropdown-header-bg-color, 2%);
+$header-top-menu-extended-dropdown-header-font-color:					darken(#6f949c, 5%);
+
+$header-top-menu-inbox-dropdown-from-font-color:						#5b9bd1;
+
+$header-top-menu-task-dropdown-progress-bg-color:						#dfe2e9;
+
+$header-top-menu-notification-time-bg-color:							lighten(#eee, 1%);
+
+// Top Menu Notifications
+$header-hor-menu-bg-color:                                              lighten($header-bg-color, 3%);
+$header-top-menu-dropdown-dark-bg-color: 								lighten($header-hor-menu-bg-color, 10%);
+$header-top-menu-dropdown-dark-header-bg-color:							lighten($header-hor-menu-bg-color, 2%);
+$header-top-menu-dropdown-dark-header-font-color:						lighten($header-top-menu-dropdown-dark-header-bg-color, 50%);
+
+$header-top-menu-dropdown-dark-item-font-color:							lighten($header-top-menu-dropdown-dark-header-bg-color, 55%);
+$header-top-menu-dropdown-dark-item-border-color:						lighten($header-top-menu-dropdown-dark-bg-color, 6%);
+$header-top-menu-dropdown-dark-item-icon-color:							lighten($header-top-menu-dropdown-dark-header-bg-color, 45%);
+$header-top-menu-dropdown-dark-item-bg-color-on-hover:					lighten($header-top-menu-dropdown-dark-bg-color, 4%);
+
+$header-top-menu-dropdown-dark-default-menu-divider:					$header-top-menu-dropdown-dark-item-border-color;
+$header-top-menu-dropdown-dark-notification-time-bg-color:				darken($header-top-menu-dropdown-dark-bg-color, 5%);
+//end: Top Menu Extended Dropdowns
+
+// Top menu dropdown
+$header-top-menu-dropdown-head-bg-color:                                lighten(#3D4A53, 35%);
+$header-top-menu-dropdown-head-font-color:                              lighten(#3D4A53, 95%);
+$header-top-menu-dropdown-border-color:                                 lighten(#3D4A53, 60%);
+
+// Sidebar menu
+$sidebar-bg-color:                                                      #ffffff; // altera o fundo do menu
+
+$sidebar-menu-heading-font-color:                                       $brand-main-color; // altera a cor da barrinha ao lado do item principal do menu
+
+$sidebar-menu-link-font-color:                                  		darken(#768DA2, 5%); // altera a cor da fonte dos subitens do menu não selecionados
+$sidebar-menu-link-font-color-on-hover:                         		$brand-main-color; // altera a cor da fonte do subitem selecionado do menu
+$sidebar-menu-link-font-color-on-active:                        		$brand-main-color; // altera a cor da fonte do item principal do menu
+
+$sidebar-menu-link-icon-font-color:                             		darken(#768DA2, 5%); // altera a cor dos ícones dos subitens do menu não selecionados
+$sidebar-menu-link-icon-font-color-on-active:                   		$brand-main-color; // altera a cor dos ícones do item principal do menu
+$sidebar-menu-link-icon-font-color-on-hover:                            $brand-main-color; // altera a cor dos ícones do subitem selecionado do menu
+
+$sidebar-menu-link-bg-color-on-hover:                           		darken(#f9fbfc, 2%); // altera o fundo dos subitens de menu
+$sidebar-menu-link-bg-color-on-active:                          		darken(#f9fbfc, 2%); // altera o fundo do item principal de menu
+
+$sidebar-menu-arrow-color:                                      		lighten($sidebar-menu-link-icon-font-color, 3%);
+$sidebar-menu-arrow-color-on-active:                            		lighten($sidebar-menu-link-icon-font-color-on-active, 3%);
+$sidebar-menu-arrow-color-on-hover:                                     lighten($sidebar-menu-link-icon-font-color-on-hover, 3%);
+
+$sidebar-menu-sub-menu-link-font-color:                         		$sidebar-menu-link-font-color;
+$sidebar-menu-sub-menu-link-icon-font-color:                    		$sidebar-menu-link-icon-font-color;
+
+$sidebar-menu-sub-menu-link-bg-color-on-hover:                  		$sidebar-menu-link-bg-color-on-hover;
+$sidebar-menu-sub-menu-link-font-color-on-hover:                  		$sidebar-menu-link-font-color-on-hover;
+$sidebar-menu-sub-menu-link-icon-font-color-on-hover:                   $sidebar-menu-link-icon-font-color-on-hover;
+
+$sidebar-menu-sub-menu-box-shadow-color:                                darken($sidebar-menu-link-bg-color-on-hover, 30%);
+$sidebar-menu-hover-sub-menu-bg-color:									#FFFFFF;
+
+// Sidebar for mobile
+$mobile-sidebar-menu-bg-color:                           				darken($bg-color, 7%);
+$mobile-sidebar-menu-link-bg-color-on-hover:             				darken($bg-color, 4%);
+
+// Footer
+$footer-fluid-font-color:                                               #69789E;
+$footer-default-font-color:                                     		#69789E;
+$footer-default-go-top-bg-color:                                		darken(#94A0B2, 10%);
+$footer-default-go-top-icon-font-color:                          		lighten(#94A0B2, 40%);
+$footer-fixed-bg-color: 												$bg-color;
+
+
+// Define layout element width and height.
+
+// Header
+$header-height:             				            				70px; // header height on table and desktop view. default: 42px
+$header-height-xs:             											($header-height * 2); // header height on mobile view
+$header-height-mobile:                                                  46px;
+
+$header-logo-height:                                    				17px;
+$header-menu-toggler-width:                             				20px;
+$header-menu-toggler-height:                             				14px;
+$header-sidebar-toggler-margin:                         				($header-height - $header-menu-toggler-height - 1px) / 2 0 0 0;
+$header-responsive-toggler-margin:                      				($header-height - $header-menu-toggler-height) / 2 14px 0 6px;
+$header-logo-margin:                                					($header-height - $header-logo-height) / 2 10px 0 10px;  // adjsut logo's margin top. default: -1px
+
+$header-page-actions-margin:                                            17px 0 15px 10px;
+
+$header-top-menu-general-item-padding:      							29px 12px 24px 12px;   // adjust top menu general elements padding. default: 15px 10px 7px 10px
+$header-top-menu-general-item-padding-on-mobile:       					29px 8px 25px 8px;  // adjust top menu general elements padding mobile. default: 15px 10px 7px 10px
+
+$header-top-menu-user-item-padding:         							25px 10px 18px 10px; // adjust top menu user bar element padding. default: 6px 0px 6px 6px
+$header-top-menu-user-item-padding-on-mobile:         					25px 6px 18px 6px;  // adjust top menu user bar element padding on mobile. default: 6px 0px 6px 4px
+$header-top-menu-language-item-padding:     							28px 12px 26px 12px;  // adjust top menu language bar element padding. default: 11px 1px 11px 5px
+$header-top-menu-language-item-padding-on-mobile:						28px 6px 26px 6px;  // adjust top menu language bar element padding. default: 11px 0px 11px 4px
+$header-top-menu-general-item-badge-top:                				24px;  // adjust top menu general elements badge top position. default: 8px
+$header-top-menu-icon-font-size:                                        16px;
+
+$header-top-menu-user-font-size:                                        14px;
+$header-top-menu-user-font-weight:                                      600;
+$header-top-menu-user-dropdown-link-font-size:                          14px;
+$header-top-menu-user-dropdown-link-font-weight:                        300;
+
+$header-hor-menu-general-item-padding:     								13px 10px;  // adjust hor menu elements padding top. default: 11px 10px
+$header-hor-menu-submenu-item-padding: 				 					9px 10px;  // adjust hor menu elements padding top. default: 7px 10px
+$header-hor-menu-submenu-item-arrow-top:                				9px;  // adjust hor menu dropdown menu's arrow. default: 9px
+$header-hor-menu-search-toggler-button-padding:      					15px 22px 15px 22px;  // adjust hor menu elements padding top. default: 13px 22px 11px 22px
+$header-hor-menu-search-button-padding:     		 					7px 20px;  // adjust hor menu elements padding top. default: 5px 20px
+$header-hor-menu-search-input-margin:    			 					7px 0 0 0;  // adjust hor menu elements padding top. default: 5px 0 0 0
+
+// Horizontal menu font
+$header-hor-menu-default-link-font-size:                                14px;
+$header-hor-menu-default-link-font-weight:                              normal;
+$header-hor-menu-dropdown-menu-link-font-size:                          14px;
+$header-hor-menu-dropdown-menu-link-font-weight:                        normal;
+$header-hor-menu-mega-menu-header-font-size:                            15px;
+$header-hor-menu-mega-menu-header-font-weight:                          normal;
+
+// Sidebar
+$sidebar-width:             											235px; // sidebar width. default:235px
+$sidebar-collapsed-width:   											54px ; // minimized/collapsed sidebar width. default:35px
+$sidebar-collapsed-submenu-width-on-hover:								($sidebar-width - 1); // sub menu width displayed on hover in collapsed sidebar mode. default:210px
+$sidebar-logo-container-width:  										($sidebar-width + 30); // logo container width. Normally same with sidebar-width.
+$sidebar-logo-container-width-xs: 										110px; // logo container width in mobile portrait view. default:110px.
+$sidebar-logo-container-width-xxs: 										100px; // logo container width in mobile landspace view. default:100px.
+
+$sidebar-menu-link-font-size:                                           14px;
+$sidebar-menu-link-font-weight:                                         400;
+$sidebar-menu-link-icon-font-size:                                      18px;
+$sidebar-menu-link-arrow-font-size:                                     13px;
+$sidebar-menu-sub-menu-link-icon-font-size:                             16px;
+
+// Page content
+$page-content-min-height:                   							600px; // default page content's min height. default:600px.
+
+// Quick Sidebar
+$quick-sidebar-width:                                                   320px;  // quick sidebar width. default: 245px;
+$quick-sidebar-tab-item-padding:										15px 15px;       // quick sidebar item padding. default: 15px 15px;
+
+$quick-sidebar-bg-color:												#21282e;
+$quick-sidebar-font-color:												lighten($quick-sidebar-bg-color, 40%);
+
+// Page footer
+$page-footer-height:                                                    33px;

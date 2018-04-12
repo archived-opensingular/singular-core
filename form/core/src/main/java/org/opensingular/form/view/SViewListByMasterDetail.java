@@ -16,13 +16,18 @@
 
 package org.opensingular.form.view;
 
-public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<SViewListByMasterDetail> {
+import org.opensingular.form.enums.ModalSize;
+
+public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<SViewListByMasterDetail>
+        implements ConfigurableModal<SViewListByMasterDetail> {
 
     private boolean editEnabled = true;
     private String newActionLabel = "Adicionar";
 
     private String editActionLabel = "Atualizar";
-    private String modalSize = "NORMAL";
+    private ModalSize modalSize;
+
+    private String actionColumnLabel = "Ações";
 
     public SViewListByMasterDetail disableEdit() {
         this.editEnabled = false;
@@ -32,7 +37,12 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
     public boolean isEditEnabled() {
         return editEnabled;
     }
-    
+
+    public SViewListByMasterDetail withActionColumnLabel(String actionColumnLabel) {
+        this.actionColumnLabel = actionColumnLabel;
+        return this;
+    }
+
     public SViewListByMasterDetail withNewActionLabel(String actionLabel) {
         this.newActionLabel = actionLabel;
         return this;
@@ -51,32 +61,17 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
         return editActionLabel;
     }
 
-    public String getModalSize() {
+    public String getActionColumnLabel() {
+        return actionColumnLabel;
+    }
+
+    @Override
+    public ModalSize getModalSize() {
         return modalSize;
     }
 
-    public SViewListByMasterDetail largeSize(){
-        modalSize = "LARGE";
-        return this;
-    }
-
-    public SViewListByMasterDetail autoSize(){
-        modalSize = "FIT";
-        return this;
-    }
-
-    public SViewListByMasterDetail smallSize(){
-        modalSize = "SMALL";
-        return this;
-    }
-
-    public SViewListByMasterDetail mediumSize(){
-        modalSize = "NORMAL";
-        return this;
-    }
-
-    public SViewListByMasterDetail fullSize(){
-        modalSize = "FULL";
-        return this;
+    @Override
+    public void setModalSize(ModalSize size) {
+        this.modalSize = size;
     }
 }

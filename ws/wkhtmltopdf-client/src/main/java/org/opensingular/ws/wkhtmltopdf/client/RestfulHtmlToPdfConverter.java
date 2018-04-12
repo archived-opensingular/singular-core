@@ -23,6 +23,7 @@ import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.commons.dto.HtmlToPdfDTO;
 import org.opensingular.lib.commons.pdf.HtmlToPdfConverter;
 import org.opensingular.ws.wkhtmltopdf.constains.HtmlToPdfConstants;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -48,12 +49,18 @@ import java.util.UUID;
  */
 public class RestfulHtmlToPdfConverter implements HtmlToPdfConverter {
 
+    public static final String ENDPOINT_WS_WKHTMLTOPDF_DEFAULT_VALUE = "http://localhost:8080/wkhtmltopdf-ws";
     private final String endpoint;
 
     public static RestfulHtmlToPdfConverter createUsingDefaultConfig() {
-        String baseURL = SingularProperties.get(HtmlToPdfConstants.ENDPOINT_WS_WKHTMLTOPDF);
+        return new RestfulHtmlToPdfConverter(getEndpointDefault());
+    }
+
+    public static String getEndpointDefault() {
+        String baseURL = SingularProperties.get(HtmlToPdfConstants.ENDPOINT_WS_WKHTMLTOPDF, ENDPOINT_WS_WKHTMLTOPDF_DEFAULT_VALUE);
+        LoggerFactory.getLogger(RestfulHtmlToPdfConverter.class).warn("Singular property {} not set! Defaulting to {} ", HtmlToPdfConstants.ENDPOINT_WS_WKHTMLTOPDF, ENDPOINT_WS_WKHTMLTOPDF_DEFAULT_VALUE);
         String context = HtmlToPdfConstants.CONVERT_HTML_TO_PDF_PATH;
-        return new RestfulHtmlToPdfConverter(baseURL + context);
+        return baseURL + context;
     }
 
     public RestfulHtmlToPdfConverter(String endpoint) {

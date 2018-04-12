@@ -17,22 +17,18 @@
 		<dependency>
 			<groupId>org.opensingular</groupId>
 			<artifactId>singular-form-core</artifactId>
-			<version>${singular.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opensingular</groupId>
 			<artifactId>singular-flow-core</artifactId>
-			<version>${singular.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opensingular</groupId>
 			<artifactId>singular-support</artifactId>
-			<version>${singular.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opensingular</groupId>
 			<artifactId>singular-commons-test</artifactId>
-			<version>${singular.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
