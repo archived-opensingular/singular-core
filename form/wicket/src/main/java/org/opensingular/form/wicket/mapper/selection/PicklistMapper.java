@@ -16,20 +16,17 @@
 
 package org.opensingular.form.wicket.mapper.selection;
 
-import org.opensingular.form.SInstance;
-import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.apache.wicket.Component;
-import org.apache.wicket.model.IModel;
-
-import java.io.Serializable;
-import java.util.List;
+import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.model.ReadOnlyModelValue;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 @SuppressWarnings("serial")
 public class PicklistMapper extends MultipleSelectMapper {
 
     @Override
-    protected Component formGroupAppender(BSControls formGroup, IModel<? extends SInstance> model, IModel<List<Serializable>> valuesModel) {
-        return formGroup.appendPicklist(retrieveChoices(model, valuesModel));
+    protected Component appendFormGroup(BSControls formGroup, WicketBuildContext ctx) {
+        return formGroup.appendPicklist(retrieveChoices(ctx.getModel(), new ReadOnlyModelValue(ctx.getModel())));
     }
 
 }

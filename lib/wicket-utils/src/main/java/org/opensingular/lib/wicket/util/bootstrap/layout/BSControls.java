@@ -77,8 +77,12 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         return this;
     }
 
+    public BSControls appendCheckboxChoice(Component checkbox, boolean inline) {
+        return super.appendTag("div", true, inline ? "class='checkbox-inline'" : "class='checkbox-list'", checkbox);
+    }
+
     public BSControls appendCheckboxChoice(Component checkbox) {
-        return super.appendTag("div", true, "class='checkbox-list'", checkbox);
+        return this.appendCheckboxChoice(checkbox, false);
     }
 
     public BSControls appendLabel(Component label) {

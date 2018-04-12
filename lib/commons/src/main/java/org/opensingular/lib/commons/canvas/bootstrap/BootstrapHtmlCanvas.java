@@ -35,7 +35,7 @@ public class BootstrapHtmlCanvas extends HtmlCanvas {
         getRootHtmlBuilder()
                 .newChild("link")
                 .putAttribute("rel", "stylesheet")
-                .putAttribute("href", "http://localhost:8080/wkhtmltopdf-ws/resources/bootstrap/3.3.7/bootstrap.min.css")
+                .putAttribute("href", "http://localhost:8080/wkhtmltopdf-ws/resources/bootstrap/3.3.7/bootstrap.css")
                 .putAttribute("crossorigin", "anonymous");
         setcurrentHtmlBuilder(getRootHtmlBuilder().newChild("div").putAttribute("class", "container"));
 
