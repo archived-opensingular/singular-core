@@ -16,6 +16,11 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
@@ -44,16 +49,12 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
 import org.opensingular.lib.wicket.util.output.BOutputPanel;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public abstract class AbstractControlsFieldComponentMapper implements IWicketComponentMapper, ISInstanceActionCapable {
 
-    final static HintKey<Boolean> NO_DECORATION = new HintKey<Boolean>() {
+    public final static HintKey<Boolean> NO_DECORATION = new HintKey<Boolean>() {
         @Override
         public Boolean getDefaultValue() {
             return Boolean.FALSE;

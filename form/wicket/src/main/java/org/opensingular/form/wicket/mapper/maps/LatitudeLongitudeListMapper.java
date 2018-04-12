@@ -20,6 +20,7 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.string.StringValue;
 import org.opensingular.form.SIComposite;
@@ -28,9 +29,12 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.type.util.STypeLatitudeLongitudeList;
 import org.opensingular.form.view.FileEventListener;
+import org.opensingular.form.view.SView;
 import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import org.opensingular.form.wicket.mapper.TableListMapper;
 import org.opensingular.form.wicket.mapper.attachment.single.FileUploadPanel;
+import org.opensingular.form.wicket.mapper.buttons.AddButton;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
@@ -42,6 +46,11 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 
 public class LatitudeLongitudeListMapper extends TableListMapper {
 
+    private WicketBuildContext pointsCtx;
+    @Override
+    protected void behaviorAfterRemoveButtonClick(AjaxRequestTarget target) {
+        target.add(pointsCtx.getParent().getContainer());
+    }
 
     @Override
     public void buildView(WicketBuildContext ctx) {
@@ -64,10 +73,17 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
         BSGrid gridGoogleMaps = ctx.getContainer().newGrid();
         gridGoogleMaps.newFormGroup().appendDiv(googleMapsPanel);
 
-        SInstanceFieldModel<SInstance> points = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeList.FIELD_POINTS);
-        WicketBuildContext pointsCtx = ctx.createChild(gridGoogleMaps, ctx.getExternalContainer(), points);
-        pointsCtx.build();
 
+        IModel<SIList<SInstance>> points = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeList.FIELD_POINTS);
+        ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, Boolean.TRUE);
+        pointsCtx = ctx.createChild(gridGoogleMaps, ctx.getExternalContainer(), points);
+        ctx.getContainer().newFormGroup().appendDiv(googleMapsPanel);
+
+        SView viewPoints = points.getObject().getType().getSuperType().getView();
+        pointsCtx.setView(viewPoints);
+        ctx.getContainer().appendComponent((String id) -> buildPanel(pointsCtx, id));
+
+        confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
         SInstanceFieldModel<SInstance> file = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeList.FIELD_FILE);
         WicketBuildContext fileCtx = ctx.createChild(ctx.getContainer().newGrid(), ctx.getExternalContainer(), file);
         fileCtx.build();
@@ -80,11 +96,11 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                 }));
 
 
-        AbstractDefaultAjaxBehavior addPoint = createBehaviorAddPoint(points, pointsCtx.getContainer());
+        AbstractDefaultAjaxBehavior addPoint = createBehaviorAddPoint(points, ctx.getContainer());
         ctx.getContainer().add(addPoint);
-        googleMapsPanel.add($b.onConfigure(c -> googleMapsPanel.enableMultipleMarkers(addPoint.getCallbackUrl().toString(), pointsCtx.getContainer().getMarkupId())));
+        googleMapsPanel.add($b.onConfigure(c -> googleMapsPanel.enableMultipleMarkers(addPoint.getCallbackUrl().toString(), ctx.getContainer().getMarkupId())));
 
-        WicketUtils.findFirstChild(pointsCtx.getContainer(), AddButton.class)
+        WicketUtils.findFirstChild(ctx.getContainer(), AddButton.class)
                 .ifPresent(button -> button.add(new AjaxEventBehavior("click") {
                     @Override
                     protected void onEvent(AjaxRequestTarget target) {
@@ -93,17 +109,15 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                 }));
 
 
-        ConfirmationModal confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
         confirmationModal.registerListener(googleMapsPanel::updateJS);
-
-
     }
 
-    private AbstractDefaultAjaxBehavior createBehaviorAddPoint(final SInstanceFieldModel<SInstance> points, BSContainer<?> container) {
+
+    private AbstractDefaultAjaxBehavior createBehaviorAddPoint(final IModel<SIList<SInstance>> points, BSContainer<?> container) {
         return new AbstractDefaultAjaxBehavior() {
             @Override
             protected void respond(AjaxRequestTarget target) {
-                SIList list = (SIList) points.getObject();
+                SIList list = points.getObject();
                 SIComposite sInstance = (SIComposite) list.addNew();
                 StringValue lat = RequestCycle.get().getRequest().getRequestParameters().getParameterValue("lat");
                 StringValue lng = RequestCycle.get().getRequest().getRequestParameters().getParameterValue("lng");
