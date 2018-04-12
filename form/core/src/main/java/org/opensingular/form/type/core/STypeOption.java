@@ -52,25 +52,17 @@ public class STypeOption<I extends SInstance> extends STypeComposite<SIOption<I>
         this.description = addFieldString(FIELD_DESCRIPTION);
     }
 
-    public <ST extends SType<I>, SIL extends STypeList<ST, I>> STypeOption<I> withSelectionFromOptionProvider(
-        SIL optionsListField,
+    public <STL extends STypeList<ST, I>, ST extends SType<I>> STypeOption<I> withSelectionFromOptionProvider(
+        STL optionsListField,
         Function<I, String> displayFunction) {
 
+        asAtr().dependsOnAllDescendants(optionsListField);
+        
         Function<SIOption<I>, Collection<I>> optionsFunc = it -> it.findNearest(optionsListField)
             .map(li -> li.stream().collect(toList()))
             .orElseGet(ArrayList::new);
 
-        return withSelectionFromOptionProvider(optionsListField, optionsFunc, displayFunction);
-    }
-
-    public <ST extends SType<I>, SIL extends STypeList<ST, I>> STypeOption<I> withSelectionFromOptionProvider(
-        SIL optionsListField,
-        Function<SIOption<I>, Collection<I>> optionsFunction,
-        Function<I, String> displayFunction) {
-
-        this.asAtr().dependsOnAllDescendants(optionsListField);
-
-        return withSelectionFromOptionProvider(optionsFunction, displayFunction);
+        return withSelectionFromOptionProvider(optionsFunc, displayFunction);
     }
 
     public <ST extends SType<I>, SIL extends STypeList<ST, I>> STypeOption<I> withSelectionFromOptionProvider(

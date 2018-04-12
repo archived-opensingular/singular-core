@@ -16,12 +16,6 @@
 
 package org.opensingular.form;
 
-import com.google.common.base.Joiner;
-import org.assertj.core.util.Lists;
-import org.opensingular.form.internal.PathReader;
-import org.opensingular.form.util.transformer.Value;
-
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,6 +26,11 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+
+import org.opensingular.form.internal.PathReader;
+import org.opensingular.form.util.transformer.Value;
 
 public class SIList<E extends SInstance> extends SInstance implements Iterable<E>, ICompositeInstance {
 
@@ -45,7 +44,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     @SuppressWarnings("unchecked")
     static <I extends SInstance> SIList<I> of(SType<I> elementsType) {
         SDictionary dictionary = elementsType.getDictionary();
-        STypeList type = dictionary.getType(STypeList.class);
+        STypeList<?, ?> type = dictionary.getType(STypeList.class);
         SIList<I> list = (SIList<I>) type.newInstance();
         list.elementsType = elementsType;
         return list;
@@ -178,6 +177,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
             values.add(index, instance);
         }
         instance.setParent(this);
+        invokeUpdateListeners();
         return instance;
     }
 
@@ -250,7 +250,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
             list.getValue().clear();
         } else if (obj instanceof List) {
             clearInstance();
-            ((List) obj).stream().forEach(o -> addValue(o));
+            ((List<?>) obj).stream().forEach(o -> addValue(o));
         } else {
             throw new SingularFormException("SList só suporta valores de mesmo tipo da lista", this);
         }
@@ -293,7 +293,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     private void invokeUpdateListeners(){
-        for (SType type : this.getType().getDependentTypes()){
+        for (SType<?> type : this.getType().getDependentTypes()){
             SInstance dependentInstance = (SInstance) this.findNearest(type).orElse(null);
             if (dependentInstance != null && dependentInstance.asAtr().getUpdateListener() != null){
                 dependentInstance.asAtr().getUpdateListener().accept(dependentInstance);
@@ -337,6 +337,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         return getValues();
     }
 
+    @Override
     public void forEach(@Nonnull Consumer<? super E> action) {
         getChildren().forEach(action);
     }

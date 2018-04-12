@@ -198,13 +198,13 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
             header.add($b.classAppender("list-icons"));
 
             if ((view != null) && (view.isInsertEnabled()) && ctx.getViewMode().isEdition()) {
-                appendInserirButton(this, form, item, btnGrid.newColInRow()).add($b.classAppender("pull-right"));
+                appendInserirButton(this, form, ctx, item, btnGrid.newColInRow()).add($b.classAppender("pull-right"));
             }
 
             final BSCol btnCell = btnGrid.newColInRow();
 
             if (ctx.getViewMode().isEdition()) {
-                appendRemoverIconButton(this, form, item, btnCell, confirmationModal, view)
+                appendRemoverIconButton(this, form, ctx, item, btnCell, confirmationModal, view)
                         .add($b.classAppender("pull-right"));
             }
 
@@ -217,9 +217,9 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
         }
     }
 
-    protected static RemoverButton appendRemoverIconButton(ElementsView elementsView, Form<?> form, Item<SInstance> item,
+    protected static RemoverButton appendRemoverIconButton(ElementsView elementsView, Form<?> form, WicketBuildContext ctx, Item<SInstance> item,
                                                            BSContainer<?> cell, ConfirmationModal confirmationModal, SViewListByForm view) {
-        final RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item, confirmationModal);
+        final RemoverButton btn = new RemoverButton("_remover_", form, ctx, elementsView, item, confirmationModal);
         cell
                 .newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + DefaultIcons.REMOVE + "' />")
                 .add(btn);

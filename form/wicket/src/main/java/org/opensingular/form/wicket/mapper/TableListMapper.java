@@ -16,12 +16,19 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import static org.opensingular.form.wicket.mapper.components.MetronicPanel.*;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -59,15 +66,6 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTDataCell;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTSection;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.opensingular.form.wicket.mapper.components.MetronicPanel.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 public class TableListMapper extends AbstractListMapper implements ISInstanceActionCapable {
 
@@ -293,7 +291,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             if (viewListByTable.isInsertEnabled() && ctx.getViewMode().isEdition()) {
                 final BSTDataCell actionColumn = row.newCol();
                 actionColumn.add($b.attrAppender("style", "width:20px", ";"));
-                appendInserirButton(this, form, item, actionColumn);
+                appendInserirButton(this, form, ctx, item, actionColumn);
             }
 
             if ((instance instanceof SIComposite) && viewListByTable.isRenderCompositeFieldsAsColumns()) {
@@ -311,7 +309,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             if (ctx.getViewMode().isEdition()) {
                 final BSTDataCell actionColumn = row.newCol();
                 actionColumn.add($b.attrAppender("style", "width:20px", ";"));
-                appendRemoverButton(this, form, item, actionColumn, confirmationModal, viewListByTable);
+                appendRemoverButton(this, form, ctx, item, actionColumn, confirmationModal, viewListByTable);
             }
 
             item.add(row);
@@ -364,15 +362,13 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                     protected void buildHeading(BSContainer<?> heading, Form<?> form) {
                         buildHeading.accept(heading, form);
                     }
-
-                    @Override
-                    protected void buildFooter(BSContainer<?> footer, Form<?> form) {
-                        buildFooter.accept(footer, form);
-                    }
-
                     @Override
                     protected void buildContent(BSContainer<?> content, Form<?> form) {
                         buildContent.accept(content, form);
+                    }
+                    @Override
+                    protected void buildFooter(BSContainer<?> footer, Form<?> form) {
+                        buildFooter.accept(footer, form);
                     }
                 };
             }
