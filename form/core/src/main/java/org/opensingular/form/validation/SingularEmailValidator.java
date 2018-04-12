@@ -65,7 +65,7 @@ public class SingularEmailValidator extends EmailValidator {
             return false;
         }
         if (user.length() > 64) {
-            throw new SingularFormException("A parte destinada ao usuário do email não pode conter mais que 64 caracteres.");
+            throw new SingularFormException("A parte destinada ao usuário do e-mail não pode conter mais que 64 caracteres.");
         }
         final Pattern userPattern = Pattern.compile("[0-9a-zA-Z._]+");
         return userPattern.matcher(user).matches();
