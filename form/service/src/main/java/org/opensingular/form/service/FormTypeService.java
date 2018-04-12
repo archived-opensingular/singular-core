@@ -54,4 +54,8 @@ public class FormTypeService  {
         return formTypeDAO.listAll();
     }
 
+    public FormTypeEntity findFormTypeByAbbreviation(String abbreviation) {
+        return formTypeDAO.findFormTypeByAbbreviation(abbreviation);
+    }
+
 }
