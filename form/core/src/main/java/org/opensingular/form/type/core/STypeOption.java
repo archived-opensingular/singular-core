@@ -33,7 +33,7 @@ import org.opensingular.form.provider.STypeOptionProvider;
 import org.opensingular.form.type.core.SIOption.Option;
 
 @SInfoType(name = "Option", spackage = SPackageCore.class)
-public class STypeOption<I extends SInstance> extends STypeComposite<SIOption<I>> {
+public class STypeOption<SI extends SInstance> extends STypeComposite<SIOption<SI>> {
 
     public static final String FIELD_REF_ID      = "refId";
     public static final String FIELD_DESCRIPTION = "description";
@@ -52,46 +52,54 @@ public class STypeOption<I extends SInstance> extends STypeComposite<SIOption<I>
         this.description = addFieldString(FIELD_DESCRIPTION);
     }
 
-    public <STL extends STypeList<ST, I>, ST extends SType<I>> STypeOption<I> withSelectionFromOptionProvider(
+    /**
+     * Sets up a {@link STypeOptionProvider} that fetches options from a @{code SIList} field {@code optionsListField}.
+     * @param optionsListField options source
+     * @param displayFunction function that transforms the instance into the option's display string
+     */
+    public <STL extends STypeList<ST, SI>, ST extends SType<SI>> STypeOption<SI> withSelectionFromOptionProvider(
         STL optionsListField,
-        Function<I, String> displayFunction) {
+        Function<SI, String> displayFunction) {
 
-        asAtr().dependsOnAllDescendants(optionsListField);
-        
-        Function<SIOption<I>, Collection<I>> optionsFunc = it -> it.findNearest(optionsListField)
+        Function<SIOption<SI>, Collection<SI>> optionsFunc = it -> it.findNearest(optionsListField)
             .map(li -> li.stream().collect(toList()))
             .orElseGet(ArrayList::new);
 
         return withSelectionFromOptionProvider(optionsFunc, displayFunction);
     }
 
-    public <ST extends SType<I>, SIL extends STypeList<ST, I>> STypeOption<I> withSelectionFromOptionProvider(
-        Function<SIOption<I>, Collection<I>> optionsFunction,
-        Function<I, String> displayFunction) {
+    /**
+     * Sets up a {@link STypeOptionProvider} that fetches options from any source from the form instance.
+     * @param optionsFunction returns instances for options
+     * @param displayFunction function that transforms the instance into the option's display string
+     */
+    public STypeOption<SI> withSelectionFromOptionProvider(
+        Function<SIOption<SI>, Collection<SI>> optionsFunction,
+        Function<SI, String> displayFunction) {
 
         this.asAtrProvider()
             .idFunction(Option::getRefId)
             .displayFunction(Option::getDescription)
             .converter(SIOption.DEFAULT_CONVERTER)
-            .provider(new STypeOptionProvider<I>(optionsFunction, displayFunction));
+            .provider(new STypeOptionProvider<SI>(optionsFunction, displayFunction));
 
         return this;
     }
 
-    public STypeOption<I> withOptions(Function<SIOption<I>, Collection<I>> optionsFunction) {
+    public STypeOption<SI> withOptions(Function<SIOption<SI>, Collection<SI>> optionsFunction) {
         getProvider().setOptionsFunction(optionsFunction);
         return this;
     }
-    public STypeOption<I> withDisplayFunction(Function<I, String> descriptionFunction) {
+    public STypeOption<SI> withDisplayFunction(Function<SI, String> descriptionFunction) {
         getProvider().setDescriptionFunction(descriptionFunction);
         return this;
     }
 
     @SuppressWarnings("unchecked")
-    private STypeOptionProvider<I> getProvider() {
+    private STypeOptionProvider<SI> getProvider() {
         Provider<?, ?> provider = this.asAtrProvider().getProvider();
         if (!(provider instanceof STypeOptionProvider<?>))
             this.asAtrProvider().provider(new STypeOptionProvider<>());
-        return (STypeOptionProvider<I>) provider;
+        return (STypeOptionProvider<SI>) provider;
     }
 }

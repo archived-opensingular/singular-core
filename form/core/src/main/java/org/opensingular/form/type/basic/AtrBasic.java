@@ -157,10 +157,6 @@ public class AtrBasic extends STranslatorForAttribute {
         return this;
     }
 
-    public AtrBasic dependsOnAllDescendants(SType<?> field) {
-        return dependsOn(new AllDescendantsDelayedDependsOnResolversSupplier(field));
-    }
-
     /**
      * Configures the current type to depend on all STypes created from the given {@param typeClass} or its subclasses.
      * This dependency should be used with caution since it can let do unwanted dependencies and apparently unpredictable behavior.
@@ -388,19 +384,5 @@ public class AtrBasic extends STranslatorForAttribute {
     public interface DelayedDependsOnResolver {
 
         public List<SType<?>> resolve(SType<?> documentRoot, SType<?> current);
-    }
-
-    private static final class AllDescendantsDelayedDependsOnResolversSupplier implements Supplier<Collection<DelayedDependsOnResolver>> {
-        private final SType<?> baseField;
-        private AllDescendantsDelayedDependsOnResolversSupplier(SType<?> baseField) {
-            this.baseField = baseField;
-        }
-        @Override
-        public Collection<DelayedDependsOnResolver> get() {
-            AtrBasic.DelayedDependsOnResolver resolver = (root, current) -> {
-                return STypes.streamDescendants(baseField, true).collect(toList());
-            };
-            return Arrays.asList(resolver);
-        }
     }
 }
