@@ -69,7 +69,6 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
             return null;
         }
         unformated = unformat(number);
-        unformated = removeZeroIfNeeded(unformated);
         return PHONE_PATTERN.matcher(unformated);
     }
 
@@ -102,19 +101,6 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
             return number;
         }
         return value;
-    }
-
-    /**
-     * Verica se o dd está no padrao de 3 digitos, exemplos 061, revemondo o 0 a esquerda
-     *
-     * @param unformated numero sem formatação
-     * @return numero ajustado
-     */
-    private String removeZeroIfNeeded(String unformated) {
-        if (Pattern.compile("0[1-9]{2}").matcher(unformated).lookingAt()) {
-            return unformated.replaceFirst("0", "");
-        }
-        return unformated;
     }
 
     String unformat(String formated) {

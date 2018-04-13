@@ -26,7 +26,7 @@ public enum MTelefoneNacionalValidator implements InstanceValueValidator<SIStrin
 
     INSTANCE();
 
-    public static final Pattern VALIDATE_PATTERN = Pattern.compile("\\(\\[1-9]{2}\\)\\s\\d{4,5}-\\d{4}");
+    public static final Pattern VALIDATE_PATTERN = Pattern.compile("\\([1-9][0-9]\\)\\s\\d{4,5}-\\d{4}");
 
     @Override
     public void validate(InstanceValidatable<SIString> validatable, String value) {
