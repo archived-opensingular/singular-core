@@ -16,6 +16,10 @@
 
 package org.opensingular.form.wicket.mapper.maps;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.LatLng;
 import org.apache.commons.collections.CollectionUtils;
@@ -40,7 +44,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.json.JSONObject;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.type.util.SILatitudeLongitudeList;
+import org.opensingular.form.type.util.SILatitudeLongitudeMapper;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.type.util.STypeLatitudeLongitudeGMaps;
 import org.opensingular.form.view.SView;
@@ -54,11 +58,7 @@ import org.opensingular.lib.wicket.util.util.WicketUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class MarkableGoogleMapsPanel<T> extends BSContainer {
 
@@ -81,6 +81,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
     private boolean multipleMarkers;
     private String  callbackUrl;
     private String  tableContainerId;
+    private String kmlUrl;
 
     private final Button             clearButton;
     private final Button             currentLocationButton;
@@ -146,7 +147,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
             mapStatic = new ImgMap(MAP_STATIC_ID, $m.loadable(() -> {
                 List<String> makerList  = new ArrayList<>();
                 List<LatLng> latLngList = new ArrayList<>();
-                ((SILatitudeLongitudeList) model.getObject()).getPoints().forEach(m -> {
+                ((SILatitudeLongitudeMapper) model.getObject()).getPoints().forEach(m -> {
                     IModel<?> latitude  = Model.of(m.getLatitude());
                     IModel<?> longitude = Model.of(m.getLongitude());
 
@@ -165,6 +166,9 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         currentLocationButton.setDefaultFormProcessing(false);
 
     }
+
+
+
 
     private String generateLatLngMaker(IModel<?> latitudeModel, IModel<?> longitudeModel) {
         if (latitudeModel.getObject() != null && longitudeModel.getObject() != null) {
@@ -193,7 +197,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
 
 
         parameters.append("&center=").append(latLng);
-        if (multipleMarkers) {
+        if (multipleMarkers && CollectionUtils.isNotEmpty(latLngMakerList)) {
             parameters.append("&path=color:0x0ea001AA|weight:0|fillcolor:0xFFB6C1BB");
             parameters.append("|enc:").append(PolylineEncoding.encode(latLngList));
         } else {
@@ -231,6 +235,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         json.put("tableContainerId", tableContainerId);
         json.put("callbackUrl", callbackUrl);
         json.put("multipleMarkers", multipleMarkers);
+        json.put("urlKml", kmlUrl);
         metaDataModel.setObject(json.toString());
     }
 
@@ -321,6 +326,10 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         this.multipleMarkers = true;
         this.callbackUrl = callbackUrl;
         this.tableContainerId = tableContainerId;
+    }
+
+    public void includeKmlFile(String kmlUrl) {
+        this.kmlUrl = kmlUrl;
     }
 
     private static class ImgMap extends WebComponent {

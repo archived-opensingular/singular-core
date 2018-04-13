@@ -16,6 +16,9 @@
 
 package org.opensingular.form.wicket;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeAttachmentList;
@@ -42,7 +45,7 @@ import org.opensingular.form.type.country.brazil.STypeCNPJ;
 import org.opensingular.form.type.country.brazil.STypeCPF;
 import org.opensingular.form.type.country.brazil.STypeTelefoneNacional;
 import org.opensingular.form.type.util.STypeLatitudeLongitudeGMaps;
-import org.opensingular.form.type.util.STypeLatitudeLongitudeList;
+import org.opensingular.form.type.util.STypeLatitudeLongitudeMapper;
 import org.opensingular.form.type.util.STypeYearMonth;
 import org.opensingular.form.view.*;
 import org.opensingular.form.wicket.mapper.BooleanMapper;
@@ -85,9 +88,6 @@ import org.opensingular.form.wicket.mapper.selection.MultipleSelectBSMapper;
 import org.opensingular.form.wicket.mapper.selection.PicklistMapper;
 import org.opensingular.form.wicket.mapper.selection.RadioMapper;
 import org.opensingular.form.wicket.mapper.selection.SelectMapper;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * @author Daniel C. Bordin on 25/08/2017.
@@ -139,7 +139,7 @@ public class IWicketComponentMapperRegistry
         add(STypeAttachment.class, SViewAttachmentImage.class,            AttachmentImageMapper::new);
         add(STypeLatitudeLongitudeGMaps.class,                                 LatitudeLongitudeMapper::new);
         add(STypeLatitudeLongitudeGMaps.class, SViewCurrentLocation.class,     LatitudeLongitudeMapper::new);
-        add(STypeLatitudeLongitudeList.class,                                 LatitudeLongitudeListMapper::new);
+        add(STypeLatitudeLongitudeMapper.class,                                 LatitudeLongitudeListMapper::new);
         add(STypeComposite.class,                                         DefaultCompositeMapper::new);
         add(STypeComposite.class,   SViewTab.class,                       TabMapper::new);
         add(STypeComposite.class,   SViewByBlock.class,                   BlocksCompositeMapper::new);

@@ -15,6 +15,12 @@
  */
 package org.opensingular.form.wicket.mapper.attachment;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.IResourceListener;
 import org.apache.wicket.Session;
@@ -41,12 +47,6 @@ import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.lib.commons.util.Loggable;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.apache.wicket.markup.head.JavaScriptHeaderItem.forReference;
 
 /**
@@ -63,6 +63,7 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
     private Component component;
     private IModel<? extends SInstance> model;
     private ContentDisposition contentDisposition;
+    private String urlGerada;
 
     public DownloadSupportedBehavior(IModel<? extends SInstance> model, ContentDisposition contentDisposition) {
         this.model = model;
@@ -105,11 +106,17 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
     private void writeResponse(String url) throws IOException {
         JSONObject jsonFile = new JSONObject();
         jsonFile.put("url", url);
+        urlGerada = url;
         WebResponse response = (WebResponse) RequestCycle.get().getResponse();
         response.setContentType("application/json");
         response.setHeader("Cache-Control", "no-store, no-cache");
         response.getOutputStream().write(jsonFile.toString().getBytes(StandardCharsets.UTF_8));
         response.flush();
+    }
+
+    public String getDownloadUrlGerada(){
+        //TODO  Obviamente remover isso.
+       return  "localhost:8080" + urlGerada;
     }
 
     public String getUrl() {

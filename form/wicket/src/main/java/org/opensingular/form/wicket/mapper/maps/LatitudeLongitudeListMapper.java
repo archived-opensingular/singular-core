@@ -26,8 +26,9 @@ import org.apache.wicket.util.string.StringValue;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
-import org.opensingular.form.type.util.STypeLatitudeLongitudeList;
+import org.opensingular.form.type.util.STypeLatitudeLongitudeMapper;
 import org.opensingular.form.view.FileEventListener;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.wicket.WicketBuildContext;
@@ -36,6 +37,7 @@ import org.opensingular.form.wicket.mapper.TableListMapper;
 import org.opensingular.form.wicket.mapper.attachment.single.FileUploadPanel;
 import org.opensingular.form.wicket.mapper.buttons.AddButton;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
+import org.opensingular.form.wicket.mapper.tablelist.TableListPanel;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
@@ -47,6 +49,7 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 public class LatitudeLongitudeListMapper extends TableListMapper {
 
     private WicketBuildContext pointsCtx;
+
     @Override
     protected void behaviorAfterRemoveButtonClick(AjaxRequestTarget target) {
         target.add(pointsCtx.getParent().getContainer());
@@ -54,8 +57,8 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
 
     @Override
     public void buildView(WicketBuildContext ctx) {
-
-        SInstanceFieldModel<SInstance> zoom = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeList.FIELD_ZOOM);
+        confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
+        SInstanceFieldModel<SInstance> zoom = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeMapper.FIELD_ZOOM);
         WicketBuildContext zoomCtx = ctx.createChild(ctx.getContainer().newGrid(), ctx.getExternalContainer(), zoom);
         zoomCtx.build();
 
@@ -63,7 +66,7 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
 
         zoomCtx.getContainer().visitChildren((TextField.class), (object, visit) -> {
             String nameSimple = ((SInstanceValueModel) object.getDefaultModel()).getSInstance().getType().getNameSimple();
-            if (nameSimple.equals(STypeLatitudeLongitudeList.FIELD_ZOOM)) {
+            if (nameSimple.equals(STypeLatitudeLongitudeMapper.FIELD_ZOOM)) {
                 ids.zoomId = object.getMarkupId();
             }
         });
@@ -71,29 +74,55 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
         final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, ctx.getModel(), ctx.getView(),
                 ctx.getViewMode().isVisualization(), true);
         BSGrid gridGoogleMaps = ctx.getContainer().newGrid();
-        gridGoogleMaps.newFormGroup().appendDiv(googleMapsPanel);
 
 
-        IModel<SIList<SInstance>> points = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeList.FIELD_POINTS);
+        IModel<SIList<SInstance>> points = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeMapper.FIELD_POINTS);
         ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, Boolean.TRUE);
         pointsCtx = ctx.createChild(gridGoogleMaps, ctx.getExternalContainer(), points);
         ctx.getContainer().newFormGroup().appendDiv(googleMapsPanel);
 
         SView viewPoints = points.getObject().getType().getSuperType().getView();
         pointsCtx.setView(viewPoints);
-        ctx.getContainer().appendComponent((String id) -> buildPanel(pointsCtx, id));
+        TableListPanel table = buildPanel(pointsCtx, "table");
+        ctx.getContainer().newFormGroup().appendDiv(table);
 
-        confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
-        SInstanceFieldModel<SInstance> file = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeList.FIELD_FILE);
+
+        IModel<SIAttachment> file = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeMapper.FIELD_FILE);
         WicketBuildContext fileCtx = ctx.createChild(ctx.getContainer().newGrid(), ctx.getExternalContainer(), file);
         fileCtx.build();
+//        final FileUploadPanel fileUploadPanel = new FileUploadPanel("container", file, ViewMode.EDIT);
+//        BSGrid gridUploadFiles = ctx.getContainer().newGrid();
+//        gridUploadFiles.newFormGroup().appendDiv(fileUploadPanel);
+
 
         WicketUtils.findFirstChild(fileCtx.getContainer(), FileUploadPanel.class)
                 .ifPresent(panel -> panel.registerFileRemovedListener((FileEventListener) attachment -> {
                     points.getObject().clearInstance();
+                    table.setVisible(true);
+                    googleMapsPanel.includeKmlFile("");
                     AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                    target.add(gridGoogleMaps);
+                    target.add(pointsCtx.getParent().getContainer());
                 }));
+
+
+        WicketUtils.findFirstChild(fileCtx.getContainer(), FileUploadPanel.class)
+                .ifPresent(panel -> panel.setConsumerAfterLoadImage((target, urlFile) -> {
+                    points.getObject().clearInstance();
+                    table.setVisible(false);
+                    //Preciso descobrir oq fazer quando ele salvar, acredito que precise ser salvo na internet...
+                    googleMapsPanel.includeKmlFile("http://api.flickr.com/services/feeds/geo/?g=322338@N20&lang=en-us&format=feed-georss");
+                    target.add(pointsCtx.getParent().getContainer());
+                }));
+
+//        WicketUtils.findFirstChild(fileCtx.getContainer(), FileUploadPanel.class)
+//                .ifPresent(panel -> panel.registerFileUploadedListener((FileEventListener) attachment -> {
+//                    System.out.println("\n\n TESTEEEEEEEEEEE");
+//                 googleMapsPanel.includeKmlFile("http://googlemaps.github.io/js-v2-samples/ggeoxml/cta.kml");
+//                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+//                    table.setVisible(false);
+//                    googleMapsPanel.add($b.onConfigure(c -> googleMapsPanel.includeKmlFile("http://googlemaps.github.io/js-v2-samples/ggeoxml/cta.kml")));
+//                    target.add(pointsCtx.getContainer());
+//                }));
 
 
         AbstractDefaultAjaxBehavior addPoint = createBehaviorAddPoint(points, ctx.getContainer());
@@ -107,7 +136,6 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                         target.add(googleMapsPanel);
                     }
                 }));
-
 
         confirmationModal.registerListener(googleMapsPanel::updateJS);
     }

@@ -22,11 +22,10 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeHiddenString;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
-import org.opensingular.form.view.SViewAttachment;
 import org.opensingular.form.view.SViewListByTable;
 
-@SInfoType(name = "LatitudeLongitudeList", spackage = SPackageUtil.class)
-public class STypeLatitudeLongitudeList extends STypeComposite<SILatitudeLongitudeList> {
+@SInfoType(name = "LatitudeLongitudeMapper", spackage = SPackageUtil.class)
+public class STypeLatitudeLongitudeMapper extends STypeComposite<SILatitudeLongitudeMapper> {
 
     private static final Integer DEFAULT_ZOOM = 4;
 
@@ -34,31 +33,35 @@ public class STypeLatitudeLongitudeList extends STypeComposite<SILatitudeLongitu
     public static final String FIELD_ZOOM = "zoom";
     public static final String FIELD_FILE = "file";
 
+    //TODO fazer um enum que tenha varios tipos de files.
+    private static final String KMZ_FILE = "kml";
+
     public STypeList<STypeLatitudeLongitude, SILatitudeLongitude> points;
     public STypeHiddenString zoom;
     public STypeAttachment file;
 
-    public STypeLatitudeLongitudeList() {
-        super(SILatitudeLongitudeList.class);
+    public STypeLatitudeLongitudeMapper() {
+        super(SILatitudeLongitudeMapper.class);
     }
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
         points = addFieldListOf(FIELD_POINTS, STypeLatitudeLongitude.class);
         file = addFieldAttachment(FIELD_FILE);
+        file.asAtr().allowedFileTypes(KMZ_FILE);
         zoom = addField(FIELD_ZOOM, STypeHiddenString.class);
 
         points.withView(new SViewListByTable().setNewEnabled(list -> {
-            SILatitudeLongitudeList latLongList = (SILatitudeLongitudeList) list.getParent();
+            SILatitudeLongitudeMapper latLongList = (SILatitudeLongitudeMapper) list.getParent();
             return !latLongList.hasFile();
         }).setDeleteEnabled(instance -> {
-            SILatitudeLongitudeList latLongList = (SILatitudeLongitudeList) instance.getParent().getParent();
+            SILatitudeLongitudeMapper latLongList = (SILatitudeLongitudeMapper) instance.getParent().getParent();
             return !latLongList.hasFile();
         }))
             .asAtr().dependsOn(file);
 
-        LatlongStrategyFactory factory = new LatlongStrategyFactory();
-        file.withView(new SViewAttachment().withFileUploadedListener(new FileLatLongUploadListener(factory)));
+//        LatlongStrategyFactory factory = new LatlongStrategyFactory();
+//        file.withView(new SViewAttachment().withFileUploadedListener(new FileLatLongUploadListener(factory)));
 
         zoom.withInitListener(ins -> {
             if(ins.isEmptyOfData())

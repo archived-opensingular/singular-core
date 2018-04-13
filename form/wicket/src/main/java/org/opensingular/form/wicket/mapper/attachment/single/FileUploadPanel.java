@@ -16,6 +16,13 @@
 
 package org.opensingular.form.wicket.mapper.attachment.single;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -56,14 +63,8 @@ import org.opensingular.form.wicket.mapper.attachment.upload.UploadResponseWrite
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
+import org.opensingular.lib.commons.lambda.IBiConsumer;
 import org.opensingular.lib.commons.util.Loggable;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet.PARAM_NAME;
 
@@ -94,6 +95,8 @@ public class FileUploadPanel extends Panel implements Loggable {
     private List<FileEventListener> fileUploadedListeners = new ArrayList<>();
 
     private List<FileEventListener> fileRemovedListeners = new ArrayList<>();
+
+    private IBiConsumer<AjaxRequestTarget, String> consumerAfterLoadImage;
 
     public FileUploadPanel(String id, IModel<SIAttachment> model, ViewMode viewMode) {
         super(id, model);
@@ -187,6 +190,7 @@ public class FileUploadPanel extends Panel implements Loggable {
             @Override
             protected void respond(AjaxRequestTarget target) {
                 target.add(preview);
+                consumerAfterLoadImage.accept(target, downloader.getDownloadUrlGerada());
             }
         };
         this.add(previewCallBack);
@@ -392,5 +396,13 @@ public class FileUploadPanel extends Panel implements Loggable {
 
     public void setShowPreview(boolean showPreview) {
         this.showPreview = showPreview;
+    }
+
+    public IBiConsumer<AjaxRequestTarget, String> getConsumerAfterLoadImage() {
+        return consumerAfterLoadImage;
+    }
+
+    public void setConsumerAfterLoadImage(IBiConsumer<AjaxRequestTarget, String> consumerAfterLoadImage) {
+        this.consumerAfterLoadImage = consumerAfterLoadImage;
     }
 }

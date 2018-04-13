@@ -54,15 +54,15 @@
 
     function createSingularMapImpl(idMetadados) {
         var metadados = JSON.parse(document.getElementById(idMetadados).value);
+        var zoomElement = document.getElementById(metadados.idZoom);
         if (document.getElementById(metadados.idLat) !== null) {
             var latElement = document.getElementById(metadados.idLat);
             var lngElement = document.getElementById(metadados.idLng);
-            var zoomElement = document.getElementById(metadados.idZoom);
             configureMap(latElement, lngElement, zoomElement, metadados.idMap, metadados.idClearButton, JSON.parse(metadados.readOnly), metadados.idCurrentLocationButton);
         } else if (metadados.multipleMarkers) {
             var tableContainerElement = document.getElementById(metadados.tableContainerId);
-            var zoomElement = document.getElementById(metadados.idZoom);
-            configureMapMultipleMarkers(tableContainerElement, zoomElement, metadados.idMap, metadados.idClearButton, JSON.parse(metadados.readOnly), metadados.callbackUrl);
+            var urlKml = metadados.urlKml;
+            configureMapMultipleMarkers(tableContainerElement, zoomElement, metadados.idMap, metadados.idClearButton, JSON.parse(metadados.readOnly), metadados.callbackUrl, urlKml);
         } else {
             document.getElementById(metadados.idMap).style.visibility = "hidden";
         }
@@ -96,7 +96,7 @@
         return map;
     }
 
-    function configureMapMultipleMarkers(tableContainerElement, zoomElement, idMap, idClearButton, readOnly, callbackUrl) {
+    function configureMapMultipleMarkers(tableContainerElement, zoomElement, idMap, idClearButton, readOnly, callbackUrl, urlKml) {
         var markers = [];
         var latLong = buildGmapsLatLong();
         var polygon = new google.maps.Polygon({
@@ -112,28 +112,42 @@
             center: latLong
         });
 
-        if (!readOnly) {
-            map.addListener('zoom_changed', function () {
-                zoomElement.value = map.zoom;
+        //O problema não é o size da url.
+
+       // urlKml = "http://showcase.opensingular.org/download/Flwy37pGExSWP38Vm08zdLphfQV6c9lo79JXTwp9/97853f29-0270-4902-8817-b7d90e1b5fc9";
+        // urlKml = "http://googlemaps.github.io/js-v2-samples/ggeoxml/cta.kml";
+        //   urlKml = "https://sites.google.com/a/gmapas.com/home/poligonos-ibge/poligonos-municipios-ibge-rio-grande-do-norte/Municipios_RN.kml"
+      //  urlKml = "http://api.flickr.com/services/feeds/geo/?g=322338@N20&lang=en-us&format=feed-georss";
+        console.log(urlKml);
+        if(urlKml !== '' && urlKml != null){
+            new google.maps.KmlLayer({
+                url: urlKml,
+                map: map
             });
-        }
+        } else {
+            if (!readOnly) {
+                map.addListener('zoom_changed', function () {
+                    zoomElement.value = map.zoom;
+                });
+            }
 
-        configureMarkers(tableContainerElement, map, readOnly, markers, polygon);
-        draw(map,  polygon,  markers);
-        if (!readOnly) {
-            configureMultipleFieldsEvents(tableContainerElement, map, markers, polygon);
-        }
+            configureMarkers(tableContainerElement, map, readOnly, markers, polygon);
+            draw(map, polygon, markers);
+            if (!readOnly) {
+                configureMultipleFieldsEvents(tableContainerElement, map, markers, polygon);
+            }
 
-        if (!readOnly) {
-            map.addListener('click', function (event) {
-                var params = {'lat': event.latLng.lat(), 'lng': event.latLng.lng()};
-                Wicket.Ajax.post({u: callbackUrl, ep: params});
+            if (!readOnly) {
+                map.addListener('click', function (event) {
+                    var params = {'lat': event.latLng.lat(), 'lng': event.latLng.lng()};
+                    Wicket.Ajax.post({u: callbackUrl, ep: params});
 
-                var number = countMarkers(tableContainerElement);
-                var marker = createMarker(map,  event.latLng, polygon, readOnly, true, number+1);
-                markers.push(marker);
-                draw(map,  polygon,  markers);
-            });
+                    var number = countMarkers(tableContainerElement);
+                    var marker = createMarker(map, event.latLng, polygon, readOnly, true, number + 1);
+                    markers.push(marker);
+                    draw(map, polygon, markers);
+                });
+            }
         }
         return map;
     }
