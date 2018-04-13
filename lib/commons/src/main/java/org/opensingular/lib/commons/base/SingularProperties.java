@@ -16,9 +16,9 @@
 
 package org.opensingular.lib.commons.base;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 import java.util.Optional;
+import javax.annotation.Nonnull;
 
 /**
  * Carrega os arquivos de propriedades do singular e dá fácil acesso ao mesmos, mediante um singleton {@link
@@ -61,7 +61,7 @@ public interface SingularProperties {
 
     // Identifica se o singular deve usar o banco em memória, ou se conectar a um banco externo.
     String USE_EMBEDDED_DATABASE = "singular.database.embbeded";
-    String JNDI_DATASOURCE = "singular.jndi.datasource.name";
+    String JNDI_DATASOURCE = "singular.datasource.jndi.name";
 
     // Identifica o nome do schema que deve ser utilizado
     String CUSTOM_SCHEMA_NAME = "singular.custom.schema.name";
