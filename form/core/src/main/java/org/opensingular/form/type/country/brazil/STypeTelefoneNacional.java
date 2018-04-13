@@ -16,6 +16,9 @@
 
 package org.opensingular.form.type.country.brazil;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.TypeBuilder;
@@ -24,15 +27,13 @@ import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.validation.validator.InstanceValidators;
 import org.opensingular.lib.commons.util.Loggable;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 @SInfoType(name = "TelefoneNacional", spackage = SPackageCountryBrazil.class)
 public class STypeTelefoneNacional extends STypeString implements Loggable {
 
     private static final Pattern NOT_NUMBER_PATTERN = Pattern.compile("[^\\d]");
-    private static final Pattern PHONE_PATTERN = Pattern.compile("(\\d{2})(\\d{1,4}|\\d{5}){0,1}(\\d{1,4}){0,1}");
-
+    private static final Pattern PHONE_PATTERN      = Pattern.compile("(\\d{2})(\\d{1,4}|\\d{5}){0,1}(\\d{1,4}){0,1}");
+    private static final Integer SIZE_MIN_PHONE = 10;
+    private static final Integer SIZE_DD_PHONE = 2;
     @Override
     protected void onLoadType(TypeBuilder tb) {
         addInstanceValidator(ValidationErrorLevel.ERROR, InstanceValidators.telefoneNacional());
@@ -54,7 +55,8 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
             return null;
         }
         String dddExtraido = extractDDD(value);
-        if (StringUtils.isNotEmpty(dddExtraido) && dddExtraido.length() == 2) {
+        if (StringUtils.isNotEmpty(dddExtraido) && dddExtraido.length() == SIZE_DD_PHONE
+                && value.length() >= SIZE_MIN_PHONE) {
             return "(" + dddExtraido + ") " + extractNumber(value);
         }
         return dddExtraido;
@@ -79,8 +81,7 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
         if (phoneMatcher.matches()) {
             return phoneMatcher.group(1);
         }
-        //Nesse caso significa que o DD não foi informado completo.
-        return unformat(value);
+        return value;
     }
 
     String extractNumber(String value) {
@@ -110,7 +111,7 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
      * @return numero ajustado
      */
     private String removeZeroIfNeeded(String unformated) {
-        if (Pattern.compile("0[1-9{2}]").matcher(unformated).lookingAt()) {
+        if (Pattern.compile("0[1-9]{2}").matcher(unformated).lookingAt()) {
             return unformated.replaceFirst("0", "");
         }
         return unformated;

@@ -18,7 +18,7 @@ package org.opensingular.form.type.country.brazil;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 
 public class STypeTelefoneNacionalTest {
@@ -41,7 +41,7 @@ public class STypeTelefoneNacionalTest {
         assertEquals("(61) 98599-7893", type.format("(061)985997893"));
         assertEquals("(61) 98599-7893", type.format("(061) 985997893"));
         assertEquals("(61) 98599-7893", type.format("61985997893"));
-        assertEquals("(60) ", type.format("60"));
+        assertEquals("60", type.format("60"));
         assertEquals("6", type.format("6"));
         assertEquals("(00) 00000-0000", type.format("00000000000"));
     }
@@ -52,7 +52,8 @@ public class STypeTelefoneNacionalTest {
         assertEquals("61", type.extractDDD("(061) 3372-5695"));
         assertEquals("61", type.extractDDD("(61) 3372-5695"));
         assertEquals("61", type.extractDDD("6133725695"));
-        assertEquals("6",  type.extractDDD("(6"));
+        assertEquals("(6",  type.extractDDD("(6"));
+        assertEquals("06",  type.extractDDD("(06"));
         assertEquals("00", type.extractDDD("00000000000"));
     }
 
@@ -61,6 +62,7 @@ public class STypeTelefoneNacionalTest {
         assertEquals("3372-5695", type.extractNumber("06133725695"));
         assertEquals("3372-5695", type.extractNumber("(061) 3372-5695"));
         assertEquals("3372-5695", type.extractNumber("(61) 3372-5695"));
+        assertEquals("98599-7893", type.extractNumber("61985997893"));
         assertEquals("98599-7893", type.extractNumber("061985997893"));
         assertEquals("98599-7893", type.extractNumber("61985997893"));
         assertEquals("8599", type.extractNumber("618599"));
@@ -69,6 +71,9 @@ public class STypeTelefoneNacionalTest {
         assertEquals("8599-789", type.extractNumber("618599789"));
         assertEquals("8599-7893", type.extractNumber("6185997893"));
         assertEquals("0000-0000", type.extractNumber("0000000000"));
+        assertEquals("0001-0001", type.extractNumber("(11) 00010001"));
+        assertEquals("0001-0001", type.extractNumber("(01) 0001-0001"));
+
     }
 
 
