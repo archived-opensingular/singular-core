@@ -190,7 +190,9 @@ public class FileUploadPanel extends Panel implements Loggable {
             @Override
             protected void respond(AjaxRequestTarget target) {
                 target.add(preview);
-                consumerAfterLoadImage.accept(target, downloader.getDownloadUrlGerada());
+                if(consumerAfterLoadImage != null) {
+                    consumerAfterLoadImage.accept(target, downloader.getDownloadUrlGerada());
+                }
             }
         };
         this.add(previewCallBack);

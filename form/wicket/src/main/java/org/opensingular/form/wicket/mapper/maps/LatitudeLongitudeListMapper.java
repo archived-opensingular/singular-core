@@ -96,7 +96,6 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
 //        BSGrid gridUploadFiles = ctx.getContainer().newGrid();
 //        gridUploadFiles.newFormGroup().appendDiv(fileUploadPanel);
 
-
         WicketUtils.findFirstChild(fileCtx.getContainer(), FileUploadPanel.class)
                 .ifPresent(panel -> panel.registerFileRemovedListener((FileEventListener) attachment -> {
                     points.getObject().clearInstance();
@@ -106,27 +105,14 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                     target.add(pointsCtx.getParent().getContainer());
                 }));
 
-
         WicketUtils.findFirstChild(fileCtx.getContainer(), FileUploadPanel.class)
                 .ifPresent(panel -> panel.setConsumerAfterLoadImage((target, urlFile) -> {
                     points.getObject().clearInstance();
                     table.setVisible(false);
-                    //Preciso descobrir oq fazer quando ele salvar, acredito que precise ser salvo na internet...
-
+                    //TODO essa atividade ainda não está funcionando no SHOW CASE devido a não ter uma URL acessivel de forma publica para acessar o arquivo.
                     googleMapsPanel.includeKmlFile(toAbsolutePath() + urlFile);
                     target.add(pointsCtx.getParent().getContainer());
                 }));
-
-
-//        WicketUtils.findFirstChild(fileCtx.getContainer(), FileUploadPanel.class)
-//                .ifPresent(panel -> panel.registerFileUploadedListener((FileEventListener) attachment -> {
-//                    System.out.println("\n\n TESTEEEEEEEEEEE");
-//                 googleMapsPanel.includeKmlFile("http://googlemaps.github.io/js-v2-samples/ggeoxml/cta.kml");
-//                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-//                    table.setVisible(false);
-//                    googleMapsPanel.add($b.onConfigure(c -> googleMapsPanel.includeKmlFile("http://googlemaps.github.io/js-v2-samples/ggeoxml/cta.kml")));
-//                    target.add(pointsCtx.getContainer());
-//                }));
 
 
         AbstractDefaultAjaxBehavior addPoint = createBehaviorAddPoint(points, ctx.getContainer());

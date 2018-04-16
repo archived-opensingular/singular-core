@@ -112,14 +112,7 @@
             center: latLong
         });
 
-        //O problema não é o size da url.
-
-       // urlKml = "http://showcase.opensingular.org/download/Flwy37pGExSWP38Vm08zdLphfQV6c9lo79JXTwp9/97853f29-0270-4902-8817-b7d90e1b5fc9";
-        // urlKml = "http://googlemaps.github.io/js-v2-samples/ggeoxml/cta.kml";
-        //   urlKml = "https://sites.google.com/a/gmapas.com/home/poligonos-ibge/poligonos-municipios-ibge-rio-grande-do-norte/Municipios_RN.kml"
-      //  urlKml = "http://api.flickr.com/services/feeds/geo/?g=322338@N20&lang=en-us&format=feed-georss";
-        console.log(urlKml);
-        if(urlKml !== '' && urlKml != null){
+         if(urlKml !== '' && urlKml != null){
             new google.maps.KmlLayer({
                 url: urlKml,
                 map: map
