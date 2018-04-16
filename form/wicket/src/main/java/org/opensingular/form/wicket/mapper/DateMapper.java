@@ -38,10 +38,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static org.opensingular.form.type.basic.SPackageBasic.ATR_MAX_DATE;
+import static org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour.DatePickerSettings;
 
 @SuppressWarnings("serial")
 public class DateMapper extends AbstractControlsFieldComponentMapper {
@@ -51,7 +50,7 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
         BSDatepickerInputGroup datepicker = formGroup
-                .newComponent(id -> new BSDatepickerInputGroup(id)
+                .newComponent(id -> new BSDatepickerInputGroup(id, getDatePickerSetings(ctx))
                         .setConverter(new ConverterImpl())
                         .setTextFieldConfigurer((IConsumer<FormComponent<?>>) c -> c
                                 .setLabel(labelModel)
@@ -64,8 +63,12 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
         return datepicker.getTextField();
     }
 
+    private DatePickerSettings getDatePickerSetings(WicketBuildContext ctx) {
+        return new DatePickerSettings(ctx.getModel());
+    }
+
     private void configureMaxDate(BSDatepickerInputGroup datepicker, Date maxDate) {
-        if(maxDate != null){
+        if (maxDate != null) {
             datepicker.setEndDate(defaultDateFormat().format(maxDate));
         }
     }
@@ -86,7 +89,7 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
     @Override
     public void adjustJSEvents(Component comp) {
         BSDatepickerInputGroup datepicker = BSDatepickerInputGroup.getFromTextfield(comp);
-        Component textField = datepicker.getTextField();
+        Component              textField  = datepicker.getTextField();
         textField
                 .add(new SingularEventBehavior()
                         .setProcessEvent("changeDate", datepicker)
@@ -99,7 +102,7 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
         if ((model != null) && (model.getObject() != null)) {
             SInstance instance = model.getObject();
             if (instance.getValue() instanceof Date) {
-                Date                   dt         = (Date) instance.getValue();
+                Date                   dt        = (Date) instance.getValue();
                 final SimpleDateFormat formatter = defaultDateFormat();
                 return formatter.format(dt);
             }

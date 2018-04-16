@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -380,6 +381,15 @@ public class AtrBasic extends STranslatorForAttribute {
         return getAttributeValue(SPackageBasic.ATR_UPPER_CASE_TEXT);
     }
 
+
+    public AtrBasic enabledDates(IFunction<SInstance, List<Date>> function) {
+        setAttributeValue(SPackageBasic.ATR_ENABLED_DATES, function);
+        return this;
+    }
+
+    public IFunction<SInstance, List<Date>> getEnabledDates() {
+        return getAttributeValue(SPackageBasic.ATR_ENABLED_DATES);
+    }
 
     public interface DelayedDependsOnResolver {
 
