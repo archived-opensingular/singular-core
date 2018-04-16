@@ -381,16 +381,6 @@ public class AtrBasic extends STranslatorForAttribute {
         return getAttributeValue(SPackageBasic.ATR_UPPER_CASE_TEXT);
     }
 
-
-    public AtrBasic enabledDates(IFunction<SInstance, List<Date>> function) {
-        setAttributeValue(SPackageBasic.ATR_ENABLED_DATES, function);
-        return this;
-    }
-
-    public IFunction<SInstance, List<Date>> getEnabledDates() {
-        return getAttributeValue(SPackageBasic.ATR_ENABLED_DATES);
-    }
-
     public interface DelayedDependsOnResolver {
 
         public List<SType<?>> resolve(SType<?> documentRoot, SType<?> current);

@@ -23,6 +23,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.convert.ConversionException;
 import org.apache.wicket.util.convert.IConverter;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.view.SViewDate;
 import org.opensingular.form.wicket.IAjaxUpdateListener;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.AjaxUpdateInputBehavior;
@@ -64,7 +65,7 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
     }
 
     private DatePickerSettings getDatePickerSetings(WicketBuildContext ctx) {
-        return new DatePickerSettings(ctx.getModel());
+        return new DatePickerSettings(ctx.getViewSupplier(SViewDate.class), ctx.getModel());
     }
 
     private void configureMaxDate(BSDatepickerInputGroup datepicker, Date maxDate) {

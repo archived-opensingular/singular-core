@@ -24,6 +24,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.apache.wicket.util.visit.IVisitor;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.view.SViewDate;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstants;
 
 import java.io.Serializable;
@@ -32,6 +34,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class DatePickerInitBehaviour extends InitScriptBehaviour {
 
@@ -87,19 +90,30 @@ public class DatePickerInitBehaviour extends InitScriptBehaviour {
     }
 
     public static class DatePickerSettings implements Serializable {
-        private IModel<? extends SInstance> iModel;
+        private IModel<? extends SInstance> model;
+        private ISupplier<SViewDate>        viewSupplier;
 
-        public DatePickerSettings(IModel<? extends SInstance> iModel) {
-            this.iModel = iModel;
+        public DatePickerSettings(ISupplier<SViewDate> viewSupplier, IModel<? extends SInstance> model) {
+            this.viewSupplier = viewSupplier;
+            this.model = model;
+        }
+
+        private Optional<SViewDate> viewSupplier() {
+            return Optional.ofNullable(viewSupplier.get());
         }
 
         public boolean hasEnabledDatesFunction() {
-            return iModel.getObject().asAtr().getEnabledDates() != null;
+            return viewSupplier()
+                    .map(SViewDate::getEnabledDatesFunction)
+                    .isPresent();
         }
 
         public List<Date> getEnabledDates() {
             if (hasEnabledDatesFunction()) {
-                return iModel.getObject().asAtr().getEnabledDates().apply(iModel.getObject());
+                return viewSupplier()
+                        .map(SViewDate::getEnabledDatesFunction)
+                        .map(i -> i.apply(model.getObject()))
+                        .orElse(null);
             }
             return null;
         }

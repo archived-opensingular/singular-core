@@ -21,7 +21,6 @@ import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIConsumer;
-import org.opensingular.form.SIEnabledDates;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SIPredicate;
 import org.opensingular.form.SISupplier;
@@ -31,7 +30,6 @@ import org.opensingular.form.SPackage;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeBehavior;
 import org.opensingular.form.STypeConsumer;
-import org.opensingular.form.STypeEnabledDates;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.STypePredicate;
 import org.opensingular.form.STypeSimple;
@@ -52,7 +50,6 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.annotation.STypeAnnotationClassifierList;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.lib.commons.lambda.IFunction;
 
 import java.util.Collection;
 import java.util.Date;
@@ -104,7 +101,6 @@ public class SPackageBasic extends SPackage {
     public static final AtrRef<STypeString, SIString, String>                ATR_ALLOWED_FILE_TYPES = new AtrRef<>(SPackageBasic.class, "allowedFileTypes"      , STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean>             ATR_UPPER_CASE_TEXT    = new AtrRef<>(SPackageBasic.class, "uppperCaseText"        , STypeBoolean.class, SIBoolean.class, Boolean.class);
     public static final AtrRef<STypeDate, SIDate, Date>                      ATR_MAX_DATE           = new AtrRef<>(SPackageBasic.class, "maxDate"               , STypeDate.class, SIDate.class, Date.class);
-    public static final AtrRef<STypeEnabledDates, SIEnabledDates, IFunction> ATR_ENABLED_DATES = new AtrRef<>(SPackageBasic.class, "enabledDates", STypeEnabledDates.class, SIEnabledDates.class, IFunction.class);
 
 
     public static final AtrRef<STypeSupplier<Collection<SType<?>>>, SISupplier<Collection<SType<?>>>, Supplier<Collection<AtrBasic.DelayedDependsOnResolver>>>
@@ -208,6 +204,5 @@ public class SPackageBasic extends SPackage {
         pb.getAttribute(ATR_ITEM_LABEL).asAtr().label("Item label")/*.editSize(30)*/.maxLength(50);
         //@formatter:on
 
-        pb.createAttributeIntoType(STypeDate.class, ATR_ENABLED_DATES);
     }
 }
