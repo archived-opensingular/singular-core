@@ -60,7 +60,7 @@ public interface SingularProperties {
     String FILEUPLOAD_DEFAULT_MAX_FILE_SIZE = "singular.fileupload.default_max_file_size";
 
     // Identifica se o singular deve usar o banco em memória, ou se conectar a um banco externo.
-    String USE_EMBEDDED_DATABASE = "singular.database.embbeded";
+    String USE_EMBEDDED_DATABASE = "singular.database.embedded";
     String JNDI_DATASOURCE = "singular.datasource.jndi.name";
 
     // Identifica o nome do schema que deve ser utilizado
