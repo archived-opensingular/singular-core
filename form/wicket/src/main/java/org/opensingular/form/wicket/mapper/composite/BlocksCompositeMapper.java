@@ -71,9 +71,9 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
     private static boolean isBlockHandlesTitleFromChild(WicketBuildContext ctx, Block block) {
         SInstance currentInstance = ctx.getCurrentInstance();
         if (block.isSingleType() && currentInstance instanceof ICompositeInstance) {
-            final boolean blockTitleBlank      = isBlank(block.getName());
+            final boolean blockTitleBlank = isBlank(block.getName());
             final boolean singleTypeTitleBlank = isSingleTypeTitleBlank(block, (ICompositeInstance) currentInstance);
-            final boolean sameTitle            = isSameTitle(block, currentInstance);
+            final boolean sameTitle = isSameTitle(block, currentInstance);
 
             return blockTitleBlank ^ singleTypeTitleBlank ^ sameTitle;
         }
@@ -103,11 +103,10 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
         protected void buildFields(WicketBuildContext ctx, BSGrid grid) {
 
             final List<String> remainingTypes = new ArrayList<>();
-            final List<String> addedTypes     = new ArrayList<>();
-            final SViewByBlock view           = (SViewByBlock) ctx.getView();
+            final List<String> addedTypes = new ArrayList<>();
 
-            final WicketBuildContext             rootContext = ctx.getRootContext();
-            final IBSComponentFactory<Component> factory     = rootContext.getPreFormPanelFactory();
+            final WicketBuildContext rootContext = ctx.getRootContext();
+            final IBSComponentFactory<Component> factory = rootContext.getPreFormPanelFactory();
 
             BSGrid targetGrid = grid;
             if (factory != null) {
@@ -121,8 +120,9 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
 
             targetGrid = targetGrid.newGrid();
 
-            for (int i = 0; i < view.getBlocks().size(); i++) {
-                final Block        block   = view.getBlocks().get(i);
+            final List<Block> blocks = ((SViewByBlock) ctx.getView()).getBlocks();
+            for (int i = 0; i < blocks.size(); i++) {
+                final Block block = blocks.get(i);
                 final PortletPanel portlet = new PortletPanel("_portlet" + i, block, ctx, (BlocksCompositeMapper) mapper);
                 addedTypes.addAll(block.getTypes());
                 appendBlock(targetGrid, block, portlet);
@@ -136,7 +136,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             }
 
             if (!remainingTypes.isEmpty()) {
-                final Block        block   = new Block();
+                final Block block = new Block();
                 final PortletPanel portlet = new PortletPanel("_portletForRemaining", block, ctx, (BlocksCompositeMapper) mapper);
                 block.setTypes(remainingTypes);
                 appendBlock(targetGrid, block, portlet);
@@ -145,7 +145,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
 
         private void appendBlock(BSGrid grid, Block block, PortletPanel portlet) {
             final BSGrid newGrid = portlet.getNewGrid();
-            BSRow        row     = newGrid.newRow();
+            BSRow row = newGrid.newRow();
 
             grid.appendTag("div", portlet);
 
@@ -155,16 +155,16 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
         }
 
         private BSRow buildBlockAndGetCurrentRow(SType<?> field, BSGrid grid, BSRow row, Block block) {
-            Boolean                        newRow = field.getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
-            SInstanceFieldModel<SInstance> im     = fieldModel(field);
-            BSRow                          target = (newRow != null && newRow) ? grid.newRow() : row;
+            Boolean newRow = field.getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
+            SInstanceFieldModel<SInstance> im = fieldModel(field);
+            BSRow target = (newRow != null && newRow) ? grid.newRow() : row;
             buildField(target, im, block);
             return target;
         }
 
         private void buildField(final BSRow row, final SInstanceFieldModel<SInstance> mField, Block block) {
             SInstance iField = mField.getObject();
-            BSCol     col    = row.newCol();
+            BSCol col = row.newCol();
             configureColspan(ctx, iField, col);
 
             WicketBuildContext childCtx = ctx.createChild(col, ctx.getExternalContainer(), mField);
@@ -175,23 +175,23 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
 
     private static class PortletPanel extends TemplatePanel {
 
-        private static final String TITLE_ID = "title";
-        private static final String GRID_ID  = "grid";
+        private static final String         TITLE_ID       = "title";
+        private static final String         GRID_ID        = "grid";
 
-        private static final String PORTLET_MARKUP = ""
-                + "<div class='portlet light'>                                     "
-                + "  <div class='portlet-title' wicket:id='" + TITLE_ID + "'></div>"
-                + "  <div class='portlet-body'>                                    "
-                + "    <div wicket:id='" + GRID_ID + "' />                         "
-                + "  </div>                                                        "
-                + "</div>                                                          ";
+        private static final String         PORTLET_MARKUP = ""
+            + "<div class='portlet light'>                                     "
+            + "  <div class='portlet-title' wicket:id='" + TITLE_ID + "'></div>"
+            + "  <div class='portlet-body'>                                    "
+            + "    <div wicket:id='" + GRID_ID + "' />                         "
+            + "  </div>                                                        "
+            + "</div>                                                          ";
 
         private final Block                 block;
         private final BSGrid                newGrid;
         private final WicketBuildContext    ctx;
         private final BlocksCompositeMapper mapper;
 
-        private boolean visible;
+        private boolean                     visible;
 
         PortletPanel(String id, Block block, WicketBuildContext ctx, BlocksCompositeMapper mapper) {
             super(id, PORTLET_MARKUP);
@@ -242,7 +242,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             }
 
             AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-            boolean           newVisible = isAnyChildrenVisible();
+            boolean newVisible = isAnyChildrenVisible();
             if (newVisible != visible) {
                 if (newVisible) {
                     target.appendJavaScript("$('#" + this.getMarkupId() + "').css('display', 'block');");
@@ -254,44 +254,44 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
         }
 
         private TemplatePanel buildPortletTitle(Block block, WicketBuildContext ctx) {
-            final String         titleMarkup     = "<div wicket:id='caption' class='caption'></div>";
+            final String titleMarkup = "<div wicket:id='caption' class='caption'></div>";
             final IModel<String> titleLabelModel = newBlockLabelModel(block, ctx);
 
-            final TemplatePanel  portletTitle = new TemplatePanel(TITLE_ID, titleMarkup);
-            final Label          titleLabel   = new Label("title", titleLabelModel);
-            final BSContainer<?> caption      = new BSContainer<>("caption");
+            final TemplatePanel portletTitle = new TemplatePanel(TITLE_ID, titleMarkup);
+            final Label titleLabel = new Label("title", titleLabelModel);
+            final BSContainer<?> caption = new BSContainer<>("caption");
 
             portletTitle.setVisible(isNotBlank(titleLabelModel.getObject()));
             portletTitle.add(caption);
             caption
-                    .appendTag("span", titleLabel.add($b.classAppender("caption-subject")))
-                    .add($b.styleAppender("width", "100%", $m.ofValue(Boolean.TRUE)));
+                .appendTag("span", titleLabel.add($b.classAppender("caption-subject")))
+                .add($b.styleAppender("width", "100%", $m.ofValue(Boolean.TRUE)));
 
             if (isBlockHandlesTitleFromChild(ctx, block)) {
                 IModel<? extends SInstance> model = IMappingModel.of(ctx.getModel())
-                        .map(it -> block.getSingleType(it).orElse(null));
+                    .map(it -> block.getSingleType(it).orElse(null));
                 IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
-                        mapper,
-                        RequestCycle.get().find(AjaxRequestTarget.class),
-                        model,
-                        model.getObject(),
-                        ctx,
-                        ctx.getContainer());
+                    mapper,
+                    RequestCycle.get().find(AjaxRequestTarget.class),
+                    model,
+                    model.getObject(),
+                    ctx,
+                    ctx.getContainer());
 
                 SInstanceActionsPanel.addLeftSecondaryRightPanelsTo(
-                        caption,
-                        mapper.getInstanceActionsProviders(),
-                        model,
-                        false,
-                        internalContextListProvider);
+                    caption,
+                    mapper.getInstanceActionsProviders(),
+                    model,
+                    false,
+                    internalContextListProvider);
             }
 
             titleLabel.add(new ClassAttributeModifier() {
                 @Override
                 protected Set<String> update(Set<String> oldClasses) {
                     if (block.getTypes().size() == 1) {
-                        final SIComposite sic        = ctx.getCurrentInstance();
-                        final SInstance   firstChild = sic.getField(block.getTypes().get(0));
+                        final SIComposite sic = ctx.getCurrentInstance();
+                        final SInstance firstChild = sic.getField(block.getTypes().get(0));
                         return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, firstChild);
                     }
                     return oldClasses;
@@ -308,8 +308,8 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             else {
                 SInstance parent = ctx.getCurrentInstance();
                 label = block.getSingleType(parent)
-                        .map(it -> it.asAtr().getLabel())
-                        .orElse(null);
+                    .map(it -> it.asAtr().getLabel())
+                    .orElse(null);
             }
 
             return Model.of(label);

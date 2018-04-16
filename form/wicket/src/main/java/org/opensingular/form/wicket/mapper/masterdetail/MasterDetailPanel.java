@@ -58,6 +58,7 @@ import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.IPredicate;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.datatable.BSDataTable;
@@ -91,7 +92,6 @@ public class MasterDetailPanel extends Panel {
     private final WicketBuildContext        ctx;
     private final IModel<SIList<SInstance>> list;
     private final MasterDetailModal         modal;
-    private final SViewListByMasterDetail   view;
     private final SInstanceActionsProviders instanceActionsProviders;
 
     private SingularFormWicket<?>           form;
@@ -107,12 +107,11 @@ public class MasterDetailPanel extends Panel {
     private ConfirmationModal confirmationModal;
 
     public MasterDetailPanel(String id, WicketBuildContext ctx, IModel<SIList<SInstance>> list, MasterDetailModal modal,
-                             SViewListByMasterDetail view, SInstanceActionsProviders instanceActionsProviders) {
+        SInstanceActionsProviders instanceActionsProviders) {
         super(id);
         this.ctx = ctx;
         this.list = list;
         this.modal = modal;
-        this.view = view;
         this.instanceActionsProviders = instanceActionsProviders;
 
         createComponents();
@@ -182,7 +181,8 @@ public class MasterDetailPanel extends Panel {
         final BSDataTableBuilder<SInstance, ?, ?> builder = new MasterDetailBSDataTableBuilder<>(newDataProvider()).withNoRecordsToolbar();
         final BSDataTable<SInstance, ?> dataTable;
 
-        configureColumns(view.getColumns(), builder, list, modal, ctx, ctx.getViewMode(), view);
+        ISupplier<SViewListByMasterDetail> viewSupplier = ctx.getViewSupplier(SViewListByMasterDetail.class);
+        configureColumns(viewSupplier.get().getColumns(), builder, list, modal, ctx, ctx.getViewMode(), viewSupplier);
         dataTable = builder.build(id);
 
         dataTable.setOnNewRowItem((IConsumer<Item<SInstance>>) rowItem -> {
@@ -241,7 +241,7 @@ public class MasterDetailPanel extends Panel {
         MasterDetailModal modal,
         WicketBuildContext ctx,
         ViewMode viewMode,
-        SViewListByMasterDetail view) {
+        ISupplier<SViewListByMasterDetail> viewSupplier) {
 
         final List<ColumnType> columnTypes = new ArrayList<>();
 
@@ -271,7 +271,7 @@ public class MasterDetailPanel extends Panel {
             propertyColumnAppender(builder, labelModel, $m.get(() -> typeName), columnType.getDisplayFunction());
         }
 
-        actionColumnAppender(builder, model, modal, ctx, viewMode, view);
+        actionColumnAppender(builder, model, modal, ctx, viewMode, viewSupplier);
     }
 
     /**
@@ -282,11 +282,11 @@ public class MasterDetailPanel extends Panel {
         MasterDetailModal modal,
         WicketBuildContext ctx,
         ViewMode vm,
-        SViewListByMasterDetail view) {
-        builder.appendActionColumn($m.ofValue(view.getActionColumnLabel()), ac -> {
-            ac.appendAction(buildViewOrEditActionConfig(vm, view), buildViewOrEditAction(modal, ctx));
+        ISupplier<SViewListByMasterDetail> viewSupplier) {
+        builder.appendActionColumn($m.ofValue(viewSupplier.get().getActionColumnLabel()), ac -> {
+            ac.appendAction(buildViewOrEditActionConfig(vm, viewSupplier), buildViewOrEditAction(modal, ctx));
             if (vm.isEdition()) {
-                ac.appendAction(buildRemoveActionConfig(view), buildRemoveAction(model, ctx));
+                ac.appendAction(buildRemoveActionConfig(viewSupplier), buildRemoveAction(model, ctx));
             }
             ac.appendAction(buildShowErrorsActionConfig(model), buildShowErrorsAction());
             if (ctx.getAnnotationMode().enabled())
@@ -294,12 +294,13 @@ public class MasterDetailPanel extends Panel {
         });
     }
 
-    private BSActionPanel.ActionConfig<SInstance> buildRemoveActionConfig(SViewListByMasterDetail view) {
+    private BSActionPanel.ActionConfig<SInstance> buildRemoveActionConfig(ISupplier<SViewListByMasterDetail> viewSupplier) {
         return new BSActionPanel.ActionConfig<SInstance>()
             .styleClasses(Model.of("list-detail-remove"))
             .iconeModel(Model.of(DefaultIcons.REMOVE))
             .titleFunction(rowModel -> "Remover")
-            .visibleFor(m -> view.isDeleteEnabled(m.getObject()));
+            .labelModel($m.ofValue("Remover"))
+            .visibleFor(m -> viewSupplier.get().isDeleteEnabled(m.getObject()));
     }
 
     private IBSAction<SInstance> buildRemoveAction(IModel<? extends SInstance> model, WicketBuildContext ctx) {
@@ -310,17 +311,17 @@ public class MasterDetailPanel extends Panel {
                 t.add(ctx.getContainer());
                 WicketFormProcessing.onFieldProcess(MasterDetailPanel.this.form, t, model);
             };
-//            target.add(confirmationModal);
+            //            target.add(confirmationModal);
             confirmationModal.show(target, confirmationAction);
         };
     }
 
-    private BSActionPanel.ActionConfig<SInstance> buildViewOrEditActionConfig(ViewMode viewMode, SViewListByMasterDetail view) {
-        final Icon openModalIcon = viewMode.isEdition() && view.isEditEnabled() ? DefaultIcons.PENCIL : DefaultIcons.EYE;
+    private BSActionPanel.ActionConfig<SInstance> buildViewOrEditActionConfig(ViewMode viewMode, ISupplier<SViewListByMasterDetail> viewSupplier) {
+        final Icon openModalIcon = viewMode.isEdition() && viewSupplier.get().isEditEnabled() ? DefaultIcons.PENCIL : DefaultIcons.EYE;
         return new BSActionPanel.ActionConfig<SInstance>()
             .iconeModel(Model.of(openModalIcon))
             .styleClasses(Model.of("list-detail-edit"))
-            .titleFunction(rowModel -> viewMode.isEdition() && view.isEditEnabled() ? "Editar" : "Visualizar");
+            .titleFunction(rowModel -> viewMode.isEdition() && viewSupplier.get().isEditEnabled() ? "Editar" : "Visualizar");
     }
 
     private IBSAction<SInstance> buildViewOrEditAction(MasterDetailModal modal, WicketBuildContext ctx) {

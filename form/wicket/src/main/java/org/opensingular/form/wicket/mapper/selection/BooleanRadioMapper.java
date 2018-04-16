@@ -24,6 +24,7 @@ import org.opensingular.form.wicket.WicketBuildContext;
 
 public class BooleanRadioMapper extends RadioMapper {
 
+    @Override
     public String getReadOnlyFormattedText(WicketBuildContext ctx, IModel<? extends SInstance> model) {
         final SInstance mi = model.getObject();
         Boolean value = mi.getValue(Boolean.class);
