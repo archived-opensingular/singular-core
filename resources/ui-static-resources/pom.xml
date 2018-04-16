@@ -42,29 +42,6 @@
                     <generateSourceMap>false</generateSourceMap>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>com.samaxes.maven</groupId>
-                <artifactId>minify-maven-plugin</artifactId>
-                <version>1.7.6</version>
-                <executions>
-                    <execution>
-                        <id>default-minify</id>
-                        <phase>package</phase>
-                        <configuration>
-                            <cssSourceDir>resources/singular/global/plugins/bootstrap/css</cssSourceDir>
-                            <cssSourceFiles>
-                                <cssSourceFile>bootstrap.css</cssSourceFile>
-                            </cssSourceFiles>
-                            <cssFinalFile>bootstrap.css</cssFinalFile>
-                        </configuration>
-                        <goals>
-                            <goal>minify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
         </plugins>
 
     </build>

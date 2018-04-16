@@ -49,14 +49,10 @@ public abstract class SingularTemplate extends WebPage {
         return "/singular-static/resources/" + getCurrentSkinFolder() + uri;
     }
 
-    protected String commonResource(String uri) {
-        return "/singular-static/resources/singular" + uri;
-    }
-
     public List<HeaderItem> getStyles() {
         return Stream.of(skinnableResource("/global/plugins/font-awesome/css/font-awesome.min.css"),
                 skinnableResource("/global/plugins/simple-line-icons/simple-line-icons.min.css"),
-                skinnableResource("/global/plugins/bootstrap/css/bootstrap.min.css"),
+                skinnableResource("/global/plugins/bootstrap/css/bootstrap.css"),
                 skinnableResource("/global/plugins/uniform/css/uniform.default.css"),
                 skinnableResource("/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css"),
                 skinnableResource("/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css"),
@@ -125,9 +121,9 @@ public abstract class SingularTemplate extends WebPage {
                         skinnableResource("/global/plugins/bootstrap-toastr/toastr.min.js"),
                         skinnableResource("/global/plugins/typeahead/typeahead.bundle.min.js"),
                         skinnableResource("/global/plugins/jstree/dist/jstree.min.js"),
-                        commonResource("/plugins/stringjs/string.min.js"),
-                        commonResource("/plugins/jquery-maskmoney/dist/jquery.maskMoney.min.js"),
-                        commonResource("/plugins/ckeditor/ckeditor.js")
+                        skinnableResource("/plugins/stringjs/string.min.js"),
+                        skinnableResource("/plugins/jquery-maskmoney/dist/jquery.maskMoney.min.js"),
+                        skinnableResource("/plugins/ckeditor/ckeditor.js")
                 ).map(JavaScriptHeaderItem::forUrl)).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
     }
 
