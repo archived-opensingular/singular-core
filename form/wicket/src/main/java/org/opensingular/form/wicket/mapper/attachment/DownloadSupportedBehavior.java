@@ -114,9 +114,8 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
         response.flush();
     }
 
-    public String getDownloadUrlGerada(){
-        //TODO  Obviamente remover isso.
-       return  "localhost:8080" + urlGerada;
+    public String getDownloadUrlGerada() {
+        return urlGerada;
     }
 
     public String getUrl() {

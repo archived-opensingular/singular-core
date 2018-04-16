@@ -16,6 +16,8 @@
 
 package org.opensingular.form.wicket.mapper.maps;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -110,9 +112,11 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                     points.getObject().clearInstance();
                     table.setVisible(false);
                     //Preciso descobrir oq fazer quando ele salvar, acredito que precise ser salvo na internet...
-                    googleMapsPanel.includeKmlFile("http://api.flickr.com/services/feeds/geo/?g=322338@N20&lang=en-us&format=feed-georss");
+
+                    googleMapsPanel.includeKmlFile(toAbsolutePath() + urlFile);
                     target.add(pointsCtx.getParent().getContainer());
                 }));
+
 
 //        WicketUtils.findFirstChild(fileCtx.getContainer(), FileUploadPanel.class)
 //                .ifPresent(panel -> panel.registerFileUploadedListener((FileEventListener) attachment -> {
@@ -138,7 +142,15 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                 }));
 
         confirmationModal.registerListener(googleMapsPanel::updateJS);
+
     }
+
+    //TODO verificar se existe uma forma mais elegante de fazer isso.
+    private static String toAbsolutePath() {
+        HttpServletRequest req = (HttpServletRequest)(RequestCycle.get().getRequest()).getContainerRequest();
+        return req.getRequestURL().substring(0, req.getRequestURL().toString().length() - req.getRequestURI().length());
+    }
+
 
 
     private AbstractDefaultAjaxBehavior createBehaviorAddPoint(final IModel<SIList<SInstance>> points, BSContainer<?> container) {
