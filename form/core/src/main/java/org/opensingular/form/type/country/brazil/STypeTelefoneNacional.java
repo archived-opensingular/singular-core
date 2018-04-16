@@ -32,7 +32,6 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
 
     private static final Pattern NOT_NUMBER_PATTERN = Pattern.compile("[^\\d]");
     private static final Pattern PHONE_PATTERN      = Pattern.compile("(\\d{2})(\\d{1,4}|\\d{5}){0,1}(\\d{1,4}){0,1}");
-    private static final Integer SIZE_MIN_PHONE = 10;
     private static final Integer SIZE_DD_PHONE = 2;
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -40,23 +39,12 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
         asAtr().maxLength(15).label("Telefone");
     }
 
-    @Override
-    public String convert(Object value) {
-        try {
-            return format(super.convert(value));
-        } catch (Exception e) {
-            getLogger().trace(e.getMessage(), e);
-            return String.valueOf(value);
-        }
-    }
-
     public String format(String value) {
         if (value == null) {
             return null;
         }
         String dddExtraido = extractDDD(value);
-        if (StringUtils.isNotEmpty(dddExtraido) && dddExtraido.length() == SIZE_DD_PHONE
-                && value.length() >= SIZE_MIN_PHONE) {
+        if (StringUtils.isNotEmpty(dddExtraido) && dddExtraido.length() == SIZE_DD_PHONE) {
             return "(" + dddExtraido + ") " + extractNumber(value);
         }
         return dddExtraido;
@@ -69,6 +57,7 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
             return null;
         }
         unformated = unformat(number);
+        unformated = removeZeroIfNeeded(unformated);
         return PHONE_PATTERN.matcher(unformated);
     }
 
@@ -108,6 +97,19 @@ public class STypeTelefoneNacional extends STypeString implements Loggable {
             return null;
         }
         return NOT_NUMBER_PATTERN.matcher(formated).replaceAll("");
+    }
+
+    /**
+     * Verica se o dd está no padrao de 3 digitos, exemplos 061, revemondo o 0 a esquerda
+     *
+     * @param unformated numero sem formatação
+     * @return numero ajustado
+     */
+    private String removeZeroIfNeeded(String unformated) {
+        if (Pattern.compile("0[1-9{2}]").matcher(unformated).lookingAt()) {
+            return unformated.replaceFirst("0", "");
+        }
+        return unformated;
     }
 
 }
