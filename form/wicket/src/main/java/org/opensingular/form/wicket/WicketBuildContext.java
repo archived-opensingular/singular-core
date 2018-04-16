@@ -448,8 +448,9 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
 
     @Override
     public SView getView() {
-        if (view == null)
+        if (view == null) {
             view = ViewResolver.resolve(getModel().getObject());
+        }
         return view;
     }
 
