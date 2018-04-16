@@ -249,15 +249,11 @@
             map: map
         });
 
-        if (readOnly) {
-            marker.setVisible(false);
+        if (isLatLongNotEmpty(latElement.value, lngElement.value)) {
+            marker.setPosition(latLong);
+            marker.setVisible(true);
         } else {
-            if (isLatLongNotEmpty(latElement.value, lngElement.value)) {
-                marker.setPosition(latLong);
-                marker.setVisible(true);
-            } else {
-                marker.setVisible(false);
-            }
+            marker.setVisible(false);
         }
 
         marker.addListener('click', function () {

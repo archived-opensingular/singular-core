@@ -37,7 +37,7 @@ public class SearchModalPanel extends AbstractSearchModalPanel {
     @Override
     protected void buildAndAppendModalToRootContainer() {
         this.modal = newModalWindow(this.ctx.getViewSupplier(SViewSearchModal.class));
-        ctx.getRootContainer().appendTag("div", this.modal);
+        ctx.getExternalContainer().appendTag("div", modal);
     }
 
     private BFModalWindow newModalWindow(ISupplier<SViewSearchModal> viewSupplier) {

@@ -16,15 +16,12 @@
 
 package org.opensingular.form.wicket.mapper.maps;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.string.StringValue;
-import org.apache.wicket.util.visit.IVisit;
-import org.apache.wicket.util.visit.IVisitor;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
@@ -42,27 +39,29 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+
 public class LatitudeLongitudeListMapper extends TableListMapper {
+
 
     @Override
     public void buildView(WicketBuildContext ctx) {
+
         SInstanceFieldModel<SInstance> zoom = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeList.FIELD_ZOOM);
         WicketBuildContext zoomCtx = ctx.createChild(ctx.getContainer().newGrid(), ctx.getExternalContainer(), zoom);
         zoomCtx.build();
 
         LatLongMarkupIds ids = new LatLongMarkupIds();
 
-        zoomCtx.getContainer().visitChildren((TextField.class), new IVisitor<Component, Object>() {
-            @Override
-            public void component(Component object, IVisit<Object> visit) {
-                String nameSimple = ((SInstanceValueModel<?>) object.getDefaultModel()).getSInstance().getType().getNameSimple();
-                if (nameSimple.equals(STypeLatitudeLongitudeList.FIELD_ZOOM)) {
-                    ids.zoomId = object.getMarkupId();
-                }
+        zoomCtx.getContainer().visitChildren((TextField.class), (object, visit) -> {
+            String nameSimple = ((SInstanceValueModel<?>) object.getDefaultModel()).getSInstance().getType().getNameSimple();
+            if (nameSimple.equals(STypeLatitudeLongitudeList.FIELD_ZOOM)) {
+                ids.zoomId = object.getMarkupId();
             }
         });
 
-        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, ctx.getModel(), ctx.getViewSupplier(SViewCurrentLocation.class), ctx.getViewMode().isVisualization(), true);
+        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, ctx.getModel(), ctx.getViewSupplier(SViewCurrentLocation.class),
+                ctx.getViewMode().isVisualization(), true);
         BSGrid gridGoogleMaps = ctx.getContainer().newGrid();
         gridGoogleMaps.newFormGroup().appendDiv(googleMapsPanel);
 
@@ -81,10 +80,10 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                 target.add(gridGoogleMaps);
             }));
 
+
         AbstractDefaultAjaxBehavior addPoint = createBehaviorAddPoint(points, pointsCtx.getContainer());
         ctx.getContainer().add(addPoint);
-
-        googleMapsPanel.enableMultipleMarkers(addPoint.getCallbackUrl().toString(), pointsCtx.getContainer().getMarkupId());
+        googleMapsPanel.add($b.onConfigure(c -> googleMapsPanel.enableMultipleMarkers(addPoint.getCallbackUrl().toString(), pointsCtx.getContainer().getMarkupId())));
 
         WicketUtils.findFirstChild(pointsCtx.getContainer(), AddButton.class)
             .ifPresent(button -> button.add(new AjaxEventBehavior("click") {
@@ -93,6 +92,7 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                     target.add(googleMapsPanel);
                 }
             }));
+
 
         ConfirmationModal confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
         confirmationModal.registerListener(googleMapsPanel::updateJS);

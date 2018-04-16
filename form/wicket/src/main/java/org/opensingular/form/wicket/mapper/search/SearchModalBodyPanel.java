@@ -31,12 +31,8 @@ import org.opensingular.form.SingularFormException;
 import org.opensingular.form.converter.SInstanceConverter;
 import org.opensingular.form.converter.SimpleSInstanceConverter;
 import org.opensingular.form.document.RefType;
-import org.opensingular.form.provider.Config;
+import org.opensingular.form.provider.*;
 import org.opensingular.form.provider.Config.Column;
-import org.opensingular.form.provider.FilteredPagedProvider;
-import org.opensingular.form.provider.FilteredProvider;
-import org.opensingular.form.provider.InMemoryFilteredPagedProviderDecorator;
-import org.opensingular.form.provider.ProviderContext;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
@@ -52,6 +48,7 @@ import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Iterator;
+import java.util.Optional;
 
 import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
@@ -196,15 +193,17 @@ class SearchModalBodyPanel extends Panel implements Loggable {
     }
 
     private SingularFormPanel buildInnerSingularFormPanel() {
+        SingularFormPanel newSingularFormPanel = new SingularFormPanel(FORM_PANEL_ID, true);
+        newSingularFormPanel.setInstanceFromType(RefType.of(() -> getConfig().getFilter()));
 
-        final SingularFormPanel parentSingularFormPanel = this.visitParents(SingularFormPanel.class,
-            (parent, visit) -> visit.stop(parent));
+        lookParentSingularFormPanel().flatMap(SingularFormPanel::getDocumentFactory)
+                .ifPresent(newSingularFormPanel::setDocumentFactory);
 
-        SingularFormPanel p = new SingularFormPanel(FORM_PANEL_ID, true);
-        p.setDocumentFactory(parentSingularFormPanel.getDocumentFactory().orElse(null));
-        p.setInstanceFromType(RefType.of(() -> getConfig().getFilter()));
+        return newSingularFormPanel;
+    }
 
-        return p;
+    private Optional<SingularFormPanel> lookParentSingularFormPanel() {
+        return Optional.ofNullable(this.visitParents(SingularFormPanel.class, (parent, visit) -> visit.stop(parent)));
     }
 
     private SInstance getInstance() {
