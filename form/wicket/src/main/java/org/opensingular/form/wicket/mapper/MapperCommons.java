@@ -16,10 +16,10 @@
 
 package org.opensingular.form.wicket.mapper;
 
-public class MapperCommons {
+public abstract class MapperCommons {
 
     private MapperCommons() {}
 
     public final static String BUTTON_STYLE = "padding: 5px 3px 1px;";
-    public final static String ICON_STYLE = "width: 0.8em;";
+    public final static String ICON_STYLE   = "width: 0.8em;";
 }

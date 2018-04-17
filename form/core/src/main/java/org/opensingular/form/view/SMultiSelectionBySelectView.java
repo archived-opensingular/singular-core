@@ -16,7 +16,6 @@
 
 package org.opensingular.form.view;
 
-@SuppressWarnings("serial")
 public class SMultiSelectionBySelectView extends AbstractSViewList {
 
 }

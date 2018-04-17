@@ -14,15 +14,14 @@ import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 public class SearchModalTreePanel extends AbstractSearchModalPanel {
 
     private BFModalWindow modal;
-    private SViewTree view;
 
     public SearchModalTreePanel(String id, WicketBuildContext ctx) {
         super(id, ctx);
-        this.view = (SViewTree) ctx.getView();
     }
 
     @Override
     protected void buildAndAppendModalToRootContainer() {
+        final SViewTree view = ctx.getViewSupplier(SViewTree.class).get();
         modal = new BFModalWindow(ctx.getExternalContainer().newChildId(), false, false);
         modal.setOutputMarkupId(true);
         modal.setTitleText(Model.of(Objects.defaultIfNull(view.getTitle(), StringUtils.EMPTY)));

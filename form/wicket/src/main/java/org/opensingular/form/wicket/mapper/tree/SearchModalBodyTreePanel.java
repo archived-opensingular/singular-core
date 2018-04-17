@@ -37,6 +37,7 @@ import org.opensingular.form.provider.TreeProvider;
 import org.opensingular.form.view.SViewTree;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.util.Loggable;
 import org.springframework.util.CollectionUtils;
 
@@ -58,13 +59,13 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
     private final IConsumer<AjaxRequestTarget> selectCallback;
     private final IConsumer<AjaxRequestTarget> clearCallback;
 
-    private SViewTree viewTree;
+    private final ISupplier<SViewTree> viewSupplier;
 
     SearchModalBodyTreePanel(String id, WicketBuildContext ctx, IConsumer<AjaxRequestTarget> selectCallback,
                              IConsumer<AjaxRequestTarget> clearCallback) {
         super(id);
         this.ctx = ctx;
-        this.viewTree = (SViewTree) ctx.getView();
+        this.viewSupplier = ctx.getViewSupplier(SViewTree.class);
         this.selectCallback = selectCallback;
         this.clearCallback = clearCallback;
     }
@@ -83,7 +84,7 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
         nodes.setObject(loadTree());
         populateParamsTree();
 
-        Form form = new Form("formHidden");
+        Form<?> form = new Form<>("formHidden");
         form.setOutputMarkupId(false);
         form.add(nodeSelected);
 
@@ -93,12 +94,13 @@ public class SearchModalBodyTreePanel extends Panel implements Loggable {
     }
 
     private void populateParamsTree() {
-        JSONObject json = new JSONObject();
-        json.put("data", treeJson(nodes.getObject(), viewTree.isOpen()));
+        final SViewTree view = viewSupplier.get();
+        final JSONObject json = new JSONObject();
+        json.put("data", treeJson(nodes.getObject(), view.isOpen()));
         json.put("hidden", stringfyId(nodeSelected));
-        json.put("showOnlyMatches", viewTree.isShowOnlyMatches());
-        json.put("showOnlyMatchesChildren", viewTree.isShowOnlyMatchesChildren());
-        json.put("onlyLeafSelected", viewTree.isSelectOnlyLeafs());
+        json.put("showOnlyMatches", view.isShowOnlyMatches());
+        json.put("showOnlyMatchesChildren", view.isShowOnlyMatchesChildren());
+        json.put("onlyLeafSelected", view.isSelectOnlyLeafs());
         viewParams.setObject(json.toString());
     }
 
