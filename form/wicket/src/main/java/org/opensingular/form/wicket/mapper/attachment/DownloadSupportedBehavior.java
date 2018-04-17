@@ -89,6 +89,7 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
     public void onResourceRequested() {
         try {
             handleRequest();
+
         } catch (IOException e) {
             getLogger().debug(null, e);
             throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -101,12 +102,12 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
         StringValue id = parameters.getParameterValue("fileId");
         StringValue name = parameters.getParameterValue("fileName");
         writeResponse(getDownloadURL(id.toString(), name.toString()));
+        urlGerada = addAttachmentSharedAll(id.toString(), name.toString());
     }
 
     private void writeResponse(String url) throws IOException {
         JSONObject jsonFile = new JSONObject();
         jsonFile.put("url", url);
-        urlGerada = url;
         WebResponse response = (WebResponse) RequestCycle.get().getResponse();
         response.setContentType("application/json");
         response.setHeader("Cache-Control", "no-store, no-cache");
@@ -128,6 +129,16 @@ public class DownloadSupportedBehavior extends Behavior implements IResourceList
         AttachmentResource attachmentResource = new AttachmentResource(sessionKey);
         getSharedResources().add(sessionKey, attachmentResource);
         return attachmentResource;
+    }
+
+    private String addAttachmentSharedAll(String attachmentKey, String filename) {
+
+        String publico = "publico";
+        getWebApplication().mountResource(AttachmentResource.getMountPathPublic(), new SharedResourceReference(publico));
+        AttachmentResource attachmentResource = new AttachmentResource(publico);
+        getSharedResources().add(publico, attachmentResource);
+
+        return attachmentResource.addAttachment(filename, contentDisposition, findAttachmentRef(attachmentKey));
     }
 
     private String getSessionKey() {
