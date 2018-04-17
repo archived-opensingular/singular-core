@@ -102,9 +102,9 @@ public class SqlUtil {
         if (SingularProperties.getOpt(USE_EMBEDDED_DATABASE).isPresent()) {
             return SingularProperties.get().isTrue(USE_EMBEDDED_DATABASE);
         } else if (SingularProperties.get().isTrue(SINGULAR_DEV_MODE)) {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
