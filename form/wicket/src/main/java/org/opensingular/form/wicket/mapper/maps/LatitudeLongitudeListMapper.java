@@ -16,6 +16,7 @@
 
 package org.opensingular.form.wicket.mapper.maps;
 
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -111,6 +112,7 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                     table.setVisible(false);
                     //TODO essa atividade ainda não está funcionando no SHOW CASE devido a não ter uma URL acessivel de forma publica para acessar o arquivo.
                     googleMapsPanel.includeKmlFile(toAbsolutePath() + urlFile);
+                    Logger.getLogger("\n\n" + toAbsolutePath() + urlFile + "\n\n");
                     target.add(pointsCtx.getParent().getContainer());
                 }));
 

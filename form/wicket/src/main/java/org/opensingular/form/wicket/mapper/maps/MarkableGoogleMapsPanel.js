@@ -112,7 +112,8 @@
             center: latLong
         });
 
-         if(urlKml !== '' && urlKml != null){
+        console.log(urlKml);
+        if (urlKml !== '' && urlKml != null) {
             new google.maps.KmlLayer({
                 url: urlKml,
                 map: map
@@ -165,7 +166,7 @@
                     latLng = buildGmapsLatLong(valLat, valLng);
                 }
 
-                markers.push(createMarker(map, latLng, polygon, readOnly, false, index+1));
+                markers.push(createMarker(map, latLng, polygon, readOnly, false, index + 1));
             })
         ;
     }
@@ -211,7 +212,9 @@
     }
 
     function draw(map, polygon, markers) {
-        var visibleMarkers = markers.filter(function (m) { return m.getVisible();});
+        var visibleMarkers = markers.filter(function (m) {
+            return m.getVisible();
+        });
         if (visibleMarkers.length > 2) {
             var coords = visibleMarkers.map(function (m) {
                 return {lat: m.getPosition().lat(), lng: m.getPosition().lng()};
@@ -238,11 +241,11 @@
 
                 $(latElement).on('change', function () {
                     defineMarkerPositionManual(latElement, lngElement, map, marker, center);
-                    draw(map, polygon,  markers);
+                    draw(map, polygon, markers);
                 });
                 $(lngElement).on('change', function () {
                     defineMarkerPositionManual(latElement, lngElement, map, marker, center);
-                    draw(map, polygon,  markers);
+                    draw(map, polygon, markers);
                 });
 
             })

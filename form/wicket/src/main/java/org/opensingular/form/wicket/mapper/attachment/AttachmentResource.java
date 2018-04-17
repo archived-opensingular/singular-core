@@ -86,7 +86,7 @@ public class AttachmentResource extends AbstractResource implements Loggable {
             resourceResponse.setContentDisposition(attachment.contentDisposition);
             resourceResponse.setContentType(attachmentRef.getContentType());
             resourceResponse.setWriteCallback(new AttachmentResourceWriteCallback(resourceResponse, attachmentRef));
-            attachments.remove(attachmentKey.toString());
+//            attachments.remove(attachmentKey.toString());
         } catch (Exception e) {
             getLogger().error("Erro ao recuperar arquivo.", e);
             resourceResponse.setStatusCode(HttpServletResponse.SC_NOT_FOUND);
