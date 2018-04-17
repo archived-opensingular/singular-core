@@ -49,7 +49,7 @@ public class SearchModalPanel extends AbstractSearchModalPanel {
     }
 
     protected void buildAndAppendModalToRootContainer() {
-        modal = new BFModalWindow(ctx.getRootContainer().newChildId(), false, false);
+        modal = new BFModalWindow(ctx.getExternalContainer().newChildId(), false, false);
         modal.setTitleText(Model.of(Objects.defaultIfNull(view.getTitle(), StringUtils.EMPTY)));
         modal.setBody(new SearchModalBodyPanel(SELECT_INPUT_MODAL_CONTENT_ID, ctx, (target) -> {
             modal.hide(target);
@@ -57,7 +57,7 @@ public class SearchModalPanel extends AbstractSearchModalPanel {
             valueField.getBehaviors(AjaxUpdateInputBehavior.class)
                     .forEach(ajax -> ajax.onUpdate(target));
         })).setSize(BSModalBorder.Size.valueOf(view.getModalSize()));
-        ctx.getRootContainer().appendTag("div", modal);
+        ctx.getExternalContainer().appendTag("div", modal);
     }
 
     @Override
