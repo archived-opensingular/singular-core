@@ -68,25 +68,28 @@ public class DatePickerInitBehaviour extends InitScriptBehaviour {
         map.put("datePickerMarkupId", idDatepicker);
         map.put("inputMarkupId", idInput);
         map.put("changeEvent", BSDatepickerConstants.JS_CHANGE_EVENT);
-        map.put("configureBeforeShowDay", false);
+        map.put("configureBeforeShowDay", Boolean.FALSE);
         map.put("enabledDates", "[]");
 
         if (datePickerSettings != null) {
             if (datePickerSettings.hasEnabledDatesFunction()) {
-                List<Date> enabledDates = datePickerSettings.getEnabledDates();
-                if (enabledDates != null) {
-                    final JSONArray        jsonArray        = new JSONArray();
-                    final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                    for (Date enabledDate : enabledDates) {
-                        jsonArray.put(simpleDateFormat.format(enabledDate));
-                    }
-                    map.put("configureBeforeShowDay", true);
-                    map.put("enabledDates", jsonArray.toString());
-                }
+                configureEnabledDates(map);
             }
         }
-
         return initScript.asString(map);
+    }
+
+    private void configureEnabledDates(Map<String, Object> map) {
+        List<Date> enabledDates = datePickerSettings.getEnabledDates();
+        if (enabledDates != null) {
+            final JSONArray        jsonArray        = new JSONArray();
+            final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            for (Date enabledDate : enabledDates) {
+                jsonArray.put(simpleDateFormat.format(enabledDate));
+            }
+            map.put("configureBeforeShowDay", Boolean.TRUE);
+            map.put("enabledDates", jsonArray.toString());
+        }
     }
 
     public static class DatePickerSettings implements Serializable {
