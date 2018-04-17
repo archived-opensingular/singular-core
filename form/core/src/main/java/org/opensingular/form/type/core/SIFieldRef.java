@@ -16,7 +16,7 @@
 
 package org.opensingular.form.type.core;
 
-import static org.opensingular.form.type.core.STypeOption.*;
+import static org.opensingular.form.type.core.STypeFieldRef.*;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -26,7 +26,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.converter.SInstanceConverter;
 import org.opensingular.lib.commons.base.SingularUtil;
 
-public class SIOption<SOURCE extends SInstance> extends SIComposite {
+public class SIFieldRef<SOURCE extends SInstance> extends SIComposite {
 
     public static class Option implements Serializable {
         public final Integer refId;
@@ -53,13 +53,13 @@ public class SIOption<SOURCE extends SInstance> extends SIComposite {
         }
     }
 
-    public static final SInstanceConverter<Option, SIOption<?>> DEFAULT_CONVERTER = new SInstanceConverter<SIOption.Option, SIOption<?>>() {
+    public static final SInstanceConverter<Option, SIFieldRef<?>> DEFAULT_CONVERTER = new SInstanceConverter<SIFieldRef.Option, SIFieldRef<?>>() {
         @Override
-        public Option toObject(SIOption<?> ins) {
+        public Option toObject(SIFieldRef<?> ins) {
             return ins.toOption();
         }
         @Override
-        public void fillInstance(SIOption<?> ins, Option obj) {
+        public void fillInstance(SIFieldRef<?> ins, Option obj) {
             ins.setOption(obj);
         }
     };
@@ -67,14 +67,14 @@ public class SIOption<SOURCE extends SInstance> extends SIComposite {
     //@formatter:off
     public Integer getRefId()       { return getValueInteger(FIELD_REF_ID     ); }
     public String  getDescription() { return getValueString (FIELD_DESCRIPTION); }
-    public SIOption<SOURCE> setRefId      (Integer      refId) { setValue(FIELD_REF_ID,            refId); return this; }
-    public SIOption<SOURCE> setDescription(String description) { setValue(FIELD_DESCRIPTION, description); return this; }
+    public SIFieldRef<SOURCE> setRefId      (Integer      refId) { setValue(FIELD_REF_ID,            refId); return this; }
+    public SIFieldRef<SOURCE> setDescription(String description) { setValue(FIELD_DESCRIPTION, description); return this; }
     //@formatter:on
 
     public Option toOption() {
         return new Option(getRefId(), getDescription());
     }
-    public SIOption<SOURCE> setOption(Option option) {
+    public SIFieldRef<SOURCE> setOption(Option option) {
         return this
             .setRefId(option.refId)
             .setDescription(option.description);

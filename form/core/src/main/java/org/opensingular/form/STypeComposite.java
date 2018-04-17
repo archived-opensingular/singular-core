@@ -38,7 +38,7 @@ import org.opensingular.form.type.core.STypeDateTime;
 import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeMonetary;
-import org.opensingular.form.type.core.STypeOption;
+import org.opensingular.form.type.core.STypeFieldRef;
 import org.opensingular.form.type.core.STypePassword;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.STypeTime;
@@ -250,12 +250,12 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     }
 
     /**
-     * Cria um novo campo do tipo {@link STypeOption} com o nome informado.
+     * Cria um novo campo do tipo {@link STypeFieldRef} com o nome informado.
      * @param fieldName - nome do campo
      */
     @SuppressWarnings("unchecked")
-    public <T extends SType<I>, I extends SInstance> STypeOption<I> addFieldOption(String fieldName, Class<T> sourceType) {
-        return addField(fieldName, STypeOption.class);
+    public <T extends SType<I>, I extends SInstance> STypeFieldRef<I> addFieldRef(String fieldName, Class<T> sourceType) {
+        return addField(fieldName, STypeFieldRef.class);
     }
 
     public SType<?> getField(String fieldSimpleName) {
