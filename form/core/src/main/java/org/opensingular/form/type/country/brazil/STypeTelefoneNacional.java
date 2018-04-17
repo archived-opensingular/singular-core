@@ -16,10 +16,6 @@
 
 package org.opensingular.form.type.country.brazil;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeString;
@@ -30,86 +26,10 @@ import org.opensingular.lib.commons.util.Loggable;
 @SInfoType(name = "TelefoneNacional", spackage = SPackageCountryBrazil.class)
 public class STypeTelefoneNacional extends STypeString implements Loggable {
 
-    private static final Pattern NOT_NUMBER_PATTERN = Pattern.compile("[^\\d]");
-    private static final Pattern PHONE_PATTERN      = Pattern.compile("(\\d{2})(\\d{1,4}|\\d{5}){0,1}(\\d{1,4}){0,1}");
-    private static final Integer SIZE_DD_PHONE = 2;
     @Override
     protected void onLoadType(TypeBuilder tb) {
         addInstanceValidator(ValidationErrorLevel.ERROR, InstanceValidators.telefoneNacional());
         asAtr().maxLength(15).label("Telefone");
-    }
-
-    public String format(String value) {
-        if (value == null) {
-            return null;
-        }
-        String dddExtraido = extractDDD(value);
-        if (StringUtils.isNotEmpty(dddExtraido) && dddExtraido.length() == SIZE_DD_PHONE) {
-            return "(" + dddExtraido + ") " + extractNumber(value);
-        }
-        return dddExtraido;
-    }
-
-    private Matcher getPhoneMatcher(String number) {
-        String unformated;
-
-        if (number == null) {
-            return null;
-        }
-        unformated = unformat(number);
-        unformated = removeZeroIfNeeded(unformated);
-        return PHONE_PATTERN.matcher(unformated);
-    }
-
-    String extractDDD(String value) {
-        final Matcher phoneMatcher = getPhoneMatcher(value);
-        if (phoneMatcher == null) {
-            return null;
-        }
-        if (phoneMatcher.matches()) {
-            return phoneMatcher.group(1);
-        }
-        return value;
-    }
-
-    String extractNumber(String value) {
-        final Matcher phoneMatcher = getPhoneMatcher(value);
-        if (phoneMatcher == null) {
-            return null;
-        }
-        if (phoneMatcher.matches()) {
-            String number = "";
-            String secondGroup = phoneMatcher.group(2);
-            if (phoneMatcher.groupCount() >= 2 && secondGroup != null) {
-                number = secondGroup;
-            }
-            String thirdGroup = phoneMatcher.group(3);
-            if (phoneMatcher.groupCount() == 3 && thirdGroup != null) {
-                number = number + "-" + thirdGroup;
-            }
-            return number;
-        }
-        return value;
-    }
-
-    String unformat(String formated) {
-        if (formated == null) {
-            return null;
-        }
-        return NOT_NUMBER_PATTERN.matcher(formated).replaceAll("");
-    }
-
-    /**
-     * Verica se o dd está no padrao de 3 digitos, exemplos 061, revemondo o 0 a esquerda
-     *
-     * @param unformated numero sem formatação
-     * @return numero ajustado
-     */
-    private String removeZeroIfNeeded(String unformated) {
-        if (Pattern.compile("0[1-9{2}]").matcher(unformated).lookingAt()) {
-            return unformated.replaceFirst("0", "");
-        }
-        return unformated;
     }
 
 }

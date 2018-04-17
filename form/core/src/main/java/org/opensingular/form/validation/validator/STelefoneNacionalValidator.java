@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.validation.InstanceValidatable;
 
-public enum MTelefoneNacionalValidator implements InstanceValueValidator<SIString, String> {
+public enum STelefoneNacionalValidator implements InstanceValueValidator<SIString, String> {
 
     INSTANCE();
 
