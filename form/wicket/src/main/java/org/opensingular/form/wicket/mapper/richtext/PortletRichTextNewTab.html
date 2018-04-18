@@ -25,6 +25,13 @@
         .cke_button__finishandclose_label, .cke_button__cancel_label, .cke_button__closed_label {
             display: inline !important;
         }
+        @media (max-width: 991px) {
+            .ck-editor-container {
+                margin: 0 !important;
+                padding: 10px !important;
+                width: 100% !important;
+            }
+        }
     </style>
 </head>
 <body class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo page-md">
@@ -37,6 +44,10 @@
             .addStyle("/global/css/components-md.css")
             .setFavicon("/singular-static/resources/singular/img/favicon.png")
             .apply();
+
+    $(document).ready(function () {
+        createCKEditor();
+    });
 </script>
 <div>
     <div class="page-header navbar navbar-fixed-top">
@@ -52,13 +63,8 @@
 
 <div class="clearfix"></div>
 
-<div class="page-container" style="width: 215mm; margin-right: auto; margin-left: auto">
+<div class="page-container ck-editor-container" style="width: 215mm; margin-right: auto; margin-left: auto">
     <textarea id="ck-text-area"></textarea>
 </div>
-<script type="text/javascript">
-    $(document).ready(function () {
-        createCKEditor();
-    });
-</script>
 </body>
 </html>
