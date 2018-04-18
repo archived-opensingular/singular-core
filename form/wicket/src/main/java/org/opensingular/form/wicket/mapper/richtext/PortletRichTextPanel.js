@@ -46,7 +46,7 @@
                 allowedContent: true,
                 skin: 'office2013',
                 language: 'pt-br',
-                // width: '215mm',
+                width: '215mm',
                 savePlugin: {
                     onSave: function (data) {
                         var jQuerRefOfHtmlContainer = $('#' + htmlContainer);
