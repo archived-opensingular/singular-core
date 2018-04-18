@@ -64,8 +64,8 @@ public final class InstanceValidators {
     /**
      * Verifica se o telefone nacional é válido
      */
-    public static MTelefoneNacionalValidator telefoneNacional(){
-        return MTelefoneNacionalValidator.INSTANCE;
+    public static STelefoneNacionalValidator telefoneNacional(){
+        return STelefoneNacionalValidator.INSTANCE;
     }
 
     /**
