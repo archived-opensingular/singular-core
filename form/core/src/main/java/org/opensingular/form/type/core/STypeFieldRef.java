@@ -16,6 +16,9 @@
 
 package org.opensingular.form.type.core;
 
+import java.util.List;
+import java.util.function.Function;
+
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -48,7 +51,11 @@ public class STypeFieldRef<SI extends SInstance> extends STypeComposite<SIFieldR
         this.description = addFieldString(FIELD_DESCRIPTION);
     }
 
-    public <STL extends STypeList<ST, SI>, ST extends SType<SI>> FieldRefSelectionBuilder<STL, ST, SI> selectFrom(STL listField) {
+    public <STL extends STypeList<ST, SI>, ST extends SType<SI>> FieldRefSelectionBuilder<STL, ST, SI> selectFrom(Function<SIFieldRef<SI>, List<? extends SI>> optionsFunction) {
+        return new FieldRefSelectionBuilder<>(this, optionsFunction);
+    }
+
+    public <STL extends STypeList<ST, SI>, ST extends SType<SI>> FieldRefSelectionBuilder<STL, ST, SI> selectFromField(STL listField) {
         return new FieldRefSelectionBuilder<>(this, listField);
     }
 }

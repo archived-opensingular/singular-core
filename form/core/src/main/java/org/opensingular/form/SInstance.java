@@ -653,6 +653,15 @@ public abstract class SInstance implements SAttributeEnabled {
     public <A extends SInstance & ICompositeInstance> Optional<A> findAncestor(SType<A> ancestorType) {
         return SInstances.findAncestor(this, ancestorType);
     }
+    
+    /**
+     * Finds the first descendant of the specified type.
+     * @param targetType tipo do descendente
+     * @return the first descendant of type {@code targetType}
+     */
+    public <A extends SInstance> Optional<A> find(@Nonnull SType<A> targetType) {
+        return SInstances.findDescendant(this, targetType);
+    }
 
     /**
      * Returns the nearest SInstance for the given type in the form SInstance tree.
@@ -980,7 +989,14 @@ public abstract class SInstance implements SAttributeEnabled {
         return Collections.emptyList();
     }
 
+    /**
+     * Replaced by {@link #root()}
+     */
+    @Deprecated
     public SInstance getDocumentRoot() {
+        return root();
+    }
+    public SInstance root() {
         return document.getRoot();
     }
 

@@ -19,8 +19,8 @@ package org.opensingular.form.builder.selection;
 import static java.util.stream.Collectors.*;
 import static org.apache.commons.lang3.StringUtils.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -41,11 +41,13 @@ public class FieldRefSelectionBuilder<STL extends STypeList<ST, SI>, ST extends 
     }
 
     public FieldRefSelectionBuilder(STypeFieldRef<SI> type, STL listField) {
-        this(type, it -> it.findNearest(listField)
+        this(type);
+
+        provider().setOptionsFunction(it -> it.findNearest(listField)
             .map(li -> li.stream().collect(toList()))
-            .orElseGet(ArrayList::new));
+            .orElseGet(Collections::emptyList));
     }
-    public FieldRefSelectionBuilder(STypeFieldRef<SI> type, Function<SIFieldRef<SI>, Collection<SI>> optionsFunction) {
+    public FieldRefSelectionBuilder(STypeFieldRef<SI> type, Function<SIFieldRef<SI>, List<? extends SI>> optionsFunction) {
         this(type);
         provider().setOptionsFunction(optionsFunction);
     }
