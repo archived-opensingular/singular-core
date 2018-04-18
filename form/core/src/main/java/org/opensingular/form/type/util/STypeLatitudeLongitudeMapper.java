@@ -48,9 +48,6 @@ public class STypeLatitudeLongitudeMapper extends STypeComposite<SILatitudeLongi
     protected void onLoadType(TypeBuilder tb) {
         points = addFieldListOf(FIELD_POINTS, STypeLatitudeLongitude.class);
 
-        //TODO essa atividade ainda não está funcionando no SHOW CASE devido a não ter uma URL acessivel de forma publica para acessar o arquivo.
-        //See LatitudeLongitudeListMapper
-
         file = addFieldAttachment(FIELD_FILE);
         file.asAtr().allowedFileTypes(KMZ_FILE);
         zoom = addField(FIELD_ZOOM, STypeHiddenString.class);

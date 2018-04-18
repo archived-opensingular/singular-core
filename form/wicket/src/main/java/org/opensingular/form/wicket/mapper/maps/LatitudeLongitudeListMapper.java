@@ -16,7 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.maps;
 
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -24,11 +23,16 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.ContentDisposition;
+import org.apache.wicket.request.resource.SharedResourceReference;
 import org.apache.wicket.util.string.StringValue;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.type.util.STypeLatitudeLongitudeMapper;
@@ -37,6 +41,7 @@ import org.opensingular.form.view.SView;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import org.opensingular.form.wicket.mapper.TableListMapper;
+import org.opensingular.form.wicket.mapper.attachment.AttachmentPublicMapperResource;
 import org.opensingular.form.wicket.mapper.attachment.single.FileUploadPanel;
 import org.opensingular.form.wicket.mapper.buttons.AddButton;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
@@ -93,9 +98,6 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
         IModel<SIAttachment> file = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeMapper.FIELD_FILE);
         WicketBuildContext fileCtx = ctx.createChild(ctx.getContainer().newGrid(), ctx.getExternalContainer(), file);
         fileCtx.build();
-//        final FileUploadPanel fileUploadPanel = new FileUploadPanel("container", file, ViewMode.EDIT);
-//        BSGrid gridUploadFiles = ctx.getContainer().newGrid();
-//        gridUploadFiles.newFormGroup().appendDiv(fileUploadPanel);
 
         WicketUtils.findFirstChild(fileCtx.getContainer(), FileUploadPanel.class)
                 .ifPresent(panel -> panel.registerFileRemovedListener((FileEventListener) attachment -> {
@@ -106,20 +108,29 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                     target.add(pointsCtx.getParent().getContainer());
                 }));
 
+//        WicketUtils.findFirstChild(fileCtx.getContainer(), FileUploadPanel.class)
+//                .ifPresent(panel -> panel.registerFileUploadedListener((FileEventListener) attachment -> {
+//                    //Problema aparentemente é que é criado um novo contexto.
+//                    points.getObject().clearInstance();
+//                    table.setVisible(false);
+//                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+////                    target.add(gridGoogleMaps);
+//                }));
+
         WicketUtils.findFirstChild(fileCtx.getContainer(), FileUploadPanel.class)
-                .ifPresent(panel -> panel.setConsumerAfterLoadImage((target, urlFile) -> {
+                .ifPresent(panel -> panel.setConsumerAfterLoadImage((target) -> {
                     points.getObject().clearInstance();
                     table.setVisible(false);
-                    //TODO essa atividade ainda não está funcionando no SHOW CASE devido a não ter uma URL acessivel de forma publica para acessar o arquivo.
+                    String urlFile = createTempPublicFile(panel);
                     googleMapsPanel.includeKmlFile(toAbsolutePath() + urlFile);
-                    Logger.getLogger("\n\n" + toAbsolutePath() + urlFile + "\n\n");
                     target.add(pointsCtx.getParent().getContainer());
                 }));
 
 
         AbstractDefaultAjaxBehavior addPoint = createBehaviorAddPoint(points, ctx.getContainer());
         ctx.getContainer().add(addPoint);
-        googleMapsPanel.add($b.onConfigure(c -> googleMapsPanel.enableMultipleMarkers(addPoint.getCallbackUrl().toString(), ctx.getContainer().getMarkupId())));
+        googleMapsPanel.add($b.onConfigure(c -> googleMapsPanel.enableMultipleMarkers(addPoint.getCallbackUrl().toString(),
+                ctx.getContainer().getMarkupId())));
 
         WicketUtils.findFirstChild(ctx.getContainer(), AddButton.class)
                 .ifPresent(button -> button.add(new AjaxEventBehavior("click") {
@@ -133,12 +144,34 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
 
     }
 
-    //TODO verificar se existe uma forma mais elegante de fazer isso.
-    private static String toAbsolutePath() {
-        HttpServletRequest req = (HttpServletRequest)(RequestCycle.get().getRequest()).getContainerRequest();
-        return req.getRequestURL().substring(0, req.getRequestURL().toString().length() - req.getRequestURI().length());
+    //TODO verificar se essa logica para criação do arquivo temporario deve permanecer nessa classe.
+    private String createTempPublicFile(FileUploadPanel panel) {
+        String name = panel.getModel().getObject().getFileName();
+        String id = panel.getModel().getObject().getFileId();
+
+        String publico = "publico";
+        WebApplication.get().mountResource(AttachmentPublicMapperResource.getMountPathPublic(),
+                new SharedResourceReference(publico));
+        AttachmentPublicMapperResource attachmentResource = new AttachmentPublicMapperResource(publico);
+        WebApplication.get().getSharedResources().add(publico, attachmentResource);
+
+        IModel<IAttachmentRef> attachmentRef = new Model<>();
+        panel.getModelObject()
+                .getDocument()
+                .getAttachmentPersistencePermanentHandler()
+                .ifPresent(c -> attachmentRef.setObject(c.getAttachment(id)));
+        if(attachmentRef.getObject() == null) {
+            attachmentRef.setObject(panel.getModelObject()
+                    .getDocument().getAttachmentPersistenceTemporaryHandler().getAttachment(id));
+        }
+        return attachmentResource.addAttachment(name, ContentDisposition.INLINE, attachmentRef.getObject());
     }
 
+    //TODO verificar se existe uma forma mais elegante de fazer isso.
+    private static String toAbsolutePath() {
+        HttpServletRequest req = (HttpServletRequest) (RequestCycle.get().getRequest()).getContainerRequest();
+        return req.getRequestURL().substring(0, req.getRequestURL().toString().length() - req.getRequestURI().length());
+    }
 
 
     private AbstractDefaultAjaxBehavior createBehaviorAddPoint(final IModel<SIList<SInstance>> points, BSContainer<?> container) {

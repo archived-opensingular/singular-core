@@ -112,7 +112,6 @@
             center: latLong
         });
 
-        console.log(urlKml);
         if (urlKml !== '' && urlKml != null) {
             new google.maps.KmlLayer({
                 url: urlKml,

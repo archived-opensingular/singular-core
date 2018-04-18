@@ -63,7 +63,7 @@ import org.opensingular.form.wicket.mapper.attachment.upload.UploadResponseWrite
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
-import org.opensingular.lib.commons.lambda.IBiConsumer;
+import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.util.Loggable;
 
 import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet.PARAM_NAME;
@@ -96,7 +96,7 @@ public class FileUploadPanel extends Panel implements Loggable {
 
     private List<FileEventListener> fileRemovedListeners = new ArrayList<>();
 
-    private IBiConsumer<AjaxRequestTarget, String> consumerAfterLoadImage;
+    private IConsumer<AjaxRequestTarget> consumerAfterLoadImage;
 
     public FileUploadPanel(String id, IModel<SIAttachment> model, ViewMode viewMode) {
         super(id, model);
@@ -191,7 +191,7 @@ public class FileUploadPanel extends Panel implements Loggable {
             protected void respond(AjaxRequestTarget target) {
                 target.add(preview);
                 if(consumerAfterLoadImage != null) {
-                    consumerAfterLoadImage.accept(target, downloader.getDownloadUrlGerada());
+                    consumerAfterLoadImage.accept(target);
                 }
             }
         };
@@ -400,11 +400,11 @@ public class FileUploadPanel extends Panel implements Loggable {
         this.showPreview = showPreview;
     }
 
-    public IBiConsumer<AjaxRequestTarget, String> getConsumerAfterLoadImage() {
+    public IConsumer<AjaxRequestTarget> getConsumerAfterLoadImage() {
         return consumerAfterLoadImage;
     }
 
-    public void setConsumerAfterLoadImage(IBiConsumer<AjaxRequestTarget, String> consumerAfterLoadImage) {
+    public void setConsumerAfterLoadImage(IConsumer<AjaxRequestTarget> consumerAfterLoadImage) {
         this.consumerAfterLoadImage = consumerAfterLoadImage;
     }
 }
