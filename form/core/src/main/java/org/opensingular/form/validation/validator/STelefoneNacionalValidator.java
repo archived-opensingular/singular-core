@@ -16,17 +16,17 @@
 
 package org.opensingular.form.validation.validator;
 
-import org.opensingular.form.type.core.SIString;
-import org.opensingular.form.validation.InstanceValidatable;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public enum MTelefoneNacionalValidator implements InstanceValueValidator<SIString, String> {
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.validation.InstanceValidatable;
+
+public enum STelefoneNacionalValidator implements InstanceValueValidator<SIString, String> {
 
     INSTANCE();
 
-    public static final Pattern VALIDATE_PATTERN = Pattern.compile("\\(\\d{2}\\)\\s\\d{4,5}-\\d{4}");
+    public static final Pattern VALIDATE_PATTERN = Pattern.compile("\\([1-9][0-9]\\)\\s\\d{4,5}-\\d{4}");
 
     @Override
     public void validate(InstanceValidatable<SIString> validatable, String value) {
