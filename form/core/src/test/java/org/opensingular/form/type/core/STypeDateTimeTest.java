@@ -65,7 +65,7 @@ public class STypeDateTimeTest extends AbstractTestOneType<STypeDateTime, SIDate
     @Test
     public void convertsFromISOForrmat() {
         SIDateTime d         = newInstance();
-        Date       reference = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ").withZone(DateTimeZone.UTC).parseLocalDateTime("2016-01-01T05:21:33.000-02:00").toDate();
+        Date       reference = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ").withZone(DateTimeZone.UTC).parseLocalDateTime("2016-01-01T05:21:33.000-02:00").toDate(DateTimeZone.UTC.toTimeZone());
         d.setValue("2016-01-01T05:21:33.000-02:00");
         assertThat(d.getValue()).isEqualTo(reference);
     }
