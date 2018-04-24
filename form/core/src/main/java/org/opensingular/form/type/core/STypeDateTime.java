@@ -68,6 +68,9 @@ public class STypeDateTime extends STypeSimple<SIDateTime, Date> {
 
     @Override
     public String toStringDisplayDefault(Date date) {
+        if (date == null) {
+            return null;
+        }
         return latinFormatter().format(date);
     }
 
