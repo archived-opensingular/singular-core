@@ -26,7 +26,10 @@ import org.opensingular.form.STypeSimple;
 import org.opensingular.lib.commons.base.SingularUtil;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
+import java.util.TimeZone;
 
 @SInfoType(name = "DateTime", spackage = SPackageCore.class)
 public class STypeDateTime extends STypeSimple<SIDateTime, Date> {
@@ -46,10 +49,10 @@ public class STypeDateTime extends STypeSimple<SIDateTime, Date> {
             return null;
         }
         try {
-            return isoFormarter().parseLocalDateTime(value).toDate();
+            return isoFormarter().parseLocalDateTime(value).toDate(DateTimeZone.UTC.toTimeZone());
         } catch (Exception e) {
             getLogger().debug(null, e);
-            try{
+            try {
                 return latinFormatter().parse(value);
             } catch (Exception ex) {
                 return handleError(value, ex);
@@ -65,6 +68,9 @@ public class STypeDateTime extends STypeSimple<SIDateTime, Date> {
 
     @Override
     public String toStringDisplayDefault(Date date) {
+        if (date == null) {
+            return null;
+        }
         return latinFormatter().format(date);
     }
 

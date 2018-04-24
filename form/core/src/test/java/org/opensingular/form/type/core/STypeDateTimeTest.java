@@ -21,14 +21,16 @@ package org.opensingular.form.type.core;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opensingular.form.AbstractTestOneType;
+import org.opensingular.form.SDictionary;
 
 import java.util.Date;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 @RunWith(Parameterized.class)
 public class STypeDateTimeTest extends AbstractTestOneType<STypeDateTime, SIDateTime> {
@@ -74,5 +76,16 @@ public class STypeDateTimeTest extends AbstractTestOneType<STypeDateTime, SIDate
         DateTime   reference = DateTime.parse("2016-01-01T05:21:00.000");
         d.setValue("01/01/2016 05:21");
         assertThat(d.getValue()).isEqualTo(reference.toDate());
+    }
+
+    @Test
+    public void testPersistAndLoad() {
+        STypeDateTime dateTime = SDictionary.create().getType(STypeDateTime.class);
+        Date          d1       = new Date();
+        String        value    = dateTime.toStringPersistence(d1);
+        Date          d2       = dateTime.fromStringPersistence(value);
+
+        Assert.assertEquals(d1, d2);
+
     }
 }
