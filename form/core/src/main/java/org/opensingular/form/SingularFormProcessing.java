@@ -18,6 +18,12 @@
 
 package org.opensingular.form;
 
+import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.event.ISInstanceListener;
+import org.opensingular.form.validation.InstanceValidationContext;
+import org.opensingular.lib.commons.lambda.IConsumer;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -84,7 +90,7 @@ public class SingularFormProcessing {
      * @return a set of processed instances
      */
     public static List<SInstance> executeFieldProcessLifecycle(SInstance instance, boolean skipValidation) {
-        List<SInstance> instancesToUpdateComponents = new ArrayList<>();
+        LinkedHashMap<String, SInstance> instancesToUpdateComponents = new LinkedHashMap<>();
 
         if (!skipValidation) {
             validate(instance);
@@ -99,10 +105,14 @@ public class SingularFormProcessing {
             revalidateInvalidOrNonEmptyInstances(updatedInstances);
         }
 
-        instancesToUpdateComponents.addAll(eventCollector.getEventSourceInstances());
-        instancesToUpdateComponents.addAll(updatedInstances);
+        for (SInstance sInstance : eventCollector.getEventSourceInstances()) {
+            instancesToUpdateComponents.put(sInstance.getPathFull(), sInstance);
+        }
+        for (SInstance updatedInstance : updatedInstances) {
+            instancesToUpdateComponents.put(updatedInstance.getPathFull(), updatedInstance);
+        }
 
-        return instancesToUpdateComponents;
+        return new ArrayList<>(instancesToUpdateComponents.values());
     }
 
     private static void notifyDependentTypesBeforeRunUpdateListeners(SInstance instance) {
