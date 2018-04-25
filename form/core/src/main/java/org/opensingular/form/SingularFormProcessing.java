@@ -162,7 +162,7 @@ public class SingularFormProcessing {
     private static Consumer<SInstance> collectUpdateListenerCascadingCollecting(SInstance i, LinkedHashMap<String, SInstance> evaluated) {
         return dependant -> {
             evaluated.put(dependant.getPathFull(), dependant);
-            if (!dependant.equals(i)) {
+            if (dependant != i) {
                 SingularFormProcessing.circularEvaluateUpdateListeners(dependant, evaluated);
             }
         };

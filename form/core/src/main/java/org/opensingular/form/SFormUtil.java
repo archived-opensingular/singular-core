@@ -234,7 +234,7 @@ public final class SFormUtil {
     public static String generateUserFriendlyPath(SInstance instance, SInstance parentContext) {
         LinkedList<String> labels = new LinkedList<>();
         SInstance child = null;
-        for (SInstance node = instance; node != null && !node.equals(parentContext); child = node, node = node.getParent()) {
+        for (SInstance node = instance; (node != null) && (node != parentContext); child = node, node = node.getParent()) {
 
             final String labelNode = node.asAtr().getLabel();
 

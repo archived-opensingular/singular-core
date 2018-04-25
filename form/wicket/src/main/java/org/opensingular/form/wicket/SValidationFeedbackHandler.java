@@ -16,7 +16,6 @@
 
 package org.opensingular.form.wicket;
 
-import static java.util.stream.Collectors.*;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 import java.io.Serializable;
@@ -24,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -280,9 +280,12 @@ public class SValidationFeedbackHandler implements Serializable {
         final Set<Component> mainComponents = collectLowerBoundInstances(feedbackFence.getMainContainer());
         final Set<Component> externalComponents = collectLowerBoundInstances(feedbackFence.getExternalContainer());
 
-        return CollectionUtils.disjunction(mainComponents, externalComponents).stream()
+        final Map<String, SInstance> map = new LinkedHashMap<>();
+        CollectionUtils.disjunction(mainComponents, externalComponents).stream()
             .flatMap(it -> resolveRootInstances(it).stream())
-            .collect(toMap(SInstance::getPathFull, it -> it));
+            .forEachOrdered(it -> map.put(it.getPathFull(), it));
+
+        return map;
     }
 
     private static Set<Component> collectLowerBoundInstances(Component container) {
