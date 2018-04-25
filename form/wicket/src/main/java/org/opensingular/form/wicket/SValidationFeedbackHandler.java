@@ -16,8 +16,21 @@
 
 package org.opensingular.form.wicket;
 
-import com.google.common.collect.Sets;
-import org.apache.commons.collections.CollectionUtils;
+import static java.util.stream.Collectors.*;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
@@ -35,27 +48,15 @@ import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toSet;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+import com.google.common.collect.Sets;
 
 public class SValidationFeedbackHandler implements Serializable {
 
-    static final MetaDataKey<SValidationFeedbackHandler> MDK = new MetaDataKey<SValidationFeedbackHandler>() {
-    };
+    static final MetaDataKey<SValidationFeedbackHandler>        MDK            = new MetaDataKey<SValidationFeedbackHandler>() {};
 
-    private final FeedbackFence feedbackFence;
-    private final List<ValidationError> currentErrors = new ArrayList<>();
-    private final List<ISValidationFeedbackHandlerListener> listeners = new ArrayList<>(1);
+    private final FeedbackFence                                 feedbackFence;
+    private final List<ValidationError>                         currentErrors  = new ArrayList<>();
+    private final List<ISValidationFeedbackHandlerListener>     listeners      = new ArrayList<>(1);
     private IModel<? extends List<IModel<? extends SInstance>>> instanceModels = $m.ofValue(new ArrayList<>());
 
     private SValidationFeedbackHandler(FeedbackFence feedbackFence) {
@@ -90,9 +91,9 @@ public class SValidationFeedbackHandler implements Serializable {
         list.add(component);
         WicketUtils.appendListOfParents(list, component, null);
         return list.stream()
-                .filter(SValidationFeedbackHandler::isBound)
-                .map(SValidationFeedbackHandler::get)
-                .findFirst();
+            .filter(SValidationFeedbackHandler::isBound)
+            .map(SValidationFeedbackHandler::get)
+            .findFirst();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -140,19 +141,19 @@ public class SValidationFeedbackHandler implements Serializable {
 
         if (!oldErrors.equals(newErrors)) {
             fireFeedbackChanged(
-                    target,
-                    this.feedbackFence.getMainContainer(),
-                    resolveRootInstances(this.feedbackFence.getMainContainer()),
-                    oldErrors,
-                    newErrors);
+                target,
+                this.feedbackFence.getMainContainer(),
+                resolveRootInstances(this.feedbackFence.getMainContainer()),
+                oldErrors,
+                newErrors);
         }
     }
 
     private void fireFeedbackChanged(AjaxRequestTarget target,
-                                     Component container,
-                                     Collection<SInstance> baseInstances,
-                                     Collection<ValidationError> oldErrors,
-                                     Collection<ValidationError> newErrors) {
+        Component container,
+        Collection<SInstance> baseInstances,
+        Collection<ValidationError> oldErrors,
+        Collection<ValidationError> newErrors) {
 
         for (ISValidationFeedbackHandlerListener listener : listeners)
             listener.onFeedbackChanged(this, target, container, baseInstances, oldErrors, newErrors);
@@ -224,8 +225,8 @@ public class SValidationFeedbackHandler implements Serializable {
 
     public Optional<ValidationErrorLevel> findNestedErrorsMaxLevel(FeedbackFence feedbackFence, IPredicate<ValidationError> filter) {
         return collectNestedErrors(feedbackFence, resolveRootInstances(feedbackFence.getMainContainer()), filter).stream()
-                .map(ValidationError::getErrorLevel)
-                .collect(Collectors.maxBy(Comparator.naturalOrder()));
+            .map(ValidationError::getErrorLevel)
+            .collect(Collectors.maxBy(Comparator.naturalOrder()));
     }
 
     private static List<ValidationError> collectNestedErrors(FeedbackFence feedbackFence, Collection<SInstance> rootInstances, IPredicate<ValidationError> filter) {
@@ -233,16 +234,16 @@ public class SValidationFeedbackHandler implements Serializable {
         final List<ValidationError> result = new ArrayList<>();
 
         for (SInstance rootInstance : rootInstances) {
-            final SDocument                document            = rootInstance.getDocument();
-            final Set<? extends SInstance> lowerBoundInstances = collectLowerBoundInstances(feedbackFence);
+            final SDocument document = rootInstance.getDocument();
+            final Map<String, SInstance> lowerBoundInstances = collectLowerBoundInstances(feedbackFence);
 
             SInstances.visit(rootInstance, (i, v) -> {
-                if (lowerBoundInstances.contains(i)) {
+                if (lowerBoundInstances.keySet().contains(i.getPathFull())) {
                     v.dontGoDeeper();
                 } else {
                     document.getValidationErrors(i.getId()).stream()
-                            .filter(it -> (filter == null) || filter.test(it))
-                            .forEach(result::add);
+                        .filter(it -> (filter == null) || filter.test(it))
+                        .forEach(result::add);
                 }
             });
         }
@@ -253,16 +254,16 @@ public class SValidationFeedbackHandler implements Serializable {
     private static boolean containsNestedErrors(FeedbackFence feedbackFence, Collection<SInstance> rootInstances, IPredicate<ValidationError> filter) {
         for (SInstance rootInstance : rootInstances) {
 
-            final SDocument                document            = rootInstance.getDocument();
-            final Set<? extends SInstance> lowerBoundInstances = collectLowerBoundInstances(feedbackFence);
+            final SDocument document = rootInstance.getDocument();
+            final Map<String, SInstance> lowerBoundInstances = collectLowerBoundInstances(feedbackFence);
 
             Optional<ValidationError> f = SInstances.visit(rootInstance, (i, v) -> {
-                if (lowerBoundInstances.contains(i)) {
+                if (lowerBoundInstances.keySet().contains(i.getPathFull())) {
                     v.dontGoDeeper();
                 } else {
                     Optional<ValidationError> found = document.getValidationErrors(i.getId()).stream()
-                            .filter(it -> (filter == null) || filter.test(it))
-                            .findAny();
+                        .filter(it -> (filter == null) || filter.test(it))
+                        .findAny();
                     if (found.isPresent())
                         v.stop(found.get());
                 }
@@ -273,15 +274,15 @@ public class SValidationFeedbackHandler implements Serializable {
         return false;
     }
 
-    protected static Set<? extends SInstance> collectLowerBoundInstances(FeedbackFence feedbackFence) {
+    protected static Map<String, SInstance> collectLowerBoundInstances(FeedbackFence feedbackFence) {
 
         // coleta os componentes descendentes que possuem um handler, e as instancias correspondentes
-        final Set<Component> mainComponents     = collectLowerBoundInstances(feedbackFence.getMainContainer());
+        final Set<Component> mainComponents = collectLowerBoundInstances(feedbackFence.getMainContainer());
         final Set<Component> externalComponents = collectLowerBoundInstances(feedbackFence.getExternalContainer());
 
-        return ((Collection<Component>) CollectionUtils.disjunction(mainComponents, externalComponents)).stream()
-                .flatMap(it -> resolveRootInstances(it).stream())
-                .collect(toSet());
+        return CollectionUtils.disjunction(mainComponents, externalComponents).stream()
+            .flatMap(it -> resolveRootInstances(it).stream())
+            .collect(toMap(SInstance::getPathFull, it -> it));
     }
 
     private static Set<Component> collectLowerBoundInstances(Component container) {
@@ -304,15 +305,15 @@ public class SValidationFeedbackHandler implements Serializable {
 
     private static Collection<SInstance> resolveRootInstances(Component rootContainer) {
 
-        final SValidationFeedbackHandler rootHandler  = get(rootContainer);
-        final List<SInstance>            rootInstance = new ArrayList<>();
+        final SValidationFeedbackHandler rootHandler = get(rootContainer);
+        final List<SInstance> rootInstance = new ArrayList<>();
 
         if (rootHandler != null) {
             rootHandler.instanceModels.getObject()
-                    .stream()
-                    .filter(it -> it != null && it.getObject() != null)
-                    .map(IModel::getObject)
-                    .forEach(rootInstance::add);
+                .stream()
+                .filter(it -> it != null && it.getObject() != null)
+                .map(IModel::getObject)
+                .forEach(rootInstance::add);
         }
 
         if (rootInstance.isEmpty()) {
