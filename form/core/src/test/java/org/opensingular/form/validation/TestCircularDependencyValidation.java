@@ -18,6 +18,9 @@
 
 package org.opensingular.form.validation;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.opensingular.form.SDictionary;
@@ -25,9 +28,6 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.SingularFormProcessing;
-
-import java.util.Collection;
-import java.util.Set;
 
 public class TestCircularDependencyValidation {
 
@@ -39,7 +39,7 @@ public class TestCircularDependencyValidation {
 
         new InstanceValidationContext().validateAll(instance);
 
-        Set<SInstance> visitedInstances = SingularFormProcessing.executeFieldProcessLifecycle(instance.getField(type.whatever), false);
+        List<SInstance> visitedInstances = SingularFormProcessing.executeFieldProcessLifecycle(instance.getField(type.whatever), false);
 
         Assert.assertEquals("whatever", visitedInstances.stream().map(SInstance::getType).map(SType::getNameSimple).filter("whatever"::equals).findFirst().orElse(""));
         Assert.assertEquals("whoever", visitedInstances.stream().map(SInstance::getType).map(SType::getNameSimple).filter("whoever"::equals).findFirst().orElse(""));

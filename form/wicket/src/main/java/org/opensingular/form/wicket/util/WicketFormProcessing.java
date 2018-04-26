@@ -16,6 +16,11 @@
 
 package org.opensingular.form.wicket.util;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -37,12 +42,6 @@ import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.lib.commons.util.Loggable;
-
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 /*
  * TODO: depois, acho que esta classe tem que deixar de ter métodos estáticos, e se tornar algo plugável e extensível,
@@ -163,13 +162,13 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
      * @param instance a instancia
      */
     public static void processDependentTypes(Page page, AjaxRequestTarget target, SInstance instance) {
-        updateBoundedComponents(page, target, new HashSet<>(evaluateUpdateListeners(instance)));
+        updateBoundedComponents(page, target, evaluateUpdateListeners(instance));
     }
 
     /**
      * Atualiza todos os componentes vinculados as instancias informadas
      */
-    private static void updateBoundedComponents(Page page, AjaxRequestTarget target, Set<SInstance> instances) {
+    private static void updateBoundedComponents(Page page, AjaxRequestTarget target, List<SInstance> instances) {
         page.visitChildren(Component.class, new SInstanceBoundedComponentUpdateVisitor(target, instances));
     }
 
@@ -183,7 +182,7 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
 
         boolean skipValidation = isSkipValidationOnRequest();
 
-        Set<SInstance> instancesToUpdateComponents = executeFieldProcessLifecycle(instance, skipValidation);
+        List<SInstance> instancesToUpdateComponents = executeFieldProcessLifecycle(instance, skipValidation);
 
         if (!skipValidation) {
             WicketBuildContext
@@ -194,9 +193,6 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
                         updateValidationFeedbackOnDescendants(target, (MarkupContainer) container);
                     }));
         }
-
-        /* Recomputing instances set hashtable: instances values could be changed during validation */
-        instancesToUpdateComponents = new HashSet<>(instancesToUpdateComponents);
 
         updateBoundedComponents(component.getPage(), target, instancesToUpdateComponents);
         component.send(component.getPage(), Broadcast.BREADTH, new SingularFormProcessingPayload(instancesToUpdateComponents));
