@@ -16,13 +16,10 @@
 
 package org.opensingular.form;
 
-import org.opensingular.form.type.core.SIBoolean;
-import org.opensingular.form.type.core.STypeBoolean;
-
-import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -32,6 +29,11 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import javax.annotation.Nonnull;
+
+import org.opensingular.form.type.core.SIBoolean;
+import org.opensingular.form.type.core.STypeBoolean;
+
 /**
  * Métodos utilitários para manipulação de SInstance.
  *
@@ -39,8 +41,7 @@ import java.util.stream.StreamSupport;
  */
 public abstract class SInstances {
 
-    private SInstances() {
-    }
+    private SInstances() {}
 
     /**
      * Faz um pecorrimento em profundidade de parent e seus filhos.
@@ -166,7 +167,7 @@ public abstract class SInstances {
     @Nonnull
     public static <P extends SInstance & ICompositeInstance> P getAncestor(SInstance node, SType<P> ancestorType) {
         return findAncestor(node, ancestorType).orElseThrow(
-                () -> new SingularFormException("Não foi encontrado " + ancestorType + " em " + node, node));
+            () -> new SingularFormException("Não foi encontrado " + ancestorType + " em " + node, node));
     }
 
     @Nonnull
@@ -225,7 +226,7 @@ public abstract class SInstances {
      * @return Optional da instância do ancestral comum
      */
     @SuppressWarnings("unchecked")
-    public static <CA extends SInstance & ICompositeInstance> Optional<CA> findCommonAncestorByStypeClass(SInstance node, Class<? extends SType> targetTypeClass) {
+    public static <CA extends SInstance & ICompositeInstance> Optional<CA> findCommonAncestorByStypeClass(SInstance node, Class<? extends SType<?>> targetTypeClass) {
         for (SInstance ancestor = node; ancestor != null; ancestor = ancestor.getParent()) {
             if (targetTypeClass.isAssignableFrom(ancestor.getType().getClass()) && ancestor instanceof ICompositeInstance) {
                 return Optional.of((CA) ancestor);
@@ -247,8 +248,8 @@ public abstract class SInstances {
             return desc;
         else
             return SInstances.findCommonAncestor(node, targetType)
-                    .flatMap(ancestor -> ancestor.findDescendant(targetType))
-                    .map(targetNode -> targetNode);
+                .flatMap(ancestor -> ancestor.findDescendant(targetType))
+                .map(targetNode -> targetNode);
     }
 
     /**
@@ -258,7 +259,6 @@ public abstract class SInstances {
      * @param targetTypeClass Classe que define o  tipo do campo a ser procurado
      * @return Optional da instância do targetType encontrado
      */
-    @SuppressWarnings("unchecked")
     public static <A extends SInstance> Optional<A> findNearest(SInstance node, Class<? extends SType<A>> targetTypeClass) {
         return findNearest(null, node, targetTypeClass);
     }
@@ -266,9 +266,9 @@ public abstract class SInstances {
     @SuppressWarnings("unchecked")
     public static <A extends SInstance> Optional<A> findNearest(SInstance children, SInstance node, Class<? extends SType<A>> targetTypeClass) {
         Optional<A> desc = (Optional<A>) SInstances.streamDescendants(node, true)
-                .filter(sInstance -> sInstance != children)
-                .filter(sInstance -> targetTypeClass.isAssignableFrom(sInstance.getType().getClass()))
-                .findFirst();
+            .filter(sInstance -> sInstance != children)
+            .filter(sInstance -> targetTypeClass.isAssignableFrom(sInstance.getType().getClass()))
+            .findFirst();
         if (desc.isPresent()) {
             return desc;
         } else if (node.getParent() != null) {
@@ -331,7 +331,7 @@ public abstract class SInstances {
      */
     public static <D extends SInstance> D getDescendant(SInstance node, SType<D> descendantType) {
         return findDescendant(node, descendantType).orElseThrow(
-                () -> new SingularFormException("Não foi encontrado " + descendantType + " em " + node, node));
+            () -> new SingularFormException("Não foi encontrado " + descendantType + " em " + node, node));
     }
 
     /**
@@ -376,8 +376,8 @@ public abstract class SInstances {
      */
     @SuppressWarnings("unchecked")
     public static <D extends SInstance, V> List<V> listDescendants(SInstance instance, SType<?> descendantType, Function<D, V> function) {
-        List<V>                result = new ArrayList<>();
-        final Deque<SInstance> deque  = new ArrayDeque<>();
+        List<V> result = new ArrayList<>();
+        final Deque<SInstance> deque = new ArrayDeque<>();
         deque.add(instance);
         while (!deque.isEmpty()) {
             final SInstance node = deque.removeFirst();
@@ -400,8 +400,8 @@ public abstract class SInstances {
     @SuppressWarnings("unchecked")
     public static <D extends SInstance> Stream<D> streamDescendants(SInstance root, boolean includeRoot, SType<D> descendantType) {
         return streamDescendants(root, includeRoot)
-                .filter(it -> it.getType().isTypeOf(descendantType))
-                .map(it -> (D) it);
+            .filter(it -> it.getType().isTypeOf(descendantType))
+            .map(it -> (D) it);
     }
 
     /**
@@ -419,6 +419,11 @@ public abstract class SInstances {
      */
     public static boolean hasAny(SInstance instance, Predicate<SInstance> predicate) {
         return hasAny(instance, true, predicate);
+    }
+
+    public static boolean contains(Collection<? extends SInstance> collection, SInstance instance) {
+        final String pathFull = instance.getPathFull();
+        return collection.stream().anyMatch(it -> it.getPathFull().equals(pathFull));
     }
 
     /**
@@ -449,9 +454,9 @@ public abstract class SInstances {
     }
 
     public static void updateBooleanAttribute(
-            SInstance instance,
-            AtrRef<STypeBoolean, SIBoolean, Boolean> valueAttribute,
-            AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> predicateAttribute) {
+        SInstance instance,
+        AtrRef<STypeBoolean, SIBoolean, Boolean> valueAttribute,
+        AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> predicateAttribute) {
 
         Predicate<SInstance> pred = instance.getAttributeValue(predicateAttribute);
         if (pred != null)

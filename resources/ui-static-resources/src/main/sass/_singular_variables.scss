@@ -84,6 +84,7 @@ $bg-color:                                                         		#e8e9f0; //
 $header-bg-color:														#FFFFFF; // altera a cor do fundo do cabeçalho
 $header-top-shadow:                                                     0px 1px 10px 0px rgba(50, 50, 50, 0.2);
 $header-mobile-menu-border:                                             lighten($header-bg-color, 3%);
+$header-height:             				            				70px  !default;
 
 // Header search
 $header-search-bg-color:                                        		$header-bg-color;
@@ -110,6 +111,7 @@ $header-top-menu-icon-font-color:                               		lighten($heade
 // Top menu user bar
 $header-top-menu-user-font-color:                                       $color-primary; // altera a cor do nome do usuário
 $header-top-menu-user-bg-color:                                 		none;
+$header-top-menu-height:                                                $header-height - 1;
 
 //begin: Top Menu Extended Dropdowns
 $header-top-menu-extended-separator-bg-color: 							darken(#f8f9fa, 5%);

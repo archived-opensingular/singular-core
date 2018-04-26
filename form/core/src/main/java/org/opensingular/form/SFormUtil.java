@@ -16,9 +16,23 @@
 
 package org.opensingular.form;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.ImmutableSet;
+import static java.util.stream.Collectors.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.processor.ClassInspectionCache;
@@ -32,22 +46,9 @@ import org.opensingular.lib.commons.context.ServiceRegistry;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.joining;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
 
 public final class SFormUtil {
 
@@ -71,7 +72,7 @@ public final class SFormUtil {
      * @return
      *  List of dependants SInstances
      */
-    public static Set<SInstance> evaluateUpdateListeners(SInstance i) {
+    public static Iterable<SInstance> evaluateUpdateListeners(SInstance i) {
         return SingularFormProcessing.evaluateUpdateListeners(i);
     }
 
@@ -233,7 +234,7 @@ public final class SFormUtil {
     public static String generateUserFriendlyPath(SInstance instance, SInstance parentContext) {
         LinkedList<String> labels = new LinkedList<>();
         SInstance child = null;
-        for (SInstance node = instance; node != null && !node.equals(parentContext); child = node, node = node.getParent()) {
+        for (SInstance node = instance; (node != null) && (node != parentContext); child = node, node = node.getParent()) {
 
             final String labelNode = node.asAtr().getLabel();
 
@@ -265,6 +266,7 @@ public final class SFormUtil {
         return ClassInspectionCache.getInfo(typeClass, CacheKey.FULL_NAME, SFormUtil::getTypeNameInternal);
     }
 
+    @SuppressWarnings("unchecked")
     private static String getTypeNameInternal(@Nonnull Class<?> typeClass) {
         Class<? extends SPackage> packageClass = getTypePackage((Class<? extends SType<?>>) typeClass);
         return getInfoPackageName(packageClass) + '.' + getTypeSimpleName((Class<? extends SType<?>>) typeClass);
@@ -276,6 +278,7 @@ public final class SFormUtil {
                 SFormUtil::getTypeSimpleNameInternal);
     }
 
+    @SuppressWarnings("unchecked")
     private static SimpleName getTypeSimpleNameInternal(Class<?> typeClass) {
         SInfoType infoType = getInfoType((Class<? extends SType<?>>) typeClass);
         String typeName = infoType.name();
@@ -285,7 +288,7 @@ public final class SFormUtil {
         return new SimpleName(typeName);
     }
 
-    public static Optional<String> getTypeLabel(Class<? extends SType> typeClass) {
+    public static Optional<String> getTypeLabel(Class<? extends SType<?>> typeClass) {
         SInfoType infoType = getInfoType((Class<? extends SType<?>>) typeClass);
         if (StringUtils.isBlank(infoType.label())) {
             return Optional.empty();
@@ -324,12 +327,14 @@ public final class SFormUtil {
     }
 
     @Nonnull
+    @SuppressWarnings("unchecked")
     private static String getInfoPackageNameInternal(@Nonnull Class<?> packageClass) {
         SInfoPackage info = getInfoPackage((Class<? extends SPackage>) packageClass);
         return info != null && !StringUtils.isBlank(info.name()) ? info.name() : packageClass.getName();
     }
 
     @Nonnull
+    @SuppressWarnings("unchecked")
     static String getScopeNameOrException(@Nonnull Class<? extends SScope> scopeClass) {
         if (SPackage.class.isAssignableFrom(scopeClass)) {
             return getInfoPackageName((Class<SPackage>) scopeClass);
@@ -341,6 +346,7 @@ public final class SFormUtil {
     }
 
     @Nonnull
+    @SuppressWarnings("unchecked")
     static Class<? extends SPackage> getPackageClassOrException(@Nonnull Class<? extends SScope> scopeClass) {
         if (SPackage.class.isAssignableFrom(scopeClass)) {
             return (Class<SPackage>) scopeClass;

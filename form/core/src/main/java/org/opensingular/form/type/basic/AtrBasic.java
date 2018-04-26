@@ -46,15 +46,16 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.joining;
-import static org.apache.commons.lang3.StringUtils.defaultString;
+import static java.util.stream.Collectors.*;
+import static org.apache.commons.lang3.StringUtils.*;
 
 public class AtrBasic extends STranslatorForAttribute {
 
-    private static final String DEPENDSON_NULL_PARAM_MSG = "dependsOn do not allow null dependent types! Check if your variables are already initialized.";
+    private static final String DEPENDSON_NULL_PARAM_MSG       = "dependsOn do not allow null dependent types! Check if your variables are already initialized.";
     private static final String ALLOWED_FILE_TYPES_SPLIT_REGEX = "[,\\s\\|]";
 
-    public AtrBasic() {}
+    public AtrBasic() {
+    }
 
     public AtrBasic(SAttributeEnabled target) {
         super(target);
@@ -98,8 +99,7 @@ public class AtrBasic extends STranslatorForAttribute {
     /**
      * For usage on attachment types only.
      *
-     * @param value
-     *  Maximum file size in Bytes.
+     * @param value Maximum file size in Bytes.
      * @return
      */
     public AtrBasic maxFileSize(Long value) {
@@ -109,9 +109,10 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public AtrBasic allowedFileTypes(String... value) {
         setAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES,
-            Stream.of(value)
-                .flatMap(it -> Stream.<String> of(it.split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
-                .collect(joining(",")));
+                Stream.of(value)
+                        .map(String::toLowerCase)
+                        .flatMap(it -> Stream.<String>of(it.split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
+                        .collect(joining(",")));
         return this;
     }
 
@@ -160,6 +161,7 @@ public class AtrBasic extends STranslatorForAttribute {
      * Configures the current type to depend on all STypes created from the given {@param typeClass} or its subclasses.
      * This dependency should be used with caution since it can let do unwanted dependencies and apparently unpredictable behavior.
      * Prefer using the {{@link #dependsOn(SType[])}} alternative.
+     *
      * @param typeClass
      * @return
      */
@@ -174,12 +176,12 @@ public class AtrBasic extends STranslatorForAttribute {
         setAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION, () -> {
             Set<DelayedDependsOnResolver> union = new LinkedHashSet<>(previous.get());
             union.add((root, current) -> {
-                    final List<SType<?>> dependentTypes = new ArrayList<SType<?>>();
-                    STypes.visitAll(root, stype -> {
-                        if (typeClass.isAssignableFrom(stype.getClass())) {
-                            dependentTypes.add(typefinder.apply((T) stype));
-                        }
-                    });
+                final List<SType<?>> dependentTypes = new ArrayList<SType<?>>();
+                STypes.visitAll(root, stype -> {
+                    if (typeClass.isAssignableFrom(stype.getClass())) {
+                        dependentTypes.add(typefinder.apply((T) stype));
+                    }
+                });
                 return dependentTypes;
             });
             return union;
@@ -196,17 +198,17 @@ public class AtrBasic extends STranslatorForAttribute {
         return dependsOn(() -> Arrays.asList(types).stream().map((SType<?> t) -> (DelayedDependsOnResolver) (root, current) -> Lists.newArrayList(t)).collect(Collectors.toList()));
     }
 
-    private void assertNoNull(String msg, Object ...o){
+    private void assertNoNull(String msg, Object... o) {
         boolean paramNull = o == null;
-        if (!paramNull){
-            for (Object item : o){
-                paramNull |= item==null;
-                if (paramNull){
+        if (!paramNull) {
+            for (Object item : o) {
+                paramNull |= item == null;
+                if (paramNull) {
                     break;
                 }
             }
         }
-        if (paramNull){
+        if (paramNull) {
             throw new SingularFormException(msg);
         }
     }
@@ -309,9 +311,9 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public List<String> getAllowedFileTypes() {
         return Optional.ofNullable(getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES)).map(in -> Arrays.asList(defaultString(
-            getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES))
+                getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES))
                 .split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
-            .orElse(Collections.emptyList());
+                .orElse(Collections.emptyList());
     }
 
     @SuppressWarnings("unchecked")
