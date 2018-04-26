@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * http:/www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -80,50 +80,51 @@ public abstract class SingularTemplate extends WebPage {
     }
 
     public List<HeaderItem> getJavaScriptsUrls() {
+
         return Stream.concat(
                 Stream.of(
-                        skinnableResource("/global/plugins/respond.min.js"),
-                        skinnableResource("/global/plugins/excanvas.min.js")
+                        "/singular-static/resources/singular/global/plugins/respond.min.js",
+                        "/singular-static/resources/singular/global/plugins/excanvas.min.js"
                 ).map(url -> JavaScriptHeaderItem.forUrl(url, null, false, StandardCharsets.UTF_8.name(), "lt IE 9")),
                 Stream.of(
-                        skinnableResource("/global/plugins/jquery-migrate.min.js"),
-                        skinnableResource("/global/plugins/jquery-ui/jquery-ui.min.js"),
-                        skinnableResource("/global/plugins/bootstrap/js/bootstrap.min.js"),
-                        skinnableResource("/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js"),
-                        skinnableResource("/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js"),
-                        skinnableResource("/global/plugins/jquery.blockui.min.js"),
-                        skinnableResource("/global/plugins/jquery.cokie.min.js"),
-                        skinnableResource("/global/plugins/uniform/jquery.uniform.min.js"),
-                        skinnableResource("/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"),
-                        skinnableResource("/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.pt-BR.min.js"),
-                        skinnableResource("/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js"),
-                        skinnableResource("/global/plugins/bootstrap-select/js/bootstrap-select.min.js"),
-                        skinnableResource("/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js"),
-                        skinnableResource("/global/plugins/jquery-multi-select/js/jquery.multi-select.js"),
-                        skinnableResource("/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js"),
-                        skinnableResource("/global/plugins/jquerymask/jquery.mask.min.js"),
-                        skinnableResource("/global/plugins/datatables/datatables.min.js"),
-                        skinnableResource("/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js"),
-                        skinnableResource("/global/plugins/morris/morris.min.js"),
-                        skinnableResource("/global/plugins/morris/raphael-min.js"),
-                        skinnableResource("/global/plugins/jquery.sparkline.min.js"),
-                        skinnableResource("/global/plugins/amcharts/amcharts/amcharts.js"),
-                        skinnableResource("/global/plugins/amcharts/amcharts/serial.js"),
-                        skinnableResource("/global/plugins/amcharts/amcharts/pie.js"),
-                        skinnableResource("/global/plugins/amcharts/amcharts/themes/light.js"),
-                        skinnableResource("/global/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js"),
-                        skinnableResource("/global/plugins/ion.rangeslider/js/ion.rangeSlider.min.js"),
-                        skinnableResource("/global/plugins/bootbox/bootbox.min.js"),
-                        skinnableResource("/global/plugins/jquery-file-upload/js/jquery.iframe-transport.js"),
-                        skinnableResource("/global/plugins/jquery-file-upload/js/jquery.fileupload.js"),
-                        skinnableResource("/global/scripts/app.min.js"),
-                        skinnableResource("/layout4/scripts/layout.min.js"),
-                        skinnableResource("/global/plugins/bootstrap-toastr/toastr.min.js"),
-                        skinnableResource("/global/plugins/typeahead/typeahead.bundle.min.js"),
-                        skinnableResource("/global/plugins/jstree/dist/jstree.min.js"),
-                        skinnableResource("/plugins/stringjs/string.min.js"),
-                        skinnableResource("/plugins/jquery-maskmoney/dist/jquery.maskMoney.min.js"),
-                        skinnableResource("/plugins/ckeditor/ckeditor.js")
+                        "/singular-static/resources/singular/global/plugins/jquery-migrate.min.js",
+                        "/singular-static/resources/singular/global/plugins/jquery-ui/jquery-ui.min.js",
+                        "/singular-static/resources/singular/global/plugins/bootstrap/js/bootstrap.min.js",
+                        "/singular-static/resources/singular/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js",
+                        "/singular-static/resources/singular/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js",
+                        "/singular-static/resources/singular/global/plugins/jquery.blockui.min.js",
+                        "/singular-static/resources/singular/global/plugins/jquery.cokie.min.js",
+                        "/singular-static/resources/singular/global/plugins/uniform/jquery.uniform.min.js",
+                        "/singular-static/resources/singular/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js",
+                        "/singular-static/resources/singular/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.pt-BR.min.js",
+                        "/singular-static/resources/singular/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js",
+                        "/singular-static/resources/singular/global/plugins/bootstrap-select/js/bootstrap-select.min.js",
+                        "/singular-static/resources/singular/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js",
+                        "/singular-static/resources/singular/global/plugins/jquery-multi-select/js/jquery.multi-select.js",
+                        "/singular-static/resources/singular/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js",
+                        "/singular-static/resources/singular/global/plugins/jquerymask/jquery.mask.min.js",
+                        "/singular-static/resources/singular/global/plugins/datatables/datatables.min.js",
+                        "/singular-static/resources/singular/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js",
+                        "/singular-static/resources/singular/global/plugins/morris/morris.min.js",
+                        "/singular-static/resources/singular/global/plugins/morris/raphael-min.js",
+                        "/singular-static/resources/singular/global/plugins/jquery.sparkline.min.js",
+                        "/singular-static/resources/singular/global/plugins/amcharts/amcharts/amcharts.js",
+                        "/singular-static/resources/singular/global/plugins/amcharts/amcharts/serial.js",
+                        "/singular-static/resources/singular/global/plugins/amcharts/amcharts/pie.js",
+                        "/singular-static/resources/singular/global/plugins/amcharts/amcharts/themes/light.js",
+                        "/singular-static/resources/singular/global/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js",
+                        "/singular-static/resources/singular/global/plugins/ion.rangeslider/js/ion.rangeSlider.min.js",
+                        "/singular-static/resources/singular/global/plugins/bootbox/bootbox.min.js",
+                        "/singular-static/resources/singular/global/plugins/jquery-file-upload/js/jquery.iframe-transport.js",
+                        "/singular-static/resources/singular/global/plugins/jquery-file-upload/js/jquery.fileupload.js",
+                        "/singular-static/resources/singular/global/scripts/app.min.js",
+                        "/singular-static/resources/singular/layout4/scripts/layout.min.js",
+                        "/singular-static/resources/singular/global/plugins/bootstrap-toastr/toastr.min.js",
+                        "/singular-static/resources/singular/global/plugins/typeahead/typeahead.bundle.min.js",
+                        "/singular-static/resources/singular/global/plugins/jstree/dist/jstree.min.js",
+                        "/singular-static/resources/singular/plugins/stringjs/string.min.js",
+                        "/singular-static/resources/singular/plugins/jquery-maskmoney/dist/jquery.maskMoney.min.js",
+                        "/singular-static/resources/singular/plugins/ckeditor/ckeditor.js"
                 ).map(JavaScriptHeaderItem::forUrl)).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
     }
 
