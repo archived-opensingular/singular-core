@@ -504,9 +504,9 @@ public abstract class SInstances {
 
     public static class TypeVisitFilter implements SInstances.IVisitFilter {
 
-        private Class<? extends SType<?>> type;
+        private Class<? extends SType> type;
 
-        public TypeVisitFilter(Class<? extends SType<?>> type) {
+        public TypeVisitFilter(Class<? extends SType> type) {
             this.type = type;
         }
 
