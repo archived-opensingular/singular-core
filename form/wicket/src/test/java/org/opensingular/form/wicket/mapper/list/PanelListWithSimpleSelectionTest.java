@@ -20,6 +20,7 @@ package org.opensingular.form.wicket.mapper.list;
 
 
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.Button;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +61,7 @@ public class PanelListWithSimpleSelectionTest {
 
     @Test
     public void testAddItem() {
-        final Button addButton = getAddButton();
+        final AjaxLink addButton = getAddButton();
 
         tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(0);
 
@@ -76,7 +77,7 @@ public class PanelListWithSimpleSelectionTest {
 
     @Test
     public void testRemoveItem() {
-        final Button addButton = getAddButton();
+        final AjaxLink addButton = getAddButton();
 
         tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(0);
 
@@ -95,7 +96,7 @@ public class PanelListWithSimpleSelectionTest {
 
     @Test
     public void testAddItemAndFillOptions() {
-        final Button addButton = getAddButton();
+        final AjaxLink addButton = getAddButton();
 
         tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(0);
 
@@ -117,7 +118,7 @@ public class PanelListWithSimpleSelectionTest {
 
     @Test
     public void testAddItemFillOptionsAndThenAddOtherItem() {
-        final Button addButton = getAddButton();
+        final AjaxLink addButton = getAddButton();
 
         tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(0);
 
@@ -138,8 +139,8 @@ public class PanelListWithSimpleSelectionTest {
                 .getSubComponentWithType(simpleSelection).assertSInstance().isValueEquals("a");
     }
 
-    private Button getAddButton() {
-        return (Button) tester.getAssertionsForm()
+    private AjaxLink getAddButton() {
+        return (AjaxLink) tester.getAssertionsForm()
                 .findSubComponent(b -> b.getClass().getName().contains("AddButton")).getTarget();
     }
 }
