@@ -9,7 +9,7 @@ $color-background-button: #D5D9E3;
 $color-success-green: #5AB879;
 
 $color-grey-01: darken(#FAFBFC, 5%);
-$color-grey-03: darken(#BBBFCD, 5%); // altera as cores dos itens apresentados na listagem
+$color-grey-03: darken(#BBBFCD, 5%);
 
 $color-grey-05: hsl(0, 0, 50%);
 $color-grey-07: hsl(0, 0, 75%);
@@ -29,6 +29,12 @@ $brand-warning: #F1C40F;
 $brand-danger: lighten(#eb5d68, 3%); // altera as cores dos itens vermelhos
 
 
+//Links
+
+$link-color:            $brand-primary; // altera a cor da fonte dos links
+$link-hover-color:      darken($link-color, 15%); // altera a cor da fonte dos links ao serem clicados
+
+
 //Form component colors
 
 $input-focus-color: $color-primary; // altera a cor em volta do campo de input quando ele tem o foco
@@ -38,7 +44,7 @@ $color-background-cancel-button: #EDEFF3; // altera a cor do botão para cancela
 //Form list tables
 
 $list-element-font-color: #a4a4a4; // altera a cor da fonte dos itens das tabelas do form
-$list-element-font-color-on-hover: #4a4a4a; // altera a cor da letra ao passar o mouse sobre os itens da tabela do form
+$list-element-font-color-on-hover: #4a4a4a; // altera a cor da fonte ao passar o mouse sobre os itens da tabela do form
 $table-line-color: #dfdfdf; // altera a cor da linha das tabelas do form
 $table-head-font-color: rgba(74, 74, 74, 0.7); // altera cor da fonte da linha de titulo das tabelas do form
 $table-empty-message-font-color: rgba(74, 74, 74, 0.7); // altera a cor da fonte da mensagem de tabela vazia no form
@@ -142,31 +148,31 @@ $header-top-menu-dropdown-head-font-color:                              lighten(
 $header-top-menu-dropdown-border-color:                                 lighten(#3D4A53, 60%);
 
 // Sidebar menu
-$sidebar-bg-color:                                                      #ffffff; // altera o fundo do menu
+$sidebar-bg-color:                                                      #ffffff; // altera a cor do fundo do menu lateral
 
-$sidebar-menu-heading-font-color:                                       $brand-main-color; // altera a cor da barrinha ao lado do item principal do menu
+$sidebar-menu-heading-font-color:                                       $brand-main-color; // altera a cor da barrinha ao lado do item principal do menu lateral
 
-$sidebar-menu-link-font-color:                                  		darken(#768DA2, 5%); // altera a cor da fonte dos subitens do menu não selecionados
-$sidebar-menu-link-font-color-on-hover:                         		$brand-main-color; // altera a cor da fonte do subitem selecionado do menu
-$sidebar-menu-link-font-color-on-active:                        		$brand-main-color; // altera a cor da fonte do item principal do menu
+$sidebar-menu-link-font-color:                                  		darken(#768DA2, 5%); // variável auxiliar para alterar a cor da fonte dos subitens do menu lateral que não estão selecionados
+$sidebar-menu-link-font-color-on-hover:                         		$brand-main-color; // variável auxiliar para alterar a cor da fonte do subitem selecionado do menu lateral e dos subitens não selecionados ao passar o mouse
+$sidebar-menu-link-font-color-on-active:                        		$brand-main-color; // altera a cor da fonte do item principal do menu lateral
 
-$sidebar-menu-link-icon-font-color:                             		darken(#768DA2, 5%); // altera a cor dos ícones dos subitens do menu não selecionados
-$sidebar-menu-link-icon-font-color-on-active:                   		$brand-main-color; // altera a cor dos ícones do item principal do menu
-$sidebar-menu-link-icon-font-color-on-hover:                            $brand-main-color; // altera a cor dos ícones do subitem selecionado do menu
+$sidebar-menu-link-icon-font-color:                             		darken(#768DA2, 5%); // variável auxiliar para alterar a cor dos ícones dos subitens não selecionados do menu lateral
+$sidebar-menu-link-icon-font-color-on-active:                   		$brand-main-color; // altera a cor do ícone do item principal do menu lateral
+$sidebar-menu-link-icon-font-color-on-hover:                            $brand-main-color; // variável auxiliar para alterar a cor do ícone do subitem selecionado do menu lateral e dos subitens não selecionados ao passar o mouse
 
-$sidebar-menu-link-bg-color-on-hover:                           		darken(#f9fbfc, 2%); // altera o fundo dos subitens de menu
-$sidebar-menu-link-bg-color-on-active:                          		darken(#f9fbfc, 2%); // altera o fundo do item principal de menu
+$sidebar-menu-link-bg-color-on-hover:                           		darken(#f9fbfc, 2%); // variável auxiliar para alterar a cor do fundo do subitem selecionado de menu lateral e dos subitens não selecionados ao passar o mouse
+$sidebar-menu-link-bg-color-on-active:                          		darken(#f9fbfc, 2%); // altera o fundo do item principal de menu lateral
 
 $sidebar-menu-arrow-color:                                      		lighten($sidebar-menu-link-icon-font-color, 3%);
-$sidebar-menu-arrow-color-on-active:                            		lighten($sidebar-menu-link-icon-font-color-on-active, 3%);
+$sidebar-menu-arrow-color-on-active:                            		lighten($sidebar-menu-link-icon-font-color-on-active, 3%); // altera a cor da seta do item principal de menu lateral
 $sidebar-menu-arrow-color-on-hover:                                     lighten($sidebar-menu-link-icon-font-color-on-hover, 3%);
 
-$sidebar-menu-sub-menu-link-font-color:                         		$sidebar-menu-link-font-color;
-$sidebar-menu-sub-menu-link-icon-font-color:                    		$sidebar-menu-link-icon-font-color;
+$sidebar-menu-sub-menu-link-font-color:                         		$sidebar-menu-link-font-color; // altera a cor da fonte dos subitens não selecionados do menu lateral
+$sidebar-menu-sub-menu-link-icon-font-color:                    		$sidebar-menu-link-icon-font-color; // altera a cor dos icones dos subitens não selecionados do menu lateral
 
-$sidebar-menu-sub-menu-link-bg-color-on-hover:                  		$sidebar-menu-link-bg-color-on-hover;
-$sidebar-menu-sub-menu-link-font-color-on-hover:                  		$sidebar-menu-link-font-color-on-hover;
-$sidebar-menu-sub-menu-link-icon-font-color-on-hover:                   $sidebar-menu-link-icon-font-color-on-hover;
+$sidebar-menu-sub-menu-link-bg-color-on-hover:                  		$sidebar-menu-link-bg-color-on-hover; // altera a cor do fundo do subitem selecionado do menu lateral e dos subitens não selecionados ao passar o mouse
+$sidebar-menu-sub-menu-link-font-color-on-hover:                  		$sidebar-menu-link-font-color-on-hover; //altera a cor da fonte do subitem selecionado do menu lateral e dos subitens não selecionados ao passar o mouse
+$sidebar-menu-sub-menu-link-icon-font-color-on-hover:                   $sidebar-menu-link-icon-font-color-on-hover; // altera a cor do ícone do subitem selecionado do menu lateral e dos subitens não selecionados ao passar o mouse
 
 $sidebar-menu-sub-menu-box-shadow-color:                                darken($sidebar-menu-link-bg-color-on-hover, 30%);
 $sidebar-menu-hover-sub-menu-bg-color:									#FFFFFF;
@@ -177,13 +183,14 @@ $mobile-sidebar-menu-link-bg-color-on-hover:             				darken($bg-color, 4
 
 // Footer
 $footer-fluid-font-color:                                               #69789E;
-$footer-default-font-color:                                     		#69789E;
+$footer-default-font-color:                                     		#69789E; // altera a cor da fonte do rodapé da página
 $footer-default-go-top-bg-color:                                		darken(#94A0B2, 10%);
 $footer-default-go-top-icon-font-color:                          		lighten(#94A0B2, 40%);
-$footer-fixed-bg-color: 												$bg-color;
+$footer-fixed-bg-color: 												$bg-color; // altera a cor do fundo do rodapé da página
 
 
-// Define layout element width and height.
+//Layout Settings
+//Define layout element width and height.
 
 // Header
 $header-height:             				            				70px; // header height on table and desktop view. default: 42px

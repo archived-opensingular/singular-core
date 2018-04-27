@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package org.opensingular.flow.persistence.entity;
+package org.opensingular.form.view;
 
-import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
 
-import org.opensingular.lib.support.persistence.util.Constants;
+import org.opensingular.form.SInstance;
+import org.opensingular.lib.commons.lambda.IFunction;
 
-/**
- * The persistent class for the TB_TIPO_VARIAVEL database table.
- */
-@Entity
-@Table(name = "TB_TIPO_VARIAVEL", schema = Constants.SCHEMA)
-@SequenceGenerator(name = AbstractVariableTypeEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_TIPO_VARIAVEL", schema = Constants.SCHEMA)
-public class VariableTypeInstance extends AbstractVariableTypeEntity {
-    private static final long serialVersionUID = 1L;
+import java.util.Date;
+import java.util.List;
 
+public class SViewDate extends SView {
+
+    private IFunction<SInstance, List<Date>> enabledDatesFunction;
+
+    public IFunction<SInstance, List<Date>> getEnabledDatesFunction() {
+        return enabledDatesFunction;
+    }
+
+    public SViewDate setEnabledDatesFunction(IFunction<SInstance, List<Date>> enabledDatesFunction) {
+        this.enabledDatesFunction = enabledDatesFunction;
+        return this;
+    }
 }

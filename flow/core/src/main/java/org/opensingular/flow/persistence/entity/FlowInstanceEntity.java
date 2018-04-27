@@ -16,25 +16,22 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Where;
-import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
-
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
+import javax.persistence.Index;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.util.List;
+
+import org.opensingular.lib.support.persistence.util.Constants;
 
 /**
  * The persistent class for the flow instance database table.
  */
 @Entity
-@GenericGenerator(name = AbstractFlowInstanceEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
-@Table(name = "TB_INSTANCIA_PROCESSO", schema = Constants.SCHEMA)
+@SequenceGenerator(name = AbstractFlowInstanceEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_INSTANCIA_PROCESSO", schema = Constants.SCHEMA)
+@Table(name = "TB_INSTANCIA_PROCESSO", schema = Constants.SCHEMA,
+        indexes = {
+                @Index(columnList = "CO_VERSAO_PROCESSO ASC, DT_INICIO ASC", name = "IX_INSTANCIA_PROCESSO")
+        })
 public class FlowInstanceEntity extends
         AbstractFlowInstanceEntity<Actor, FlowVersionEntity, TaskInstanceEntity, VariableInstanceEntity, RoleInstanceEntity, ExecutionVariableEntity> {
     private static final long serialVersionUID = 1L;

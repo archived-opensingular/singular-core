@@ -16,24 +16,22 @@
 
 package org.opensingular.form.wicket.mapper.masterdetail;
 
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.*;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
-import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
-
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 @SuppressWarnings("serial")
 public class ListMasterDetailMapper implements IWicketComponentMapper, ISInstanceActionCapable {
@@ -45,8 +43,8 @@ public class ListMasterDetailMapper implements IWicketComponentMapper, ISInstanc
         this.instanceActionsProviders.addSInstanceActionsProvider(sortPosition, provider);
     }
 
-    private void checkView(SView view, IModel<SIList<SInstance>> model) {
-        if (!(view instanceof SViewListByMasterDetail)) {
+    private void checkView(WicketBuildContext ctx, IModel<SIList<SInstance>> model) {
+        if (!(ctx.getView() instanceof SViewListByMasterDetail)) {
             throw new SingularFormException("Error: Mapper " + ListMasterDetailMapper.class.getSimpleName()
                     + " must be associated with a view  of type" + SViewListByMasterDetail.class.getName() + ".", model.getObject());
         }
@@ -58,9 +56,8 @@ public class ListMasterDetailMapper implements IWicketComponentMapper, ISInstanc
 
         final IModel<SIList<SInstance>> model = (IModel<SIList<SInstance>>) ctx.getModel();
 
-        checkView(ctx.getView(), model);
+        checkView(ctx, model);
 
-        final SViewListByMasterDetail view          = (SViewListByMasterDetail) ctx.getView();
         final ViewMode                viewMode      = ctx.getViewMode();
         final BSContainer<?>          currentExternal = new BSContainer<>("externalContainerAtual");
         final BSContainer<?>          currentSibling = new BSContainer<>("externalContainerIrmao");
@@ -68,11 +65,11 @@ public class ListMasterDetailMapper implements IWicketComponentMapper, ISInstanc
         ctx.getExternalContainer().appendTag("div", true, null, currentExternal);
         ctx.getExternalContainer().appendTag("div", true, null, currentSibling);
 
-        final MasterDetailModal modal = new MasterDetailModal("mods", model, newItemLabelModel(model), ctx, viewMode, view, currentSibling);
+        final MasterDetailModal modal = new MasterDetailModal("mods", model, newItemLabelModel(model), ctx, viewMode, currentSibling);
 
         currentExternal.appendTag("div", true, null, modal);
 
-        MasterDetailPanel masterDetailPanel = new MasterDetailPanel("panel", ctx, model, modal, view, instanceActionsProviders);
+        MasterDetailPanel masterDetailPanel = new MasterDetailPanel("panel", ctx, model, modal, instanceActionsProviders);
         ctx.getContainer().appendTag("div", true, null, masterDetailPanel);
 
         modal.add($b.onEnterDelegate(modal.addButton, SINGULAR_PROCESS_EVENT));

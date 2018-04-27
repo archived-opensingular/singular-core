@@ -16,18 +16,17 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
-
 import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.opensingular.lib.support.persistence.util.Constants;
 
 /**
  * The persistent class for the TB_VARIAVEL database table.
  */
 @Entity
-@GenericGenerator(name = AbstractVariableInstanceEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
+@SequenceGenerator(name = AbstractVariableInstanceEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_VARIAVEL", schema = Constants.SCHEMA)
 @Table(name = "TB_VARIAVEL", schema = Constants.SCHEMA)
 public class VariableInstanceEntity extends AbstractVariableInstanceEntity<FlowInstanceEntity, VariableTypeInstance> {
     private static final long serialVersionUID = 1L;

@@ -16,43 +16,41 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
-
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
+import javax.persistence.Index;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.util.List;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.opensingular.lib.support.persistence.util.Constants;
 
 /**
  * The persistent class for the flow definition database table.
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
-@GenericGenerator(name = AbstractFlowDefinitionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
-@Table(name = "TB_DEFINICAO_PROCESSO", schema = Constants.SCHEMA)
+@SequenceGenerator(name = AbstractFlowDefinitionEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_DEFINICAO_PROCESSO", schema = Constants.SCHEMA)
+@Table(name = "TB_DEFINICAO_PROCESSO", schema = Constants.SCHEMA,
+        indexes = {
+                @Index(columnList = "NO_CLASSE_JAVA ASC", name = "IX_CLASSE_DEFINICAO")
+        })
 public class FlowDefinitionEntity extends
-        AbstractFlowDefinitionEntity<ModuleEntity,CategoryEntity, TaskDefinitionEntity, RoleDefinitionEntity, FlowVersionEntity> {
+        AbstractFlowDefinitionEntity<ModuleEntity, CategoryEntity, TaskDefinitionEntity, RoleDefinitionEntity, FlowVersionEntity> {
 
     private static final long serialVersionUID = 1L;
-    
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(schema = Constants.SCHEMA, name = "TB_VERSAO_PROCESSO", 
-        joinColumns = @JoinColumn(name = "CO_DEFINICAO_PROCESSO", referencedColumnName = "CO_DEFINICAO_PROCESSO"),
-        inverseJoinColumns = @JoinColumn(name = "CO_VERSAO_PROCESSO", referencedColumnName = "CO_VERSAO_PROCESSO"))
-    private List<FlowInstanceEntity> flowInstances;
 
-    public List<FlowInstanceEntity> getFlowInstances() {
-        return flowInstances;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "flowDefinition")
+    private List<FlowVersionEntity> flowVersions;
+
+    public List<FlowVersionEntity> getFlowVersions() {
+        return flowVersions;
     }
 
-    public void setFlowInstances(List<FlowInstanceEntity> flowInstances) {
-        this.flowInstances = flowInstances;
+    public void setFlowVersions(List<FlowVersionEntity> flowVersions) {
+        this.flowVersions = flowVersions;
     }
 }

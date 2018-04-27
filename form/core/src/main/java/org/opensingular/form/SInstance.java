@@ -391,6 +391,10 @@ public abstract class SInstance implements SAttributeEnabled {
      */
     public abstract boolean isEmptyOfData();
 
+    public boolean isNotEmptyOfData(){
+        return  !isEmptyOfData();
+    }
+
     public Object getValueWithDefault() {
         return getValue((Class<?>) null);
     }

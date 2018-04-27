@@ -46,6 +46,7 @@ import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.internal.lib.commons.xml.MParser;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
@@ -77,14 +78,12 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
 
         if (!(ctx.getView() instanceof SViewBreadcrumb)) {
             throw new SingularFormException("Error: Mapper " + ListBreadcrumbMapper.class.getSimpleName()
-                    + " must be associated with a view  of type" + SViewBreadcrumb.class.getName() + ".", model.getObject());
+                + " must be associated with a view  of type" + SViewBreadcrumb.class.getName() + ".", model.getObject());
         }
-
-        final SViewBreadcrumb view = (SViewBreadcrumb) ctx.getView();
 
         final IModel<String> listLabel = newLabelModel(ctx, model);
 
-        BreadCrumbPanel breadcrumbPanel = new BreadCrumbPanel("panel", model, listLabel, ctx, viewMode, view);
+        BreadCrumbPanel breadcrumbPanel = new BreadCrumbPanel("panel", model, listLabel, ctx, viewMode);
 
         List<String> breadCrumbs = ctx.getRootContext().getBreadCrumbs();
 
@@ -118,7 +117,6 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
         private IModel<SIList<SInstance>> listModel;
         private IModel<String>            listLabel;
         private WicketBuildContext        ctx;
-        private SViewBreadcrumb           view;
         private IModel<SInstance>         currentInstance;
         private String                    instanceBackupXml;
         private boolean                   adding;
@@ -126,17 +124,15 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
 
         @SuppressWarnings("unchecked")
         public BreadCrumbPanel(String id,
-                               IModel<? extends SInstance> model,
-                               IModel<String> listLabel,
-                               WicketBuildContext ctx,
-                               ViewMode viewMode,
-                               SViewBreadcrumb view) {
+            IModel<? extends SInstance> model,
+            IModel<String> listLabel,
+            WicketBuildContext ctx,
+            ViewMode viewMode) {
             super(id);
             this.listModel = $m.get(() -> (SIList<SInstance>) model.getObject());
             this.listLabel = listLabel;
             this.ctx = ctx;
             this.viewMode = viewMode;
-            this.view = view;
 
             BreadCrumbStatus selectedBreadCrumbStatus = ctx.getSelectedBreadCrumbStatus();
             if (selectedBreadCrumbStatus != null) {
@@ -147,8 +143,8 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
         }
 
         private void pushStatus() {
-            ctx.getBreadCrumbStatus().push(new BreadCrumbStatus(listModel, listLabel, ctx, view,
-                    currentInstance, instanceBackupXml, adding, viewMode));
+            ctx.getBreadCrumbStatus().push(new BreadCrumbStatus(listModel, listLabel, ctx,
+                currentInstance, instanceBackupXml, adding, viewMode));
         }
 
         private void popStatus() {
@@ -156,7 +152,6 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
             this.listModel = status.listModel;
             this.listLabel = status.listLabel;
             this.ctx = status.ctx;
-            this.view = status.view;
             this.currentInstance = status.currentInstance;
             this.instanceBackupXml = status.instanceBackupXml;
             this.adding = status.adding;
@@ -185,38 +180,38 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
         protected void buildHeading(BSContainer<?> heading, Form<?> form) {
             heading.appendTag("span", new Label("_title", listLabel));
             heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(listLabel.getObject()))));
-            if (viewMode.isEdition() && view.isNewEnabled(listModel.getObject())) {
+            if (viewMode.isEdition() && ctx.getViewSupplier(SViewBreadcrumb.class).get().isNewEnabled(listModel.getObject())) {
                 appendAddButton(heading, ctx.getModel(), ctx);
             }
         }
 
         protected void appendAddButton(BSContainer<?> container, IModel<? extends SInstance> m, WicketBuildContext ctx) {
             container
-                    .newTemplateTag(t -> ""
-                            + "<button"
-                            + " wicket:id='_add'"
-                            + " class='btn btn-sm pull-right'"
-                            + " style='" + MapperCommons.BUTTON_STYLE + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + DefaultIcons.PLUS + "'></i>"
-                            + "</button>")
-                    .add(new AjaxLink<Void>("_add") {
-                        @Override
-                        public void onClick(AjaxRequestTarget target) {
-                            final SInstance si = m.getObject();
-                            if (si instanceof SIList) {
-                                final SIList sil = (SIList) si;
-                                if (sil.getType().getMaximumSize() != null && sil.getType().getMaximumSize() == sil.size()) {
-                                    target.appendJavaScript(";bootbox.alert('A quantidade máxima de valores foi atingida.');");
-                                    target.appendJavaScript(Scripts.multipleModalBackDrop());
-                                } else {
-                                    adding = true;
-                                    pushStatus();
-                                    SInstance sInstance = sil.addNew();
-                                    IModel<? extends SInstance> itemModel = new SInstanceFieldModel<>(ctx.getRootContext().getModel(), sInstance.getPathFromRoot());
-                                    showCrud(ctx, target, itemModel);
-                                }
+                .newTemplateTag(t -> ""
+                    + "<button"
+                    + " wicket:id='_add'"
+                    + " class='btn btn-sm pull-right'"
+                    + " style='" + MapperCommons.BUTTON_STYLE + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + DefaultIcons.PLUS + "'></i>"
+                    + "</button>")
+                .add(new AjaxLink<Void>("_add") {
+                    @Override
+                    public void onClick(AjaxRequestTarget target) {
+                        final SInstance si = m.getObject();
+                        if (si instanceof SIList) {
+                            final SIList sil = (SIList) si;
+                            if (sil.getType().getMaximumSize() != null && sil.getType().getMaximumSize() == sil.size()) {
+                                target.appendJavaScript(";bootbox.alert('A quantidade máxima de valores foi atingida.');");
+                                target.appendJavaScript(Scripts.multipleModalBackDrop());
+                            } else {
+                                adding = true;
+                                pushStatus();
+                                SInstance sInstance = sil.addNew();
+                                IModel<? extends SInstance> itemModel = new SInstanceFieldModel<>(ctx.getRootContext().getModel(), sInstance.getPathFromRoot());
+                                showCrud(ctx, target, itemModel);
                             }
                         }
-                    });
+                    }
+                });
         }
 
         private void showCrud(WicketBuildContext ctx, AjaxRequestTarget target, IModel<? extends SInstance> itemModel) {
@@ -253,7 +248,7 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
         protected void buildContent(BSContainer<?> content, Form<?> form) {
 
             content.appendTag("table", true, null, (id) -> {
-                BSDataTable<SInstance, ?> bsDataTable = buildTable(id, listModel, view, ctx, viewMode);
+                BSDataTable<SInstance, ?> bsDataTable = buildTable(id, listModel, ctx, viewMode);
                 bsDataTable.add(new Behavior() {
                     @Override
                     public void onConfigure(Component component) {
@@ -269,11 +264,12 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
         }
 
         private BSDataTable<SInstance, ?> buildTable(String id, IModel<? extends SInstance> model,
-                                                     SViewBreadcrumb view, WicketBuildContext ctx, ViewMode viewMode) {
+            WicketBuildContext ctx, ViewMode viewMode) {
 
+            SViewBreadcrumb view = (SViewBreadcrumb) ctx.getView();
             BSDataTableBuilder<SInstance, ?, ?> builder = new BSDataTableBuilder<>(newDataProvider(model));
             builder.withNoRecordsToolbar();
-            configureColumns(view.getColumns(), builder, model, ctx, viewMode, view);
+            configureColumns(view.getColumns(), builder, model, ctx, viewMode);
 
             return builder.build(id);
         }
@@ -301,13 +297,11 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
         }
 
         private void configureColumns(
-                List<SViewBreadcrumb.Column> mapColumns,
-                BSDataTableBuilder<SInstance, ?, ?> builder,
-                IModel<? extends SInstance> model,
-                WicketBuildContext ctx,
-                ViewMode viewMode,
-                SViewBreadcrumb view) {
-
+            List<SViewBreadcrumb.Column> mapColumns,
+            BSDataTableBuilder<SInstance, ?, ?> builder,
+            IModel<? extends SInstance> model,
+            WicketBuildContext ctx,
+            ViewMode viewMode) {
 
             List<ColumnType> columnTypes = new ArrayList<>();
 
@@ -317,10 +311,10 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
                     columnTypes.add(new ColumnType(type.getName(), null));
                 } else if (type.isComposite()) {
                     ((STypeComposite<?>) type)
-                            .getFields()
-                            .stream()
-                            .filter(sType -> sType instanceof STypeSimple)
-                            .forEach(sType -> columnTypes.add(new ColumnType(sType.getName(), null)));
+                        .getFields()
+                        .stream()
+                        .filter(sType -> sType instanceof STypeSimple)
+                        .forEach(sType -> columnTypes.add(new ColumnType(sType.getName(), null)));
 
                 }
             } else {
@@ -341,47 +335,46 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
                 } else {
                     labelModel = $m.ofValue((String) columnType.getType(model.getObject()).getAttributeValue(SPackageBasic.ATR_LABEL.getNameFull()));
                 }
-                final String         typeName = columnType.getTypeName();
+                final String typeName = columnType.getTypeName();
                 propertyColumnAppender(builder, labelModel, $m.ofValue(typeName), columnType.getDisplayFunction());
             }
 
-            actionColumnAppender(builder, model, ctx, viewMode, view);
+            actionColumnAppender(builder, model, ctx, viewMode);
 
         }
 
         private void actionColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder,
-                                          IModel<? extends SInstance> model,
-                                          WicketBuildContext ctx,
-                                          ViewMode viewMode,
-                                          SViewBreadcrumb view) {
-
+            IModel<? extends SInstance> model,
+            WicketBuildContext ctx,
+            ViewMode viewMode) {
+            ISupplier<SViewBreadcrumb> viewSupplier = ctx.getViewSupplier(SViewBreadcrumb.class);
             builder.appendActionColumn($m.ofValue(""), actionColumn -> {
                 if (viewMode.isEdition()) {
 
-                    IFunction<IModel<?>, Boolean> visibleFor = m -> view.isDeleteEnabled((SInstance) m.getObject());
+                    IFunction<IModel<?>, Boolean> visibleFor = m -> viewSupplier.get().isDeleteEnabled((SInstance) m.getObject());
 
                     actionColumn.appendAction(new BSActionPanel.ActionConfig().visibleFor(visibleFor)
-                                    .iconeModel(Model.of(DefaultIcons.MINUS), Model.of(MapperCommons.ICON_STYLE))
-                                    .styleClasses(Model.of("red"))
-                                    .style($m.ofValue(MapperCommons.BUTTON_STYLE)),
-                            (target, rowModel) -> {
-                                SIList<?> sList = ((SIList<?>) model.getObject());
-                                sList.remove(sList.indexOf(rowModel.getObject()));
-                                target.add(ctx.getContainer());
-                            });
-                }
-                final Icon openModalIcon = viewMode.isEdition() && view.isEditEnabled() ? DefaultIcons.PENCIL_SQUARE : DefaultIcons.EYE;
-                actionColumn.appendAction(
-                        new BSActionPanel.ActionConfig()
-                                .iconeModel(Model.of(openModalIcon), Model.of(MapperCommons.ICON_STYLE))
-                                .styleClasses(Model.of("blue-madison"))
-                                .style($m.ofValue(MapperCommons.BUTTON_STYLE)),
+                        .iconeModel(Model.of(DefaultIcons.MINUS), Model.of(MapperCommons.ICON_STYLE))
+                        .styleClasses(Model.of("red"))
+                        .style($m.ofValue(MapperCommons.BUTTON_STYLE)),
                         (target, rowModel) -> {
-                            currentInstance = rowModel;
-                            saveState();
-                            pushStatus();
-                            showCrud(ctx, target, rowModel);
+                            SIList<?> sList = ((SIList<?>) model.getObject());
+                            sList.remove(sList.indexOf(rowModel.getObject()));
+                            target.add(ctx.getContainer());
                         });
+                }
+                final Icon openModalIcon = viewMode.isEdition() && viewSupplier.get().isEditEnabled() ? DefaultIcons.PENCIL_SQUARE : DefaultIcons.EYE;
+                actionColumn.appendAction(
+                    new BSActionPanel.ActionConfig()
+                        .iconeModel(Model.of(openModalIcon), Model.of(MapperCommons.ICON_STYLE))
+                        .styleClasses(Model.of("blue-madison"))
+                        .style($m.ofValue(MapperCommons.BUTTON_STYLE)),
+                    (target, rowModel) -> {
+                        currentInstance = rowModel;
+                        saveState();
+                        pushStatus();
+                        showCrud(ctx, target, rowModel);
+                    });
             });
         }
 
@@ -389,7 +382,7 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
             WicketBuildContext originalContext = ctx.getParent();
 
             while (originalContext.getParent() != null
-                    && !originalContext.isShowBreadcrumb()) {
+                && !originalContext.isShowBreadcrumb()) {
                 originalContext = originalContext.getParent();
             }
 
@@ -421,8 +414,8 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
          * serialização do lambda do appendPropertyColumn
          */
         private void propertyColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder,
-                                            IModel<String> labelModel, IModel<String> sTypeNameModel,
-                                            IFunction<SInstance, String> displayValueFunction) {
+            IModel<String> labelModel, IModel<String> sTypeNameModel,
+            IFunction<SInstance, String> displayValueFunction) {
             builder.appendPropertyColumn(labelModel, o -> {
                 SIComposite composite = (SIComposite) o;
                 SType<?> type = composite.getDictionary().getType(sTypeNameModel.getObject());
@@ -436,52 +429,49 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
             cell.add(WicketUtils.$b.attrAppender("class", "text-center", " "));
 
             cell
-                    .newTemplateTag(t -> "" +
-                            "<button wicket:id='okButton' class='btn btn-primary'>" +
-                            "<wicket:container wicket:id='label'></wicket:container>" +
-                            "</button> ")
-                    .add(new ActionAjaxButton("okButton") {
-                        @Override
-                        protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                            popStatus();
-                            hideCrud(ctx, target);
-                        }
-                    }.add(new Label("label", "OK")));
-
+                .newTemplateTag(t -> "" +
+                    "<button wicket:id='okButton' class='btn btn-primary'>" +
+                    "<wicket:container wicket:id='label'></wicket:container>" +
+                    "</button> ")
+                .add(new ActionAjaxButton("okButton") {
+                    @Override
+                    protected void onAction(AjaxRequestTarget target, Form<?> form) {
+                        popStatus();
+                        hideCrud(ctx, target);
+                    }
+                }.add(new Label("label", "OK")));
 
             cell
-                    .newTemplateTag(t -> "" +
-                            "<button wicket:id='cancelButton' class='btn'>" +
-                            "<wicket:container wicket:id='label'></wicket:container>" +
-                            "</button> ")
-                    .add(new ActionAjaxButton("cancelButton") {
-                        @Override
-                        protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                            popStatus();
-                            rollbackState();
-                            hideCrud(ctx, target);
-                        }
-                    }.add(new Label("label", "Cancelar")));
+                .newTemplateTag(t -> "" +
+                    "<button wicket:id='cancelButton' class='btn'>" +
+                    "<wicket:container wicket:id='label'></wicket:container>" +
+                    "</button> ")
+                .add(new ActionAjaxButton("cancelButton") {
+                    @Override
+                    protected void onAction(AjaxRequestTarget target, Form<?> form) {
+                        popStatus();
+                        rollbackState();
+                        hideCrud(ctx, target);
+                    }
+                }.add(new Label("label", "Cancelar")));
 
         }
 
         public static class BreadCrumbStatus implements Serializable {
             final IModel<SIList<SInstance>> listModel;
-            final IModel<String> listLabel;
-            final WicketBuildContext ctx;
-            final SViewBreadcrumb view;
-            final IModel<SInstance> currentInstance;
-            final String instanceBackupXml;
-            final boolean adding;
-            final ViewMode viewMode;
+            final IModel<String>            listLabel;
+            final WicketBuildContext        ctx;
+            final IModel<SInstance>         currentInstance;
+            final String                    instanceBackupXml;
+            final boolean                   adding;
+            final ViewMode                  viewMode;
 
             public BreadCrumbStatus(IModel<SIList<SInstance>> listModel, IModel<String> listLabel,
-                                    WicketBuildContext ctx, SViewBreadcrumb view, IModel<SInstance> currentInstance,
-                                    String instanceBackupXml, boolean adding, ViewMode viewMode) {
+                WicketBuildContext ctx, IModel<SInstance> currentInstance,
+                String instanceBackupXml, boolean adding, ViewMode viewMode) {
                 this.listModel = listModel;
                 this.listLabel = listLabel;
                 this.ctx = ctx;
-                this.view = view;
                 this.currentInstance = currentInstance;
                 this.instanceBackupXml = instanceBackupXml;
                 this.adding = adding;

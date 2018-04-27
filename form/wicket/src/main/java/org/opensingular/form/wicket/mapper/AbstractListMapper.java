@@ -41,6 +41,7 @@ import org.opensingular.form.wicket.repeater.PathInstanceItemReuseStrategy;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.form.wicket.util.WicketFormUtils;
 import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.behavior.FadeInOnceBehavior;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
@@ -94,7 +95,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
     }
 
     protected static RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, WicketBuildContext ctx, Item<SInstance> item,
-        BSContainer<?> cell, ConfirmationModal confirmationModal, SViewListByTable viewListByTable) {
+        BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<SViewListByTable> viewSupplier) {
         RemoverButton btn = new RemoverButton("_remover_", form, ctx, elementsView, item, confirmationModal);
 
         cell
@@ -105,9 +106,8 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                 + "</button>")
             .add(btn);
 
-        if (viewListByTable != null) {
-            btn.add($b.onConfigure(c -> c.setVisible(viewListByTable.isDeleteEnabled(item.getModelObject()))));
-        }
+        btn.add($b.onConfigure(c -> viewSupplier.optional()
+            .ifPresent(view -> c.setVisible(view.isDeleteEnabled(item.getModelObject())))));
         return btn;
     }
 
@@ -164,7 +164,8 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                 .orElse("Adicionar item"));
     }
 
-    protected void addInitialNumberOfLines(SType<?> currentType, SIList<?> list, AbstractSViewListWithControls<?> view) {
+    protected void addInitialNumberOfLines(SType<?> currentType, SIList<?> list, ISupplier<? extends AbstractSViewListWithControls<?>> viewSupplier) {
+        final AbstractSViewListWithControls<?> view = viewSupplier.get();
         if (currentType.isList() && list.isEmpty()) {
             for (int i = 0; i < view.getInitialNumberOfLines(); i++) {
                 list.addNew();
@@ -301,9 +302,8 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
     }
 
     protected static class InserirButton extends ActionAjaxButton {
-        private final WicketBuildContext ctx;
-        private final Item<SInstance>    item;
-        private final ElementsView       elementsView;
+        private final WicketBuildContext ctx;private final Item<SInstance> item;
+        private final ElementsView elementsView;
 
         protected InserirButton(String id, ElementsView elementsView, Form<?> form, WicketBuildContext ctx, Item<SInstance> item) {
             super(id, form);
@@ -323,10 +323,9 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
     }
 
     protected static class RemoverButton extends ActionAjaxButton {
-        private final WicketBuildContext ctx;
-        private final ElementsView       elementsView;
-        private final Item<SInstance>    item;
-        private final ConfirmationModal  confirmationModal;
+        private final WicketBuildContext ctx;private final ElementsView elementsView;
+        private final Item<SInstance> item;
+        private final ConfirmationModal confirmationModal;
 
         protected RemoverButton(String id, Form<?> form, WicketBuildContext ctx, ElementsView elementsView, Item<SInstance> item, ConfirmationModal confirmationModal) {
             super(id, form);

@@ -33,7 +33,7 @@ import org.opensingular.lib.support.persistence.entity.BaseEntity;
 public abstract class AbstractModuleEntity extends BaseEntity<String> implements IEntityModule {
 
     @Id
-    @Column(name = "CO_MODULO")
+    @Column(name = "CO_MODULO", length = 30)
     private String cod;
 
     @Column(name = "NO_MODULO", length = 100, nullable = false)

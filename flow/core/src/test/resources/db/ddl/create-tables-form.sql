@@ -66,6 +66,7 @@ CREATE TABLE DBSINGULAR.TB_VERSAO_ANOTACAO_FORMULARIO
 /*==============================================================*/
 CREATE TABLE DBSINGULAR.TB_CONTEUDO_ARQUIVO (
    CO_CONTEUDO_ARQUIVO  INT          		 NOT NULL,
+      /*TODO verificar se precisa ser mesmo CHAR.*/
    TX_SHA1              CHAR(40)             NOT NULL,
    NU_BYTES             INT			         NOT NULL,
    DT_INCLUSAO          DATETIME             NOT NULL,
@@ -80,6 +81,7 @@ CREATE TABLE DBSINGULAR.TB_ARQUIVO (
    CO_ARQUIVO           INT                  NOT NULL,
    NO_ARQUIVO           VARCHAR(200)         NOT NULL,
    CO_CONTEUDO_ARQUIVO	INT			         NOT NULL,
+   /*TODO verificar se precisa ser mesmo CHAR.*/
    TX_SHA1              CHAR(40)             NOT NULL,
    NU_BYTES             INT                  NOT NULL,
    DT_CRIACAO           SMALLDATETIME        NOT NULL,
@@ -89,6 +91,7 @@ CREATE TABLE DBSINGULAR.TB_ARQUIVO (
 CREATE TABLE DBSINGULAR.TB_ANOTACAO_FORMULARIO
 (
    CO_VERSAO_FORMULARIO INTEGER              NOT NULL,
+      /*TODO verificar se precisa ser mesmo VARCHAR2.*/
    CO_CHAVE_ANOTACAO    VARCHAR2(200)        NOT NULL,
    CO_VERSAO_ANOTACAO_ATUAL INTEGER              NULL,
    CONSTRAINT PK_TB_ANOTACAO PRIMARY KEY (CO_VERSAO_FORMULARIO, CO_CHAVE_ANOTACAO)
@@ -99,6 +102,7 @@ CREATE TABLE DBSINGULAR.TB_ANOTACAO_FORMULARIO
 /*==============================================================*/
 CREATE TABLE DBSINGULAR.TB_ANEXO_FORMULARIO
 (
+   /*TODO verificar se precisa ser mesmo NUMBER.*/
    CO_VERSAO_FORMULARIO NUMBER               NOT NULL,
    CO_ARQUIVO           NUMBER               NOT NULL,
    CONSTRAINT PK_TB_ANEXO_FORMULARIO PRIMARY KEY (CO_VERSAO_FORMULARIO, CO_ARQUIVO)

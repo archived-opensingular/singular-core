@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.wicket.mapper;
+package org.opensingular.form;
 
-public abstract class MapperCommons {
+import org.opensingular.lib.commons.lambda.IFunction;
 
-    private MapperCommons() {}
+import java.util.Date;
+import java.util.List;
 
-    public final static String BUTTON_STYLE = "padding: 5px 3px 1px;";
-    public final static String ICON_STYLE   = "width: 0.8em;";
+
+public class SIEnabledDates extends SICode<IFunction<SInstance, List<Date>>> {
+    public SIEnabledDates() {
+    }
 }

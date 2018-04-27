@@ -22,6 +22,7 @@ import java.io.Serializable;
 
 import org.opensingular.form.SInstance;
 import org.opensingular.form.view.SView;
+import org.opensingular.lib.commons.lambda.ISupplier;
 
 public interface IFormBuildContext extends Serializable {
 
@@ -30,6 +31,16 @@ public interface IFormBuildContext extends Serializable {
     IFormBuildContext getParent();
     
     SView getView();
+    
+    @SuppressWarnings("unchecked")
+    default <V extends SView> ISupplier<V> getViewSupplier(Class<V> viewType) {
+        return () -> {
+            SView view = this.getView();
+            if (view != null && viewType.isAssignableFrom(view.getClass()))
+                return (V) view;
+            return null;
+        };
+    }
     
     default boolean isRootContext() {
         return (this.getParent() == null);

@@ -18,20 +18,20 @@ package org.opensingular.form.persistence.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.GenericGenerator;
 
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
 
 @Entity
-@GenericGenerator(name = CollectionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
+@SequenceGenerator(name = CollectionEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_COLECAO", schema = Constants.SCHEMA)
 @Table(name = "TB_COLECAO", schema = Constants.SCHEMA)
 public class CollectionEntity extends BaseEntity<Long> {
 
@@ -39,14 +39,14 @@ public class CollectionEntity extends BaseEntity<Long> {
 
     @Id
     @Column(name = "CO_COLECAO")
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Long cod;
 
-    @Column(name = "NO_COLECAO")
+    @Column(name = "NO_COLECAO", length = 50)
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "CO_TIPO_FORMULARIO")
+    @JoinColumn(name = "CO_TIPO_FORMULARIO", foreignKey = @ForeignKey(name = "FK_COLECAO_TIPO_FORMULARIO"), nullable = false)
     private FormTypeEntity formType;
 
     @Override

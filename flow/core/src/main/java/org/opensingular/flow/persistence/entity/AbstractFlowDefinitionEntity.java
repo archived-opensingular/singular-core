@@ -16,6 +16,21 @@
 
 package org.opensingular.flow.persistence.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.opensingular.flow.core.entity.IEntityCategory;
 import org.opensingular.flow.core.entity.IEntityFlowDefinition;
@@ -24,19 +39,6 @@ import org.opensingular.flow.core.entity.IEntityModule;
 import org.opensingular.flow.core.entity.IEntityRoleDefinition;
 import org.opensingular.flow.core.entity.IEntityTaskDefinition;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
-
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The base persistent class for the flow definition database table.
@@ -54,24 +56,24 @@ public abstract class AbstractFlowDefinitionEntity<MODULE extends IEntityModule,
 
     @Id
     @Column(name = "CO_DEFINICAO_PROCESSO")
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Integer cod;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_CATEGORIA")
+    @JoinColumn(name = "CO_CATEGORIA", foreignKey = @ForeignKey(name = "FK_DEFIN_PROCES_CATEGORIA"))
     private CATEGORY category;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_MODULO", nullable = false)
+    @JoinColumn(name = "CO_MODULO", nullable = false, foreignKey = @ForeignKey(name = "FK_DEFIN_PROCES_MODULO"))
     private MODULE module;
 
-    @Column(name = "SG_PROCESSO", length = 200, nullable = false, unique = true)
+    @Column(name = "SG_PROCESSO", length = 200, nullable = false)
     private String key;
 
     @Column(name = "NO_PROCESSO", length = 200, nullable = false)
     private String name;
 
-    @Column(name = "NO_CLASSE_JAVA", length = 250, nullable = false, unique = true)
+    @Column(name = "NO_CLASSE_JAVA", length = 500, nullable = false)
     private String definitionClassName;
 
     @OneToMany(mappedBy = "flowDefinition", fetch = FetchType.LAZY)

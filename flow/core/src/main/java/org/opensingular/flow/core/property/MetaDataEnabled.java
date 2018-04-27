@@ -16,12 +16,12 @@
 
 package org.opensingular.flow.core.property;
 
-import org.opensingular.lib.commons.base.SingularException;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Optional;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.opensingular.lib.commons.base.SingularException;
 
 /**
  * Indicates the capability of a class to have meta data information through a dynamic map of key and value.

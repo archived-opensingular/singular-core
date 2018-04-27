@@ -16,17 +16,26 @@
  *
  */
 
-package org.opensingular.lib.support.persistence.entity;
+package org.opensingular.lib.support.persistence;
 
-import org.hibernate.EmptyInterceptor;
-import org.opensingular.lib.support.persistence.util.SqlUtil;
+import java.io.Serializable;
 
-@SuppressWarnings("serial")
-public class SingularEntityInterceptor extends EmptyInterceptor {
+public class DatabaseObjectNameReplacement implements Serializable{
 
-    @Override
-    public String onPrepareStatement(String sql) {
-        return SqlUtil.replaceSingularSchemaName(sql);
+    private String originalObjectName;
+    private String objectNameReplacement;
+
+    public DatabaseObjectNameReplacement(String originalObjectName, String objectNameReplacement) {
+        this.originalObjectName = originalObjectName;
+        this.objectNameReplacement = objectNameReplacement;
+    }
+
+    public String getOriginalObjectName() {
+        return originalObjectName;
+    }
+
+    public String getObjectNameReplacement() {
+        return objectNameReplacement;
     }
 
 }
