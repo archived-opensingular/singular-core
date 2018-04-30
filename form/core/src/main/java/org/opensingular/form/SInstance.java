@@ -16,24 +16,6 @@
 
 package org.opensingular.form;
 
-import org.opensingular.form.aspect.AspectRef;
-import org.opensingular.form.calculation.SimpleValueCalculation;
-import org.opensingular.form.document.SDocument;
-import org.opensingular.form.event.ISInstanceListener;
-import org.opensingular.form.event.SInstanceEvent;
-import org.opensingular.form.event.SInstanceEventType;
-import org.opensingular.form.event.SInstanceListeners;
-import org.opensingular.form.internal.PathReader;
-import org.opensingular.form.io.PersistenceBuilderXML;
-import org.opensingular.form.type.basic.SPackageBasic;
-import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.validation.ValidationError;
-import org.opensingular.internal.lib.commons.xml.MElement;
-import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.lib.commons.lambda.IFunction;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,6 +27,24 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.opensingular.form.aspect.AspectRef;
+import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.document.SDocument;
+import org.opensingular.form.event.ISInstanceListener;
+import org.opensingular.form.event.SInstanceEvent;
+import org.opensingular.form.event.SInstanceEventType;
+import org.opensingular.form.event.SInstanceListeners;
+import org.opensingular.form.internal.PathReader;
+import org.opensingular.form.io.PersistenceBuilderXML;
+import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.validation.ValidationError;
+import org.opensingular.internal.lib.commons.xml.MElement;
+import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IFunction;
 
 public abstract class SInstance implements SAttributeEnabled {
 
@@ -208,6 +208,7 @@ public abstract class SInstance implements SAttributeEnabled {
      * Executa as inicilização de atribuição de valor da instância (ver {@link SType#withInitListener(IConsumer)}). Pode
      * sobrepor valores preexistentes.
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public final void init() {
         //Não deve chamar o init se estiver no modo de leitura do XML
         if (!getDocument().isRestoreMode()) {
@@ -335,6 +336,7 @@ public abstract class SInstance implements SAttributeEnabled {
      * @throws ClassCastException     if this instance type doesn't match rootTypeClass
      * @throws NoSuchElementException if type returned by the function doesn't match a descendant type
      */
+    @SuppressWarnings("unchecked")
     public <RT extends SType<RI>,
             RI extends SInstance,
             TT extends SType<TI>,
@@ -405,6 +407,7 @@ public abstract class SInstance implements SAttributeEnabled {
         return convert(getValue(), resultClass);
     }
 
+    @SuppressWarnings("unchecked")
     <T> T convert(@Nullable Object value, @Nullable Class<T> resultClass) {
         if (resultClass == null || value == null) {
             return (T) value;
@@ -463,6 +466,7 @@ public abstract class SInstance implements SAttributeEnabled {
      * Retorna o campo cujo o nome seja igual ao do tipo informado e verifica se o campo encontrado é do mesmo tipo
      * informado. Caso não seja do mesmo tipo, dispara uma exception.
      */
+    @SuppressWarnings("unchecked")
     public <II extends SInstance> II getField(SType<II> type) {
         SInstance instance = getField(type.getNameSimple());
         type.checkIfIsInstanceOf(instance);
@@ -562,6 +566,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     @Nonnull
+    @Override
     public final SAttributeEnabled getParentAttributeContext() {
         return getType();
     }
@@ -571,6 +576,7 @@ public abstract class SInstance implements SAttributeEnabled {
      * hierarquia.
      */
     @Nonnull
+    @Override
     public Optional<SInstance> getAttributeDirectly(@Nonnull String fullName) {
         return AttributeValuesManager.staticGetAttributeDirectly(this, attributes, fullName);
     }
@@ -581,11 +587,13 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     @Nullable
+    @Override
     public final <T> T getAttributeValue(@Nonnull AtrRef<?, ?, ?> atr, @Nullable Class<T> resultClass) {
         return getAttributeValue(getDictionary().getAttributeReferenceOrException(atr), resultClass);
     }
 
     @Nullable
+    @Override
     public final <V> V getAttributeValue(@Nonnull AtrRef<?, ?, V> atr) {
         return getAttributeValue(getDictionary().getAttributeReferenceOrException(atr), atr.getValueClass());
     }
@@ -613,6 +621,7 @@ public abstract class SInstance implements SAttributeEnabled {
      * Lista todos os atributos com valor associado diretamente à instância atual.
      */
     @Nonnull
+    @Override
     public Collection<SInstance> getAttributes() {
         return AttributeValuesManager.staticGetAttributes(attributes);
     }
