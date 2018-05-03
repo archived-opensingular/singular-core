@@ -128,7 +128,6 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
                             .add($b.onConfigure(c -> c.setVisible(!listModel.getObject().isEmpty()))))
                         .add(empty
                             .add($b.onConfigure(c -> c.setVisible(listModel.getObject().isEmpty())))));
-                content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
                 content.getParent()
                     .add(dependsOnModifier(listModel));
             },
