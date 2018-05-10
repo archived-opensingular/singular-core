@@ -18,6 +18,7 @@ package org.opensingular.flow.core.builder;
 
 import org.opensingular.flow.core.BusinessRoleStrategy;
 import org.opensingular.flow.core.DashboardView;
+import org.opensingular.flow.core.DisplayInfoFlow;
 import org.opensingular.flow.core.FlowDefinition;
 import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.FlowMap;
@@ -40,6 +41,7 @@ import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.flow.core.TaskAccessStrategy;
 import org.opensingular.lib.commons.base.SingularUtil;
 
+import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
 public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extends FlowMap, BUILDER_TASK extends BuilderTask, BUILDER_JAVA extends BuilderJava<?>, BUILDER_PEOPLE extends BuilderHuman<?>, BUILDER_WAIT extends BuilderWait<?>, BUILDER_END extends BuilderEnd<?>, BUILDER_START extends BuilderStart<?>, BUILDER_TRANSITION extends BuilderTransition<?>, BUILDER_ROLE extends BuilderBusinessRole<?>, TASK_DEF extends ITaskDefinition> {
@@ -213,5 +215,15 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extend
         for (STask<?> sTask : getFlowMap().getAllTasks()) {
             sTask.addStartedTaskListener(listener);
         }
+    }
+
+    /**
+     * Returns display information of the flow object that may be used to help (guide) the diagram generation of the
+     * flow.
+     * <p>It doesn't affect the runtime of the flow.</p>
+     */
+    @Nonnull
+    public DisplayInfoFlow getDisplayInfo() {
+        return getFlowMap().getDisplayInfo();
     }
 }

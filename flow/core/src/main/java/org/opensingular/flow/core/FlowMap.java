@@ -61,6 +61,8 @@ public class FlowMap {
 
     private final Map<String, DashboardView> dashboardViews = new LinkedHashMap<>();
 
+    private DisplayInfoFlow displayInfo;
+
     /**
      * Instancia um novo mapa para a definição de fluxo especificado.
      */
@@ -499,5 +501,18 @@ public class FlowMap {
     public <T extends Serializable> FlowMap setMetaDataValue(@Nonnull MetaDataKey<T> key, T value) {
         getFlowDefinition().setMetaDataValue(key, value);
         return this;
+    }
+
+    /**
+     * Returns display information of the flow object that may be used to help (guide) the diagram generation of the
+     * flow.
+     * <p>It doesn't affect the runtime of the flow.</p>
+     */
+    @Nonnull
+    public DisplayInfoFlow getDisplayInfo() {
+        if (displayInfo == null) {
+            displayInfo = new DisplayInfoFlow(this);
+        }
+        return displayInfo;
     }
 }

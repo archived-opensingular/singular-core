@@ -16,14 +16,13 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.core.property.MetaDataMap;
 import org.opensingular.flow.core.property.MetaDataEnabled;
+import org.opensingular.flow.core.property.MetaDataMap;
 import org.opensingular.flow.core.variable.ValidationResult;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.lib.commons.base.SingularUtil;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +35,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     private final STask<?> origin;
     private final String name;
     private final STask<?> destination;
-    private final String         abbreviation;
+    private final String abbreviation;
 
     private UITransitionAccessStrategy<TaskInstance> accessStrategy;
     private List<SBusinessRole> rolesToDefineUser;
@@ -47,9 +46,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     private ITransitionParametersValidator   parametersValidator;
 
     private ITaskPredicate predicate;
-    private EventType displayEventType;
-    private String displayAsLinkName;
-    private int displayAsLinkGroupIndex = -1;
+    private DisplayInfoTransition displayInfo;
 
     protected STransition(STask<?> origin, String name, @Nonnull STask<?> destination) {
         this.origin = origin;
@@ -245,77 +242,15 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     }
 
     /**
-     * Return the BPMN type of event that triggers the execution of this transition for use when generating a diagram
-     * of the flow. When null, it usually means that this a transition manually executed by the user.
-     * <p> This method first user the value set by {@link #setDisplayEventType(EventType)}. If null and {@link
-     * #getPredicate()}
-     * is not null, then returns {@link ITaskPredicate#getDisplayEventType()}.
+     * Returns the display information of the transition that may be used to help the diagram generation of the flow.
      * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
      */
-    @Nullable
-    public EventType getDisplayEventType() {
-        if (displayEventType == null && getPredicate() != null) {
-            return getPredicate().getDisplayEventType();
+    @Nonnull
+    public DisplayInfoTransition getDisplayInfo() {
+        if (displayInfo == null) {
+            displayInfo = new DisplayInfoTransition(this);
         }
-        return displayEventType;
-    }
-
-    /**
-     * Defines, for the purpose of generating a diagram of the flow, the BPMN type of the event that triggers the
-     * execution of this transition, if not null. When it's null on a human task, usually means that this a transition
-     * manually executed by the user.
-     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
-     */
-    public void setDisplayEventType(@Nullable EventType displayEventType) {
-        this.displayEventType = displayEventType;
-    }
-
-    /**
-     * Define that, when generating a diagram of the flow, this transition should be preferred displayed as link
-     * event instead of a direct line to the destination.
-     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
-     *
-     * @param displayAsLinkName The name of the link. If not null, then this transition will be displayed as link.
-     */
-    public void setDisplayAsLink(@Nullable String displayAsLinkName) {
-        setDisplayAsLink(displayAsLinkName, -1);
-    }
-
-    /**
-     * Define that, when generating a diagram of the flow, this transition should be preferred displayed as link
-     * event instead of a direct line to the destination.
-     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
-     *
-     * @param displayAsLinkName The name of the link. If not null, then this transition will be displayed as link.
-     * @param linkGroupIndex    If there is two links for the same destination with the same index, it
-     *                          will be rendered as just one visual component.
-     */
-    public void setDisplayAsLink(@Nullable String displayAsLinkName, int linkGroupIndex) {
-        this.displayAsLinkName = displayAsLinkName;
-        this.displayAsLinkGroupIndex = linkGroupIndex;
-    }
-
-    /**
-     * If not null, it means that this transition should be preferred displayed as link event instead of a direct line
-     * to the destination when generating a diagram of the flow.
-     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
-     */
-    @Nullable
-    public String getDisplayAsLinkName() {
-        return displayAsLinkName;
-    }
-
-    /**
-     * Two transition marked to be rendered as link and that also have the same non negative index, it means that both
-     * transition should be point to the same outgoing link. This information is meaningful only if {@link
-     * #getDisplayAsLinkName()} is not null.
-     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
-     *
-     * @return negative number, if the link shouldn't be grouped. A non negative number, if this transition is part of
-     * the same link group.
-     */
-    public int getDisplayAsLinkGroupIndex() {
-        return displayAsLinkGroupIndex;
+        return displayInfo;
     }
 
     @FunctionalInterface
@@ -338,4 +273,19 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
         void validate(VarInstanceMap<?,?> params, ValidationResult validationResult, K flowInstance);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        STransition that = (STransition) o;
+        return Objects.equals(origin, that.origin) && Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = origin.hashCode();
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
+    }
 }

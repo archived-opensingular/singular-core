@@ -20,11 +20,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.tuple.Pair;
+import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.STransition;
 import org.opensingular.flow.core.SingularFlowException;
+import org.opensingular.flow.core.TaskInstance;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,6 +38,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,12 +51,41 @@ import java.util.stream.Collectors;
 public class ExecutionHistoryForRendering {
 
     private String current;
+    private String lastAddedDestinationByTransition;
     private final Set<String> executedTasks = new HashSet<>();
     private final HashMap<Pair<String, String>, Set<String>> transitions = new HashMap<>();
     private final Set<String> taskWithInTransition = new HashSet<>();
     private final Set<String> taskWithOutTransition = new HashSet<>();
     private List<ExecutionEntry> executionHistory = new ArrayList<>();
 
+    /** Extracts the execution history from a {@link FlowInstance}. */
+    @Nonnull
+    public static ExecutionHistoryForRendering from(@Nonnull FlowInstance flowInstance) {
+        ExecutionHistoryForRendering historyForRendering = new ExecutionHistoryForRendering();
+        TaskInstance current = null;
+        for (TaskInstance task : flowInstance.getTasksOlderFirst()) {
+            historyForRendering.addExecuted(task.getAbbreviation(), task.getBeginDate(), task.getEndDate());
+            Optional<STransition> transition = task.getExecutedTransition();
+            transition.ifPresent(t -> historyForRendering.addTransition(t));
+            current = task;
+        }
+        if (current != null) {
+            historyForRendering.setCurrent(current.getAbbreviation());
+        }
+        historyForRendering.guessMissingTransitions(flowInstance.getFlowDefinition().getFlowMap());
+        return historyForRendering;
+    }
+
+
+    /** Removes all history information. */
+    public void clear() {
+        current = null;
+        executedTasks.clear();
+        transitions.clear();
+        taskWithOutTransition.clear();
+        taskWithInTransition.clear();
+        executionHistory.clear();
+    }
 
     /** Marks this task as executed. */
     public void addExecuted(@Nonnull String taskAbbreviation) {
@@ -124,6 +156,7 @@ public class ExecutionHistoryForRendering {
     private void addTransitionInternal(@Nonnull String fromTaskAbbreviation, @Nonnull String toTaskAbbreviation,
             @Nullable String transitionName) {
         addExecutedInternal(fromTaskAbbreviation, null, null);
+        lastAddedDestinationByTransition = toTaskAbbreviation;
         Pair<String, String> key = Pair.of(fromTaskAbbreviation, toTaskAbbreviation);
         taskWithOutTransition.add(fromTaskAbbreviation);
         taskWithInTransition.add(toTaskAbbreviation);
@@ -243,6 +276,9 @@ public class ExecutionHistoryForRendering {
 
         int fixes = tryFixByExecutionHistory(flow, taskByKey);
         fixes += tryFixByGuessingUniqueOfOriginOrDestination(flow, taskByKey);
+        if (current == null && lastAddedDestinationByTransition != null) {
+            current = lastAddedDestinationByTransition;
+        }
         return fixes;
     }
 
@@ -282,7 +318,7 @@ public class ExecutionHistoryForRendering {
     private int tryFixByGuessingUniqueOfOriginOrDestination(@Nonnull FlowMap flow,
             @Nonnull Map<String, STask<?>> taskByKey) {
         int fixes = 0;
-        if (isTaskMissingInTransition(flow, current)) {
+        if (current != null && isTaskMissingInTransition(flow, current)) {
             fixes += tryFixIn(taskByKey, current);
         }
         for (String task : executedTasks) {

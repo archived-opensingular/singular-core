@@ -28,10 +28,12 @@ import java.util.function.Consumer;
  */
 public interface BuilderParametersEnabled<SELF extends BuilderParametersEnabled<SELF>> {
 
+    @Nonnull
     public default SELF self() {
         return (SELF) this;
     }
 
+    @Nonnull
     default SELF with(Consumer<SELF> consumer) {
         SELF self = self();
         consumer.accept(self);

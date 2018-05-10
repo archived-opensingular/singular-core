@@ -16,6 +16,7 @@
 
 package org.opensingular.flow.core.builder;
 
+import org.opensingular.flow.core.DisplayInfoTransition;
 import org.opensingular.flow.core.EventType;
 import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.ITaskDefinition;
@@ -93,7 +94,7 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
      * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
      */
     public default SELF setDisplayEventType(EventType eventType) {
-        getTransition().setDisplayEventType(eventType);
+        getTransition().getDisplayInfo().setDisplayEventType(eventType);
         return self();
     }
 
@@ -113,7 +114,7 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
      * @param displayAsLinkName The name of the link. If not null, then this transition will be displayed as link.
      */
     default SELF setDisplayAsLink(@Nullable String displayAsLinkName) {
-        getTransition().setDisplayAsLink(displayAsLinkName);
+        getTransition().getDisplayInfo().setDisplayAsLink(displayAsLinkName);
         return self();
     }
 
@@ -127,7 +128,27 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
      *                          will be rendered as just one visual component.
      */
     default SELF setDisplayAsLink(@Nullable String displayAsLinkName, int linkGroupIndex) {
-        getTransition().setDisplayAsLink(displayAsLinkName, linkGroupIndex);
+        getTransition().getDisplayInfo().setDisplayAsLink(displayAsLinkName, linkGroupIndex);
         return self();
+    }
+
+    /**
+     * Sets the transition as critical path of the flow, so the origin task and the destination task should be preferred
+     * displayed together in the same visual level.
+     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
+     */
+    @Nonnull
+    default SELF setDisplayAsCriticalPath() {
+        getTransition().getDisplayInfo().setCriticalPath(true);
+        return self();
+    }
+
+    /**
+     * Returns the display information of the transition.
+     * <p>This information doesn't affect the runtime of the flow. The only affect is on the diagram generation.</p>
+     */
+    @Nonnull
+    default DisplayInfoTransition getDisplayInfo() {
+        return getTransition().getDisplayInfo();
     }
 }
