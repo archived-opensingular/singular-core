@@ -29,13 +29,18 @@ public interface ITaskDefinition {
 
     @Nonnull
     default String getKey() {
-        return SingularUtil.convertToJavaIdentity(getName(), true).toUpperCase();
+        return taskNameToTaskKey(getName());
     }
 
     /** Creates a {@link ITaskDefinition} with the name informed and the key calculated based in the name. */
     @Nonnull
     public static ITaskDefinition of(@Nonnull String name) {
-        return of(name, SingularUtil.convertToJavaIdentity(name, true).toUpperCase());
+        return of(name, taskNameToTaskKey(name));
+    }
+
+    @Nonnull
+    static String taskNameToTaskKey(@Nonnull String name) {
+        return SingularUtil.convertToJavaIdentity(name, true).toUpperCase();
     }
 
     /** Creates a {@link ITaskDefinition} with the name and key informed. */
