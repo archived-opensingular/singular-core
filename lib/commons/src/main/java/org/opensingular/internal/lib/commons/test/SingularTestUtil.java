@@ -73,7 +73,7 @@ public final class SingularTestUtil {
      * @param code              Código a ser executado e que se espera que gere exception
      * @param expectedException Classe da exceção esperada de ser disparada
      */
-    public static void assertException(RunnableEx code, Class<? extends Exception> expectedException) {
+    public static void assertException(RunnableEx code, Class<? extends Throwable> expectedException) {
         assertException(code, expectedException, null, null);
     }
 
@@ -84,7 +84,7 @@ public final class SingularTestUtil {
      * @param expectedException        Classe da exceção esperada de ser disparada
      * @param expectedExceptionMsgPart (pode ser null) Trecho esperado de ser encontrado na mensagem da exception
      */
-    public static void assertException(RunnableEx code, Class<? extends Exception> expectedException,
+    public static void assertException(RunnableEx code, Class<? extends Throwable> expectedException,
                                        String expectedExceptionMsgPart) {
         assertException(code, expectedException, expectedExceptionMsgPart, null);
     }
@@ -98,7 +98,7 @@ public final class SingularTestUtil {
      * @param failMsgIfNoException     (pode ser null) Mensage to be attacher to the fail mensage in case of no
      *                                 exception is producted from the executed code
      */
-    public static void assertException(@Nonnull RunnableEx code, @Nonnull Class<? extends Exception> expectedException,
+    public static void assertException(@Nonnull RunnableEx code, @Nonnull Class<? extends Throwable> expectedException,
                                        @Nullable String expectedExceptionMsgPart, @Nullable String failMsgIfNoException) {
         try {
             code.run();
@@ -110,9 +110,11 @@ public final class SingularTestUtil {
                 msg += ", pois " + failMsgIfNoException;
             }
             throw new AssertionError(msg);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             if (findExpectedException(e, expectedException, expectedExceptionMsgPart)) {
                 return;
+            } else if (e instanceof Error) {
+                throw (Error) e;
             } else {
                 String msg = "Era esperado '" + expectedException.getSimpleName() + "'";
                 msg += " no entanto ocorreu a exceção '" + e.getClass().getSimpleName() + "'";
@@ -124,7 +126,7 @@ public final class SingularTestUtil {
     /**
      * Verifica se encontra a exception esperada na pilha de erro
      */
-    private static boolean findExpectedException(Throwable e, Class<? extends Exception> expectedException,
+    private static boolean findExpectedException(Throwable e, Class<? extends Throwable> expectedException,
                                                  String expectedExceptionMsgPart) {
         if (expectedException.isInstance(e)) {
             if (expectedExceptionMsgPart == null || (e.getMessage() != null && e.getMessage().contains(
