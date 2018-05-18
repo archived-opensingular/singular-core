@@ -128,7 +128,6 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
                             .add($b.onConfigure(c -> c.setVisible(!listModel.getObject().isEmpty()))))
                         .add(empty
                             .add($b.onConfigure(c -> c.setVisible(listModel.getObject().isEmpty())))));
-                content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
                 content.getParent()
                     .add(dependsOnModifier(listModel));
             },
@@ -199,13 +198,13 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
             header.add($b.classAppender("list-icons"));
 
             if ((viewSupplier.get() != null) && (viewSupplier.get().isInsertEnabled()) && ctx.getViewMode().isEdition()) {
-                appendInserirButton(this, form, item, btnGrid.newColInRow()).add($b.classAppender("pull-right"));
+                appendInserirButton(this, form, ctx, item, btnGrid.newColInRow()).add($b.classAppender("pull-right"));
             }
 
             final BSCol btnCell = btnGrid.newColInRow();
 
             if (ctx.getViewMode().isEdition()) {
-                appendRemoverIconButton(this, form, item, btnCell, confirmationModal, viewSupplier)
+                appendRemoverIconButton(this, form, ctx, item, btnCell, confirmationModal, viewSupplier)
                     .add($b.classAppender("pull-right"));
             }
 
@@ -218,9 +217,9 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
         }
     }
 
-    protected static RemoverButton appendRemoverIconButton(ElementsView elementsView, Form<?> form, Item<SInstance> item,
+    protected static RemoverButton appendRemoverIconButton(ElementsView elementsView, Form<?> form, WicketBuildContext ctx, Item<SInstance> item,
         BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<SViewListByForm> viewSupplier) {
-        final RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item, confirmationModal);
+        final RemoverButton btn = new RemoverButton("_remover_", form, ctx, elementsView, item, confirmationModal);
         cell
             .newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + DefaultIcons.REMOVE + "' />")
             .add(btn);

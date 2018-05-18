@@ -27,6 +27,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.decorator.action.SInstanceAction;
 import org.opensingular.form.decorator.action.SInstanceAction.Preview;
 import org.opensingular.internal.form.wicket.util.HtmlConversionUtils;
 import org.opensingular.lib.commons.lambda.IFunction;
@@ -40,6 +41,7 @@ public class SInstanceActionPreviewPanel extends Panel {
 
         IModel<String> messageModel = $m.map(previewModel,
             it -> HtmlConversionUtils.toHtmlMessage(it.getMessage(), it.getFormat()));
+        IModel<List<SInstanceAction>> actionsModel = $m.map(previewModel, it -> it.getActions());
 
         add($b.classAppender("singular-form-action-preview dropdown-menu theme-panel hold-on-click dropdown-custom"));
         add(new Label("title", $m.map(previewModel, it -> it.getTitle()))
@@ -50,7 +52,7 @@ public class SInstanceActionPreviewPanel extends Panel {
             instanceModel,
             internalContextListProvider,
             SInstanceActionsPanel.Mode.BAR,
-            $m.map(previewModel, it -> it.getActions())::getObject)
+            () -> actionsModel.getObject())
                 .setActionClassFunction(it -> "singular-form-action-preview-action")
                 .setLinkClassFunction(it -> "singular-form-action-preview-link"));
     }

@@ -16,29 +16,41 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.decorator.action.ISInstanceActionCapable;
+import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
 import org.opensingular.form.wicket.mapper.behavior.RequiredBehaviorUtil;
+import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
+import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.AttributeModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
+import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSWellBorder;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 
-import java.util.Set;
+public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCapable {
 
-import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
-
-public class BooleanMapper implements IWicketComponentMapper {
+    private final SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
 
     @Override
     public void buildView(WicketBuildContext ctx) {
@@ -53,13 +65,33 @@ public class BooleanMapper implements IWicketComponentMapper {
     }
 
     protected void buildForEdition(WicketBuildContext ctx) {
-        final BSControls                  formGroup  = ctx.getContainer().newFormGroup();
-        final IModel<? extends SInstance> model      = ctx.getModel();
-        final AttributeModel<String>      labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
-        final CheckBox                    input      = new CheckBox(model.getObject().getName(), new SInstanceValueModel<>(model));
-        final Label                       label      = buildLabel("_", labelModel);
+        final BSControls formGroup = ctx.getContainer().newFormGroup();
+        final IModel<? extends SInstance> model = ctx.getModel();
+        final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
+        final CheckBox input = new CheckBox(model.getObject().getName(), new SInstanceValueModel<>(model));
+        final Label label = buildLabel("_", labelModel);
         adjustJSEvents(ctx, label);
+
         formGroup.appendCheckbox(input, label);
+
+        final BSContainer<?> checkboxDiv = input.getMetaData(BSControls.CHECKBOX_DIV);
+        if (checkboxDiv != null) { //
+            IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
+                BooleanMapper.this,
+                RequestCycle.get().find(AjaxRequestTarget.class),
+                model,
+                model.getObject(),
+                ctx,
+                ctx.getContainer());
+
+            SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
+                checkboxDiv,
+                instanceActionsProviders,
+                model,
+                false,
+                internalContextListProvider);
+        }
+
         input.add(DisabledClassBehavior.getInstance());
         formGroup.appendFeedback(ctx.createFeedbackCompactPanel("feedback"));
         ctx.configure(this, input);
@@ -73,9 +105,9 @@ public class BooleanMapper implements IWicketComponentMapper {
     }
 
     protected void buildForVisualization(WicketBuildContext ctx) {
-        final BSControls                  formGroup  = ctx.getContainer().newFormGroup();
-        final IModel<? extends SInstance> model      = ctx.getModel();
-        final AttributeModel<String>      labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
+        final BSControls formGroup = ctx.getContainer().newFormGroup();
+        final IModel<? extends SInstance> model = ctx.getModel();
+        final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
 
         final Boolean checked;
 
@@ -86,12 +118,12 @@ public class BooleanMapper implements IWicketComponentMapper {
             checked = Boolean.FALSE;
         }
 
-        String clazz    = checked ? "fa fa-check-square" : "fa fa-square-o";
+        String clazz = checked ? "fa fa-check-square" : "fa fa-square-o";
         String idSuffix = (mi != null) ? mi.getName() : StringUtils.EMPTY;
         TemplatePanel tp = formGroup.newTemplateTag(t -> ""
-                + "<div wicket:id='" + "_well" + idSuffix + "'>"
-                + "   <i class='" + clazz + "'></i> <span wicket:id='label'></span> "
-                + " </div>");
+            + "<div wicket:id='" + "_well" + idSuffix + "'>"
+            + "   <i class='" + clazz + "'></i> <span wicket:id='label'></span> "
+            + " </div>");
         final BSWellBorder wellBorder = BSWellBorder.small("_well" + idSuffix);
         tp.add(wellBorder.add(buildLabel("label", labelModel)));
     }
@@ -105,4 +137,8 @@ public class BooleanMapper implements IWicketComponentMapper {
         comp.add(new SingularEventsHandlers(ADD_TEXT_FIELD_HANDLERS));
     }
 
+    @Override
+    public void addSInstanceActionsProvider(int sortPosition, ISInstanceActionsProvider provider) {
+        this.instanceActionsProviders.addSInstanceActionsProvider(sortPosition, provider);
+    }
 }
