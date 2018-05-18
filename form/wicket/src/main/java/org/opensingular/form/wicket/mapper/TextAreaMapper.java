@@ -16,6 +16,8 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
+
 import java.util.Optional;
 
 import org.apache.wicket.Component;
@@ -23,8 +25,6 @@ import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.validation.validator.StringValidator;
-
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.view.SView;
@@ -53,7 +53,7 @@ public class TextAreaMapper extends StringMapper {
             Optional<Integer> maxSize = Optional.ofNullable(mi.getAttributeValue(SPackageBasic.ATR_MAX_LENGTH));
 
             if (maxSize.isPresent()) {
-                textArea.add(StringValidator.maximumLength(maxSize.get()));
+                textArea.add($b.attr("maxlength", maxSize.get()));
                 textArea.add(new CountDownBehaviour());
             }
 

@@ -17,17 +17,27 @@
 package org.opensingular.flow.core.renderer;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.tuple.Pair;
+import org.opensingular.flow.core.FlowMap;
 import org.opensingular.flow.core.ITaskDefinition;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.STransition;
+import org.opensingular.flow.core.SingularFlowException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Represents the history of execution and current state of a particular flow instance so the diagram of the flow
@@ -40,21 +50,42 @@ public class ExecutionHistoryForRendering {
     private String current;
     private final Set<String> executedTasks = new HashSet<>();
     private final HashMap<Pair<String, String>, Set<String>> transitions = new HashMap<>();
+    private final Set<String> taskWithInTransition = new HashSet<>();
+    private final Set<String> taskWithOutTransition = new HashSet<>();
+    private List<ExecutionEntry> executionHistory = new ArrayList<>();
+
 
     /** Marks this task as executed. */
     public void addExecuted(@Nonnull String taskAbbreviation) {
-        executedTasks.add(taskAbbreviation);
+        addExecuted(taskAbbreviation, null, null);
+    }
+
+    /** Marks this task as executed. */
+    public void addExecuted(@Nonnull String taskAbbreviation, @Nullable Date start, @Nullable Date end) {
+        addExecutedInternal(normalizeTask(taskAbbreviation), start, end);
     }
 
     /** Marks this task as executed. */
     public void addExecuted(@Nonnull ITaskDefinition taskDefinition) {
-        addExecuted(normalize(taskDefinition));
+        addExecuted(taskDefinition, null, null);
+    }
+
+    /** Marks this task as executed. */
+    public void addExecuted(@Nonnull ITaskDefinition taskDefinition, @Nullable Date start, @Nullable Date end) {
+        addExecutedInternal(normalizeTask(taskDefinition), start, end);
     }
 
     /** Marks a list os tasks as executed. */
     public void addExecuted(@Nonnull ITaskDefinition... taskDefinition) {
         for (ITaskDefinition t : taskDefinition) {
             addExecuted(t);
+        }
+    }
+
+    private void addExecutedInternal(@Nonnull String taskAbbreviation, @Nullable Date start, @Nullable Date end) {
+        executedTasks.add(taskAbbreviation);
+        if (start != null) {
+            executionHistory.add(new ExecutionEntry(taskAbbreviation, start, end, executionHistory.size()));
         }
     }
 
@@ -78,58 +109,75 @@ public class ExecutionHistoryForRendering {
         addTransition(fromTaskAbbreviation, toTaskAbbreviation, null);
     }
 
-    /** Mark as executed the transaction beteween the two tasks and with the specified name. */
+    /** Mark as executed the transaction between the two tasks and with the specified name. */
     public void addTransition(@Nonnull String fromTaskAbbreviation, @Nonnull String toTaskAbbreviation,
             @Nullable String transitionName) {
-        addExecuted(fromTaskAbbreviation);
-        String s = normalizeName(transitionName);
-        Pair<String, String> key = Pair.of(fromTaskAbbreviation, toTaskAbbreviation);
-        Set<String> names = transitions.computeIfAbsent(key, x -> new HashSet<String>());
-        names.add(s == null ? "*" : s);
-    }
-    /** Mark as executed the transaction beteween the two tasks and with the specified name. */
-    public void addTransition(@Nonnull ITaskDefinition from, @Nonnull ITaskDefinition to,
-            @Nullable String transitionName) {
-        addTransition(normalize(from), normalize(to), transitionName);
+        addTransitionInternal(normalizeTask(fromTaskAbbreviation), normalizeTask(toTaskAbbreviation), transitionName);
     }
 
-    private String normalizeName(String name) {
-        String s = StringUtils.trimToNull(name);
-        return s == null ? null : s.toLowerCase();
+    /** Mark the transaction as executed. */
+    public void addTransition(STransition transition) {
+        addTransitionInternal(normalizeTask(transition.getOrigin()), normalizeTask(transition.getDestination()),
+                transition.getAbbreviation());
+    }
+
+    private void addTransitionInternal(@Nonnull String fromTaskAbbreviation, @Nonnull String toTaskAbbreviation,
+            @Nullable String transitionName) {
+        addExecutedInternal(fromTaskAbbreviation, null, null);
+        Pair<String, String> key = Pair.of(fromTaskAbbreviation, toTaskAbbreviation);
+        taskWithOutTransition.add(fromTaskAbbreviation);
+        taskWithInTransition.add(toTaskAbbreviation);
+        Set<String> names = transitions.computeIfAbsent(key, x -> new HashSet<String>());
+        String s = normalizeTransition(transitionName);
+        names.add(s == null ? "*" : s);
+    }
+
+    /** Mark as executed the transaction between the two tasks and with the specified name. */
+    public void addTransition(@Nonnull ITaskDefinition from, @Nonnull ITaskDefinition to,
+            @Nullable String transitionName) {
+        addTransitionInternal(normalizeTask(from), normalizeTask(to), transitionName);
     }
 
     /** Mark the task that is the current state of the instance. */
     public void setCurrent(@Nonnull String currentTaskAbbreviation) {
-        this.current = currentTaskAbbreviation;
+        this.current = normalizeTask(currentTaskAbbreviation);
     }
 
     /** Mark the task that is the current state of the instance. */
     public void setCurrent(@Nonnull ITaskDefinition current) {
-        setCurrent(normalize(current));
+        setCurrent(normalizeTask(current));
     }
+
+    @Nullable
+    public String getCurrent() {return current;}
 
     /** Verifies if the given task is active at this moment. */
     public boolean isCurrent(@Nonnull STask<?> task) {
-        return Objects.equals(current, normalize(task));
+        return Objects.equals(current, normalizeTask(task));
     }
 
     /** Verifies if the task was executed. */
     public boolean isExecuted(@Nonnull STask<?> task) {
-        return executedTasks.contains(normalize(task));
+        return executedTasks.contains(normalizeTask(task));
     }
 
     /** Verifies if the transition was executed. */
     public boolean isExecuted(@Nonnull STransition transition) {
-        Pair<String, String> key = Pair.of(normalize(transition.getOrigin()), normalize(transition.getDestination()));
-        Set<String> names = transitions.get(key);
+        Set<String> names = transitions.get(keyOf(transition.getOrigin(), transition.getDestination()));
         if (names != null) {
-            String s = normalizeName(transition.getName());
+            String s = normalizeTransition(transition.getName());
             if (s != null && names.contains(s)) {
                 return true;
             }
             return names.contains("*");
         }
         return false;
+    }
+
+    @Nullable
+    private String normalizeTransition(@Nullable String name) {
+        String s = StringUtils.trimToNull(name);
+        return s == null ? null : s.toLowerCase();
     }
 
     /** Verifies if any transition was executed. */
@@ -142,12 +190,239 @@ public class ExecutionHistoryForRendering {
         return current == null && executedTasks.isEmpty();
     }
 
-    private static String normalize(STask<?> task) {
-        return task.getAbbreviation().trim().toLowerCase();
+    @Nonnull
+    public Set<String> getTransitions(@Nonnull ITaskDefinition origin, @Nonnull ITaskDefinition destination) {
+        Set<String> names = transitions.get(keyOf(origin, destination));
+        return names == null ? Collections.emptySet() : names;
     }
 
-    private static String normalize(ITaskDefinition task) {
-        return task.getKey().trim().toLowerCase();
+    @Nonnull
+    private static Pair<String, String> keyOf(@Nonnull STask<?> origin, @Nonnull STask<?> destination) {
+        return Pair.of(normalizeTask(origin), normalizeTask(destination));
+    }
+
+    @Nonnull
+    private static Pair<String, String> keyOf(@Nonnull ITaskDefinition origin, @Nonnull ITaskDefinition destination) {
+        return Pair.of(normalizeTask(origin), normalizeTask(destination));
+    }
+
+    @Nonnull
+    private static String normalizeTask(STask<?> task) {
+        return normalizeTask(task.getAbbreviation());
+    }
+
+    @Nonnull
+    private static String normalizeTask(@Nonnull ITaskDefinition task) {
+        return normalizeTask(task.getKey());
+    }
+
+    @Nonnull
+    private static String normalizeTask(@Nonnull String name) {
+        String s = StringUtils.trimToNull(name);
+        if (s == null) {
+            throw new SingularFlowException("Invalid name for a task: '" + name + "'");
+        }
+        return s.toLowerCase();
+    }
+
+    /** Counts how many transitions are registered. */
+    public int countTransitions() {
+        return (int) transitions.values().stream().mapToLong(s -> s.size()).sum();
+    }
+
+    /**
+     * Tries to guess which transition was used to arrive to a task that is marked as executed and that also don't have
+     * a incoming transition. The algorithm doesn't guarantees that will be able to find a answer. If the arriving
+     * transition is ambiguous, the algorithm won't mark any transition.
+     *
+     * @return The number of added transitions. Zero is no change was made.
+     */
+    public int guessMissingTransitions(@Nonnull FlowMap flow) {
+        Map<String, STask<?>> taskByKey = new HashMap<>();
+        flow.getAllTasks().forEach(task -> taskByKey.put(normalizeTask(task), task));
+
+        int fixes = tryFixByExecutionHistory(flow, taskByKey);
+        fixes += tryFixByGuessingUniqueOfOriginOrDestination(flow, taskByKey);
+        return fixes;
+    }
+
+    private int tryFixByExecutionHistory(@Nonnull FlowMap flow, @Nonnull Map<String, STask<?>> taskByKey) {
+        int fixes = 0;
+        if (executionHistory.isEmpty()) {
+            return 0;
+        }
+        Collections.sort(executionHistory);
+        ExecutionEntry last = executionHistory.get(0);
+        for (int i = 1; i < executionHistory.size(); last = executionHistory.get(i), i++) {
+            fixes += checksIfThereIsATransitionBetween(taskByKey, last, executionHistory.get(i));
+        }
+        if (current == null) {
+            current = executionHistory.get(executionHistory.size() - 1).getTask();
+            fixes++;
+        }
+        return fixes;
+    }
+
+    private int checksIfThereIsATransitionBetween(@Nonnull Map<String, STask<?>> taskByKey,
+            @Nonnull ExecutionEntry last, @Nonnull ExecutionEntry destiny) {
+        STask<?> taskOrigin = taskByKey.get(last.getTask());
+        STask<?> taskDestiny = taskByKey.get(destiny.getTask());
+        if (taskDestiny == null || taskOrigin == null) {
+            return 0;
+        }
+        List<STransition> transitions = taskOrigin.getTransitions().stream().filter(
+                t -> t.getDestination().equals(taskDestiny)).collect(Collectors.toList());
+        if (transitions.size() == 1) {
+            addTransition(transitions.get(0));
+            return 1;
+        }
+        return 0;
+    }
+
+    private int tryFixByGuessingUniqueOfOriginOrDestination(@Nonnull FlowMap flow,
+            @Nonnull Map<String, STask<?>> taskByKey) {
+        int fixes = 0;
+        if (isTaskMissingInTransition(flow, current)) {
+            fixes += tryFixIn(taskByKey, current);
+        }
+        for (String task : executedTasks) {
+            if (isTaskMissingInTransition(flow, task)) {
+                fixes += tryFixIn(taskByKey, task);
+            }
+            if (isTaskMissingOutTransition(task)) {
+                fixes += tryFixOut(taskByKey, task);
+            }
+        }
+        return fixes;
+    }
+
+    private boolean isTaskMissingOutTransition(@Nonnull String task) {
+        return !taskWithOutTransition.contains(task);
+    }
+
+    private boolean isTaskMissingInTransition(@Nonnull FlowMap flow, @Nonnull String task) {
+        return !taskWithInTransition.contains(task) && !normalizeTask(flow.getStart().getTask()).equals(task);
+    }
+
+    private int tryFixOut(@Nonnull Map<String, STask<?>> taskByKey, @Nonnull String taskToFix) {
+        STask<?> task = taskByKey.get(taskToFix);
+        if (task != null) {
+            STransition selected = lookForTaskDestinationExecuted(task);
+            if (selected != null) {
+                addTransition(selected);
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    @Nullable
+    private STransition lookForTaskDestinationExecuted(STask<?> task) {
+        STransition selected = null;
+        for (STransition transition : task.getTransitions()) {
+            if (isExecuted(transition.getDestination()) || isCurrent(transition.getDestination())) {
+                if (selected == null) {
+                    selected = transition;
+                } else {
+                    return null; //It's ambiguous
+                }
+            }
+        }
+        return selected;
+    }
+
+    private int tryFixIn(@Nonnull Map<String, STask<?>> taskByKey, @Nonnull String taskToFix) {
+        STask<?> task = taskByKey.get(taskToFix);
+        if (task != null) {
+            STransition selected = lookForTaskOriginExecuted(task);
+            if (selected != null) {
+                addTransition(selected);
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    @Nullable
+    private STransition lookForTaskOriginExecuted(@Nonnull STask<?> task) {
+        STransition selected = null;
+        for (STransition transition : task.getTransitionsArriving()) {
+            if (isExecuted(transition.getOrigin())) {
+                if (selected == null) {
+                    selected = transition;
+                } else {
+                    return null; //It's ambiguous
+                }
+            }
+        }
+        return selected;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (!(o instanceof ExecutionHistoryForRendering)) return false;
+
+        ExecutionHistoryForRendering that = (ExecutionHistoryForRendering) o;
+
+        return new EqualsBuilder()
+                .append(current, that.current)
+                .append(executedTasks, that.executedTasks)
+                .append(transitions, that.transitions)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(current)
+                .append(executedTasks)
+                .append(transitions)
+                .toHashCode();
+    }
+
+    private static class ExecutionEntry implements Comparable<ExecutionEntry> {
+
+        private final String task;
+        private final Date start;
+        private final Date end;
+        private final int sequential;
+
+        private ExecutionEntry(@Nonnull String task, @Nonnull Date start, Date end, int sequential) {
+            this.task = task;
+            this.start = start;
+            this.end = end;
+            this.sequential = sequential;
+        }
+
+        @Nonnull
+        public String getTask() {
+            return task;
+        }
+
+        @Nonnull
+        public Date getStart() {
+            return start;
+        }
+
+        @Nullable
+        public Date getEnd() {
+            return end;
+        }
+
+        public int getSequential() {
+            return sequential;
+        }
+
+        @Override
+        public int compareTo(ExecutionEntry o) {
+            int cmp = start.compareTo(o.start);
+            if (cmp == 0) {
+                cmp = (sequential < o.sequential ? -1 : (sequential == o.sequential ? 0 : 1));
+            }
+            return cmp;
+        }
     }
 }
 

@@ -20,6 +20,7 @@ import org.apache.commons.collections.Factory;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
@@ -345,18 +346,20 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         }
     }
 
-    protected static final class AddButton extends ActionAjaxButton {
+    protected static final class AddButton extends AjaxLink<String> {
+
+        private final Form<?> form;
         private final IModel<SIList<SInstance>> listModel;
 
         public AddButton(String id, Form<?> form, IModel<SIList<SInstance>> mList) {
-            super(id, form);
-            this.setDefaultFormProcessing(false);
+            super(id);
+            this.form = form;
             listModel = mList;
             add($b.attr("title", "Adicionar Linha"));
         }
 
         @Override
-        protected void onAction(AjaxRequestTarget target, Form<?> form) {
+        public void onClick(AjaxRequestTarget target) {
             final SIList<SInstance> list = listModel.getObject();
             if (list.getType().getMaximumSize() != null && list.getType().getMaximumSize() == list.size()) {
                 target.appendJavaScript(";bootbox.alert('A quantidade máxima de valores foi atingida.');");
@@ -367,6 +370,5 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                 target.focusComponent(this);
             }
         }
-
     }
 }

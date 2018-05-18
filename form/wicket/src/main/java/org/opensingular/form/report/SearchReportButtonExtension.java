@@ -31,26 +31,27 @@ import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.report.ReportMetadata;
 import org.opensingular.lib.commons.report.SingularReport;
+import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.commons.views.ViewGenerator;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
-import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.wicket.util.util.Shortcuts;
 import org.opensingular.lib.wicket.views.SingularReportPanel;
 import org.opensingular.lib.wicket.views.plugin.ReportButtonExtension;
 
-import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.*;
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public class SearchReportButtonExtension implements ReportButtonExtension {
 
-    private SingularFormPanel singularFormPanel;
+    private SingularFormPanel  singularFormPanel;
     private SingularSaveButton filterButton;
-    private BSModalBorder searchModal;
+    private BSModalBorder      searchModal;
     private boolean init = true;
     private ISupplier<SingularReport> singularFormReport;
-    private FormReportFilter formReportFilter;
+    private FormReportFilter          formReportFilter;
 
     @Override
     public void init(ISupplier<SingularReport> singularReport) {
@@ -96,8 +97,14 @@ public class SearchReportButtonExtension implements ReportButtonExtension {
                 }
             }
         });
+        BSContainer<?> modalContainer = new BSContainer<>(reportPanel.getPluginContainerView().newChildId());
+        singularFormPanel.setModalContainer(modalContainer);
+
         templatePanel.add(searchModal);
-        reportPanel.getPluginContainerView().add(templatePanel);
+        reportPanel
+                .getPluginContainerView()
+                .add(templatePanel)
+                .add(modalContainer);
     }
 
     private void addCloseButton(BSModalBorder bsModalBorder) {

@@ -26,15 +26,15 @@ import org.apache.wicket.util.visit.IVisitor;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 
-import java.util.Set;
+import java.util.List;
 
 
 public class SInstanceBoundedComponentUpdateVisitor implements IVisitor<Component, Void> {
 
     private final AjaxRequestTarget ajaxRequestTarget;
-    private final Set<SInstance> instances;
+    private final List<SInstance> instances;
 
-    public SInstanceBoundedComponentUpdateVisitor(AjaxRequestTarget ajaxRequestTarget, Set<SInstance> instances) {
+    public SInstanceBoundedComponentUpdateVisitor(AjaxRequestTarget ajaxRequestTarget, List<SInstance> instances) {
         this.ajaxRequestTarget = ajaxRequestTarget;
         this.instances = instances;
     }
@@ -43,8 +43,8 @@ public class SInstanceBoundedComponentUpdateVisitor implements IVisitor<Componen
     public void component(Component component, IVisit<Void> v) {
         IModel<?> model = component.getDefaultModel();
         if (model instanceof ISInstanceAwareModel) {
-            ISInstanceAwareModel instanceAwareModel = (ISInstanceAwareModel) model;
-            if (instances.contains(instanceAwareModel.getSInstance())) {
+            SInstance compSInstance = ((ISInstanceAwareModel) model).getSInstance();
+            if (compSInstance != null && instances.stream().anyMatch(compSInstance::isSameOrDescendantOf)) {
                 WicketFormProcessing.refreshComponentOrCellContainer(ajaxRequestTarget, component);
             }
         }

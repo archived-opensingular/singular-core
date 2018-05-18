@@ -16,24 +16,21 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
+
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.validation.validator.StringValidator;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.CountDownBehaviour;
-import org.opensingular.form.wicket.behavior.InputMaskBehavior;
-import org.opensingular.form.wicket.behavior.InputMaskBehavior.Masks;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
-
-import java.util.Optional;
-
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public class PasswordMapper extends AbstractControlsFieldComponentMapper {
 
@@ -50,7 +47,7 @@ public class PasswordMapper extends AbstractControlsFieldComponentMapper {
         Optional<Integer> maxSize = Optional.ofNullable(
                 model.getObject().getAttributeValue(SPackageBasic.ATR_MAX_LENGTH));
         if (maxSize.isPresent()) {
-            comp.add(StringValidator.maximumLength(maxSize.get()));
+            comp.add($b.attr("maxlength", maxSize.get()));
             comp.add(new CountDownBehaviour());
         }
 
