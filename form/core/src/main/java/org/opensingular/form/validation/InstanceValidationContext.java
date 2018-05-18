@@ -16,26 +16,27 @@
 
 package org.opensingular.form.validation;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-import org.opensingular.form.ICompositeInstance;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SInstanceViewState;
-import org.opensingular.form.SInstances;
-import org.opensingular.form.SType;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.opensingular.form.ICompositeInstance;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SInstanceViewState;
+import org.opensingular.form.SInstances;
+import org.opensingular.form.SType;
+import org.opensingular.form.document.SDocument;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+
 public class InstanceValidationContext {
 
     private final ListMultimap<Integer, ValidationError> contextErrors = ArrayListMultimap.create();
 
-    public InstanceValidationContext() {
-    }
+    public InstanceValidationContext() {}
 
     private ListMultimap<Integer, ValidationError> getContextErrors() {
         return contextErrors;
@@ -58,32 +59,35 @@ public class InstanceValidationContext {
                 pathsWithError.add(inst.getPathFull());
             }
         });
-        updateDocumentErrors(rootInstance);
+        updateDocumentErrorsAll(rootInstance);
     }
 
-    public void validateSingle(SInstance rootInstance) {
-        validateInstance(new InstanceValidatableImpl<>(rootInstance, this::onError));
-        updateDocumentErrors(rootInstance);
+    public void validateSingle(SInstance instance) {
+        validateInstance(new InstanceValidatableImpl<>(instance, this::onError));
+        updateDocumentErrorsSingle(instance);
+
     }
 
     private void onError(ValidationError error) {
         getContextErrors().put(error.getInstanceId(), error);
     }
 
-    protected void updateDocumentErrors(SInstance rootInstance) {
+    private void updateDocumentErrorsAll(SInstance rootInstance) {
         SInstances.streamDescendants(rootInstance, true)
-                .forEach(instance -> {
-                    Integer id = instance.getId();
-                    rootInstance.getDocument()
-                            .setValidationErrors(id, contextErrors.get(id));
-                });
+            .forEach(instance -> updateDocumentErrorsSingle(instance));
+    }
+    private void updateDocumentErrorsSingle(SInstance instance) {
+        final SDocument document = instance.getDocument();
+        final Integer id = instance.getId();
+        final List<ValidationError> errors = contextErrors.get(id);
+        document.setValidationErrors(id, errors);
     }
 
     public <I extends SInstance> void validateInstance(InstanceValidatable<I> validatable) {
         validateInstance(validatable, false);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked" })
     protected <I extends SInstance> void validateInstance(InstanceValidatable<I> validatable, boolean containsInvalidChild) {
         final I instance = validatable.getInstance();
         if (isEnabledInHierarchy(instance) && isVisibleInHierarchy(instance)) {
@@ -120,27 +124,27 @@ public class InstanceValidationContext {
 
     protected boolean isEnabledInHierarchy(SInstance instance) {
         return SInstances.listAscendants(instance, true).stream()
-                .map(it -> SInstanceViewState.get(it).isEnabled())
-                .noneMatch(Boolean.FALSE::equals);
+            .map(it -> SInstanceViewState.get(it).isEnabled())
+            .noneMatch(Boolean.FALSE::equals);
     }
 
     protected boolean isVisibleInHierarchy(SInstance instance) {
         return SInstances.listAscendants(instance, true).stream()
-                .map(it -> SInstanceViewState.get(it).isVisible())
-                .noneMatch(Boolean.FALSE::equals);
+            .map(it -> SInstanceViewState.get(it).isVisible())
+            .noneMatch(Boolean.FALSE::equals);
     }
 
     public boolean hasErrorsAboveLevel(ValidationErrorLevel minErrorLevel) {
         return getContextErrors().values().stream()
-                .anyMatch(it -> it.getErrorLevel().compareTo(minErrorLevel) >= 0);
+            .anyMatch(it -> it.getErrorLevel().compareTo(minErrorLevel) >= 0);
     }
 
     private static class InstanceValidatableImpl<I extends SInstance> implements InstanceValidatable<I> {
 
-        private ValidationErrorLevel defaultLevel = ValidationErrorLevel.ERROR;
-        private final I instance;
+        private ValidationErrorLevel            defaultLevel = ValidationErrorLevel.ERROR;
+        private final I                         instance;
         private final Consumer<ValidationError> onError;
-        public boolean errorFound;
+        public boolean                          errorFound;
 
         public InstanceValidatableImpl(I instance, Consumer<ValidationError> onError) {
             this.instance = instance;
