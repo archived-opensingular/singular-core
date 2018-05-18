@@ -1015,4 +1015,15 @@ public abstract class SInstance implements SAttributeEnabled {
         List<SInstance> ascendants = SInstances.listAscendants(this);
         return ascendants.stream().anyMatch(parent -> parent.getType().getClass().equals(candidate));
     }
+
+    /**
+     * Check if the candidate is the same as the current object by checking the reference
+     */
+    public boolean isSame(SInstance candidate){
+        return this == candidate; //NOSONAR
+    }
+
+    public boolean isSameOrDescendantOf(SInstance candidate) {
+        return isSame(candidate) || isDescendantOf(candidate);
+    }
 }

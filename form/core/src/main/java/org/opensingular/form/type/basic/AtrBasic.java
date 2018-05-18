@@ -52,12 +52,14 @@ import org.opensingular.lib.commons.lambda.IFunction;
 
 import com.google.common.collect.Lists;
 
+
 public class AtrBasic extends STranslatorForAttribute {
 
     private static final String DEPENDSON_NULL_PARAM_MSG       = "dependsOn do not allow null dependent types! Check if your variables are already initialized.";
     private static final String ALLOWED_FILE_TYPES_SPLIT_REGEX = "[,\\s\\|]";
 
-    public AtrBasic() {}
+    public AtrBasic() {
+    }
 
     public AtrBasic(SAttributeEnabled target) {
         super(target);
@@ -100,8 +102,7 @@ public class AtrBasic extends STranslatorForAttribute {
     /**
      * For usage on attachment types only.
      *
-     * @param value
-     *  Maximum file size in Bytes.
+     * @param value Maximum file size in Bytes.
      * @return
      */
     public AtrBasic maxFileSize(Long value) {
@@ -111,9 +112,10 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public AtrBasic allowedFileTypes(String... value) {
         setAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES,
-            Stream.of(value)
-                .flatMap(it -> Stream.<String> of(it.split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
-                .collect(joining(",")));
+                Stream.of(value)
+                        .map(String::toLowerCase)
+                        .flatMap(it -> Stream.<String>of(it.split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
+                        .collect(joining(",")));
         return this;
     }
 
@@ -162,6 +164,7 @@ public class AtrBasic extends STranslatorForAttribute {
      * Configures the current type to depend on all STypes created from the given {@param typeClass} or its subclasses.
      * This dependency should be used with caution since it can let do unwanted dependencies and apparently unpredictable behavior.
      * Prefer using the {{@link #dependsOn(SType[])}} alternative.
+     *
      * @param typeClass
      * @return
      */
@@ -311,9 +314,9 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public List<String> getAllowedFileTypes() {
         return Optional.ofNullable(getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES)).map(in -> Arrays.asList(defaultString(
-            getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES))
+                getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES))
                 .split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
-            .orElse(Collections.emptyList());
+                .orElse(Collections.emptyList());
     }
 
     @SuppressWarnings("unchecked")

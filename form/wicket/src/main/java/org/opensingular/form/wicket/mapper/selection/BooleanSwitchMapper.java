@@ -19,27 +19,40 @@ package org.opensingular.form.wicket.mapper.selection;
 import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.decorator.action.ISInstanceActionCapable;
+import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.view.SViewBooleanSwitch;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.mapper.BooleanMapper;
 import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
 import org.opensingular.form.wicket.mapper.behavior.RequiredBehaviorUtil;
+import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
+import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.AttributeModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
+import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 
-public class BooleanSwitchMapper implements IWicketComponentMapper {
+public class BooleanSwitchMapper implements IWicketComponentMapper, ISInstanceActionCapable {
+
+    private final SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
 
     @Override
     @SuppressWarnings("unchecked")
@@ -85,11 +98,31 @@ public class BooleanSwitchMapper implements IWicketComponentMapper {
                 //@formatter:on
                 + "", input)
             .appendFeedback(ctx.createFeedbackCompactPanel("feedback"));
+
+        IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
+            BooleanSwitchMapper.this,
+            RequestCycle.get().find(AjaxRequestTarget.class),
+            model,
+            model.getObject(),
+            ctx,
+            ctx.getContainer());
+
+        SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
+            formGroup,
+            instanceActionsProviders,
+            model,
+            false,
+            internalContextListProvider);
     }
 
     @Override
     public void adjustJSEvents(WicketBuildContext ctx, Component comp) {
         comp.add(new SingularEventsHandlers(ADD_TEXT_FIELD_HANDLERS)
             .setOption(SingularEventsHandlers.OPTS_ORIGINAL_VALIDATE_EVENT, "switchChange.bootstrapSwitch"));
+    }
+
+    @Override
+    public void addSInstanceActionsProvider(int sortPosition, ISInstanceActionsProvider provider) {
+        this.instanceActionsProviders.addSInstanceActionsProvider(sortPosition, provider);
     }
 }
