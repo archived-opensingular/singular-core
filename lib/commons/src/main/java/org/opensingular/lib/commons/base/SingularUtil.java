@@ -16,13 +16,15 @@
 
 package org.opensingular.lib.commons.base;
 
-import com.google.common.base.Throwables;
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.DigestUtils;
-
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.text.Normalizer;
+import java.util.function.Function;
+
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
+
+import com.google.common.base.Throwables;
 
 public final class SingularUtil {
 
@@ -32,7 +34,7 @@ public final class SingularUtil {
         Throwables.propagateIfPossible(throwable, SingularException.class);
         throw SingularException.rethrow(throwable);
     }
-    
+
     public static String toSHA1(Object object) {
         return toSHA1(object.toString().getBytes(StandardCharsets.UTF_8));
     }
@@ -83,5 +85,27 @@ public final class SingularUtil {
 
     public static String normalize(String original) {
         return Normalizer.normalize(original, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+    }
+
+    @SafeVarargs
+    @SuppressWarnings("unchecked")
+    public static <T> boolean areEqual(T a, Object b, Function<T, Object>... propertyFunctions) {
+        if (a == b)
+            return true;
+        if (b == null)
+            return false;
+        if (a.getClass() != b.getClass())
+            return false;
+        final T typedB = (T) b;
+        for (Function<T, Object> func : propertyFunctions) {
+            final Object propA = func.apply(a);
+            final Object propB = func.apply(typedB);
+            if (propA == null) {
+                if (propB != null)
+                    return false;
+            } else if (!propA.equals(propB))
+                return false;
+        }
+        return true;
     }
 }

@@ -16,23 +16,9 @@
 
 package org.opensingular.form.type.basic;
 
-import com.google.common.collect.Lists;
-import org.apache.commons.lang3.ObjectUtils;
-import org.opensingular.form.AtrRef;
-import org.opensingular.form.SAttributeEnabled;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.STranslatorForAttribute;
-import org.opensingular.form.SType;
-import org.opensingular.form.STypes;
-import org.opensingular.form.SingularFormException;
-import org.opensingular.form.calculation.SimpleValueCalculation;
-import org.opensingular.form.enums.PhraseBreak;
-import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
-import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.lib.commons.lambda.IFunction;
+import static java.util.stream.Collectors.*;
+import static org.apache.commons.lang3.StringUtils.*;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -47,8 +33,25 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.*;
-import static org.apache.commons.lang3.StringUtils.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.ObjectUtils;
+import org.opensingular.form.AtrRef;
+import org.opensingular.form.SAttributeEnabled;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.STranslatorForAttribute;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypes;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.enums.PhraseBreak;
+import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
+import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IFunction;
+
+import com.google.common.collect.Lists;
+
 
 public class AtrBasic extends STranslatorForAttribute {
 
@@ -90,7 +93,6 @@ public class AtrBasic extends STranslatorForAttribute {
         setAttributeValue(SPackageBasic.ATR_BASIC_MASK, mask);
         return this;
     }
-
 
     public AtrBasic maxLength(Integer value) {
         setAttributeValue(SPackageBasic.ATR_MAX_LENGTH, value);
@@ -387,5 +389,4 @@ public class AtrBasic extends STranslatorForAttribute {
 
         public List<SType<?>> resolve(SType<?> documentRoot, SType<?> current);
     }
-
 }

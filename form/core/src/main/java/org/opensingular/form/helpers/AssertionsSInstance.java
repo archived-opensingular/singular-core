@@ -310,7 +310,7 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
      * {@link org.opensingular.form.document.SDocument}.
      */
     public void assertCorrectDocumentReference() {
-        assertCorrectDocumentReference(getTarget().getDocumentRoot(), getTarget());
+        assertCorrectDocumentReference(getTarget().root(), getTarget());
     }
 
     private void assertCorrectDocumentReference(@Nonnull SInstance reference, @Nonnull SInstance target) {

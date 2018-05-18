@@ -472,6 +472,14 @@ public abstract class SInstance implements SAttributeEnabled {
         type.checkIfIsInstanceOf(instance);
         return (II) instance;
     }
+    
+    /**
+     * Retorna o campo cujo o nome seja igual ao do tipo informado e verifica se o campo encontrado é do mesmo tipo
+     * informado. Caso não seja do mesmo tipo, dispara uma exception.
+     */
+    public <II extends SISimple<T>, T extends Serializable> T getFieldValue(STypeSimple<II, T> type) {
+        return getField(type).getValue();
+    }
 
     @Nonnull
     final SInstance getField(@Nonnull PathReader pathReader) {
@@ -648,6 +656,15 @@ public abstract class SInstance implements SAttributeEnabled {
     @Nonnull
     public <A extends SInstance & ICompositeInstance> Optional<A> findAncestor(SType<A> ancestorType) {
         return SInstances.findAncestor(this, ancestorType);
+    }
+    
+    /**
+     * Finds the first descendant of the specified type.
+     * @param targetType tipo do descendente
+     * @return the first descendant of type {@code targetType}
+     */
+    public <A extends SInstance> Optional<A> find(@Nonnull SType<A> targetType) {
+        return SInstances.findDescendant(this, targetType);
     }
 
     /**
@@ -976,7 +993,14 @@ public abstract class SInstance implements SAttributeEnabled {
         return Collections.emptyList();
     }
 
+    /**
+     * Replaced by {@link #root()}
+     */
+    @Deprecated
     public SInstance getDocumentRoot() {
+        return root();
+    }
+    public SInstance root() {
         return document.getRoot();
     }
 
