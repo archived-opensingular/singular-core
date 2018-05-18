@@ -27,9 +27,11 @@ import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.STransition;
 import org.opensingular.flow.core.SingularFlowException;
 import org.opensingular.flow.core.TaskInstance;
+import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -41,6 +43,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Represents the history of execution and current state of a particular flow instance so the diagram of the flow
@@ -58,9 +61,26 @@ public class ExecutionHistoryForRendering {
     private final Set<String> taskWithOutTransition = new HashSet<>();
     private List<ExecutionEntry> executionHistory = new ArrayList<>();
 
-    /** Extracts the execution history from a {@link FlowInstance}. */
+    /**
+     * Extracts the execution history from a {@link FlowInstance} and, if necessary, tries to guess the missing
+     * transition (see {@link #guessMissingTransitions(FlowMap)}).
+     */
     @Nonnull
     public static ExecutionHistoryForRendering from(@Nonnull FlowInstance flowInstance) {
+        return from(flowInstance, true);
+
+    }
+
+    /**
+     * Extracts the execution history from a {@link FlowInstance}.
+     *
+     * @param guessMissingTransitions If true and there is missing transition between executed tasks, tries to guess it
+     *                                (see {@link #guessMissingTransitions(FlowMap)})
+     */
+    @Nonnull
+    public static ExecutionHistoryForRendering from(@Nonnull FlowInstance flowInstance,
+            boolean guessMissingTransitions) {
+
         ExecutionHistoryForRendering historyForRendering = new ExecutionHistoryForRendering();
         TaskInstance current = null;
         for (TaskInstance task : flowInstance.getTasksOlderFirst()) {
@@ -72,10 +92,41 @@ public class ExecutionHistoryForRendering {
         if (current != null) {
             historyForRendering.setCurrent(current.getAbbreviation());
         }
-        historyForRendering.guessMissingTransitions(flowInstance.getFlowDefinition().getFlowMap());
+        if (guessMissingTransitions) {
+            historyForRendering.guessMissingTransitions(flowInstance.getFlowDefinition().getFlowMap());
+        }
         return historyForRendering;
     }
 
+    /** Prints the history info to the standard output for inspection. */
+    public void debug() {
+        debug(System.out);
+    }
+
+    /** Prints the history info to output for inspection. */
+    public void debug(@Nonnull PrintStream out) {
+        println(out, "Executed Tasks (" + executedTasks.size() + ")");
+        executedTasks.forEach(t -> out.println("   " + t));
+
+        println(out, "Transitions (" + transitions.entrySet().stream().mapToInt(e -> e.getValue().size()).sum() + ")");
+        for (Map.Entry<Pair<String, String>, Set<String>> entry : transitions.entrySet()) {
+            out.print("   (" + entry.getKey().getLeft() + " -> " + entry.getKey().getRight() + ") = ");
+            out.println(entry.getValue().stream().collect(Collectors.joining(", ")));
+        }
+
+        println(out, "Execution History (" + executionHistory.size() + ")");
+        for (ExecutionEntry entry : executionHistory) {
+            out.println("   " + StringUtils.rightPad(entry.getTask(), 30) + "   [" +
+                    ConversorToolkit.printDateTimeShort(entry.getStart()) + ", " +
+                    ConversorToolkit.printDateTimeShort(entry.getEnd()) + "]");
+        }
+        println(out, "Current = " + current);
+    }
+
+    private void println(@Nonnull PrintStream out, @Nonnull String txt) {
+        String s = txt.length() == 0 ? txt : " " + txt + " ";
+        out.println("=" + StringUtils.rightPad(s, 70, '='));
+    }
 
     /** Removes all history information. */
     public void clear() {
@@ -186,6 +237,16 @@ public class ExecutionHistoryForRendering {
 
     /** Verifies if the given task is active at this moment. */
     public boolean isCurrent(@Nonnull STask<?> task) {
+        return Objects.equals(current, normalizeTask(task));
+    }
+
+    /** Verifies if the given task is active at this moment. */
+    public boolean isCurrent(@Nonnull ITaskDefinition task) {
+        return Objects.equals(current, normalizeTask(task));
+    }
+
+    /** Verifies if the given task is active at this moment. */
+    public boolean isCurrent(@Nonnull String task) {
         return Objects.equals(current, normalizeTask(task));
     }
 
@@ -392,6 +453,103 @@ public class ExecutionHistoryForRendering {
             }
         }
         return selected;
+    }
+
+    /** Asserts that there is one and only one transition marked as executed between the two tasks. */
+    public final void assertOneTransitionMarked(@Nonnull ITaskDefinition origin, @Nonnull ITaskDefinition destination) {
+        assertOneTransitionMarked(origin, destination, null);
+    }
+
+    /**
+     * Asserts that there is one and only one transition marked as executed between the two tasks and with the specified
+     * transaction name trowing {@link AssertionError} if the condition is not met.
+     *
+     * @param expectedTransitionName if this is not null, also checks if executed transaction's name is the same
+     */
+    public final void assertOneTransitionMarked(@Nonnull ITaskDefinition origin, @Nonnull ITaskDefinition destination,
+            @Nullable String expectedTransitionName) {
+        Set<String> ts = getTransitions(origin, destination);
+        if (ts.size() == 0) {
+            throw new AssertionError(
+                    "There is no transition from '" + origin.getKey() + "' to '" + destination.getKey() +
+                            "' marked as executed and was expected at least one");
+        } else if (ts.size() != 1) {
+            throw new AssertionError(
+                    "From '" + origin.getKey() + "' to '" + destination.getKey() + "' there are " + ts.size() +
+                            " transitions marked as executed instead of expected only one. The executed transitions " +
+                            "are " + ts.stream().collect(Collectors.joining(", ")));
+        } else if (expectedTransitionName != null) {
+            String executed = ts.iterator().next();
+            if (!expectedTransitionName.equals(executed)) {
+                throw new AssertionError(
+                        "There is one transition from '" + origin.getKey() + "' to '" + destination.getKey() +
+                                "' marked as executed, but the transition is [" + executed +
+                                "] instead the expected transition [" + expectedTransitionName + "]");
+            }
+        }
+    }
+
+    /**
+     * Asserts that there is one and only one transition marked as executed between the two tasks trowing {@link
+     * AssertionError} if the condition is not met.
+     */
+    public final void assertNoTransitionMarked(@Nonnull ITaskDefinition origin, @Nonnull ITaskDefinition destination) {
+        Set<String> ts = getTransitions(origin, destination);
+        if (ts.size() != 0) {
+            throw new AssertionError("There is " + ts.size() + " transition(s) from '" + origin.getKey() + "' to '" +
+                    destination.getKey() + "' marked as executed but none was expected. Executed transactions: " +
+                    ts.stream().collect(Collectors.joining(", ")));
+        }
+    }
+
+    /** Asserts that all and the only informed tasks are marked as executed, otherwise throws {@link AssertionError}. */
+    public final void assertTaskMarked(ITaskDefinition... expectedExecutedTasks) {
+        List<String> orderedExpected = Stream.of(expectedExecutedTasks).map(t -> normalizeTask(t)).collect(
+                Collectors.toList());
+        Collections.sort(orderedExpected);
+        List<String> orderedExecuted = new ArrayList<>(executedTasks);
+        Collections.sort(orderedExecuted);
+        if (!isSame(orderedExecuted, orderedExpected)) {
+            throw new AssertionError("The tasks marked as executed isn't the expected ones:\n expected: [" +
+                    orderedExpected.stream().collect(Collectors.joining(", ")) + "]\ncurrent : [" +
+                    orderedExecuted.stream().collect(Collectors.joining(", ")) + "]");
+        }
+    }
+
+    private boolean isSame(List<String> l1, List<String> l2) {
+        if (l1.size() == l2.size()) {
+            for (int i = 0; i < l1.size(); i++) {
+                if (!l1.get(i).equals(l2.get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /** Asserts what is the current task in execution throwing {@link AssertionError} if the condition is not met. */
+    public final void assertCurrentTask(@Nonnull ITaskDefinition expectedCurrentTask) {
+        assertCurrentTask(normalizeTask(expectedCurrentTask));
+    }
+    /** Asserts what is the current task in execution throwing {@link AssertionError} if the condition is not met. */
+    public final void assertCurrentTask(@Nonnull String expectedCurrentTask) {
+        if (!isCurrent(expectedCurrentTask)) {
+            throw new AssertionError(
+                    "The current task was expcted to be [" + normalizeTask(expectedCurrentTask) + "] but it is [" +
+                            current + "]");
+        }
+    }
+
+    /**
+     * Asserts the number os transactions marked as executed. Throws {@link AssertionError} if the condition is not
+     * met
+     */
+    public void assertTransitionMarked(int expectedMarkedTransactions) {
+        if (expectedMarkedTransactions != countTransitions()) {
+            throw new AssertionError("The number of transactions marked as executed is [" + countTransitions() +
+                    "] but was expected to be [" + expectedMarkedTransactions + "]");
+        }
     }
 
     @Override
