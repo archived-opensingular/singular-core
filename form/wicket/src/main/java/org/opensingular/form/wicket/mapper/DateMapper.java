@@ -51,7 +51,7 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
         final IModel<? extends SInstance> model = ctx.getModel();
         BSDatepickerInputGroup datepicker = formGroup
                 .newComponent(id -> new BSDatepickerInputGroup(id, getDatePickerSetings(ctx))
-                        .setConverter(new ConverterImpl())
+                        .setConverter(new DateConverter(defaultDateFormat()))
                         .setTextFieldConfigurer((IConsumer<FormComponent<?>>) c -> c
                                 .setLabel(labelModel)
                                 .setDefaultModel(new SInstanceValueModel<>(model))

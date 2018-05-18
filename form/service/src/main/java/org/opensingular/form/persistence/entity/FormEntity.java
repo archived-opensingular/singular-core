@@ -51,10 +51,6 @@ public class FormEntity extends BaseEntity<Long> {
     @JoinColumn(name = "CO_TIPO_FORMULARIO", foreignKey = @ForeignKey(name = "FK_FORMULARIO_TIPO_FORMULARIO"), nullable = false)
     private FormTypeEntity formType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_COLECAO", foreignKey = @ForeignKey(name = "FK_FORMULARIO_COLECAO"))
-    private CollectionEntity collection;
-
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "CO_VERSAO_ATUAL", foreignKey = @ForeignKey(name = "FK_FORMULARIO_VERSAO_ATUAL"))
     private FormVersionEntity currentFormVersionEntity;
