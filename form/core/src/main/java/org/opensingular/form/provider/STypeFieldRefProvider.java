@@ -1,23 +1,24 @@
 package org.opensingular.form.provider;
 
-import static java.util.stream.Collectors.*;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.type.core.SIFieldRef;
+import org.opensingular.form.type.core.SIFieldRef.Option;
+import org.opensingular.lib.commons.lambda.IFunction;
 
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import org.opensingular.form.SInstance;
-import org.opensingular.form.type.core.SIFieldRef;
-import org.opensingular.form.type.core.SIFieldRef.Option;
+import static java.util.stream.Collectors.*;
 
 public final class STypeFieldRefProvider<SI extends SInstance>
     implements Provider<SIFieldRef.Option, SIFieldRef<SI>> {
 
-    private Function<SIFieldRef<SI>, List<? extends SI>> optionsFunction     = it -> null;
-    private Function<SI, String>                                         descriptionFunction = it -> it.toStringDisplay();
+    private IFunction<SIFieldRef<SI>, List<? extends SI>> optionsFunction     = it -> null;
+    private IFunction<SI, String>                         descriptionFunction = SInstance::toStringDisplay;
 
     public STypeFieldRefProvider() {}
-    public STypeFieldRefProvider(Function<SIFieldRef<SI>, List<? extends SI>> optionsFunction, Function<SI, String> descriptionFunction) {
+    public STypeFieldRefProvider(IFunction<SIFieldRef<SI>, List<? extends SI>> optionsFunction, IFunction<SI, String> descriptionFunction) {
         setOptionsFunction(optionsFunction);
         setDescriptionFunction(descriptionFunction);
     }
@@ -36,11 +37,11 @@ public final class STypeFieldRefProvider<SI extends SInstance>
     public Function<SI, String> getDescriptionFunction() {
         return descriptionFunction;
     }
-    public STypeFieldRefProvider<SI> setOptionsFunction(Function<SIFieldRef<SI>, List<? extends SI>> optionsFunction) {
+    public STypeFieldRefProvider<SI> setOptionsFunction(IFunction<SIFieldRef<SI>, List<? extends SI>> optionsFunction) {
         this.optionsFunction = optionsFunction;
         return this;
     }
-    public STypeFieldRefProvider<SI> setDescriptionFunction(Function<SI, String> descriptionFunction) {
+    public STypeFieldRefProvider<SI> setDescriptionFunction(IFunction<SI, String> descriptionFunction) {
         this.descriptionFunction = descriptionFunction;
         return this;
     }

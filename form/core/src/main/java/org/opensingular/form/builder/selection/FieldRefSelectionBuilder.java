@@ -31,6 +31,7 @@ import org.opensingular.form.provider.STypeFieldRefProvider;
 import org.opensingular.form.type.core.SIFieldRef;
 import org.opensingular.form.type.core.SIFieldRef.Option;
 import org.opensingular.form.type.core.STypeFieldRef;
+import org.opensingular.lib.commons.lambda.IFunction;
 
 public class FieldRefSelectionBuilder<STL extends STypeList<ST, SI>, ST extends SType<SI>, SI extends SInstance> {
 
@@ -47,12 +48,12 @@ public class FieldRefSelectionBuilder<STL extends STypeList<ST, SI>, ST extends 
             .map(li -> li.stream().collect(toList()))
             .orElseGet(Collections::emptyList));
     }
-    public FieldRefSelectionBuilder(STypeFieldRef<SI> type, Function<SIFieldRef<SI>, List<? extends SI>> optionsFunction) {
+    public FieldRefSelectionBuilder(STypeFieldRef<SI> type, IFunction<SIFieldRef<SI>, List<? extends SI>> optionsFunction) {
         this(type);
         provider().setOptionsFunction(optionsFunction);
     }
 
-    public FieldRefSelectionBuilder<STL, ST, SI> display(Function<SI, String> displayFunction) {
+    public FieldRefSelectionBuilder<STL, ST, SI> display(IFunction<SI, String> displayFunction) {
         provider().setDescriptionFunction(displayFunction);
         return this;
     }

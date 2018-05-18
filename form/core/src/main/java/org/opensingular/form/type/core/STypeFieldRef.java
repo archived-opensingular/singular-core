@@ -16,9 +16,6 @@
 
 package org.opensingular.form.type.core;
 
-import java.util.List;
-import java.util.function.Function;
-
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -26,6 +23,9 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.builder.selection.FieldRefSelectionBuilder;
+import org.opensingular.lib.commons.lambda.IFunction;
+
+import java.util.List;
 
 /**
  * Type used to refer to another instance in the same document. The {@code refId} field holds
@@ -51,7 +51,7 @@ public class STypeFieldRef<SI extends SInstance> extends STypeComposite<SIFieldR
         this.description = addFieldString(FIELD_DESCRIPTION);
     }
 
-    public <STL extends STypeList<ST, SI>, ST extends SType<SI>> FieldRefSelectionBuilder<STL, ST, SI> selectFrom(Function<SIFieldRef<SI>, List<? extends SI>> optionsFunction) {
+    public <STL extends STypeList<ST, SI>, ST extends SType<SI>> FieldRefSelectionBuilder<STL, ST, SI> selectFrom(IFunction<SIFieldRef<SI>, List<? extends SI>> optionsFunction) {
         return new FieldRefSelectionBuilder<>(this, optionsFunction);
     }
 

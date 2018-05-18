@@ -416,10 +416,36 @@ public class ExecutionHistoryForRendering {
         }
 
         @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+
+            if (!(o instanceof ExecutionEntry)) return false;
+
+            ExecutionEntry that = (ExecutionEntry) o;
+
+            return new EqualsBuilder()
+                    .append(sequential, that.sequential)
+                    .append(task, that.task)
+                    .append(start, that.start)
+                    .append(end, that.end)
+                    .isEquals();
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder(17, 37)
+                    .append(task)
+                    .append(start)
+                    .append(end)
+                    .append(sequential)
+                    .toHashCode();
+        }
+
+        @Override
         public int compareTo(ExecutionEntry o) {
             int cmp = start.compareTo(o.start);
             if (cmp == 0) {
-                cmp = (sequential < o.sequential ? -1 : (sequential == o.sequential ? 0 : 1));
+                cmp = (Integer.compare(sequential, o.sequential));
             }
             return cmp;
         }
