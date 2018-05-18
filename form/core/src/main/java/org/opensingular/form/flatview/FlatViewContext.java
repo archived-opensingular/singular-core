@@ -20,6 +20,7 @@ package org.opensingular.form.flatview;
 
 import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
 
 public class FlatViewContext {
 
@@ -45,6 +46,7 @@ public class FlatViewContext {
         this.renderIfEmpty = renderIfEmpty;
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends SInstance> T getInstanceAs(Class<T> tClass) {
         return (T) instance;
     }
@@ -53,10 +55,11 @@ public class FlatViewContext {
         return instance;
     }
 
+    @SuppressWarnings("unchecked")
     public String getLabel() {
         String label = instance.asAtr().getLabel();
         if (label == null) {
-            label = SFormUtil.getTypeLabel(instance.getType().getClass()).orElse(null);
+            label = SFormUtil.getTypeLabel((Class<? extends SType<?>>) instance.getType().getClass()).orElse(null);
         }
         if (label == null) {
             label = instance.getName();
