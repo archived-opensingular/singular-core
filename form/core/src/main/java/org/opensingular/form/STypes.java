@@ -16,8 +16,7 @@
 
 package org.opensingular.form;
 
-import com.google.common.base.Joiner;
-
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -98,6 +97,18 @@ public abstract class STypes {
         return StreamSupport.stream(new STypeRecursiveSpliterator(root, includeRoot), false);
     }
 
+    /**
+     * Returns an array containing all descendants of <code>type</code>.
+     *
+     * @param type top type of the descendants
+     * @param includeBase if true, includes {@code type} in the result
+     * @return array of descendant types
+     */
+    public static SType<?>[] arrayOfDescendants(SType<?> type, boolean includeBase) {
+        return streamDescendants(type, includeBase)
+            .toArray(length -> (SType<?>[]) Array.newInstance(SType.class, length));
+    }
+
     public static Collection<SType<?>> containedTypes(SType<?> node) {
         List<SType<?>> result = new ArrayList<>();
         if (node instanceof ICompositeType) {
@@ -130,7 +141,7 @@ public abstract class STypes {
      * @return
      */
     public static Optional<SType<?>> findRootAscendant(SType<?> root) {
-        SScope   type      = root.getParentScope();
+        SScope type = root.getParentScope();
         SType<?> rootStype = null;
         while (type != null) {
             if (type instanceof SType<?>) {

@@ -16,17 +16,17 @@
 
 package org.opensingular.form.event;
 
-import com.google.common.collect.ImmutableList;
-import org.opensingular.form.SInstance;
+import static java.util.stream.Collectors.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toSet;
+import org.opensingular.form.SInstance;
+
+import com.google.common.collect.ImmutableList;
 
 public interface ISInstanceListener {
 
@@ -69,8 +69,8 @@ public interface ISInstanceListener {
         }
 
 
-        public Set<SInstance> getEventSourceInstances(){
-            return this.streamEvents().map(SInstanceEvent::getSource).collect(toSet());
+        public List<SInstance> getEventSourceInstances(){
+            return this.streamEvents().map(SInstanceEvent::getSource).collect(toList());
         }
     }
 }

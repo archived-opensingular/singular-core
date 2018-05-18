@@ -24,6 +24,7 @@ import org.apache.wicket.util.visit.IVisitor;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.type.util.STypeLatitudeLongitudeGMaps;
+import org.opensingular.form.view.SViewCurrentLocation;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.composite.DefaultCompositeMapper;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
@@ -39,7 +40,7 @@ public class LatitudeLongitudeMapper extends DefaultCompositeMapper {
         ctx.getContainer().visitChildren((TextField.class), new IVisitor<Component, Object>() {
             @Override
             public void component(Component object, IVisit<Object> visit) {
-                String nameSimple = ((SInstanceValueModel)object.getDefaultModel()).getSInstance().getType().getNameSimple();
+                String nameSimple = ((SInstanceValueModel<?>) object.getDefaultModel()).getSInstance().getType().getNameSimple();
                 if (nameSimple.equals(STypeLatitudeLongitude.FIELD_LATITUDE)) {
                     ids.latitudeId = object.getMarkupId();
                 }
@@ -54,7 +55,7 @@ public class LatitudeLongitudeMapper extends DefaultCompositeMapper {
 
         final IModel<? extends SInstance> model = ctx.getModel();
 
-        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, model, ctx.getView(), ctx.getViewMode().isVisualization(), false);
+        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, model, ctx.getViewSupplier(SViewCurrentLocation.class), ctx.getViewMode().isVisualization(), false);
         ctx.getContainer().newFormGroup().appendDiv(googleMapsPanel);
     }
 

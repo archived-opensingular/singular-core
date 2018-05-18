@@ -16,17 +16,14 @@
 
 package org.opensingular.form.wicket.mapper;
 
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
-
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.core.STypeDateTime;
-import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewDateTime;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.datetime.DateTimeContainer;
@@ -38,17 +35,10 @@ public class DateTimeMapper extends AbstractControlsFieldComponentMapper {
     @Override
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
-        final SView view = ctx.getView();
-        
-        SViewDateTime dateTimerView = null;
-        if(view instanceof SViewDateTime){
-            dateTimerView = (SViewDateTime) view;
-        }
-        final DateTimeContainer dateTimeContainer = new DateTimeContainer(model.getObject().getName(), new SInstanceValueModel<>(model), dateTimerView);
+        final DateTimeContainer dateTimeContainer = new DateTimeContainer(model.getObject().getName(), new SInstanceValueModel<>(model), ctx.getViewSupplier(SViewDateTime.class));
         formGroup.appendDiv(dateTimeContainer);
         return dateTimeContainer;
     }
-
 
     @Override
     public String getReadOnlyFormattedText(WicketBuildContext ctx, IModel<? extends SInstance> model) {

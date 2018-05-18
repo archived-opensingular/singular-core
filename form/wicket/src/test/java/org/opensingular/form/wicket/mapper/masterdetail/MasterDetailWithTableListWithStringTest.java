@@ -18,6 +18,7 @@
 
 package org.opensingular.form.wicket.mapper.masterdetail;
 
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.junit.Before;
@@ -113,7 +114,7 @@ public class MasterDetailWithTableListWithStringTest {
         return tester.getAssertionsForm().getSubComponentWithId("addButton").getTarget(AbstractLink.class);
     }
 
-    private Button findTableAddButton() {
-        return tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("AddButton")).getTarget(Button.class);
+    private AjaxLink findTableAddButton() {
+        return tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("AddButton")).getTarget(AjaxLink.class);
     }
 }

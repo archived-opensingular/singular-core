@@ -269,7 +269,7 @@ Page Header
       .page-header.navbar .top-menu .navbar-nav > li.dropdown {
         margin: 0px;
         padding: 0px;
-        height: 70px;
+        height: 69px;
         display: inline-block; }
         .page-header.navbar .top-menu .navbar-nav > li.dropdown:last-child {
           padding-right: 0px; }
@@ -1729,7 +1729,7 @@ Theme Panel
   margin-bottom: 0; }
 
 .portlet-body .panel-body, .portlet-body .panel-footer {
-  padding: 10px 0 0; }
+  padding: 15px 15px 10px 15px; }
 
 .cancel-btn {
   background-color: #EDEFF3; }

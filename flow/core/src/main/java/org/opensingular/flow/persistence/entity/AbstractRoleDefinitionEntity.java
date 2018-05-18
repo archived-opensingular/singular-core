@@ -16,23 +16,25 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.opensingular.flow.core.entity.IEntityFlowDefinition;
-import org.opensingular.flow.core.entity.IEntityRoleDefinition;
-import org.opensingular.flow.core.entity.IEntityRoleTask;
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.List;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.opensingular.flow.core.entity.IEntityFlowDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleDefinition;
+import org.opensingular.flow.core.entity.IEntityRoleTask;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 /**
  * The base persistent class for the TB_DEFINICAO_PAPEL database table.
@@ -52,14 +54,14 @@ public abstract class AbstractRoleDefinitionEntity<FLOW_DEFINITION extends IEnti
 
     @Id
     @Column(name = "CO_DEFINICAO_PAPEL")
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Integer cod;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_DEFINICAO_PROCESSO", nullable = false)
+    @JoinColumn(name = "CO_DEFINICAO_PROCESSO", nullable = false, foreignKey = @ForeignKey(name = "FK_DEFI_PPL_DEFINICAO_PROCESSO"))
     private FLOW_DEFINITION flowDefinition;
 
-    @Column(name = "NO_PAPEL", length = 100, nullable = false)
+    @Column(name = "NO_PAPEL", length = 300, nullable = false)
     private String name;
 
     @Column(name = "SG_PAPEL", length = 100, nullable = false)

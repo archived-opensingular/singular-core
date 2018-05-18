@@ -18,6 +18,9 @@
 
 package org.opensingular.flow.test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -31,9 +34,6 @@ import org.opensingular.flow.core.entity.IEntityRoleDefinition;
 import org.opensingular.flow.test.definicao.MultiVersionSampleFlowDefinition;
 import org.opensingular.flow.test.definicao.MultiVersionSampleFlowInstance;
 import org.opensingular.flow.test.support.TestFlowSupport;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -51,6 +51,8 @@ public class FlowVersionTest extends TestFlowSupport {
     @Test
     public void testVersionChange() {
 
+        MultiVersionSampleFlowDefinition.changeFlowToVersao1();
+        FlowDefinitionCache.invalidateAll();
         MultiVersionSampleFlowInstance flowVersion1 = new MultiVersionSampleFlowDefinition().prepareStartCall().createAndStart();
         TaskInstance start1 = flowVersion1.getCurrentTaskOrException();
 

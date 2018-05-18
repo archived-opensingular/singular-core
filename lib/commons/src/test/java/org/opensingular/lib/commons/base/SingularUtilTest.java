@@ -18,6 +18,10 @@
 
 package org.opensingular.lib.commons.base;
 
+import static org.junit.Assert.*;
+
+import java.util.Date;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.opensingular.lib.commons.dto.HtmlToPdfDTO;
@@ -25,12 +29,12 @@ import org.opensingular.lib.commons.dto.HtmlToPdfDTO;
 public class SingularUtilTest {
 
     @Test
-    public void toSHA1Test(){
+    public void toSHA1Test() {
         Assert.assertNotNull(SingularUtil.toSHA1(new HtmlToPdfDTO()));
     }
 
     @Test
-    public void convertToJavaIdentityTest(){
+    public void convertToJavaIdentityTest() {
         String test = " um teste para verificar o que ele converte.";
 
         String convertedValue = SingularUtil.convertToJavaIdentity(test, true);
@@ -41,7 +45,36 @@ public class SingularUtilTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void propragateExceptionTest(){
+    public void propragateExceptionTest() {
         SingularUtil.propagate(new NullPointerException());
+    }
+
+    public void areEqualTest() {
+        assertTrue(SingularUtil.areEqual(1, 1, it -> it));
+
+        class A {
+            int    i;
+            String s;
+            Date   d;
+            public A(int i, String s, Date d) {
+                this.i = i;
+                this.s = s;
+                this.d = d;
+            }
+        }
+
+        A a = new A(1, "1", new Date(12345));
+        A aAlt = new A(1, "A", new Date(11111));
+        A aNull = new A(1, null, null);
+        A b = new A(2, "B", new Date());
+
+        assertTrue(SingularUtil.areEqual(a, a));
+        assertFalse(SingularUtil.areEqual(a, aAlt));
+        assertTrue(SingularUtil.areEqual(a, aAlt, it -> it.i));
+        assertFalse(SingularUtil.areEqual(a, aAlt, it -> it.i, it -> it.s, it -> it.d));
+        assertFalse(SingularUtil.areEqual(a, aNull, it -> it.i));
+        assertFalse(SingularUtil.areEqual(a, aNull, it -> it.i, it -> it.s, it -> it.d));
+        assertFalse(SingularUtil.areEqual(a, b));
+        assertFalse(SingularUtil.areEqual(a, b, it -> it.i, it -> it.s, it -> it.d));
     }
 }

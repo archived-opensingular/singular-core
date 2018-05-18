@@ -77,15 +77,14 @@ public class AttachmentContentDao<T extends AttachmentContentEntity> extends Bas
             try (FileOutputStream fos = new FileOutputStream(file)) {
                 IOUtils.copy(inZip, fos);
             }
-            try (TempFileInputStream tempFileStream = new TempFileInputStream(file)) {
-                T fileEntity = createInstance();
-                fileEntity.setContent(getSession().getLobHelper().createBlob(tempFileStream, file.length()));
-                fileEntity.setHashSha1(hashSha1);
-                fileEntity.setSize(length);
-                fileEntity.setInclusionDate(new Date());
-                consummerEntity.accept(fileEntity);
-                return fileEntity;
-            }
+            T                   fileEntity     = createInstance();
+            /* o TempFileInputStream abaixo não deve ser fechado aqui, fica a cargo do hibernate */
+            fileEntity.setContent(getSession().getLobHelper().createBlob(new TempFileInputStream(file), file.length()));//NOSONAR
+            fileEntity.setHashSha1(hashSha1);
+            fileEntity.setSize(length);
+            fileEntity.setInclusionDate(new Date());
+            consummerEntity.accept(fileEntity);
+            return fileEntity;
         } catch (Exception e) {
             throw SingularException.rethrow(e.getMessage(), e);
         }

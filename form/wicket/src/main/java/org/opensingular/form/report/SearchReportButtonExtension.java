@@ -31,6 +31,7 @@ import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.report.SingularReport;
 import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.commons.views.ViewGenerator;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
@@ -38,7 +39,7 @@ import org.opensingular.lib.wicket.util.util.Shortcuts;
 import org.opensingular.lib.wicket.views.SingularReportPanel;
 import org.opensingular.lib.wicket.views.plugin.ReportButtonExtension;
 
-import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.*;
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
 
 public class SearchReportButtonExtension implements ReportButtonExtension {
@@ -81,27 +82,31 @@ public class SearchReportButtonExtension implements ReportButtonExtension {
 
     @Override
     public void onBuild(SingularReportPanel reportPanel) {
-        if (hasFilter){
-            TemplatePanel templatePanel = new TemplatePanel(reportPanel.getPluginContainerView().newChildId(),
-                    "<div wicket:id='modal-border'><div wicket:id='singular-form-panel'></div></div>");
-            searchModal = new BSModalBorder("modal-border");
-            addFilter(searchModal);
-            addFilterButton(searchModal);
-            templatePanel.add(searchModal);
-            reportPanel.getPluginContainerView().add(templatePanel);
-            addCloseButton(searchModal);
-            reportPanel.getTable().add($b.notVisibleIf(this::isFirstRequestAndIsNotEagerLoading));
-            searchModal.add(new Behavior() {
-                @Override
-                public void onConfigure(Component component) {
-                    super.onConfigure(component);
-                    if (isFirstRequestAndIsNotEagerLoading()) {
-                        searchModal.show(null);
-                        init = false;
-                    }
+        TemplatePanel templatePanel = new TemplatePanel(reportPanel.getPluginContainerView().newChildId(),
+                "<div wicket:id='modal-border'><div wicket:id='singular-form-panel'></div></div>");
+        searchModal = new BSModalBorder("modal-border");
+        addFilter(searchModal);
+        addFilterButton(searchModal);
+        addCloseButton(searchModal);
+        reportPanel.getTable().add($b.notVisibleIf(this::isFirstRequestAndIsNotEagerLoading));
+        searchModal.add(new Behavior() {
+            @Override
+            public void onConfigure(Component component) {
+                super.onConfigure(component);
+                if (isFirstRequestAndIsNotEagerLoading()) {
+                    searchModal.show(null);
+                    init = false;
                 }
-            });
-        }
+            }
+        });
+        BSContainer<?> modalContainer = new BSContainer<>(reportPanel.getPluginContainerView().newChildId());
+        singularFormPanel.setModalContainer(modalContainer);
+
+        templatePanel.add(searchModal);
+        reportPanel
+                .getPluginContainerView()
+                .add(templatePanel)
+                .add(modalContainer);
     }
 
     private void addCloseButton(BSModalBorder bsModalBorder) {

@@ -16,22 +16,24 @@
 
 package org.opensingular.flow.persistence.entity;
 
+import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.opensingular.flow.core.SUser;
 import org.opensingular.flow.core.entity.IEntityTaskHistoricType;
 import org.opensingular.flow.core.entity.IEntityTaskInstance;
 import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
-
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Table;
-import java.util.Date;
 
 /**
  * The base persistent class for the TB_HISTORICO_INSTANCIA_TAREFA database table.
@@ -52,11 +54,11 @@ public abstract class AbstractTaskInstanceHistoryEntity<USER extends SUser, TASK
 
     @Id
     @Column(name = "CO_HISTORICO_ALOCACAO")
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Integer cod;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_INSTANCIA_TAREFA", nullable = false)
+    @JoinColumn(name = "CO_INSTANCIA_TAREFA", nullable = false, foreignKey = @ForeignKey(name = "FK_HIST_INST_TAR_INST_TAR"))
     private TASK_INSTANCE taskInstance;
 
     @Column(name = "DT_INICIO_ALOCACAO", nullable = false, updatable = false)
@@ -66,18 +68,18 @@ public abstract class AbstractTaskInstanceHistoryEntity<USER extends SUser, TASK
     private Date endDateAllocation;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_TIPO_HISTORICO_TAREFA", nullable = false)
+    @JoinColumn(name = "CO_TIPO_HISTORICO_TAREFA", nullable = false, foreignKey = @ForeignKey(name = "FK_HIST_INST_TAR_TP_HIST_TAR"))
     private TASK_HISTORIC_TYPE type;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_ATOR_ALOCADO")
+    @JoinColumn(name = "CO_ATOR_ALOCADO", foreignKey = @ForeignKey(name = "FK_HIST_INST_TAR_ATOR_ALOCADO"))
     private USER allocatedUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_ATOR_ALOCADOR")
+    @JoinColumn(name = "CO_ATOR_ALOCADOR", foreignKey = @ForeignKey(name = "FK_HIST_INST_TAR_ATOR_ALOCADOR"))
     private USER allocatorUser;
 
-    @Column(name = "DS_COMPLEMENTO")
+    @Column(name = "DS_COMPLEMENTO", length = 8000)
     private String description;
 
     @Override

@@ -61,6 +61,7 @@ public class SPackageCore extends SPackage {
         pb.createType(STypeAttachmentList.class);
         pb.createType(STypeHTML.class);
         pb.createType(STypePassword.class);
+        pb.createType(STypeFieldRef.class);
 
         pb.createAttributeIntoType(STypeAttachment.class, STypeAttachment.ATR_ORIGINAL_ID);
         pb.createAttributeIntoType(STypeAttachment.class, STypeAttachment.ATR_IS_TEMPORARY);

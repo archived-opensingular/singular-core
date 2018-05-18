@@ -36,13 +36,14 @@ public class FormTypeService  {
     }
 
 
+    @SuppressWarnings("unchecked")
     private FormTypeEntity getOrCreateNewFormTypeEntity(final SType<?> type) {
         String name = type.getName();
         FormTypeEntity formTypeEntity = formTypeDAO.findFormTypeByAbbreviation(name);
         if (formTypeEntity == null) {
             formTypeEntity = new FormTypeEntity();
             formTypeEntity.setAbbreviation(name);
-            formTypeEntity.setLabel(SFormUtil.getTypeLabel(type.getClass())
+            formTypeEntity.setLabel(SFormUtil.getTypeLabel((Class<? extends SType<?>>) type.getClass())
                     .orElse(type.getNameSimple()));
             formTypeEntity.setCacheVersionNumber(1L);//TODO VINICIUS.NUNES
             formTypeDAO.saveOrUpdate(formTypeEntity);

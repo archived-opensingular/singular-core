@@ -23,23 +23,25 @@ import org.opensingular.form.wicket.behavior.InputMaskBehavior;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior.Masks;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SIDateTimeModel;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 public class DateTimeContainer extends BSContainer<DateTimeContainer> {
 
     private final ISInstanceAwareModel<Date> model;
-    private final SViewDateTime              dateTimerView;
+    private final ISupplier<SViewDateTime>   dateTimerViewSupplier;
 
-    public DateTimeContainer(String id, ISInstanceAwareModel<Date> model, SViewDateTime dateTimerView) {
+    public DateTimeContainer(String id, ISInstanceAwareModel<Date> model, ISupplier<SViewDateTime> dateTimerViewSupplier) {
         super(id);
         this.model = model;
-        this.dateTimerView = dateTimerView;
+        this.dateTimerViewSupplier = dateTimerViewSupplier;
     }
 
     @Override
@@ -52,8 +54,8 @@ public class DateTimeContainer extends BSContainer<DateTimeContainer> {
 
     protected Component buildDateField() {
         return new TextField<>("date", new SIDateTimeModel.DateModel(model))
-                .add(new DatePickerInitBehaviour())
-                .add(new InputMaskBehavior(Masks.FULL_DATE));
+            .add(new DatePickerInitBehaviour())
+            .add(new InputMaskBehavior(Masks.FULL_DATE));
     }
 
     protected TextField<String> buildTimeField() {
@@ -84,10 +86,13 @@ public class DateTimeContainer extends BSContainer<DateTimeContainer> {
         final Map<String, Object> params = new TreeMap<>();
         params.put("defaultTime", Boolean.FALSE);
         params.put("showMeridian", Boolean.FALSE);
-        if (dateTimerView != null) {
-            params.put("showMeridian", dateTimerView.isMode24hs());
-            params.put("minuteStep", dateTimerView.getMinuteStep());
-        }
+
+        Optional.ofNullable(dateTimerViewSupplier).map(it -> it.get())
+            .ifPresent(v -> {
+                params.put("showMeridian", v.isMode24hs());
+                params.put("minuteStep", v.getMinuteStep());
+            });
+
         return params;
     }
 

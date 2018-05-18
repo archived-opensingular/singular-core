@@ -20,19 +20,22 @@ import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
+import org.hibernate.annotations.Check;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.GenericGenerator;
-
 import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.entity.TransitionType;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 /**
  * The base persistent class for the TB_VERSAO_TRANSICAO database table.
@@ -46,21 +49,22 @@ import org.opensingular.flow.core.entity.TransitionType;
  */
 @MappedSuperclass
 @Table(name = "TB_VERSAO_TRANSICAO")
+@Check(constraints ="TP_TRANSICAO IN ('E', 'A', 'H')")
 public abstract class AbstractTaskTransitionVersionEntity<TASK_VERSION extends IEntityTaskVersion> extends BaseEntity<Integer> implements IEntityTaskTransitionVersion {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_VERSAO_TRANSICAO";
 
     @Id
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     @Column(name = "CO_VERSAO_TRANSICAO")
     private Integer cod;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_VERSAO_TAREFA_ORIGEM", nullable = false, updatable = false)
+    @JoinColumn(name = "CO_VERSAO_TAREFA_ORIGEM", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_VER_TRANS_VER_TAR_ORIG"))
     private TASK_VERSION originTask;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_VERSAO_TAREFA_DESTINO", nullable = false, updatable = false)
+    @JoinColumn(name = "CO_VERSAO_TAREFA_DESTINO", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_VER_TRANS_VER_TAR_DEST"))
     private TASK_VERSION destinationTask;
 
     @Column(name = "NO_TRANSICAO", length = 300, nullable = false)
@@ -70,7 +74,8 @@ public abstract class AbstractTaskTransitionVersionEntity<TASK_VERSION extends I
     private String abbreviation;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "TP_TRANSICAO", nullable = false)
+    @Column(name = "TP_TRANSICAO", nullable = false, length = 1)
+    @ColumnDefault(value = "'E'")
     private TransitionType type;
 
     @Override
