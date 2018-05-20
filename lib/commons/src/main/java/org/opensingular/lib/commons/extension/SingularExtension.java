@@ -19,7 +19,20 @@
 package org.opensingular.lib.commons.extension;
 
 /**
- * Common interface for extensions
+ * Common base interface for extensions point in Singular. Specific code extension points must create a new interface
+ * that also extends this interface.
+ * <p>All extensions of this interface must have the 'Extension' suffix.</p>
+ * <p>For more information of how to use extensions points, see {@link SingularExtensionUtil}.</p>
  */
 public interface SingularExtension {
+
+    /**
+     * Indicates the priority of the implementation in comparision to another implementation of the same interface. This
+     * is used to select the more relevant implementation when two or mores implementation are available.
+     *
+     * @return 0 by default
+     */
+    public default int getExtensionPriority() {
+        return 0;
+    }
 }

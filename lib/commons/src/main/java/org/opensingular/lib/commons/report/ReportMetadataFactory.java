@@ -19,6 +19,10 @@
 package org.opensingular.lib.commons.report;
 
 
-public interface ReportMetadataFactory {
+import org.opensingular.lib.commons.extension.SingularExtension;
+
+public interface ReportMetadataFactory extends SingularExtension {
+
     ReportMetadata get();
+
 }

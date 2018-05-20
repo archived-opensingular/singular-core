@@ -70,7 +70,7 @@ public class SingularReportPanel extends Panel {
     public SingularReportPanel(String id, ISupplier<SingularReport> singularReportSupplier) {
         super(id);
         this.singularReportSupplier = singularReportSupplier;
-        this.reportButtonExtensions = SingularExtensionUtil.get().findExtensionsByClass(ReportButtonExtension.class);
+        this.reportButtonExtensions = SingularExtensionUtil.get().findExtensions(ReportButtonExtension.class);
         this.reportMetadata = makeReportMetadata();
     }
 
@@ -121,7 +121,7 @@ public class SingularReportPanel extends Panel {
     }
 
     protected ReportMetadata makeReportMetadata() {
-        return SingularExtensionUtil.get().findExtensionByClass(ReportMetadataFactory.class).get();
+        return SingularExtensionUtil.get().findExtensionOrException(ReportMetadataFactory.class).get();
     }
 
     private void addTitle() {
