@@ -42,6 +42,8 @@ public final class SingularTestUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingularTestUtil.class);
 
+    public static final int DEFAULT_WAIT_TIME_MILLI_AFTER_SHOW_ON_DESKTOP = 5000;
+
     private SingularTestUtil() {
     }
 
@@ -176,6 +178,26 @@ public final class SingularTestUtil {
      */
     public static <EX extends Exception> void showFileOnDesktopForUserAndWaitOpening(@Nonnull Object requester,
             @Nonnull String fileExtension, @Nonnull IConsumerEx<OutputStream, EX> fileGenerator) {
+        showFileOnDesktopForUserAndWaitOpening(requester, fileExtension, fileGenerator,
+                DEFAULT_WAIT_TIME_MILLI_AFTER_SHOW_ON_DESKTOP);
+    }
+
+    /**
+     * Create a temp file, call the file generator provided to fill the temp file and then opens the file on the
+     * developers desktop (calls {@link #showFileOnDesktopForUserAndWaitOpening(File)}). This method guaranties that the
+     * file will be deleted.
+     * <p>This method may be used to inspect visually a generated file.</p>
+     *
+     * @param requester     Class or object client of the temp file generation. The name of the class will be used as
+     *                      prefix of the temp file names.
+     * @param fileExtension It doesn't have a dot, it will be added (for example, "png" becomes ".png")
+     * @param fileGenerator The code that will called to fill the temp file before the file be show
+     * @param waitTimeMilliAfterCall Indica o tempo de espera em milisegundo. Se for negativo, não espera.
+     * @see {@link TempFileProvider#create(Object, IConsumerEx)}
+     */
+    public static <EX extends Exception> void showFileOnDesktopForUserAndWaitOpening(@Nonnull Object requester,
+            @Nonnull String fileExtension, @Nonnull IConsumerEx<OutputStream, EX> fileGenerator,
+            int waitTimeMilliAfterCall) {
         TempFileProvider.create(requester, tmpProvider -> {
             String ext = fileExtension.indexOf('.') == -1 ? '.' + fileExtension : fileExtension;
             File arq = tmpProvider.createTempFile(ext);
@@ -185,17 +207,16 @@ public final class SingularTestUtil {
                 Throwables.throwIfUnchecked(e);
                 throw new SingularTestException(e);
             }
-            showFileOnDesktopForUserAndWaitOpening(arq);
+            showFileOnDesktopForUser(arq, waitTimeMilliAfterCall);
         });
     }
-
 
     /**
      * Abre o arqivo informado com o aplicativo associado no sistema operacional e espera 5 segundos para
      * prosseguir. Útil para inspecionar visualmente um arquivo que acabou de ser gerado por um teste.
      */
     public static void showFileOnDesktopForUserAndWaitOpening(File arq) {
-        showFileOnDesktopForUser(arq, 5000);
+        showFileOnDesktopForUser(arq, DEFAULT_WAIT_TIME_MILLI_AFTER_SHOW_ON_DESKTOP);
     }
 
     /**

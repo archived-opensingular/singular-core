@@ -16,8 +16,14 @@
 
 package org.opensingular.flow.core;
 
+import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.flow.core.variable.VarService;
 import org.opensingular.flow.core.view.IViewLocator;
+import org.opensingular.internal.lib.commons.injection.SingularInjector;
+import org.opensingular.lib.commons.context.RefService;
+import org.opensingular.lib.commons.context.ServiceRegistry;
+import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.net.Lnk;
 import org.opensingular.lib.commons.net.WebRef;
 
@@ -31,6 +37,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 
@@ -272,4 +279,61 @@ public class SFlowUtil {
         public List<? extends SUser> listAllowedUsers(FlowInstance instance) {
             return Collections.emptyList();
         }
-    }}
+    }
+
+    /**
+     * Instantiates a flow definition ignoring any bean injection dependency.
+     * <p>IT MUST NOT BE USE IN PRODUCTION ENVIRONMENT. IT SHOULD ONLY BE USED FOR DEBUG AND JUNIT IMPLEMENTATIONS.</p>
+     */
+    @Nonnull
+    public static <T extends FlowDefinition<?>> T instanceForDebug(@Nonnull Class<T> definitionClass) {
+        Optional<SingularInjector> injector = ServiceRegistryLocator.locate().lookupSingularInjectorOpt();
+        if (!injector.isPresent()) {
+            ServiceRegistry registry = ServiceRegistryLocator.locate();
+            registry.bindService(SingularInjector.class, RefService.ofToBeDescartedIfSerialized(new SingularInjector() {
+                @Override
+                public void inject(@Nonnull Object object) {
+
+                }
+            }));
+        }
+        try {
+            return definitionClass.cast(definitionClass.newInstance());
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new SingularFlowException(e);
+        }
+    }
+
+    /**
+     * Create a flow definition and calls the informed flowCreator to build the flow structure.
+     * <p>This method isn't supposed to be used in production environments, but rather for debugging or JUnit testing
+     * during developing.</p>
+     */
+    @Nonnull
+    public static FlowDefinition<?> instanceForDebug(@Nonnull Consumer<FlowBuilderImpl> flowCreator) {
+        return new BaseFlowTestDefinition(flowCreator);
+    }
+
+    private static final class BaseFlowTestDefinition extends FlowDefinition<FlowInstance> {
+
+        private final Consumer<FlowBuilderImpl> flowCreator;
+
+        public BaseFlowTestDefinition(@Nonnull Consumer<FlowBuilderImpl> flowCreator) {
+            this("dummyFlow", flowCreator);
+        }
+
+        public BaseFlowTestDefinition(@Nonnull String flowKey, @Nonnull Consumer<FlowBuilderImpl> flowCreator) {
+            super(FlowInstance.class, VarService.basic(), flowKey);
+            this.flowCreator = flowCreator;
+        }
+
+        @Nonnull
+        @Override
+        protected FlowMap createFlowMap() {
+            FlowBuilderImpl f = new FlowBuilderImpl(this);
+            flowCreator.accept(f);
+            return f.build();
+        }
+    }
+
+}
