@@ -124,8 +124,20 @@ public final class SingularExtensionUtil implements Loggable {
      */
     @Nonnull
     public <T extends SingularExtension> Optional<T> findExtension(@Nonnull Class<T> extensionTarget) {
-        List<T> list = findExtensions(extensionTarget);
-        return list.size() == 0 ? Optional.empty() : Optional.of(list.get(0));
+        return findExtension(extensionTarget, null);
+    }
+
+    /**
+     * Lookup for the implementation of the extension point.
+     * <p>If multiple implementations are found, they will sorted by {@link SingularExtension#getExtensionPriority()}
+     * and the one with the highest priority will be returned.</p>
+     * @param qualifier If not null, return only a extension point that matches de qualifier.
+     */
+    @Nonnull
+    public <T extends SingularExtension> Optional<T> findExtension(@Nonnull Class<T> extensionTarget,
+            @Nullable String qualifier) {
+        List<T> list = findExtensions(extensionTarget, qualifier);
+        return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
     }
 
     /**
@@ -135,8 +147,20 @@ public final class SingularExtensionUtil implements Loggable {
      */
     @Nonnull
     public <T extends SingularExtension> T findExtensionOrException(@Nonnull Class<T> extensionTarget) {
-        List<T> list = findExtensions(extensionTarget);
-        if (list.size() == 0) {
+        return findExtensionOrException(extensionTarget, null);
+    }
+
+    /**
+     * Lookup for the implementation of the extension point and throws a exception if no one is found.
+     * <p>If multiple implementations are found, they will sorted by {@link SingularExtension#getExtensionPriority()}
+     * and the one with the highest priority will be returned.</p>
+     * @param qualifier If not null, return only a extension point that matches de qualifier.
+     */
+    @Nonnull
+    public <T extends SingularExtension> T findExtensionOrException(@Nonnull Class<T> extensionTarget,
+            @Nullable String qualifier) {
+        List<T> list = findExtensions(extensionTarget, qualifier);
+        if (list.isEmpty()) {
             throw new SingularException("No registered implementation for " + extensionTarget.getName() + " was found");
         }
         return list.get(0);

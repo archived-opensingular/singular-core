@@ -24,6 +24,7 @@ import org.opensingular.lib.commons.extension.SingularExtensionUtil;
 import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
+import java.util.Optional;
 
 /**
  * Helper class for {@link IFlowRenderer} related tasks.
@@ -41,6 +42,16 @@ public final class RendererUtil {
     @Nonnull
     public static IFlowRenderer findRenderer() {
         return SingularExtensionUtil.get().findExtensionOrException(FlowRendererProviderExtension.class).getRenderer();
+    }
+
+    /**
+     * Finds the appropriate {@link IFlowRenderer} implementation used for displaying diagrams for the end user.
+     * <p>Uses the extension point configuration (see {@link SingularExtensionUtil}.</p>
+     */
+    @Nonnull
+    public static Optional<IFlowRenderer> findRendererForUserDisplay() {
+        return SingularExtensionUtil.get().findExtension(FlowRendererProviderExtension.class,
+                FlowRendererProviderExtension.FOR_USER_DISPLAY).map(p -> p.getRenderer());
     }
 
     /**

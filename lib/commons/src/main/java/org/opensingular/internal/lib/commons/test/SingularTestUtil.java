@@ -112,7 +112,7 @@ public final class SingularTestUtil {
                 msg += ", pois " + failMsgIfNoException;
             }
             throw new AssertionError(msg);
-        } catch (Throwable e) {
+        } catch (Throwable e) { //NOSONAR
             if (findExpectedException(e, expectedException, expectedExceptionMsgPart)) {
                 return;
             } else if (e instanceof Error) {

@@ -469,7 +469,7 @@ public class ExecutionHistoryForRendering {
     public final void assertOneTransitionMarked(@Nonnull ITaskDefinition origin, @Nonnull ITaskDefinition destination,
             @Nullable String expectedTransitionName) {
         Set<String> ts = getTransitions(origin, destination);
-        if (ts.size() == 0) {
+        if (ts.isEmpty()) {
             throw new AssertionError(
                     "There is no transition from '" + origin.getKey() + "' to '" + destination.getKey() +
                             "' marked as executed and was expected at least one");
@@ -495,7 +495,7 @@ public class ExecutionHistoryForRendering {
      */
     public final void assertNoTransitionMarked(@Nonnull ITaskDefinition origin, @Nonnull ITaskDefinition destination) {
         Set<String> ts = getTransitions(origin, destination);
-        if (ts.size() != 0) {
+        if (!ts.isEmpty()) {
             throw new AssertionError("There is " + ts.size() + " transition(s) from '" + origin.getKey() + "' to '" +
                     destination.getKey() + "' marked as executed but none was expected. Executed transactions: " +
                     ts.stream().collect(Collectors.joining(", ")));
@@ -607,6 +607,21 @@ public class ExecutionHistoryForRendering {
 
         public int getSequential() {
             return sequential;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ExecutionEntry entry = (ExecutionEntry) o;
+            return (sequential == entry.sequential) && Objects.equals(start, entry.start);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = start != null ? start.hashCode() : 0;
+            result = 31 * result + sequential;
+            return result;
         }
 
         @Override

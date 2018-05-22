@@ -16,7 +16,6 @@
 
 package org.opensingular.lib.commons.extension;
 
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.Test;
 import org.opensingular.lib.commons.base.SingularException;
@@ -26,6 +25,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -41,7 +41,7 @@ public class SingularExtensionUtilTest {
     public void lookingForNoExistingImplementation() {
         assertThat(extensionUtil().findExtensions(NoImplementationExtension.class)).isEmpty();
         assertThat(extensionUtil().findExtension(NoImplementationExtension.class).orElse(null)).isNull();
-        Assertions.assertThatThrownBy(() -> extensionUtil().findExtensionOrException(NoImplementationExtension.class))
+        assertThatThrownBy(() -> extensionUtil().findExtensionOrException(NoImplementationExtension.class))
                 .isExactlyInstanceOf(SingularException.class).hasMessageContaining("No registered implementation for");
     }
 
@@ -56,7 +56,7 @@ public class SingularExtensionUtilTest {
     }
 
     private void assertInvalidNameException(ThrowableAssert.ThrowingCallable code) {
-        Assertions.assertThatThrownBy(code).isExactlyInstanceOf(SingularException.class).hasMessageContaining(
+        assertThatThrownBy(code).isExactlyInstanceOf(SingularException.class).hasMessageContaining(
                 "It must ends with the sufix 'Extension'");
     }
 
@@ -158,16 +158,30 @@ public class SingularExtensionUtilTest {
             assertThat(list).element(i).isExactlyInstanceOf(expectedResult[i]);
         }
 
-        if (expectedResult.length == 0 && qualifier == null) {
-            assertThat(extensionUtil().findExtension(extensionTarget).orElse(null)).isNull();
-            Assertions.assertThatThrownBy(() -> extensionUtil().findExtensionOrException(extensionTarget))
-                    .isExactlyInstanceOf(SingularException.class).hasMessageContaining(
-                    "No registered implementation for");
-        } else if (qualifier == null) {
-            assertThat(extensionUtil().findExtension(extensionTarget).orElse(null)).isExactlyInstanceOf(
-                    expectedResult[0]);
-            assertThat(extensionUtil().findExtensionOrException(extensionTarget)).isExactlyInstanceOf(
-                    expectedResult[0]);
+        if (expectedResult.length == 0) {
+            if (qualifier == null) {
+                assertThat(extensionUtil().findExtension(extensionTarget).orElse(null)).isNull();
+                assertThatThrownBy(() -> extensionUtil().findExtensionOrException(extensionTarget))
+                        .isExactlyInstanceOf(SingularException.class).hasMessageContaining(
+                        "No registered implementation for");
+            } else {
+                assertThat(extensionUtil().findExtension(extensionTarget, qualifier).orElse(null)).isNull();
+                assertThatThrownBy(
+                        () -> extensionUtil().findExtensionOrException(extensionTarget, qualifier)).isExactlyInstanceOf(
+                        SingularException.class).hasMessageContaining("No registered implementation for");
+            }
+        } else {
+            if (qualifier == null) {
+                assertThat(extensionUtil().findExtension(extensionTarget).orElse(null)).isExactlyInstanceOf(
+                        expectedResult[0]);
+                assertThat(extensionUtil().findExtensionOrException(extensionTarget)).isExactlyInstanceOf(
+                        expectedResult[0]);
+            } else {
+                assertThat(extensionUtil().findExtension(extensionTarget, qualifier).orElse(null)).isExactlyInstanceOf(
+                        expectedResult[0]);
+                assertThat(extensionUtil().findExtensionOrException(extensionTarget, qualifier)).isExactlyInstanceOf(
+                        expectedResult[0]);
+            }
         }
     }
 

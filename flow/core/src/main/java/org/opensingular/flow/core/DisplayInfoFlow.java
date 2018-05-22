@@ -85,7 +85,6 @@ public class DisplayInfoFlow {
      */
     public void addCriticalPath(@Nonnull ITaskDefinition taskOrigin, @Nonnull ITaskDefinition taskDestination) {
         STask<?> origin = flowMap.getTask(taskOrigin);
-        STask<?> destination = flowMap.getTask(taskDestination);
         origin.getTransitionToOrException(taskDestination).getDisplayInfo().setCriticalPath(true);
     }
 }
