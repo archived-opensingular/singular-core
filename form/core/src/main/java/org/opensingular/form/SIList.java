@@ -293,10 +293,12 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     private void invokeUpdateListeners(){
-        for (SType<?> type : this.getType().getDependentTypes()){
-            SInstance dependentInstance = (SInstance) this.findNearest(type).orElse(null);
-            if (dependentInstance != null && dependentInstance.asAtr().getUpdateListener() != null){
-                dependentInstance.asAtr().getUpdateListener().accept(dependentInstance);
+        if (!getDocument().isRestoreMode()) {
+            for (SType<?> type : this.getType().getDependentTypes()) {
+                SInstance dependentInstance = (SInstance) this.findNearest(type).orElse(null);
+                if (dependentInstance != null && dependentInstance.asAtr().getUpdateListener() != null) {
+                    dependentInstance.asAtr().getUpdateListener().accept(dependentInstance);
+                }
             }
         }
     }
