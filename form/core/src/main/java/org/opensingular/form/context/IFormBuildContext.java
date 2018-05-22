@@ -38,7 +38,7 @@ public interface IFormBuildContext extends Serializable {
             SView view = this.getView();
             if (view != null && viewType.isAssignableFrom(view.getClass()))
                 return (V) view;
-            return null;
+            return (V) null;
         };
     }
     
