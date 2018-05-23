@@ -20,7 +20,6 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
-import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.lib.commons.util.Loggable;
 
@@ -40,9 +39,11 @@ public class STypeAddress extends STypeComposite<SIComposite> implements Loggabl
 
         cep = this.addField("cep", STypeCEP.class);
         cep.asAtrBootstrap().colPreference(2);
+        cep.asAtrIndex().indexed(Boolean.TRUE);
 
         logradouro = this.addFieldString("logradouro");
         logradouro.asAtr().label("Logradouro").asAtrBootstrap().colPreference(8);
+        logradouro.asAtrIndex().indexed(Boolean.TRUE);
 
         numero = this.addFieldString("numero");
         numero
@@ -51,6 +52,7 @@ public class STypeAddress extends STypeComposite<SIComposite> implements Loggabl
                 .label("Número")
                 .asAtrBootstrap()
                 .colPreference(2);
+        numero.asAtrIndex().indexed(Boolean.TRUE);
 
         complemento = this.addFieldString("complemento");
         complemento.asAtr().label("Complemento").asAtrBootstrap().colPreference(6);
@@ -62,6 +64,7 @@ public class STypeAddress extends STypeComposite<SIComposite> implements Loggabl
         cidade.asAtr().label("Cidade").asAtrBootstrap().colPreference(6);
 
         estado = this.addField("estado", STypeUF.class);
+        estado.asAtrIndex().indexed(Boolean.TRUE);
 
     }
 }

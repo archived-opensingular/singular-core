@@ -194,7 +194,18 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extend
     protected BUILDER_TRANSITION addTransition(BuilderTask origin, String actionName, TASK_DEF destination) {
         return newTransition(origin.getTask().addTransition(actionName, getTask(destination)));
     }
-    
+
+    /**
+     * TODO change it to from/go format:
+     * from(task, predicate).go(destinationTask)
+     * this builder should not present methods related with UI configuration, a new builder interface should be created instead i.e: BUILDER_TASK_AUTOMATIC
+     *
+     * @param origin
+     * @param condition
+     * @param destination
+     * @return
+     */
+    @Deprecated
     public BUILDER_TRANSITION addAutomaticTransition(TASK_DEF origin, ITaskPredicate condition, TASK_DEF destination) {
         FLOW_MAP flowMap = getFlowMap();
         return newTransition(flowMap.getTask(origin).addAutomaticTransition(condition, flowMap.getTask(destination)));

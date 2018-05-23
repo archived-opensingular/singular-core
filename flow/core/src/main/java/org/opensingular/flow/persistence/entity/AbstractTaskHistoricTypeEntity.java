@@ -18,14 +18,14 @@ package org.opensingular.flow.persistence.entity;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
-
 import org.opensingular.flow.core.entity.IEntityTaskHistoricType;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 /**
  * The base persistent class for the TB_TIPO_HISTORICO_TAREFA database table.
@@ -42,11 +42,11 @@ public abstract class AbstractTaskHistoricTypeEntity extends BaseEntity<Integer>
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_TIPO_HISTORICO_TAREFA";
 
     @Id
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     @Column(name = "CO_TIPO_HISTORICO_TAREFA")
     private Integer cod;
 
-    @Column(name = "DS_TIPO_HISTORICO_TAREFA", length = 50)
+    @Column(name = "DS_TIPO_HISTORICO_TAREFA", length = 100, nullable = false)
     private String description;
 
     @Override

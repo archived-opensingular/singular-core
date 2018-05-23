@@ -421,11 +421,6 @@ public abstract class SInstances {
         return hasAny(instance, true, predicate);
     }
 
-    public static boolean contains(Collection<? extends SInstance> collection, SInstance instance) {
-        final String pathFull = instance.getPathFull();
-        return collection.stream().anyMatch(it -> it.getPathFull().equals(pathFull));
-    }
-
     /**
      * Verifica se a instância ou algum filho atende a condição informada ou não.
      *

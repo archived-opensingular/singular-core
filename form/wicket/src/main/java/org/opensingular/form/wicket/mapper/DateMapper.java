@@ -20,28 +20,27 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.convert.ConversionException;
-import org.apache.wicket.util.convert.IConverter;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.view.SViewDate;
 import org.opensingular.form.wicket.IAjaxUpdateListener;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior.Masks;
+import org.opensingular.form.wicket.converter.DateConverter;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerInputGroup;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Locale;
 
 import static org.opensingular.form.type.basic.SPackageBasic.ATR_MAX_DATE;
+import static org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour.DatePickerSettings;
 
 @SuppressWarnings("serial")
 public class DateMapper extends AbstractControlsFieldComponentMapper {
@@ -51,8 +50,8 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
         BSDatepickerInputGroup datepicker = formGroup
-                .newComponent(id -> new BSDatepickerInputGroup(id)
-                        .setConverter(new ConverterImpl())
+                .newComponent(id -> new BSDatepickerInputGroup(id, getDatePickerSetings(ctx))
+                        .setConverter(new DateConverter(defaultDateFormat()))
                         .setTextFieldConfigurer((IConsumer<FormComponent<?>>) c -> c
                                 .setLabel(labelModel)
                                 .setDefaultModel(new SInstanceValueModel<>(model))
@@ -64,8 +63,12 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
         return datepicker.getTextField();
     }
 
+    private DatePickerSettings getDatePickerSetings(WicketBuildContext ctx) {
+        return new DatePickerSettings(ctx.getViewSupplier(SViewDate.class), ctx.getModel());
+    }
+
     private void configureMaxDate(BSDatepickerInputGroup datepicker, Date maxDate) {
-        if(maxDate != null){
+        if (maxDate != null) {
             datepicker.setEndDate(defaultDateFormat().format(maxDate));
         }
     }
@@ -86,7 +89,7 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
     @Override
     public void adjustJSEvents(Component comp) {
         BSDatepickerInputGroup datepicker = BSDatepickerInputGroup.getFromTextfield(comp);
-        Component textField = datepicker.getTextField();
+        Component              textField  = datepicker.getTextField();
         textField
                 .add(new SingularEventBehavior()
                         .setProcessEvent("changeDate", datepicker)
@@ -99,37 +102,12 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
         if ((model != null) && (model.getObject() != null)) {
             SInstance instance = model.getObject();
             if (instance.getValue() instanceof Date) {
-                Date                   dt         = (Date) instance.getValue();
+                Date                   dt        = (Date) instance.getValue();
                 final SimpleDateFormat formatter = defaultDateFormat();
                 return formatter.format(dt);
             }
         }
         return StringUtils.EMPTY;
-    }
-
-    @SuppressWarnings("rawtypes")
-    private static final class ConverterImpl implements IConverter, Loggable {
-        @Override
-        public Object convertToObject(String date, Locale locale) throws ConversionException {
-            if ("//".equals(date))
-                return null;
-            try {
-                SimpleDateFormat sdf = defaultDateFormat();
-                sdf.setLenient(false);
-                return sdf.parse(date);
-            } catch (ParseException e) {
-                String msg = String.format(
-                        "Can't parse value '%s' with format '%s'.",
-                        date, "dd/MM/yyyy");
-                getLogger().trace(msg, e);
-                throw new ConversionException(e);
-            }
-        }
-
-        @Override
-        public String convertToString(Object date, Locale locale) {
-            return (defaultDateFormat()).format((Date) date);
-        }
     }
 
 }

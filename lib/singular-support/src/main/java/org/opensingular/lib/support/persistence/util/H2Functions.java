@@ -27,4 +27,5 @@ public class H2Functions {
         long d2l = d2 == null ? 0 : d2.getTime();
         return (d1l - d2l) / ((double) 1000 * 60 * 60 * 24);
     }
+
 }

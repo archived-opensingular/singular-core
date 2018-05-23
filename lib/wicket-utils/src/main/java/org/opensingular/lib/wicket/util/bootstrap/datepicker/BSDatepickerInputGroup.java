@@ -21,6 +21,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.util.convert.IConverter;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour;
+import org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour.DatePickerSettings;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSInputGroup;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
@@ -33,6 +34,7 @@ public class BSDatepickerInputGroup extends BSInputGroup {
 
     public enum ViewMode {
         DAYS, MONTH, YEAR, DECADE, CENTURY, MILLENIUM;
+
         public String toString() {
             return name().toLowerCase();
         }
@@ -46,14 +48,21 @@ public class BSDatepickerInputGroup extends BSInputGroup {
     private Component textfield;
     private Component button;
 
-    private String                         dateFormat          = DEFAULT_DATE_FORMAT;
-    private String                         startDate           = DEFAULT_START_DATE;
-    private String                         endDate             = DEFAULT_END_DATE;
-    private ViewMode                       startView           = ViewMode.DAYS;
-    private ViewMode                       minView             = ViewMode.DAYS;
-    private ViewMode                       maxView             = ViewMode.MILLENIUM;
+    private String   dateFormat = DEFAULT_DATE_FORMAT;
+    private String   startDate  = DEFAULT_START_DATE;
+    private String   endDate    = DEFAULT_END_DATE;
+    private ViewMode startView  = ViewMode.DAYS;
+    private ViewMode minView    = ViewMode.DAYS;
+    private ViewMode maxView    = ViewMode.MILLENIUM;
+
+    private DatePickerSettings datePickerSettings;
     private IConsumer<? extends Component> textFieldConfigurer = IConsumer.noop();
-    private IConverter<Date>               converter;
+    private IConverter<Date> converter;
+
+    public BSDatepickerInputGroup(String id, DatePickerSettings datePickerSettings) {
+        super(id);
+        this.datePickerSettings = datePickerSettings;
+    }
 
     public BSDatepickerInputGroup(String id) {
         super(id);
@@ -78,7 +87,7 @@ public class BSDatepickerInputGroup extends BSInputGroup {
 
             appendInputText(textfield);
             button = newButtonAddon(DefaultIcons.CALENDAR);
-            add(new DatePickerInitBehaviour());
+            add(new DatePickerInitBehaviour(datePickerSettings));
             add($b.classAppender("date"));
         }
     }
@@ -91,12 +100,13 @@ public class BSDatepickerInputGroup extends BSInputGroup {
         initialize();
         return textfield;
     }
+
     public final Component getButton() {
         initialize();
         return button;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected Component newTextField(String id) {
         TextField<Date> comp = new TextField<Date>(id, Date.class) {
             @Override
@@ -110,18 +120,34 @@ public class BSDatepickerInputGroup extends BSInputGroup {
 
     public IConverter<Date> getConverter() {
         return (converter != null)
-            ? converter
-            : super.getConverter(Date.class);
+                ? converter
+                : super.getConverter(Date.class);
     }
 
-    //@formatter:off
-    public String getDateFormat()   { return dateFormat;    }
-    public String getStartDate()    { return startDate;     }
-    public String getEndDate()      { return endDate;       }
-    public ViewMode getStartView()  { return startView;     }
-    public ViewMode getMinView()    { return minView;       }
-    public ViewMode getMaxView()    { return maxView;       }
-    //@formatter:on
+    public String getDateFormat() {
+        return dateFormat;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public ViewMode getStartView() {
+        return startView;
+    }
+
+    public ViewMode getMinView() {
+        return minView;
+    }
+
+    public ViewMode getMaxView() {
+        return maxView;
+    }
+
     public BSDatepickerInputGroup setDateFormat(String dateFormat) {
         this.dateFormat = dateFormat;
         return this;
@@ -156,6 +182,7 @@ public class BSDatepickerInputGroup extends BSInputGroup {
         this.converter = converter;
         return this;
     }
+
     public BSDatepickerInputGroup setTextFieldConfigurer(IConsumer<? extends Component> configurer) {
         this.textFieldConfigurer = configurer;
         return this;

@@ -18,18 +18,18 @@
 
 package org.opensingular.form.persistence.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
 @Embeddable
 public class FormAttachmentEntityId implements Serializable {
 
-    @Column(name = "CO_VERSAO_FORMULARIO")
+    @Column(name = "CO_VERSAO_FORMULARIO", nullable = false)
     private Long formVersionCod;
 
-    @Column(name = "CO_ARQUIVO")
+    @Column(name = "CO_ARQUIVO", nullable = false)
     private Long attachmentCod;
 
     public FormAttachmentEntityId() {

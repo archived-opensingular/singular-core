@@ -19,14 +19,15 @@
 package org.opensingular.form.persistence.entity;
 
 
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.opensingular.lib.support.persistence.util.Constants;
-
 import javax.persistence.EmbeddedId;
+import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
+
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.util.Constants;
 
 @MappedSuperclass
 @Table(name = "TB_ANEXO_FORMULARIO", schema = Constants.SCHEMA)
@@ -36,11 +37,11 @@ public class AbstractFormAttachmentEntity<T extends AttachmentEntity> extends Ba
     private FormAttachmentEntityId cod;
 
     @ManyToOne
-    @JoinColumn(name = "CO_VERSAO_FORMULARIO", insertable = false, updatable = false)
+    @JoinColumn(name = "CO_VERSAO_FORMULARIO", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_ANX_FORM_VERSAO_FORMULARIO"))
     private FormVersionEntity formVersionEntity;
 
     @ManyToOne
-    @JoinColumn(name = "CO_ARQUIVO", insertable = false, updatable = false)
+    @JoinColumn(name = "CO_ARQUIVO", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_ANX_FORM_CO_ARQUIVO"))
     private T attachmentEntity;
 
     public FormVersionEntity getFormVersionEntity() {

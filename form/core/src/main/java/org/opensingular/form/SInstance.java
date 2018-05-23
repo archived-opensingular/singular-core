@@ -391,6 +391,10 @@ public abstract class SInstance implements SAttributeEnabled {
      */
     public abstract boolean isEmptyOfData();
 
+    public boolean isNotEmptyOfData(){
+        return  !isEmptyOfData();
+    }
+
     public Object getValueWithDefault() {
         return getValue((Class<?>) null);
     }
@@ -467,6 +471,14 @@ public abstract class SInstance implements SAttributeEnabled {
         SInstance instance = getField(type.getNameSimple());
         type.checkIfIsInstanceOf(instance);
         return (II) instance;
+    }
+    
+    /**
+     * Retorna o campo cujo o nome seja igual ao do tipo informado e verifica se o campo encontrado é do mesmo tipo
+     * informado. Caso não seja do mesmo tipo, dispara uma exception.
+     */
+    public <II extends SISimple<T>, T extends Serializable> T getFieldValue(STypeSimple<II, T> type) {
+        return getField(type).getValue();
     }
 
     @Nonnull
@@ -644,6 +656,15 @@ public abstract class SInstance implements SAttributeEnabled {
     @Nonnull
     public <A extends SInstance & ICompositeInstance> Optional<A> findAncestor(SType<A> ancestorType) {
         return SInstances.findAncestor(this, ancestorType);
+    }
+    
+    /**
+     * Finds the first descendant of the specified type.
+     * @param targetType tipo do descendente
+     * @return the first descendant of type {@code targetType}
+     */
+    public <A extends SInstance> Optional<A> find(@Nonnull SType<A> targetType) {
+        return SInstances.findDescendant(this, targetType);
     }
 
     /**
@@ -972,7 +993,14 @@ public abstract class SInstance implements SAttributeEnabled {
         return Collections.emptyList();
     }
 
+    /**
+     * Replaced by {@link #root()}
+     */
+    @Deprecated
     public SInstance getDocumentRoot() {
+        return root();
+    }
+    public SInstance root() {
         return document.getRoot();
     }
 
@@ -986,5 +1014,16 @@ public abstract class SInstance implements SAttributeEnabled {
     public boolean isDescendantOf(Class<? extends SType<?>> candidate) {
         List<SInstance> ascendants = SInstances.listAscendants(this);
         return ascendants.stream().anyMatch(parent -> parent.getType().getClass().equals(candidate));
+    }
+
+    /**
+     * Check if the candidate is the same as the current object by checking the reference
+     */
+    public boolean isSame(SInstance candidate){
+        return this == candidate; //NOSONAR
+    }
+
+    public boolean isSameOrDescendantOf(SInstance candidate) {
+        return isSame(candidate) || isDescendantOf(candidate);
     }
 }

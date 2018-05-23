@@ -16,23 +16,26 @@
 
 package org.opensingular.flow.persistence.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.Index;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
 import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
  * The persistent class for the version of a flow definition database table.
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
-@GenericGenerator(name = AbstractFlowVersionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
-@Table(name = "TB_VERSAO_PROCESSO", schema = Constants.SCHEMA)
-public class FlowVersionEntity extends AbstractFlowVersionEntity<FlowDefinitionEntity, TaskVersionEntity> {
+@SequenceGenerator(name = AbstractFlowVersionEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_PROCESSO", schema = Constants.SCHEMA)
+@Table(name = "TB_VERSAO_PROCESSO", schema = Constants.SCHEMA,
+        indexes = {
+                @Index(columnList = "CO_DEFINICAO_PROCESSO ASC, DT_VERSAO ASC", name = "IX_PROCESSO")
+        })
+public class FlowVersionEntity extends AbstractFlowVersionEntity<FlowDefinitionEntity, TaskVersionEntity, FlowInstanceEntity> {
     private static final long serialVersionUID = 1L;
 
 }

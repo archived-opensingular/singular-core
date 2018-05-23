@@ -25,7 +25,7 @@ public class SingularReportPanelTest extends SingularSimpleWicketTestCase {
 
     @Test
     public void testRendering() throws Exception {
-        getTester().startPage(new MockSingularReportPage(id -> new BlankSingularReportPanel(id, () -> null)));
+        getTester().startPage(new MockSingularReportPage(id -> new BlankSingularReportPanel(id, null)));
         getTester().assertRenderedPage(MockSingularReportPage.class);
     }
 }

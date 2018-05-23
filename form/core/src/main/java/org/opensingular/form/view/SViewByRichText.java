@@ -17,4 +17,15 @@
 package org.opensingular.form.view;
 
 public class SViewByRichText extends SView {
+
+    //Be careful, this will broke the print A4 layout.
+    private boolean disablePageLayout = false;
+
+    public boolean isDisablePageLayout() {
+        return disablePageLayout;
+    }
+
+    public void setDisablePageLayout(boolean disablePageLayout) {
+        this.disablePageLayout = disablePageLayout;
+    }
 }

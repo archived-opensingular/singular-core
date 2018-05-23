@@ -16,19 +16,22 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import org.opensingular.lib.support.persistence.util.Constants;
-
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Check;
+import org.opensingular.lib.support.persistence.util.Constants;
 
 /**
  * The persistent class for the flow permission database table.
  */
 @Entity
 @Table(name = "RL_PERMISSAO_PROCESSO", schema = Constants.SCHEMA)
+@Check(constraints ="TP_PERMISSAO IN ('A', 'I', 'C', 'R')")
 public class FlowRight {
     private static final long serialVersionUID = 1L;
 
@@ -37,7 +40,7 @@ public class FlowRight {
 
     //bi-directional many-to-one association to FlowDefinition
     @ManyToOne
-    @JoinColumn(name = "CO_DEFINICAO_PROCESSO", insertable = false, updatable = false)
+    @JoinColumn(name = "CO_DEFINICAO_PROCESSO", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_PERM_PROCES_DEFI_PROCES"))
     private FlowDefinitionEntity flowDefinition;
 
     public FlowRight() {

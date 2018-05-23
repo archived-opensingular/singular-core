@@ -628,7 +628,7 @@ public class ExecutionHistoryForRendering {
         public int compareTo(ExecutionEntry o) {
             int cmp = start.compareTo(o.start);
             if (cmp == 0) {
-                cmp = (sequential < o.sequential ? -1 : (sequential == o.sequential ? 0 : 1));
+                cmp = (Integer.compare(sequential, o.sequential));
             }
             return cmp;
         }
