@@ -67,7 +67,7 @@ public class SingularReportPanel extends Panel {
     public SingularReportPanel(String id, SingularReport report) {
         super(id);
         this.singularReportSupplier = report;
-        this.reportButtonExtensions = SingularExtensionUtil.get().findExtensionsByClass(ReportButtonExtension.class);
+        this.reportButtonExtensions = SingularExtensionUtil.get().findExtensions(ReportButtonExtension.class);
     }
 
     @Override
