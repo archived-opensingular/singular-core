@@ -165,7 +165,7 @@ public interface IModelsMixin extends Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    default <T extends Serializable> IModel<T> wrapValue(Serializable valueOrModel) {
+    default <T extends Serializable> IModel<T> wrapValue(T valueOrModel) {
         return (valueOrModel instanceof IModel) ? (IModel<T>) valueOrModel : this.ofValue((T) valueOrModel);
     }
 }

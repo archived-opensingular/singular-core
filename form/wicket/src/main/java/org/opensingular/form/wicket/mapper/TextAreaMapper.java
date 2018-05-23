@@ -42,13 +42,13 @@ public class TextAreaMapper extends StringMapper {
         final SView view = ctx.getView();
 
         if (view instanceof SViewTextArea) {
-
             SViewTextArea mTextAreaView = (SViewTextArea) view;
+            Integer lines = mTextAreaView.getLines();
 
             final SInstance mi = model.getObject();
             FormComponent<?> textArea = new TextArea<>(mi.getName(), new SInstanceValueModel<>(model));
             textArea.setLabel(labelModel);
-            formGroup.appendTextarea(textArea, mTextAreaView.getLines());
+            formGroup.appendTextarea(textArea, lines);
 
             Optional<Integer> maxSize = Optional.ofNullable(mi.getAttributeValue(SPackageBasic.ATR_MAX_LENGTH));
 

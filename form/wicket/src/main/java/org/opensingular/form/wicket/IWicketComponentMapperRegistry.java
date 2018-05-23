@@ -131,6 +131,7 @@ public class IWicketComponentMapperRegistry
         add(STypeString.class,     SViewTextArea.class,                   TextAreaMapper::new);
         add(STypeString.class,     SViewAutoComplete.class,               AutocompleteMapper::new);
         add(STypeDate.class,                                              DateMapper::new);
+        add(STypeDate.class,       SViewDate.class,                       DateMapper::new);
         add(STypeYearMonth.class,                                         YearMonthMapper::new);
         add(STypeDecimal.class,                                           DecimalMapper::new);
         add(STypeMonetary.class,                                          MoneyMapper::new);

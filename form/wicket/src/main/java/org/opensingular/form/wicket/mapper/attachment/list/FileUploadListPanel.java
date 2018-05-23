@@ -53,6 +53,7 @@ import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManagerFa
 import org.opensingular.form.wicket.mapper.attachment.upload.UploadResponseWriter;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet;
+import org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.AttachmentKeyStrategy;
 import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppender;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
@@ -66,15 +67,10 @@ import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.apache.commons.lang3.ObjectUtils.*;
-import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet.*;
+import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.AttachmentKeyStrategy.*;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
@@ -256,7 +252,7 @@ public class FileUploadListPanel extends Panel implements Loggable {
     }
 
     private String uploadUrl() {
-        return FileUploadServlet.getUploadUrl(getServletRequest(), uploadId);
+        return AttachmentKeyStrategy.getUploadUrl(getServletRequest(), uploadId);
     }
 
     private HttpServletRequest getServletRequest() {

@@ -18,12 +18,10 @@ package org.opensingular.form.view;
 
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.enums.ModalSize;
-import org.opensingular.form.enums.ModalViewMode;
 
 /**
  * The type S view search modal.
  */
-@SuppressWarnings("serial")
 public class SViewSearchModal extends SView implements ConfigurableModal<SViewSearchModal> {
 
     private String title = StringUtils.EMPTY;

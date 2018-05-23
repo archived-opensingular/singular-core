@@ -23,7 +23,6 @@ import org.opensingular.form.STypeSimple;
 /**
  * View para os tipos: {@link STypeSimple}, {@link STypeComposite}
  */
-@SuppressWarnings("serial")
 public class SViewSelectionBySelect extends SView {
 
     @Override

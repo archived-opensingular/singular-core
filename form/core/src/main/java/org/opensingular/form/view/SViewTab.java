@@ -20,7 +20,6 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.lib.commons.lambda.IPredicate;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -160,7 +159,7 @@ public class SViewTab extends SView {
      * Each tab defined on {@link SViewTab} is represented by this class.
      *
      */
-    public final static class STab implements Serializable {
+    public final static class STab {
 
         private final SViewTab tabView;
         private final String   id;

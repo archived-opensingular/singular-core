@@ -96,7 +96,12 @@ public class PackageBuilder {
 
     @Nonnull
     public <I extends SInstance, T extends SType<I>> STypeList<T, I> createListTypeOf(@Nonnull String simpleNameNewType, @Nonnull T elementsType) {
-        return sPackage.createTypeListOf(simpleNameNewType, elementsType);
+        return sPackage.createTypeListOf(simpleNameNewType, null, elementsType);
+    }
+
+    @Nonnull
+    public <I extends SInstance, T extends SType<I>> STypeList<T, I> createListTypeOf(@Nonnull String simpleNameNewType, @Nonnull String elementSimpleName, @Nonnull T elementsType) {
+        return sPackage.createTypeListOf(simpleNameNewType, elementSimpleName, elementsType);
     }
 
     @SuppressWarnings("rawtypes")

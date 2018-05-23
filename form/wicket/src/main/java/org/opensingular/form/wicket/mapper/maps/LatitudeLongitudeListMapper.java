@@ -28,6 +28,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.type.util.STypeLatitudeLongitudeList;
 import org.opensingular.form.view.FileEventListener;
+import org.opensingular.form.view.SViewCurrentLocation;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.TableListMapper;
 import org.opensingular.form.wicket.mapper.attachment.single.FileUploadPanel;
@@ -53,13 +54,13 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
         LatLongMarkupIds ids = new LatLongMarkupIds();
 
         zoomCtx.getContainer().visitChildren((TextField.class), (object, visit) -> {
-            String nameSimple = ((SInstanceValueModel) object.getDefaultModel()).getSInstance().getType().getNameSimple();
+            String nameSimple = ((SInstanceValueModel<?>) object.getDefaultModel()).getSInstance().getType().getNameSimple();
             if (nameSimple.equals(STypeLatitudeLongitudeList.FIELD_ZOOM)) {
                 ids.zoomId = object.getMarkupId();
             }
         });
 
-        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, ctx.getModel(), ctx.getView(),
+        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, ctx.getModel(), ctx.getViewSupplier(SViewCurrentLocation.class),
                 ctx.getViewMode().isVisualization(), true);
         BSGrid gridGoogleMaps = ctx.getContainer().newGrid();
         gridGoogleMaps.newFormGroup().appendDiv(googleMapsPanel);
@@ -73,11 +74,11 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
         fileCtx.build();
 
         WicketUtils.findFirstChild(fileCtx.getContainer(), FileUploadPanel.class)
-                .ifPresent(panel -> panel.registerFileRemovedListener((FileEventListener) attachment -> {
-                    points.getObject().clearInstance();
-                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                    target.add(gridGoogleMaps);
-                }));
+            .ifPresent(panel -> panel.registerFileRemovedListener((FileEventListener) attachment -> {
+                points.getObject().clearInstance();
+                AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+                target.add(gridGoogleMaps);
+            }));
 
 
         AbstractDefaultAjaxBehavior addPoint = createBehaviorAddPoint(points, pointsCtx.getContainer());
@@ -85,17 +86,16 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
         googleMapsPanel.add($b.onConfigure(c -> googleMapsPanel.enableMultipleMarkers(addPoint.getCallbackUrl().toString(), pointsCtx.getContainer().getMarkupId())));
 
         WicketUtils.findFirstChild(pointsCtx.getContainer(), AddButton.class)
-                .ifPresent(button -> button.add(new AjaxEventBehavior("click") {
-                    @Override
-                    protected void onEvent(AjaxRequestTarget target) {
-                        target.add(googleMapsPanel);
-                    }
-                }));
+            .ifPresent(button -> button.add(new AjaxEventBehavior("click") {
+                @Override
+                protected void onEvent(AjaxRequestTarget target) {
+                    target.add(googleMapsPanel);
+                }
+            }));
 
 
         ConfirmationModal confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
         confirmationModal.registerListener(googleMapsPanel::updateJS);
-
 
     }
 
@@ -103,7 +103,7 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
         return new AbstractDefaultAjaxBehavior() {
             @Override
             protected void respond(AjaxRequestTarget target) {
-                SIList list = (SIList) points.getObject();
+                SIList<?> list = (SIList<?>) points.getObject();
                 SIComposite sInstance = (SIComposite) list.addNew();
                 StringValue lat = RequestCycle.get().getRequest().getRequestParameters().getParameterValue("lat");
                 StringValue lng = RequestCycle.get().getRequest().getRequestParameters().getParameterValue("lng");
