@@ -104,7 +104,7 @@ public interface IBehaviorsMixin extends Serializable {
         return styleAppender(styles, $m.ofValue(Boolean.TRUE));
     }
     default AttributeAppender styleAppender(Map<String, String> styles, IModel<Boolean> enabledModel) {
-        return attrAppender("style", $m.ofValue(new HashMap<>(styles)), ";", enabledModel);
+    	return styleAppender($m.ofValue(new HashMap<>(styles)), enabledModel);
     }
 
     default AttributeAppender styleAppender(String name, Serializable valueOrModel, IModel<Boolean> enabledModel) {

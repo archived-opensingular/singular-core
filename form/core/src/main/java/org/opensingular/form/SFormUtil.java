@@ -221,10 +221,13 @@ public final class SFormUtil {
         final Pattern abbreviationPrefix = Pattern.compile("([A-Z]+)([A-Z][a-z])");
         final ImmutableSet<String> upperCaseSpecialCases = ImmutableSet.of("id", "url");
 
-        return StringUtils.capitalize(Stream.of(simpleName).map(s -> lowerUpper.matcher(s).replaceAll(
-                "$1-$2")).map(s -> abbreviationPrefix.matcher(s).replaceAll("$1-$2")).flatMap(s -> Stream.of(s.split(
-                "[-_]+"))).map(s -> (StringUtils.isAllUpperCase(s) ? s : StringUtils.uncapitalize(s))).map(
-                s -> upperCaseSpecialCases.contains(s) ? StringUtils.capitalize(s) : s).collect(joining(" ")));
+        return StringUtils.capitalize(Stream.of(simpleName)
+        		.map(s -> lowerUpper.matcher(s).replaceAll("$1-$2"))
+        		.map(s -> abbreviationPrefix.matcher(s).replaceAll("$1-$2"))
+        		.flatMap(s -> Stream.<String>of(s.split("[-_]+")))
+        		.map(s -> (StringUtils.isAllUpperCase(s)) ? s : StringUtils.uncapitalize(s))
+        		.map(s -> upperCaseSpecialCases.contains(s) ? StringUtils.capitalize(s) : s)
+        		.collect(joining(" ")));
     }
 
     public static String generateUserFriendlyPath(SInstance instance) {
