@@ -19,6 +19,8 @@
 package org.opensingular.form.report;
 
 import org.junit.Test;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SType;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
 import org.opensingular.form.wicket.helpers.SingularWicketTestCase;
 import org.opensingular.lib.commons.table.ColumnType;
@@ -26,6 +28,9 @@ import org.opensingular.lib.commons.table.TableTool;
 import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.wicket.util.menu.MetronicMenuItem;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
+
+import java.io.Serializable;
+import java.util.Optional;
 
 public class ReportPageTest extends SingularWicketTestCase {
 
@@ -46,9 +51,11 @@ public class ReportPageTest extends SingularWicketTestCase {
 
     private static ReportPage createPage() {
         SingularFormReport report = new SingularFormReport() {
+
+
             @Override
-            public Class getFilterType() {
-                return null;
+            public Optional<SType<?>> getFilterType(PackageBuilder packageBuilder) {
+                return Optional.empty();
             }
 
             @Override
@@ -57,7 +64,7 @@ public class ReportPageTest extends SingularWicketTestCase {
             }
 
             @Override
-            public ViewGenerator makeViewGenerator(FormReportMetadata reportMetadata) {
+            public ViewGenerator getViewGenerator() {
                 TableTool tableTool = new TableTool();
                 tableTool.addColumn(ColumnType.STRING, "nome");
                 tableTool.createSimpleTablePopulator()
@@ -65,11 +72,42 @@ public class ReportPageTest extends SingularWicketTestCase {
                         .setValue(0, "Danilo");
                 return tableTool;
             }
+
+            @Override
+            public void loadReportInstance(String XML) {
+
+            }
+
+            @Override
+            public String dumpReportInstanceXML() {
+                return null;
+            }
+
+
+            @Override
+            public void setParam(String key, Serializable val) {
+
+            }
+
+            @Override
+            public Serializable getParam(String key) {
+                return null;
+            }
+
+            @Override
+            public Object getFilterValue() {
+                return null;
+            }
+
+            @Override
+            public void setFilterValue(Object value) {
+
+            }
         };
         return new ReportPage(null) {
             @Override
             protected void configureMenu(ReportMenuBuilder menu) {
-                menu.addItem(DefaultIcons.PENCIL, "X1", () -> report);
+                menu.addItem(DefaultIcons.PENCIL, "X1", report);
             }
         };
     }

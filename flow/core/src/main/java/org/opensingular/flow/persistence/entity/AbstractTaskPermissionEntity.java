@@ -18,18 +18,19 @@ package org.opensingular.flow.persistence.entity;
 
 import javax.persistence.Column;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
-
 import org.opensingular.flow.core.entity.IEntityTaskDefinition;
 import org.opensingular.flow.core.entity.IEntityTaskPermission;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 /**
  * The base persistent class for the RL_PERMISSAO_TAREFA database table.
@@ -49,11 +50,11 @@ public abstract class AbstractTaskPermissionEntity<TASK_DEF extends IEntityTaskD
 
     @Id
     @Column(name = "CO_PERMISSAO_TAREFA")
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Integer cod;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_DEFINICAO_TAREFA", nullable = false)
+    @JoinColumn(name = "CO_DEFINICAO_TAREFA", nullable = false, foreignKey = @ForeignKey(name = "FK_PERM_TAR_DEFINICAO_TAREFA"))
     private TASK_DEF taskDefinition;
 
     @Column(name = "CO_PERMISSAO", length = 500, nullable = false)

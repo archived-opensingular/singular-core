@@ -16,18 +16,17 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
-
 import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.opensingular.lib.support.persistence.util.Constants;
 
 /**
  * The persistent class for the TB_INSTANCIA_TAREFA database table.
  */
 @Entity
-@GenericGenerator(name = AbstractTaskInstanceEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
+@SequenceGenerator(name = AbstractTaskInstanceEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_INSTANCIA_TAREFA", schema = Constants.SCHEMA)
 @Table(name = "TB_INSTANCIA_TAREFA", schema = Constants.SCHEMA)
 public class TaskInstanceEntity extends AbstractTaskInstanceEntity<Actor, FlowInstanceEntity, TaskVersionEntity, TaskTransitionVersionEntity, ExecutionVariableEntity, TaskInstanceHistoryEntity> {
     private static final long serialVersionUID = 1L;

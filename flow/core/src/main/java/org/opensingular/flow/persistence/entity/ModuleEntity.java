@@ -17,6 +17,7 @@
 package org.opensingular.flow.persistence.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -29,7 +30,11 @@ import org.opensingular.lib.support.persistence.util.Constants;
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
-@Table(name = "TB_MODULO", schema = Constants.SCHEMA)
+@Table(name = "TB_MODULO", schema = Constants.SCHEMA,
+        indexes = {
+                @Index(columnList = "NO_MODULO ASC", name = "IX_GRUPO_NOME"),
+                @Index(columnList = "URL_CONEXAO ASC", name = "IX_GRUPO_CONEXAO")
+        })
 public class ModuleEntity extends AbstractModuleEntity {
 
     private static final long serialVersionUID = 1L;

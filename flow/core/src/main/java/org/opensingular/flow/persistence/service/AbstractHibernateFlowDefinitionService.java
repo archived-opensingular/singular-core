@@ -101,7 +101,7 @@ public abstract class AbstractHibernateFlowDefinitionService<CATEGORY extends IE
     private TransitionType getType(STransition transition) {
         if (transition.getPredicate() != null) {
             return TransitionType.A;
-        } else if (transition.getDisplayEventType() != null) {
+        } else if (transition.getDisplayInfo().getDisplayEventType() != null) {
             return TransitionType.E;
         }
         return TransitionType.H;

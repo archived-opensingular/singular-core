@@ -16,25 +16,26 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
-
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.util.List;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Check;
+import org.opensingular.lib.support.persistence.util.Constants;
 
 /**
  * The persistent class for the TB_DEFINICAO_TAREFA database table.
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
-@GenericGenerator(name = AbstractTaskDefinitionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
+@SequenceGenerator(name = AbstractTaskDefinitionEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_DEFINICAO_TAREFA", schema = Constants.SCHEMA)
 @Table(name = "TB_DEFINICAO_TAREFA", schema = Constants.SCHEMA)
+@Check(constraints ="TP_ESTRATEGIA_SEGURANCA IS NULL OR (TP_ESTRATEGIA_SEGURANCA IN ('D','E'))")
 public class TaskDefinitionEntity extends AbstractTaskDefinitionEntity<FlowDefinitionEntity, TaskVersionEntity, RoleTaskEntity> {
 
     private static final long serialVersionUID = 1L;

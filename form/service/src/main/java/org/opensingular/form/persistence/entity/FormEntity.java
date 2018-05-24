@@ -15,24 +15,28 @@
  */
 package org.opensingular.form.persistence.entity;
 
-import javax.persistence.*;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.*;
-
-import org.hibernate.annotations.Cache;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
 
 /**
  * The persistent class for the TB_FORMULARIO database table.
  */
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
-@GenericGenerator(name = FormEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
+@SequenceGenerator(name = FormEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_FORMULARIO", schema = Constants.SCHEMA)
 @Table(name = "TB_FORMULARIO", schema = Constants.SCHEMA)
 public class FormEntity extends BaseEntity<Long> {
 
@@ -40,19 +44,15 @@ public class FormEntity extends BaseEntity<Long> {
 
     @Id
     @Column(name = "CO_FORMULARIO")
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Long cod;
 
     @ManyToOne
-    @JoinColumn(name = "CO_TIPO_FORMULARIO")
+    @JoinColumn(name = "CO_TIPO_FORMULARIO", foreignKey = @ForeignKey(name = "FK_FORMULARIO_TIPO_FORMULARIO"), nullable = false)
     private FormTypeEntity formType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_COLECAO")
-    private CollectionEntity collection;
-
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "CO_VERSAO_ATUAL")
+    @JoinColumn(name = "CO_VERSAO_ATUAL", foreignKey = @ForeignKey(name = "FK_FORMULARIO_VERSAO_ATUAL"))
     private FormVersionEntity currentFormVersionEntity;
 
     //NÃO MAPEAR A LISTA DE VERSÕES NESSA ENTIDADE.
@@ -72,14 +72,6 @@ public class FormEntity extends BaseEntity<Long> {
 
     public void setFormType(FormTypeEntity formType) {
         this.formType = formType;
-    }
-
-    public CollectionEntity getCollection() {
-        return collection;
-    }
-
-    public void setCollection(CollectionEntity collection) {
-        this.collection = collection;
     }
 
     public FormVersionEntity getCurrentFormVersionEntity() {

@@ -17,22 +17,25 @@ package org.opensingular.lib.support.persistence.util;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.opensingular.lib.commons.base.SingularProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.opensingular.lib.commons.base.SingularProperties.CUSTOM_SCHEMA_NAME;
-import static org.opensingular.lib.commons.base.SingularProperties.SINGULAR_DEV_MODE;
-import static org.opensingular.lib.commons.base.SingularProperties.USE_EMBEDDED_DATABASE;
+import static org.opensingular.lib.commons.base.SingularProperties.*;
 
 /**
  * Utility class for sql processing.
  */
 public class SqlUtil {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SqlUtil.class);
+
     private static final List<String> CRUD_OPERATIONS = Arrays.asList("SELECT", "UPDATE", "DELETE", "INSERT");
+
 
     private SqlUtil() {
     }
@@ -47,7 +50,6 @@ public class SqlUtil {
     @Nonnull
     public static String replaceInSQL(@Nonnull String sql, @Nonnull String current, @Nonnull String replacement) {
         return sql.replaceAll(current, replacement);
-
     }
 
 
@@ -67,10 +69,16 @@ public class SqlUtil {
     @Nonnull
     public static String replaceSingularSchemaName(@Nonnull String sql) {
         Optional<String> customSchema = SingularProperties.getOpt(CUSTOM_SCHEMA_NAME);
-        if (customSchema.isPresent()) {
-            return SqlUtil.replaceInSQL(sql, Constants.SCHEMA, customSchema.get());
-        }
-        return sql;
+        return customSchema.map(s -> SqlUtil.replaceSchemaName(sql, Constants.SCHEMA, s)).orElse(sql);
+    }
+
+    /**
+     * Replaces default singular schema name using the configured replacement
+     */
+    @Nonnull
+    public static String replaceSchemaName(@Nonnull String sql, @Nonnull String defaultSchema, @Nonnull String schemaReplacement) {
+        LOGGER.trace("Running database schema replacement from  {} to {}", defaultSchema, schemaReplacement);
+        return SqlUtil.replaceInSQL(sql, defaultSchema, schemaReplacement);
     }
 
     public static boolean hasCompleteCrud(List<String> vals) {
@@ -86,7 +94,9 @@ public class SqlUtil {
         return true;
     }
 
-    /** Verifies if should use embedded database (usually while running a test or in development mode). */
+    /**
+     * Verifies if should use embedded database (usually while running a test or in development mode).
+     */
     public static boolean useEmbeddedDatabase() {
         //In the future, this code should be move to Embedded Database helper class
         if (SingularProperties.getOpt(USE_EMBEDDED_DATABASE).isPresent()) {
@@ -95,5 +105,15 @@ public class SqlUtil {
             return false;
         }
         return true;
+    }
+
+    /**
+     * If true, the database will be recreated. The most common usage is to
+     * configure hibernate to create-drop tables and reinsert initial data.
+     *
+     * @return
+     */
+    public static boolean isDropCreateDatabase() {
+        return SingularProperties.get().isTrue(SingularProperties.RECREATE_DATABASE);
     }
 }

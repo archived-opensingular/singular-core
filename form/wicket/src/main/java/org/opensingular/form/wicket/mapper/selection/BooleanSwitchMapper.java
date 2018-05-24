@@ -58,7 +58,6 @@ public class BooleanSwitchMapper implements IWicketComponentMapper, ISInstanceAc
     @SuppressWarnings("unchecked")
     public void buildView(WicketBuildContext ctx) {
 
-        final SViewBooleanSwitch<Boolean> view = (SViewBooleanSwitch<Boolean>) ctx.getView();
         final IModel<? extends SInstance> model = ctx.getModel();
         final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
 
@@ -80,10 +79,11 @@ public class BooleanSwitchMapper implements IWicketComponentMapper, ISInstanceAc
             }
         });
 
-        Optional<String> onColor = view.getColor(Boolean.TRUE);
-        Optional<String> onText = view.getText(Boolean.TRUE);
-        Optional<String> offColor = view.getColor(Boolean.FALSE);
-        Optional<String> offText = view.getText(Boolean.FALSE);
+        final SViewBooleanSwitch<Boolean> view = (SViewBooleanSwitch<Boolean>) ctx.getView();
+        final Optional<String> onColor = view.getColor(Boolean.TRUE);
+        final Optional<String> onText = view.getText(Boolean.TRUE);
+        final Optional<String> offColor = view.getColor(Boolean.FALSE);
+        final Optional<String> offText = view.getText(Boolean.FALSE);
 
         formGroup
             .appendLabel(label)

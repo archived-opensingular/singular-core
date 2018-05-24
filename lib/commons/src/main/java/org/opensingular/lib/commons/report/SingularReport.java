@@ -26,14 +26,13 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
-
 /**
  * Singular Report
+ * It Represents both an report definition and a report instance.
  *
- * @param <R> the report metadata type
- * @param <T> the filter type
+ * @param <F> filter parametric type
  */
-public interface SingularReport<R extends ReportMetadata<T>, T extends ReportFilter> extends Serializable {
+public interface SingularReport<F> extends Serializable {
 
     String getReportName();
 
@@ -42,7 +41,7 @@ public interface SingularReport<R extends ReportMetadata<T>, T extends ReportFil
      *
      * @return the viewgenerator
      */
-    ViewGenerator makeViewGenerator(R reportMetadata);
+    ViewGenerator getViewGenerator();
 
     /**
      * Informa se o relatorio deve ser carregado automaticamente ou somente apos
@@ -63,11 +62,51 @@ public interface SingularReport<R extends ReportMetadata<T>, T extends ReportFil
         return Arrays.asList(ViewOutputFormat.HTML, ViewOutputFormat.EXCEL, ViewOutputFormat.HTML);
     }
 
-    default void onFilterInit(T filter){
-
-    }
-
-    default String getIdentity(){
+    default String getIdentity() {
         return SingularUtil.convertToJavaIdentity(getReportName(), true);
     }
+
+
+    /**
+     * Loads the XML of an Report Instance
+     *
+     * @param XML the content
+     */
+    void loadReportInstance(String XML);
+
+    /**
+     * Extract the XML definition of this Report Instance
+     *
+     * @return the content
+     */
+    String dumpReportInstanceXML();
+
+    /**
+     * Set parameters
+     *
+     * @param key the param key
+     * @param val the param value
+     */
+    void setParam(String key, Serializable val);
+
+    /**
+     * Get the value of a parameter
+     *
+     * @param key the param key
+     * @return the value
+     */
+    Serializable getParam(String key);
+
+    /**
+     *
+     * @return
+     *  current instance object value
+     */
+    F getFilterValue();
+
+    /**
+     * uptates the internal state of the filter value
+     * @param value
+     */
+    void setFilterValue(F value);
 }
