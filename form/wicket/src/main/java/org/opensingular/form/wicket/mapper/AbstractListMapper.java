@@ -88,7 +88,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
             .newTemplateTag(tp -> ""
                 + "<button"
                 + " wicket:id='_inserir_'"
-                + " class='btn btn-success btn-sm'"
+                + " class='btn btn-sm'"
                 + " style='" + MapperCommons.BUTTON_STYLE + ";margin-top:3px;'><i style='" + MapperCommons.ICON_STYLE + "' class='" + DefaultIcons.PLUS + "'></i>"
                 + "</button>")
             .add(btn);

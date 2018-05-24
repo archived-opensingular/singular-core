@@ -84,7 +84,9 @@ $bg-color:                                                         		#e8e9f0; //
 $header-bg-color:														#FFFFFF; // altera a cor do fundo do cabeçalho
 $header-top-shadow:                                                     0px 1px 10px 0px rgba(50, 50, 50, 0.2);
 $header-mobile-menu-border:                                             lighten($header-bg-color, 3%);
-$header-height:             				            				70px  !default;
+$header-height:             				            				70px; // header height on table and desktop view. default: 42px
+$header-height-xs:             											($header-height * 2); // header height on mobile view
+$header-height-mobile:                                                  46px;
 
 // Header search
 $header-search-bg-color:                                        		$header-bg-color;
@@ -195,9 +197,6 @@ $footer-fixed-bg-color: 												$bg-color; // altera a cor do fundo do rodap
 //Define layout element width and height.
 
 // Header
-$header-height:             				            				70px; // header height on table and desktop view. default: 42px
-$header-height-xs:             											($header-height * 2); // header height on mobile view
-$header-height-mobile:                                                  46px;
 
 $header-logo-height:                                    				17px;
 $header-menu-toggler-width:                             				20px;
