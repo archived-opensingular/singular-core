@@ -26,23 +26,24 @@ import java.util.stream.Collectors;
 
 public class JQuery {
 
-    private JQuery() {}
+    private JQuery() {
+    }
 
-//    public static StringBuilder $(Component component) {
-//        if (component instanceof Page) {
-//            return new StringBuilder("$(document)");
-//        }
-//        return $("#" + component.getMarkupId());
-//    }
+    //    public static StringBuilder $(Component component) {
+    //        if (component instanceof Page) {
+    //            return new StringBuilder("$(document)");
+    //        }
+    //        return $("#" + component.getMarkupId());
+    //    }
 
     public static StringBuilder convertEvent(Component component, String originalEvent, String newEvent) {
         return $(component).append("" + ".on('").append(originalEvent).append("', function(){")
-                .append(" $(this).trigger('").append(newEvent).append("');").append("});");
+            .append(" $(this).trigger('").append(newEvent).append("');").append("});");
     }
 
     public static CharSequence redirectEvent(
-                                             Component originalComponent, String originalEvent,
-                                             Component newComponent, String newEvent) {
+            Component originalComponent, String originalEvent,
+            Component newComponent, String newEvent) {
 
         return on(originalComponent, originalEvent, $(newComponent) + ".trigger('" + newEvent + "');"
             + "console.log('redirecting event " + originalEvent + " to " + newEvent + "');");
@@ -78,5 +79,13 @@ public class JQuery {
             ? scriptString
             : "function(e){" + scriptString + ";}";
         return $(component) + ".on('" + event + "'," + function + ");";
+    }
+
+    public static String onWindowLoad(CharSequence script) {
+        final String scriptString = script.toString().trim();
+        final String function = (scriptString.startsWith("function"))
+            ? scriptString
+            : "function(e){" + scriptString + ";}";
+        return "$(window).on('load'," + function + ");";
     }
 }

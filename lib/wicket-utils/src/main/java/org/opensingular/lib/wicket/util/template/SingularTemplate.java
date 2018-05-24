@@ -72,6 +72,8 @@ public abstract class SingularTemplate extends WebPage {
                 skinnableResource("/global/plugins/jquery-file-upload/css/jquery.fileupload.css"),
                 skinnableResource("/global/plugins/bootstrap-toastr/toastr.min.css"),
                 skinnableResource("/global/plugins/typeahead/typeahead.css"),
+                skinnableResource("/plugins/photoswipe/photoswipe.css"),
+                skinnableResource("/plugins/photoswipe/default-skin/default-skin.css"),
                 skinnableResource("/layout4/css/custom.css"),
                 skinnableResource("/css/custom.css"),
                 skinnableResource("/layout4/css/themes/default.css"),
@@ -124,8 +126,12 @@ public abstract class SingularTemplate extends WebPage {
                         "/singular-static/resources/singular/global/plugins/jstree/dist/jstree.min.js",
                         "/singular-static/resources/singular/plugins/stringjs/string.min.js",
                         "/singular-static/resources/singular/plugins/jquery-maskmoney/dist/jquery.maskMoney.min.js",
-                        "/singular-static/resources/singular/plugins/ckeditor/ckeditor.js"
-                ).map(JavaScriptHeaderItem::forUrl)).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
+                        "/singular-static/resources/singular/plugins/ckeditor/ckeditor.js",
+                        "/singular-static/resources/singular/plugins/photoswipe/photoswipe.min.js",
+                        "/singular-static/resources/singular/plugins/photoswipe/photoswipe-ui-default.min.js",
+                        "/singular-static/resources/singular/plugins/photoswipe/jquery-photoswipe.js"
+                ).map(JavaScriptHeaderItem::forUrl)
+            ).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
     }
 
     public final SkinOptions skinOptions = new SkinOptions();
