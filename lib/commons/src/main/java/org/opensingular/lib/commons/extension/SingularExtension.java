@@ -34,5 +34,5 @@ public interface SingularExtension {
      */
     public default int getExtensionPriority() {
         return 0;
-    }
+    } //NOSONAR
 }
