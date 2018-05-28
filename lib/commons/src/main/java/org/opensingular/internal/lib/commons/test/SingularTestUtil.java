@@ -115,7 +115,7 @@ public final class SingularTestUtil {
         } catch (Throwable e) { //NOSONAR
             if (findExpectedException(e, expectedException, expectedExceptionMsgPart)) {
                 return;
-            } else if (e instanceof Error) {
+            } else if (e instanceof Error) { //NOSONAR
                 throw (Error) e;
             } else {
                 String msg = "Era esperado '" + expectedException.getSimpleName() + "'";
@@ -176,8 +176,8 @@ public final class SingularTestUtil {
      * @param fileGenerator The code that will called to fill the temp file before the file be show
      * @see {@link TempFileProvider#create(Object, IConsumerEx)}
      */
-    public static <EX extends Exception> void showFileOnDesktopForUserAndWaitOpening(@Nonnull Object requester,
-            @Nonnull String fileExtension, @Nonnull IConsumerEx<OutputStream, EX> fileGenerator) {
+    public static <E extends Exception> void showFileOnDesktopForUserAndWaitOpening(@Nonnull Object requester,
+            @Nonnull String fileExtension, @Nonnull IConsumerEx<OutputStream, E> fileGenerator) {
         showFileOnDesktopForUserAndWaitOpening(requester, fileExtension, fileGenerator,
                 DEFAULT_WAIT_TIME_MILLI_AFTER_SHOW_ON_DESKTOP);
     }
@@ -195,8 +195,8 @@ public final class SingularTestUtil {
      * @param waitTimeMilliAfterCall Indica o tempo de espera em milisegundo. Se for negativo, não espera.
      * @see {@link TempFileProvider#create(Object, IConsumerEx)}
      */
-    public static <EX extends Exception> void showFileOnDesktopForUserAndWaitOpening(@Nonnull Object requester,
-            @Nonnull String fileExtension, @Nonnull IConsumerEx<OutputStream, EX> fileGenerator,
+    public static <E extends Exception> void showFileOnDesktopForUserAndWaitOpening(@Nonnull Object requester,
+            @Nonnull String fileExtension, @Nonnull IConsumerEx<OutputStream, E> fileGenerator,
             int waitTimeMilliAfterCall) {
         TempFileProvider.create(requester, tmpProvider -> {
             String ext = fileExtension.indexOf('.') == -1 ? '.' + fileExtension : fileExtension;

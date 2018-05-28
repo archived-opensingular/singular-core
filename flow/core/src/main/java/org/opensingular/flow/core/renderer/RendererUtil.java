@@ -23,7 +23,6 @@ import org.opensingular.lib.commons.extension.SingularExtensionUtil;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
-import java.awt.*;
 import java.util.Optional;
 
 /**
@@ -51,7 +50,7 @@ public final class RendererUtil {
     @Nonnull
     public static Optional<IFlowRenderer> findRendererForUserDisplay() {
         return SingularExtensionUtil.get().findExtension(FlowRendererProviderExtension.class,
-                FlowRendererProviderExtension.FOR_USER_DISPLAY).map(p -> p.getRenderer());
+                FlowRendererProviderExtension.FOR_USER_DISPLAY).map(FlowRendererProviderExtension::getRenderer);
     }
 
     /**
@@ -89,9 +88,8 @@ public final class RendererUtil {
      */
     public static void showDiagramOnDesktopForUser(@Nonnull FlowDefinition<?> definition,
             int waitTimeMilliAfterCall) {
-        SingularTestUtil.showFileOnDesktopForUserAndWaitOpening(RendererUtil.class, "png", out -> {
-            RendererUtil.findRenderer().generatePng(definition, out);
-        });
+        SingularTestUtil.showFileOnDesktopForUserAndWaitOpening(RendererUtil.class, "png",
+                out -> RendererUtil.findRenderer().generatePng(definition, out), waitTimeMilliAfterCall);
     }
 
     /**
@@ -115,7 +113,7 @@ public final class RendererUtil {
 
     private static class ImageViewer extends JFrame {
 
-        public ImageViewer(String title, byte[] image) throws HeadlessException {
+        public ImageViewer(String title, byte[] image) {
             super(title);
             getRootPane().setContentPane(getImageComponent(image));
             pack();
