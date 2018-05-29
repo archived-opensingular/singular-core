@@ -17,7 +17,9 @@
 package org.opensingular.form.wicket.mapper.richtext;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -46,22 +48,37 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 public class PortletRichTextPanel extends Panel implements Loggable {
 
     private HiddenField hiddenInput;
-    private Label       htmlContent;
-    private Label       label;
-    private String      hash;
+    private Label htmlContent;
+    private Label label;
+    private String hash;
     private WicketBuildContext ctx;
     private boolean visibleMode = true;
+
+    private List<BtnRichText> btnRichTextList = new ArrayList<>();
 
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "PortletRichTextPanel.js")) {
             final Map<String, String> params = new HashMap<>();
+
+
+            //TODO isso terá que ser alterado pois pode ter um id NULL.
+            gerarMassa("ExtraButtons");
+            gerarMassa("ExtraButtons2");
+            gerarMassa("ExtraButtons3");
+            gerarMassa("ExtraButtons4");
+            params.put("buttonsList", btnRichTextList.toString().replaceAll("\\[", "").replaceAll("]", ""));
+            String listaIds = btnRichTextList.parallelStream()
+                    .map(BtnRichText::getId)
+                    .collect(StringBuilder::new, (a, b) -> a.append(b).append(","), StringBuilder::append).toString();
+            params.put("btnList", listaIds);
+
             params.put("label", (String) label.getDefaultModel().getObject());
             params.put("htmlContainer", htmlContent.getMarkupId());
             params.put("hiddenInput", hiddenInput.getMarkupId());
             params.put("hash", hash);
-            params.put("html", richTextNewTabHtml().retrieveHtml());
+            params.put("html", richTextNewTabHtml(listaIds).retrieveHtml());
             params.put("isEnabled", String.valueOf(visibleMode));
             packageTextTemplate.interpolate(params);
             response.render(JavaScriptHeaderItem.forScript(packageTextTemplate.getString(), hash));
@@ -70,8 +87,8 @@ public class PortletRichTextPanel extends Panel implements Loggable {
         }
     }
 
-    public RichTextNewTabHtml richTextNewTabHtml() {
-        return new RichTextNewTabHtml(RequestCycle.get().getRequest().getFilterPath());
+    public RichTextNewTabHtml richTextNewTabHtml(String listaIds) {
+        return new RichTextNewTabHtml(RequestCycle.get().getRequest().getFilterPath(), listaIds);
     }
 
     public PortletRichTextPanel(String id, WicketBuildContext ctx) {
@@ -81,12 +98,12 @@ public class PortletRichTextPanel extends Panel implements Loggable {
 
     }
 
-    public WebMarkupContainer configureLabelButton(){
+    public WebMarkupContainer configureLabelButton() {
         IModel<String> buttonMsg = new Model<>();
         WebMarkupContainer containerLabel = new WebMarkupContainer("containerLabel");
         Label labelMsg = new Label("buttonMsg", buttonMsg);
         WebMarkupContainer iconeClass = new WebMarkupContainer("iconeClass");
-        if(visibleMode) {
+        if (visibleMode) {
             buttonMsg.setObject("Editar");
             iconeClass.add(new AttributeAppender("class", DefaultIcons.PENCIL));
         } else {
@@ -140,4 +157,18 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     public void setVisibleMode(boolean visibleMode) {
         this.visibleMode = visibleMode;
     }
+
+    public void addButton(BtnRichText btnRichText) {
+        this.btnRichTextList.add(btnRichText);
+    }
+
+    private void gerarMassa(String id) {
+        addButton(new BtnRichText(id, id, id, id) {
+            @Override
+            public void getAction(CkEditorContext editorContext) {
+                editorContext.getValue();
+            };
+        });
+    }
+
 }

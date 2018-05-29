@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-(function (label, htmlContainer, hiddenInput, html, isEnabled) {
+(function (label, htmlContainer, hiddenInput, html, isEnabled, btnList, buttonsList) {
 
     var newWindow;
     window['openNewTabWithCKEditor${hash}'] = function () {
         if (typeof newWindow !== "undefined") {
-             newWindow.close();
+            newWindow.close();
         }
         newWindow = window.open("", "${hash}");
         newWindow.document.open();
@@ -33,6 +33,7 @@
         nw.createCKEditor = function () {
             nw.document.getElementById('ck-text-area').value = $('#' + htmlContainer).html();
 
+
             var plugin;
             if (isEnabled === "true") {
                 plugin = 'finishAndClose,cancel';
@@ -41,7 +42,7 @@
                 plugin = 'closed';
             }
 
-            nw.CKEDITOR.replace("ck-text-area", {
+            var editor = nw.CKEDITOR.replace("ck-text-area", {
                 extraPlugins: plugin,
                 allowedContent: true,
                 skin: 'office2013',
@@ -77,7 +78,8 @@
                     '/',
                     {name: 'styles', items: ['Styles', 'Format', 'FontSize']},
                     {name: 'colors', items: ['TextColor', 'BGColor']},
-                    {name: 'tools', items: ['ShowBlocks']}
+                    {name: 'tools', items: ['ShowBlocks']},
+                    {name: 'others', items: btnList.split(",")}
                 ],
                 on: {
                     'instanceReady': function (evt) {
@@ -86,7 +88,26 @@
                 }
             });
 
+            buttonsList.split(", ").forEach( function(b) {
+                var texts = b.split("-");
+
+                editor.ui.addButton(texts[0],
+                    {
+                        label: texts[1],
+                        command: texts[0],
+                        icon: texts[2],
+                        toolbar: texts[3]
+                    });
+                editor.addCommand(texts[0], {
+                    exec: function () {
+                       alert("ok");
+                       // Wicket.Ajax.get({u:'" + removeAjaxAction.getCallbackUrl() + "'});
+                    }
+                });
+            });
+
             nw.CKEDITOR.config.disableNativeSpellChecker = false;
         };
+
     }
-})('${label}', '${htmlContainer}', '${hiddenInput}', '${html}', '${isEnabled}');
+})('${label}', '${htmlContainer}', '${hiddenInput}', '${html}', '${isEnabled}', '${btnList}', '${buttonsList}');

@@ -19,23 +19,37 @@
 package org.opensingular.form.wicket.mapper.richtext;
 
 import org.opensingular.form.wicket.util.ClasspathHtmlLoader;
+import org.springframework.util.StringUtils;
 
 public class RichTextNewTabHtml {
 
     private static final String BASE_URL_PLACEHOLDER = "#BASE_URL_PLACEHOLDER#";
+    private static final String CSS_PLACEHOLDER = "CSS_PLACEHOLDER";
 
     private ClasspathHtmlLoader classpathHtmlLoader = new ClasspathHtmlLoader("PortletRichTextNewTab.html", this.getClass());
-    private String              loadedHtml          = null;
+    private String loadedHtml = null;
+    private StringBuilder buttonsCssStyle = new StringBuilder();
     private String baseurl;
 
-    public RichTextNewTabHtml(String baseurl) {
+    public RichTextNewTabHtml(String baseurl, String listaIds) {
         this.baseurl = baseurl;
+        for (String id : listaIds.split(",")) {
+            buttonsCssStyle.append("        .cke_button__").append(id.toLowerCase()).append("_label, ");
+        }
+        buttonsCssStyle.deleteCharAt(buttonsCssStyle.length()-1);
+        buttonsCssStyle.deleteCharAt(buttonsCssStyle.length()-1);
+
     }
 
     public String retrieveHtml() {
         if (loadedHtml == null) {
             loadedHtml = classpathHtmlLoader.loadHtml();
         }
+
+        if(StringUtils.isEmpty(buttonsCssStyle)){
+            buttonsCssStyle.append(".noClassForButton ");
+        }
+        loadedHtml = loadedHtml.replace(CSS_PLACEHOLDER, buttonsCssStyle);
         return loadedHtml.replace(BASE_URL_PLACEHOLDER, baseurl);
     }
 
