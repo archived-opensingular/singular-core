@@ -16,28 +16,28 @@
 
 package org.opensingular.form.wicket.mapper.richtext;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.HiddenField;
+import org.apache.wicket.markup.html.link.AbstractLink;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.util.template.PackageTextTemplate;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
+import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
@@ -53,42 +53,13 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     private String hash;
     private WicketBuildContext ctx;
     private boolean visibleMode = true;
+    private CallbackAjaxBehaviour eventSaveCallbackBehavior;
 
     private List<BtnRichText> btnRichTextList = new ArrayList<>();
 
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "PortletRichTextPanel.js")) {
-            final Map<String, String> params = new HashMap<>();
-
-
-            //TODO isso terá que ser alterado pois pode ter um id NULL.
-            gerarMassa("ExtraButtons");
-            gerarMassa("ExtraButtons2");
-            gerarMassa("ExtraButtons3");
-            gerarMassa("ExtraButtons4");
-            params.put("buttonsList", btnRichTextList.toString().replaceAll("\\[", "").replaceAll("]", ""));
-            String listaIds = btnRichTextList.parallelStream()
-                    .map(BtnRichText::getId)
-                    .collect(StringBuilder::new, (a, b) -> a.append(b).append(","), StringBuilder::append).toString();
-            params.put("btnList", listaIds);
-
-            params.put("label", (String) label.getDefaultModel().getObject());
-            params.put("htmlContainer", htmlContent.getMarkupId());
-            params.put("hiddenInput", hiddenInput.getMarkupId());
-            params.put("hash", hash);
-            params.put("html", richTextNewTabHtml(listaIds).retrieveHtml());
-            params.put("isEnabled", String.valueOf(visibleMode));
-            packageTextTemplate.interpolate(params);
-            response.render(JavaScriptHeaderItem.forScript(packageTextTemplate.getString(), hash));
-        } catch (IOException e) {
-            getLogger().error(e.getMessage(), e);
-        }
-    }
-
-    public RichTextNewTabHtml richTextNewTabHtml(String listaIds) {
-        return new RichTextNewTabHtml(RequestCycle.get().getRequest().getFilterPath(), listaIds);
     }
 
     public PortletRichTextPanel(String id, WicketBuildContext ctx) {
@@ -96,6 +67,11 @@ public class PortletRichTextPanel extends Panel implements Loggable {
         this.ctx = ctx;
         hash = RandomStringUtils.random(10, true, false);
 
+        //TODO REMOVER
+        gerarMassa("ExtraButtons");
+        gerarMassa("ExtraButtons2");
+        gerarMassa("ExtraButtons3");
+        gerarMassa("ExtraButtons4");
     }
 
     public WebMarkupContainer configureLabelButton() {
@@ -112,12 +88,17 @@ public class PortletRichTextPanel extends Panel implements Loggable {
         }
         containerLabel.add(iconeClass);
         containerLabel.add(labelMsg);
+
         return containerLabel;
     }
 
     @Override
     protected void onInitialize() {
         super.onInitialize();
+        eventSaveCallbackBehavior = new CallbackAjaxBehaviour(p -> {
+            p.getPageParameters();
+        });
+        add(eventSaveCallbackBehavior);
         build(ctx);
         addBehaviours();
     }
@@ -134,20 +115,30 @@ public class PortletRichTextPanel extends Panel implements Loggable {
         add(label);
         add(htmlContent);
         add(hiddenInput);
-        Button buttonEditar = createButtonOpenEditor();
+        WebMarkupContainer buttonEditar = createButtonOpenEditor();
         buttonEditar.add(configureLabelButton());
         add(buttonEditar);
 
         htmlContent.setEscapeModelStrings(false);
     }
 
-    private Button createButtonOpenEditor() {
-        return new Button("button") {
+    private AbstractLink createButtonOpenEditor() {
+
+        PageParameters pageParameters = new PageParameters();
+        pageParameters.add("enabled", String.valueOf(visibleMode));
+        pageParameters.add("btnRichTextList", btnRichTextList);
+        pageParameters.add("htmlEventSave", eventSaveCallbackBehavior.getCallbackUrl());
+
+        return new BookmarkablePageLink("button", RichTextNewTabPage.class, pageParameters) {
+
             @Override
-            protected String getOnClickScript() {
-                return "openNewTabWithCKEditor" + hash + "();";
+            protected void onComponentTag(ComponentTag tag) {
+                super.onComponentTag(tag);
+                tag.put("target", "_blank");
             }
+
         };
+
     }
 
     public boolean isVisibleMode() {
@@ -162,13 +153,26 @@ public class PortletRichTextPanel extends Panel implements Loggable {
         this.btnRichTextList.add(btnRichText);
     }
 
+    private static class CallbackAjaxBehaviour extends AbstractDefaultAjaxBehavior {
+        private final IConsumer<AjaxRequestTarget> callback;
+
+        private CallbackAjaxBehaviour(IConsumer<AjaxRequestTarget> callback) {
+            this.callback = callback;
+        }
+
+        @Override
+        protected void respond(AjaxRequestTarget ajaxRequestTarget) {
+            callback.accept(ajaxRequestTarget);
+        }
+    }
+
+    //TODO REMOVER
     private void gerarMassa(String id) {
-        addButton(new BtnRichText(id, id, id, id) {
+        addButton(new BtnRichText(id, id, id, "TESTEEE") {
             @Override
             public void getAction(CkEditorContext editorContext) {
                 editorContext.getValue();
-            };
+            }
         });
     }
-
 }

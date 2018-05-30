@@ -21,6 +21,7 @@ public abstract class BtnRichText implements Serializable {
         this.iconUrl = iconUrl;
         this.toolbar = toolbar;
     }
+
     public abstract void getAction(CkEditorContext editorContext);
 
 

@@ -14,48 +14,43 @@
  * limitations under the License.
  */
 
-(function (label, htmlContainer, hiddenInput, html, isEnabled, btnList, buttonsList) {
+(function (label, htmlContainer, hiddenInput, html, isEnabled, buttonsList) {
 
-    var newWindow;
-    window['openNewTabWithCKEditor${hash}'] = function () {
-        if (typeof newWindow !== "undefined") {
-            newWindow.close();
-        }
-        newWindow = window.open("", "${hash}");
-        newWindow.document.open();
-        appendFunctions(newWindow);
-        newWindow.document.write(html);
-        newWindow.document.close();
-        newWindow.document.title = label;
-    };
-
-    function appendFunctions(nw) {
-        nw.createCKEditor = function () {
-            nw.document.getElementById('ck-text-area').value = $('#' + htmlContainer).html();
+    $(document).ready(function () {
+        appendFunctions();
+    });
 
 
+    function appendFunctions() {
+        $(function () {
             var plugin;
             if (isEnabled === "true") {
                 plugin = 'finishAndClose,cancel';
             } else {
-                nw.CKEDITOR.config.readOnly = true;
+                CKEDITOR.config.readOnly = true;
                 plugin = 'closed';
             }
+            var ids = "";
+            buttonsList.split(", ").forEach(function (b) {
+                var texts = b.split("-");
+                ids += texts[0] + ",";
+            });
+            ids = ids.slice(0, -1);
 
-            var editor = nw.CKEDITOR.replace("ck-text-area", {
+            var editor = CKEDITOR.replace("ck-text-area", {
                 extraPlugins: plugin,
                 allowedContent: true,
                 skin: 'office2013',
                 language: 'pt-br',
                 width: '215mm',
                 savePlugin: {
-                    onSave: function (data) {
-                        var jQuerRefOfHtmlContainer = $('#' + htmlContainer);
+                    onSave: function (data, event) {
+                        var jQuerRefOfHtmlContainer = $('#' + 'ck-text-area');
                         jQuerRefOfHtmlContainer.html(data);
+                        jQuerRefOfHtmlContainer.val(data);
 
-                        var jQueryRefOfHiddenInput = $('#' + hiddenInput);
-                        jQueryRefOfHiddenInput.val(data);
-                        jQueryRefOfHiddenInput.trigger("singular:process");
+                        //TODO passar o parametro por aqui.
+                        Wicket.Ajax.get({u: html});
                     }
                 },
                 toolbar: [
@@ -79,16 +74,18 @@
                     {name: 'styles', items: ['Styles', 'Format', 'FontSize']},
                     {name: 'colors', items: ['TextColor', 'BGColor']},
                     {name: 'tools', items: ['ShowBlocks']},
-                    {name: 'others', items: btnList.split(",")}
+                    {name: 'others', items: ids.split(",")}
                 ],
                 on: {
                     'instanceReady': function (evt) {
-                        nw.$('.cke_contents').height(nw.$('html').height() - nw.$('.cke_contents').offset().top - nw.$('.cke_bottom').height() - 20);
+                        $('.cke_contents').height($('html').height() - $('.cke_contents').offset().top - $('.cke_bottom').height() - 20);
                     }
                 }
             });
 
-            buttonsList.split(", ").forEach( function(b) {
+            CKEDITOR.config.disableNativeSpellChecker = false;
+
+            buttonsList.split(", ").forEach(function (b) {
                 var texts = b.split("-");
 
                 editor.ui.addButton(texts[0],
@@ -100,14 +97,14 @@
                     });
                 editor.addCommand(texts[0], {
                     exec: function () {
-                       alert("ok");
-                       // Wicket.Ajax.get({u:'" + removeAjaxAction.getCallbackUrl() + "'});
+                        alert("ok");
+                       /* Wicket.Ajax.get({u: html});*/
                     }
                 });
             });
 
-            nw.CKEDITOR.config.disableNativeSpellChecker = false;
-        };
+            return editor;
+        });
 
     }
-})('${label}', '${htmlContainer}', '${hiddenInput}', '${html}', '${isEnabled}', '${btnList}', '${buttonsList}');
+})('${label}', '${htmlContainer}', '${hiddenInput}', '${html}', '${isEnabled}', '${buttonsList}');

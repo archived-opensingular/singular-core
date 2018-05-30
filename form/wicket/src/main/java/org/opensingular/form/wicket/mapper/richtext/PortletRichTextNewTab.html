@@ -25,6 +25,7 @@
         .cke_button__finishandclose_label,
         .cke_button__cancel_label,
         .cke_button__closed_label,
+        .cke_button__teste_label,
         CSS_PLACEHOLDER {
             display: inline !important;
         }
@@ -59,8 +60,118 @@
     <textarea id="ck-text-area"></textarea>
 </div>
 <script type="text/javascript">
+
     $(document).ready(function () {
-        createCKEditor();
+        nw.document.getElementById('ck-text-area').value = $('#' + htmlContainer);
+
+
+        var plugin;
+        if (isEnabled === "true") {
+            plugin = 'finishAndClose,cancel';
+        } else {
+            nw.CKEDITOR.config.readOnly = true;
+            plugin = 'closed';
+        }
+
+        var editor = nw.CKEDITOR.replace("ck-text-area", {
+            extraPlugins: plugin,
+            allowedContent: true,
+            skin: 'office2013',
+            language: 'pt-br',
+            width: '215mm',
+            savePlugin: {
+                onSave: function (data) {
+                    var jQuerRefOfHtmlContainer = $('#' + htmlContainer);
+                    jQuerRefOfHtmlContainer.html(data);
+
+                    var jQueryRefOfHiddenInput = $('#' + hiddenInput);
+                    jQueryRefOfHiddenInput.val(data);
+                    jQueryRefOfHiddenInput.trigger("singular:process");
+                }
+            },
+            toolbar: [
+                {name: 'document', items: ['Closed', 'FinishAndClose', 'Cancel', 'Preview', 'Print']},
+                {
+                    name: 'clipboard',
+                    items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']
+                },
+                {name: 'editing', items: ['Find', 'Replace', '-', 'Scayt']},
+                {
+                    name: 'basicstyles',
+                    items: ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat']
+                },
+                {
+                    name: 'paragraph',
+                    items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']
+                },
+                {name: 'links', items: ['Link', 'Unlink']},
+                {name: 'insert', items: ['Table', 'HorizontalRule', 'SpecialChar', 'PageBreak']},
+                '/',
+                {name: 'styles', items: ['Styles', 'Format', 'FontSize']},
+                {name: 'colors', items: ['TextColor', 'BGColor']},
+                {name: 'tools', items: ['ShowBlocks']},
+                {name: 'others', items: btnList.split(",")}
+            ],
+            on: {
+                'instanceReady': function (evt) {
+                    nw.$('.cke_contents').height(nw.$('html').height() - nw.$('.cke_contents').offset().top - nw.$('.cke_bottom').height() - 20);
+                }
+            }
+        });
+
+        nw.CKEDITOR.config.disableNativeSpellChecker = false;
+
+
+        editor.ui.addButton('ExtraButtons3',
+            {
+                label: 'ExtraButtons3',
+                command: 'ExtraButtons3',
+                icon: 'ExtraButtons3',
+                toolbar: 'ExtraButtons3'
+            });
+        editor.addCommand('ExtraButtons3', {
+            exec: function () {
+                alert("ok");
+            }
+        });
+        editor.ui.addButton('ExtraButtons4',
+            {
+                label: 'ExtraButtons4',
+                command: 'ExtraButtons4',
+                icon: 'ExtraButtons4',
+                toolbar: 'ExtraButtons4'
+            });
+        editor.addCommand('ExtraButtons4', {
+            exec: function () {
+                alert("ok");
+            }
+        });
+        editor.ui.addButton('ExtraButtons2',
+            {
+                label: 'ExtraButtons2',
+                command: 'ExtraButtons2',
+                icon: 'ExtraButtons2',
+                toolbar: 'ExtraButtons2'
+            });
+        editor.addCommand('ExtraButtons2', {
+            exec: function () {
+                alert("ok");
+            }
+        });
+        editor.ui.addButton('ExtraButtons',
+            {
+                label: 'ExtraButtons',
+                command: 'ExtraButtons',
+                icon: 'ExtraButtons',
+                toolbar: 'ExtraButtons'
+            });
+        editor.addCommand('ExtraButtons', {
+            exec: function () {
+                alert("ok");
+            }
+        });
+
+        return editor;
     });
 </script>
 </body>
