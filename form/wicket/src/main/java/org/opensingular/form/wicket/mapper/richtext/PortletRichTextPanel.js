@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-(function (label, htmlContainer, hiddenInput, html, isEnabled, buttonsList) {
+(function (label, htmlContainer, hiddenInput, isEnabled, buttonsList) {
 
     $(document).ready(function () {
-        appendFunctions();
+        appendFunctions(window.opener);
     });
 
 
-    function appendFunctions() {
+    function appendFunctions(opener) {
         $(function () {
+            document.getElementById('ck-text-area').value = opener.$('#' + htmlContainer).html();
+
             var plugin;
             if (isEnabled === "true") {
                 plugin = 'finishAndClose,cancel';
@@ -44,13 +46,14 @@
                 language: 'pt-br',
                 width: '215mm',
                 savePlugin: {
-                    onSave: function (data, event) {
-                        var jQuerRefOfHtmlContainer = $('#' + 'ck-text-area');
-                        jQuerRefOfHtmlContainer.html(data);
-                        jQuerRefOfHtmlContainer.val(data);
+                    onSave: function (data) {
 
-                        //TODO passar o parametro por aqui.
-                        Wicket.Ajax.get({u: html});
+                        var jQuerRefOfHtmlContainer = opener.$('#' + htmlContainer);
+                        jQuerRefOfHtmlContainer.html(data);
+
+                        var jQueryRefOfHiddenInput = opener.$('#' + hiddenInput);
+                        jQueryRefOfHiddenInput.val(data);
+                        jQueryRefOfHiddenInput.trigger("singular:process");
                     }
                 },
                 toolbar: [
@@ -77,8 +80,10 @@
                     {name: 'others', items: ids.split(",")}
                 ],
                 on: {
-                    'instanceReady': function (evt) {
-                        $('.cke_contents').height($('html').height() - $('.cke_contents').offset().top - $('.cke_bottom').height() - 20);
+                    'instanceReady': function () {
+                        $('.cke_contents').height($('#bodyPage').height() - $('.cke_contents').offset().top - $('.cke_bottom').height() - 20);
+
+                        // $('.cke_contents').height(700);
                     }
                 }
             });
@@ -92,13 +97,12 @@
                     {
                         label: texts[1],
                         command: texts[0],
-                        icon: texts[2],
-                        toolbar: texts[3]
+                        icon: texts[2]
                     });
                 editor.addCommand(texts[0], {
                     exec: function () {
                         alert("ok");
-                       /* Wicket.Ajax.get({u: html});*/
+                        /* Wicket.Ajax.get({u: html});*/
                     }
                 });
             });
@@ -107,4 +111,4 @@
         });
 
     }
-})('${label}', '${htmlContainer}', '${hiddenInput}', '${html}', '${isEnabled}', '${buttonsList}');
+})('${label}', '${htmlContainer}', '${hiddenInput}', '${isEnabled}', '${buttonsList}');

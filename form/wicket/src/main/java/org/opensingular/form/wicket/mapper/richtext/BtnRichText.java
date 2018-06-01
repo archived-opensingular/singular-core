@@ -8,18 +8,16 @@ public abstract class BtnRichText implements Serializable {
     private String id;
     private String label;
     private String iconUrl;
-    private String toolbar;
 //    private String form;
 
 
     public BtnRichText() {
     }
 
-    public BtnRichText(String id, String label, String iconUrl, String toolbar) {
+    public BtnRichText(String id, String label, String iconUrl) {
         this.id = id;
         this.label = label;
         this.iconUrl = iconUrl;
-        this.toolbar = toolbar;
     }
 
     public abstract void getAction(CkEditorContext editorContext);
@@ -49,18 +47,11 @@ public abstract class BtnRichText implements Serializable {
         this.iconUrl = iconUrl;
     }
 
-    public String getToolbar() {
-        return toolbar;
-    }
-
-    public void setToolbar(String toolbar) {
-        this.toolbar = toolbar;
-    }
 
     //TODO VERIFICAR SE REALMENTE NÃO É POSSIVEL PASSAR VIA JSON.
     @Override
     public final String toString() {
-        return id + "-" + label + "-" + iconUrl + "-" + toolbar;
+        return id + "-" + label + "-" + iconUrl;
     }
 
 }

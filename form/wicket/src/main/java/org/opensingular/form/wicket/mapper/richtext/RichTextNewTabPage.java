@@ -37,10 +37,10 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
+import org.springframework.util.CollectionUtils;
 import org.wicketstuff.annotation.mount.MountPath;
 
 @MountPath("/RichTextNewTabPage")
@@ -48,31 +48,20 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
 
     public static final IHeaderResponseDecorator JAVASCRIPT_DECORATOR = (response) -> new JavaScriptFilteredIntoFooterHeaderResponse(response, SingularTemplate.JAVASCRIPT_CONTAINER);
     public static final String JAVASCRIPT_CONTAINER = "javascript-container";
-    private String buttonsExtraRichText = "";
-    private String htmlEventSave;
     private String hiddenInput;
-    private String enabled;
+    private String htmlContainer;
     private IModel<String> model = new Model<>("TESTANDO");
 
-    public RichTextNewTabPage(PageParameters parameters) {
-        super(parameters);
-        this.enabled = getPageParameters().get("enabled").toString();
-        this.htmlEventSave = getPageParameters().get("htmlEventSave").toString();
-        this.buttonsExtraRichText = getPageParameters().get("btnRichTextList").toString();
-//        this.htmlContent = markupId;
-//        this.hiddenInput = markupId;
-        //TODO TODO O ID DEVE COMECAR COM extra
-    }
-    public RichTextNewTabPage(String teste){
-        System.out.println(teste);
-    }
+    private boolean visibleMode;
+    private List<BtnRichText> btnRichTextList;
 
-    public RichTextNewTabPage(String filterPath, List<BtnRichText> btnRichTextList, String markupId, String markupId1, String enabled) {
-//        this.baseurl = baseurl;
-//        this.btnRichTextList = btnRichTextList;
-
-        this.hiddenInput = markupId;
-        this.enabled = enabled;
+    public RichTextNewTabPage(boolean visibleMode, List<BtnRichText> btnRichTextList,
+            String hiddenInput, String htmlContainer) {
+        this.visibleMode = visibleMode;
+        this.btnRichTextList = btnRichTextList;
+        this.hiddenInput = hiddenInput;
+        this.htmlContainer = htmlContainer;
+        //IMPORTANTE -> TODO O ID DEVE COMECAR COM extra
 
     }
 
@@ -83,12 +72,15 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
             final Map<String, String> params = new HashMap<>();
 
             params.put("label", "TESTE");
-            params.put("htmlContainer", "");
-            params.put("hiddenInput", hiddenInput);
+            params.put("htmlContainer", this.htmlContainer);
+            params.put("hiddenInput", this.hiddenInput);
             params.put("hash", "");
-            params.put("html", htmlEventSave);
-            params.put("isEnabled", String.valueOf(enabled));
-            params.put("buttonsList", buttonsExtraRichText.replaceAll("\\[", "").replaceAll("]", ""));
+            params.put("isEnabled", String.valueOf(visibleMode));
+            if(CollectionUtils.isEmpty(btnRichTextList)){
+                params.put("buttonsList", "");
+            } else {
+                params.put("buttonsList", btnRichTextList.toString().replaceAll("\\[", "").replaceAll("]", ""));
+            }
             packageTextTemplate.interpolate(params);
             response.render(JavaScriptHeaderItem.forScript(packageTextTemplate.getString(), this.getId()));
         } catch (IOException e) {
@@ -118,8 +110,6 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
                 super.onError(target, form);
             }
         };
-
-        hiddenInput = linkSave.getMarkupId();
         form.add(linkSave);
         add(form);
         getApplication().setHeaderResponseDecorator(JAVASCRIPT_DECORATOR);

@@ -22,22 +22,21 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.core.request.handler.PageProvider;
+import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.HiddenField;
-import org.apache.wicket.markup.html.link.AbstractLink;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
-import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
@@ -53,7 +52,7 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     private String hash;
     private WicketBuildContext ctx;
     private boolean visibleMode = true;
-    private CallbackAjaxBehaviour eventSaveCallbackBehavior;
+    private AbstractDefaultAjaxBehavior eventSaveCallbackBehavior;
 
     private List<BtnRichText> btnRichTextList = new ArrayList<>();
 
@@ -95,10 +94,14 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        eventSaveCallbackBehavior = new CallbackAjaxBehaviour(p -> {
-            p.getPageParameters();
-        });
-        add(eventSaveCallbackBehavior);
+//        eventSaveCallbackBehavior = new AbstractDefaultAjaxBehavior() {
+//            @Override
+//            protected void respond(AjaxRequestTarget target) {
+//                target.add(PortletRichTextPanel.this);
+//                target.appendJavaScript("alert('ok');");
+//            }
+//        };
+//        add(eventSaveCallbackBehavior);
         build(ctx);
         addBehaviours();
     }
@@ -119,17 +122,22 @@ public class PortletRichTextPanel extends Panel implements Loggable {
         buttonEditar.add(configureLabelButton());
         add(buttonEditar);
 
+
         htmlContent.setEscapeModelStrings(false);
     }
 
-    private AbstractLink createButtonOpenEditor() {
+    private WebMarkupContainer createButtonOpenEditor() {
 
-        PageParameters pageParameters = new PageParameters();
-        pageParameters.add("enabled", String.valueOf(visibleMode));
-        pageParameters.add("btnRichTextList", btnRichTextList);
-        pageParameters.add("htmlEventSave", eventSaveCallbackBehavior.getCallbackUrl());
 
-        return new BookmarkablePageLink("button", RichTextNewTabPage.class, pageParameters) {
+        RichTextNewTabPage richTextNewTabPage = new RichTextNewTabPage(visibleMode,
+                btnRichTextList,
+                hiddenInput.getMarkupId(),
+                htmlContent.getMarkupId());
+        return new Link<String>("button") {
+
+            @Override
+            public void onClick() {
+            }
 
             @Override
             protected void onComponentTag(ComponentTag tag) {
@@ -137,6 +145,12 @@ public class PortletRichTextPanel extends Panel implements Loggable {
                 tag.put("target", "_blank");
             }
 
+            @Override
+            protected CharSequence getURL() {
+                return RequestCycle.get().urlFor(
+                        new RenderPageRequestHandler(
+                                new PageProvider(richTextNewTabPage)));
+            }
         };
 
     }
@@ -153,22 +167,9 @@ public class PortletRichTextPanel extends Panel implements Loggable {
         this.btnRichTextList.add(btnRichText);
     }
 
-    private static class CallbackAjaxBehaviour extends AbstractDefaultAjaxBehavior {
-        private final IConsumer<AjaxRequestTarget> callback;
-
-        private CallbackAjaxBehaviour(IConsumer<AjaxRequestTarget> callback) {
-            this.callback = callback;
-        }
-
-        @Override
-        protected void respond(AjaxRequestTarget ajaxRequestTarget) {
-            callback.accept(ajaxRequestTarget);
-        }
-    }
-
     //TODO REMOVER
     private void gerarMassa(String id) {
-        addButton(new BtnRichText(id, id, id, "TESTEEE") {
+        addButton(new BtnRichText(id, id, id) {
             @Override
             public void getAction(CkEditorContext editorContext) {
                 editorContext.getValue();
