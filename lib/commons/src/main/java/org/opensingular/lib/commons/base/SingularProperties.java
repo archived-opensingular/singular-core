@@ -47,7 +47,6 @@ public interface SingularProperties {
     String SINGULAR_EMAIL_TEST_RECPT = "singular.email.rcpt.test";
 
     String SINGULAR_DEV_MODE = "singular.development";
-    String SINGULAR_SERVER_ADDR = "singular.server.address";
 
     // Limites globais são limites máximos, não configuráveis por arquivo.
     String FILEUPLOAD_GLOBAL_MAX_REQUEST_SIZE = "singular.fileupload.global_max_request_size";
