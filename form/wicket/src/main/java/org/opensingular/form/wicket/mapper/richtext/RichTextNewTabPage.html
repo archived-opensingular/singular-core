@@ -18,11 +18,14 @@
 <html xmlns:wicket="http://wicket.apache.org" style="height: 100%;">
 <meta charset="utf-8"/>
 <head>
-    <title></title>
+    <title wicket:id="title">Title</title>
     <script src="/singular-static/resources/singular/plugins/jquery.min.js" type="text/javascript"></script>
     <script src="/singular-static/resources/singular/plugins/ckeditor/ckeditor.js" type="text/javascript"></script>
-    <script src="/singular-static/resources/singular/scripts/singular-resource-handler.js"
-            type="text/javascript"></script>
+    <script src="/singular-static/resources/singular/scripts/singular-resource-handler.js" type="text/javascript"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+
     <style type="text/css">
         [class^="cke_button_label cke_button__extra"] {
             display: inline !important;
@@ -50,7 +53,7 @@
     <div class="page-header navbar navbar-fixed-top">
         <div class="page-header-inner">
             <div class="page-logo">
-                <a href="#BASE_URL_PLACEHOLDER#">
+                <a href="#">
                     <div class="logo-default"></div>
                 </a>
             </div>
@@ -65,8 +68,13 @@
     <form wicket:id="form">
         <textarea wicket:id="conteudo" id="ck-text-area"></textarea>
 
-        <a wicket:id="onSave"></a>
+
+        <div wicket:id="modalCkEditor" id="modalCkEditor">
+            <label>Teste</label>
+            <a wicket:id="onModalClick" id="buttonClickModal"></a>
+        </div>
     </form>
+
 </div>
 
 

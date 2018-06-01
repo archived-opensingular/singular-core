@@ -23,21 +23,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
 import org.apache.wicket.markup.head.filter.JavaScriptFilteredIntoFooterHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderResponseDecorator;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.template.PackageTextTemplate;
+import org.opensingular.form.view.richtext.BtnRichText;
+import org.opensingular.form.wicket.component.BFModalWindow;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
 import org.springframework.util.CollectionUtils;
@@ -55,12 +54,14 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     private boolean visibleMode;
     private List<BtnRichText> btnRichTextList;
 
-    public RichTextNewTabPage(boolean visibleMode, List<BtnRichText> btnRichTextList,
+    public RichTextNewTabPage(String title, boolean visibleMode, List<BtnRichText> btnRichTextList,
             String hiddenInput, String htmlContainer) {
         this.visibleMode = visibleMode;
         this.btnRichTextList = btnRichTextList;
         this.hiddenInput = hiddenInput;
         this.htmlContainer = htmlContainer;
+        add(new Label("title", Model.of(title)));
+
         //IMPORTANTE -> TODO O ID DEVE COMECAR COM extra
 
     }
@@ -71,7 +72,6 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "PortletRichTextPanel.js")) {
             final Map<String, String> params = new HashMap<>();
 
-            params.put("label", "TESTE");
             params.put("htmlContainer", this.htmlContainer);
             params.put("hiddenInput", this.hiddenInput);
             params.put("hash", "");
@@ -86,6 +86,8 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         } catch (IOException e) {
             getLogger().error(e.getMessage(), e);
         }
+        response.render(JavaScriptHeaderItem.forUrl("https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"));
+        response.render(JavaScriptHeaderItem.forUrl("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"));
     }
 
     @Override
@@ -95,95 +97,25 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         Form form = new Form("form");
         form.add(criarTextArea());
 
-        AjaxButton linkSave = new AjaxButton("onSave", form) {
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                super.onSubmit(target, form);
-                model.getObject();
-                //TODO Oq fazer depois que salvar??
-
-//                target.appendJavaScript("window.close();");
-            }
-
-            @Override
-            protected void onError(AjaxRequestTarget target, Form<?> form) {
-                super.onError(target, form);
-            }
-        };
-        form.add(linkSave);
+        BFModalWindow bfModalWindow = new BFModalWindow("modalCkEditor");
+        bfModalWindow.setTitleText(Model.of("teste"));
+//        modalBorder.addButton(BSModalBorder.ButtonStyle.BLUE, Model.of(getString("label.filter")), new AjaxButton("click"){
+//            @Override
+//            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+//                super.onSubmit(target, form);
+//            }
+//        });
+        bfModalWindow.setVisible(true);
+        form.add(bfModalWindow);
         add(form);
         getApplication().setHeaderResponseDecorator(JAVASCRIPT_DECORATOR);
         add(new HeaderResponseContainer(JAVASCRIPT_CONTAINER, JAVASCRIPT_CONTAINER));
+
     }
 
     private TextArea<String> criarTextArea() {
-        final TextArea<String> components = new TextArea<>("conteudo", model);
-        addBehavior(components);
-        return components;
+        return new TextArea<>("conteudo", model);
     }
 
-    public void addBehavior(TextArea<String> components) {
-        components.add(new Behavior() {
-            @Override
-            public void renderHead(Component component, IHeaderResponse response) {
-                super.renderHead(component, response);
-            }
 
-            @Override
-            public boolean isEnabled(Component component) {
-                return component.isVisibleInHierarchy() && component.isEnabledInHierarchy();
-            }
-        });
-    }
-
-    private String ckEditorJs() {
-        return "$(function () { var plugin = 'finishAndClose,cancel';            "
-                + "            var editor = CKEDITOR.replace(\"ck-text-area\", {\n"
-                + "            extraPlugins: plugin,\n"
-                + "            allowedContent: true,\n"
-                + "            skin: 'office2013',\n"
-                + "            language: 'pt-br',\n"
-                + "            width: '215mm',\n"
-                + "            savePlugin: {\n"
-                + "                onSave: function (data) {\n"
-                + "                    var jQuerRefOfHtmlContainer = $('#' + 'ck-text-area');\n"
-                + "                    jQuerRefOfHtmlContainer.html(data);\n"
-                + "\n"
-                + "                    var jQueryRefOfHiddenInput = $('#' + hiddenInput);\n"
-                + "                    jQueryRefOfHiddenInput.val(data);\n"
-                + "                    jQueryRefOfHiddenInput.trigger(\"singular:process\");\n"
-                + "                }\n"
-                + "            },\n"
-                + "            toolbar: [\n"
-                + "                {name: 'document', items: ['Closed', 'FinishAndClose', 'Cancel', 'Preview', 'Print']},\n"
-                + "                {\n"
-                + "                    name: 'clipboard',\n"
-                + "                    items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']\n"
-                + "                },\n"
-                + "                {name: 'editing', items: ['Find', 'Replace', '-', 'Scayt']},\n"
-                + "                {\n"
-                + "                    name: 'basicstyles',\n"
-                + "                    items: ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat']\n"
-                + "                },\n"
-                + "                {\n"
-                + "                    name: 'paragraph',\n"
-                + "                    items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']\n"
-                + "                },\n"
-                + "                {name: 'links', items: ['Link', 'Unlink']},\n"
-                + "                {name: 'insert', items: ['Table', 'HorizontalRule', 'SpecialChar', 'PageBreak']},\n"
-                + "                '/',\n"
-                + "                {name: 'styles', items: ['Styles', 'Format', 'FontSize']},\n"
-                + "                {name: 'colors', items: ['TextColor', 'BGColor']},\n"
-                + "                {name: 'tools', items: ['ShowBlocks']}\n"
-                + "            ],\n"
-                + "            on: {\n"
-                + "                'instanceReady': function (evt) {\n"
-                + "                    $('.cke_contents').height($('html').height() - $('.cke_contents').offset().top - $('.cke_bottom').height() - 20);\n"
-                + "                }\n"
-                + "            }\n"
-                + "        });\n"
-                + "\n"
-                + "            CKEDITOR.config.disableNativeSpellChecker = false;\n"
-                + "        });";
-    }
 }

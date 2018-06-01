@@ -1,4 +1,4 @@
-package org.opensingular.form.wicket.mapper.richtext;
+package org.opensingular.form.view.richtext;
 
 import java.io.Serializable;
 

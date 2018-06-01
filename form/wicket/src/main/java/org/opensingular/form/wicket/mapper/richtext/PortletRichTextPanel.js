@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-(function (label, htmlContainer, hiddenInput, isEnabled, buttonsList) {
+(function (htmlContainer, hiddenInput, isEnabled, buttonsList) {
 
     $(document).ready(function () {
         appendFunctions(window.opener);
@@ -34,8 +34,8 @@
             }
             var ids = "";
             buttonsList.split(", ").forEach(function (b) {
-                var texts = b.split("-");
-                ids += texts[0] + ",";
+                var texts = b.split("#$");
+                ids += 'extra' + texts[0] + ",";
             });
             ids = ids.slice(0, -1);
 
@@ -82,8 +82,6 @@
                 on: {
                     'instanceReady': function () {
                         $('.cke_contents').height($('#bodyPage').height() - $('.cke_contents').offset().top - $('.cke_bottom').height() - 20);
-
-                        // $('.cke_contents').height(700);
                     }
                 }
             });
@@ -91,9 +89,8 @@
             CKEDITOR.config.disableNativeSpellChecker = false;
 
             buttonsList.split(", ").forEach(function (b) {
-                var texts = b.split("-");
-
-                editor.ui.addButton(texts[0],
+                var texts = b.split("#$");
+                editor.ui.addButton('extra' + texts[0],
                     {
                         label: texts[1],
                         command: texts[0],
@@ -101,8 +98,13 @@
                     });
                 editor.addCommand(texts[0], {
                     exec: function () {
-                        alert("ok");
-                        /* Wicket.Ajax.get({u: html});*/
+                        console.log(editor.getData());
+                        console.log($('#modalCkEditor'));
+
+                        $('#modalCkEditor').modal({show: true});
+
+                        //Wicket.Ajax.post({u: html, ep:{'innerText':data}});
+
                     }
                 });
             });
@@ -111,4 +113,4 @@
         });
 
     }
-})('${label}', '${htmlContainer}', '${hiddenInput}', '${isEnabled}', '${buttonsList}');
+})('${htmlContainer}', '${hiddenInput}', '${isEnabled}', '${buttonsList}');

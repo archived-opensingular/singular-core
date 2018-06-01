@@ -1,4 +1,4 @@
-package org.opensingular.form.wicket.mapper.richtext;
+package org.opensingular.form.view.richtext;
 
 import java.io.Serializable;
 
@@ -51,7 +51,7 @@ public abstract class BtnRichText implements Serializable {
     //TODO VERIFICAR SE REALMENTE NÃO É POSSIVEL PASSAR VIA JSON.
     @Override
     public final String toString() {
-        return id + "-" + label + "-" + iconUrl;
+        return id + "#$" + label + "#$" + iconUrl;
     }
 
 }
