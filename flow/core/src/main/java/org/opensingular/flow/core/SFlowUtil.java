@@ -290,12 +290,10 @@ public class SFlowUtil {
         Optional<SingularInjector> injector = ServiceRegistryLocator.locate().lookupSingularInjectorOpt();
         if (!injector.isPresent()) {
             ServiceRegistry registry = ServiceRegistryLocator.locate();
-            registry.bindService(SingularInjector.class, RefService.ofToBeDescartedIfSerialized(new SingularInjector() {
-                @Override
-                public void inject(@Nonnull Object object) {
-
-                }
-            }));
+            //Creates a injector that doesn't do nothing and also doesn't about complain missing injections
+            registry.bindService(SingularInjector.class,
+                    RefService.ofToBeDescartedIfSerialized((SingularInjector) obj -> {
+                    }));
         }
         try {
             return definitionClass.cast(definitionClass.newInstance());

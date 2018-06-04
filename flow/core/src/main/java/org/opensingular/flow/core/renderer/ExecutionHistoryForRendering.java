@@ -100,7 +100,7 @@ public class ExecutionHistoryForRendering {
 
     /** Prints the history info to the standard output for inspection. */
     public void debug() {
-        debug(System.out);
+        debug(System.out); //NOSONAR
     }
 
     /** Prints the history info to output for inspection. */
@@ -195,13 +195,13 @@ public class ExecutionHistoryForRendering {
     /** Mark as executed the transaction between the two tasks and with the specified name. */
     public void addTransition(@Nonnull String fromTaskAbbreviation, @Nonnull String toTaskAbbreviation,
             @Nullable String transitionName) {
-        addTransitionInternal(normalizeTask(fromTaskAbbreviation), normalizeTask(toTaskAbbreviation), transitionName);
+        addTransitionInternal(normalizeTask(fromTaskAbbreviation), normalizeTask(toTaskAbbreviation), normalizeTransition(transitionName));
     }
 
     /** Mark the transaction as executed. */
     public void addTransition(STransition transition) {
         addTransitionInternal(normalizeTask(transition.getOrigin()), normalizeTask(transition.getDestination()),
-                transition.getAbbreviation());
+                normalizeTransition(transition));
     }
 
     private void addTransitionInternal(@Nonnull String fromTaskAbbreviation, @Nonnull String toTaskAbbreviation,
@@ -212,14 +212,13 @@ public class ExecutionHistoryForRendering {
         taskWithOutTransition.add(fromTaskAbbreviation);
         taskWithInTransition.add(toTaskAbbreviation);
         Set<String> names = transitions.computeIfAbsent(key, x -> new HashSet<String>());
-        String s = normalizeTransition(transitionName);
-        names.add(s == null ? "*" : s);
+        names.add(transitionName == null ? "*" : transitionName);
     }
 
     /** Mark as executed the transaction between the two tasks and with the specified name. */
     public void addTransition(@Nonnull ITaskDefinition from, @Nonnull ITaskDefinition to,
             @Nullable String transitionName) {
-        addTransitionInternal(normalizeTask(from), normalizeTask(to), transitionName);
+        addTransitionInternal(normalizeTask(from), normalizeTask(to), normalizeTransition(transitionName));
     }
 
     /** Mark the task that is the current state of the instance. */
@@ -259,13 +258,18 @@ public class ExecutionHistoryForRendering {
     public boolean isExecuted(@Nonnull STransition transition) {
         Set<String> names = transitions.get(keyOf(transition.getOrigin(), transition.getDestination()));
         if (names != null) {
-            String s = normalizeTransition(transition.getName());
+            String s = normalizeTransition(transition);
             if (s != null && names.contains(s)) {
                 return true;
             }
             return names.contains("*");
         }
         return false;
+    }
+
+    @Nullable
+    private String normalizeTransition(@Nonnull STransition transition) {
+        return normalizeTransition(transition.getAbbreviation());
     }
 
     @Nullable
@@ -504,8 +508,8 @@ public class ExecutionHistoryForRendering {
 
     /** Asserts that all and the only informed tasks are marked as executed, otherwise throws {@link AssertionError}. */
     public final void assertTaskMarked(ITaskDefinition... expectedExecutedTasks) {
-        List<String> orderedExpected = Stream.of(expectedExecutedTasks).map(t -> normalizeTask(t)).collect(
-                Collectors.toList());
+        List<String> orderedExpected = Stream.of(expectedExecutedTasks).map(ExecutionHistoryForRendering::normalizeTask)
+                .collect(Collectors.toList());
         Collections.sort(orderedExpected);
         List<String> orderedExecuted = new ArrayList<>(executedTasks);
         Collections.sort(orderedExecuted);
@@ -611,8 +615,11 @@ public class ExecutionHistoryForRendering {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            } else if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             ExecutionEntry entry = (ExecutionEntry) o;
             return (sequential == entry.sequential) && Objects.equals(start, entry.start);
         }
