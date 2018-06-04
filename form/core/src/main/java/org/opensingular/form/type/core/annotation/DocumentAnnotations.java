@@ -130,7 +130,7 @@ public class DocumentAnnotations {
             }
             return (SIList<SIAnnotation>) documentFactory.createInstance(refTypeAnnotation, executeInitTypeSetup);
         }
-        return docRef.getRoot().getDictionary().newInstance(STypeAnnotationList.class);
+        return (SIList) docRef.getRoot().getDictionary().newInstance(STypeAnnotationList.class);
     }
 
     /** Localiza a anotação com o classificado solicitado na instancia informatada. Ou retorna null. */
