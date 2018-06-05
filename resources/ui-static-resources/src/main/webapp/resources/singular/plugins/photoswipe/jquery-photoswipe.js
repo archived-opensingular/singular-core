@@ -1,9 +1,33 @@
+/*
+ *  jquery-photoswipe - v0.9.0
+ *  jQuery plugin to wrap PhotoSwipe (http://photoswipe.com), with some additional goodies.
+ *  https://github.com/opensingular
+ *
+ *  Made by Ronald Tetsuo Miura
+ *  
+ *  Licensed to the Apache Software Foundation (ASF) under one
+ *  or more contributor license agreements.  See the NOTICE file
+ *  distributed with this work for additional information
+ *  regarding copyright ownership.  The ASF licenses this file
+ *  to you under the Apache License, Version 2.0 (the
+ *  "License"); you may not use this file except in compliance
+ *  with the License.  You may obtain a copy of the License at
+ *  
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *  
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ */
 (function($) {
-  var PhotoSwipeKey = 'PhotoSwipe';
+  let PhotoSwipeKey = 'PhotoSwipe';
 
   function bindEvents(ps, $this) {
 
-    var simpleEvents = [
+    let simpleEvents = [
       'beforeChange',
       'afterChange',
       'imageLoadComplete',
@@ -17,8 +41,8 @@
       'unbindEvents',
       'destroy',
       'preventDragEvent' ];
-    for (var i = 0; i < simpleEvents.length; i++) {
-      var evt = simpleEvents[0];
+    for (let i = 0; i < simpleEvents.length; i++) {
+      let evt = simpleEvents[i];
       ps.listen(evt, function() { $this.trigger('photoswipe:' + evt); });
     }
 
@@ -28,36 +52,18 @@
     ps.listen('shareLinkClick'      , function(e, target)   { $this.trigger('photoswipe:shareLinkClick'     , [ e, target   ]); });
     ps.framework.bind(ps.scrollWrap /* bind on any element of gallery */, 'pswpTap', function(e) { $this.trigger('photoswipe:pswpTap', [ e ]) });
   }
-
-  function resolveImageMetadata(el) {
-    var $el = $(el);
-    switch (el.tagName.toUpperCase()) {
-      case 'IMG':
-        return {
-          url: el.src,
-          w: el.naturalWidth,
-          h: el.naturalHeight
-        }
-      case 'A':
-        return {
-          url: el.href,
-          w: $el.data('width'),
-          h: $el.data('height')
-        };
-      default:
-        return {
-          url: $el.data('url'),
-          w: $el.data('width'),
-          h: $el.data('height')
-        };
-    }
-  }
   
-  var methods = {
-    init : function(options) {
-      var opts = $.extend({}, $.fn.photoswipe.defaults, options || {});
+  function withPswd(thiz, callback) {
+    let pswd = $(thiz).data(PhotoSwipeKey);
+    if (pswd)
+      callback(pswd);
+  }
 
-      var $this = $(this);
+  let methods = {
+    init : function(options) {
+      let opts = $.extend({}, $.fn.photoswipe.defaults, options || {});
+
+      let $this = $(this);
 
       if (!$this.hasClass('pswp') && $this.children().length == 0) {
         $this
@@ -68,47 +74,87 @@
           .html(opts.bodyTemplate);
       }
 
-      var ps = new PhotoSwipe(this, opts.uiClass, opts.items, opts);
+      let items = (typeof opts.items == 'function') ? opts.items(this) : opts.items;
+      for (let i=0; i<items.length; i++) {
+        items[i].w = items[i].w || 0;
+        items[i].h = items[i].h || 0;
+      }
+      let ps = new PhotoSwipe(this, opts.uiClass, items, opts);
       ps.init();
       $this.data(PhotoSwipeKey, ps);
       bindEvents(ps, $this);
+      $this.photoswipe('loadAndUpdateImageSizes');
     },
     goTo : function(index) {
-      $(this).data(PhotoSwipeKey).goTo(index);
+      withPswd(this, function (ps) { ps.goTo(index); });
     },
     next : function() {
-      $(this).data(PhotoSwipeKey).next();
+      withPswd(this, function (ps) { ps.next(); });
     },
     updateSize : function(force) {
-      $(this).data(PhotoSwipeKey).updateSize(force);
+      withPswd(this, function (ps) { ps.updateSize(force); });
     },
     close : function() {
-      $(this).data(PhotoSwipeKey).close();
+      withPswd(this, function (ps) { ps.close(); });
     },
     destroy : function() {
-      var ps = $(this).data(PhotoSwipeKey);
-      $(this).removeData(PhotoSwipeKey);
+      let $this = $(this);
+      let ps = $this.data(PhotoSwipeKey);
+      $this.removeData(PhotoSwipeKey);
       ps.destroy();
     },
     zoomTo : function(destZoomLevel, centerPoint, speed, easingFn, updateFn) {
-      $(this).data(PhotoSwipeKey).zoomTo(destZoomLevel, centerPoint, speed, easingFn, updateFn);
+      withPswd(this, function (ps) { ps.zoomTo(destZoomLevel, centerPoint, speed, easingFn, updateFn); });
     },
     applyZoomPan : function(zoomLevel, panX, panY) {
-      $(this).data(PhotoSwipeKey).applyZoomPan(zoomLevel, panX, panY);
+      withPswd(this, function (ps) { ps.applyZoomPan(zoomLevel, panX, panY); });
     },
-    
     setItems : function(newItems) {
-      var $this = $(this);
-      var pswp = $this.data(PhotoSwipeKey);
-      var items = pswp.items;
-      Array.prototype.splice.apply(items, [0, items.length].concat(newItems));
-      pswp.invalidateCurrItems();
-      pswp.updateSize(true);
+      withPswd(this, function (ps) {
+        let items = ps.items;
+        Array.prototype.splice.apply(items, [0, items.length].concat(newItems));
+        ps.invalidateCurrItems();
+        ps.updateSize(true);
+      });
+    },
+    updateItem: function(src, w, h) {
+      let updatedItem = { src:src, w:w, h:h };
+      if ((typeof src == 'object') && src.src && src.w && src.h) {
+        updatedItem = src;
+      }
+      
+      withPswd(this, function (ps) {
+        let $this = $(this);
+        let items = ps.items;
+        for (let i=0; i<items.length; i++) {
+          if (items[i].src == updatedItem.src) {
+            items.splice(i, 1, updatedItem);
+          }
+        }
+        ps.invalidateCurrItems();
+        ps.updateSize(true);
+      });
+    },
+    loadAndUpdateImageSizes : function() {
+      let $this = $(this);
+      withPswd(this, function (ps) {
+        let items = ps.items;
+        for (let i=0; i<items.length; i++) {
+          let item = items[i];
+          if (!item.w || !item.h) {
+            let img = new Image();
+            img.onload = function() {
+              $this.photoswipe('updateItem', img.src, img.naturalWidth, img.naturalHeight);
+            }
+            img.src = item.src;
+          }
+        }
+      });
     }
   };
 
   $.fn.photoswipe = function(methodOrOptions) {
-    var args = arguments;
+    let args = arguments;
     if ('PhotoSwipe' == methodOrOptions) {
       return this.data(PhotoSwipeKey);
 
@@ -129,14 +175,13 @@
 
   $.fn.photoswipe.defaults = {
     uiClass : PhotoSwipeUI_Default,
-    images : null,
     shareButtons : [ {
       id : 'download',
       label : 'Download image',
       url : '{{raw_image_url}}',
       download : true
     } ],
-    //\n    <div class='pswp' tabindex='-1' role='dialog' aria-hidden='true'>\
+    //\n<div class='pswp' tabindex='-1' role='dialog' aria-hidden='true'>\
     bodyTemplate : "\
 \n      <div class='pswp__bg'></div>\
 \n      <div class='pswp__scroll-wrap'>\
@@ -171,7 +216,7 @@
 \n        </div>\
 \n      </div>\
 \n    ",
-  //\n    </div>\
+  //\n</div>\
   };
 
 }(jQuery));
