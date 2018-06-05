@@ -23,13 +23,13 @@ import org.opensingular.form.view.SView;
 
 public class SViewByRichTextNewTab extends SView {
 
-    private List<BtnRichText> btnRichTextList = new ArrayList<>();
+    private List<RichTextAction> btnRichTextList = new ArrayList<>(0);
 
-    public void addButton(BtnRichText btnRichText) {
+    public void addAction(RichTextAction btnRichText) {
         this.btnRichTextList.add(btnRichText);
     }
 
-    public List<BtnRichText> getBtnRichTextList() {
+    public List<RichTextAction> getBtnRichTextList() {
         return btnRichTextList;
     }
 }

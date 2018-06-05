@@ -16,8 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.richtext;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -35,14 +33,11 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.opensingular.form.view.richtext.BtnRichText;
-import org.opensingular.form.view.richtext.CkEditorContext;
 import org.opensingular.form.view.richtext.SViewByRichTextNewTab;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
-import org.springframework.util.CollectionUtils;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.opensingular.lib.wicket.util.jquery.JQuery.$;
@@ -50,15 +45,13 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public class PortletRichTextPanel extends Panel implements Loggable {
 
-    private HiddenField hiddenInput;
+    private HiddenField<String> hiddenInput;
     private Label htmlContent;
     private Label label;
     private String hash;
     private WicketBuildContext ctx;
     private boolean visibleMode = true;
     private AbstractDefaultAjaxBehavior eventSaveCallbackBehavior;
-
-    private List<BtnRichText> btnRichTextList = new ArrayList<>();
 
     @Override
     public void renderHead(IHeaderResponse response) {
@@ -125,28 +118,6 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     }
 
     private WebMarkupContainer createButtonOpenEditor() {
-
-        if(this.ctx.getView() != null && this.ctx.getView() instanceof SViewByRichTextNewTab){
-            SViewByRichTextNewTab view = (SViewByRichTextNewTab) this.ctx.getView();
-            if(!CollectionUtils.isEmpty(view.getBtnRichTextList())) {
-                view.getBtnRichTextList().forEach(f -> {
-                    BtnRichText btnRichText = new BtnRichText(f.getId(), f.getLabel(), f.getIconUrl()) {
-                        @Override
-                        public void getAction(CkEditorContext editorContext) {
-//                            f.getAction(editorContext);
-                            //Esta gerando problema de serialização, pois o STypeDadosPessoais não é serializado.
-                        }
-                    };
-                    btnRichTextList.add(btnRichText);
-                });
-            }
-        }
-
-        RichTextNewTabPage richTextNewTabPage = new RichTextNewTabPage(label.getDefaultModelObject().toString(),
-                visibleMode,
-                btnRichTextList,
-                hiddenInput.getMarkupId(),
-                htmlContent.getMarkupId());
         return new Link<String>("button") {
 
             @Override
@@ -161,6 +132,11 @@ public class PortletRichTextPanel extends Panel implements Loggable {
 
             @Override
             protected CharSequence getURL() {
+                RichTextNewTabPage richTextNewTabPage = new RichTextNewTabPage(label.getDefaultModelObject().toString(),
+                        visibleMode,
+                        ctx.getViewSupplier(SViewByRichTextNewTab.class),
+                        hiddenInput,
+                        htmlContent.getMarkupId());
                 return RequestCycle.get().urlFor(
                         new RenderPageRequestHandler(
                                 new PageProvider(richTextNewTabPage)));
@@ -175,9 +151,5 @@ public class PortletRichTextPanel extends Panel implements Loggable {
 
     public void setVisibleMode(boolean visibleMode) {
         this.visibleMode = visibleMode;
-    }
-
-    public void addButton(BtnRichText btnRichText) {
-        this.btnRichTextList.add(btnRichText);
     }
 }

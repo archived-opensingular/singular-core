@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-(function (htmlContainer, hiddenInput, isEnabled, buttonsList) {
+(function (htmlContainer, hiddenInput, callbackUrl, isEnabled, buttonsList) {
 
     $(document).ready(function () {
         appendFunctions(window.opener);
@@ -23,7 +23,7 @@
 
     function appendFunctions(opener) {
         $(function () {
-            document.getElementById('ck-text-area').value = opener.$('#' + htmlContainer).html();
+            // document.getElementById('ck-text-area').value = opener.$('#' + htmlContainer).html();
 
             var plugin;
             if (isEnabled === "true") {
@@ -33,9 +33,9 @@
                 plugin = 'closed';
             }
             var ids = "";
-            buttonsList.split(", ").forEach(function (b) {
-                var texts = b.split("#$");
-                ids += 'extra' + texts[0] + ",";
+            var buttonsExtra = buttonsList.split(",");
+            buttonsExtra.forEach(function (b) {
+                ids += 'extra' + buttonsExtra.indexOf(b) + ",";
             });
             ids = ids.slice(0, -1);
 
@@ -88,8 +88,9 @@
 
             CKEDITOR.config.disableNativeSpellChecker = false;
 
-            buttonsList.split(", ").forEach(function (b) {
+            buttonsExtra.forEach(function (b) {
                 var texts = b.split("#$");
+
                 editor.ui.addButton('extra' + texts[0],
                     {
                         label: texts[1],
@@ -98,12 +99,10 @@
                     });
                 editor.addCommand(texts[0], {
                     exec: function () {
-                        console.log(editor.getData());
-                        console.log($('#modalCkEditor'));
+                        var cursor_position = editor.getSelection().getRanges()[0].startOffset;
+                        console.log(cursor_position);
 
-                        $('#modalCkEditor').modal({show: true});
-
-                        //Wicket.Ajax.post({u: html, ep:{'innerText':data}});
+                        Wicket.Ajax.post({u: callbackUrl, ep: {'innerText': editor.getData(), 'index': texts[0], 'cursorPosition': cursor_position}});
 
                     }
                 });
@@ -113,4 +112,4 @@
         });
 
     }
-})('${htmlContainer}', '${hiddenInput}', '${isEnabled}', '${buttonsList}');
+})('${htmlContainer}', '${hiddenInput}', '${callbackUrl}', '${isEnabled}', '${buttonsList}');
