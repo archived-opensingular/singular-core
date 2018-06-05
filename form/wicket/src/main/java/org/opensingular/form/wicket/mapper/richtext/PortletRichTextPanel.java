@@ -19,7 +19,6 @@ package org.opensingular.form.wicket.mapper.richtext;
 import java.util.Optional;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.core.request.handler.PageProvider;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
@@ -48,10 +47,9 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     private HiddenField<String> hiddenInput;
     private Label htmlContent;
     private Label label;
-    private String hash;
+    private String hash; //TODO VERIFICAR NECESSIDADE DO HASH.
     private WicketBuildContext ctx;
     private boolean visibleMode = true;
-    private AbstractDefaultAjaxBehavior eventSaveCallbackBehavior;
 
     @Override
     public void renderHead(IHeaderResponse response) {
@@ -85,14 +83,6 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-//        eventSaveCallbackBehavior = new AbstractDefaultAjaxBehavior() {
-//            @Override
-//            protected void respond(AjaxRequestTarget target) {
-//                target.add(PortletRichTextPanel.this);
-//                target.appendJavaScript("alert('ok');");
-//            }
-//        };
-//        add(eventSaveCallbackBehavior);
         build(ctx);
         addBehaviours();
     }
@@ -118,11 +108,15 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     }
 
     private WebMarkupContainer createButtonOpenEditor() {
+        RichTextNewTabPage richTextNewTabPage = new RichTextNewTabPage(label.getDefaultModelObject().toString(),
+                visibleMode,
+                ctx.getViewSupplier(SViewByRichTextNewTab.class),
+                hiddenInput,
+                htmlContent.getMarkupId());
         return new Link<String>("button") {
 
             @Override
-            public void onClick() {
-            }
+            public void onClick() {}
 
             @Override
             protected void onComponentTag(ComponentTag tag) {
@@ -132,11 +126,6 @@ public class PortletRichTextPanel extends Panel implements Loggable {
 
             @Override
             protected CharSequence getURL() {
-                RichTextNewTabPage richTextNewTabPage = new RichTextNewTabPage(label.getDefaultModelObject().toString(),
-                        visibleMode,
-                        ctx.getViewSupplier(SViewByRichTextNewTab.class),
-                        hiddenInput,
-                        htmlContent.getMarkupId());
                 return RequestCycle.get().urlFor(
                         new RenderPageRequestHandler(
                                 new PageProvider(richTextNewTabPage)));

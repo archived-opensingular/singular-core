@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -59,7 +58,7 @@ import org.opensingular.lib.wicket.util.template.RecursosStaticosSingularTemplat
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
 import org.wicketstuff.annotation.mount.MountPath;
 
-@MountPath("/RichTextNewTabPage") //TODO CAIXA BAIXA SEM /
+@MountPath("richtextnewtabpage")
 public class RichTextNewTabPage extends WebPage implements Loggable {
 
     public static final IHeaderResponseDecorator JAVASCRIPT_DECORATOR = (response) -> new JavaScriptFilteredIntoFooterHeaderResponse(response, SingularTemplate.JAVASCRIPT_CONTAINER);
@@ -73,6 +72,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     private AbstractDefaultAjaxBehavior eventSaveCallbackBehavior;
     private BFModalWindow bfModalWindow;
     private TextArea<String> textArea;
+    private AjaxButton submitButton;
 
     public RichTextNewTabPage(String title, boolean visibleMode, ISupplier<SViewByRichTextNewTab> viewSupplier,
             HiddenField<String> hiddenInput, String htmlContainer) {
@@ -80,9 +80,8 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         this.viewSupplier = viewSupplier;
         this.hiddenInput = hiddenInput;
         this.htmlContainer = htmlContainer;
-        modelTextArea = this.hiddenInput.getModel();
         add(new Label("title", Model.of(title)));
-
+        this.modelTextArea = hiddenInput.getModel();
         //IMPORTANTE -> TODO O ID DEVE COMECAR COM extra
 
     }
@@ -90,9 +89,11 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
+
         try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "PortletRichTextPanel.js")) {
             final Map<String, String> params = new HashMap<>();
 
+            params.put("submitButtonId", submitButton.getMarkupId());
             params.put("htmlContainer", this.htmlContainer);
             params.put("hiddenInput", this.hiddenInput.getMarkupId());
             params.put("callbackUrl", eventSaveCallbackBehavior.getCallbackUrl().toString());
@@ -132,6 +133,14 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         Form form = new Form("form");
         form.add(criarTextArea());
 
+        submitButton = new AjaxButton("submitButton") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                hiddenInput.setModelObject(modelTextArea.getObject());
+            }
+        };
+        form.add(submitButton);
+
         createModal(form);
         createCallBackBehavior();
 
@@ -147,47 +156,45 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
             protected void respond(AjaxRequestTarget target) {
 
                 IRequestParameters requestParameters = RichTextNewTabPage.this.getRequest().getRequestParameters();
+
+                //Todo VERIFICAR SE NÃO É MELHOR CRIAR UM OBJETO CONTENDO ESSES 4 ATRIBUTOS.
                 String text = requestParameters.getParameterValue("innerText").toString();
                 modelTextArea.setObject(text);
                 Integer index = requestParameters.getParameterValue("index").toInt();
+                String selected = requestParameters.getParameterValue("selected").toString();
 
-                Integer cursorPosition = requestParameters.getParameterValue("cursorPosition").toInt();
 
-
-                //TODO REMOVER INDEX FIXO.
                 RichTextAction richTextAction = viewSupplier.get().getBtnRichTextList().get(index);
                 if (richTextAction != null) {
                     if (richTextAction.getForm().isPresent()) {
                         SingularFormPanel singularFormPanel = new SingularFormPanel("modalBody", (Class<? extends SType<?>>) richTextAction.getForm().get());
                         bfModalWindow.setBody(singularFormPanel);
                         bfModalWindow.addButton(BSModalBorder.ButtonStyle.CANCEL, Model.of("Cancelar"), createCancelButton());
-                        bfModalWindow.addButton(BSModalBorder.ButtonStyle.CONFIRM, Model.of("Confirmar"), createConfirmButton(singularFormPanel, index, cursorPosition));
-                        bfModalWindow.setTitleText(Model.of(richTextAction.getLabel())); //TODO VERIFICAR SE PRECISA ALTERAR
+                        bfModalWindow.addButton(BSModalBorder.ButtonStyle.CONFIRM, Model.of("Confirmar"), createConfirmButton(singularFormPanel, index, selected));
+                        bfModalWindow.setTitleText(Model.of(richTextAction.getLabel())); //TODO VERIFICAR SE PRECISA ALTERAR O TITLE DA MODAL.
                         bfModalWindow.show(target);
                     } else {
-                        RichTextContext richTextContext = returnRichTextContextInitialized(richTextAction);
+                        RichTextContext richTextContext = returnRichTextContextInitialized(richTextAction, selected);
                         richTextAction.onAction(richTextContext, Optional.empty());
-                        changeValueRichText(target, richTextContext, richTextAction.getType(), cursorPosition);
+                        changeValueRichText(target, richTextContext, richTextAction.getType());
                     }
                 }
 
 
             }
 
-            private SingularButton createConfirmButton(SingularFormPanel singularFormPanel, int actionIndex, Integer cursorPosition) {
+            private SingularButton createConfirmButton(SingularFormPanel singularFormPanel, int actionIndex, String selected) {
                 return new SingularButton("btnConfirmar", singularFormPanel.getInstanceModel()) {
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         RichTextAction richTextAction = viewSupplier.get().getBtnRichTextList().get(actionIndex);
-                        RichTextContext richTextContext = returnRichTextContextInitialized(richTextAction);
+                        RichTextContext richTextContext = returnRichTextContextInitialized(richTextAction, selected);
 
                         richTextAction.onAction(richTextContext, Optional.of(singularFormPanel.getInstance()));
 
-                        changeValueRichText(target, richTextContext, richTextAction.getType(), cursorPosition);
+                        changeValueRichText(target, richTextContext, richTextAction.getType());
                         bfModalWindow.hide(target);
                     }
-
-                    //TODO realizar action.
                 };
             }
 
@@ -207,9 +214,10 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
      * Método que contem a logica para retornar o RichText especifico de acordo com o que foi criado no SType.
      *
      * @param richTextAction a interface RichText da lista.
+     * @param selected       o texto selecionado.
      * @return retorna o RichText especifico de acordo com o type.
      */
-    private RichTextContext returnRichTextContextInitialized(RichTextAction richTextAction) {
+    private RichTextContext returnRichTextContextInitialized(RichTextAction richTextAction, String selected) {
         if (richTextAction.getType().equals(RichTextInsertContext.class)) {
             return new RichTextInsertContext();
         }
@@ -217,7 +225,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
             return new RichTextSelectionContext() {
                 @Override
                 public String getTextSelected() {
-                    return "teste";
+                    return selected;
                 }
             };
         }
@@ -232,19 +240,14 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         return null;
     }
 
-    private void changeValueRichText(AjaxRequestTarget target, RichTextContext richTextContext, Class typeRichText, Integer cursorPosition) {
+    private void changeValueRichText(AjaxRequestTarget target, RichTextContext richTextContext, Class typeRichText) {
         if (richTextContext.getValue() != null) {
-            if (typeRichText.equals(RichTextInsertContext.class)) {
-                String modalTextArea = StringEscapeUtils.unescapeHtml4(modelTextArea.getObject());
-                String partInit = modalTextArea.substring(0, cursorPosition);
-                String partFinal = modalTextArea.substring(cursorPosition, modalTextArea.length() -1);
-                String partExtra = richTextContext.getValue();
-                modelTextArea.setObject(partInit + partExtra + partFinal);
+            if (typeRichText.equals(RichTextInsertContext.class) || typeRichText.equals(RichTextContentContext.class)) {
+                target.appendJavaScript("CKEDITOR.instances['ck-text-area'].insertHtml('" + richTextContext.getValue() + "');");
             } else {
                 modelTextArea.setObject(richTextContext.getValue());
             }
             textArea.modelChanged();
-            target.add(textArea, this.getPage());
         }
     }
 
@@ -262,6 +265,5 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         textArea = new TextArea<>("conteudo", modelTextArea);
         return textArea;
     }
-
 
 }

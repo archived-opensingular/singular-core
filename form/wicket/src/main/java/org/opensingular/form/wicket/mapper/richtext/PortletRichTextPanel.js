@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-(function (htmlContainer, hiddenInput, callbackUrl, isEnabled, buttonsList) {
+(function (htmlContainer, hiddenInput, callbackUrl, isEnabled, buttonsList, submitButtonId) {
 
     $(document).ready(function () {
         appendFunctions(window.opener);
@@ -23,7 +23,6 @@
 
     function appendFunctions(opener) {
         $(function () {
-            // document.getElementById('ck-text-area').value = opener.$('#' + htmlContainer).html();
 
             var plugin;
             if (isEnabled === "true") {
@@ -48,6 +47,8 @@
                 savePlugin: {
                     onSave: function (data) {
 
+                        $('#ck-text-area').val(data);
+                        $('#' + submitButtonId).click();
                         var jQuerRefOfHtmlContainer = opener.$('#' + htmlContainer);
                         jQuerRefOfHtmlContainer.html(data);
 
@@ -99,10 +100,10 @@
                     });
                 editor.addCommand(texts[0], {
                     exec: function () {
-                        var cursor_position = editor.getSelection().getRanges()[0].startOffset;
-                        console.log(cursor_position);
+                        var selected = editor.getSelection().getSelectedText();
+                        var innerText = editor.document.getBody().getText();
 
-                        Wicket.Ajax.post({u: callbackUrl, ep: {'innerText': editor.getData(), 'index': texts[0], 'cursorPosition': cursor_position}});
+                        Wicket.Ajax.post({u: callbackUrl, ep: {'innerText': innerText, 'index': texts[0], 'selected': selected}});
 
                     }
                 });
@@ -112,4 +113,4 @@
         });
 
     }
-})('${htmlContainer}', '${hiddenInput}', '${callbackUrl}', '${isEnabled}', '${buttonsList}');
+})('${htmlContainer}', '${hiddenInput}', '${callbackUrl}', '${isEnabled}', '${buttonsList}', '${submitButtonId}');
