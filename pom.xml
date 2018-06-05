@@ -144,9 +144,15 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-Djava.locale.providers=COMPAT</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.8</version>
                 <configuration>
                     <destFile>${sonar.jacoco.reportPaths}</destFile>
                     <append>true</append>
@@ -199,6 +205,11 @@
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.org.apache</groupId>
+            <artifactId>jaxp-ri</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

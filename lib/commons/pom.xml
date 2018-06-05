@@ -38,11 +38,6 @@
         </dependency>
         <!--for javadoc generation only-->
         <dependency>
-            <groupId>com.sun.org.apache</groupId>
-            <artifactId>jaxp-ri</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>javax.xml.ws</groupId>
             <artifactId>jaxws-api</artifactId>
             <scope>provided</scope>
