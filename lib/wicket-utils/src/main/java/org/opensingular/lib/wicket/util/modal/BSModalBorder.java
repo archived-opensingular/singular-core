@@ -235,6 +235,14 @@ public class BSModalBorder extends Border {
         return addButton(style, model, button);
     }
 
+    public BSModalBorder addButton(ButtonStyle style, String labelKey, String labelDefaultValue, AjaxButton button) {
+        IModel<String> model = null;
+        if (labelKey != null) {
+            model = new ResourceModel(labelKey, labelDefaultValue);
+        }
+        return addButton(style, model, button);
+    }
+
     public BSModalBorder addButton(ButtonStyle style, IModel<String> label, Button button) {
         if (label != null) {
             button.setLabel(label);
