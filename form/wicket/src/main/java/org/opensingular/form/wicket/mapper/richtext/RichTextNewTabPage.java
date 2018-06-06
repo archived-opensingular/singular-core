@@ -238,24 +238,14 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
      * @return retorna o RichText especifico de acordo com o type.
      */
     private RichTextContext returnRichTextContextInitialized(RichTextAction richTextAction, String selected) {
-        if (richTextAction.getType().equals(RichTextInsertContext.class)) {
-            return new RichTextInsertContext();
-        }
         if (richTextAction.getType().equals(RichTextSelectionContext.class)) {
-            return new RichTextSelectionContext() {
-                @Override
-                public String getValue() {
-                    return selected;
-                }
-            };
+            return  new RichTextSelectionContext(selected);
         }
         if (richTextAction.getType().equals(RichTextContentContext.class)) {
-            return new RichTextContentContext() {
-                @Override
-                public String getValue() {
-                    return modelTextArea.getObject();
-                }
-            };
+            return  new RichTextContentContext(modelTextArea.getObject());
+        }
+        if (richTextAction.getType().equals(RichTextInsertContext.class)) {
+            return new RichTextInsertContext();
         }
         return null;
     }

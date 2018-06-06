@@ -1,19 +1,26 @@
 package org.opensingular.form.view.richtext;
 
-import javax.annotation.Nonnull;
-
 public class RichTextContentContext implements RichTextContext {
 
 
-    private String content;
+    private String content = "";
+    private String newValue;
+
+    public RichTextContentContext(String content) {
+        this.content = content;
+    }
 
     @Override
-    public void setReturnValue(@Nonnull String value) {
-        this.content = value;
+    public void setReturnValue(String newValue) {
+        this.newValue = newValue;
     }
 
     @Override
     public String getValue() {
-        return content;
+        return this.newValue;
+    }
+
+    public String getContent() {
+        return this.content;
     }
 }
