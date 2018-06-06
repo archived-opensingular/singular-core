@@ -28,6 +28,7 @@ import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.persistence.FormKey;
 import org.opensingular.form.persistence.FormRespository;
 import org.opensingular.form.persistence.exception.HibernateFormRepositoryException;
+import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 import javax.annotation.Nonnull;
@@ -84,7 +85,7 @@ public abstract class HibernateFormRepository<T extends BaseEntity
         if (formKey instanceof HibernateFormKey) {
             return ((HibernateFormKey<ID>) formKey).getEntityCod();
         }
-        throw new RuntimeException("A FormKey informada não é do tipo HibernateFormKey");
+        throw new HibernateFormRepositoryException("A FormKey informada não é do tipo HibernateFormKey");
     }
 
     @Nonnull
