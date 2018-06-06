@@ -74,7 +74,6 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extend
         return flowMap;
     }
 
-    @Nonnull
     public FLOW_MAP build() {
         return flowMap;
     }
