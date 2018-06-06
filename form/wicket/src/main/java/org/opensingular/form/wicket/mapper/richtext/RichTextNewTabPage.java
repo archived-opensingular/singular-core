@@ -169,8 +169,6 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
                 String text = requestParameters.getParameterValue(INNER_TEXT).toString();
                 Integer index = requestParameters.getParameterValue(INDEX).toInt();
                 String selected = requestParameters.getParameterValue(SELECTED).toString();
-                modelTextArea.setObject(text);
-
 
                 RichTextAction richTextAction = viewSupplier.get().getTextActionList().get(index);
                 if (richTextAction != null) {
@@ -179,13 +177,13 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
                         SingularFormPanel singularFormPanel = new SingularFormPanel("modalBody", stypeActionButton);
                         bfModalWindow.setBody(singularFormPanel);
                         bfModalWindow.addButton(BSModalBorder.ButtonStyle.CANCEL, Model.of("Cancelar"), createCancelButton());
-                        bfModalWindow.addButton(BSModalBorder.ButtonStyle.CONFIRM, Model.of("Confirmar"), createConfirmButton(singularFormPanel, index, selected));
+                        bfModalWindow.addButton(BSModalBorder.ButtonStyle.CONFIRM, Model.of("Confirmar"), createConfirmButton(singularFormPanel, index, selected, text));
 
 
                         Optional<String> title = SFormUtil.getTypeLabel(stypeActionButton);
 
                         IModel<String> titleModel = new Model<>();
-                        if(title.isPresent()){
+                        if (title.isPresent()) {
                             titleModel.setObject(title.get());
                         } else {
                             titleModel.setObject(richTextAction.getLabel());
@@ -194,7 +192,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
                         bfModalWindow.setTitleText(titleModel);
                         bfModalWindow.show(target);
                     } else {
-                        RichTextContext richTextContext = returnRichTextContextInitialized(richTextAction, selected);
+                        RichTextContext richTextContext = returnRichTextContextInitialized(richTextAction, selected, text);
                         richTextAction.onAction(richTextContext, Optional.empty());
                         changeValueRichText(target, richTextContext, richTextAction.getType());
                     }
@@ -203,12 +201,12 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
 
             }
 
-            private SingularButton createConfirmButton(SingularFormPanel singularFormPanel, int actionIndex, String selected) {
+            private SingularButton createConfirmButton(SingularFormPanel singularFormPanel, int actionIndex, String selected, String text) {
                 return new SingularButton("btnConfirmar", singularFormPanel.getInstanceModel()) {
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         RichTextAction richTextAction = viewSupplier.get().getTextActionList().get(actionIndex);
-                        RichTextContext richTextContext = returnRichTextContextInitialized(richTextAction, selected);
+                        RichTextContext richTextContext = returnRichTextContextInitialized(richTextAction, selected, text);
 
                         richTextAction.onAction(richTextContext, Optional.of(singularFormPanel.getInstance()));
 
@@ -235,14 +233,15 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
      *
      * @param richTextAction a interface RichText da lista.
      * @param selected       o texto selecionado.
+     * @param content        o content do ckEditor.
      * @return retorna o RichText especifico de acordo com o type.
      */
-    private RichTextContext returnRichTextContextInitialized(RichTextAction richTextAction, String selected) {
+    private RichTextContext returnRichTextContextInitialized(RichTextAction richTextAction, String selected, String content) {
         if (richTextAction.getType().equals(RichTextSelectionContext.class)) {
-            return  new RichTextSelectionContext(selected);
+            return new RichTextSelectionContext(selected);
         }
         if (richTextAction.getType().equals(RichTextContentContext.class)) {
-            return  new RichTextContentContext(modelTextArea.getObject());
+            return new RichTextContentContext(content);
         }
         if (richTextAction.getType().equals(RichTextInsertContext.class)) {
             return new RichTextInsertContext();
