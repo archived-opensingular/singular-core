@@ -18,7 +18,6 @@ package org.opensingular.form.wicket.mapper.richtext;
 
 import java.util.Optional;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.core.request.handler.PageProvider;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
@@ -47,7 +46,6 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     private HiddenField<String> hiddenInput;
     private Label htmlContent;
     private Label label;
-    private String hash; //TODO VERIFICAR NECESSIDADE DO HASH.
     private WicketBuildContext ctx;
     private boolean visibleMode = true;
 
@@ -59,7 +57,6 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     public PortletRichTextPanel(String id, WicketBuildContext ctx) {
         super(id);
         this.ctx = ctx;
-        hash = RandomStringUtils.random(10, true, false);
     }
 
     public WebMarkupContainer configureLabelButton() {
@@ -108,11 +105,6 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     }
 
     private WebMarkupContainer createButtonOpenEditor() {
-        RichTextNewTabPage richTextNewTabPage = new RichTextNewTabPage(label.getDefaultModelObject().toString(),
-                visibleMode,
-                ctx.getViewSupplier(SViewByRichTextNewTab.class),
-                hiddenInput,
-                htmlContent.getMarkupId());
         return new Link<String>("button") {
 
             @Override
@@ -126,6 +118,12 @@ public class PortletRichTextPanel extends Panel implements Loggable {
 
             @Override
             protected CharSequence getURL() {
+                RichTextNewTabPage richTextNewTabPage = new RichTextNewTabPage(label.getDefaultModelObject().toString(),
+                        visibleMode,
+                        ctx.getViewSupplier(SViewByRichTextNewTab.class),
+                        hiddenInput,
+                        htmlContent.getMarkupId());
+
                 return RequestCycle.get().urlFor(
                         new RenderPageRequestHandler(
                                 new PageProvider(richTextNewTabPage)));

@@ -41,6 +41,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.util.template.PackageTextTemplate;
+import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SType;
 import org.opensingular.form.view.richtext.RichTextAction;
 import org.opensingular.form.view.richtext.RichTextContentContext;
@@ -63,6 +64,11 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
 
     public static final IHeaderResponseDecorator JAVASCRIPT_DECORATOR = (response) -> new JavaScriptFilteredIntoFooterHeaderResponse(response, SingularTemplate.JAVASCRIPT_CONTAINER);
     public static final String JAVASCRIPT_CONTAINER = "javascript-container";
+
+    public static final String INNER_TEXT = "innerText";
+    public static final String INDEX = "index";
+    public static final String SELECTED = "selected";
+
     private final ISupplier<SViewByRichTextNewTab> viewSupplier;
     private HiddenField<String> hiddenInput;
     private String htmlContainer;
@@ -119,14 +125,11 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < viewSupplier.get().getTextActionList().size(); i++) {
             RichTextAction richTextAction = viewSupplier.get().getTextActionList().get(i);
-            sb.append(i)
-                    .append("#$")
-                    .append(richTextAction.getLabel())
-                    .append("#$")
-                    .append(richTextAction.getIconUrl())
-                    .append("#$")
-                    .append(richTextAction.getLabelInline())
-                    .append(",");
+            String actionButtonFormatted = i + "#$" + richTextAction.getLabel()
+                    + "#$" + richTextAction.getIconUrl()
+                    + "#$" + richTextAction.getLabelInline()
+                    + ",";
+            sb.append(actionButtonFormatted);
         }
         sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
@@ -163,21 +166,32 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
 
                 IRequestParameters requestParameters = RichTextNewTabPage.this.getRequest().getRequestParameters();
 
-                //Todo VERIFICAR SE NÃO É MELHOR CRIAR UM OBJETO CONTENDO ESSES 4 ATRIBUTOS.
-                String text = requestParameters.getParameterValue("innerText").toString();
+                String text = requestParameters.getParameterValue(INNER_TEXT).toString();
+                Integer index = requestParameters.getParameterValue(INDEX).toInt();
+                String selected = requestParameters.getParameterValue(SELECTED).toString();
                 modelTextArea.setObject(text);
-                Integer index = requestParameters.getParameterValue("index").toInt();
-                String selected = requestParameters.getParameterValue("selected").toString();
 
 
                 RichTextAction richTextAction = viewSupplier.get().getTextActionList().get(index);
                 if (richTextAction != null) {
                     if (richTextAction.getForm().isPresent()) {
-                        SingularFormPanel singularFormPanel = new SingularFormPanel("modalBody", (Class<? extends SType<?>>) richTextAction.getForm().get());
+                        Class<? extends SType<?>> stypeActionButton = (Class<? extends SType<?>>) richTextAction.getForm().get();
+                        SingularFormPanel singularFormPanel = new SingularFormPanel("modalBody", stypeActionButton);
                         bfModalWindow.setBody(singularFormPanel);
                         bfModalWindow.addButton(BSModalBorder.ButtonStyle.CANCEL, Model.of("Cancelar"), createCancelButton());
                         bfModalWindow.addButton(BSModalBorder.ButtonStyle.CONFIRM, Model.of("Confirmar"), createConfirmButton(singularFormPanel, index, selected));
-                        bfModalWindow.setTitleText(Model.of(richTextAction.getLabel())); //TODO VERIFICAR SE PRECISA ALTERAR O TITLE DA MODAL.
+
+
+                        Optional<String> title = SFormUtil.getTypeLabel(stypeActionButton);
+
+                        IModel<String> titleModel = new Model<>();
+                        if(title.isPresent()){
+                            titleModel.setObject(title.get());
+                        } else {
+                            titleModel.setObject(richTextAction.getLabel());
+                        }
+
+                        bfModalWindow.setTitleText(titleModel);
                         bfModalWindow.show(target);
                     } else {
                         RichTextContext richTextContext = returnRichTextContextInitialized(richTextAction, selected);
@@ -258,12 +272,10 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     }
 
     private void createModal(Form form) {
-        //TODO Entender melhor os parametros do ModalWIndow (true, true)
         bfModalWindow = new BFModalWindow("modalCkEditor", false, true);
         WebMarkupContainer container = new WebMarkupContainer("modalBody");
         container.setOutputMarkupId(true);
         bfModalWindow.setBody(container);
-
         form.add(bfModalWindow);
     }
 
