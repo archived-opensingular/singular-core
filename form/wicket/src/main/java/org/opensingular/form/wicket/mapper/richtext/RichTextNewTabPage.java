@@ -242,12 +242,11 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
 
     private void changeValueRichText(AjaxRequestTarget target, RichTextContext richTextContext, Class typeRichText) {
         if (richTextContext.getValue() != null) {
-            if (typeRichText.equals(RichTextInsertContext.class) || typeRichText.equals(RichTextContentContext.class)) {
+            if (typeRichText.equals(RichTextInsertContext.class) || typeRichText.equals(RichTextSelectionContext.class)) {
                 target.appendJavaScript("CKEDITOR.instances['ck-text-area'].insertHtml('" + richTextContext.getValue() + "');");
-            } else {
-                modelTextArea.setObject(richTextContext.getValue());
+            } else if (typeRichText.equals(RichTextContentContext.class)) {
+                target.appendJavaScript("CKEDITOR.instances['ck-text-area'].setData('" + richTextContext.getValue() + "');");
             }
-            textArea.modelChanged();
         }
     }
 
