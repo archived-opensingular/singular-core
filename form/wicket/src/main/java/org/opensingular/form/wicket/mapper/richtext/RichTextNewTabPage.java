@@ -71,7 +71,6 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     private boolean visibleMode;
     private AbstractDefaultAjaxBehavior eventSaveCallbackBehavior;
     private BFModalWindow bfModalWindow;
-    private TextArea<String> textArea;
     private AjaxButton submitButton;
 
     public RichTextNewTabPage(String title, boolean visibleMode, ISupplier<SViewByRichTextNewTab> viewSupplier,
@@ -94,6 +93,11 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
             final Map<String, String> params = new HashMap<>();
 
             params.put("submitButtonId", submitButton.getMarkupId());
+            params.put("classDisableDoubleClick", viewSupplier.get()
+                    .getConfiguration()
+                    .getDoubleClickDisabledClasses()
+                    .stream()
+                    .reduce(new StringBuilder(), (s, b) -> s.append(b).append(", "), StringBuilder::append).toString());
             params.put("htmlContainer", this.htmlContainer);
             params.put("hiddenInput", this.hiddenInput.getMarkupId());
             params.put("callbackUrl", eventSaveCallbackBehavior.getCallbackUrl().toString());
@@ -113,13 +117,15 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
 
     private String renderButtonsList() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < viewSupplier.get().getBtnRichTextList().size(); i++) {
-            RichTextAction richTextAction = viewSupplier.get().getBtnRichTextList().get(i);
+        for (int i = 0; i < viewSupplier.get().getTextActionList().size(); i++) {
+            RichTextAction richTextAction = viewSupplier.get().getTextActionList().get(i);
             sb.append(i)
                     .append("#$")
                     .append(richTextAction.getLabel())
                     .append("#$")
                     .append(richTextAction.getIconUrl())
+                    .append("#$")
+                    .append(richTextAction.getLabelInline())
                     .append(",");
         }
         sb.deleteCharAt(sb.length() - 1);
@@ -164,7 +170,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
                 String selected = requestParameters.getParameterValue("selected").toString();
 
 
-                RichTextAction richTextAction = viewSupplier.get().getBtnRichTextList().get(index);
+                RichTextAction richTextAction = viewSupplier.get().getTextActionList().get(index);
                 if (richTextAction != null) {
                     if (richTextAction.getForm().isPresent()) {
                         SingularFormPanel singularFormPanel = new SingularFormPanel("modalBody", (Class<? extends SType<?>>) richTextAction.getForm().get());
@@ -187,7 +193,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
                 return new SingularButton("btnConfirmar", singularFormPanel.getInstanceModel()) {
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                        RichTextAction richTextAction = viewSupplier.get().getBtnRichTextList().get(actionIndex);
+                        RichTextAction richTextAction = viewSupplier.get().getTextActionList().get(actionIndex);
                         RichTextContext richTextContext = returnRichTextContextInitialized(richTextAction, selected);
 
                         richTextAction.onAction(richTextContext, Optional.of(singularFormPanel.getInstance()));
@@ -224,7 +230,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         if (richTextAction.getType().equals(RichTextSelectionContext.class)) {
             return new RichTextSelectionContext() {
                 @Override
-                public String getTextSelected() {
+                public String getValue() {
                     return selected;
                 }
             };
@@ -232,7 +238,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         if (richTextAction.getType().equals(RichTextContentContext.class)) {
             return new RichTextContentContext() {
                 @Override
-                public String getContent() {
+                public String getValue() {
                     return modelTextArea.getObject();
                 }
             };
@@ -241,6 +247,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     }
 
     private void changeValueRichText(AjaxRequestTarget target, RichTextContext richTextContext, Class typeRichText) {
+        //Caso a String seja vazia significa que o texto deverá ser limpado.
         if (richTextContext.getValue() != null) {
             if (typeRichText.equals(RichTextInsertContext.class) || typeRichText.equals(RichTextSelectionContext.class)) {
                 target.appendJavaScript("CKEDITOR.instances['ck-text-area'].insertHtml('" + richTextContext.getValue() + "');");
@@ -252,7 +259,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
 
     private void createModal(Form form) {
         //TODO Entender melhor os parametros do ModalWIndow (true, true)
-        bfModalWindow = new BFModalWindow("modalCkEditor", true, true);
+        bfModalWindow = new BFModalWindow("modalCkEditor", false, true);
         WebMarkupContainer container = new WebMarkupContainer("modalBody");
         container.setOutputMarkupId(true);
         bfModalWindow.setBody(container);
@@ -261,8 +268,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     }
 
     private TextArea<String> criarTextArea() {
-        textArea = new TextArea<>("conteudo", modelTextArea);
-        return textArea;
+        return new TextArea<>("conteudo", modelTextArea);
     }
 
 }

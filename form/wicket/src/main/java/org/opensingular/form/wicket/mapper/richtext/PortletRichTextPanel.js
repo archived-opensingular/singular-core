@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-(function (htmlContainer, hiddenInput, callbackUrl, isEnabled, buttonsList, submitButtonId) {
+(function (htmlContainer, hiddenInput, callbackUrl, isEnabled, buttonsList, submitButtonId, classDisableDoubleClick) {
 
     $(document).ready(function () {
         appendFunctions(window.opener);
@@ -34,7 +34,14 @@
             var ids = "";
             var buttonsExtra = buttonsList.split(",");
             buttonsExtra.forEach(function (b) {
-                ids += 'extra' + buttonsExtra.indexOf(b) + ",";
+                var texts = b.split("#$");
+                var id;
+                if(texts[3] === "true"){
+                    id = 'extra' + texts[0];
+                } else {
+                    id = texts[0];
+                }
+                ids += id + ",";
             });
             ids = ids.slice(0, -1);
 
@@ -89,10 +96,27 @@
 
             CKEDITOR.config.disableNativeSpellChecker = false;
 
+
+            editor.on('doubleclick', function (evt) {
+                var element = evt.data.element;
+                var classesDoubleClick =  classDisableDoubleClick.split(", ");
+
+                if (element.hasClass(classesDoubleClick)){
+                    evt.stop();
+                }
+            }, null, null, 1);
+
             buttonsExtra.forEach(function (b) {
                 var texts = b.split("#$");
 
-                editor.ui.addButton('extra' + texts[0],
+                var id;
+                if(texts[3] === "true"){
+                    id = 'extra' + texts[0];
+                } else {
+                    id = texts[0];
+                }
+
+                editor.ui.addButton(id,
                     {
                         label: texts[1],
                         command: texts[0],
@@ -113,4 +137,4 @@
         });
 
     }
-})('${htmlContainer}', '${hiddenInput}', '${callbackUrl}', '${isEnabled}', '${buttonsList}', '${submitButtonId}');
+})('${htmlContainer}', '${hiddenInput}', '${callbackUrl}', '${isEnabled}', '${buttonsList}', '${submitButtonId}', '${classDisableDoubleClick}');

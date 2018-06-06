@@ -5,18 +5,15 @@ import javax.annotation.Nonnull;
 public class RichTextSelectionContext implements RichTextContext {
 
     private String textSelected;
-    private String value;
 
     @Override
     public void setReturnValue(@Nonnull String value) {
-        this.value = value;
+        this.textSelected = value;
     }
 
+    @Override
     public String getValue() {
-        return value;
-    }
-
-    public String getTextSelected() {
         return textSelected;
     }
+
 }

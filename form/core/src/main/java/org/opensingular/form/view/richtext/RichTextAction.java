@@ -8,6 +8,9 @@ import org.opensingular.form.SType;
 public interface RichTextAction<T extends RichTextContext> {
 
     String getLabel();
+    default Boolean getLabelInline(){
+        return Boolean.TRUE;
+    }
     String getIconUrl();
     Optional<Class<? extends SType<?>>> getForm();
     Class<? extends T> getType();

@@ -6,18 +6,14 @@ public class RichTextContentContext implements RichTextContext {
 
 
     private String content;
-    private String value;
 
     @Override
     public void setReturnValue(@Nonnull String value) {
-        this.value = value;
+        this.content = value;
     }
 
+    @Override
     public String getValue() {
-        return value;
-    }
-
-    public String getContent() {
         return content;
     }
 }
