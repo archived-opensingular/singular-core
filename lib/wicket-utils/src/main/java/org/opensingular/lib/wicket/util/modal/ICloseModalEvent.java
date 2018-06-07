@@ -16,15 +16,14 @@
  *
  */
 
-package org.opensingular.form.wicket.panel;
+package org.opensingular.lib.wicket.util.modal;
 
-import java.io.Serializable;
 import java.util.function.Predicate;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
-public interface ICloseModalEvent extends Serializable {
+public interface ICloseModalEvent {
 
     boolean matchesBodyContent(Component bodyComponent);
 

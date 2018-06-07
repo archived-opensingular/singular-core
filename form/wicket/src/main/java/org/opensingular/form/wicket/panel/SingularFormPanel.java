@@ -16,8 +16,17 @@
 
 package org.opensingular.form.wicket.panel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import javax.annotation.Nonnull;
+
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -41,23 +50,12 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.WicketBuildListeners;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.enums.ViewMode;
-import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
-
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * Painel que encapusla a lógica de criação de forms dinâmicos.
@@ -241,7 +239,7 @@ public class SingularFormPanel extends Panel {
         }
         updateContainer();
 
-        add(new ModalEventListenerBehavior(modalItems));
+        add(new FormModalEventListenerBehavior(modalItems));
     }
 
     /**
@@ -438,11 +436,6 @@ public class SingularFormPanel extends Panel {
         if (buildListeners == null)
             buildListeners = new ArrayList<>(getDefaultBuildListeners());
         return buildListeners;
-    }
-
-    static void pushChildren(Deque<Component> stack, MarkupContainer container) {
-        for (Component child : container)
-            stack.push(child);
     }
 
     public void setNested(boolean nested) {

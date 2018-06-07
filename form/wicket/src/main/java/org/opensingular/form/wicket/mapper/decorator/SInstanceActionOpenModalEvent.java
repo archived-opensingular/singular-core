@@ -37,12 +37,12 @@ import org.apache.wicket.model.Model;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.SInstanceAction;
 import org.opensingular.form.decorator.action.SInstanceAction.ActionHandler;
-import org.opensingular.form.wicket.panel.IOpenModalEvent;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
+import org.opensingular.lib.wicket.util.modal.IOpenModalEvent;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder.ButtonStyle;
 import org.opensingular.lib.wicket.util.model.IMappingModel;
 

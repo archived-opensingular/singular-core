@@ -16,7 +16,7 @@
  *
  */
 
-package org.opensingular.form.wicket.panel;
+package org.opensingular.lib.wicket.util.modal;
 
 import java.util.Iterator;
 

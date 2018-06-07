@@ -16,7 +16,7 @@
  *
  */
 
-package org.opensingular.form.wicket.panel;
+package org.opensingular.lib.wicket.util.modal;
 
 import java.util.Deque;
 import java.util.Iterator;
@@ -28,10 +28,9 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.model.Model;
-import org.opensingular.form.wicket.component.BFModalWindow;
-import org.opensingular.form.wicket.panel.IOpenModalEvent.ButtonDef;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
+import org.opensingular.lib.wicket.util.modal.IOpenModalEvent.ButtonDef;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 
 /**
@@ -61,17 +60,22 @@ public class ModalEventListenerBehavior extends Behavior {
         }
     }
 
+    protected BSModalWindow newModalWindow(String modalId) {
+        return new BSModalWindow(modalId);
+    }
+
     protected void handleOpenModalEvent(IEvent<?> event, IOpenModalEvent payload) {
         event.stop();
 
-        BFModalWindow modal = new BFModalWindow(modalItemsContainer.newChildId());
+        final String modalId = modalItemsContainer.newChildId();
+        final BSModalWindow modal = newModalWindow(modalId);
         modalItemsContainer.newTag("div", modal);
 
-        Component content = payload.getBodyContent(modal.getId() + "_body");
+        final Component content = payload.getBodyContent(modal.getId() + "_body");
         modal.setTitleText(Model.of(payload.getModalTitle()));
         modal.setBody(content);
 
-        Iterator<ButtonDef> buttonDefs = payload.getFooterButtons(modal::hide);
+        final Iterator<ButtonDef> buttonDefs = payload.getFooterButtons(modal::hide);
         if (buttonDefs != null) {
             while (buttonDefs.hasNext()) {
                 ButtonDef def = buttonDefs.next();
@@ -100,19 +104,25 @@ public class ModalEventListenerBehavior extends Behavior {
     protected void handleCloseModalEvent(IEvent<?> event, ICloseModalEvent payload) {
         Deque<Component> stack = new LinkedList<>();
         MarkupContainer container = modalItemsContainer;
-        SingularFormPanel.pushChildren(stack, container);
+        pushChildren(stack, container);
         while (!stack.isEmpty()) {
             Component child = stack.pop();
-            if (child instanceof BFModalWindow) {
-                BFModalWindow modal = (BFModalWindow) child;
+            if (child instanceof BSModalWindow) {
+                BSModalWindow modal = (BSModalWindow) child;
                 if (payload.matchesBodyContent(modal.getBody())) {
                     event.stop();
                     modal.hide(payload.getTarget());
                     break;
                 }
             } else if (child instanceof MarkupContainer) {
-                SingularFormPanel.pushChildren(stack, (MarkupContainer) child);
+                pushChildren(stack, (MarkupContainer) child);
             }
         }
     }
+
+    private static void pushChildren(Deque<Component> stack, MarkupContainer container) {
+        for (Component child : container)
+            stack.push(child);
+    }
+
 }
