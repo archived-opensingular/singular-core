@@ -53,20 +53,20 @@ final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
     private AjaxRequestTarget                          target;
     private IModel<? extends Serializable>             textModel;
     private IModel<? extends SInstance>                instanceModel;
-    private IModel<? extends SInstance>                formInstanceModel;
+    private IModel<? extends SInstance>                modalFormInstanceModel;
     private ISupplier<? extends List<SInstanceAction>> actions;
 
     public SInstanceActionOpenModalEvent(String title,
             AjaxRequestTarget target,
             IModel<? extends Serializable> textModel,
             IModel<? extends SInstance> instanceModel,
-            IModel<? extends SInstance> formInstanceModel,
+            IModel<? extends SInstance> modalFormInstanceModel,
             ISupplier<? extends List<SInstanceAction>> actions) {
         this.title = title;
         this.target = target;
         this.textModel = textModel;
         this.instanceModel = instanceModel;
-        this.formInstanceModel = formInstanceModel;
+        this.modalFormInstanceModel = modalFormInstanceModel;
         this.actions = actions;
     }
 
@@ -85,30 +85,30 @@ final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
                     .add($b.visibleIf($m.isNotNullOrEmpty(this.textModel)))
             : new WebMarkupContainer("textPanel");
 
-        Component formPanel = (formInstanceModel != null)
-            ? new SingularFormPanel("formPanel", true)
-                .setInstanceCreator(new ModelGetterSupplier<SInstance>(formInstanceModel))
-                .add($b.visibleIf($m.isNotNullOrEmpty(this.formInstanceModel)))
+        Component modalFormPanel = (modalFormInstanceModel != null)
+            ? new SingularFormPanel("modalFormPanel", true)
+                .setInstanceCreator(new ModelGetterSupplier<SInstance>(modalFormInstanceModel))
+                .add($b.visibleIf($m.isNotNullOrEmpty(this.modalFormInstanceModel)))
             : new WebMarkupContainer("formPanel");
 
         return new TemplatePanel(id, ""
             + "<div wicket:id='textPanel'></div>"
-            + "<div wicket:id='formPanel'></div>")
+            + "<div wicket:id='modalFormPanel'></div>")
                 .add(textPanel)
-                .add(formPanel)
-                .setDefaultModel((formInstanceModel != null) ? formInstanceModel : $m.ofValue());
+                .add(modalFormPanel)
+                .setDefaultModel((modalFormInstanceModel != null) ? modalFormInstanceModel : $m.ofValue());
     }
     @Override
     public void configureModal(BSModalBorder modal) {
         modal.setTitleText(Model.of(this.title));
-        
+
         List<SInstanceAction> actionsList = actions.get();
         for (int i = 0; i < actionsList.size(); i++) {
             final SInstanceAction action = actionsList.get(i);
             modal.addButton(
                 resolveButtonStyle(action.getType()),
                 Model.of(action.getText()),
-                new FooterButton("action" + i, action, instanceModel, formInstanceModel));
+                new FooterButton("action" + i, action, instanceModel, modalFormInstanceModel));
         }
     }
 
@@ -133,17 +133,17 @@ final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
     static final class FooterButton extends ActionAjaxButton {
 
         private final IModel<? extends SInstance> instanceSupplier;
-        private final IModel<? extends SInstance> formInstanceModel;
+        private final IModel<? extends SInstance> modalFormInstanceModel;
         private final SInstanceAction             action;
 
         private FooterButton(String id,
                 SInstanceAction action,
                 IModel<? extends SInstance> instanceSupplier,
-                IModel<? extends SInstance> formInstanceModel) {
+                IModel<? extends SInstance> modalFormInstanceModel) {
             super(id);
             this.action = action;
             this.instanceSupplier = instanceSupplier;
-            this.formInstanceModel = formInstanceModel;
+            this.modalFormInstanceModel = modalFormInstanceModel;
         }
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
@@ -152,15 +152,15 @@ final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
                 List<Object> childContextList = Arrays.asList(
                     target,
                     form,
-                    formInstanceModel,
-                    (formInstanceModel == null) ? null : formInstanceModel.getObject(),
+                    modalFormInstanceModel,
+                    (modalFormInstanceModel == null) ? null : modalFormInstanceModel.getObject(),
                     this)
                     .stream()
                     .filter(it -> it != null)
                     .collect(toList());
                 actionHandler.onAction(
                     action,
-                    new ModelGetterSupplier<SInstance>(formInstanceModel),
+                    new ModelGetterSupplier<SInstance>(modalFormInstanceModel),
                     new WicketSIconActionDelegate(
                         instanceSupplier,
                         childContextList));

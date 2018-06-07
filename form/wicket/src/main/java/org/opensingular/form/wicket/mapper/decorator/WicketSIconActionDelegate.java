@@ -75,10 +75,10 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate, Seri
         Out<FormDelegate> formDelegate,
         String title,
         Serializable text,
-        ISupplier<SInstance> formInstance,
+        ISupplier<SInstance> modalFormInstance,
         ActionsFactory actionsFactory) {
 
-        IModel<? extends SInstance> formInstanceModel = Optional.ofNullable(formInstance)
+        IModel<? extends SInstance> formInstanceModel = Optional.ofNullable(modalFormInstance)
             .map(it -> it.get())
             .map(it -> new SInstanceRootModel<>(it))
             .orElse(null);
