@@ -69,8 +69,8 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     public static final String INDEX = "index";
     public static final String SELECTED = "selected";
 
-    private final ISupplier<SViewByRichTextNewTab> viewSupplier;
-    private HiddenField<String> hiddenInput;
+    private ISupplier<SViewByRichTextNewTab> viewSupplier;
+    private String hiddenInputId;
     private String htmlContainer;
     private IModel<String> modelTextArea;
 
@@ -83,12 +83,35 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
             HiddenField<String> hiddenInput, String htmlContainer) {
         this.visibleMode = visibleMode;
         this.viewSupplier = viewSupplier;
-        this.hiddenInput = hiddenInput;
+        this.hiddenInputId = hiddenInput.getMarkupId();
         this.htmlContainer = htmlContainer;
         add(new Label("title", Model.of(title)));
+
+        //TODO TENTAR ALTERAR PARA PEGAR O MODEL DO HIDDENINPUT.
         this.modelTextArea = hiddenInput.getModel();
         //IMPORTANTE -> TODO O ID DEVE COMECAR COM extra
 
+    }
+
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
+        Form form = new Form("form");
+        form.add(criarTextArea());
+
+        submitButton = new AjaxButton("submitButton") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+            }
+        };
+        form.add(submitButton);
+
+        createModal(form);
+        createCallBackBehavior();
+
+        add(form);
+        getApplication().setHeaderResponseDecorator(JAVASCRIPT_DECORATOR);
+        add(new HeaderResponseContainer(JAVASCRIPT_CONTAINER, JAVASCRIPT_CONTAINER));
     }
 
     @Override
@@ -98,6 +121,12 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "PortletRichTextPanel.js")) {
             final Map<String, String> params = new HashMap<>();
 
+            /*Logica para adicioanar uma View do tipo nova Aba caso o usuario não tenha configurado.
+            Isso serve para manter compatibilidade com versões antigas.*/
+            if (!viewSupplier.optional().isPresent()) {
+                viewSupplier = (ISupplier<SViewByRichTextNewTab>) SViewByRichTextNewTab::new;
+            }
+
             params.put("submitButtonId", submitButton.getMarkupId());
             params.put("classDisableDoubleClick", viewSupplier.get()
                     .getConfiguration()
@@ -105,7 +134,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
                     .stream()
                     .reduce(new StringBuilder(), (s, b) -> s.append(b).append(", "), StringBuilder::append).toString());
             params.put("htmlContainer", this.htmlContainer);
-            params.put("hiddenInput", this.hiddenInput.getMarkupId());
+            params.put("hiddenInput", this.hiddenInputId);
             params.put("callbackUrl", eventSaveCallbackBehavior.getCallbackUrl().toString());
             params.put("isEnabled", String.valueOf(visibleMode));
 
@@ -131,32 +160,10 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
                     + ",";
             sb.append(actionButtonFormatted);
         }
-        sb.deleteCharAt(sb.length() - 1);
+        if (sb.length() > 0) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
         return sb.toString();
-    }
-
-    @Override
-    protected void onInitialize() {
-        super.onInitialize();
-
-        Form form = new Form("form");
-        form.add(criarTextArea());
-
-        submitButton = new AjaxButton("submitButton") {
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                hiddenInput.setModelObject(modelTextArea.getObject());
-            }
-        };
-        form.add(submitButton);
-
-        createModal(form);
-        createCallBackBehavior();
-
-        add(form);
-        getApplication().setHeaderResponseDecorator(JAVASCRIPT_DECORATOR);
-        add(new HeaderResponseContainer(JAVASCRIPT_CONTAINER, JAVASCRIPT_CONTAINER));
-
     }
 
     private void createCallBackBehavior() {
@@ -203,6 +210,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
 
             private SingularButton createConfirmButton(SingularFormPanel singularFormPanel, int actionIndex, String selected, String text) {
                 return new SingularButton("btnConfirmar", singularFormPanel.getInstanceModel()) {
+
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         RichTextAction richTextAction = viewSupplier.get().getTextActionList().get(actionIndex);
@@ -249,15 +257,27 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         return null;
     }
 
+
     private void changeValueRichText(AjaxRequestTarget target, RichTextContext richTextContext, Class typeRichText) {
         //Caso a String seja vazia significa que o texto deverá ser limpado.
         if (richTextContext.getValue() != null) {
             if (typeRichText.equals(RichTextInsertContext.class) || typeRichText.equals(RichTextSelectionContext.class)) {
                 target.appendJavaScript("CKEDITOR.instances['ck-text-area'].insertHtml('" + richTextContext.getValue() + "');");
             } else if (typeRichText.equals(RichTextContentContext.class)) {
-                target.appendJavaScript("CKEDITOR.instances['ck-text-area'].setData('" + richTextContext.getValue() + "');");
+                target.appendJavaScript("CKEDITOR.instances['ck-text-area'].setData('" +
+                        fortmatHtmlValue(richTextContext) + "');");
             }
         }
+    }
+
+    /**
+     * Method to remove the break lines (\n) and the carriage return (\r). If don't do that the JS will return a exception.
+     *
+     * @param richTextContext The content that will be placed in the CKeditor.
+     * @return The HTML or text formatted.
+     */
+    private String fortmatHtmlValue(RichTextContext richTextContext) {
+        return richTextContext.getValue().replaceAll("\r", "").replaceAll("\n", "");
     }
 
     private void createModal(Form form) {

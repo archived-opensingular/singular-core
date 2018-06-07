@@ -95,7 +95,7 @@
             });
 
             CKEDITOR.config.disableNativeSpellChecker = false;
-
+            CKEDITOR.config.fullPage = true;
 
             editor.on('doubleclick', function (evt) {
                 var element = evt.data.element;
