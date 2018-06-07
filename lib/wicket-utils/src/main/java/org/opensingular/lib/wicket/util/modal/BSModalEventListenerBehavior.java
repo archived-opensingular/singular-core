@@ -19,7 +19,6 @@
 package org.opensingular.lib.wicket.util.modal;
 
 import java.util.Deque;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.apache.wicket.Component;
@@ -27,24 +26,22 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.event.IEvent;
-import org.apache.wicket.model.Model;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
-import org.opensingular.lib.wicket.util.modal.IOpenModalEvent.ButtonDef;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 
 /**
  * Listener para eventos <code>IOpenModalEvent</code> e <code>ICloseModalEvent</code>,
  * que gerencia abertura e fechamento de modais.
  */
-public class ModalEventListenerBehavior extends Behavior {
+public class BSModalEventListenerBehavior extends Behavior {
 
     private final BSContainer<?> modalItemsContainer;
 
     /**
      * @param modalItemsContainer instância de BSContainer<?> que irá conter os componentes de modal.
      */
-    public ModalEventListenerBehavior(BSContainer<?> modalItemsContainer) {
+    public BSModalEventListenerBehavior(BSContainer<?> modalItemsContainer) {
         this.modalItemsContainer = modalItemsContainer;
     }
 
@@ -72,16 +69,9 @@ public class ModalEventListenerBehavior extends Behavior {
         modalItemsContainer.newTag("div", modal);
 
         final Component content = payload.getBodyContent(modal.getId() + "_body");
-        modal.setTitleText(Model.of(payload.getModalTitle()));
         modal.setBody(content);
 
-        final Iterator<ButtonDef> buttonDefs = payload.getFooterButtons(modal::hide);
-        if (buttonDefs != null) {
-            while (buttonDefs.hasNext()) {
-                ButtonDef def = buttonDefs.next();
-                modal.addButton(def.style, def.label, def.button);
-            }
-        }
+        payload.configureModal(modal.getModalBorder());
 
         final AjaxRequestTarget target = payload.getTarget();
 

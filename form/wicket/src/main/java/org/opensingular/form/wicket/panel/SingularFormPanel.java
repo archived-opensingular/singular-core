@@ -239,7 +239,7 @@ public class SingularFormPanel extends Panel {
         }
         updateContainer();
 
-        add(new FormModalEventListenerBehavior(modalItems));
+        add(new SFormModalEventListenerBehavior(modalItems));
     }
 
     /**

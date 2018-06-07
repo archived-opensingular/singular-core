@@ -22,9 +22,7 @@ import static java.util.stream.Collectors.*;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.Component;
@@ -38,12 +36,12 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.SInstanceAction;
 import org.opensingular.form.decorator.action.SInstanceAction.ActionHandler;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
-import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
-import org.opensingular.lib.wicket.util.modal.IOpenModalEvent;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder.ButtonStyle;
+import org.opensingular.lib.wicket.util.modal.IOpenModalEvent;
 import org.opensingular.lib.wicket.util.model.IMappingModel;
 
 /**
@@ -59,22 +57,17 @@ final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
     private ISupplier<? extends List<SInstanceAction>> actions;
 
     public SInstanceActionOpenModalEvent(String title,
-        AjaxRequestTarget target,
-        IModel<? extends Serializable> textModel,
-        IModel<? extends SInstance> instanceModel,
-        IModel<? extends SInstance> formInstanceModel,
-        ISupplier<? extends List<SInstanceAction>> actions) {
+            AjaxRequestTarget target,
+            IModel<? extends Serializable> textModel,
+            IModel<? extends SInstance> instanceModel,
+            IModel<? extends SInstance> formInstanceModel,
+            ISupplier<? extends List<SInstanceAction>> actions) {
         this.title = title;
         this.target = target;
         this.textModel = textModel;
         this.instanceModel = instanceModel;
         this.formInstanceModel = formInstanceModel;
         this.actions = actions;
-    }
-
-    @Override
-    public String getModalTitle() {
-        return this.title;
     }
 
     @Override
@@ -106,18 +99,17 @@ final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
                 .setDefaultModel((formInstanceModel != null) ? formInstanceModel : $m.ofValue());
     }
     @Override
-    public Iterator<ButtonDef> getFooterButtons(IConsumer<AjaxRequestTarget> closeCallback) {
-        final List<ButtonDef> buttons = new ArrayList<IOpenModalEvent.ButtonDef>();
+    public void configureModal(BSModalBorder modal) {
+        modal.setTitleText(Model.of(this.title));
+        
         List<SInstanceAction> actionsList = actions.get();
         for (int i = 0; i < actionsList.size(); i++) {
             final SInstanceAction action = actionsList.get(i);
-
-            final ButtonStyle style = resolveButtonStyle(action.getType());
-            final Model<String> label = Model.of(action.getText());
-            final FooterButton button = new FooterButton("action" + i, action, instanceModel, formInstanceModel);
-            buttons.add(new ButtonDef(style, label, button));
+            modal.addButton(
+                resolveButtonStyle(action.getType()),
+                Model.of(action.getText()),
+                new FooterButton("action" + i, action, instanceModel, formInstanceModel));
         }
-        return buttons.iterator();
     }
 
     private static ButtonStyle resolveButtonStyle(SInstanceAction.ActionType actionType) {
@@ -145,9 +137,9 @@ final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
         private final SInstanceAction             action;
 
         private FooterButton(String id,
-            SInstanceAction action,
-            IModel<? extends SInstance> instanceSupplier,
-            IModel<? extends SInstance> formInstanceModel) {
+                SInstanceAction action,
+                IModel<? extends SInstance> instanceSupplier,
+                IModel<? extends SInstance> formInstanceModel) {
             super(id);
             this.action = action;
             this.instanceSupplier = instanceSupplier;
