@@ -16,21 +16,23 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.opensingular.flow.core.entity.IEntityFlowInstance;
-import org.opensingular.flow.core.entity.IEntityVariableInstance;
-import org.opensingular.flow.core.entity.IEntityVariableType;
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-
 import javax.persistence.Column;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.opensingular.flow.core.entity.IEntityFlowInstance;
+import org.opensingular.flow.core.entity.IEntityVariableInstance;
+import org.opensingular.flow.core.entity.IEntityVariableType;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 /**
  * The base persistent class for the TB_VARIAVEL database table.
@@ -50,23 +52,23 @@ public abstract class AbstractVariableInstanceEntity<FLOW_INSTANCE extends IEnti
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_VARIAVEL";
 
     @Id
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     @Column(name = "CO_VARIAVEL")
     private Integer cod;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_INSTANCIA_PROCESSO", nullable = false)
+    @JoinColumn(name = "CO_INSTANCIA_PROCESSO", nullable = false, foreignKey = @ForeignKey(name = "FK_VARIAVEL_INSTANCIA_PROCESSO"))
     private FLOW_INSTANCE flowInstance;
 
-    @Column(name = "NO_VARIAVEL", nullable = false)
+    @Column(name = "NO_VARIAVEL", nullable = false, length = 100)
     private String name;
 
     @Lob
-    @Column(name = "VL_VARIAVEL", length = 1000)
+    @Column(name = "VL_VARIAVEL", length = 8000)
     private String value;
 
     @ManyToOne
-    @JoinColumn(name = "CO_TIPO_VARIAVEL")
+    @JoinColumn(name = "CO_TIPO_VARIAVEL", foreignKey = @ForeignKey(name = "FK_VARIAVEL_TIPO_VARIAVEL"),  nullable = false)
     private VAR_TYPE type;
 
     @Override

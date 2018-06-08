@@ -18,24 +18,25 @@
 
 package org.opensingular.form.persistence.entity;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.util.Constants;
 
 /**
  * The persistent class for the TB_CACHE_CAMPO database table.
  */
 @Entity
-@GenericGenerator(name = FormCacheFieldEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
+@SequenceGenerator(name = FormCacheFieldEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_CACHE_CAMPO", schema = Constants.SCHEMA)
 @Table(name = "TB_CACHE_CAMPO", schema = Constants.SCHEMA)
 public class FormCacheFieldEntity extends BaseEntity<Long> {
 
@@ -43,11 +44,11 @@ public class FormCacheFieldEntity extends BaseEntity<Long> {
 
     @Id
     @Column(name = "CO_CACHE_CAMPO")
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Long cod;
 
     @ManyToOne
-    @JoinColumn(name = "CO_TIPO_FORMULARIO")
+    @JoinColumn(name = "CO_TIPO_FORMULARIO", foreignKey = @ForeignKey(name = "FK_CACHE_CAMPO_TIPO_FORMULARIO"))
     private FormTypeEntity formTypeEntity;
 
     @Column(name = "DS_CAMINHO_CAMPO", length = 255)

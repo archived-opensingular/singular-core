@@ -18,37 +18,36 @@ package org.opensingular.form.persistence.entity;
 
 import java.sql.Blob;
 import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.GenericGenerator;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
 
 @Entity
-@GenericGenerator(name = AttachmentContentEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
+@SequenceGenerator(name = AttachmentContentEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_CONTEUDO_ARQUIVO", schema = Constants.SCHEMA)
 @Table(name = "TB_CONTEUDO_ARQUIVO", schema = Constants.SCHEMA)
 public class AttachmentContentEntity extends BaseEntity<Long> {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_CONTEUDO_ARQUIVO";
 
     @Id
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     @Column(name = "CO_CONTEUDO_ARQUIVO")
     private Long cod;
 
-    @Column(name = "TX_SHA1", nullable = false)
+    @Column(name = "TX_SHA1", nullable = false, length = 40)
     private String hashSha1;
 
-    @Column(name = "NU_BYTES")
+    @Column(name = "NU_BYTES", nullable = false)
     private long size;
 
     @Temporal(TemporalType.TIMESTAMP)

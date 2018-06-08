@@ -16,10 +16,6 @@
 
 package org.opensingular.form;
 
-import org.opensingular.form.internal.PathReader;
-import org.opensingular.form.util.transformer.Value;
-
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,6 +26,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+
+import org.opensingular.form.internal.PathReader;
+import org.opensingular.form.util.transformer.Value;
 
 public class SIComposite extends SInstance implements ICompositeInstance, Iterable<SInstance> {
 
@@ -92,6 +93,7 @@ public class SIComposite extends SInstance implements ICompositeInstance, Iterab
         return fields == null ? Stream.empty() : fields.stream();
     }
 
+    @Override
     public Iterator<SInstance> iterator() {
         return fields == null ? Collections.emptyIterator() : fields.iterator();
     }

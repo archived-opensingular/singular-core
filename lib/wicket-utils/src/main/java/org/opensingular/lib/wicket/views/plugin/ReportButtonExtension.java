@@ -20,8 +20,6 @@ package org.opensingular.lib.wicket.views.plugin;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.opensingular.lib.commons.extension.SingularExtension;
-import org.opensingular.lib.commons.lambda.ISupplier;
-import org.opensingular.lib.commons.report.ReportMetadata;
 import org.opensingular.lib.commons.report.SingularReport;
 import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.commons.views.ViewGenerator;
@@ -36,21 +34,22 @@ public interface ReportButtonExtension extends Serializable, SingularExtension {
 
     /**
      * Allow Configuration based on SingularReport
+     * @param singularReport
      */
-    default void init(ISupplier<SingularReport> singularReport) {
+    default void init(SingularReport singularReport) {
 
     }
 
     /**
      * Allow update on report metadata
      *
-     * @param reportMetadata the report metadata
+     * @param report the report metadata
      */
-    default void updateReportMetatada(ReportMetadata reportMetadata) {
+    default void updateReportMetatada(SingularReport<?> report) {
     }
 
     /**
-     * Allow append another components do the report panel, usefull to add modals
+     * Allow append another components do the report panel, useful to add modals
      */
     default void onBuild(SingularReportPanel reportPanel) {
 

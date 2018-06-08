@@ -16,9 +16,9 @@
 
 package org.opensingular.lib.commons.base;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 import java.util.Optional;
+import javax.annotation.Nonnull;
 
 /**
  * Carrega os arquivos de propriedades do singular e dá fácil acesso ao mesmos, mediante um singleton {@link
@@ -47,7 +47,6 @@ public interface SingularProperties {
     String SINGULAR_EMAIL_TEST_RECPT = "singular.email.rcpt.test";
 
     String SINGULAR_DEV_MODE = "singular.development";
-    String SINGULAR_SERVER_ADDR = "singular.server.address";
 
     // Limites globais são limites máximos, não configuráveis por arquivo.
     String FILEUPLOAD_GLOBAL_MAX_REQUEST_SIZE = "singular.fileupload.global_max_request_size";
@@ -60,8 +59,8 @@ public interface SingularProperties {
     String FILEUPLOAD_DEFAULT_MAX_FILE_SIZE = "singular.fileupload.default_max_file_size";
 
     // Identifica se o singular deve usar o banco em memória, ou se conectar a um banco externo.
-    String USE_EMBEDDED_DATABASE = "singular.database.embbeded";
-    String JNDI_DATASOURCE = "singular.jndi.name.datasource";
+    String USE_EMBEDDED_DATABASE = "singular.database.embedded";
+    String JNDI_DATASOURCE = "singular.datasource.jndi.name";
 
     // Identifica o nome do schema que deve ser utilizado
     String CUSTOM_SCHEMA_NAME = "singular.custom.schema.name";
@@ -72,6 +71,12 @@ public interface SingularProperties {
     String FREEMARKER_IGNORE_ERROR = "singular.form.freemarker.ignore_error";
 
     String REST_ALLOWED_COMMON_NAME = "singular.rest.allowed.common.name";
+
+    // Propriedades dos serviços soap
+    String UPLOAD_DIR_WS = "singular.ws.upload";
+    String TARGET_NAMESPACE = "singular.ws.targetnamespace";
+
+    String RECREATE_DATABASE = "singular.database.recreate";
 
     //    ParmDef<String> ADDRESS = new ParmDef<>("Asasd.ad.asda " , String.class, "dadad")
 

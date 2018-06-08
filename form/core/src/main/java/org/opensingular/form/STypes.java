@@ -16,8 +16,12 @@
 
 package org.opensingular.form;
 
+import com.google.common.base.Joiner;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -95,6 +99,18 @@ public abstract class STypes {
         return StreamSupport.stream(new STypeRecursiveSpliterator(root, includeRoot), false);
     }
 
+    /**
+     * Returns an array containing all descendants of <code>type</code>.
+     *
+     * @param type top type of the descendants
+     * @param includeBase if true, includes {@code type} in the result
+     * @return array of descendant types
+     */
+    public static SType<?>[] arrayOfDescendants(SType<?> type, boolean includeBase) {
+        return streamDescendants(type, includeBase)
+            .toArray(length -> (SType<?>[]) Array.newInstance(SType.class, length));
+    }
+
     public static Collection<SType<?>> containedTypes(SType<?> node) {
         List<SType<?>> result = new ArrayList<>();
         if (node instanceof ICompositeType) {
@@ -127,7 +143,7 @@ public abstract class STypes {
      * @return
      */
     public static Optional<SType<?>> findRootAscendant(SType<?> root) {
-        SScope   type      = root.getParentScope();
+        SScope type = root.getParentScope();
         SType<?> rootStype = null;
         while (type != null) {
             if (type instanceof SType<?>) {
@@ -136,5 +152,31 @@ public abstract class STypes {
             type = type.getParentScope();
         }
         return Optional.ofNullable(rootStype);
+    }
+
+    /**
+     * Compute the Stype path until its root SType.
+     * Stops at package declarations.
+     * Note that types referenced in different hierarchies could return different paths.
+     *
+     *
+     * @param leaf
+     * @return
+     *  dot separated path of types simple names.
+     */
+    public static String getPathFromRoot(SType<?> leaf) {
+        List<String> path = getPathToRoot(leaf);
+        Collections.reverse(path);
+        return Joiner.on(".").join(path);
+    }
+
+    private static List<String> getPathToRoot(SScope sType) {
+        List<String> s = new ArrayList<>();
+        s.add(sType.getNameSimple());
+        if (sType.getParentScope() instanceof SPackage || sType.getParentScope() == null) {
+            return s;
+        }
+        s.addAll(getPathToRoot(sType.getParentScope()));
+        return s;
     }
 }

@@ -16,8 +16,8 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.core.property.MetaDataMap;
 import org.opensingular.flow.core.property.MetaDataEnabled;
+import org.opensingular.flow.core.property.MetaDataMap;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -245,6 +245,38 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
     public Optional<STransition> getTransition(@Nonnull String transitionName) {
         Objects.requireNonNull(transitionName);
         return Optional.ofNullable(transitionsByName.get(transitionName.toLowerCase()));
+    }
+
+    /**
+     * Returns the transition that connects the current task to the informed task. Throws a exception if there more the
+     * one transition to the target task.
+     */
+    @Nonnull
+    public Optional<STransition> getTransitionTo(@Nonnull ITaskDefinition destination) {
+        Objects.requireNonNull(destination);
+        STransition selected = null;
+        for (STransition transition : transitions) {
+            if (transition.getDestination().is(destination)) {
+                if (selected == null) {
+                    selected = transition;
+                } else {
+                    throw new SingularFlowException(
+                            "There is more than one transition to '" + destination.getKey() + "' from '" +
+                                    getAbbreviation() + "'");
+                }
+            }
+        }
+        return Optional.ofNullable(selected);
+    }
+
+    /**
+     * Returns the transition that connects the current task to the informed task or throws a exception if there isn't
+     * any direct transition or if there more the one transition to the target task.
+     */
+    @Nonnull
+    public STransition getTransitionToOrException(@Nonnull ITaskDefinition destination) {
+        return getTransitionTo(destination).orElseThrow(() -> new SingularFlowException(
+                "There is no transtion from '" + getAbbreviation() + "' to '" + destination.getKey() + "'"));
     }
 
     public void notifyTaskStart(TaskInstance taskInstance, ExecutionContext executionContext) {

@@ -16,19 +16,20 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.opensingular.flow.core.entity.IEntityCategory;
-import org.opensingular.flow.core.entity.IEntityFlowDefinition;
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.List;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.opensingular.flow.core.entity.IEntityCategory;
+import org.opensingular.flow.core.entity.IEntityFlowDefinition;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 /**
  * The base persistent class for the TB_CATEGORIA database table.
@@ -48,7 +49,7 @@ public abstract class AbstractCategoryEntity<FLOW_DEFINITION extends IEntityFlow
     
     @Id
     @Column(name = "CO_CATEGORIA")
-    @GeneratedValue(generator = PK_GENERATOR_NAME)
+    @GeneratedValue(generator = PK_GENERATOR_NAME, strategy = GenerationType.AUTO)
     private Integer cod;
 
     @Column(name = "NO_CATEGORIA", length = 100, nullable = false)

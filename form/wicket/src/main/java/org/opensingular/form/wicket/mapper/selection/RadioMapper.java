@@ -23,13 +23,13 @@ import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-
 import org.opensingular.form.SInstance;
 import org.opensingular.form.view.SViewSelectionByRadio;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
 import org.opensingular.form.wicket.model.SelectSInstanceAwareModel;
 import org.opensingular.form.wicket.renderer.SingularChoiceRenderer;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 public class RadioMapper extends SelectMapper {
@@ -37,7 +37,7 @@ public class RadioMapper extends SelectMapper {
     @Override
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
-        final SViewSelectionByRadio radioView = (SViewSelectionByRadio) ctx.getView();
+        final ISupplier<SViewSelectionByRadio> viewSupplier = ctx.getViewSupplier(SViewSelectionByRadio.class);
         final String id = model.getObject().getName();
 
         RadioChoice<Serializable> rc = new RadioChoice<Serializable>(id,
@@ -48,10 +48,11 @@ public class RadioMapper extends SelectMapper {
             @Override
             protected IValueMap getAdditionalAttributesForLabel(int index, Serializable choice) {
                 IValueMap map = new ValueMap();
-                if (radioView.getLayout() == SViewSelectionByRadio.Layout.HORIZONTAL) {
+                SViewSelectionByRadio view = viewSupplier.get();
+                if (view.getLayout() == SViewSelectionByRadio.Layout.HORIZONTAL) {
                     map.put("class", "radio-inline");
                     map.put("style", "position:relative;top:-1px;padding-left:3px;padding-right:10px;");
-                } else if (radioView.getLayout() == SViewSelectionByRadio.Layout.VERTICAL) {
+                } else if (view.getLayout() == SViewSelectionByRadio.Layout.VERTICAL) {
                     map.put("style", "position:relative;top:-1px;padding-left:3px;padding-right:10px;display:table-cell;");
                 }
                 return map;
@@ -70,10 +71,11 @@ public class RadioMapper extends SelectMapper {
             }
         };
 
-        if (radioView.getLayout() == SViewSelectionByRadio.Layout.HORIZONTAL) {
+        SViewSelectionByRadio view = viewSupplier.get();
+        if (view.getLayout() == SViewSelectionByRadio.Layout.HORIZONTAL) {
             rc.setPrefix("<span style=\"display: inline-block;white-space: nowrap;\">");
             rc.setSuffix("</span>");
-        } else if (radioView.getLayout() == SViewSelectionByRadio.Layout.VERTICAL) {
+        } else if (view.getLayout() == SViewSelectionByRadio.Layout.VERTICAL) {
             rc.setPrefix("<span style='display: table;padding: 4px 0;'>");
             rc.setSuffix("</span>");
         }

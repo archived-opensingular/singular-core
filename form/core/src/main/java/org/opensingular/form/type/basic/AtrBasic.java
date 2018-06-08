@@ -16,7 +16,26 @@
 
 package org.opensingular.form.type.basic;
 
-import com.google.common.collect.Lists;
+import static java.util.stream.Collectors.*;
+import static org.apache.commons.lang3.StringUtils.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.opensingular.form.AtrRef;
 import org.opensingular.form.SAttributeEnabled;
@@ -31,23 +50,8 @@ import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import com.google.common.collect.Lists;
 
-import static java.util.stream.Collectors.*;
-import static org.apache.commons.lang3.StringUtils.*;
 
 public class AtrBasic extends STranslatorForAttribute {
 
@@ -89,7 +93,6 @@ public class AtrBasic extends STranslatorForAttribute {
         setAttributeValue(SPackageBasic.ATR_BASIC_MASK, mask);
         return this;
     }
-
 
     public AtrBasic maxLength(Integer value) {
         setAttributeValue(SPackageBasic.ATR_MAX_LENGTH, value);
@@ -382,10 +385,8 @@ public class AtrBasic extends STranslatorForAttribute {
         return getAttributeValue(SPackageBasic.ATR_UPPER_CASE_TEXT);
     }
 
-
     public interface DelayedDependsOnResolver {
 
         public List<SType<?>> resolve(SType<?> documentRoot, SType<?> current);
     }
-
 }

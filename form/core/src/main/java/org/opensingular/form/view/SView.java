@@ -18,10 +18,7 @@ package org.opensingular.form.view;
 
 import org.opensingular.form.SType;
 
-import java.io.Serializable;
-
-@SuppressWarnings("serial")
-public class SView implements Serializable {
+public class SView {
 
     public static final SView DEFAULT = new SView();
 

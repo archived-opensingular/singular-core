@@ -16,12 +16,12 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import java.io.Serializable;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * The primary key class for the flow permission database table.
@@ -32,27 +32,27 @@ public class FlowRightPK implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "CO_DEFINICAO_PROCESSO")
-    private Integer codFlowDefinition;
+    private Long codFlowDefinition;
 
     @Column(name = "TP_PERMISSAO")
-    private String rightType;
+    private Character rightType;
 
     public FlowRightPK() {
     }
 
-    public Integer getCodFlowDefinition() {
+    public Long getCodFlowDefinition() {
         return this.codFlowDefinition;
     }
 
-    public void setCodFlowDefinition(Integer codFlowDefinition) {
+    public void setCodFlowDefinition(Long codFlowDefinition) {
         this.codFlowDefinition = codFlowDefinition;
     }
 
-    public String getRightType() {
+    public Character getRightType() {
         return this.rightType;
     }
 
-    public void setRightType(String rightType) {
+    public void setRightType(Character rightType) {
         this.rightType = rightType;
     }
 

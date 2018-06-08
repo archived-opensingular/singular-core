@@ -90,7 +90,6 @@ public class BSModalWindow extends Panel {
         if (resetOnBodySwitch) {
             removeButtons();
             getModalBorder()
-                .setSize(BSModalBorder.Size.NORMAL)
                 .setDismissible(false);
         }
         return this;

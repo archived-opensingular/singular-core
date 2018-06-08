@@ -25,8 +25,6 @@ import org.apache.wicket.util.visit.IVisitor;
 import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
-import org.opensingular.lib.commons.report.ReportFilter;
-import org.opensingular.lib.commons.report.ReportMetadata;
 import org.opensingular.lib.commons.report.SingularReport;
 import org.opensingular.lib.commons.table.ColumnType;
 import org.opensingular.lib.commons.table.TablePopulator;
@@ -37,17 +35,18 @@ import org.opensingular.lib.commons.views.ViewOutputFormatExportable;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.io.Serializable;
 
 public class SingularReportPanelDownloadTest extends WicketTestCase {
     private static final boolean OPEN_DOWNLOADED_FILE = false;
 
-    private SingularReport<ReportMetadata<ReportFilter>, ReportFilter> singularReport;
+    private SingularReport<Object> singularReport;
     private MockSingularReportPage mockSingularReportPage;
 
     @Before
     public void setUp() throws Exception {
         singularReport = makeSingularReport();
-        mockSingularReportPage = new MockSingularReportPage(id -> new BlankSingularReportPanel(id, () -> singularReport));
+        mockSingularReportPage = new MockSingularReportPage(id -> new BlankSingularReportPanel(id, singularReport));
         tester.startPage(mockSingularReportPage);
     }
 
@@ -82,15 +81,15 @@ public class SingularReportPanelDownloadTest extends WicketTestCase {
     }
 
     @Nonnull
-    private SingularReport<ReportMetadata<ReportFilter>, ReportFilter> makeSingularReport() {
-        return new SingularReport<ReportMetadata<ReportFilter>, ReportFilter>() {
+    private SingularReport<Object> makeSingularReport() {
+        return new SingularReport<Object>() {
             @Override
             public String getReportName() {
                 return "X";
             }
 
             @Override
-            public ViewGenerator makeViewGenerator(ReportMetadata<ReportFilter> reportMetadata) {
+            public ViewGenerator getViewGenerator() {
                 TableTool tt = new TableTool();
                 tt.addColumn(ColumnType.STRING, "nome");
                 tt.addColumn(ColumnType.INTEGER, "idade");
@@ -104,6 +103,37 @@ public class SingularReportPanelDownloadTest extends WicketTestCase {
             @Override
             public Boolean eagerLoading() {
                 return Boolean.TRUE;
+            }
+
+            @Override
+            public void loadReportInstance(String XML) {
+
+            }
+
+            @Override
+            public String dumpReportInstanceXML() {
+                return null;
+            }
+
+
+            @Override
+            public void setParam(String key, Serializable val) {
+
+            }
+
+            @Override
+            public Serializable getParam(String key) {
+                return null;
+            }
+
+            @Override
+            public Object getFilterValue() {
+                return null;
+            }
+
+            @Override
+            public void setFilterValue(Object value) {
+
             }
         };
     }

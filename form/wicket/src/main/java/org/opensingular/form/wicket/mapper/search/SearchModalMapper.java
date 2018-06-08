@@ -33,6 +33,7 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 public class SearchModalMapper extends AbstractControlsFieldComponentMapper {
 
+    @Override
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final SView view = ctx.getView();
 
