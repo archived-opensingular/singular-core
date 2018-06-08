@@ -81,11 +81,12 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
 
     /**
      * The new Rich Text Page constructor.
-     *  @param title         The title of page.
-     * @param visibleMode   True if is just visible model; False if is editable.
-     * @param viewSupplier  The suplier of new Tab View.
-     * @param hiddenInput   The hidden input of the Page who calls.
-     * @param markupId      The markupId of the Label of the Page who calls.
+     *
+     * @param title        The title of page.
+     * @param visibleMode  True if is just visible model; False if is editable.
+     * @param viewSupplier The suplier of new Tab View.
+     * @param hiddenInput  The hidden input of the Page who calls.
+     * @param markupId     The markupId of the Label of the Page who calls.
      */
     public RichTextNewTabPage(String title, boolean visibleMode, ISupplier<SViewByRichTextNewTab> viewSupplier,
             HiddenField<String> hiddenInput, String markupId) {
@@ -190,20 +191,11 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
                         Class<? extends SType<?>> stypeActionButton = (Class<? extends SType<?>>) richTextAction.getForm().get();
                         SingularFormPanel singularFormPanel = new SingularFormPanel("modalBody", stypeActionButton);
                         bfModalWindow.setBody(singularFormPanel);
+
                         bfModalWindow.addButton(BSModalBorder.ButtonStyle.CANCEL, Model.of("Cancelar"), createCancelButton());
                         bfModalWindow.addButton(BSModalBorder.ButtonStyle.CONFIRM, Model.of("Confirmar"), createConfirmButton(singularFormPanel, index, selected, text));
 
-
-                        Optional<String> title = SFormUtil.getTypeLabel(stypeActionButton);
-
-                        IModel<String> titleModel = new Model<>();
-                        if (title.isPresent()) {
-                            titleModel.setObject(title.get());
-                        } else {
-                            titleModel.setObject(richTextAction.getLabel());
-                        }
-
-                        bfModalWindow.setTitleText(titleModel);
+                        bfModalWindow.setTitleText(Model.of(SFormUtil.getTypeLabel(stypeActionButton).orElse(richTextAction.getLabel())));
                         bfModalWindow.show(target);
                     } else {
                         RichTextContext richTextContext = returnRichTextContextInitialized(richTextAction, selected, text);
@@ -244,6 +236,11 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         add(eventSaveCallbackBehavior);
     }
 
+    /**
+     * Button called when button is clicked, or button of modal is clicked.
+     *
+     * @param form Form that contains the button.
+     */
     private void createSubmitButton(Form form) {
         submitButton = new AjaxButton("submitButton") {
             @Override
@@ -272,12 +269,12 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     }
 
     /**
-     * Método que contem a logica para retornar o RichText especifico de acordo com o que foi criado no SType.
+     * Method that contains the logic to return the correct implementation of RichTextContext
      *
-     * @param richTextAction a interface RichText da lista.
-     * @param selected       o texto selecionado.
-     * @param content        o content do ckEditor.
-     * @return retorna o RichText especifico de acordo com o type.
+     * @param richTextAction the RichText that contains the attribute Type.
+     * @param selected       The selected of Text.
+     * @param content        The Context of Text.
+     * @return the RichText implementation according the Type of RichText.
      */
     private RichTextContext returnRichTextContextInitialized(RichTextAction richTextAction, String selected, String content) {
         if (richTextAction.getType().equals(RichTextSelectionContext.class)) {
@@ -289,7 +286,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         if (richTextAction.getType().equals(RichTextInsertContext.class)) {
             return new RichTextInsertContext();
         }
-        return null;
+        throw new NullPointerException("Don't find any implementation of the RichTextContext!");
     }
 
     /**

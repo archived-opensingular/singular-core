@@ -5,6 +5,9 @@ import javax.annotation.Nonnull;
 
 /**
  * A interface that can be used to create new custom buttons.
+ * The implementation of the button should be in the RichTextNewTabPage.
+ *
+ * @see class: RichTextNewTabPage method: returnRichTextContextInitialized.
  */
 public interface RichTextContext extends Serializable {
 
