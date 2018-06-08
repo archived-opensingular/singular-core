@@ -172,7 +172,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     }
 
     /**
-     * Method with create a CallBackBehavior when the button is clicked.
+     * Method that create a CallBackBehavior when the button is clicked.
      */
     private void createCallBackBehavior() {
         eventSaveCallbackBehavior = new AbstractDefaultAjaxBehavior() {
