@@ -86,10 +86,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         this.hiddenInputId = hiddenInput.getMarkupId();
         this.htmlContainer = htmlContainer;
         add(new Label("title", Model.of(title)));
-
-        //TODO TENTAR ALTERAR PARA PEGAR O MODEL DO HIDDENINPUT.
         this.modelTextArea = hiddenInput.getModel();
-        //IMPORTANTE -> TODO O ID DEVE COMECAR COM extra
 
     }
 
@@ -155,7 +152,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         for (int i = 0; i < viewSupplier.get().getTextActionList().size(); i++) {
             RichTextAction richTextAction = viewSupplier.get().getTextActionList().get(i);
             String actionButtonFormatted = i + "#$" + richTextAction.getLabel()
-                    + "#$" + richTextAction.getIconUrl()
+                    + "#$" + richTextAction.getIcon().getCssClass()
                     + "#$" + richTextAction.getLabelInline()
                     + ",";
             sb.append(actionButtonFormatted);
@@ -218,8 +215,10 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
 
                         richTextAction.onAction(richTextContext, Optional.of(singularFormPanel.getInstance()));
 
-                        changeValueRichText(target, richTextContext, richTextAction.getType());
-                        bfModalWindow.hide(target);
+                        if(richTextContext.getValue() != null) {
+                            changeValueRichText(target, richTextContext, richTextAction.getType());
+                            bfModalWindow.hide(target);
+                        }
                     }
                 };
             }

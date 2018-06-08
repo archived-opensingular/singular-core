@@ -89,3 +89,15 @@ div.checker.disabled span.checked {
 div.checker.disabled span.checked:hover {
   background-position: -170px -260px;
 }
+
+.sei-icon {
+  width:20px;
+  height: 20px;
+  content: url("/singular-static/resources/singular/img/sei.png");
+}
+
+.document-model-icon {
+  width:20px;
+  height: 20px;
+  content: url("/singular-static/resources/singular/img/modelfile.png");
+}
