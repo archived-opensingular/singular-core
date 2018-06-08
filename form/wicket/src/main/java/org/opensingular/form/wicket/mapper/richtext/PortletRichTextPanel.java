@@ -108,8 +108,7 @@ public class PortletRichTextPanel extends Panel implements Loggable {
         RichTextNewTabPage richTextNewTabPage = new RichTextNewTabPage(label.getDefaultModelObject().toString(),
                 visibleMode,
                 this.ctx.getViewSupplier(SViewByRichTextNewTab.class),
-                hiddenInput,
-                htmlContent.getMarkupId());
+                hiddenInput, htmlContent .getMarkupId());
 
         return new Link<String>("button") {
 

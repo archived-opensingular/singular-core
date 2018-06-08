@@ -32,7 +32,7 @@
                 plugin = 'closed';
             }
             var ids = "";
-            var buttonsExtra = buttonsList.split(",");
+            var buttonsExtra = buttonsList.split(",,");
             buttonsExtra.forEach(function (b) {
                 var texts = b.split("#$");
                 var id;
@@ -44,7 +44,6 @@
                 ids += id + ",";
             });
             ids = ids.slice(0, -1);
-
             var editor = CKEDITOR.replace("ck-text-area", {
                 extraPlugins: plugin,
                 allowedContent: true,
@@ -130,9 +129,7 @@
 
             });
 
-
         });
-
 
     }
 
@@ -148,7 +145,7 @@
     }
 
     function configureIconButtons() {
-        buttonsList.split(",").forEach(function (b) {
+        buttonsList.split(",,").forEach(function (b) {
             var texts = b.split("#$");
 
             var id;
