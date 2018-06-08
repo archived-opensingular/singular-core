@@ -62,7 +62,7 @@ import org.wicketstuff.annotation.mount.MountPath;
 @MountPath("richtextnewtabpage")
 public class RichTextNewTabPage extends WebPage implements Loggable {
 
-    private static final IHeaderResponseDecorator JAVASCRIPT_DECORATOR = (response) -> new JavaScriptFilteredIntoFooterHeaderResponse(response, SingularTemplate.JAVASCRIPT_CONTAINER);
+    private static final IHeaderResponseDecorator JAVASCRIPT_DECORATOR = response -> new JavaScriptFilteredIntoFooterHeaderResponse(response, SingularTemplate.JAVASCRIPT_CONTAINER);
     private static final String JAVASCRIPT_CONTAINER = "javascript-container";
 
     private static final String INNER_TEXT = "innerText";
@@ -140,10 +140,10 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
             params.put("buttonsList", this.renderButtonsList());
             packageTextTemplate.interpolate(params);
             response.render(JavaScriptHeaderItem.forScript(packageTextTemplate.getString(), this.getId()));
+
         } catch (IOException e) {
             getLogger().error(e.getMessage(), e);
         }
-
         RecursosStaticosSingularTemplate.getStyles("singular").forEach(response::render);
         RecursosStaticosSingularTemplate.getJavaScriptsUrls().forEach(response::render);
 
@@ -180,7 +180,6 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
             protected void respond(AjaxRequestTarget target) {
 
                 IRequestParameters requestParameters = RichTextNewTabPage.this.getRequest().getRequestParameters();
-
                 String text = requestParameters.getParameterValue(INNER_TEXT).toString();
                 Integer index = requestParameters.getParameterValue(INDEX).toInt();
                 String selected = requestParameters.getParameterValue(SELECTED).toString();
@@ -188,23 +187,24 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
                 RichTextAction richTextAction = viewSupplier.get().getTextActionList().get(index);
                 if (richTextAction != null) {
                     if (richTextAction.getForm().isPresent()) {
-                        Class<? extends SType<?>> stypeActionButton = (Class<? extends SType<?>>) richTextAction.getForm().get();
-                        SingularFormPanel singularFormPanel = new SingularFormPanel("modalBody", stypeActionButton);
-                        bfModalWindow.setBody(singularFormPanel);
-
-                        bfModalWindow.addButton(BSModalBorder.ButtonStyle.CANCEL, Model.of("Cancelar"), createCancelButton());
-                        bfModalWindow.addButton(BSModalBorder.ButtonStyle.CONFIRM, Model.of("Confirmar"), createConfirmButton(singularFormPanel, index, selected, text));
-
-                        bfModalWindow.setTitleText(Model.of(SFormUtil.getTypeLabel(stypeActionButton).orElse(richTextAction.getLabel())));
-                        bfModalWindow.show(target);
+                        configureModal(target, text, index, selected, richTextAction);
                     } else {
                         RichTextContext richTextContext = returnRichTextContextInitialized(richTextAction, selected, text);
                         richTextAction.onAction(richTextContext, Optional.empty());
                         changeValueRichText(target, richTextContext, richTextAction.getType());
                     }
                 }
+            }
 
-
+            private void configureModal(AjaxRequestTarget target, String text, Integer index, String selected, RichTextAction richTextAction) {
+                Class<? extends SType<?>> stypeActionButton = (Class<? extends SType<?>>) richTextAction.getForm().orElse(null);
+                SingularFormPanel singularFormPanel = new SingularFormPanel("modalBody", stypeActionButton);
+                singularFormPanel.setOutputMarkupId(true);
+                bfModalWindow.setBody(singularFormPanel);
+                bfModalWindow.addButton(BSModalBorder.ButtonStyle.CANCEL, Model.of("Cancelar"), createCancelButton());
+                bfModalWindow.addButton(BSModalBorder.ButtonStyle.CONFIRM, Model.of("Confirmar"), createConfirmButton(singularFormPanel, index, selected, text));
+                bfModalWindow.setTitleText(Model.of(SFormUtil.getTypeLabel(stypeActionButton).orElse(richTextAction.getLabel())));
+                bfModalWindow.show(target);
             }
 
             private SingularButton createConfirmButton(SingularFormPanel singularFormPanel, int actionIndex, String selected, String text) {
@@ -258,9 +258,6 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
      */
     private void createModal(Form form) {
         bfModalWindow = new BFModalWindow("modalCkEditor", false, true);
-        WebMarkupContainer container = new WebMarkupContainer("modalBody");
-        container.setOutputMarkupId(true);
-        bfModalWindow.setBody(container);
         form.add(bfModalWindow);
     }
 
