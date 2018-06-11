@@ -16,10 +16,10 @@
 
 (function (htmlContainer, hiddenInput, callbackUrl, isEnabled, buttonsList, submitButtonId, classDisableDoubleClick) {
 
+
     $(document).ready(function () {
         appendFunctions(window.opener);
     });
-
 
     function appendFunctions(opener) {
         $(function () {
@@ -32,11 +32,11 @@
                 plugin = 'closed';
             }
             var ids = "";
-            var buttonsExtra = buttonsList.split(",");
+            var buttonsExtra = buttonsList.split(",,");
             buttonsExtra.forEach(function (b) {
                 var texts = b.split("#$");
                 var id;
-                if(texts[3] === "true"){
+                if (texts[3] === "true") {
                     id = 'extra' + texts[0];
                 } else {
                     id = texts[0];
@@ -44,7 +44,6 @@
                 ids += id + ",";
             });
             ids = ids.slice(0, -1);
-
             var editor = CKEDITOR.replace("ck-text-area", {
                 extraPlugins: plugin,
                 allowedContent: true,
@@ -90,27 +89,19 @@
                 on: {
                     'instanceReady': function () {
                         $('.cke_contents').height($('#bodyPage').height() - $('.cke_contents').offset().top - $('.cke_bottom').height() - 20);
+                        configureIconButtons();
                     }
                 }
             });
 
             CKEDITOR.config.disableNativeSpellChecker = false;
-
-
-            editor.on('doubleclick', function (evt) {
-                var element = evt.data.element;
-                var classesDoubleClick =  classDisableDoubleClick.split(", ");
-
-                if (element.hasClass(classesDoubleClick)){
-                    evt.stop();
-                }
-            }, null, null, 1);
+            configureDisabledDoubleClick(editor);
 
             buttonsExtra.forEach(function (b) {
                 var texts = b.split("#$");
 
                 var id;
-                if(texts[3] === "true"){
+                if (texts[3] === "true") {
                     id = 'extra' + texts[0];
                 } else {
                     id = texts[0];
@@ -119,22 +110,62 @@
                 editor.ui.addButton(id,
                     {
                         label: texts[1],
-                        command: texts[0],
-                        icon: texts[2]
+                        command: texts[0]
                     });
+
                 editor.addCommand(texts[0], {
                     exec: function () {
                         var selected = editor.getSelection().getSelectedText();
                         var innerText = editor.document.getBody().getText();
 
-                        Wicket.Ajax.post({u: callbackUrl, ep: {'innerText': innerText, 'index': texts[0], 'selected': selected}});
+                        Wicket.Ajax.post({
+                            u: callbackUrl,
+                            ep: {'innerText': innerText, 'index': texts[0], 'selected': selected}
+                        });
 
                     }
                 });
+
+
             });
 
-            return editor;
         });
 
     }
+
+    function configureDisabledDoubleClick(editor) {
+        editor.on('doubleclick', function (evt) {
+            var element = evt.data.element;
+            var classesDoubleClick = classDisableDoubleClick.split(", ");
+
+            if (element.hasClass(classesDoubleClick)) {
+                evt.stop();
+            }
+        }, null, null, 1);
+    }
+
+    function configureIconButtons() {
+        buttonsList.split(",,").forEach(function (b) {
+            var texts = b.split("#$");
+
+            var id;
+            if (texts[3] === "true") {
+                id = 'extra' + texts[0];
+            } else {
+                id = texts[0];
+            }
+
+
+            var classeIcon;
+            if (texts[2].indexOf('fa fa-') >=0) {
+                classeIcon = ' cke_singular_icon-font-awesome ';
+            } else {
+                classeIcon = ' cke_singular_icon-simple-line ';
+            }
+            $('.cke_button__' + id + '_icon').addClass(texts[2] + classeIcon);
+
+        });
+    }
+
+
 })('${htmlContainer}', '${hiddenInput}', '${callbackUrl}', '${isEnabled}', '${buttonsList}', '${submitButtonId}', '${classDisableDoubleClick}');

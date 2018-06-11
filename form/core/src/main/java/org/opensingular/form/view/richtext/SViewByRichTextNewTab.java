@@ -21,9 +21,19 @@ import java.util.List;
 
 import org.opensingular.form.view.SView;
 
+/**
+ * SView of RichText for NewTab, this is the Default view.
+ */
 public class SViewByRichTextNewTab extends SView {
 
+    /**
+     * Class that represent some configuration of the RichText.
+     */
     private RichTextConfiguration richTextConfiguration = new RichTextConfiguration(this);
+
+    /**
+     * The list of Action buttons.
+     */
     private List<RichTextAction> richTextActionList = new ArrayList<>(0);
 
     public void addAction(RichTextAction btnRichText) {

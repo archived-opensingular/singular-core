@@ -105,6 +105,11 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     }
 
     private WebMarkupContainer createButtonOpenEditor() {
+        RichTextNewTabPage richTextNewTabPage = new RichTextNewTabPage(label.getDefaultModelObject().toString(),
+                visibleMode,
+                this.ctx.getViewSupplier(SViewByRichTextNewTab.class),
+                hiddenInput, htmlContent .getMarkupId());
+
         return new Link<String>("button") {
 
             @Override
@@ -118,12 +123,6 @@ public class PortletRichTextPanel extends Panel implements Loggable {
 
             @Override
             protected CharSequence getURL() {
-                RichTextNewTabPage richTextNewTabPage = new RichTextNewTabPage(label.getDefaultModelObject().toString(),
-                        visibleMode,
-                        ctx.getViewSupplier(SViewByRichTextNewTab.class),
-                        hiddenInput,
-                        htmlContent.getMarkupId());
-
                 return RequestCycle.get().urlFor(
                         new RenderPageRequestHandler(
                                 new PageProvider(richTextNewTabPage)));

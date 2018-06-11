@@ -12,6 +12,10 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 
 public class RecursosStaticosSingularTemplate {
 
+    private RecursosStaticosSingularTemplate(){
+        /*Construtor vazio pois os métodos são apenas estaticos.*/
+    }
+
     protected static String skinnableResource(String uri, String skinFolder) {
         return "/singular-static/resources/" + skinFolder + uri;
     }
