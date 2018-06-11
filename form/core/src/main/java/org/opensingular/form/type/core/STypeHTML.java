@@ -16,6 +16,7 @@
 
 package org.opensingular.form.type.core;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeSimple;
 import org.opensingular.form.TypeBuilder;
@@ -39,7 +40,11 @@ public class STypeHTML extends STypeSimple<SIHTML, String> {
     @Override
     public String convert(Object value) {
         if (value instanceof String) {
-            return fromString((String) value);
+            String valueText = (String) value;
+            if (StringUtils.isEmpty(valueText)) {
+               return null;
+            }
+            return fromString(valueText);
         } else {
             return super.convert(value);
         }
