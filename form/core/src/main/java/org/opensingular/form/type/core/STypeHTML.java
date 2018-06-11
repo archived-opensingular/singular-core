@@ -45,6 +45,8 @@ public class STypeHTML extends STypeSimple<SIHTML, String> {
         }
     }
 
+
+
     @Override
     public String fromString(String value) {
         return value;
