@@ -16,8 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.richtext;
 
-import java.util.Optional;
-
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.core.request.handler.PageProvider;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
@@ -37,16 +35,18 @@ import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.opensingular.lib.wicket.util.jquery.JQuery.$;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import java.util.Optional;
+
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.opensingular.lib.wicket.util.jquery.JQuery.*;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
 
 public class PortletRichTextPanel extends Panel implements Loggable {
 
     private HiddenField<String> hiddenInput;
-    private Label htmlContent;
-    private Label label;
-    private WicketBuildContext ctx;
+    private Label               htmlContent;
+    private Label               label;
+    private WicketBuildContext  ctx;
     private boolean visibleMode = true;
 
     @Override
@@ -60,10 +60,10 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     }
 
     public WebMarkupContainer configureLabelButton() {
-        IModel<String> buttonMsg = new Model<>();
+        IModel<String>     buttonMsg      = new Model<>();
         WebMarkupContainer containerLabel = new WebMarkupContainer("containerLabel");
-        Label labelMsg = new Label("buttonMsg", buttonMsg);
-        WebMarkupContainer iconeClass = new WebMarkupContainer("iconeClass");
+        Label              labelMsg       = new Label("buttonMsg", buttonMsg);
+        WebMarkupContainer iconeClass     = new WebMarkupContainer("iconeClass");
         if (visibleMode) {
             buttonMsg.setObject("Editar");
             iconeClass.add(new AttributeAppender("class", DefaultIcons.PENCIL));
@@ -105,15 +105,11 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     }
 
     private WebMarkupContainer createButtonOpenEditor() {
-        RichTextNewTabPage richTextNewTabPage = new RichTextNewTabPage(label.getDefaultModelObject().toString(),
-                visibleMode,
-                this.ctx.getViewSupplier(SViewByRichTextNewTab.class),
-                hiddenInput, htmlContent .getMarkupId());
-
         return new Link<String>("button") {
 
             @Override
-            public void onClick() {}
+            public void onClick() {
+            }
 
             @Override
             protected void onComponentTag(ComponentTag tag) {
@@ -123,6 +119,10 @@ public class PortletRichTextPanel extends Panel implements Loggable {
 
             @Override
             protected CharSequence getURL() {
+                RichTextNewTabPage richTextNewTabPage = new RichTextNewTabPage(label.getDefaultModelObject().toString(),
+                        visibleMode,
+                        PortletRichTextPanel.this.ctx.getViewSupplier(SViewByRichTextNewTab.class),
+                        hiddenInput, htmlContent.getMarkupId());
                 return RequestCycle.get().urlFor(
                         new RenderPageRequestHandler(
                                 new PageProvider(richTextNewTabPage)));
