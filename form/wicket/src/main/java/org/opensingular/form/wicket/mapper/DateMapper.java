@@ -30,17 +30,15 @@ import org.opensingular.form.wicket.behavior.InputMaskBehavior.Masks;
 import org.opensingular.form.wicket.converter.DateConverter;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.lib.commons.util.Loggable;
+import org.opensingular.lib.wicket.util.behavior.DatePickerSettings;
+import org.opensingular.lib.wicket.util.behavior.SingularDatePickerSettings;
 import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerInputGroup;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Logger;
-import java.util.Locale;
 
 import static org.opensingular.form.type.basic.SPackageBasic.ATR_MAX_DATE;
-import static org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour.DatePickerSettings;
 
 @SuppressWarnings("serial")
 public class DateMapper extends AbstractControlsFieldComponentMapper {
@@ -64,7 +62,7 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
     }
 
     private DatePickerSettings getDatePickerSetings(WicketBuildContext ctx) {
-        return new DatePickerSettings(ctx.getViewSupplier(SViewDate.class), ctx.getModel());
+        return new SingularDatePickerSettings(ctx.getViewSupplier(SViewDate.class), ctx.getModel());
     }
 
     private void configureMaxDate(BSDatepickerInputGroup datepicker, Date maxDate) {
