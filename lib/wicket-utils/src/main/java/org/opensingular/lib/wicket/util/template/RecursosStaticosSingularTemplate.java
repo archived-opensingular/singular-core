@@ -59,7 +59,6 @@ public class RecursosStaticosSingularTemplate {
                         "/singular-static/resources/singular/global/plugins/excanvas.min.js"
                 ).map(url -> JavaScriptHeaderItem.forUrl(url, null, false, StandardCharsets.UTF_8.name(), "lt IE 9")),
                 Stream.of(
-                        "/singular-static/resources/singular/global/plugins/jquery-migrate.min.js",
                         "/singular-static/resources/singular/global/plugins/jquery-ui/jquery-ui.min.js",
                         "/singular-static/resources/singular/global/plugins/bootstrap/js/bootstrap.min.js",
                         "/singular-static/resources/singular/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js",
