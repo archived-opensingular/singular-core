@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 public class DatePickerInitScriptBuilder {
-    private final static PackageTextTemplate INIT_SCRIPT = new PackageTextTemplate(DatePickerInitBehaviour.class, "DatePickerInitScriptTemplate.js");
-    private final static SimpleDateFormat ISO_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-    private final static SimpleDateFormat DATAPICKER_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
+    private final PackageTextTemplate initScript = new PackageTextTemplate(DatePickerInitBehaviour.class, "DatePickerInitScriptTemplate.js");
+    private final SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private final SimpleDateFormat datapickerFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     private final Map<String, Object> variables;
     private final DatePickerSettings datePickerSettings;
@@ -33,7 +33,7 @@ public class DatePickerInitScriptBuilder {
         setTodayHighlight(false);
         setShowOnFocus(true);
         changeEvent(BSDatepickerConstants.JS_CHANGE_EVENT);
-        configureBeforeShowDay(Boolean.FALSE);
+        configureBeforeShowDay(false);
         setEnabledDates(Collections.emptyList());
         setStartDate(null);
     }
@@ -48,7 +48,7 @@ public class DatePickerInitScriptBuilder {
             datePickerSettings.isTodayHighlight().ifPresent(this::setTodayHighlight);
             datePickerSettings.getStartDate().ifPresent(this::setStartDate);
         }
-        return INIT_SCRIPT.asString(variables);
+        return initScript.asString(variables);
     }
 
 
@@ -64,34 +64,34 @@ public class DatePickerInitScriptBuilder {
         variables.put("changeEvent", changeEvent);
     }
 
-    private void configureBeforeShowDay(Boolean configureBeforeShowDate) {
+    private void configureBeforeShowDay(boolean configureBeforeShowDate) {
         variables.put("configureBeforeShowDay", configureBeforeShowDate);
     }
 
-    private void setAutoclose(Boolean autoclose) {
+    private void setAutoclose(boolean autoclose) {
         variables.put("autoclose", autoclose);
     }
 
-    private void setClearBtn(Boolean clearBtn) {
+    private void setClearBtn(boolean clearBtn) {
         variables.put("clearBtn", clearBtn);
     }
 
-    private void setShowOnFocus(Boolean showOnFocus) {
+    private void setShowOnFocus(boolean showOnFocus) {
         variables.put("showOnFocus", showOnFocus);
     }
 
-    private void setTodayBtn(Boolean todayBtn) {
+    private void setTodayBtn(boolean todayBtn) {
         variables.put("todayBtn", todayBtn);
     }
 
-    private void setTodayHighlight(Boolean todayHighlight) {
+    private void setTodayHighlight(boolean todayHighlight) {
         variables.put("todayHighlight", todayHighlight);
     }
 
     private void setStartDate(Date startDate) {
         String val = "false";
         if (startDate != null) {
-            val = DATAPICKER_FORMAT.format(startDate);
+            val = datapickerFormat.format(startDate);
         }
         variables.put("startDate", val);
     }
@@ -100,7 +100,7 @@ public class DatePickerInitScriptBuilder {
         final JSONArray jsonArray = new JSONArray();
 
         for (Date enabledDate : enabledDates) {
-            jsonArray.put(ISO_FORMAT.format(enabledDate));
+            jsonArray.put(isoFormat.format(enabledDate));
         }
         configureBeforeShowDay(!enabledDates.isEmpty());
         variables.put("enabledDates", jsonArray.toString());
