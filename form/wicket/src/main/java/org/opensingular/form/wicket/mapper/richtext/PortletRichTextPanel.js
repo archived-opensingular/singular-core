@@ -118,6 +118,10 @@
                         var selected = editor.getSelection().getSelectedText();
                         var innerText = editor.document.getBody().getText();
 
+                        var jQueryRefOfHiddenInput = opener.$('.btn save-btn');
+                        console.log(jQueryRefOfHiddenInput);
+                        jQueryRefOfHiddenInput.click();
+
                         Wicket.Ajax.post({
                             u: callbackUrl,
                             ep: {'innerText': innerText, 'index': texts[0], 'selected': selected}
