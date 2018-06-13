@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-(function (htmlContainer, hiddenInput, callbackUrl, isEnabled, buttonsList, submitButtonId, classDisableDoubleClick) {
+(function (htmlContainer, hiddenInput, callbackUrl, isEnabled, showSaveButton, buttonsList, submitButtonId, classDisableDoubleClick) {
 
 
     $(document).ready(function () {
@@ -26,17 +26,25 @@
 
             var plugin;
             if (isEnabled === "true") {
-                plugin = 'finishAndClose,cancel';
+                if (showSaveButton === "true") {
+                    plugin = 'saveButton,closed';
+                } else {
+                    plugin = 'finishAndClose,cancel';
+                }
             } else {
                 CKEDITOR.config.readOnly = true;
                 plugin = 'closed';
             }
+
             var ids = "";
+            //Foi utilizado ',,' para separar cada botão adicionado no RichText.
             var buttonsExtra = buttonsList.split(",,");
             buttonsExtra.forEach(function (b) {
+                //Foi utilizado #$ para separar cada atributo do botão.
                 var texts = b.split("#$");
                 var id;
                 if (texts[3] === "true") {
+                    //É adicionado extra nos botões que é para ser exibido com a label ao lado.
                     id = 'extra' + texts[0];
                 } else {
                     id = texts[0];
@@ -50,8 +58,8 @@
                 skin: 'office2013',
                 language: 'pt-br',
                 width: '215mm',
-                savePlugin: {
-                    onSave: function (data) {
+                buttonPlugin: {
+                    onEvent: function (data) {
 
                         $('#ck-text-area').val(data);
                         $('#' + submitButtonId).click();
@@ -61,10 +69,41 @@
                         var jQueryRefOfHiddenInput = opener.$('#' + hiddenInput);
                         jQueryRefOfHiddenInput.val(data);
                         jQueryRefOfHiddenInput.trigger("singular:process");
+                    },
+
+                    onSaveAction: function (data) {
+
+                        var msgException = "A página do requerimento foi fechada, ou foi aberta de forma indevida."
+                            + "<p> Não será possivel salvar o Requerimento.</p>";
+                        if (window.opener) {
+                            var jQuerRefOfHtmlContainer = opener.$('#' + htmlContainer);
+                            jQuerRefOfHtmlContainer.html(data);
+
+                            var jQueryRefOfHiddenInput = opener.$('#' + hiddenInput);
+                            jQueryRefOfHiddenInput.val(data);
+                            jQueryRefOfHiddenInput.trigger("singular:process");
+
+                            $('#ck-text-area').val(data);
+                            $('#' + submitButtonId).click();
+
+                            try {
+                                if (window.opener.AbstractFormPage) {
+                                    window.opener.AbstractFormPage.onSave();
+                                    toastr.success("Requerimento salvo com sucesso.");
+                                } else {
+                                    toastr.error(msgException);
+                                }
+                            } catch (e) {
+                                toastr.error("Ocorreu um erro ao salvar o requerimento.");
+                            }
+                        } else {
+                            toastr.error(msgException);
+                        }
+
                     }
                 },
                 toolbar: [
-                    {name: 'document', items: ['Closed', 'FinishAndClose', 'Cancel', 'Preview', 'Print']},
+                    {name: 'document', items: ['SaveButton', 'Closed', 'FinishAndClose', 'Cancel', 'Preview', 'Print']},
                     {
                         name: 'clipboard',
                         items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']
@@ -98,10 +137,20 @@
             configureDisabledDoubleClick(editor);
 
             buttonsExtra.forEach(function (b) {
+
+                /**
+                 * [0] = ID
+                 * [1] = Label
+                 * [2] = The css of Icon
+                 * [3] = If have to show the label inline.
+                 */
+
+                    //Foi utilizado #$ para separar cada atributo do botão.
                 var texts = b.split("#$");
 
                 var id;
                 if (texts[3] === "true") {
+                    //É adicionado extra nos botões que é para ser exibido com a label ao lado.
                     id = 'extra' + texts[0];
                 } else {
                     id = texts[0];
@@ -133,6 +182,11 @@
 
     }
 
+    /**
+     * Method to configure the disabled double click buttons.
+     * If the view contains this class, the double click will do nothing
+     * @param editor The CKeditor instance.
+     */
     function configureDisabledDoubleClick(editor) {
         editor.on('doubleclick', function (evt) {
             var element = evt.data.element;
@@ -144,6 +198,11 @@
         }, null, null, 1);
     }
 
+    /**
+     * Method to configure the icon of the buttons.
+     * This will use the value [2] that contains the class of the button,
+     *  and will add the font-awesome (fa-fa-user), or the icon-simple-line (icon-user).
+     */
     function configureIconButtons() {
         buttonsList.split(",,").forEach(function (b) {
             var texts = b.split("#$");
@@ -157,7 +216,7 @@
 
 
             var classeIcon;
-            if (texts[2].indexOf('fa fa-') >=0) {
+            if (texts[2].indexOf('fa fa-') >= 0) {
                 classeIcon = ' cke_singular_icon-font-awesome ';
             } else {
                 classeIcon = ' cke_singular_icon-simple-line ';
@@ -168,4 +227,4 @@
     }
 
 
-})('${htmlContainer}', '${hiddenInput}', '${callbackUrl}', '${isEnabled}', '${buttonsList}', '${submitButtonId}', '${classDisableDoubleClick}');
+})('${htmlContainer}', '${hiddenInput}', '${callbackUrl}', '${isEnabled}', '${showSaveButton}', '${buttonsList}', '${submitButtonId}', '${classDisableDoubleClick}');
