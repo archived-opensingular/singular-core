@@ -73,18 +73,33 @@
 
                     onSaveAction: function (data) {
 
-                        var jQuerRefOfHtmlContainer = opener.$('#' + htmlContainer);
-                        jQuerRefOfHtmlContainer.html(data);
+                        var msgException = "A página do requerimento foi fechada, ou foi aberta de forma indevida."
+                            + "<p> Não será possivel salvar o Requerimento.</p>";
+                        if (window.opener) {
+                            var jQuerRefOfHtmlContainer = opener.$('#' + htmlContainer);
+                            jQuerRefOfHtmlContainer.html(data);
 
-                        var jQueryRefOfHiddenInput = opener.$('#' + hiddenInput);
-                        jQueryRefOfHiddenInput.val(data);
-                        jQueryRefOfHiddenInput.trigger("singular:process");
+                            var jQueryRefOfHiddenInput = opener.$('#' + hiddenInput);
+                            jQueryRefOfHiddenInput.val(data);
+                            jQueryRefOfHiddenInput.trigger("singular:process");
 
-                        $('#ck-text-area').val(data);
-                        $('#' + submitButtonId).click();
+                            $('#ck-text-area').val(data);
+                            $('#' + submitButtonId).click();
 
-                        window.opener.AbstractFormPage.onSave();
-                        toastr.success("Requerimento salvo com sucesso.");
+                            try {
+                                if (window.opener.AbstractFormPage) {
+                                    window.opener.AbstractFormPage.onSave();
+                                    toastr.success("Requerimento salvo com sucesso.");
+                                } else {
+                                    toastr.error(msgException);
+                                }
+                            } catch (e) {
+                                toastr.error("Ocorreu um erro ao salvar o requerimento.");
+                            }
+                        } else {
+                            toastr.error(msgException);
+                        }
+
                     }
                 },
                 toolbar: [
