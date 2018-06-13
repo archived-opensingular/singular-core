@@ -30,13 +30,11 @@ public class RichTextButtonAjaxBehavior extends AbstractDefaultAjaxBehavior {
     private static final String SELECTED = "selected";
 
     private BFModalWindow bfModalWindow;
-    private AjaxButton submitButton;
     private WebPage webPage;
     private ISupplier<SViewByRichTextNewTab> viewSupplier;
 
-    RichTextButtonAjaxBehavior(BFModalWindow bfModalWindow, AjaxButton submitButton, WebPage webPage, ISupplier<SViewByRichTextNewTab> viewSupplier) {
+    RichTextButtonAjaxBehavior(BFModalWindow bfModalWindow, WebPage webPage, ISupplier<SViewByRichTextNewTab> viewSupplier) {
         this.bfModalWindow = bfModalWindow;
-        this.submitButton = submitButton;
         this.webPage = webPage;
         this.viewSupplier = viewSupplier;
     }

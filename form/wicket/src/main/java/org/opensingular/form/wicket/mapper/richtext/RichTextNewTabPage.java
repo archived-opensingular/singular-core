@@ -21,7 +21,6 @@ package org.opensingular.form.wicket.mapper.richtext;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -39,16 +38,11 @@ import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.template.PackageTextTemplate;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
 import org.opensingular.form.view.richtext.RichTextAction;
-import org.opensingular.form.view.richtext.RichTextContentContext;
 import org.opensingular.form.view.richtext.SViewByRichTextNewTab;
 import org.opensingular.form.wicket.component.BFModalWindow;
 import org.opensingular.lib.commons.lambda.ISupplier;
-import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.commons.util.Loggable;
-import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.template.RecursosStaticosSingularTemplate;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
 import org.wicketstuff.annotation.mount.MountPath;
@@ -165,7 +159,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
      * Method that create a CallBackBehavior when the button is clicked.
      */
     private void createCallBackBehavior() {
-        eventSaveCallbackBehavior = new RichTextButtonAjaxBehavior(bfModalWindow, submitButton, this, viewSupplier);
+        eventSaveCallbackBehavior = new RichTextButtonAjaxBehavior(bfModalWindow, this, viewSupplier);
         add(eventSaveCallbackBehavior);
     }
 

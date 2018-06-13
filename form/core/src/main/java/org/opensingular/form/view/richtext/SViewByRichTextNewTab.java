@@ -37,6 +37,19 @@ public class SViewByRichTextNewTab extends SView {
      */
     private List<RichTextAction> richTextActionList = new ArrayList<>(0);
 
+    /**
+     * Method to configure the visible of Save Button.
+     * Required to be in the Enabled mode to works.
+     *
+     * @param showSaveButton True will show the save and the closed button.
+     *                       False will show the confirm and cancel button.
+     * @return This view.
+     */
+    public SViewByRichTextNewTab showSaveButton(boolean showSaveButton) {
+        this.showSaveButton = showSaveButton;
+        return this;
+    }
+
     public void addAction(RichTextAction btnRichText) {
         this.richTextActionList.add(btnRichText);
     }
@@ -45,13 +58,8 @@ public class SViewByRichTextNewTab extends SView {
         return richTextActionList;
     }
 
-    public RichTextConfiguration getConfiguration(){
+    public RichTextConfiguration getConfiguration() {
         return richTextConfiguration;
-    }
-
-    public SViewByRichTextNewTab showSaveButton(boolean showSaveButton){
-        this.showSaveButton = showSaveButton;
-        return this;
     }
 
     public boolean isShowSaveButton() {

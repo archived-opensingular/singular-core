@@ -35,12 +35,16 @@
                 CKEDITOR.config.readOnly = true;
                 plugin = 'closed';
             }
+
             var ids = "";
+            //Foi utilizado ',,' para separar cada botão adicionado no RichText.
             var buttonsExtra = buttonsList.split(",,");
             buttonsExtra.forEach(function (b) {
+                //Foi utilizado #$ para separar cada atributo do botão.
                 var texts = b.split("#$");
                 var id;
                 if (texts[3] === "true") {
+                    //É adicionado extra nos botões que é para ser exibido com a label ao lado.
                     id = 'extra' + texts[0];
                 } else {
                     id = texts[0];
@@ -118,10 +122,20 @@
             configureDisabledDoubleClick(editor);
 
             buttonsExtra.forEach(function (b) {
+
+                /**
+                 * [0] = ID
+                 * [1] = Label
+                 * [2] = The css of Icon
+                 * [3] = If have to show the label inline.
+                 */
+
+                    //Foi utilizado #$ para separar cada atributo do botão.
                 var texts = b.split("#$");
 
                 var id;
                 if (texts[3] === "true") {
+                    //É adicionado extra nos botões que é para ser exibido com a label ao lado.
                     id = 'extra' + texts[0];
                 } else {
                     id = texts[0];
@@ -153,6 +167,11 @@
 
     }
 
+    /**
+     * Method to configure the disabled double click buttons.
+     * If the view contains this class, the double click will do nothing
+     * @param editor The CKeditor instance.
+     */
     function configureDisabledDoubleClick(editor) {
         editor.on('doubleclick', function (evt) {
             var element = evt.data.element;
@@ -164,6 +183,11 @@
         }, null, null, 1);
     }
 
+    /**
+     * Method to configure the icon of the buttons.
+     * This will use the value [2] that contains the class of the button,
+     *  and will add the font-awesome (fa-fa-user), or the icon-simple-line (icon-user).
+     */
     function configureIconButtons() {
         buttonsList.split(",,").forEach(function (b) {
             var texts = b.split("#$");
