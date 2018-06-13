@@ -26,6 +26,7 @@ import org.opensingular.form.view.SView;
  */
 public class SViewByRichTextNewTab extends SView {
 
+    private boolean showSaveButton;
     /**
      * Class that represent some configuration of the RichText.
      */
@@ -48,4 +49,12 @@ public class SViewByRichTextNewTab extends SView {
         return richTextConfiguration;
     }
 
+    public SViewByRichTextNewTab showSaveButton(boolean showSaveButton){
+        this.showSaveButton = showSaveButton;
+        return this;
+    }
+
+    public boolean isShowSaveButton() {
+        return showSaveButton;
+    }
 }

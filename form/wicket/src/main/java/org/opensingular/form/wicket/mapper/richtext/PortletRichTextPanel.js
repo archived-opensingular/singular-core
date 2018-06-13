@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-(function (htmlContainer, hiddenInput, callbackUrl, isEnabled, buttonsList, submitButtonId, classDisableDoubleClick) {
+(function (htmlContainer, hiddenInput, callbackUrl, isEnabled, showSaveButton, buttonsList, submitButtonId, classDisableDoubleClick) {
 
 
     $(document).ready(function () {
@@ -26,7 +26,11 @@
 
             var plugin;
             if (isEnabled === "true") {
-                plugin = 'finishAndClose,cancel';
+                if (showSaveButton === "true") {
+                    plugin = 'saveButton,closed';
+                } else {
+                    plugin = 'finishAndClose,cancel';
+                }
             } else {
                 CKEDITOR.config.readOnly = true;
                 plugin = 'closed';
@@ -50,8 +54,8 @@
                 skin: 'office2013',
                 language: 'pt-br',
                 width: '215mm',
-                savePlugin: {
-                    onSave: function (data) {
+                buttonPlugin: {
+                    onEvent: function (data) {
 
                         $('#ck-text-area').val(data);
                         $('#' + submitButtonId).click();
@@ -61,10 +65,26 @@
                         var jQueryRefOfHiddenInput = opener.$('#' + hiddenInput);
                         jQueryRefOfHiddenInput.val(data);
                         jQueryRefOfHiddenInput.trigger("singular:process");
+                    },
+
+                    onSaveAction: function (data) {
+
+                        var jQuerRefOfHtmlContainer = opener.$('#' + htmlContainer);
+                        jQuerRefOfHtmlContainer.html(data);
+
+                        var jQueryRefOfHiddenInput = opener.$('#' + hiddenInput);
+                        jQueryRefOfHiddenInput.val(data);
+                        jQueryRefOfHiddenInput.trigger("singular:process");
+
+                        $('#ck-text-area').val(data);
+                        $('#' + submitButtonId).click();
+
+                        window.opener.AbstractFormPage.onSave();
+                        toastr.success("Requerimento salvo com sucesso.");
                     }
                 },
                 toolbar: [
-                    {name: 'document', items: ['Closed', 'FinishAndClose', 'Cancel', 'Preview', 'Print']},
+                    {name: 'document', items: ['SaveButton', 'Closed', 'FinishAndClose', 'Cancel', 'Preview', 'Print']},
                     {
                         name: 'clipboard',
                         items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']
@@ -118,10 +138,6 @@
                         var selected = editor.getSelection().getSelectedText();
                         var innerText = editor.document.getBody().getText();
 
-                        var jQueryRefOfHiddenInput = opener.$('.btn save-btn');
-                        console.log(jQueryRefOfHiddenInput);
-                        jQueryRefOfHiddenInput.click();
-
                         Wicket.Ajax.post({
                             u: callbackUrl,
                             ep: {'innerText': innerText, 'index': texts[0], 'selected': selected}
@@ -161,7 +177,7 @@
 
 
             var classeIcon;
-            if (texts[2].indexOf('fa fa-') >=0) {
+            if (texts[2].indexOf('fa fa-') >= 0) {
                 classeIcon = ' cke_singular_icon-font-awesome ';
             } else {
                 classeIcon = ' cke_singular_icon-simple-line ';
@@ -172,4 +188,4 @@
     }
 
 
-})('${htmlContainer}', '${hiddenInput}', '${callbackUrl}', '${isEnabled}', '${buttonsList}', '${submitButtonId}', '${classDisableDoubleClick}');
+})('${htmlContainer}', '${hiddenInput}', '${callbackUrl}', '${isEnabled}', '${showSaveButton}', '${buttonsList}', '${submitButtonId}', '${classDisableDoubleClick}');
