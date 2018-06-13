@@ -20,7 +20,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.view.SViewByRichText;
+import org.opensingular.form.view.richtext.SViewByRichText;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.behavior.CKEditorInitBehaviour;

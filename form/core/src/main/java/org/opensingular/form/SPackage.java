@@ -97,11 +97,11 @@ public class SPackage extends SScopeBase {
     }
 
     protected static boolean isNull(@Nullable SISimple<?> field) {
-        return field == null || field.isNull();
+        return field == null || field.isEmptyOfData();
     }
 
     protected static boolean isNotNull(@Nullable SISimple<?> field) {
-        return field != null && !field.isNull();
+        return field != null && !field.isEmptyOfData();
     }
 
     protected static boolean isTrue(@Nullable SISimple<?> field) {

@@ -38,6 +38,7 @@ public class STypeString extends STypeSimple<SIString, String> {
     }
 
     protected void validateMaxLength(InstanceValidatable<SIString> validatable) {
+
         SIString instance = validatable.getInstance();
         String value = instance.getValue();
         Integer maxLength = instance.getAttributeValue(SPackageBasic.ATR_MAX_LENGTH);
