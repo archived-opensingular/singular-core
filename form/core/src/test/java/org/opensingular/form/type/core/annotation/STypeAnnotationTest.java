@@ -30,6 +30,7 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.io.FormSerializationUtil;
 import org.opensingular.form.io.FormSerialized;
+import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 
 import java.util.List;
@@ -199,6 +200,21 @@ public class STypeAnnotationTest {
         instance.asAtrAnnotation().annotation().setApproved(true);
         Assertions.assertThat(instance.asAtrAnnotation().hasAnyRefusal()).isFalse();
     }
+
+    @Test public void anInstanceWithARejectedFieldOnSubTree(){
+        SIComposite instance = baseCompositeField.newInstance();
+        SIString field11Instance = instance.getDescendant(field11);
+
+        field11Instance.asAtrAnnotation().annotation().setApproved(false);
+        Assertions.assertThat(field11Instance.asAtrAnnotation().hasAnyRefusalOnTree()).isTrue();
+        Assertions.assertThat(instance.asAtrAnnotation().hasAnyRefusalOnTree()).isTrue();
+        Assertions.assertThat(instance.asAtrAnnotation().hasAnyRefusal()).isTrue();
+
+        field11Instance.asAtrAnnotation().annotation().setApproved(true);
+        Assertions.assertThat(field11Instance.asAtrAnnotation().hasAnyRefusalOnTree()).isFalse();
+        Assertions.assertThat(instance.asAtrAnnotation().hasAnyRefusal()).isFalse();
+    }
+
 
     @Test public void anRejectedInstanceIsnRefused(){
         SIComposite instance = baseCompositeField.newInstance();

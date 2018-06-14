@@ -170,6 +170,15 @@ public class AtrAnnotation extends STranslatorForAttribute {
         return getAnnotationService().hasAnyAnnotationsOnTree(target());
     }
 
+    /**
+     * Checks if there is any refusal on the subtree starting from current instance.
+     * @return
+     * true if there is any refusal
+     */
+    public boolean hasAnyRefusalOnTree() {
+        return getAnnotationService().hasAnyRefusalOnTree(target());
+    }
+
     /** Retorna true se a instância ou algum de seus filhos tiver uma anotação marcadada como não aprovada. */
     public boolean hasAnyRefusal() {
         return getAnnotationService().hasAnyRefusal(target());
