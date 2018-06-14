@@ -37,7 +37,6 @@
                 $box.find('.fa-file-text').removeClass('fa-file-text').addClass('fa-remove').css('color', 'red');
                 $box.find('.list-item-uploading').removeClass('list-item-uploading').addClass('list-item-uploaded');
                 $box.find('.list-action-remove').removeClass('hidden').click(function (e) {
-                    console.log('blabla');
                     $box.remove();
                     window.FileUploadListPanel.setUploadItemState(panel_id, box_id, null);
                 });

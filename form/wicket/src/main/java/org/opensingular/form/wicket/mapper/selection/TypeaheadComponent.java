@@ -16,6 +16,16 @@
 
 package org.opensingular.form.wicket.mapper.selection;
 
+import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
+import javax.annotation.Nonnull;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -50,17 +60,8 @@ import org.opensingular.form.wicket.model.AbstractSInstanceAwareModel;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.wicket.util.template.RecursosStaticosSingularTemplate;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
-
-import javax.annotation.Nonnull;
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static org.opensingular.form.wicket.mapper.selection.TypeaheadComponent.generateResultOptions;
@@ -83,7 +84,7 @@ public class TypeaheadComponent extends Panel {
         @Override
         public List<HeaderItem> getDependencies() {
             if (getPage() instanceof SingularTemplate) {
-                return ((SingularTemplate) getPage()).getStyles();
+               return RecursosStaticosSingularTemplate.getStyles(((SingularTemplate) getPage()).getCurrentSkinFolder());
             } else {
                 return Collections.emptyList();
             }

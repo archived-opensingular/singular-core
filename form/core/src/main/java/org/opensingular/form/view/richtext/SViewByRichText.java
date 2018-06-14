@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.view;
+package org.opensingular.form.view.richtext;
+
+import org.opensingular.form.view.SView;
 
 public class SViewByRichText extends SView {
 
