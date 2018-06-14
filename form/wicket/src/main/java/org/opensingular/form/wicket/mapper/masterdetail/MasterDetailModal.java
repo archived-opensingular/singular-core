@@ -95,23 +95,23 @@ class MasterDetailModal extends BFModalWindow {
             this.addLink(BSModalBorder.ButtonStyle.CANCEL, $m.ofValue("Cancelar"), new ActionAjaxLink<Void>("btn-cancelar") {
                 @Override
                 protected void onAction(AjaxRequestTarget target) {
-                    roobackTheInstance(target);
+                    rollbackTheInstance(target);
                 }
 
             });
         }
 
-        getModalBorder().setCloseIconCallback(this::roobackTheInstance);
+        getModalBorder().setCloseIconCallback(this::rollbackTheInstance);
 
     }
 
     /**
-     * Method responsible for remove the new Instance, or rollback the old Instance.
-     * Is used in the cancel and the closed button.
+     * Method responsible for remove the new Instance, or rollback to the old Instance.
+     * It is used by cancel and  close button.
      *
      * @param target The target to close the modal.
      */
-    private void roobackTheInstance(AjaxRequestTarget target) {
+    private void rollbackTheInstance(AjaxRequestTarget target) {
         if (closeCallback != null) {
             closeCallback.accept(target);
         }
