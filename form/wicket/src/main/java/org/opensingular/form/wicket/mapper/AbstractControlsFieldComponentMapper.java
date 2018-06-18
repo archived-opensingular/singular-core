@@ -16,10 +16,12 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
@@ -52,6 +54,9 @@ import java.util.Set;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 public abstract class AbstractControlsFieldComponentMapper implements IWicketComponentMapper, ISInstanceActionCapable {
+
+    private final static MetaDataKey<Boolean> MDK_COMPONENT_CONFIGURED = new MetaDataKey<Boolean>() {
+    };
 
     final static HintKey<Boolean> NO_DECORATION = new HintKey<Boolean>() {
         @Override
@@ -148,7 +153,10 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
                     }
                 });
                 for (FormComponent<?> fc : findAjaxComponents(input)) {
-                    ctx.configure(this, fc);
+                    if (BooleanUtils.isNotTrue(fc.getMetaData(MDK_COMPONENT_CONFIGURED))) {
+                        ctx.configure(this, fc);
+                        fc.setMetaData(MDK_COMPONENT_CONFIGURED, Boolean.TRUE);
+                    }
                 }
             }));
         } else {
