@@ -140,15 +140,17 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
                 }
             });
             input.add(DisabledClassBehavior.getInstance());
-            input.add($b.onConfigure(c -> label.add(new ClassAttributeModifier() {
-                @Override
-                protected Set<String> update(Set<String> oldClasses) {
-                    return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
+            input.add($b.onConfigure(c -> {
+                label.add(new ClassAttributeModifier() {
+                    @Override
+                    protected Set<String> update(Set<String> oldClasses) {
+                        return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
+                    }
+                });
+                for (FormComponent<?> fc : findAjaxComponents(input)) {
+                    ctx.configure(this, fc);
                 }
-            })));
-            for (FormComponent<?> fc : findAjaxComponents(input)) {
-                ctx.configure(this, fc);
-            }
+            }));
         } else {
             input = appendReadOnlyInput(ctx, formGroup, labelModel);
         }
