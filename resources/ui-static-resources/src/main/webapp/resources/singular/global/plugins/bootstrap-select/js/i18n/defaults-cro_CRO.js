@@ -23,15 +23,20 @@
 
 (function ($) {
   $.fn.selectpicker.defaults = {
-    noneSelectedText: 'Nessuna selezione',
-    noneResultsText: 'Nessun risultato per {0}',
-    countSelectedText: function (numSelected, numTotal){
-      return (numSelected == 1) ? 'Selezionato {0} di {1}' : 'Selezionati {0} di {1}';
+    noneSelectedText: 'Odaberite stavku',
+    noneResultsText: 'Nema rezultata pretrage {0}',
+    countSelectedText: function (numSelected, numTotal) {
+      return (numSelected == 1) ? "{0} stavka selektirana" : "{0} stavke selektirane";
     },
-    maxOptionsText: ['Limite raggiunto ({n} {var} max)', 'Limite del gruppo raggiunto ({n} {var} max)', ['elementi', 'elemento']],
-    multipleSeparator: ', ',
-    selectAllText: 'Seleziona Tutto',
-    deselectAllText: 'Deseleziona Tutto'
+    maxOptionsText: function (numAll, numGroup) {
+      return [
+        (numAll == 1) ? 'Limit je postignut ({n} stvar maximalno)' : 'Limit je postignut ({n} stavke maksimalno)',
+        (numGroup == 1) ? 'Grupni limit je postignut ({n} stvar maksimalno)' : 'Grupni limit je postignut ({n} stavke maksimalno)'
+      ];
+    },
+    selectAllText: 'Selektiraj sve',
+    deselectAllText: 'Deselektiraj sve',
+    multipleSeparator: ', '
   };
 })(jQuery);
 
