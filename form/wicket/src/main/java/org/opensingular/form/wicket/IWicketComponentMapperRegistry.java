@@ -168,6 +168,7 @@ public class IWicketComponentMapperRegistry
         add(STypeAttachmentList.class, SViewAttachmentList.class,         AttachmentListMapper::new);
         add(STypeCNPJ.class,                                              CNPJMapper::new);
         add(STypeCPF.class,                                               CPFMapper::new);
+        add(STypePassword.class,        SViewPassword.class,              PasswordMapper::new);
         add(STypePassword.class,                                          PasswordMapper::new);
         add(STypeHiddenString.class,                                      InputHiddenMapper::new);
         //@formatter:on
