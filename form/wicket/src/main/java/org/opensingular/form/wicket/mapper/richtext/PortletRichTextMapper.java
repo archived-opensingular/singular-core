@@ -44,7 +44,7 @@ public class PortletRichTextMapper extends StringMapper {
     }
 
     @Override
-    protected void configureLabel(WicketBuildContext ctx, IModel<String> labelModel, boolean hintNoDecoration, BSLabel label) {
+    public void configureLabel(WicketBuildContext ctx, IModel<String> labelModel, boolean hintNoDecoration, BSLabel label) {
         label.setVisible(false);
     }
 

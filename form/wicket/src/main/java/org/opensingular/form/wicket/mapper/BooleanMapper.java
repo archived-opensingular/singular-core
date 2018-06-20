@@ -16,8 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -34,6 +32,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.view.SViewCheckBoxLabelAbove;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
@@ -45,8 +44,12 @@ import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSWellBorder;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
+
+import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
 
 public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCapable {
 
@@ -69,10 +72,27 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
         final IModel<? extends SInstance> model = ctx.getModel();
         final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
         final CheckBox input = new CheckBox(model.getObject().getName(), new SInstanceValueModel<>(model));
-        final Label label = buildLabel("_", labelModel);
-        adjustJSEvents(ctx, label);
+        final BSLabel label            = new BSLabel("label", labelModel);
 
-        formGroup.appendCheckbox(input, label);
+        final boolean                hintNoDecoration = ctx.getHint(NO_DECORATION);
+
+
+        adjustJSEvents(ctx, label);
+        if(ctx.getView() instanceof SViewCheckBoxLabelAbove) {
+            configureLabel(ctx, labelModel, hintNoDecoration, label);
+
+            if (hintNoDecoration) {
+                formGroup.appendLabel(label);
+            } else {
+                BSControls labelBar = new BSControls("labelBar")
+                        .appendLabel(label);
+                labelBar.add(WicketUtils.$b.classAppender("labelBar"));
+                formGroup.appendLabel(labelBar).appendCheckboxInline(input, ((SViewCheckBoxLabelAbove) ctx.getView()).getAlignment());
+            }
+        } else {
+            formGroup.appendCheckbox(input, label);
+        }
+
 
         final BSContainer<?> checkboxDiv = input.getMetaData(BSControls.CHECKBOX_DIV);
         if (checkboxDiv != null) { //

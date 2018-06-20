@@ -16,8 +16,12 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -46,28 +50,12 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
 import org.opensingular.lib.wicket.util.output.BOutputPanel;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public abstract class AbstractControlsFieldComponentMapper implements IWicketComponentMapper, ISInstanceActionCapable {
 
     private final static MetaDataKey<Boolean> MDK_COMPONENT_CONFIGURED = new MetaDataKey<Boolean>() {
-    };
-
-    final static HintKey<Boolean> NO_DECORATION = new HintKey<Boolean>() {
-        @Override
-        public Boolean getDefaultValue() {
-            return Boolean.FALSE;
-        }
-
-        @Override
-        public boolean isInheritable() {
-            return true;
-        }
     };
 
     private final SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
@@ -145,20 +133,19 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
                 }
             });
             input.add(DisabledClassBehavior.getInstance());
-            input.add($b.onConfigure(c -> {
-                label.add(new ClassAttributeModifier() {
+
+            input.add($b.onConfigure(c -> label.add(new ClassAttributeModifier() {
                     @Override
                     protected Set<String> update(Set<String> oldClasses) {
                         return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
                     }
-                });
-                for (FormComponent<?> fc : findAjaxComponents(input)) {
-                    if (BooleanUtils.isNotTrue(fc.getMetaData(MDK_COMPONENT_CONFIGURED))) {
-                        ctx.configure(this, fc);
-                        fc.setMetaData(MDK_COMPONENT_CONFIGURED, Boolean.TRUE);
-                    }
+            })));
+            for (FormComponent<?> fc : findAjaxComponents(input)) {
+                if (BooleanUtils.isNotTrue(fc.getMetaData(MDK_COMPONENT_CONFIGURED))) {
+                    ctx.configure(this, fc);
+                    fc.setMetaData(MDK_COMPONENT_CONFIGURED, Boolean.TRUE);
                 }
-            }));
+            }
         } else {
             input = appendReadOnlyInput(ctx, formGroup, labelModel);
         }
@@ -166,16 +153,6 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         if ((input instanceof LabeledWebMarkupContainer) && (((LabeledWebMarkupContainer) input).getLabel() == null)) {
             ((LabeledWebMarkupContainer) input).setLabel(labelModel);
         }
-    }
-
-    protected void configureLabel(WicketBuildContext ctx, IModel<String> labelModel, boolean hintNoDecoration, BSLabel label) {
-        label.add(DisabledClassBehavior.getInstance());
-        label.setVisible(!hintNoDecoration);
-        label.add($b.onConfigure(c -> {
-            if (ctx.getHint(HIDE_LABEL) || StringUtils.isEmpty(labelModel.getObject())) {
-                c.setVisible(false);
-            }
-        }));
     }
 
     protected FormComponent<?>[] findAjaxComponents(Component input) {
