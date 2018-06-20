@@ -16,28 +16,23 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.view.SViewDate;
-import org.opensingular.form.wicket.IAjaxUpdateListener;
 import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior.Masks;
 import org.opensingular.form.wicket.converter.DateConverter;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerInputGroup;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.logging.Logger;
-import java.util.Locale;
 
 import static org.opensingular.form.type.basic.SPackageBasic.ATR_MAX_DATE;
 import static org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour.DatePickerSettings;
@@ -75,26 +70,6 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
 
     private static SimpleDateFormat defaultDateFormat() {
         return new SimpleDateFormat("dd/MM/yyyy");
-    }
-
-    @Override
-    public void addAjaxUpdate(WicketBuildContext ctx, Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
-        adjustJSEvents(component);
-        BSDatepickerInputGroup datepicker = BSDatepickerInputGroup.getFromTextfield(component);
-        datepicker.getTextField()
-                .add(AjaxUpdateInputBehavior.forProcess(model, listener))
-                .add(AjaxUpdateInputBehavior.forValidate(model, listener));
-    }
-
-    @Override
-    public void adjustJSEvents(Component comp) {
-        BSDatepickerInputGroup datepicker = BSDatepickerInputGroup.getFromTextfield(comp);
-        Component              textField  = datepicker.getTextField();
-        textField
-                .add(new SingularEventBehavior()
-                        .setProcessEvent("changeDate", datepicker)
-                        .setValidateEvent("blur", textField)
-                        .setSupportComponents(datepicker.getButton()));
     }
 
     @Override

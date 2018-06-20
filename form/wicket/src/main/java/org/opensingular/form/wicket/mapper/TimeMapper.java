@@ -16,12 +16,11 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.json.JSONObject;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
@@ -32,9 +31,6 @@ import org.opensingular.form.wicket.mapper.datetime.CreateTimePickerBehavior;
 import org.opensingular.form.wicket.model.SIDateTimeModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Mapper for data type responsible for storing time (hour and minutes).
