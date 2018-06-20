@@ -66,8 +66,8 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
 
     protected Component appendReadOnlyInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
-        final SInstance                   mi    = model.getObject();
-        final BOutputPanel                comp  = new BOutputPanel(mi.getName(), $m.ofValue(getReadOnlyFormattedText(ctx, model)));
+        final SInstance mi = model.getObject();
+        final BOutputPanel comp = new BOutputPanel(mi.getName(), $m.ofValue(getReadOnlyFormattedText(ctx, model)));
         formGroup.appendTag("div", comp);
         return comp;
     }
@@ -75,15 +75,15 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
     @Override
     public void buildView(WicketBuildContext ctx) {
 
-        final IModel<? extends SInstance> model      = ctx.getModel();
-        final IModel<String>              labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
+        final IModel<? extends SInstance> model = ctx.getModel();
+        final IModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
 
-        final boolean                hintNoDecoration = ctx.getHint(NO_DECORATION);
-        final BSContainer<?>         container        = ctx.getContainer();
-        final AttributeModel<String> subtitle         = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
-        final ViewMode               viewMode         = ctx.getViewMode();
-        final BSLabel                label            = new BSLabel("label", labelModel);
-        final BSControls             formGroup        = container.newFormGroup();
+        final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
+        final BSContainer<?> container = ctx.getContainer();
+        final AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
+        final ViewMode viewMode = ctx.getViewMode();
+        final BSLabel label = new BSLabel("label", labelModel);
+        final BSControls formGroup = container.newFormGroup();
 
         configureLabel(ctx, labelModel, hintNoDecoration, label);
 
@@ -134,24 +134,31 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
             });
             input.add(DisabledClassBehavior.getInstance());
 
-            input.add($b.onConfigure(c -> label.add(new ClassAttributeModifier() {
+            input.add($b.onConfigure(c -> {
+                label.add(new ClassAttributeModifier() {
                     @Override
                     protected Set<String> update(Set<String> oldClasses) {
                         return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
                     }
-            })));
-            for (FormComponent<?> fc : findAjaxComponents(input)) {
-                if (BooleanUtils.isNotTrue(fc.getMetaData(MDK_COMPONENT_CONFIGURED))) {
-                    ctx.configure(this, fc);
-                    fc.setMetaData(MDK_COMPONENT_CONFIGURED, Boolean.TRUE);
-                }
-            }
+                });
+                reloadComponentConfigured(ctx, input);
+            }));
+            reloadComponentConfigured(ctx, input);
         } else {
             input = appendReadOnlyInput(ctx, formGroup, labelModel);
         }
 
         if ((input instanceof LabeledWebMarkupContainer) && (((LabeledWebMarkupContainer) input).getLabel() == null)) {
             ((LabeledWebMarkupContainer) input).setLabel(labelModel);
+        }
+    }
+
+    private void reloadComponentConfigured(WicketBuildContext ctx, Component input) {
+        for (FormComponent<?> fc : findAjaxComponents(input)) {
+            if (BooleanUtils.isNotTrue(fc.getMetaData(MDK_COMPONENT_CONFIGURED))) {
+                ctx.configure(this, fc);
+                fc.setMetaData(MDK_COMPONENT_CONFIGURED, Boolean.TRUE);
+            }
         }
     }
 

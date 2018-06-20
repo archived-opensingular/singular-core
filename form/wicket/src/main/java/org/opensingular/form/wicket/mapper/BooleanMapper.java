@@ -72,25 +72,32 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
         final IModel<? extends SInstance> model = ctx.getModel();
         final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
         final CheckBox input = new CheckBox(model.getObject().getName(), new SInstanceValueModel<>(model));
-        final BSLabel label            = new BSLabel("label", labelModel);
 
         final boolean                hintNoDecoration = ctx.getHint(NO_DECORATION);
 
-
-        adjustJSEvents(ctx, label);
         if(ctx.getView() instanceof SViewCheckBoxLabelAbove) {
-            configureLabel(ctx, labelModel, hintNoDecoration, label);
+            final BSLabel bsLabel            = new BSLabel("label", labelModel);
+            configureLabel(ctx, labelModel, hintNoDecoration, bsLabel);
 
             if (hintNoDecoration) {
-                formGroup.appendLabel(label);
+                formGroup.appendLabel(bsLabel);
             } else {
                 BSControls labelBar = new BSControls("labelBar")
-                        .appendLabel(label);
+                        .appendLabel(bsLabel);
                 labelBar.add(WicketUtils.$b.classAppender("labelBar"));
                 formGroup.appendLabel(labelBar).appendCheckboxInline(input, ((SViewCheckBoxLabelAbove) ctx.getView()).getAlignment());
             }
         } else {
+            final Label label = buildLabel("_", labelModel);
+            adjustJSEvents(ctx, label);
             formGroup.appendCheckbox(input, label);
+
+            label.add(new ClassAttributeModifier() {
+                @Override
+                protected Set<String> update(Set<String> oldClasses) {
+                    return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
+                }
+            });
         }
 
 
@@ -116,12 +123,7 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
         formGroup.appendFeedback(ctx.createFeedbackCompactPanel("feedback"));
         ctx.configure(this, input);
 
-        label.add(new ClassAttributeModifier() {
-            @Override
-            protected Set<String> update(Set<String> oldClasses) {
-                return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
-            }
-        });
+
     }
 
     protected void buildForVisualization(WicketBuildContext ctx) {
