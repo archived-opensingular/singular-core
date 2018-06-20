@@ -20,12 +20,12 @@ import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.aspect.AspectRef;
 import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
 import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
-import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
 
 import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
@@ -74,7 +74,7 @@ public interface IWicketComponentMapper extends Serializable {
         }
     };
 
-    default void configureLabel(WicketBuildContext ctx, IModel<String> labelModel, boolean hintNoDecoration, BSLabel label) {
+    default void configureLabel(WicketBuildContext ctx, IModel<String> labelModel, boolean hintNoDecoration, Label label) {
         label.add(DisabledClassBehavior.getInstance());
         label.setVisible(!hintNoDecoration);
         label.add($b.onConfigure(c -> {
