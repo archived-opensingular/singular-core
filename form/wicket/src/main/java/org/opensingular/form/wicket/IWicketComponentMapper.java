@@ -26,6 +26,8 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.aspect.AspectRef;
 import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
 import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
+import org.opensingular.form.wicket.model.AttributeModel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
@@ -57,6 +59,7 @@ public interface IWicketComponentMapper extends Serializable {
     @FunctionalInterface
     interface HintKey<T> extends Serializable {
         T getDefaultValue();
+
         default boolean isInheritable() {
             return false;
         }
@@ -83,5 +86,18 @@ public interface IWicketComponentMapper extends Serializable {
             }
         }));
     }
+
+    default void configureSubTitle(WicketBuildContext ctx, BSControls formGroup, AttributeModel<String> subtitle) {
+        formGroup.newHelpBlock(subtitle)
+                .add($b.onConfigure(c -> {
+                    if (ctx.getHint(HIDE_LABEL) || StringUtils.isEmpty(subtitle.getObject())) {
+                        c.add($b.classAppender("hidden-xs"))
+                                .add($b.classAppender("hidden-sm"))
+                                .add($b.classAppender("hidden-md"))
+                                .add($b.classAppender("hidden-lg"));
+                    }
+                }));
+    }
+
 
 }

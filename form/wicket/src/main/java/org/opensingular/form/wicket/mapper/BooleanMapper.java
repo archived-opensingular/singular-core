@@ -42,6 +42,7 @@ import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.AttributeModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.commons.table.Column;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
@@ -53,6 +54,7 @@ import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTIO
 
 public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCapable {
 
+    public static final String BS_WELL = "_well";
     private final SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
 
     @Override
@@ -117,20 +119,21 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
     private Label configureCheckBoxWithLabelByView(WicketBuildContext ctx, BSControls formGroup,
             CheckBox input) {
         final AttributeModel<String> labelModel = new AttributeModel<>(ctx.getModel(), SPackageBasic.ATR_LABEL);
+        final AttributeModel<String> subtitle = new AttributeModel<>(ctx.getModel(), SPackageBasic.ATR_SUBTITLE);
         final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
         Label label;
         if (ctx.getView() instanceof SViewCheckBoxLabelAbove) {
             label = new BSLabel("label", labelModel);
             configureLabel(ctx, labelModel, hintNoDecoration, label);
+            BSControls labelBar = new BSControls("labelBar")
+                    .appendLabel(label);
+            labelBar.add(WicketUtils.$b.classAppender("labelBar"));
+            formGroup.appendLabel(labelBar);
 
-            if (hintNoDecoration) {
-                formGroup.appendLabel(label);
-            } else {
-                BSControls labelBar = new BSControls("labelBar")
-                        .appendLabel(label);
-                labelBar.add(WicketUtils.$b.classAppender("labelBar"));
-                formGroup.appendLabel(labelBar).appendCheckboxInline(input, ((SViewCheckBoxLabelAbove) ctx.getView()).getAlignment());
-            }
+            configureSubTitle(ctx, formGroup, subtitle);
+
+            formGroup.appendCheckboxInline(input, ((SViewCheckBoxLabelAbove) ctx.getView()).getAlignment());
+
         } else {
             label = buildLabel("_", labelModel);
             formGroup.appendCheckbox(input, label);
@@ -142,7 +145,7 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
         final BSControls formGroup = ctx.getContainer().newFormGroup();
         final IModel<? extends SInstance> model = ctx.getModel();
         final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
-
+        final AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
         final Boolean checked;
 
         final SInstance mi = model.getObject();
@@ -152,14 +155,42 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
             checked = Boolean.FALSE;
         }
 
-        String clazz = checked ? "fa fa-check-square" : "fa fa-square-o";
-        String idSuffix = (mi != null) ? mi.getName() : StringUtils.EMPTY;
-        TemplatePanel tp = formGroup.newTemplateTag(t -> ""
-                + "<div wicket:id='" + "_well" + idSuffix + "'>"
-                + "   <i class='" + clazz + "'></i> <span wicket:id='label'></span> "
-                + " </div>");
-        final BSWellBorder wellBorder = BSWellBorder.small("_well" + idSuffix);
-        tp.add(wellBorder.add(buildLabel("label", labelModel)));
+        if (ctx.getView() instanceof SViewCheckBoxLabelAbove) {
+            final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
+            final BSLabel label = new BSLabel("label", labelModel);
+            configureLabel(ctx, labelModel, hintNoDecoration, label);
+            formGroup.appendLabel(label);
+
+            configureSubTitle(ctx, formGroup, subtitle);
+
+            String clazz = checked ? "fa fa-check-square" : "fa fa-square-o";
+            String idSuffix = (mi != null) ? mi.getName() : StringUtils.EMPTY;
+            TemplatePanel tp = formGroup.newTemplateTag(t -> ""
+                    + "<div wicket:id='" + BS_WELL + idSuffix + "' "
+                    + configureTextAlignStyle(((SViewCheckBoxLabelAbove) ctx.getView()).getAlignment()) + ">"
+                    + "   <i class='" + clazz + "'></i>"
+                    + " </div>");
+            final BSWellBorder wellBorder = BSWellBorder.small(BS_WELL + idSuffix);
+            tp.add(wellBorder);
+        } else {
+            String clazz = checked ? "fa fa-check-square" : "fa fa-square-o";
+            String idSuffix = (mi != null) ? mi.getName() : StringUtils.EMPTY;
+            TemplatePanel tp = formGroup.newTemplateTag(t -> ""
+                    + "<div wicket:id='" + BS_WELL + idSuffix + "'>"
+                    + "   <i class='" + clazz + "'></i> <span wicket:id='label'></span> "
+                    + " </div>");
+            final BSWellBorder wellBorder = BSWellBorder.small(BS_WELL + idSuffix);
+            tp.add(wellBorder.add(buildLabel("label", labelModel)));
+        }
+
+    }
+
+    private String configureTextAlignStyle(Column.Alignment alignment) {
+        String style = "";
+        if (alignment != null) {
+            style = "style= 'text-align:" + alignment.name().toLowerCase() + "'";
+        }
+        return style;
     }
 
     protected Label buildLabel(String id, AttributeModel<String> labelModel) {

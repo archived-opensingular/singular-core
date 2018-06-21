@@ -112,11 +112,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
             formGroup.appendDiv(labelBar);
         }
 
-        formGroup.newHelpBlock(subtitle)
-                .add($b.classAppender("hidden-xs"))
-                .add($b.classAppender("hidden-sm"))
-                .add($b.classAppender("hidden-md"));
-        //.add(InvisibleIfNullOrEmptyBehavior.getInstance());
+        configureSubTitle(ctx,formGroup,subtitle);
 
         final Component input;
 
