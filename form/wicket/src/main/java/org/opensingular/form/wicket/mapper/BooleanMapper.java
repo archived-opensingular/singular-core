@@ -24,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -73,15 +72,7 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
         final BSControls formGroup = ctx.getContainer().newFormGroup();
         final IModel<? extends SInstance> model = ctx.getModel();
         final CheckBox input = new CheckBox(model.getObject().getName(), new SInstanceValueModel<>(model));
-        Label label = configureCheckBoxWithLabelByView(ctx, formGroup, input);
-
-        adjustJSEvents(ctx, label);
-        label.add(new ClassAttributeModifier() {
-            @Override
-            protected Set<String> update(Set<String> oldClasses) {
-                return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
-            }
-        });
+        configureCheckBoxWithLabelByView(ctx, formGroup, input);
 
         final BSContainer<?> checkboxDiv = input.getMetaData(BSControls.CHECKBOX_DIV);
         if (checkboxDiv != null) { //
@@ -105,7 +96,6 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
         formGroup.appendFeedback(ctx.createFeedbackCompactPanel("feedback"));
         ctx.configure(this, input);
 
-
     }
 
     /**
@@ -114,37 +104,41 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
      * @param ctx       Ctx containing the View.
      * @param formGroup The formGroup to add the checkBox.
      * @param input     The CheckBox Input that should be add in the FormGroup.
-     * @return The label of the CheckBox.
      */
-    private Label configureCheckBoxWithLabelByView(WicketBuildContext ctx, BSControls formGroup,
+    private void configureCheckBoxWithLabelByView(WicketBuildContext ctx, BSControls formGroup,
             CheckBox input) {
-        final AttributeModel<String> labelModel = new AttributeModel<>(ctx.getModel(), SPackageBasic.ATR_LABEL);
-        final AttributeModel<String> subtitle = new AttributeModel<>(ctx.getModel(), SPackageBasic.ATR_SUBTITLE);
-        final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
-        Label label;
+        final IModel<? extends SInstance> model = ctx.getModel();
+        BSLabel label;
         if (ctx.getView() instanceof SViewCheckBoxLabelAbove) {
-            label = new BSLabel("label", labelModel);
-            configureLabel(ctx, labelModel, hintNoDecoration, label);
+            label = configureLabel(ctx);
             BSControls labelBar = new BSControls("labelBar")
                     .appendLabel(label);
             labelBar.add(WicketUtils.$b.classAppender("labelBar"));
             formGroup.appendLabel(labelBar);
 
+            final AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
             configureSubTitle(formGroup, subtitle);
 
             formGroup.appendCheckboxInline(input, ((SViewCheckBoxLabelAbove) ctx.getView()).getAlignment());
-
         } else {
+            final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
             label = buildLabel("_", labelModel);
             formGroup.appendCheckbox(input, label);
         }
-        return label;
+
+
+        adjustJSEvents(ctx, label);
+        label.add(new ClassAttributeModifier() {
+            @Override
+            protected Set<String> update(Set<String> oldClasses) {
+                return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
+            }
+        });
     }
 
     protected void buildForVisualization(WicketBuildContext ctx) {
         final BSControls formGroup = ctx.getContainer().newFormGroup();
         final IModel<? extends SInstance> model = ctx.getModel();
-        final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
         final AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
         final Boolean checked;
 
@@ -156,10 +150,7 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
         }
 
         if (ctx.getView() instanceof SViewCheckBoxLabelAbove) {
-            final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
-            final BSLabel label = new BSLabel("label", labelModel);
-            configureLabel(ctx, labelModel, hintNoDecoration, label);
-            formGroup.appendLabel(label);
+            formGroup.appendLabel(configureLabel(ctx));
 
             configureSubTitle(formGroup, subtitle);
 
@@ -173,6 +164,7 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
             final BSWellBorder wellBorder = BSWellBorder.small(BS_WELL + idSuffix);
             tp.add(wellBorder);
         } else {
+            final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
             String clazz = checked ? "fa fa-check-square" : "fa fa-square-o";
             String idSuffix = (mi != null) ? mi.getName() : StringUtils.EMPTY;
             TemplatePanel tp = formGroup.newTemplateTag(t -> ""
@@ -193,8 +185,8 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
         return style;
     }
 
-    protected Label buildLabel(String id, AttributeModel<String> labelModel) {
-        return (Label) new Label(id, labelModel.getObject()).setEscapeModelStrings(false);
+    protected BSLabel buildLabel(String id, AttributeModel<String> labelModel) {
+        return (BSLabel) new BSLabel(id, labelModel.getObject()).setEscapeModelStrings(false);
     }
 
     @Override

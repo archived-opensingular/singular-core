@@ -82,10 +82,9 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         final BSContainer<?> container = ctx.getContainer();
         final AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
         final ViewMode viewMode = ctx.getViewMode();
-        final BSLabel label = new BSLabel("label", labelModel);
         final BSControls formGroup = container.newFormGroup();
 
-        configureLabel(ctx, labelModel, hintNoDecoration, label);
+        BSLabel label = configureLabel(ctx);
 
         if (hintNoDecoration) {
             formGroup.appendLabel(label);

@@ -17,12 +17,12 @@
 package org.opensingular.form.wicket.mapper.richtext;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.StringMapper;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
 
 public class PortletRichTextMapper extends StringMapper {
 
@@ -44,8 +44,7 @@ public class PortletRichTextMapper extends StringMapper {
     }
 
     @Override
-    public void configureLabel(WicketBuildContext ctx, IModel<String> labelModel, boolean hintNoDecoration, Label label) {
-        label.setVisible(false);
+    public BSLabel configureLabel(WicketBuildContext ctx) {
+        return (BSLabel) super.configureLabel(ctx).setVisible(false);
     }
-
 }

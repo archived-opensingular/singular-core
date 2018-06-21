@@ -20,14 +20,15 @@ import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.aspect.AspectRef;
+import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
 import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
 import org.opensingular.form.wicket.model.AttributeModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
 
 import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
@@ -77,16 +78,31 @@ public interface IWicketComponentMapper extends Serializable {
         }
     };
 
-    default void configureLabel(WicketBuildContext ctx, IModel<String> labelModel, boolean hintNoDecoration, Label label) {
+    /**
+     * Method responsible for create and configurate the label usend by the default's inputs by Singular form.
+     *
+     * @param ctx The WicketBuildCOntext, to know if contains the HIDE_LABEL configuration.
+     * @return The Bootstrap label configured.
+     */
+    default BSLabel configureLabel(WicketBuildContext ctx) {
+        final AttributeModel<String> labelModel = new AttributeModel<>(ctx.getModel(), SPackageBasic.ATR_LABEL);
+        BSLabel label = new BSLabel("label", labelModel);
         label.add(DisabledClassBehavior.getInstance());
-        label.setVisible(!hintNoDecoration);
+        label.setVisible(!ctx.getHint(NO_DECORATION));
         label.add($b.onConfigure(c -> {
             if (ctx.getHint(HIDE_LABEL) || StringUtils.isEmpty(labelModel.getObject())) {
                 c.setVisible(false);
             }
         }));
+        return label;
     }
 
+    /**
+     * Method responsible for create the subtitle of the input's form.
+     *
+     * @param formGroup The formGroup what will be added the subtitle.
+     * @param subtitle  The subtitle text.
+     */
     default void configureSubTitle(BSControls formGroup, AttributeModel<String> subtitle) {
         formGroup.newHelpBlock(subtitle);
     }
