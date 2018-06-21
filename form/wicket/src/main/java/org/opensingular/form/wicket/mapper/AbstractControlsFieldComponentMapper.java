@@ -112,7 +112,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
             formGroup.appendDiv(labelBar);
         }
 
-        configureSubTitle(ctx,formGroup,subtitle);
+        configureSubTitle(formGroup,subtitle);
 
         final Component input;
 

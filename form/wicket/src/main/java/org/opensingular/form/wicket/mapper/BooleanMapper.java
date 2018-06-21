@@ -130,7 +130,7 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
             labelBar.add(WicketUtils.$b.classAppender("labelBar"));
             formGroup.appendLabel(labelBar);
 
-            configureSubTitle(ctx, formGroup, subtitle);
+            configureSubTitle(formGroup, subtitle);
 
             formGroup.appendCheckboxInline(input, ((SViewCheckBoxLabelAbove) ctx.getView()).getAlignment());
 
@@ -161,7 +161,7 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
             configureLabel(ctx, labelModel, hintNoDecoration, label);
             formGroup.appendLabel(label);
 
-            configureSubTitle(ctx, formGroup, subtitle);
+            configureSubTitle(formGroup, subtitle);
 
             String clazz = checked ? "fa fa-check-square" : "fa fa-square-o";
             String idSuffix = (mi != null) ? mi.getName() : StringUtils.EMPTY;

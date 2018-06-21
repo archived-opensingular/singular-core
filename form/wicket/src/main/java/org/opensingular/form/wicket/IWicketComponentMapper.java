@@ -87,16 +87,8 @@ public interface IWicketComponentMapper extends Serializable {
         }));
     }
 
-    default void configureSubTitle(WicketBuildContext ctx, BSControls formGroup, AttributeModel<String> subtitle) {
-        formGroup.newHelpBlock(subtitle)
-                .add($b.onConfigure(c -> {
-                    if (ctx.getHint(HIDE_LABEL) || StringUtils.isEmpty(subtitle.getObject())) {
-                        c.add($b.classAppender("hidden-xs"))
-                                .add($b.classAppender("hidden-sm"))
-                                .add($b.classAppender("hidden-md"))
-                                .add($b.classAppender("hidden-lg"));
-                    }
-                }));
+    default void configureSubTitle(BSControls formGroup, AttributeModel<String> subtitle) {
+        formGroup.newHelpBlock(subtitle);
     }
 
 
