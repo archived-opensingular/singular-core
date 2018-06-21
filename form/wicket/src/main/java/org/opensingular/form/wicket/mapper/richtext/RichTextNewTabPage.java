@@ -109,7 +109,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
 
-        try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "PortletRichTextPanel.js")) {
+        try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "RichTextNewTabPage.js")) {
             final Map<String, String> params = new HashMap<>();
 
             /*If don't contains the View, i add a view with empty buttons, for default use.*/

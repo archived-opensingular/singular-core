@@ -49,6 +49,7 @@ import org.opensingular.form.type.util.STypeLatitudeLongitudeList;
 import org.opensingular.form.type.util.STypeYearMonth;
 import org.opensingular.form.view.*;
 import org.opensingular.form.view.richtext.SViewByRichText;
+import org.opensingular.form.view.richtext.SViewByRichTextNewTab;
 import org.opensingular.form.wicket.mapper.BooleanMapper;
 import org.opensingular.form.wicket.mapper.DateMapper;
 import org.opensingular.form.wicket.mapper.DateTimeMapper;
@@ -164,6 +165,7 @@ public class IWicketComponentMapperRegistry
         add(STypeTime.class,                                              TimeMapper::new);
         add(STypeTelefoneNacional.class,                                  TelefoneNacionalMapper::new);
         add(STypeHTML.class,                                              PortletRichTextMapper::new);
+        add(STypeHTML.class,        SViewByRichTextNewTab.class,          PortletRichTextMapper::new);
         add(STypeHTML.class,        SViewByRichText.class,                RichTextMapper::new);
         add(STypeAttachmentList.class, SViewAttachmentList.class,         AttachmentListMapper::new);
         add(STypeCNPJ.class,                                              CNPJMapper::new);
