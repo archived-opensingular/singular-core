@@ -16,6 +16,9 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.FormComponent;
@@ -30,16 +33,11 @@ import org.opensingular.form.wicket.behavior.InputMaskBehavior.Masks;
 import org.opensingular.form.wicket.converter.DateConverter;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerInputGroup;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.logging.Logger;
-import java.util.Locale;
-
 import static org.opensingular.form.type.basic.SPackageBasic.ATR_MAX_DATE;
+import static org.opensingular.form.type.basic.SPackageBasic.ATR_MIN_DATE;
 import static org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour.DatePickerSettings;
 
 @SuppressWarnings("serial")
@@ -59,8 +57,15 @@ public class DateMapper extends AbstractControlsFieldComponentMapper {
                                 .add(new InputMaskBehavior(Masks.FULL_DATE))));
 
         configureMaxDate(datepicker, model.getObject().getAttributeValue(ATR_MAX_DATE));
+        configureMinDate(datepicker, model.getObject().getAttributeValue(ATR_MIN_DATE));
 
         return datepicker.getTextField();
+    }
+
+    private void configureMinDate(BSDatepickerInputGroup datepicker, Date minDate) {
+        if (minDate != null) {
+            datepicker.setStartDate(defaultDateFormat().format(minDate));
+        }
     }
 
     private DatePickerSettings getDatePickerSetings(WicketBuildContext ctx) {
