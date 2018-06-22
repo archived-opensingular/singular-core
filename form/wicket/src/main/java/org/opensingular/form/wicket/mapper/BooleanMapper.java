@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -108,7 +109,7 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
     private void configureCheckBoxWithLabelByView(WicketBuildContext ctx, BSControls formGroup,
             CheckBox input) {
         final IModel<? extends SInstance> model = ctx.getModel();
-        BSLabel label;
+        Label label;
         if (ctx.getView() instanceof SViewCheckBoxLabelAbove) {
             label = configureLabel(ctx);
             BSControls labelBar = new BSControls("labelBar")
@@ -185,7 +186,7 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
         return style;
     }
 
-    protected BSLabel buildLabel(String id, AttributeModel<String> labelModel) {
+    protected Label buildLabel(String id, AttributeModel<String> labelModel) {
         return (BSLabel) new BSLabel(id, labelModel.getObject()).setEscapeModelStrings(false);
     }
 
