@@ -67,7 +67,7 @@ public interface SingularProperties {
     String SINGULAR_MAIL_FROM = "singular.mail.from";
     String SINGULAR_MAIL_PORT = "singular.mail.port";
     String SINGULAR_MAIL_USERNAME = "singular.mail.username";
-    String SINGULAR_MAIL_PASSWORD = "singular.mail.password";
+    String SINGULAR_MAIL_SECURITY_WORD = "singular.mail.password";
     String SINGULAR_MAIL_PROTOCOL = "singular.mail.protocol";
     String SINGULAR_MAIL_HOST = "singular.mail.host";
     String SINGULAR_MAIL_SMTP_STARTTLS_ENABLE = "singular.mail.smtp.starttls.enable";
