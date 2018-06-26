@@ -84,7 +84,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         final ViewMode viewMode = ctx.getViewMode();
         final BSControls formGroup = container.newFormGroup();
 
-        BSLabel label = configureLabel(ctx);
+        BSLabel label = createLabel(ctx);
 
         if (hintNoDecoration) {
             formGroup.appendLabel(label);
@@ -111,7 +111,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
             formGroup.appendDiv(labelBar);
         }
 
-        configureSubTitle(formGroup,subtitle);
+        createSubTitle(formGroup,subtitle);
 
         final Component input;
 

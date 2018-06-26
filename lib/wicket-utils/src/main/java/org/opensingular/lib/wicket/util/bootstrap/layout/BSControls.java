@@ -30,7 +30,6 @@ import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
@@ -73,39 +72,31 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSControls appendCheckbox(Component checkbox, IModel<?> labelModel) {
-        return this.appendCheckbox(checkbox, new Label("_", labelModel));
+        return this.appendCheckbox(checkbox, new Label("_", labelModel), null);
     }
 
-    public BSControls appendCheckbox(Component checkbox, Component label) {
+    public BSControls appendCheckbox(Component checkbox, Component label, Column.Alignment alignment) {
         final BSContainer<?> checkboxDiv = new BSContainer<>("_" + checkbox.getId());
         final BSContainer<?> checkboxLabel = new BSContainer<>("_");
 
         checkbox.setMetaData(CHECKBOX_DIV, checkboxDiv);
         checkbox.setMetaData(CHECKBOX_LABEL, checkboxLabel);
 
-        return this
-                .appendTag("div", true, "class='checkbox'", checkboxDiv
-                        .appendTag("label", checkboxLabel
-                                .appendTag("input", false, "type='checkbox'", checkbox)
-                                .appendTag("span", label)));
-    }
-
-
-    public BSControls appendCheckboxInline(CheckBox checkbox, Column.Alignment alignment) {
-        final BSContainer<?> checkboxDiv = new BSContainer<>("_" + checkbox.getId());
-        final BSContainer<?> checkboxLabel = new BSContainer<>("_");
-
-        checkbox.setMetaData(CHECKBOX_DIV, checkboxDiv);
-        checkbox.setMetaData(CHECKBOX_LABEL, checkboxLabel);
-
+        if (label != null) {
+            checkboxLabel.appendTag("span", label);
+        }
         String style = "";
         if (alignment != null) {
             style = "style= 'text-align:" + alignment.name().toLowerCase() + "'";
         }
+
         return this
-                .appendTag("div", true, "class='checkbox' " + style, checkboxDiv
-                        .appendTag("label", checkboxLabel
-                                .appendTag("input", false, "type='checkbox'", checkbox)));
+                .appendTag("div", true, "class='checkbox'" + style, checkboxDiv
+                        .appendTag("label", checkboxLabel));
+    }
+
+    public BSControls appendCheckboxWithoutLabel(Component checkbox, Column.Alignment alignment) {
+        return appendCheckbox(checkbox, null, alignment);
     }
 
 

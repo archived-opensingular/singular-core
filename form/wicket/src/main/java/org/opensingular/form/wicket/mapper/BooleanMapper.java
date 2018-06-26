@@ -111,20 +111,20 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
         final IModel<? extends SInstance> model = ctx.getModel();
         Label label;
         if (ctx.getView() instanceof SViewCheckBoxLabelAbove) {
-            label = configureLabel(ctx);
+            label = createLabel(ctx);
             BSControls labelBar = new BSControls("labelBar")
                     .appendLabel(label);
             labelBar.add(WicketUtils.$b.classAppender("labelBar"));
             formGroup.appendLabel(labelBar);
 
             final AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
-            configureSubTitle(formGroup, subtitle);
+            createSubTitle(formGroup, subtitle);
 
-            formGroup.appendCheckboxInline(input, ((SViewCheckBoxLabelAbove) ctx.getView()).getAlignment());
+            formGroup.appendCheckboxWithoutLabel(input, ((SViewCheckBoxLabelAbove) ctx.getView()).getAlignment());
         } else {
             final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
             label = buildLabel("_", labelModel);
-            formGroup.appendCheckbox(input, label);
+            formGroup.appendCheckbox(input, label, null);
         }
 
 
@@ -150,32 +150,38 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
             checked = Boolean.FALSE;
         }
 
+        String clazz = checked ? "fa fa-check-square" : "fa fa-square-o";
+        String idSuffix = (mi != null) ? mi.getName() : StringUtils.EMPTY;
+
         if (ctx.getView() instanceof SViewCheckBoxLabelAbove) {
-            formGroup.appendLabel(configureLabel(ctx));
+            formGroup.appendLabel(createLabel(ctx));
 
-            configureSubTitle(formGroup, subtitle);
+            createSubTitle(formGroup, subtitle);
 
-            String clazz = checked ? "fa fa-check-square" : "fa fa-square-o";
-            String idSuffix = (mi != null) ? mi.getName() : StringUtils.EMPTY;
-            TemplatePanel tp = formGroup.newTemplateTag(t -> ""
-                    + "<div wicket:id='" + BS_WELL + idSuffix + "' "
-                    + configureTextAlignStyle(((SViewCheckBoxLabelAbove) ctx.getView()).getAlignment()) + ">"
-                    + "   <i class='" + clazz + "'></i>"
-                    + " </div>");
+            TemplatePanel tp = createTagForViewCheckBoxWithoutLabelInline(formGroup, clazz, idSuffix, ((SViewCheckBoxLabelAbove) ctx.getView()).getAlignment());
             final BSWellBorder wellBorder = BSWellBorder.small(BS_WELL + idSuffix);
             tp.add(wellBorder);
         } else {
-            final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
-            String clazz = checked ? "fa fa-check-square" : "fa fa-square-o";
-            String idSuffix = (mi != null) ? mi.getName() : StringUtils.EMPTY;
-            TemplatePanel tp = formGroup.newTemplateTag(t -> ""
-                    + "<div wicket:id='" + BS_WELL + idSuffix + "'>"
-                    + "   <i class='" + clazz + "'></i> <span wicket:id='label'></span> "
-                    + " </div>");
+            TemplatePanel tp = createTagForViewCheckBox(formGroup, clazz, idSuffix, true, null);
             final BSWellBorder wellBorder = BSWellBorder.small(BS_WELL + idSuffix);
-            tp.add(wellBorder.add(buildLabel("label", labelModel)));
+            tp.add(wellBorder.add(buildLabel("label", new AttributeModel<>(model, SPackageBasic.ATR_LABEL))));
         }
 
+    }
+
+    private TemplatePanel createTagForViewCheckBox(BSControls formGroup, String clazz,
+            String idSuffix, boolean withSpan, Column.Alignment alignment) {
+        return formGroup.newTemplateTag(t -> ""
+                + "<div wicket:id='" + BS_WELL + idSuffix + "' "
+                + configureTextAlignStyle(alignment) + ">"
+                + "   <i class='" + clazz + "'></i>"
+                + (withSpan ? "<span wicket:id='label'></span> " : "")
+                + " </div>");
+    }
+
+    private TemplatePanel createTagForViewCheckBoxWithoutLabelInline(BSControls formGroup, String clazz,
+            String idSuffix, Column.Alignment alignment) {
+        return createTagForViewCheckBox(formGroup, clazz, idSuffix, false, alignment);
     }
 
     private String configureTextAlignStyle(Column.Alignment alignment) {

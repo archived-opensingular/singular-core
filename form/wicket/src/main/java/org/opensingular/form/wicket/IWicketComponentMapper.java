@@ -79,12 +79,12 @@ public interface IWicketComponentMapper extends Serializable {
     };
 
     /**
-     * Method responsible for create and configurate the label usend by the default's inputs by Singular form.
+     * Method responsible for create and configurate the label used by the default's inputs by Singular form.
      *
      * @param ctx The WicketBuildCOntext, to know if contains the HIDE_LABEL configuration.
      * @return The Bootstrap label configured.
      */
-    default BSLabel configureLabel(WicketBuildContext ctx) {
+    default BSLabel createLabel(WicketBuildContext ctx) {
         final AttributeModel<String> labelModel = new AttributeModel<>(ctx.getModel(), SPackageBasic.ATR_LABEL);
         BSLabel label = new BSLabel("label", labelModel);
         label.add(DisabledClassBehavior.getInstance());
@@ -103,7 +103,7 @@ public interface IWicketComponentMapper extends Serializable {
      * @param formGroup The formGroup what will be added the subtitle.
      * @param subtitle  The subtitle text.
      */
-    default void configureSubTitle(BSControls formGroup, AttributeModel<String> subtitle) {
+    default void createSubTitle(BSControls formGroup, AttributeModel<String> subtitle) {
         formGroup.newHelpBlock(subtitle);
     }
 
