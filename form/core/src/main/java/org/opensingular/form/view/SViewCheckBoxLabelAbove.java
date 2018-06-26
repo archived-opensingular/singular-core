@@ -1,6 +1,6 @@
 package org.opensingular.form.view;
 
-import org.opensingular.lib.commons.table.Alignment;
+import org.opensingular.lib.commons.ui.Alignment;
 
 /**
  * SView for put the Label Above the CheckBox.

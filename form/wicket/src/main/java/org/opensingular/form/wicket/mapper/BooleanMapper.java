@@ -24,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
@@ -42,19 +41,15 @@ import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.AttributeModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
-import org.opensingular.form.wicket.util.ClasspathHtmlLoader;
 import org.opensingular.lib.commons.lambda.IFunction;
-import org.opensingular.lib.commons.table.Alignment;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
-import org.opensingular.lib.wicket.util.bootstrap.layout.BSWellBorder;
-import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
 
 import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
 
 public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCapable {
 
-    public static final String BS_WELL = "_well";
     private final SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
 
     @Override
@@ -117,14 +112,13 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
 
             final AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
             createSubTitle(formGroup, subtitle);
-
             formGroup.appendCheckboxWithoutLabel(input, ((SViewCheckBoxLabelAbove) ctx.getView()).getAlignment());
+
         } else {
             final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
             label = buildLabel("_", labelModel);
             formGroup.appendCheckbox(input, label, null);
         }
-
 
         adjustJSEvents(ctx, label);
         label.add(new ClassAttributeModifier() {
@@ -138,17 +132,7 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
     protected void buildForVisualization(WicketBuildContext ctx) {
         final BSControls formGroup = ctx.getContainer().newFormGroup();
         final IModel<? extends SInstance> model = ctx.getModel();
-        final Boolean checked;
 
-        final SInstance mi = model.getObject();
-        if ((mi != null) && (mi.getValue() != null)) {
-            checked = (Boolean) mi.getValue();
-        } else {
-            checked = Boolean.FALSE;
-        }
-
-        String clazz = checked ? "fa fa-check-square" : "fa fa-square-o";
-        String idSuffix = (mi != null) ? mi.getName() : StringUtils.EMPTY;
 
         if (ctx.getView() instanceof SViewCheckBoxLabelAbove) {
             formGroup.appendLabel(createLabel(ctx));
@@ -156,43 +140,19 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
             final AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
             createSubTitle(formGroup, subtitle);
 
-            TemplatePanel tp = createTagForViewCheckBox(formGroup, clazz, idSuffix, ((SViewCheckBoxLabelAbove) ctx.getView()).getAlignment());
-            final BSWellBorder wellBorder = BSWellBorder.small(BS_WELL + idSuffix);
-            tp.add(wellBorder.add(new WebMarkupContainer("label").setVisible(false)));
+            createTagForViewCheckBox(formGroup, ctx, false);
+
         } else {
-            TemplatePanel tp = createTagForViewCheckBox(formGroup, clazz, idSuffix, null);
-            final BSWellBorder wellBorder = BSWellBorder.small(BS_WELL + idSuffix);
-            tp.add(wellBorder.add(buildLabel("label", new AttributeModel<>(model, SPackageBasic.ATR_LABEL))));
+            createTagForViewCheckBox(formGroup, ctx, true);
         }
 
     }
 
-    private TemplatePanel createTagForViewCheckBox(BSControls formGroup, String clazz,
-            String idSuffix, Alignment alignment) {
-
-        return formGroup.newTemplateTag(t -> new ClasspathHtmlLoader("CheckBoxMapper.html", this.getClass(), false)
-                .loadHtml()
-                .replaceAll("#STYLE#", configureTextAlignStyle(alignment))
-                .replaceAll("#clazz#", clazz)
-                .replaceAll("#id#", BS_WELL + idSuffix));
-
-
-//        return formGroup.newTemplateTag(t -> ""
-//                + "<div wicket:id='" + BS_WELL + idSuffix + "' "
-//                + configureTextAlignStyle(alignment) + ">"
-//                + "   <i class='" + clazz + "'></i>"
-//                + (withSpan ? "<span wicket:id='label'></span> " : "")
-//                + " </div>");
-//    }
-    }
-
-
-    private String configureTextAlignStyle(Alignment alignment) {
-        String style = "";
-        if (alignment != null) {
-            style = "style= 'text-align:" + alignment.name().toLowerCase() + "'";
-        }
-        return style;
+    private void createTagForViewCheckBox(BSControls formGroup, WicketBuildContext ctx, boolean showLabelInline) {
+        final IModel<? extends SInstance> model = ctx.getModel();
+        String idSuffix = (model != null && model.getObject() != null) ? model.getObject().getName() : StringUtils.EMPTY;
+        formGroup.appendComponent((IBSComponentFactory<Component>) componentId ->
+                new CheckBoxPanel("checkBox" + idSuffix, ctx, showLabelInline));
     }
 
     /**

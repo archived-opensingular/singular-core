@@ -36,7 +36,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.lib.commons.table.Alignment;
+import org.opensingular.lib.commons.ui.Alignment;
 import org.opensingular.lib.wicket.util.behavior.BSSelectInitBehaviour;
 import org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour;
 import org.opensingular.lib.wicket.util.behavior.PicklistInitBehaviour;

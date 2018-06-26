@@ -29,6 +29,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.opensingular.lib.commons.ui.Alignment;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.commons.views.format.ViewOutputExcel;
 

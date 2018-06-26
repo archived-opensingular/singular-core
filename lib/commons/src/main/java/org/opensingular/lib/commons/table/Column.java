@@ -20,6 +20,7 @@ import java.io.Serializable;
 import javax.annotation.Nonnull;
 
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.ui.Alignment;
 
 public class Column implements Serializable {
 

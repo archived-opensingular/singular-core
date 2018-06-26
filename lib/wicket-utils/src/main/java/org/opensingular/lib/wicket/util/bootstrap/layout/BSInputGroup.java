@@ -24,7 +24,7 @@ import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.opensingular.lib.commons.table.Alignment;
+import org.opensingular.lib.commons.ui.Alignment;
 import org.opensingular.lib.commons.ui.Icon;
 
 public class BSInputGroup extends BSControls {

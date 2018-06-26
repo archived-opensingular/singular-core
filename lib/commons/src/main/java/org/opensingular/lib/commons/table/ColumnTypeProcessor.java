@@ -26,6 +26,7 @@ import org.joda.time.LocalDateTime;
 import org.joda.time.base.AbstractInstant;
 import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.ui.Alignment;
 
 /**
  * Fornece as implementações de manituplação de um tipo específicos de coluna, bem como meta dados sobre esse tipo.
