@@ -60,7 +60,6 @@ public interface SingularProperties {
     String CUSTOM_SCHEMA_NAME = "singular.custom.schema.name";   // Identifica o nome do schema que deve ser utilizado
     String USE_EMBEDDED_DATABASE = "singular.database.embedded";  // Identifica se o singular deve usar o banco em memória, ou se conectar a um banco externo.
     String JNDI_DATASOURCE = "singular.datasource.jndi.name";
-    String HIBERNATE_GENERATOR = "flow.persistence.hibernate.generator";
 
     //########    PROPRIEDADES DO E-MAIL    ########
     String SINGULAR_SEND_EMAIL = "singular.send.email";
@@ -84,7 +83,6 @@ public interface SingularProperties {
     String REST_ALLOWED_COMMON_NAME = "singular.rest.allowed.common.name";
 
     String SYSTEM_PROPERTY_SINGULAR_SERVER_HOME = "singular.server.home";
-    String HIBERNATE_SEQUENCE_PROPERTY_PATTERN = "flow.persistence.%s.sequence";
     String SINGULAR_EAGER_LOAD_FLOW_DEFINITIONS = "singular.flow.eager.load";
 
 
