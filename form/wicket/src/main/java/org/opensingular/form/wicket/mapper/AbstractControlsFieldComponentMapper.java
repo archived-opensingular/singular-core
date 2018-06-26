@@ -48,7 +48,6 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
 import org.opensingular.lib.wicket.util.output.BOutputPanel;
-import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
@@ -89,10 +88,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         if (hintNoDecoration) {
             formGroup.appendLabel(label);
         } else {
-            BSControls labelBar = new BSControls("labelBar")
-                    .appendLabel(label);
-
-            labelBar.add(WicketUtils.$b.classAppender("labelBar"));
+            BSControls labelBar = createLabelBar(label);
 
             IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
                     AbstractControlsFieldComponentMapper.this,
@@ -111,7 +107,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
             formGroup.appendDiv(labelBar);
         }
 
-        createSubTitle(formGroup,subtitle);
+        createSubTitle(formGroup, subtitle);
 
         final Component input;
 
@@ -129,16 +125,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
             });
             input.add(DisabledClassBehavior.getInstance());
 
-            input.add($b.onConfigure(c -> {
-                label.add(new ClassAttributeModifier() {
-                    @Override
-                    protected Set<String> update(Set<String> oldClasses) {
-                        return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
-                    }
-                });
-                reloadComponentConfigured(ctx, input);
-            }));
-            reloadComponentConfigured(ctx, input);
+            configureAjaxListeners(ctx, model, label, input);
         } else {
             input = appendReadOnlyInput(ctx, formGroup, labelModel);
         }
@@ -148,7 +135,43 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         }
     }
 
-    private void reloadComponentConfigured(WicketBuildContext ctx, Component input) {
+    /**
+     * This method is responsible for configure the events javascript for the input.
+     * <p>The Javascripts configuration have to be executed after the onConfigure event,
+     * because could be places where the input is added dynamically, so the reload JS have to be executed in the onConfigure. </p>
+     * <p> The Javascripts configuration have to be executed in the creation of the input,
+     * this happens because have some JS that should be executed before the onConfigure. </p>
+     *
+     * @param ctx
+     * @param model
+     * @param label
+     * @param input
+     * @see org.opensingular.form.wicket.mapper.search.SearchModalMapper
+     * inside of
+     * @see org.opensingular.form.wicket.mapper.TableListMapper
+     * @see org.opensingular.form.wicket.mapper.selection.RadioMapper
+     */
+    private void configureAjaxListeners(WicketBuildContext ctx, IModel<? extends SInstance> model, BSLabel label, Component input) {
+        input.add($b.onConfigure(c -> {
+            label.add(new ClassAttributeModifier() {
+                @Override
+                protected Set<String> update(Set<String> oldClasses) {
+                    return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
+                }
+            });
+            configureJSForComponent(ctx, input);
+        }));
+        configureJSForComponent(ctx, input);
+    }
+
+    /**
+     * Method for reload the configuration of Javascript for the Component.
+     * This method will include a meta data for configure the Javascripts elements just one time.
+     *
+     * @param ctx   The context.
+     * @param input The input.
+     */
+    private void configureJSForComponent(WicketBuildContext ctx, Component input) {
         for (FormComponent<?> fc : findAjaxComponents(input)) {
             if (BooleanUtils.isNotTrue(fc.getMetaData(MDK_COMPONENT_CONFIGURED))) {
                 ctx.configure(this, fc);

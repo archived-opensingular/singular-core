@@ -24,7 +24,7 @@ import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.opensingular.lib.commons.table.Column;
+import org.opensingular.lib.commons.table.Alignment;
 import org.opensingular.lib.commons.ui.Icon;
 
 public class BSInputGroup extends BSControls {
@@ -173,7 +173,7 @@ public class BSInputGroup extends BSControls {
     }
 
     @Override
-    public BSControls appendCheckbox(Component checkbox, Component label, Column.Alignment alignment) {
+    public BSControls appendCheckbox(Component checkbox, Component label, Alignment alignment) {
         return (BSInputGroup) super.appendCheckbox(checkbox, label, null);
     }
 

@@ -1,6 +1,6 @@
 package org.opensingular.form.view;
 
-import org.opensingular.lib.commons.table.Column;
+import org.opensingular.lib.commons.table.Alignment;
 
 /**
  * SView for put the Label Above the CheckBox.
@@ -11,7 +11,7 @@ public class SViewCheckBoxLabelAbove extends SView {
     /**
      * Variable for alignment of the checkbox
      */
-    private Column.Alignment alignment;
+    private Alignment alignment;
 
     /**
      * Method for change de alignment of checkbox.
@@ -22,7 +22,7 @@ public class SViewCheckBoxLabelAbove extends SView {
      * @param alignment The alignment.
      * @return <code>this</code>
      */
-    public SViewCheckBoxLabelAbove setAlignCheckBox(Column.Alignment alignment) {
+    public SViewCheckBoxLabelAbove setAlignCheckBox(Alignment alignment) {
         this.alignment = alignment;
         return this;
     }
@@ -31,7 +31,7 @@ public class SViewCheckBoxLabelAbove extends SView {
      * Returns the alignment.
      * @return The alignment.
      */
-    public Column.Alignment getAlignment() {
+    public Alignment getAlignment() {
         return alignment;
     }
 }

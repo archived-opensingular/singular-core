@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.aspect.AspectRef;
@@ -29,6 +30,7 @@ import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
 import org.opensingular.form.wicket.model.AttributeModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
@@ -107,5 +109,19 @@ public interface IWicketComponentMapper extends Serializable {
         formGroup.newHelpBlock(subtitle);
     }
 
+
+    /**
+     * This LabelBar is use for creating the container of the label, including a Css Style.
+     * The container will have the label and the Help icon if exists. <code>SPackageBasic.ATR_HELP</code>
+     *
+     * @param label The label for the input.
+     * @return The container with the label, and a Css class.
+     */
+    default BSControls createLabelBar(Label label) {
+        BSControls labelBar = new BSControls("labelBar")
+                .appendLabel(label);
+        labelBar.add(WicketUtils.$b.classAppender("labelBar"));
+        return labelBar;
+    }
 
 }

@@ -18,6 +18,11 @@
 
 package org.opensingular.lib.commons.table;
 
+import java.util.HashMap;
+import java.util.Map;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -26,11 +31,6 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.commons.views.format.ViewOutputExcel;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
 
 public class TableOutputExcel extends TableOutput implements Loggable {
     private final ViewOutputExcel viewOutputExcel;
@@ -130,7 +130,7 @@ public class TableOutputExcel extends TableOutput implements Loggable {
         viewOutputExcel.getOutput().autoSizeColumn(cell.getColumnIndex());
     }
 
-    private void configAlignment(XSSFCellStyle cellStyle, Column.Alignment alignment) {
+    private void configAlignment(XSSFCellStyle cellStyle, Alignment alignment) {
         switch (alignment) {
             case CENTER:
                 cellStyle.setAlignment(HorizontalAlignment.CENTER);

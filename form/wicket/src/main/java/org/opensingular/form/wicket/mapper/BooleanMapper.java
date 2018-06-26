@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
@@ -41,14 +42,13 @@ import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.AttributeModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
+import org.opensingular.form.wicket.util.ClasspathHtmlLoader;
 import org.opensingular.lib.commons.lambda.IFunction;
-import org.opensingular.lib.commons.table.Column;
+import org.opensingular.lib.commons.table.Alignment;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
-import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSWellBorder;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
-import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
 
@@ -112,9 +112,7 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
         Label label;
         if (ctx.getView() instanceof SViewCheckBoxLabelAbove) {
             label = createLabel(ctx);
-            BSControls labelBar = new BSControls("labelBar")
-                    .appendLabel(label);
-            labelBar.add(WicketUtils.$b.classAppender("labelBar"));
+            BSControls labelBar = createLabelBar(label);
             formGroup.appendLabel(labelBar);
 
             final AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
@@ -140,7 +138,6 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
     protected void buildForVisualization(WicketBuildContext ctx) {
         final BSControls formGroup = ctx.getContainer().newFormGroup();
         final IModel<? extends SInstance> model = ctx.getModel();
-        final AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
         final Boolean checked;
 
         final SInstance mi = model.getObject();
@@ -156,13 +153,14 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
         if (ctx.getView() instanceof SViewCheckBoxLabelAbove) {
             formGroup.appendLabel(createLabel(ctx));
 
+            final AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
             createSubTitle(formGroup, subtitle);
 
-            TemplatePanel tp = createTagForViewCheckBoxWithoutLabelInline(formGroup, clazz, idSuffix, ((SViewCheckBoxLabelAbove) ctx.getView()).getAlignment());
+            TemplatePanel tp = createTagForViewCheckBox(formGroup, clazz, idSuffix, ((SViewCheckBoxLabelAbove) ctx.getView()).getAlignment());
             final BSWellBorder wellBorder = BSWellBorder.small(BS_WELL + idSuffix);
-            tp.add(wellBorder);
+            tp.add(wellBorder.add(new WebMarkupContainer("label").setVisible(false)));
         } else {
-            TemplatePanel tp = createTagForViewCheckBox(formGroup, clazz, idSuffix, true, null);
+            TemplatePanel tp = createTagForViewCheckBox(formGroup, clazz, idSuffix, null);
             final BSWellBorder wellBorder = BSWellBorder.small(BS_WELL + idSuffix);
             tp.add(wellBorder.add(buildLabel("label", new AttributeModel<>(model, SPackageBasic.ATR_LABEL))));
         }
@@ -170,21 +168,26 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
     }
 
     private TemplatePanel createTagForViewCheckBox(BSControls formGroup, String clazz,
-            String idSuffix, boolean withSpan, Column.Alignment alignment) {
-        return formGroup.newTemplateTag(t -> ""
-                + "<div wicket:id='" + BS_WELL + idSuffix + "' "
-                + configureTextAlignStyle(alignment) + ">"
-                + "   <i class='" + clazz + "'></i>"
-                + (withSpan ? "<span wicket:id='label'></span> " : "")
-                + " </div>");
+            String idSuffix, Alignment alignment) {
+
+        return formGroup.newTemplateTag(t -> new ClasspathHtmlLoader("CheckBoxMapper.html", this.getClass(), false)
+                .loadHtml()
+                .replaceAll("#STYLE#", configureTextAlignStyle(alignment))
+                .replaceAll("#clazz#", clazz)
+                .replaceAll("#id#", BS_WELL + idSuffix));
+
+
+//        return formGroup.newTemplateTag(t -> ""
+//                + "<div wicket:id='" + BS_WELL + idSuffix + "' "
+//                + configureTextAlignStyle(alignment) + ">"
+//                + "   <i class='" + clazz + "'></i>"
+//                + (withSpan ? "<span wicket:id='label'></span> " : "")
+//                + " </div>");
+//    }
     }
 
-    private TemplatePanel createTagForViewCheckBoxWithoutLabelInline(BSControls formGroup, String clazz,
-            String idSuffix, Column.Alignment alignment) {
-        return createTagForViewCheckBox(formGroup, clazz, idSuffix, false, alignment);
-    }
 
-    private String configureTextAlignStyle(Column.Alignment alignment) {
+    private String configureTextAlignStyle(Alignment alignment) {
         String style = "";
         if (alignment != null) {
             style = "style= 'text-align:" + alignment.name().toLowerCase() + "'";
@@ -192,8 +195,17 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
         return style;
     }
 
+    /**
+     * This method is responsible for create the label of checkBox.
+     * Be careful, this should be LABEL, can't be BSLabel because the changed of the behavior.
+     *
+     * @param id         The id of the label.
+     * @param labelModel The model of the label.
+     * @return Retuns label.
+     */
     protected Label buildLabel(String id, AttributeModel<String> labelModel) {
-        return (BSLabel) new BSLabel(id, labelModel.getObject()).setEscapeModelStrings(false);
+        return (Label) new Label(id, labelModel.getObject())
+                .setEscapeModelStrings(false);
     }
 
     @Override

@@ -36,7 +36,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.lib.commons.table.Column;
+import org.opensingular.lib.commons.table.Alignment;
 import org.opensingular.lib.wicket.util.behavior.BSSelectInitBehaviour;
 import org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour;
 import org.opensingular.lib.wicket.util.behavior.PicklistInitBehaviour;
@@ -75,13 +75,14 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         return this.appendCheckbox(checkbox, new Label("_", labelModel), null);
     }
 
-    public BSControls appendCheckbox(Component checkbox, Component label, Column.Alignment alignment) {
+    public BSControls appendCheckbox(Component checkbox, Component label, Alignment alignment) {
         final BSContainer<?> checkboxDiv = new BSContainer<>("_" + checkbox.getId());
         final BSContainer<?> checkboxLabel = new BSContainer<>("_");
 
         checkbox.setMetaData(CHECKBOX_DIV, checkboxDiv);
         checkbox.setMetaData(CHECKBOX_LABEL, checkboxLabel);
 
+        checkboxLabel.appendTag("input", false, "type='checkbox'", checkbox);
         if (label != null) {
             checkboxLabel.appendTag("span", label);
         }
@@ -95,7 +96,7 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
                         .appendTag("label", checkboxLabel));
     }
 
-    public BSControls appendCheckboxWithoutLabel(Component checkbox, Column.Alignment alignment) {
+    public BSControls appendCheckboxWithoutLabel(Component checkbox, Alignment alignment) {
         return appendCheckbox(checkbox, null, alignment);
     }
 

@@ -18,22 +18,28 @@
 
 package org.opensingular.form.wicket.util;
 
-import org.apache.commons.io.IOUtils;
-import org.opensingular.form.SingularFormException;
-import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.io.IOUtils;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
+
 public class ClasspathHtmlLoader {
 
-    private String   name;
+    private String name;
     private Class<?> scope;
+    private boolean escapeScript = true;
 
     public ClasspathHtmlLoader(String name, Class<?> scope) {
         this.name = name;
         this.scope = scope;
+    }
+
+    public ClasspathHtmlLoader(String name, Class<?> scope, boolean escapeScript) {
+        this(name, scope);
+        this.escapeScript = escapeScript;
     }
 
     public String loadHtml() {
@@ -45,11 +51,17 @@ public class ClasspathHtmlLoader {
     }
 
     private String javascriptEscape(InputStream htmlInputStream) {
+
         try {
-            return JavaScriptUtils.javaScriptEscape(IOUtils.toString(htmlInputStream, StandardCharsets.UTF_8.name()));
+            String html = IOUtils.toString(htmlInputStream, StandardCharsets.UTF_8.name());
+            if (escapeScript) {
+                return JavaScriptUtils.javaScriptEscape(html);
+            }
+            return html;
         } catch (IOException e) {
             throw new SingularFormException("Não foi possivel extrair o conteudo html", e);
         }
+
     }
 
 }
