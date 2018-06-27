@@ -39,8 +39,14 @@ public class PasswordMapper extends AbstractControlsFieldComponentMapper {
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
 
+        boolean haveToTrim = ctx.getCurrentInstance().getType().getAttributeValue(SPackageBasic.ATR_TRIM);
         FormComponent<?> comp = new PasswordTextField(model.getObject().getName(),
-                new SInstanceValueModel<>(model)).setLabel(labelModel);
+                new SInstanceValueModel<>(model)) {
+            @Override
+            protected boolean shouldTrimInput() {
+                 return haveToTrim;
+            }
+        }.setLabel(labelModel);
 
         if (ctx.getView() instanceof SViewPassword) {
             ((PasswordTextField) comp).setResetPassword(((SViewPassword) ctx.getView()).getResetPassword());
