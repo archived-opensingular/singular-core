@@ -24,6 +24,7 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -35,20 +36,20 @@ import org.apache.wicket.model.Model;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.SInstanceAction;
 import org.opensingular.form.decorator.action.SInstanceAction.ActionHandler;
+import org.opensingular.form.wicket.modal.IOpenSingularFormModalEvent;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder.ButtonStyle;
-import org.opensingular.lib.wicket.util.modal.IOpenModalEvent;
 import org.opensingular.lib.wicket.util.model.IMappingModel;
 
 /**
  * ESTA CLASSE DE EVENTO NÃO É SERIALIZÁVEL!!!
  * Por isso a classe de botão é estática, para manter o controle das referências. Cuidado com referências implícitas!
  */
-final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
+public final class SInstanceActionOpenModalEvent implements IOpenSingularFormModalEvent {
     private String                                     title;
     private AjaxRequestTarget                          target;
     private IModel<? extends Serializable>             textModel;
@@ -71,8 +72,8 @@ final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
     }
 
     @Override
-    public AjaxRequestTarget getTarget() {
-        return this.target;
+    public Optional<AjaxRequestTarget> getTarget() {
+        return Optional.ofNullable(this.target);
     }
 
     @Override
@@ -99,7 +100,7 @@ final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
                 .setDefaultModel((modalFormInstanceModel != null) ? modalFormInstanceModel : $m.ofValue());
     }
     @Override
-    public void configureModal(BSModalBorder modal) {
+    public void configureModal(BSModalBorder modal, Component bodyContent) {
         modal.setTitleText(Model.of(this.title));
 
         List<SInstanceAction> actionsList = actions.get();

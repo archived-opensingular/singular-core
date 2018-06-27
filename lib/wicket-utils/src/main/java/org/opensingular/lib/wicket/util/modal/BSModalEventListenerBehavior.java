@@ -20,6 +20,7 @@ package org.opensingular.lib.wicket.util.modal;
 
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.Optional;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -57,7 +58,7 @@ public class BSModalEventListenerBehavior extends Behavior {
         }
     }
 
-    protected BSModalWindow newModalWindow(String modalId) {
+    protected BSModalWindow newModalWindow(String modalId, IOpenModalEvent openModalEvent) {
         return new BSModalWindow(modalId);
     }
 
@@ -65,25 +66,25 @@ public class BSModalEventListenerBehavior extends Behavior {
         event.stop();
 
         final String modalId = modalItemsContainer.newChildId();
-        final BSModalWindow modal = newModalWindow(modalId);
-        modalItemsContainer.newTag("div", modal);
+        final BSModalWindow modal = newModalWindow(modalId, payload);
+        modalItemsContainer.newTag("div", modal.setOutputMarkupId(true).setOutputMarkupId(true));
 
         final Component content = payload.getBodyContent(modal.getId() + "_body");
         modal.setBody(content);
 
-        payload.configureModal(modal.getModalBorder());
+        payload.configureModal(modal.getModalBorder(), content);
 
-        final AjaxRequestTarget target = payload.getTarget();
+        final Optional<AjaxRequestTarget> target = payload.getTarget();
 
         // adiciona uma div para a renderização da modal
-        if (target != null) {
-            target.prependJavaScript(JQuery.$(modalItemsContainer.getParent()) + ""
+        target.ifPresent(t -> {
+            t.prependJavaScript(JQuery.$(modalItemsContainer) + ""
                 + ".append('<div id=\"" + modal.getMarkupId() + "\"></div>');");
-            target.add(modal);
-            target.appendJavaScript(Scripts.multipleModalBackDrop());
-        }
+            t.add(modal);
+            t.appendJavaScript(Scripts.multipleModalBackDrop());
+        });
 
-        modal.show(target);
+        modal.show(target.orElse(null));
         modal.setOnHideCallBack(t -> {
             Component removedComponent = modalItemsContainer.removeItem(modal);
             if ((t != null) && (removedComponent != null))

@@ -19,18 +19,21 @@
 package org.opensingular.form.wicket.panel;
 
 import org.opensingular.form.wicket.component.BFModalWindow;
+import org.opensingular.form.wicket.modal.IOpenSingularFormModalEvent;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
-import org.opensingular.lib.wicket.util.modal.BSModalWindow;
 import org.opensingular.lib.wicket.util.modal.BSModalEventListenerBehavior;
+import org.opensingular.lib.wicket.util.modal.BSModalWindow;
+import org.opensingular.lib.wicket.util.modal.IOpenModalEvent;
 
 public class SFormModalEventListenerBehavior extends BSModalEventListenerBehavior {
 
     public SFormModalEventListenerBehavior(BSContainer<?> modalItemsContainer) {
         super(modalItemsContainer);
     }
-
     @Override
-    protected BSModalWindow newModalWindow(String modalId) {
-        return new BFModalWindow(modalId);
+    protected BSModalWindow newModalWindow(String modalId, IOpenModalEvent event) {
+        return (event instanceof IOpenSingularFormModalEvent)
+            ? new BFModalWindow(modalId)
+            : super.newModalWindow(modalId, event);
     }
 }

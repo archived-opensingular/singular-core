@@ -18,14 +18,21 @@
 
 package org.opensingular.lib.wicket.util.modal;
 
+import java.util.Optional;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.event.Broadcast;
 
 public interface IOpenModalEvent {
 
-    AjaxRequestTarget getTarget();
+    Optional<AjaxRequestTarget> getTarget();
 
     Component getBodyContent(String id);
 
-    void configureModal(BSModalBorder modalBorder);
+    void configureModal(BSModalBorder modal, Component bodyContent);
+
+    default void bubble(Component component) {
+        component.send(component, Broadcast.BUBBLE, this);
+    }
 }

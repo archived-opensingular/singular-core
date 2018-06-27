@@ -22,12 +22,17 @@ import java.util.function.Predicate;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.event.Broadcast;
 
 public interface ICloseModalEvent {
 
     boolean matchesBodyContent(Component bodyComponent);
 
     AjaxRequestTarget getTarget();
+
+    default void bubble(Component component) {
+        component.send(component, Broadcast.BUBBLE, this);
+    }
 
     static ICloseModalEvent of(AjaxRequestTarget target, Predicate<Component> predicate) {
         return new ICloseModalEvent() {
