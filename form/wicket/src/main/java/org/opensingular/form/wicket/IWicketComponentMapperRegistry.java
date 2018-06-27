@@ -16,6 +16,9 @@
 
 package org.opensingular.form.wicket;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeAttachmentList;
@@ -45,6 +48,7 @@ import org.opensingular.form.type.util.STypeLatitudeLongitudeGMaps;
 import org.opensingular.form.type.util.STypeLatitudeLongitudeList;
 import org.opensingular.form.type.util.STypeYearMonth;
 import org.opensingular.form.view.*;
+import org.opensingular.form.view.richtext.SViewByRichText;
 import org.opensingular.form.wicket.mapper.BooleanMapper;
 import org.opensingular.form.wicket.mapper.DateMapper;
 import org.opensingular.form.wicket.mapper.DateTimeMapper;
@@ -86,9 +90,6 @@ import org.opensingular.form.wicket.mapper.selection.PicklistMapper;
 import org.opensingular.form.wicket.mapper.selection.RadioMapper;
 import org.opensingular.form.wicket.mapper.selection.SelectMapper;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 /**
  * @author Daniel C. Bordin on 25/08/2017.
  */
@@ -122,6 +123,7 @@ public class IWicketComponentMapperRegistry
         add(STypeSimple.class,     SViewReadOnly.class,                   ReadOnlyControlsFieldComponentMapper::new);
         add(STypeBoolean.class,    SViewSelectionBySelect.class,          BooleanSelectMapper::new);
         add(STypeBoolean.class,                                           BooleanMapper::new);
+        add(STypeBoolean.class,    SViewCheckBoxLabelAbove.class,         BooleanMapper::new);
         add(STypeBoolean.class,    SViewBooleanSwitch.class,              BooleanSwitchMapper::new);
         add(STypeBoolean.class,    SViewBooleanByRadio.class,             BooleanRadioMapper::new);
         add(STypeInteger.class,                                           () -> new NumberMapper<>(Integer.class));

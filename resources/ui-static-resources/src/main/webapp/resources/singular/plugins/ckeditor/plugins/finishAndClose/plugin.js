@@ -10,7 +10,7 @@ CKEDITOR.plugins.add('finishAndClose',
                 });
             editor.addCommand('finishAndClose', {
                 exec: function () {
-                    editor.config.savePlugin.onSave(editor.getData());
+                    editor.config.buttonPlugin.onEvent(editor.getData());
                     window.close();
                 }
             });
