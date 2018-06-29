@@ -43,7 +43,7 @@ public class BSPropertyColumn<T, S>
     public BSPropertyColumn(IModel<String> displayModel, IFunction<T, Object> propertyFunction) {
         this(displayModel, null, null, propertyFunction);
     }
-    BSPropertyColumn(IModel<String> displayModel, S sortProperty, String propertyExpression, IFunction<T, Object> propertyFunction) {
+    private BSPropertyColumn(IModel<String> displayModel, S sortProperty, String propertyExpression, IFunction<T, Object> propertyFunction) {
         super(displayModel, sortProperty);
         this.propertyExpression = propertyExpression;
         this.propertyFunction = propertyFunction;

@@ -29,7 +29,7 @@ import org.opensingular.lib.commons.lambda.IFunction;
 public class BSPropertyActionColumn<T, S> extends BSPropertyColumn<T, S> implements IExportableColumn<T, S> {
 
     public BSPropertyActionColumn(IModel<String> displayModel, IFunction<T, Object> propertyFunction) {
-        super(displayModel, null, null, propertyFunction);
+        super(displayModel, propertyFunction);
     }
 
     /**

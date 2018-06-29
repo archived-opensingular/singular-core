@@ -25,6 +25,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -114,10 +115,9 @@ class SearchModalBodyPanel extends Panel implements Loggable {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        response.render(JavaScriptReferenceHeaderItem
-                .forReference(new PackageResourceReference(this.getClass(),
-                        "SearchModalBodyPanel.js")));
+        response.render(JavaScriptReferenceHeaderItem.forReference(new PackageResourceReference(this.getClass(),"SearchModalBodyPanel.js")));
         response.render(OnDomReadyHeaderItem.forScript("clickedColumn.create();"));
+        response.render(CssHeaderItem.forReference(new PackageResourceReference(this.getClass(), "SearchModalBodyPanel.css")));
     }
 
     private Config getConfig() {
