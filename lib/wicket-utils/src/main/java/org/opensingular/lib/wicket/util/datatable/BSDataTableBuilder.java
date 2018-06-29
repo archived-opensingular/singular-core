@@ -16,6 +16,10 @@
 
 package org.opensingular.lib.wicket.util.datatable;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.extensions.markup.html.repeater.tree.ISortableTreeProvider;
@@ -24,11 +28,8 @@ import org.apache.wicket.model.Model;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
+import org.opensingular.lib.wicket.util.datatable.column.BSPropertyActionColumn;
 import org.opensingular.lib.wicket.util.datatable.column.BSPropertyColumn;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @param <T>       Tipo de objeto que sera renderizado pelas celulas da coluna
@@ -107,6 +108,11 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> implements 
     }
     public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(String headerTitle, S sortProperty, String propertyExpression) {
         return appendPropertyColumn(Model.of(headerTitle), sortProperty, propertyExpression);
+    }
+
+    public BSDataTableBuilder<T, S, BSPropertyActionColumn<T, S>> appendPropertyActionColumn(IModel<String> displayModel,
+            IFunction<T, Object> propertyFunction) {
+       return appendColumn(new BSPropertyActionColumn<>(displayModel, propertyFunction));
     }
 
     public BSDataTableBuilder<T, S, BSActionColumn<T, S>> appendActionColumn(IModel<String> displayModel, BSActionColumnCallback<T, S> callback) {

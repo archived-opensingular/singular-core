@@ -21,7 +21,6 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.export.IExpo
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
-
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
@@ -44,7 +43,7 @@ public class BSPropertyColumn<T, S>
     public BSPropertyColumn(IModel<String> displayModel, IFunction<T, Object> propertyFunction) {
         this(displayModel, null, null, propertyFunction);
     }
-    private BSPropertyColumn(IModel<String> displayModel, S sortProperty, String propertyExpression, IFunction<T, Object> propertyFunction) {
+    BSPropertyColumn(IModel<String> displayModel, S sortProperty, String propertyExpression, IFunction<T, Object> propertyFunction) {
         super(displayModel, sortProperty);
         this.propertyExpression = propertyExpression;
         this.propertyFunction = propertyFunction;
