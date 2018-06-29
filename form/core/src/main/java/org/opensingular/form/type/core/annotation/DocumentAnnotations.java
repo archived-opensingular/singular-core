@@ -322,6 +322,15 @@ public class DocumentAnnotations {
         return SInstances.hasAny(instance, i -> hasAnnotation(i));
     }
 
+    /**
+     * Returns true if the given instance or any of its children is annotated with an refusal
+     * @param instance
+     * @return
+     */
+    public boolean hasAnyRefusalOnTree(SInstance instance) {
+        return SInstances.hasAny(instance, i -> hasAnnotation(i) && BooleanUtils.isFalse(i.asAtrAnnotation().annotation().getApproved()));
+    }
+
     /** Retorna true se a instância ou algum de seus filhos tiver uma anotação marcadada como não aprovada. */
     public boolean hasAnyRefusal(SInstance instance) {
         return SInstances.hasAny(instance, i -> hasAnnotation(i) && BooleanUtils.isFalse(i.asAtrAnnotation().annotation().getApproved()));

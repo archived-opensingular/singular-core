@@ -24,7 +24,7 @@ import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-
+import org.opensingular.lib.commons.ui.Alignment;
 import org.opensingular.lib.commons.ui.Icon;
 
 public class BSInputGroup extends BSControls {
@@ -48,19 +48,19 @@ public class BSInputGroup extends BSControls {
 
     public BSInputGroup appendCheckboxAddon(Component checkbox) {
         return appendTag("div", true, "class='input-group-addon'", id -> new BSContainer<>(id)
-            .appendTag("input", false, "type='checkbox'", checkbox));
+                .appendTag("input", false, "type='checkbox'", checkbox));
     }
 
     public BSInputGroup appendIconAddon(Icon icon) {
         return appendTag("div", true, "class='input-group-addon'", id -> new BSContainer<>(id)
-            .appendTag("i", true, "class='" + icon.getCssClass() + "'", new WebMarkupContainer("i")));
+                .appendTag("i", true, "class='" + icon.getCssClass() + "'", new WebMarkupContainer("i")));
     }
 
     public BSInputGroup appendButtonAddon(Icon icon) {
         return appendTag("span", true, "class='input-group-btn'", bid -> new BSContainer<>(bid)
-            .appendTag("button", true, "class='btn default btn-sm icon' style='height:30px' type='button'",
-                iid -> new BSContainer<>(iid).appendTag("i", true, "class='" + icon.getCssClass() + "'",
-                    new WebMarkupContainer("i"))));
+                .appendTag("button", true, "class='btn default btn-sm icon' style='height:30px' type='button'",
+                        iid -> new BSContainer<>(iid).appendTag("i", true, "class='" + icon.getCssClass() + "'",
+                                new WebMarkupContainer("i"))));
     }
 
     public BSContainer<?> newButtonAddon(Icon icon) {
@@ -77,6 +77,7 @@ public class BSInputGroup extends BSControls {
     public BSInputGroup appendButtonGroup(IBSComponentFactory<BSInputGroupButton> factory) {
         return appendComponent(factory);
     }
+
     public BSInputGroupButton newButtonGroup() {
         return newComponent(BSInputGroupButton::new);
     }
@@ -85,94 +86,117 @@ public class BSInputGroup extends BSControls {
     public BSInputGroup appendTag(String tag, Component component) {
         return (BSInputGroup) super.appendTag(tag, component);
     }
+
     @Override
     public BSInputGroup appendTag(String tag, boolean closeTag, String attrs, Component component) {
         return (BSInputGroup) super.appendTag(tag, closeTag, attrs, component);
     }
+
     @Override
     public BSInputGroup appendTag(String tag, boolean closeTag, String attrs, IBSComponentFactory<Component> factory) {
         return (BSInputGroup) super.appendTag(tag, closeTag, attrs, factory);
     }
+
     @Override
     public <C extends Component> BSInputGroup appendComponent(IBSComponentFactory<C> factory) {
         return (BSInputGroup) super.appendComponent(factory);
     }
+
     @Override
     public BSInputGroup xs(int colspan) {
         return (BSInputGroup) super.xs(colspan);
     }
+
     @Override
     public BSInputGroup sm(int colspan) {
         return (BSInputGroup) super.sm(colspan);
     }
+
     @Override
     public BSInputGroup md(int colspan) {
         return (BSInputGroup) super.md(colspan);
     }
+
     @Override
     public BSInputGroup lg(int colspan) {
         return (BSInputGroup) super.lg(colspan);
     }
+
     @Override
     public BSInputGroup xsOffset(int colspan) {
         return (BSInputGroup) super.xsOffset(colspan);
     }
+
     @Override
     public BSInputGroup smOffset(int colspan) {
         return (BSInputGroup) super.smOffset(colspan);
     }
+
     @Override
     public BSInputGroup mdOffset(int colspan) {
         return (BSInputGroup) super.mdOffset(colspan);
     }
+
     @Override
     public BSInputGroup lgOffset(int colspan) {
         return (BSInputGroup) super.lgOffset(colspan);
     }
+
     @Override
     public BSInputGroup xsHidden(boolean hidden) {
         return (BSInputGroup) super.xsHidden(hidden);
     }
+
     @Override
     public BSInputGroup smHidden(boolean hidden) {
         return (BSInputGroup) super.smHidden(hidden);
     }
+
     @Override
     public BSInputGroup mdHidden(boolean hidden) {
         return (BSInputGroup) super.mdHidden(hidden);
     }
+
     @Override
     public BSInputGroup lgHidden(boolean hidden) {
         return (BSInputGroup) super.lgHidden(hidden);
     }
+
     @Override
     public BSInputGroup appendCheckbox(Component checkbox) {
         return (BSInputGroup) super.appendCheckbox(checkbox);
     }
+
     @Override
     public BSInputGroup appendCheckbox(Component checkbox, IModel<?> labelModel) {
         return (BSInputGroup) super.appendCheckbox(checkbox, labelModel);
     }
+
     @Override
-    public BSInputGroup appendCheckbox(Component checkbox, Component label) {
-        return (BSInputGroup) super.appendCheckbox(checkbox, label);
+    public BSControls appendCheckbox(Component checkbox, Component label, Alignment alignment) {
+        return (BSInputGroup) super.appendCheckbox(checkbox, label, null);
     }
+
     @Override
     public BSInputGroup appendInputEmail(Component input) {
         return (BSInputGroup) super.appendInputEmail(input);
     }
+
     @Override
     public BSInputGroup appendInputPassword(Component input) {
         return (BSInputGroup) super.appendInputPassword(input);
     }
+
     @Override
     public BSInputGroup appendInputText(Component input) {
         return (BSInputGroup) super.appendInputText(input);
     }
+
     @Override
     public BSInputGroup appendInputButton(Component button) {
         return (BSInputGroup) super.appendInputButton(button);
     }
+
     @Override
     public BSInputGroup appendInputButton(String extraClasses, Component button) {
         return (BSInputGroup) super.appendInputButton(extraClasses, button);
