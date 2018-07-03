@@ -16,6 +16,12 @@
 
 package org.opensingular.form.type.basic;
 
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
 import org.opensingular.form.AtrRef;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
@@ -50,12 +56,6 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.annotation.STypeAnnotationClassifierList;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.lib.commons.lambda.IConsumer;
-
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @SInfoPackage(name = SPackageBasic.NAME)
@@ -101,6 +101,7 @@ public class SPackageBasic extends SPackage {
     public static final AtrRef<STypeString, SIString, String>                ATR_ALLOWED_FILE_TYPES = new AtrRef<>(SPackageBasic.class, "allowedFileTypes"      , STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean>             ATR_UPPER_CASE_TEXT    = new AtrRef<>(SPackageBasic.class, "uppperCaseText"        , STypeBoolean.class, SIBoolean.class, Boolean.class);
     public static final AtrRef<STypeDate, SIDate, Date>                      ATR_MAX_DATE           = new AtrRef<>(SPackageBasic.class, "maxDate"               , STypeDate.class, SIDate.class, Date.class);
+    public static final AtrRef<STypeDate, SIDate, Date>                      ATR_MIN_DATE           = new AtrRef<>(SPackageBasic.class, "minDate"               , STypeDate.class, SIDate.class, Date.class);
 
 
     public static final AtrRef<STypeSupplier<Collection<SType<?>>>, SISupplier<Collection<SType<?>>>, Supplier<Collection<AtrBasic.DelayedDependsOnResolver>>>
@@ -132,6 +133,7 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeIntoType(STypeList.class, ATR_MINIMUM_SIZE);
 
         pb.createAttributeIntoType(STypeDate.class, ATR_MAX_DATE);
+        pb.createAttributeIntoType(STypeDate.class, ATR_MIN_DATE);
 
         // Cria os tipos de atributos
         pb.createAttributeType(ATR_MAX_LENGTH);
