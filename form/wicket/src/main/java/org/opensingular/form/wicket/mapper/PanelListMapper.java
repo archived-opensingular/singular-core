@@ -208,7 +208,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
             final BSCol btnCell = btnGrid.newColInRow();
 
             if (ctx.getViewMode().isEdition()) {
-                appendRemoverButton(this, form, item, btnCell, confirmationModal, viewSupplier.get())
+                appendRemoverButton(this, form, item, btnCell, confirmationModal, viewSupplier)
                         .add($b.classAppender("pull-right"));
             }
 
@@ -222,12 +222,12 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
 
         @Override
         protected RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, Item<SInstance> item,
-                BSContainer<?> cell, ConfirmationModal confirmationModal, AbstractSViewListWithControls viewListByTable) {
+                BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<? extends AbstractSViewListWithControls> viewSupplier) {
             final RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item, confirmationModal);
             cell.newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + DefaultIcons.REMOVE + "' />")
                     .add(btn);
-            if (viewListByTable != null) {
-                btn.add($b.onConfigure(c -> c.setVisible(viewListByTable.isDeleteEnabled(item.getModelObject()))));
+            if (viewSupplier.get() != null) {
+                btn.add($b.onConfigure(c -> c.setVisible(viewSupplier.get().isDeleteEnabled(item.getModelObject()))));
             }
             return btn;
         }

@@ -90,15 +90,16 @@ public class TableElementsView extends ElementsView {
         if (ctx.getViewMode().isEdition()) {
             final BSTDataCell actionColumn = row.newCol();
             actionColumn.add($b.attrAppender("style", "width:20px", ";"));
-            appendRemoverButton(this, form, item, actionColumn, confirmationModal, viewSupplier.get());
+            appendRemoverButton(this, form, item, actionColumn, confirmationModal, viewSupplier);
         }
 
         item.add(row);
 
     }
 
+    @Override
     protected RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, Item<SInstance> item,
-            BSContainer<?> cell, ConfirmationModal confirmationModal, AbstractSViewListWithControls viewListByTable) {
+            BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<? extends AbstractSViewListWithControls> viewListByTable) {
         return new RemoverButton("_remover_", form, elementsView, item, confirmationModal) {
             @Override
             protected void behaviorAfterRemoveItem(AjaxRequestTarget target) {

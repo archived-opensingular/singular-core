@@ -22,6 +22,7 @@ import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.form.wicket.repeater.PathInstanceItemReuseStrategy;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.behavior.FadeInOnceBehavior;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
@@ -162,7 +163,7 @@ public abstract class ElementsView extends RefreshingView<SInstance> {
     }
 
     protected RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, Item<SInstance> item,
-            BSContainer<?> cell, ConfirmationModal confirmationModal, AbstractSViewListWithControls viewListByTable) {
+            BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<? extends AbstractSViewListWithControls>  viewListByTable) {
         return new RemoverButton("_remover_", form, elementsView,item,confirmationModal).createRemoverButton(cell, viewListByTable);
     }
 

@@ -8,6 +8,7 @@ import org.opensingular.form.view.AbstractSViewListWithControls;
 import org.opensingular.form.wicket.mapper.MapperCommons;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.util.WicketFormUtils;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
@@ -49,7 +50,7 @@ public class RemoverButton extends ActionAjaxButton {
 
     protected void behaviorAfterRemoveItem(AjaxRequestTarget target) { }
 
-    public RemoverButton createRemoverButton(BSContainer<?> cell, AbstractSViewListWithControls viewListByTable) {
+    public RemoverButton createRemoverButton(BSContainer<?> cell, ISupplier<? extends AbstractSViewListWithControls> viewListByTable) {
 
         cell.newTemplateTag(tp -> ""
                         + "<button wicket:id='_remover_' class='singular-remove-btn'>"
@@ -58,8 +59,8 @@ public class RemoverButton extends ActionAjaxButton {
                         + "</button>")
                 .add(this);
 
-        if (viewListByTable != null) {
-            add($b.onConfigure(c -> c.setVisible(viewListByTable.isDeleteEnabled(item.getModelObject()))));
+        if (viewListByTable.get() != null) {
+            add($b.onConfigure(c -> c.setVisible(viewListByTable.get().isDeleteEnabled(item.getModelObject()))));
         }
         return this;
     }
