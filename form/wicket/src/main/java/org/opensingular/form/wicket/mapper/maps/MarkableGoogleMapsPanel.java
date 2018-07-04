@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+
 import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.LatLng;
 import org.apache.commons.collections.CollectionUtils;
@@ -47,46 +49,44 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.type.util.SILatitudeLongitudeMapper;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.type.util.STypeLatitudeLongitudeGMaps;
-import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewCurrentLocation;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.commons.base.SingularProperties;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPanel<T>> {
 
-public class MarkableGoogleMapsPanel<T> extends BSContainer {
 
-    private static final Logger LOGGER       = LoggerFactory.getLogger(MarkableGoogleMapsPanel.class);
-    private static final String PANEL_SCRIPT = "MarkableGoogleMapsPanel.js";
+    private static final String PANEL_SCRIPT  = "MarkableGoogleMapsPanel.js";
 
-    private static final String SINGULAR_GOOGLEMAPS_JS_KEY     = "singular.googlemaps.js.key";
-    private static final String SINGULAR_GOOGLEMAPS_STATIC_KEY = "singular.googlemaps.static.key";
-    public static final  String MAP_ID                         = "map";
-    public static final  String MAP_STATIC_ID                  = "mapStatic";
-    private final LatLongMarkupIds ids;
+    private static final String                             SINGULAR_GOOGLEMAPS_JS_KEY     = "singular.googlemaps.js.key";
+    private static final String                             SINGULAR_GOOGLEMAPS_STATIC_KEY = "singular.googlemaps.static.key";
+    public static final String                              MAP_ID                         = "map";
+    public static final String                              MAP_STATIC_ID                  = "mapStatic";
+    private final LatLongMarkupIds                          ids;
 
-    private final String singularKeyMaps      = SingularProperties.getOpt(SINGULAR_GOOGLEMAPS_JS_KEY).orElse(null);
-    private final String singularKeyMapStatic = SingularProperties.getOpt(SINGULAR_GOOGLEMAPS_STATIC_KEY).orElse(null);
+    private final String                                    singularKeyMaps                = SingularProperties.getOpt(SINGULAR_GOOGLEMAPS_JS_KEY).orElse(null);
+    private final String                                    singularKeyMapStatic           = SingularProperties.getOpt(SINGULAR_GOOGLEMAPS_STATIC_KEY).orElse(null);
 
-    private final IModel<String> metaDataModel = new Model<>();
-    private final boolean visualization;
-    private final SView   view;
+    private final IModel<String>                            metaDataModel                  = new Model<>();
+    private final boolean                                   visualization;
+    private final ISupplier<? extends SViewCurrentLocation> viewSupplier;
 
-    private boolean multipleMarkers;
-    private String  callbackUrl;
-    private String  tableContainerId;
+
+    private boolean           multipleMarkers;
+    private String            callbackUrl;
+    private String            tableContainerId;
     private String kmlUrl;
 
-    private final Button             clearButton;
-    private final Button             currentLocationButton;
+    private final Button       clearButton;
+    private final Button       currentLocationButton;
     private final WebMarkupContainer verNoMaps;
-    private final ImgMap             mapStatic;
+    private final ImgMap       mapStatic;
     private final WebMarkupContainer  map      = new WebMarkupContainer(MAP_ID);
     private final HiddenField<String> metaData = new HiddenField<>("metadados", metaDataModel);
 
@@ -107,11 +107,11 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         }
     }
 
-    public MarkableGoogleMapsPanel(LatLongMarkupIds ids, IModel<? extends SInstance> model, SView view, boolean visualization, boolean multipleMarkers) {
+    public MarkableGoogleMapsPanel(LatLongMarkupIds ids, IModel<? extends SInstance> model, ISupplier<? extends SViewCurrentLocation> viewSupplier, boolean visualization, boolean multipleMarkers) {
         super(model.getObject().getName());
         this.visualization = visualization;
         this.ids = ids;
-        this.view = view;
+        this.viewSupplier = viewSupplier;
         this.clearButton = new Button("clearButton", $m.ofValue("Limpar"));
         this.currentLocationButton = new Button("currentLocationButton", $m.ofValue("Marcar Minha Posição"));
         this.multipleMarkers = multipleMarkers;
@@ -242,6 +242,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
     @Override
     protected void onInitialize() {
         super.onInitialize();
+
         TemplatePanel panelErrorMsg = newTemplateTag(tt -> {
             final StringBuilder templateBuilder = new StringBuilder();
             templateBuilder.append("<div> <label class=\"text-danger\" wicket:id='errorMapStatic'></label> </div>");
@@ -265,7 +266,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         });
 
         Component errorMapStatic = new Label("errorMapStatic", "Não foi encontrada a Key do Google Maps Static no arquivo singular.properties").setVisible(false);
-        Component errorMapJS     = new Label("errorMapJS", "Não foi encontrada a Key do Google Maps JS no arquivo singular.properties").setVisible(false);
+        Component errorMapJS = new Label("errorMapJS", "Não foi encontrada a Key do Google Maps JS no arquivo singular.properties").setVisible(false);
 
         panelErrorMsg.add(errorMapJS, errorMapStatic);
         templatePanel.add(verNoMaps, clearButton, currentLocationButton, map, metaData, mapStatic);
@@ -288,7 +289,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
         this.add(WicketUtils.$b.attrAppender("style", "height: " + getHeight() + "px;", ""));
 
         map.setVisible(!isVisualization());
-        currentLocationButton.setVisible(SViewCurrentLocation.class.isInstance(view) && !isVisualization());
+        currentLocationButton.setVisible(SViewCurrentLocation.class.isInstance(viewSupplier.get()) && !isVisualization());
 
         boolean notMultipleAndNotVisualization = !multipleMarkers && !isVisualization();
         clearButton.setVisible(notMultipleAndNotVisualization);
@@ -315,11 +316,10 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer {
     }
 
     private boolean isReadOnly() {
-        boolean truth = visualization;
-        if (SViewCurrentLocation.class.isInstance(view)) {
-            truth |= SViewCurrentLocation.class.cast(view).isDisableUserLocationSelection();
-        }
-        return truth;
+        SViewCurrentLocation view = viewSupplier.get();
+        if (view != null)
+            return visualization || view.isDisableUserLocationSelection();
+        return visualization;
     }
 
     public void enableMultipleMarkers(String callbackUrl, String tableContainerId) {

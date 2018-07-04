@@ -17,88 +17,135 @@
 package org.opensingular.form.wicket.model;
 
 import org.apache.wicket.model.IModel;
+import org.opensingular.form.SAttributeEnabled;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.converter.SInstanceConverter;
+import org.opensingular.form.provider.AtrProvider;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
+/**
+ * A Wicket Model to handle SIList on multi select components. This model will:
+ * Always return new models for each item of the SIList when the getObject is called;
+ * Never replace or overwrite the SIList itens on the setObject;
+ *
+ * @author Danilo Mesquita
+ * @see IModel
+ * @see SIList
+ */
+@SuppressWarnings("unchecked")
 public class MultipleSelectSInstanceAwareModel extends AbstractSInstanceAwareModel<List<Serializable>> {
 
-    private static final long serialVersionUID = -4455601838581324870L;
+    /**
+     * SerialVersionUID, last changed on 11/06/2018 (incompatibility issues because previous
+     * version contained two serializable field and this contains only one)
+     */
+    private static final long serialVersionUID = 7424751526796663865L;
 
-    private final IModel<? extends SIList<?>> model;
-    private final List<SelectSInstanceAwareModel> selects;
+    /**
+     * The SIList Model
+     */
+    private final IModel<? extends SIList> listModel;
 
-    public MultipleSelectSInstanceAwareModel(IModel<? extends SInstance> model) {
-        if (!(model.getObject() instanceof SIList)) {
-            throw new SingularFormException("Este model somente deve ser utilizado para tipo lista", model.getObject());
+    /**
+     * Constructor that expects that the model parameter contain a SIList
+     * @param listModel the SIList model
+     */
+    public MultipleSelectSInstanceAwareModel(IModel<? extends SInstance> listModel) {
+        if (!(listModel.getObject() instanceof SIList)) {
+            throw new SingularFormException("This model is only allowed to SIList", listModel.getObject());
         }
-        this.model = (IModel<? extends SIList<?>>) model;
-        this.selects = new ArrayList<>();
-        final SIList<?> list = this.model.getObject();
-        for (int i = 0; i < list.size(); i += 1) {
-            selects.add(new SelectSInstanceAwareModel(new SInstanceListItemModel<>(model, i), getCustomSelectConverterResolver()));
-        }
+        this.listModel = (IModel<? extends SIList>) listModel;
     }
 
-    @Override
-    public SInstance getSInstance() {
-        return model.getObject();
-    }
-
+    /**
+     * Get the serializable values from the SIlist. Will always create the item models to avoid desynchronization.
+     * @return the serializable values
+     */
     @Override
     public List<Serializable> getObject() {
+        ArrayList<SelectSInstanceAwareModel> selects = new ArrayList<>();
+        for (int i = 0; i < listModel.getObject().size(); i += 1) {
+            selects.add(new SelectSInstanceAwareModel(new SInstanceListItemModel<>(listModel, i), new RetrieveFromParentSelectConverterResolver()));
+        }
         return selects.stream().map(IModel::getObject).collect(Collectors.toList());
     }
 
+    /**
+     * Set the values checking if any value were removed from the list.
+     * @param objects the serializable value to set on the list
+     */
     @Override
     public void setObject(List<Serializable> objects) {
-        SIList list = model.getObject();
-        SInstanceConverter converter = model.getObject().asAtrProvider().getConverter();
-        Map<Serializable, SInstance> deletedValuesMap = makeValueInstanceMap(list, converter);
-
-        //remove submited fields from deletion and store new values
-        List<Serializable> newValues = new ArrayList<>();
-        for (Serializable next : objects) {
-            if (deletedValuesMap.containsKey(next)) {
-                deletedValuesMap.remove(next);
+        //initial state with all values
+        Map<Serializable, SInstance> valueAndInstanceMap = makeValueInstanceMap();
+        for (Serializable object : objects) {
+            if (valueAndInstanceMap.containsKey(object)) {
+                //removes the value that remain in submitted list
+                valueAndInstanceMap.remove(object);
             } else {
-                newValues.add(next);
+                //add new value that aren't in the old state
+                getSIListConverter().fillInstance(getSIList().addNew(), object);
             }
         }
+        //removes from SIList the removed values from the model
+        valueAndInstanceMap.forEach((key, val) -> getSIList().remove(val));
+    }
 
-        //delete remove values from silist
-        deletedValuesMap.forEach((key, val) -> {
-            list.remove(val);
-        });
+    /**
+     * Get the model instance without cast
+     * @return the instance
+     */
+    @Override
+    public SInstance getSInstance() {
+        return listModel.getObject();
+    }
 
-        //convert new values and add to the list
-        for (Serializable newValue : newValues) {
-            addNewValue(list, converter, newValue);
+    /**
+     * Makes a map of serializable values retrieved from instance converter and the instance itself. This method uses
+     * the instance converter to transform the instance to serializable value.
+     * @see SInstanceConverter
+     * @return the map
+     */
+    private Map<Serializable, SInstance> makeValueInstanceMap() {
+        return getSIList().stream()
+                .collect(LinkedHashMap::new
+                        , (map, inst) -> map.put(getSIListConverter().toObject((SInstance) inst), (SInstance) inst)
+                        , LinkedHashMap::putAll);
+    }
+
+    /**
+     * Get the converter attribute from model instance
+     * @return the converter
+     */
+    private SInstanceConverter getSIListConverter() {
+        return getSIList().asAtrProvider().getConverter();
+    }
+
+    /**
+     * Get the SIlist from the model instance
+     * @return the SIList
+     */
+    private SIList<SInstance> getSIList() {
+        return listModel.getObject();
+    }
+
+    /**
+     * Resolver that retrieve the converter attribute from parent instance
+     * @see AtrProvider#getConverter()
+     * @see SelectSInstanceAwareModel.SelectConverterResolver
+     * @see SelectSInstanceAwareModel#getObject()
+     * @see SelectSInstanceAwareModel#setObject(Serializable) ()
+     */
+    private static class RetrieveFromParentSelectConverterResolver implements SelectSInstanceAwareModel.SelectConverterResolver {
+        @Override
+        public Optional<SInstanceConverter> apply(SInstance inst) {
+            return Optional.ofNullable(inst.getParent()).map(SAttributeEnabled::asAtrProvider).map(AtrProvider::getConverter);
         }
-    }
-
-    private void addNewValue(SIList list, SInstanceConverter converter, Serializable newValue) {
-        final SInstance newElement = list.addNew();
-        converter.fillInstance(newElement, newValue);
-        selects.add(new SelectSInstanceAwareModel(new SInstanceListItemModel<>(model, list.indexOf(newElement)), getCustomSelectConverterResolver()));
-    }
-
-    private Map<Serializable, SInstance> makeValueInstanceMap(SIList list, SInstanceConverter converter) {
-        Map<Serializable, SInstance> valueInstanceMap = new LinkedHashMap<>();
-        list.forEach(instance -> {
-            valueInstanceMap.put(converter.toObject((SInstance) instance), (SInstance) instance);
-        });
-        return valueInstanceMap;
-    }
-
-    public SelectSInstanceAwareModel.SelectConverterResolver getCustomSelectConverterResolver() {
-        return si -> Optional.ofNullable(si.getParent().asAtrProvider().getConverter());
     }
 
 }

@@ -44,9 +44,9 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
 
     public static final String SESSION_KEY = FileUploadManager.class.getName();
 
-    private AttachmentKeyFactory     attachmentKeyFactory;
-    private UploadInfoRepository     uploadInfoRepository;
-    private UploadPathHandler        uploadPathHandler;
+    private AttachmentKeyFactory attachmentKeyFactory;
+    private UploadInfoRepository uploadInfoRepository;
+    private UploadPathHandler uploadPathHandler;
     private FileUploadInfoRepository fileUploadInfoRepository;
 
 
@@ -88,13 +88,18 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
 
         final AttachmentKey newkey = attachmentKeyFactory.make();
 
-        uploadInfoRepository.add(new UploadInfo(newkey,
+        uploadInfoRepository.add(createUploadInfo(
+                maxFileSize, maxFileCount, allowedFileTypes, temporaryAttachmentPersistenceHandlerSupplier, newkey));
+
+        return newkey;
+    }
+
+    public UploadInfo createUploadInfo(Long maxFileSize, Integer maxFileCount, Collection<String> allowedFileTypes, TemporaryAttachmentPersistenceHandlerSupplier temporaryAttachmentPersistenceHandlerSupplier, AttachmentKey newkey) {
+        return new UploadInfo(newkey,
                 ObjectUtils.defaultIfNull(maxFileSize, Long.MAX_VALUE),
                 ObjectUtils.defaultIfNull(maxFileCount, 1),
                 ObjectUtils.defaultIfNull(allowedFileTypes, Collections.emptyList()),
-                temporaryAttachmentPersistenceHandlerSupplier));
-
-        return newkey;
+                temporaryAttachmentPersistenceHandlerSupplier);
     }
 
     public synchronized Optional<UploadInfo> findUploadInfoByAttachmentKey(AttachmentKey uploadId) {
@@ -117,11 +122,11 @@ public class FileUploadManager implements Serializable, HttpSessionBindingListen
 
         getLogger().debug("createFile({},{},{})", uploadInfo.getUploadId(), fileName, input);
 
-        final Path                          path;
+        final Path path;
         final IAttachmentPersistenceHandler handler;
-        final IAttachmentRef                attachment;
-        final FileUploadInfo                info;
-        final File                          file;
+        final IAttachmentRef attachment;
+        final FileUploadInfo info;
+        final File file;
 
         handler = uploadInfo.getPersistenceHandlerSupplier().get();
         path = uploadPathHandler.getLocalFilePath(attachmentKeyFactory.make().toString());

@@ -130,7 +130,7 @@ public class DocumentAnnotations {
             }
             return (SIList<SIAnnotation>) documentFactory.createInstance(refTypeAnnotation, executeInitTypeSetup);
         }
-        return docRef.getRoot().getDictionary().newInstance(STypeAnnotationList.class);
+        return (SIList) docRef.getRoot().getDictionary().newInstance(STypeAnnotationList.class);
     }
 
     /** Localiza a anotação com o classificado solicitado na instancia informatada. Ou retorna null. */
@@ -320,6 +320,15 @@ public class DocumentAnnotations {
      */
     public boolean hasAnyAnnotationsOnTree(SInstance instance) {
         return SInstances.hasAny(instance, i -> hasAnnotation(i));
+    }
+
+    /**
+     * Returns true if the given instance or any of its children is annotated with an refusal
+     * @param instance
+     * @return
+     */
+    public boolean hasAnyRefusalOnTree(SInstance instance) {
+        return SInstances.hasAny(instance, i -> hasAnnotation(i) && BooleanUtils.isFalse(i.asAtrAnnotation().annotation().getApproved()));
     }
 
     /** Retorna true se a instância ou algum de seus filhos tiver uma anotação marcadada como não aprovada. */

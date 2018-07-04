@@ -31,16 +31,13 @@ import org.opensingular.form.SingularFormException;
 import org.opensingular.form.converter.SInstanceConverter;
 import org.opensingular.form.converter.SimpleSInstanceConverter;
 import org.opensingular.form.document.RefType;
-import org.opensingular.form.provider.Config;
+import org.opensingular.form.provider.*;
 import org.opensingular.form.provider.Config.Column;
-import org.opensingular.form.provider.FilteredPagedProvider;
-import org.opensingular.form.provider.FilteredProvider;
-import org.opensingular.form.provider.InMemoryFilteredPagedProviderDecorator;
-import org.opensingular.form.provider.ProviderContext;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
@@ -51,6 +48,7 @@ import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Iterator;
+import java.util.Optional;
 
 import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
@@ -58,21 +56,21 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 @SuppressWarnings("unchecked")
 class SearchModalBodyPanel extends Panel implements Loggable {
 
-    private static final String FILTER_BUTTON_ID = "filterButton";
-    private static final String FORM_PANEL_ID    = "formPanel";
-    private static final String RESULT_TABLE_ID  = "resultTable";
+    private static final String                FILTER_BUTTON_ID = "filterButton";
+    private static final String                FORM_PANEL_ID    = "formPanel";
+    private static final String                RESULT_TABLE_ID  = "resultTable";
 
     private final WicketBuildContext           ctx;
-    private final SViewSearchModal view;
+    private final ISupplier<SViewSearchModal>  viewSupplier;
     private final IConsumer<AjaxRequestTarget> selectCallback;
 
-    private SingularFormPanel innerSingularFormPanel;
-    private MarkupContainer   resultTable;
+    private SingularFormPanel                  innerSingularFormPanel;
+    private MarkupContainer                    resultTable;
 
     SearchModalBodyPanel(String id, WicketBuildContext ctx, IConsumer<AjaxRequestTarget> selectCallback) {
         super(id);
         this.ctx = ctx;
-        this.view = (SViewSearchModal) ctx.getView();
+        this.viewSupplier = ctx.getViewSupplier(SViewSearchModal.class);
         this.selectCallback = selectCallback;
         validate();
     }
@@ -82,7 +80,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
             throw new SingularFormException("O provider não foi informado", getInstance());
         }
         if (getInstance().asAtrProvider().getConverter() == null
-                && (getInstance() instanceof SIComposite || getInstance() instanceof SIList)) {
+            && (getInstance() instanceof SIComposite || getInstance() instanceof SIList)) {
             throw new SingularFormException("O tipo não é simples e o converter não foi informado.", getInstance());
         }
     }
@@ -154,26 +152,24 @@ class SearchModalBodyPanel extends Panel implements Loggable {
             }
         });
 
-        builder.setRowsPerPage(view.getPageSize());
+        builder.setRowsPerPage(viewSupplier.get().getPageSize());
 
         for (Object o : config.result().getColumns()) {
             configureColumns(builder, (Column) o);
         }
 
         builder.appendActionColumn(Model.of(), (actionColumn) -> actionColumn
-                .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(DefaultIcons.ARROW_RIGHT)).titleFunction(m -> "Selecionar"),
-                        (IBSAction<Object>) (target, model) ->
-                        {
-                            SInstanceConverter converter = getInstance().asAtrProvider().getConverter();
-                            if (converter == null && !(getInstance() instanceof SIComposite || getInstance() instanceof SIList)) {
-                                converter = new SimpleSInstanceConverter<>();
-                            }
-                            if (converter != null) {
-                                converter.fillInstance(getInstance(), (Serializable) model.getObject());
-                            }
-                            selectCallback.accept(target);
-                        })
-        );
+            .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(DefaultIcons.ARROW_RIGHT)).titleFunction(m -> "Selecionar"),
+                (IBSAction<Object>) (target, model) -> {
+                    SInstanceConverter converter = getInstance().asAtrProvider().getConverter();
+                    if (converter == null && !(getInstance() instanceof SIComposite || getInstance() instanceof SIList)) {
+                        converter = new SimpleSInstanceConverter<>();
+                    }
+                    if (converter != null) {
+                        converter.fillInstance(getInstance(), (Serializable) model.getObject());
+                    }
+                    selectCallback.accept(target);
+                }));
 
         return builder.build(RESULT_TABLE_ID);
     }
@@ -197,15 +193,17 @@ class SearchModalBodyPanel extends Panel implements Loggable {
     }
 
     private SingularFormPanel buildInnerSingularFormPanel() {
+        SingularFormPanel newSingularFormPanel = new SingularFormPanel(FORM_PANEL_ID, true);
+        newSingularFormPanel.setInstanceFromType(RefType.of(() -> getConfig().getFilter()));
 
-        final SingularFormPanel parentSingularFormPanel = this.visitParents(SingularFormPanel.class,
-                (parent, visit) -> visit.stop(parent));
+        lookParentSingularFormPanel().flatMap(SingularFormPanel::getDocumentFactory)
+                .ifPresent(newSingularFormPanel::setDocumentFactory);
 
-        SingularFormPanel p = new SingularFormPanel(FORM_PANEL_ID, true);
-        p.setDocumentFactory(parentSingularFormPanel.getDocumentFactory().orElse(null));
-        p.setInstanceFromType(RefType.of(() -> getConfig().getFilter()));
+        return newSingularFormPanel;
+    }
 
-        return p;
+    private Optional<SingularFormPanel> lookParentSingularFormPanel() {
+        return Optional.ofNullable(this.visitParents(SingularFormPanel.class, (parent, visit) -> visit.stop(parent)));
     }
 
     private SInstance getInstance() {

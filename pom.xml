@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.opensingular</groupId>
     <artifactId>singular</artifactId>
 
-    <version>1.7.1-SNAPSHOT</version>
+    <version>1.8.0-SNAPSHOT</version>
     <name>[singular]</name>
     <description>Singular Core Technologies</description>
     <url>http://opensingular.org</url>
@@ -41,7 +42,7 @@
     <modules>
         <module>flow</module>
         <module>form</module>
-	    <module>flow-form</module>
+        <module>flow-form</module>
         <module>lib</module>
         <module>resources</module>
         <module>ws</module>
@@ -86,7 +87,8 @@
                         </manifest>
                         <manifestEntries>
                             <!--suppress MavenModelInspection -->
-                            <Implementation-Build>${project.version}.${buildNumber} | ${timestamp}</Implementation-Build>
+                            <Implementation-Build>${project.version}.${buildNumber} | ${timestamp}
+                            </Implementation-Build>
                             <!--suppress MavenModelInspection -->
                             <Revision-Id>${revisionNumber}</Revision-Id>
                         </manifestEntries>
@@ -142,9 +144,17 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.21.0</version>
+                <configuration>
+                    <argLine>-Djava.locale.providers=COMPAT</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.8</version>
+                <version>0.8.1</version>
                 <configuration>
                     <destFile>${sonar.jacoco.reportPaths}</destFile>
                     <append>true</append>
@@ -169,13 +179,13 @@
             </plugin>
         </plugins>
     </build>
-    
+
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.opensingular</groupId>
-			    <artifactId>bom</artifactId>
-			    <version>1.7.1-SNAPSHOT</version>
+                <artifactId>bom</artifactId>
+                <version>1.8.0-SNAPSHOT</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -195,6 +205,16 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.org.apache</groupId>
+            <artifactId>jaxp-ri</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
@@ -209,8 +229,8 @@
         <url>${project.scm.url}</url>
         <connection>${project.scm.connection}</connection>
         <developerConnection>${project.scm.developerConnection}</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <profiles>
         <profile>
@@ -273,16 +293,22 @@
     </profiles>
 
     <properties>
-        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,e13,e14,e15,e16,e17,e18,e19,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19,s20,s21,s22,s23,s24,s25,s26,s27,s28,s29,s30,s31,s32,s33,s34,s35,s36,s37,s38,s39,s40,s41,s42,s43,s44,s45,s46,s47,s48,s49,s50,s51,s52,s53,s54,s55,s56,s57,s58</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria>
+            e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,e13,e14,e15,e16,e17,e18,e19,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19,s20,s21,s22,s23,s24,s25,s26,s27,s28,s29,s30,s31,s32,s33,s34,s35,s36,s37,s38,s39,s40,s41,s42,s43,s44,s45,s46,s47,s48,s49,s50,s51,s52,s53,s54,s55,s56,s57,s58
+        </sonar.issue.ignore.multicriteria>
         <!-- Falso positivo: injeção via construtor -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>squid:S3306</sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
         <!-- Falso positivo: chaves duplicadas em properties  -->
-        <sonar.issue.ignore.multicriteria.e2.ruleKey>jproperties:duplicated-keys-across-files</sonar.issue.ignore.multicriteria.e2.ruleKey>
-        <sonar.issue.ignore.multicriteria.e2.resourceKey>**/*.properties</sonar.issue.ignore.multicriteria.e2.resourceKey>
+        <sonar.issue.ignore.multicriteria.e2.ruleKey>jproperties:duplicated-keys-across-files
+        </sonar.issue.ignore.multicriteria.e2.ruleKey>
+        <sonar.issue.ignore.multicriteria.e2.resourceKey>**/*.properties
+        </sonar.issue.ignore.multicriteria.e2.resourceKey>
         <!-- Falso positivo: chaves duplicadas em properties  -->
-        <sonar.issue.ignore.multicriteria.e3.ruleKey>jproperties:duplicated-keys</sonar.issue.ignore.multicriteria.e3.ruleKey>
-        <sonar.issue.ignore.multicriteria.e3.resourceKey>**/*.properties</sonar.issue.ignore.multicriteria.e3.resourceKey>
+        <sonar.issue.ignore.multicriteria.e3.ruleKey>jproperties:duplicated-keys
+        </sonar.issue.ignore.multicriteria.e3.ruleKey>
+        <sonar.issue.ignore.multicriteria.e3.resourceKey>**/*.properties
+        </sonar.issue.ignore.multicriteria.e3.resourceKey>
         <!-- Falso positivo: sobrescrever equals em entidades -->
         <sonar.issue.ignore.multicriteria.e4.ruleKey>squid:S2160</sonar.issue.ignore.multicriteria.e4.ruleKey>
         <sonar.issue.ignore.multicriteria.e4.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e4.resourceKey>
@@ -291,9 +317,11 @@
         <sonar.issue.ignore.multicriteria.e5.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e5.resourceKey>
         <!-- Falso positivo: hard coded credentials -->
         <sonar.issue.ignore.multicriteria.e6.ruleKey>jproperties:S2068</sonar.issue.ignore.multicriteria.e6.ruleKey>
-        <sonar.issue.ignore.multicriteria.e6.resourceKey>**/*.properties</sonar.issue.ignore.multicriteria.e6.resourceKey>
+        <sonar.issue.ignore.multicriteria.e6.resourceKey>**/*.properties
+        </sonar.issue.ignore.multicriteria.e6.resourceKey>
         <!-- Falso positivo: sha-1 vulneravel -->
-        <sonar.issue.ignore.multicriteria.e7.ruleKey>findsecbugs:WEAK_MESSAGE_DIGEST_SHA1</sonar.issue.ignore.multicriteria.e7.ruleKey>
+        <sonar.issue.ignore.multicriteria.e7.ruleKey>findsecbugs:WEAK_MESSAGE_DIGEST_SHA1
+        </sonar.issue.ignore.multicriteria.e7.ruleKey>
         <sonar.issue.ignore.multicriteria.e7.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e7.resourceKey>
         <!-- Falso positivo: generic wildcard -->
         <sonar.issue.ignore.multicriteria.e8.ruleKey>squid:S1452</sonar.issue.ignore.multicriteria.e8.ruleKey>
@@ -311,180 +339,290 @@
         <sonar.issue.ignore.multicriteria.e12.ruleKey>squid:S1214</sonar.issue.ignore.multicriteria.e12.ruleKey>
         <sonar.issue.ignore.multicriteria.e12.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e12.resourceKey>
         <!-- Falso positivo: different keys with same value -->
-        <sonar.issue.ignore.multicriteria.e13.ruleKey>jproperties:duplicated-values</sonar.issue.ignore.multicriteria.e13.ruleKey>
-        <sonar.issue.ignore.multicriteria.e13.resourceKey>**/*.properties</sonar.issue.ignore.multicriteria.e13.resourceKey>
+        <sonar.issue.ignore.multicriteria.e13.ruleKey>jproperties:duplicated-values
+        </sonar.issue.ignore.multicriteria.e13.ruleKey>
+        <sonar.issue.ignore.multicriteria.e13.resourceKey>**/*.properties
+        </sonar.issue.ignore.multicriteria.e13.resourceKey>
         <!-- Falso positivo: different keys with same value -->
-        <sonar.issue.ignore.multicriteria.e14.ruleKey>squid:MaximumInheritanceDepth</sonar.issue.ignore.multicriteria.e14.ruleKey>
+        <sonar.issue.ignore.multicriteria.e14.ruleKey>squid:MaximumInheritanceDepth
+        </sonar.issue.ignore.multicriteria.e14.ruleKey>
         <sonar.issue.ignore.multicriteria.e14.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e14.resourceKey>
         <!-- Falso positivo: literais replicados -->
         <sonar.issue.ignore.multicriteria.e15.ruleKey>squid:S1192</sonar.issue.ignore.multicriteria.e15.ruleKey>
         <sonar.issue.ignore.multicriteria.e15.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e15.resourceKey>
         <!-- Falso positivo: atributos publicos nos stypes  -->
-        <sonar.issue.ignore.multicriteria.e16.ruleKey>squid:ClassVariableVisibilityCheck</sonar.issue.ignore.multicriteria.e16.ruleKey>
+        <sonar.issue.ignore.multicriteria.e16.ruleKey>squid:ClassVariableVisibilityCheck
+        </sonar.issue.ignore.multicriteria.e16.ruleKey>
         <sonar.issue.ignore.multicriteria.e16.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e16.resourceKey>
         <!-- Falso positivo: array armazenado diretamente -->
-        <sonar.issue.ignore.multicriteria.e17.ruleKey>pmd:ArrayIsStoredDirectly</sonar.issue.ignore.multicriteria.e17.ruleKey>
+        <sonar.issue.ignore.multicriteria.e17.ruleKey>pmd:ArrayIsStoredDirectly
+        </sonar.issue.ignore.multicriteria.e17.ruleKey>
         <sonar.issue.ignore.multicriteria.e17.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e17.resourceKey>
         <!-- Falso positivo: métodos chamados de maneira redundante -->
-        <sonar.issue.ignore.multicriteria.e18.ruleKey>fb-contrib:PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS</sonar.issue.ignore.multicriteria.e18.ruleKey>
+        <sonar.issue.ignore.multicriteria.e18.ruleKey>fb-contrib:PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS
+        </sonar.issue.ignore.multicriteria.e18.ruleKey>
         <sonar.issue.ignore.multicriteria.e18.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e18.resourceKey>
         <!-- Falso positivo: chamada a método não final no construtor -->
-        <sonar.issue.ignore.multicriteria.e19.ruleKey>fb-contrib:PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS</sonar.issue.ignore.multicriteria.e19.ruleKey>
+        <sonar.issue.ignore.multicriteria.e19.ruleKey>fb-contrib:PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS
+        </sonar.issue.ignore.multicriteria.e19.ruleKey>
         <sonar.issue.ignore.multicriteria.e19.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e19.resourceKey>
 
 
-
         <!-- Falso positivo: command injection  -->
-        <sonar.issue.ignore.multicriteria.s1.ruleKey>findsecbugs:COMMAND_INJECTION</sonar.issue.ignore.multicriteria.s1.ruleKey>
-        <sonar.issue.ignore.multicriteria.s1.resourceKey>**/PDFUtilUnix.java</sonar.issue.ignore.multicriteria.s1.resourceKey>
+        <sonar.issue.ignore.multicriteria.s1.ruleKey>findsecbugs:COMMAND_INJECTION
+        </sonar.issue.ignore.multicriteria.s1.ruleKey>
+        <sonar.issue.ignore.multicriteria.s1.resourceKey>**/PDFUtilUnix.java
+        </sonar.issue.ignore.multicriteria.s1.resourceKey>
         <!-- Falso positivo: command injection  -->
-        <sonar.issue.ignore.multicriteria.s2.ruleKey>findsecbugs:COMMAND_INJECTION</sonar.issue.ignore.multicriteria.s2.ruleKey>
-        <sonar.issue.ignore.multicriteria.s2.resourceKey>**/PDFUtilWin.java</sonar.issue.ignore.multicriteria.s2.resourceKey>
+        <sonar.issue.ignore.multicriteria.s2.ruleKey>findsecbugs:COMMAND_INJECTION
+        </sonar.issue.ignore.multicriteria.s2.ruleKey>
+        <sonar.issue.ignore.multicriteria.s2.resourceKey>**/PDFUtilWin.java
+        </sonar.issue.ignore.multicriteria.s2.resourceKey>
         <!-- Falso positivo: XPATH injection  -->
-        <sonar.issue.ignore.multicriteria.s3.ruleKey>findsecbugs:XPATH_INJECTION</sonar.issue.ignore.multicriteria.s3.ruleKey>
-        <sonar.issue.ignore.multicriteria.s3.resourceKey>**/XPathToolkit.java</sonar.issue.ignore.multicriteria.s3.resourceKey>
+        <sonar.issue.ignore.multicriteria.s3.ruleKey>findsecbugs:XPATH_INJECTION
+        </sonar.issue.ignore.multicriteria.s3.ruleKey>
+        <sonar.issue.ignore.multicriteria.s3.resourceKey>**/XPathToolkit.java
+        </sonar.issue.ignore.multicriteria.s3.resourceKey>
         <!-- Falso positivo: remote object deserialization  -->
-        <sonar.issue.ignore.multicriteria.s4.ruleKey>findsecbugs:OBJECT_DESERIALIZATION</sonar.issue.ignore.multicriteria.s4.ruleKey>
-        <sonar.issue.ignore.multicriteria.s4.resourceKey>**/Base64.java</sonar.issue.ignore.multicriteria.s4.resourceKey>
+        <sonar.issue.ignore.multicriteria.s4.ruleKey>findsecbugs:OBJECT_DESERIALIZATION
+        </sonar.issue.ignore.multicriteria.s4.ruleKey>
+        <sonar.issue.ignore.multicriteria.s4.resourceKey>**/Base64.java
+        </sonar.issue.ignore.multicriteria.s4.resourceKey>
         <!-- Falso positivo: file location specified by user  -->
-        <sonar.issue.ignore.multicriteria.s5.ruleKey>findsecbugs:PATH_TRAVERSAL_OUT</sonar.issue.ignore.multicriteria.s5.ruleKey>
-        <sonar.issue.ignore.multicriteria.s5.resourceKey>**/Base64.java</sonar.issue.ignore.multicriteria.s5.resourceKey>
+        <sonar.issue.ignore.multicriteria.s5.ruleKey>findsecbugs:PATH_TRAVERSAL_OUT
+        </sonar.issue.ignore.multicriteria.s5.ruleKey>
+        <sonar.issue.ignore.multicriteria.s5.resourceKey>**/Base64.java
+        </sonar.issue.ignore.multicriteria.s5.resourceKey>
         <!-- Falso positivo: file location specified by user  -->
-        <sonar.issue.ignore.multicriteria.s6.ruleKey>findsecbugs:PATH_TRAVERSAL_IN</sonar.issue.ignore.multicriteria.s6.ruleKey>
-        <sonar.issue.ignore.multicriteria.s6.resourceKey>**/Base64.java</sonar.issue.ignore.multicriteria.s6.resourceKey>
+        <sonar.issue.ignore.multicriteria.s6.ruleKey>findsecbugs:PATH_TRAVERSAL_IN
+        </sonar.issue.ignore.multicriteria.s6.ruleKey>
+        <sonar.issue.ignore.multicriteria.s6.resourceKey>**/Base64.java
+        </sonar.issue.ignore.multicriteria.s6.resourceKey>
         <!-- Falso positivo: file location specified by user  -->
-        <sonar.issue.ignore.multicriteria.s7.ruleKey>findsecbugs:PATH_TRAVERSAL_OUT</sonar.issue.ignore.multicriteria.s7.ruleKey>
-        <sonar.issue.ignore.multicriteria.s7.resourceKey>**/FileSystemAttachmentPersistenceHandler.java</sonar.issue.ignore.multicriteria.s7.resourceKey>
+        <sonar.issue.ignore.multicriteria.s7.ruleKey>findsecbugs:PATH_TRAVERSAL_OUT
+        </sonar.issue.ignore.multicriteria.s7.ruleKey>
+        <sonar.issue.ignore.multicriteria.s7.resourceKey>**/FileSystemAttachmentPersistenceHandler.java
+        </sonar.issue.ignore.multicriteria.s7.resourceKey>
         <!-- Falso positivo: file location specified by user  -->
-        <sonar.issue.ignore.multicriteria.s8.ruleKey>findsecbugs:PATH_TRAVERSAL_IN</sonar.issue.ignore.multicriteria.s8.ruleKey>
-        <sonar.issue.ignore.multicriteria.s8.resourceKey>**/FileSystemAttachmentPersistenceHandler.java</sonar.issue.ignore.multicriteria.s8.resourceKey>
+        <sonar.issue.ignore.multicriteria.s8.ruleKey>findsecbugs:PATH_TRAVERSAL_IN
+        </sonar.issue.ignore.multicriteria.s8.ruleKey>
+        <sonar.issue.ignore.multicriteria.s8.resourceKey>**/FileSystemAttachmentPersistenceHandler.java
+        </sonar.issue.ignore.multicriteria.s8.resourceKey>
         <!-- Falso positivo: file location specified by user  -->
-        <sonar.issue.ignore.multicriteria.s9.ruleKey>findsecbugs:PATH_TRAVERSAL_OUT</sonar.issue.ignore.multicriteria.s9.ruleKey>
-        <sonar.issue.ignore.multicriteria.s9.resourceKey>**/FileSystemAttachmentRef.java</sonar.issue.ignore.multicriteria.s9.resourceKey>
+        <sonar.issue.ignore.multicriteria.s9.ruleKey>findsecbugs:PATH_TRAVERSAL_OUT
+        </sonar.issue.ignore.multicriteria.s9.ruleKey>
+        <sonar.issue.ignore.multicriteria.s9.resourceKey>**/FileSystemAttachmentRef.java
+        </sonar.issue.ignore.multicriteria.s9.resourceKey>
         <!-- Falso positivo: file location specified by user  -->
-        <sonar.issue.ignore.multicriteria.s10.ruleKey>findsecbugs:PATH_TRAVERSAL_IN</sonar.issue.ignore.multicriteria.s10.ruleKey>
-        <sonar.issue.ignore.multicriteria.s10.resourceKey>**/FileSystemAttachmentRef.java</sonar.issue.ignore.multicriteria.s10.resourceKey>
+        <sonar.issue.ignore.multicriteria.s10.ruleKey>findsecbugs:PATH_TRAVERSAL_IN
+        </sonar.issue.ignore.multicriteria.s10.ruleKey>
+        <sonar.issue.ignore.multicriteria.s10.resourceKey>**/FileSystemAttachmentRef.java
+        </sonar.issue.ignore.multicriteria.s10.resourceKey>
         <!-- Falso positivo: file location specified by user  -->
-        <sonar.issue.ignore.multicriteria.s11.ruleKey>findsecbugs:PATH_TRAVERSAL_OUT</sonar.issue.ignore.multicriteria.s11.ruleKey>
-        <sonar.issue.ignore.multicriteria.s11.resourceKey>**/SingularPropertiesImpl.java</sonar.issue.ignore.multicriteria.s11.resourceKey>
+        <sonar.issue.ignore.multicriteria.s11.ruleKey>findsecbugs:PATH_TRAVERSAL_OUT
+        </sonar.issue.ignore.multicriteria.s11.ruleKey>
+        <sonar.issue.ignore.multicriteria.s11.resourceKey>**/SingularPropertiesImpl.java
+        </sonar.issue.ignore.multicriteria.s11.resourceKey>
         <!-- Falso positivo: file location specified by user  -->
-        <sonar.issue.ignore.multicriteria.s12.ruleKey>findsecbugs:PATH_TRAVERSAL_IN</sonar.issue.ignore.multicriteria.s12.ruleKey>
-        <sonar.issue.ignore.multicriteria.s12.resourceKey>**/SingularPropertiesImpl.java</sonar.issue.ignore.multicriteria.s12.resourceKey>
+        <sonar.issue.ignore.multicriteria.s12.ruleKey>findsecbugs:PATH_TRAVERSAL_IN
+        </sonar.issue.ignore.multicriteria.s12.ruleKey>
+        <sonar.issue.ignore.multicriteria.s12.resourceKey>**/SingularPropertiesImpl.java
+        </sonar.issue.ignore.multicriteria.s12.resourceKey>
         <!-- Falso positivo: file location specified by user  -->
-        <sonar.issue.ignore.multicriteria.s13.ruleKey>findsecbugs:PATH_TRAVERSAL_OUT</sonar.issue.ignore.multicriteria.s13.ruleKey>
-        <sonar.issue.ignore.multicriteria.s13.resourceKey>**/PDFUtilUnix.java</sonar.issue.ignore.multicriteria.s13.resourceKey>
+        <sonar.issue.ignore.multicriteria.s13.ruleKey>findsecbugs:PATH_TRAVERSAL_OUT
+        </sonar.issue.ignore.multicriteria.s13.ruleKey>
+        <sonar.issue.ignore.multicriteria.s13.resourceKey>**/PDFUtilUnix.java
+        </sonar.issue.ignore.multicriteria.s13.resourceKey>
         <!-- Falso positivo: file location specified by user  -->
-        <sonar.issue.ignore.multicriteria.s14.ruleKey>findsecbugs:PATH_TRAVERSAL_IN</sonar.issue.ignore.multicriteria.s14.ruleKey>
-        <sonar.issue.ignore.multicriteria.s14.resourceKey>**/PDFUtilUnix.java</sonar.issue.ignore.multicriteria.s14.resourceKey>
+        <sonar.issue.ignore.multicriteria.s14.ruleKey>findsecbugs:PATH_TRAVERSAL_IN
+        </sonar.issue.ignore.multicriteria.s14.ruleKey>
+        <sonar.issue.ignore.multicriteria.s14.resourceKey>**/PDFUtilUnix.java
+        </sonar.issue.ignore.multicriteria.s14.resourceKey>
         <!-- Falso positivo: file location specified by user  -->
-        <sonar.issue.ignore.multicriteria.s15.ruleKey>findsecbugs:PATH_TRAVERSAL_OUT</sonar.issue.ignore.multicriteria.s15.ruleKey>
-        <sonar.issue.ignore.multicriteria.s15.resourceKey>**/PDFUtilWin.java</sonar.issue.ignore.multicriteria.s15.resourceKey>
+        <sonar.issue.ignore.multicriteria.s15.ruleKey>findsecbugs:PATH_TRAVERSAL_OUT
+        </sonar.issue.ignore.multicriteria.s15.ruleKey>
+        <sonar.issue.ignore.multicriteria.s15.resourceKey>**/PDFUtilWin.java
+        </sonar.issue.ignore.multicriteria.s15.resourceKey>
         <!-- Falso positivo: file location specified by user  -->
-        <sonar.issue.ignore.multicriteria.s16.ruleKey>findsecbugs:PATH_TRAVERSAL_IN</sonar.issue.ignore.multicriteria.s16.ruleKey>
-        <sonar.issue.ignore.multicriteria.s16.resourceKey>**/PDFUtilWin.java</sonar.issue.ignore.multicriteria.s16.resourceKey>
+        <sonar.issue.ignore.multicriteria.s16.ruleKey>findsecbugs:PATH_TRAVERSAL_IN
+        </sonar.issue.ignore.multicriteria.s16.ruleKey>
+        <sonar.issue.ignore.multicriteria.s16.resourceKey>**/PDFUtilWin.java
+        </sonar.issue.ignore.multicriteria.s16.resourceKey>
         <!-- Falso positivo: XSS attack  -->
-        <sonar.issue.ignore.multicriteria.s17.ruleKey>findsecbugs:XSS_SERVLET</sonar.issue.ignore.multicriteria.s17.ruleKey>
-        <sonar.issue.ignore.multicriteria.s17.resourceKey>**/UploadResponseWriter.java</sonar.issue.ignore.multicriteria.s17.resourceKey>
+        <sonar.issue.ignore.multicriteria.s17.ruleKey>findsecbugs:XSS_SERVLET
+        </sonar.issue.ignore.multicriteria.s17.ruleKey>
+        <sonar.issue.ignore.multicriteria.s17.resourceKey>**/UploadResponseWriter.java
+        </sonar.issue.ignore.multicriteria.s17.resourceKey>
         <!-- Falso positivo: cookie seguro  -->
-        <sonar.issue.ignore.multicriteria.s18.ruleKey>findsecbugs:HTTPONLY_COOKIE</sonar.issue.ignore.multicriteria.s18.ruleKey>
-        <sonar.issue.ignore.multicriteria.s18.resourceKey>**/SkinOptions.java</sonar.issue.ignore.multicriteria.s18.resourceKey>
+        <sonar.issue.ignore.multicriteria.s18.ruleKey>findsecbugs:HTTPONLY_COOKIE
+        </sonar.issue.ignore.multicriteria.s18.ruleKey>
+        <sonar.issue.ignore.multicriteria.s18.resourceKey>**/SkinOptions.java
+        </sonar.issue.ignore.multicriteria.s18.resourceKey>
         <!-- Falso positivo: cookie seguro  -->
-        <sonar.issue.ignore.multicriteria.s19.ruleKey>findsecbugs:INSECURE_COOKIE</sonar.issue.ignore.multicriteria.s19.ruleKey>
-        <sonar.issue.ignore.multicriteria.s19.resourceKey>**/SkinOptions.java</sonar.issue.ignore.multicriteria.s19.resourceKey>
+        <sonar.issue.ignore.multicriteria.s19.ruleKey>findsecbugs:INSECURE_COOKIE
+        </sonar.issue.ignore.multicriteria.s19.ruleKey>
+        <sonar.issue.ignore.multicriteria.s19.resourceKey>**/SkinOptions.java
+        </sonar.issue.ignore.multicriteria.s19.resourceKey>
         <!-- Falso positivo: Remove this useless assignment to local variable  -->
         <sonar.issue.ignore.multicriteria.s20.ruleKey>squid:S1854</sonar.issue.ignore.multicriteria.s20.ruleKey>
-        <sonar.issue.ignore.multicriteria.s20.resourceKey>**/STypeNotificacaoSimplificadaDinamizado.java</sonar.issue.ignore.multicriteria.s20.resourceKey>
+        <sonar.issue.ignore.multicriteria.s20.resourceKey>**/STypeNotificacaoSimplificadaDinamizado.java
+        </sonar.issue.ignore.multicriteria.s20.resourceKey>
         <sonar.issue.ignore.multicriteria.s21.ruleKey>squid:S1854</sonar.issue.ignore.multicriteria.s21.ruleKey>
-        <sonar.issue.ignore.multicriteria.s21.resourceKey>**/CaseInputModalSearchPackage.java</sonar.issue.ignore.multicriteria.s21.resourceKey>
+        <sonar.issue.ignore.multicriteria.s21.resourceKey>**/CaseInputModalSearchPackage.java
+        </sonar.issue.ignore.multicriteria.s21.resourceKey>
         <sonar.issue.ignore.multicriteria.s22.ruleKey>squid:S1854</sonar.issue.ignore.multicriteria.s22.ruleKey>
-        <sonar.issue.ignore.multicriteria.s22.resourceKey>**/CaseLazyInputModalSearchPackage.java</sonar.issue.ignore.multicriteria.s22.resourceKey>
+        <sonar.issue.ignore.multicriteria.s22.resourceKey>**/CaseLazyInputModalSearchPackage.java
+        </sonar.issue.ignore.multicriteria.s22.resourceKey>
         <!-- Falso positivo: Security - Potential CRLF Injection for logs  -->
-        <sonar.issue.ignore.multicriteria.s23.ruleKey>findsecbugs:CRLF_INJECTION_LOGS</sonar.issue.ignore.multicriteria.s23.ruleKey>
-        <sonar.issue.ignore.multicriteria.s23.resourceKey>**/PDFUtilUnix.java</sonar.issue.ignore.multicriteria.s23.resourceKey>
-        <sonar.issue.ignore.multicriteria.s24.ruleKey>findsecbugs:CRLF_INJECTION_LOGS</sonar.issue.ignore.multicriteria.s24.ruleKey>
-        <sonar.issue.ignore.multicriteria.s24.resourceKey>**/PDFUtilWin.java</sonar.issue.ignore.multicriteria.s24.resourceKey>
+        <sonar.issue.ignore.multicriteria.s23.ruleKey>findsecbugs:CRLF_INJECTION_LOGS
+        </sonar.issue.ignore.multicriteria.s23.ruleKey>
+        <sonar.issue.ignore.multicriteria.s23.resourceKey>**/PDFUtilUnix.java
+        </sonar.issue.ignore.multicriteria.s23.resourceKey>
+        <sonar.issue.ignore.multicriteria.s24.ruleKey>findsecbugs:CRLF_INJECTION_LOGS
+        </sonar.issue.ignore.multicriteria.s24.ruleKey>
+        <sonar.issue.ignore.multicriteria.s24.resourceKey>**/PDFUtilWin.java
+        </sonar.issue.ignore.multicriteria.s24.resourceKey>
         <!-- Falso positivo: Nome do arquivo pode ser adulterado pelo cliente -->
-        <sonar.issue.ignore.multicriteria.s25.ruleKey>findsecbugs:FILE_UPLOAD_FILENAME</sonar.issue.ignore.multicriteria.s25.ruleKey>
-        <sonar.issue.ignore.multicriteria.s25.resourceKey>**/FileUploadProcessor.java</sonar.issue.ignore.multicriteria.s25.resourceKey>
+        <sonar.issue.ignore.multicriteria.s25.ruleKey>findsecbugs:FILE_UPLOAD_FILENAME
+        </sonar.issue.ignore.multicriteria.s25.ruleKey>
+        <sonar.issue.ignore.multicriteria.s25.resourceKey>**/FileUploadProcessor.java
+        </sonar.issue.ignore.multicriteria.s25.resourceKey>
         <sonar.issue.ignore.multicriteria.s26.ruleKey>squid:S2095</sonar.issue.ignore.multicriteria.s26.ruleKey>
-        <sonar.issue.ignore.multicriteria.s26.resourceKey>**/PDFUtil.java</sonar.issue.ignore.multicriteria.s26.resourceKey>
-        <sonar.issue.ignore.multicriteria.s27.ruleKey>findsecbugs:PATH_TRAVERSAL_IN</sonar.issue.ignore.multicriteria.s27.ruleKey>
-        <sonar.issue.ignore.multicriteria.s27.resourceKey>**/PDFUtil.java</sonar.issue.ignore.multicriteria.s27.resourceKey>
+        <sonar.issue.ignore.multicriteria.s26.resourceKey>**/PDFUtil.java
+        </sonar.issue.ignore.multicriteria.s26.resourceKey>
+        <sonar.issue.ignore.multicriteria.s27.ruleKey>findsecbugs:PATH_TRAVERSAL_IN
+        </sonar.issue.ignore.multicriteria.s27.ruleKey>
+        <sonar.issue.ignore.multicriteria.s27.resourceKey>**/PDFUtil.java
+        </sonar.issue.ignore.multicriteria.s27.resourceKey>
         <!-- Falso positivo: parametro reutilizado como variavel -->
         <sonar.issue.ignore.multicriteria.s28.ruleKey>squid:S1226</sonar.issue.ignore.multicriteria.s28.ruleKey>
-        <sonar.issue.ignore.multicriteria.s28.resourceKey>**/MformPersistenciaXML.java</sonar.issue.ignore.multicriteria.s28.resourceKey>
-        <sonar.issue.ignore.multicriteria.s29.ruleKey>fb-contrib:SPP_CONVERSION_OF_STRING_LITERAL</sonar.issue.ignore.multicriteria.s29.ruleKey>
-        <sonar.issue.ignore.multicriteria.s29.resourceKey>**/AbstractHibernatePersistenceService.java</sonar.issue.ignore.multicriteria.s29.resourceKey>
-        <sonar.issue.ignore.multicriteria.s30.ruleKey>fb-contrib:PSC_PRESIZE_COLLECTIONS</sonar.issue.ignore.multicriteria.s30.ruleKey>
-        <sonar.issue.ignore.multicriteria.s30.resourceKey>**/DominioService.java</sonar.issue.ignore.multicriteria.s30.resourceKey>
-        <sonar.issue.ignore.multicriteria.s31.ruleKey>fb-contrib:MDM_SETDEFAULTLOCALE</sonar.issue.ignore.multicriteria.s31.ruleKey>
-        <sonar.issue.ignore.multicriteria.s31.resourceKey>**/ShowcaseApplication.java</sonar.issue.ignore.multicriteria.s31.resourceKey>
-        <sonar.issue.ignore.multicriteria.s32.ruleKey>fb-contrib:CLI_CONSTANT_LIST_INDEX</sonar.issue.ignore.multicriteria.s32.ruleKey>
-        <sonar.issue.ignore.multicriteria.s32.resourceKey>**/ConversorDataISO8601.java</sonar.issue.ignore.multicriteria.s32.resourceKey>
+        <sonar.issue.ignore.multicriteria.s28.resourceKey>**/MformPersistenciaXML.java
+        </sonar.issue.ignore.multicriteria.s28.resourceKey>
+        <sonar.issue.ignore.multicriteria.s29.ruleKey>fb-contrib:SPP_CONVERSION_OF_STRING_LITERAL
+        </sonar.issue.ignore.multicriteria.s29.ruleKey>
+        <sonar.issue.ignore.multicriteria.s29.resourceKey>**/AbstractHibernatePersistenceService.java
+        </sonar.issue.ignore.multicriteria.s29.resourceKey>
+        <sonar.issue.ignore.multicriteria.s30.ruleKey>fb-contrib:PSC_PRESIZE_COLLECTIONS
+        </sonar.issue.ignore.multicriteria.s30.ruleKey>
+        <sonar.issue.ignore.multicriteria.s30.resourceKey>**/DominioService.java
+        </sonar.issue.ignore.multicriteria.s30.resourceKey>
+        <sonar.issue.ignore.multicriteria.s31.ruleKey>fb-contrib:MDM_SETDEFAULTLOCALE
+        </sonar.issue.ignore.multicriteria.s31.ruleKey>
+        <sonar.issue.ignore.multicriteria.s31.resourceKey>**/ShowcaseApplication.java
+        </sonar.issue.ignore.multicriteria.s31.resourceKey>
+        <sonar.issue.ignore.multicriteria.s32.ruleKey>fb-contrib:CLI_CONSTANT_LIST_INDEX
+        </sonar.issue.ignore.multicriteria.s32.ruleKey>
+        <sonar.issue.ignore.multicriteria.s32.resourceKey>**/ConversorDataISO8601.java
+        </sonar.issue.ignore.multicriteria.s32.resourceKey>
 
-        <sonar.issue.ignore.multicriteria.s33.ruleKey>fb-contrib:NFF_NON_FUNCTIONAL_FIELD</sonar.issue.ignore.multicriteria.s33.ruleKey>
-        <sonar.issue.ignore.multicriteria.s33.resourceKey>**/ServiceRefTransientValue.java</sonar.issue.ignore.multicriteria.s33.resourceKey>
-        <sonar.issue.ignore.multicriteria.s34.ruleKey>fb-contrib:NFF_NON_FUNCTIONAL_FIELD</sonar.issue.ignore.multicriteria.s34.ruleKey>
-        <sonar.issue.ignore.multicriteria.s34.resourceKey>**/DiffInfo.java</sonar.issue.ignore.multicriteria.s34.resourceKey>
-        <sonar.issue.ignore.multicriteria.s35.ruleKey>fb-contrib:NFF_NON_FUNCTIONAL_FIELD</sonar.issue.ignore.multicriteria.s35.ruleKey>
-        <sonar.issue.ignore.multicriteria.s35.resourceKey>**/DummyPage.java</sonar.issue.ignore.multicriteria.s35.resourceKey>
-        <sonar.issue.ignore.multicriteria.s36.ruleKey>fb-contrib:NFF_NON_FUNCTIONAL_FIELD</sonar.issue.ignore.multicriteria.s36.ruleKey>
-        <sonar.issue.ignore.multicriteria.s36.resourceKey>**/ConfirmationEventPayload.java</sonar.issue.ignore.multicriteria.s36.resourceKey>
+        <sonar.issue.ignore.multicriteria.s33.ruleKey>fb-contrib:NFF_NON_FUNCTIONAL_FIELD
+        </sonar.issue.ignore.multicriteria.s33.ruleKey>
+        <sonar.issue.ignore.multicriteria.s33.resourceKey>**/ServiceRefTransientValue.java
+        </sonar.issue.ignore.multicriteria.s33.resourceKey>
+        <sonar.issue.ignore.multicriteria.s34.ruleKey>fb-contrib:NFF_NON_FUNCTIONAL_FIELD
+        </sonar.issue.ignore.multicriteria.s34.ruleKey>
+        <sonar.issue.ignore.multicriteria.s34.resourceKey>**/DiffInfo.java
+        </sonar.issue.ignore.multicriteria.s34.resourceKey>
+        <sonar.issue.ignore.multicriteria.s35.ruleKey>fb-contrib:NFF_NON_FUNCTIONAL_FIELD
+        </sonar.issue.ignore.multicriteria.s35.ruleKey>
+        <sonar.issue.ignore.multicriteria.s35.resourceKey>**/DummyPage.java
+        </sonar.issue.ignore.multicriteria.s35.resourceKey>
+        <sonar.issue.ignore.multicriteria.s36.ruleKey>fb-contrib:NFF_NON_FUNCTIONAL_FIELD
+        </sonar.issue.ignore.multicriteria.s36.ruleKey>
+        <sonar.issue.ignore.multicriteria.s36.resourceKey>**/ConfirmationEventPayload.java
+        </sonar.issue.ignore.multicriteria.s36.resourceKey>
 
-        <sonar.issue.ignore.multicriteria.s37.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE</sonar.issue.ignore.multicriteria.s37.ruleKey>
-        <sonar.issue.ignore.multicriteria.s37.resourceKey>**/AbstractBasicFormPersistence.java</sonar.issue.ignore.multicriteria.s37.resourceKey>
-        <sonar.issue.ignore.multicriteria.s38.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE</sonar.issue.ignore.multicriteria.s38.ruleKey>
-        <sonar.issue.ignore.multicriteria.s38.resourceKey>**/FormKeyInt.java</sonar.issue.ignore.multicriteria.s38.resourceKey>
-        <sonar.issue.ignore.multicriteria.s39.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE</sonar.issue.ignore.multicriteria.s39.ruleKey>
-        <sonar.issue.ignore.multicriteria.s39.resourceKey>**/FormKeyLong.java</sonar.issue.ignore.multicriteria.s39.resourceKey>
-        <sonar.issue.ignore.multicriteria.s40.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE</sonar.issue.ignore.multicriteria.s40.ruleKey>
-        <sonar.issue.ignore.multicriteria.s40.resourceKey>**/STypeFormKey.java</sonar.issue.ignore.multicriteria.s40.resourceKey>
-        <sonar.issue.ignore.multicriteria.s41.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE</sonar.issue.ignore.multicriteria.s41.ruleKey>
-        <sonar.issue.ignore.multicriteria.s41.resourceKey>**/FileUploadListPanel.java</sonar.issue.ignore.multicriteria.s41.resourceKey>
-        <sonar.issue.ignore.multicriteria.s42.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE</sonar.issue.ignore.multicriteria.s42.ruleKey>
-        <sonar.issue.ignore.multicriteria.s42.resourceKey>**/FileUploadPanel.java</sonar.issue.ignore.multicriteria.s42.resourceKey>
-        <sonar.issue.ignore.multicriteria.s43.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE</sonar.issue.ignore.multicriteria.s43.ruleKey>
-        <sonar.issue.ignore.multicriteria.s43.resourceKey>**/SingularPropertiesImpl.java</sonar.issue.ignore.multicriteria.s43.resourceKey>
+        <sonar.issue.ignore.multicriteria.s37.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE
+        </sonar.issue.ignore.multicriteria.s37.ruleKey>
+        <sonar.issue.ignore.multicriteria.s37.resourceKey>**/AbstractBasicFormPersistence.java
+        </sonar.issue.ignore.multicriteria.s37.resourceKey>
+        <sonar.issue.ignore.multicriteria.s38.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE
+        </sonar.issue.ignore.multicriteria.s38.ruleKey>
+        <sonar.issue.ignore.multicriteria.s38.resourceKey>**/FormKeyInt.java
+        </sonar.issue.ignore.multicriteria.s38.resourceKey>
+        <sonar.issue.ignore.multicriteria.s39.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE
+        </sonar.issue.ignore.multicriteria.s39.ruleKey>
+        <sonar.issue.ignore.multicriteria.s39.resourceKey>**/FormKeyLong.java
+        </sonar.issue.ignore.multicriteria.s39.resourceKey>
+        <sonar.issue.ignore.multicriteria.s40.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE
+        </sonar.issue.ignore.multicriteria.s40.ruleKey>
+        <sonar.issue.ignore.multicriteria.s40.resourceKey>**/STypeFormKey.java
+        </sonar.issue.ignore.multicriteria.s40.resourceKey>
+        <sonar.issue.ignore.multicriteria.s41.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE
+        </sonar.issue.ignore.multicriteria.s41.ruleKey>
+        <sonar.issue.ignore.multicriteria.s41.resourceKey>**/FileUploadListPanel.java
+        </sonar.issue.ignore.multicriteria.s41.resourceKey>
+        <sonar.issue.ignore.multicriteria.s42.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE
+        </sonar.issue.ignore.multicriteria.s42.ruleKey>
+        <sonar.issue.ignore.multicriteria.s42.resourceKey>**/FileUploadPanel.java
+        </sonar.issue.ignore.multicriteria.s42.resourceKey>
+        <sonar.issue.ignore.multicriteria.s43.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE
+        </sonar.issue.ignore.multicriteria.s43.ruleKey>
+        <sonar.issue.ignore.multicriteria.s43.resourceKey>**/SingularPropertiesImpl.java
+        </sonar.issue.ignore.multicriteria.s43.resourceKey>
 
-        <sonar.issue.ignore.multicriteria.s44.ruleKey>fb-contrib:PDP_POORLY_DEFINED_PARAMETER</sonar.issue.ignore.multicriteria.s44.ruleKey>
-        <sonar.issue.ignore.multicriteria.s44.resourceKey>**/BSPaginationPanel.java</sonar.issue.ignore.multicriteria.s44.resourceKey>
-        <sonar.issue.ignore.multicriteria.s45.ruleKey>fb-contrib:PDP_POORLY_DEFINED_PARAMETER</sonar.issue.ignore.multicriteria.s45.ruleKey>
-        <sonar.issue.ignore.multicriteria.s45.resourceKey>**/BSItemsPerPageDropDown.java</sonar.issue.ignore.multicriteria.s45.resourceKey>
-        <sonar.issue.ignore.multicriteria.s46.ruleKey>fb-contrib:PDP_POORLY_DEFINED_PARAMETER</sonar.issue.ignore.multicriteria.s46.ruleKey>
-        <sonar.issue.ignore.multicriteria.s46.resourceKey>**/SingularPropertiesImpl.java</sonar.issue.ignore.multicriteria.s46.resourceKey>
-        <sonar.issue.ignore.multicriteria.s47.ruleKey>fb-contrib:PDP_POORLY_DEFINED_PARAMETER</sonar.issue.ignore.multicriteria.s47.ruleKey>
-        <sonar.issue.ignore.multicriteria.s47.resourceKey>**/ListBreadcrumbMapper.java</sonar.issue.ignore.multicriteria.s47.resourceKey>
+        <sonar.issue.ignore.multicriteria.s44.ruleKey>fb-contrib:PDP_POORLY_DEFINED_PARAMETER
+        </sonar.issue.ignore.multicriteria.s44.ruleKey>
+        <sonar.issue.ignore.multicriteria.s44.resourceKey>**/BSPaginationPanel.java
+        </sonar.issue.ignore.multicriteria.s44.resourceKey>
+        <sonar.issue.ignore.multicriteria.s45.ruleKey>fb-contrib:PDP_POORLY_DEFINED_PARAMETER
+        </sonar.issue.ignore.multicriteria.s45.ruleKey>
+        <sonar.issue.ignore.multicriteria.s45.resourceKey>**/BSItemsPerPageDropDown.java
+        </sonar.issue.ignore.multicriteria.s45.resourceKey>
+        <sonar.issue.ignore.multicriteria.s46.ruleKey>fb-contrib:PDP_POORLY_DEFINED_PARAMETER
+        </sonar.issue.ignore.multicriteria.s46.ruleKey>
+        <sonar.issue.ignore.multicriteria.s46.resourceKey>**/SingularPropertiesImpl.java
+        </sonar.issue.ignore.multicriteria.s46.resourceKey>
+        <sonar.issue.ignore.multicriteria.s47.ruleKey>fb-contrib:PDP_POORLY_DEFINED_PARAMETER
+        </sonar.issue.ignore.multicriteria.s47.ruleKey>
+        <sonar.issue.ignore.multicriteria.s47.resourceKey>**/ListBreadcrumbMapper.java
+        </sonar.issue.ignore.multicriteria.s47.resourceKey>
 
-        <sonar.issue.ignore.multicriteria.s48.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE</sonar.issue.ignore.multicriteria.s48.ruleKey>
-        <sonar.issue.ignore.multicriteria.s48.resourceKey>**/DownloadSupportedBehavior.java</sonar.issue.ignore.multicriteria.s48.resourceKey>
+        <sonar.issue.ignore.multicriteria.s48.ruleKey>fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE
+        </sonar.issue.ignore.multicriteria.s48.ruleKey>
+        <sonar.issue.ignore.multicriteria.s48.resourceKey>**/DownloadSupportedBehavior.java
+        </sonar.issue.ignore.multicriteria.s48.resourceKey>
 
-        <sonar.issue.ignore.multicriteria.s49.ruleKey>findsecbugs:OBJECT_DESERIALIZATION</sonar.issue.ignore.multicriteria.s49.ruleKey>
-        <sonar.issue.ignore.multicriteria.s49.resourceKey>**/SingularIOUtils.java</sonar.issue.ignore.multicriteria.s49.resourceKey>
+        <sonar.issue.ignore.multicriteria.s49.ruleKey>findsecbugs:OBJECT_DESERIALIZATION
+        </sonar.issue.ignore.multicriteria.s49.ruleKey>
+        <sonar.issue.ignore.multicriteria.s49.resourceKey>**/SingularIOUtils.java
+        </sonar.issue.ignore.multicriteria.s49.resourceKey>
 
         <sonar.issue.ignore.multicriteria.s50.ruleKey>squid:S00112</sonar.issue.ignore.multicriteria.s50.ruleKey>
-        <sonar.issue.ignore.multicriteria.s50.resourceKey>**/RunnableEx.java</sonar.issue.ignore.multicriteria.s50.resourceKey>
+        <sonar.issue.ignore.multicriteria.s50.resourceKey>**/RunnableEx.java
+        </sonar.issue.ignore.multicriteria.s50.resourceKey>
 
         <!-- Falso positivo: cookie seguro  -->
         <sonar.issue.ignore.multicriteria.s51.ruleKey>squid:S2092</sonar.issue.ignore.multicriteria.s51.ruleKey>
-        <sonar.issue.ignore.multicriteria.s51.resourceKey>**/SkinOptions.java</sonar.issue.ignore.multicriteria.s51.resourceKey>
+        <sonar.issue.ignore.multicriteria.s51.resourceKey>**/SkinOptions.java
+        </sonar.issue.ignore.multicriteria.s51.resourceKey>
 
         <!-- Falso positivo: remover estado mutavel de servlet  -->
         <sonar.issue.ignore.multicriteria.s52.ruleKey>squid:S2226</sonar.issue.ignore.multicriteria.s52.ruleKey>
-        <sonar.issue.ignore.multicriteria.s52.resourceKey>**/FileUploadServlet.java</sonar.issue.ignore.multicriteria.s52.resourceKey>
+        <sonar.issue.ignore.multicriteria.s52.resourceKey>**/FileUploadServlet.java
+        </sonar.issue.ignore.multicriteria.s52.resourceKey>
 
-        <sonar.issue.ignore.multicriteria.s53.ruleKey>findsecbugs:OBJECT_DESERIALIZATION</sonar.issue.ignore.multicriteria.s53.ruleKey>
-        <sonar.issue.ignore.multicriteria.s53.resourceKey>**/WicketSerializationDebugUtil.java</sonar.issue.ignore.multicriteria.s53.resourceKey>
+        <sonar.issue.ignore.multicriteria.s53.ruleKey>findsecbugs:OBJECT_DESERIALIZATION
+        </sonar.issue.ignore.multicriteria.s53.ruleKey>
+        <sonar.issue.ignore.multicriteria.s53.resourceKey>**/WicketSerializationDebugUtil.java
+        </sonar.issue.ignore.multicriteria.s53.resourceKey>
 
         <sonar.issue.ignore.multicriteria.s54.ruleKey>squid:S1166</sonar.issue.ignore.multicriteria.s54.ruleKey>
-        <sonar.issue.ignore.multicriteria.s54.resourceKey>**/SingularSpringInjector.java</sonar.issue.ignore.multicriteria.s54.resourceKey>
+        <sonar.issue.ignore.multicriteria.s54.resourceKey>**/SingularSpringInjector.java
+        </sonar.issue.ignore.multicriteria.s54.resourceKey>
         <sonar.issue.ignore.multicriteria.s55.ruleKey>squid:S1166</sonar.issue.ignore.multicriteria.s55.ruleKey>
-        <sonar.issue.ignore.multicriteria.s55.resourceKey>**/SpringBeanLocator.java</sonar.issue.ignore.multicriteria.s55.resourceKey>
+        <sonar.issue.ignore.multicriteria.s55.resourceKey>**/SpringBeanLocator.java
+        </sonar.issue.ignore.multicriteria.s55.resourceKey>
         <sonar.issue.ignore.multicriteria.s56.ruleKey>squid:S1166</sonar.issue.ignore.multicriteria.s56.ruleKey>
-        <sonar.issue.ignore.multicriteria.s56.resourceKey>**/SpringFieldValueFactory.java</sonar.issue.ignore.multicriteria.s56.resourceKey>
+        <sonar.issue.ignore.multicriteria.s56.resourceKey>**/SpringFieldValueFactory.java
+        </sonar.issue.ignore.multicriteria.s56.resourceKey>
         <sonar.issue.ignore.multicriteria.s57.ruleKey>squid:S1166</sonar.issue.ignore.multicriteria.s57.ruleKey>
-        <sonar.issue.ignore.multicriteria.s57.resourceKey>**/LazyInitProxyFactory.java</sonar.issue.ignore.multicriteria.s57.resourceKey>
-        <sonar.issue.ignore.multicriteria.s58.ruleKey>findsecbugs:SQL_INJECTION_JDBC</sonar.issue.ignore.multicriteria.s58.ruleKey>
-        <sonar.issue.ignore.multicriteria.s58.resourceKey>**/RelationalDatabaseHibernate.java</sonar.issue.ignore.multicriteria.s58.resourceKey>
+        <sonar.issue.ignore.multicriteria.s57.resourceKey>**/LazyInitProxyFactory.java
+        </sonar.issue.ignore.multicriteria.s57.resourceKey>
+        <sonar.issue.ignore.multicriteria.s58.ruleKey>findsecbugs:SQL_INJECTION_JDBC
+        </sonar.issue.ignore.multicriteria.s58.ruleKey>
+        <sonar.issue.ignore.multicriteria.s58.resourceKey>**/RelationalDatabaseHibernate.java
+        </sonar.issue.ignore.multicriteria.s58.resourceKey>
 
         <!-- Sonar -->
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -494,13 +632,15 @@
 
         <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.url>
         <project.scm.connection>scm:git:http://10.0.0.22/SINGULAR/singular-core.git</project.scm.connection>
-        <project.scm.developerConnection>scm:git:ssh://10.0.0.22/SINGULAR/singular-core.git</project.scm.developerConnection>
+        <project.scm.developerConnection>scm:git:ssh://10.0.0.22/SINGULAR/singular-core.git
+        </project.scm.developerConnection>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sonar.exclusions>**/*.less, **/*.sass, **/*.html, **/*.xml, **/*.js, **/*.css, **/form/exemplos/*</sonar.exclusions>
+        <sonar.exclusions>**/*.less, **/*.sass, **/*.html, **/*.xml, **/*.js, **/*.css, **/form/exemplos/*
+        </sonar.exclusions>
         <jdk.version>1.8</jdk.version>
         <skipTests>false</skipTests>
         <!-- Spring and Spring Security should be update together with compatible versions -->
-    
+
     </properties>
 
 </project>

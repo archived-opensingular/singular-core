@@ -29,12 +29,14 @@ import org.opensingular.form.persistence.relational.RelationalSQL;
  * @author Edmundo Andrade
  */
 public class PersistenceStrategyTable implements PersistenceStrategy {
+    @Override
     public void save(SInstance instance, List<RelationalData> toList) {
         for (SInstance item : getChildren(instance)) {
             RelationalSQL.persistenceStrategy(item.getType()).save(item, toList);
         }
     }
 
+    @Override
     public void load(SInstance instance, List<RelationalData> fromList) {
         for (SInstance item : getChildren(instance)) {
             RelationalSQL.persistenceStrategy(item.getType()).load(item, fromList);

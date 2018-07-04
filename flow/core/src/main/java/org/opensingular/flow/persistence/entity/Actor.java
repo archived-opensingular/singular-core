@@ -16,22 +16,22 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.opensingular.flow.core.SUser;
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.opensingular.lib.support.persistence.util.Constants;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.Subselect;
+import org.opensingular.flow.core.SUser;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.util.Constants;
 
 /**
  * The persistent class for the TB_ATOR database table.
  */
 @Entity
-@Table(name = "VW_ATOR", schema = Constants.SCHEMA)
+@Subselect("SELECT A.CO_ATOR, A.CO_USUARIO, A.NO_ATOR, A.DS_EMAIL FROM " + Constants.SCHEMA + ".VW_ATOR A")
 public class Actor extends BaseEntity<Integer> implements SUser {
 
     /* nao deve ter generator, deve ser uma view*/

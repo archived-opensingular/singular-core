@@ -48,6 +48,7 @@ import org.opensingular.form.type.util.STypeLatitudeLongitudeGMaps;
 import org.opensingular.form.type.util.STypeLatitudeLongitudeMapper;
 import org.opensingular.form.type.util.STypeYearMonth;
 import org.opensingular.form.view.*;
+import org.opensingular.form.view.richtext.SViewByRichText;
 import org.opensingular.form.wicket.mapper.BooleanMapper;
 import org.opensingular.form.wicket.mapper.DateMapper;
 import org.opensingular.form.wicket.mapper.DateTimeMapper;
@@ -122,6 +123,7 @@ public class IWicketComponentMapperRegistry
         add(STypeSimple.class,     SViewReadOnly.class,                   ReadOnlyControlsFieldComponentMapper::new);
         add(STypeBoolean.class,    SViewSelectionBySelect.class,          BooleanSelectMapper::new);
         add(STypeBoolean.class,                                           BooleanMapper::new);
+        add(STypeBoolean.class,    SViewCheckBoxLabelAbove.class,         BooleanMapper::new);
         add(STypeBoolean.class,    SViewBooleanSwitch.class,              BooleanSwitchMapper::new);
         add(STypeBoolean.class,    SViewBooleanByRadio.class,             BooleanRadioMapper::new);
         add(STypeInteger.class,                                           () -> new NumberMapper<>(Integer.class));
@@ -131,6 +133,7 @@ public class IWicketComponentMapperRegistry
         add(STypeString.class,     SViewTextArea.class,                   TextAreaMapper::new);
         add(STypeString.class,     SViewAutoComplete.class,               AutocompleteMapper::new);
         add(STypeDate.class,                                              DateMapper::new);
+        add(STypeDate.class,       SViewDate.class,                       DateMapper::new);
         add(STypeYearMonth.class,                                         YearMonthMapper::new);
         add(STypeDecimal.class,                                           DecimalMapper::new);
         add(STypeMonetary.class,                                          MoneyMapper::new);

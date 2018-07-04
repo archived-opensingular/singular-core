@@ -16,25 +16,21 @@
 
 package org.opensingular.form.persistence.entity;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.HybridIdentityOrSequenceGenerator;
-import org.hibernate.annotations.GenericGenerator;
-
+import java.util.List;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.List;
+
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.util.Constants;
 
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
-@GenericGenerator(name = FormAnnotationEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_ANOTACAO_FORMULARIO", schema = Constants.SCHEMA)
 public class FormAnnotationEntity extends BaseEntity<FormAnnotationPK> {
 
@@ -44,7 +40,7 @@ public class FormAnnotationEntity extends BaseEntity<FormAnnotationPK> {
     private FormAnnotationPK cod;
 
     @ManyToOne
-    @JoinColumn(name = "CO_VERSAO_ANOTACAO_ATUAL")
+    @JoinColumn(name = "CO_VERSAO_ANOTACAO_ATUAL", foreignKey = @ForeignKey(name = "FK_ANOT_FORM_VER_ANOT_ATUAL"))
     private FormAnnotationVersionEntity annotationCurrentVersion;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "formAnnotationEntity")

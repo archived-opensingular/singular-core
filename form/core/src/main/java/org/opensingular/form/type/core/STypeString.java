@@ -19,7 +19,9 @@ package org.opensingular.form.type.core;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeSimple;
+import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.validation.InstanceValidatable;
 import org.opensingular.form.view.SViewTextArea;
 import org.opensingular.lib.commons.lambda.IConsumer;
 
@@ -28,6 +30,26 @@ public class STypeString extends STypeSimple<SIString, String> {
 
     public STypeString() {
         super(SIString.class, String.class);
+    }
+
+    @Override
+    protected void onLoadType(TypeBuilder tb) {
+        addInstanceValidator(validatable -> validateMaxLength(validatable));
+    }
+
+    protected void validateMaxLength(InstanceValidatable<SIString> validatable) {
+
+        SIString instance = validatable.getInstance();
+        String value = instance.getValue();
+        Integer maxLength = instance.getAttributeValue(SPackageBasic.ATR_MAX_LENGTH);
+
+        if ((value != null) &&
+            (maxLength != null) &&
+            (maxLength >= 0) &&
+            (value.length() > maxLength)) {
+
+            validatable.error("O tamanho máximo é " + maxLength);
+        }
     }
 
     protected STypeString(Class<? extends SIString> instanceClass) {

@@ -64,8 +64,8 @@ public final class InstanceValidators {
     /**
      * Verifica se o telefone nacional é válido
      */
-    public static MTelefoneNacionalValidator telefoneNacional(){
-        return MTelefoneNacionalValidator.INSTANCE;
+    public static STelefoneNacionalValidator telefoneNacional(){
+        return STelefoneNacionalValidator.INSTANCE;
     }
 
     /**
@@ -77,5 +77,9 @@ public final class InstanceValidators {
 
     public static MMaxDateValidator maxDate(){
         return MMaxDateValidator.INSTANCE;
+    }
+
+    public static MMinDateValidator minDate(){
+        return MMinDateValidator.INSTANCE;
     }
 }

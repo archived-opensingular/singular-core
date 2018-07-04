@@ -31,7 +31,7 @@ import org.opensingular.lib.commons.lambda.IFunction;
  * 
  * @author Daniel C. Bordin
  */
-public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSViewList> extends AbstractSViewListWithControls<SELF> {
+public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSViewListWithCustomColumns<SELF>> extends AbstractSViewListWithControls<SELF> {
 
     private final List<Column> columns = new ArrayList<>();
 
@@ -77,6 +77,7 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      * coluna específico e o conteudo de cada célula será cálculado
      * dinamicamente mediante a função informada.
      */
+    @SuppressWarnings("unchecked")
     public final SELF col(SType<?> type, String customLabel, IFunction<SInstance, String> displayFunction) {
         columns.add(new Column(type.getName(), customLabel, displayFunction));
         return (SELF) this;
@@ -103,6 +104,7 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      *            Conversor da instância da linha (um composite) na string de
      *            conteúdo da celula
      */
+    @SuppressWarnings("unchecked")
     public final SELF col(String customLabel, IFunction<SInstance, String> displayFunction) {
         columns.add(new Column(null, customLabel, displayFunction));
         return (SELF) this;

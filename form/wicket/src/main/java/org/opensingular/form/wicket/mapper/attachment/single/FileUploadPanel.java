@@ -61,12 +61,12 @@ import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManager;
 import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManagerFactory;
 import org.opensingular.form.wicket.mapper.attachment.upload.UploadResponseWriter;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
-import org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet;
+import org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.AttachmentKeyStrategy;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.util.Loggable;
 
-import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet.PARAM_NAME;
+import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.ServletFileUploadStrategy.PARAM_NAME;
 
 public class FileUploadPanel extends Panel implements Loggable {
 
@@ -256,7 +256,7 @@ public class FileUploadPanel extends Panel implements Loggable {
     }
 
     private String getUploadUrl() {
-        return FileUploadServlet.getUploadUrl(getServletRequest(), uploadId);
+        return AttachmentKeyStrategy.getUploadUrl(getServletRequest(), uploadId);
     }
 
     private FileUploadManager getFileUploadManager() {

@@ -37,7 +37,7 @@ import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.type.util.STypeLatitudeLongitudeMapper;
 import org.opensingular.form.view.FileEventListener;
-import org.opensingular.form.view.SView;
+import org.opensingular.form.view.SViewCurrentLocation;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import org.opensingular.form.wicket.mapper.TableListMapper;
@@ -73,13 +73,13 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
         LatLongMarkupIds ids = new LatLongMarkupIds();
 
         zoomCtx.getContainer().visitChildren((TextField.class), (object, visit) -> {
-            String nameSimple = ((SInstanceValueModel) object.getDefaultModel()).getSInstance().getType().getNameSimple();
+            String nameSimple = ((SInstanceValueModel<?>) object.getDefaultModel()).getSInstance().getType().getNameSimple();
             if (nameSimple.equals(STypeLatitudeLongitudeMapper.FIELD_ZOOM)) {
                 ids.zoomId = object.getMarkupId();
             }
         });
 
-        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, ctx.getModel(), ctx.getView(),
+        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, ctx.getModel(), ctx.getViewSupplier(SViewCurrentLocation.class),
                 ctx.getViewMode().isVisualization(), true);
         BSGrid gridGoogleMaps = ctx.getContainer().newGrid();
 
@@ -113,9 +113,9 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
 //                    //Problema aparentemente é que é criado um novo contexto.
 //                    points.getObject().clearInstance();
 //                    table.setVisible(false);
-//                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-////                    target.add(gridGoogleMaps);
-//                }));
+//AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+    ////                target.add(gridGoogleMaps);
+    //                }));
 
         WicketUtils.findFirstChild(fileCtx.getContainer(), FileUploadPanel.class)
                 .ifPresent(panel -> panel.setConsumerAfterLoadImage((target) -> {
@@ -123,8 +123,7 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                     table.setVisible(false);
                     String urlFile = createTempPublicFile(panel);
                     googleMapsPanel.includeKmlFile(toAbsolutePath() + urlFile);
-                    target.add(pointsCtx.getParent().getContainer());
-                }));
+                    target.add(pointsCtx.getParent().getContainer());            }));
 
 
         AbstractDefaultAjaxBehavior addPoint = createBehaviorAddPoint(points, ctx.getContainer());
@@ -133,12 +132,12 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                 ctx.getContainer().getMarkupId())));
 
         WicketUtils.findFirstChild(ctx.getContainer(), AddButton.class)
-                .ifPresent(button -> button.add(new AjaxEventBehavior("click") {
-                    @Override
-                    protected void onEvent(AjaxRequestTarget target) {
-                        target.add(googleMapsPanel);
-                    }
-                }));
+            .ifPresent(button -> button.add(new AjaxEventBehavior("click") {
+                @Override
+                protected void onEvent(AjaxRequestTarget target) {
+                    target.add(googleMapsPanel);
+                }
+            }));
 
         confirmationModal.registerListener(googleMapsPanel::updateJS);
 

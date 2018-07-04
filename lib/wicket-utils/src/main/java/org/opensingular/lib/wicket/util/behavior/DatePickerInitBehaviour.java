@@ -20,44 +20,48 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.util.visit.IVisitor;
-import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstants;
+
+import java.util.HashMap;
 
 public class DatePickerInitBehaviour extends InitScriptBehaviour {
 
+    private static final long serialVersionUID = 8453390368637518965L;
+
+    private final DatePickerSettings datePickerSettings;
+
+    public DatePickerInitBehaviour(DatePickerSettings datePickerSettings) {
+        this.datePickerSettings = datePickerSettings;
+    }
+
+    public DatePickerInitBehaviour() {
+        this(null);
+    }
+
     @Override
     public String getScript(Component component) {
-
-        String idDatepicker = component.getMarkupId();
-        String idInput = component.getMarkupId();
-
-        if (component instanceof MarkupContainer) {
-            FormComponent<?> fc = ((MarkupContainer) component).visitChildren(FormComponent.class,
-                    (IVisitor<FormComponent<?>, FormComponent<?>>) (object, visit) -> visit.stop(object));
-            if (fc != null) {
-                idInput = fc.getMarkupId();
-            }
-        }
-
-        String js = ""
-            + " var $datepicker = $('#" + idDatepicker + "');"
-            + " var $input = $('#" + idInput + "');"
-            + " if (!$input.prop('disabled')){"
-            + "      $datepicker.datepicker({ "
-            + "        rtl: App.isRTL(), "
-            + "        orientation: 'right', "
-            + "        autoclose: true, "
-            + "        language: 'pt-BR' "
-            + "      }) "
-            + "      .on('changeDate', function(){"
-            + "        var input = $input; "
-            + "        var format = $datepicker.data('dateFormat').toUpperCase();"
-            + "        if ( format == 'DD/MM/YYYY' && /\\d{1,2}\\/\\d{1,2}\\/\\d{4}/.test(input.val()) "
-            + "          || format == 'DD/MM' && /\\d{1,2}\\/\\d{1,2}/.test(input.val())) { "
-            + "          input.trigger('" + BSDatepickerConstants.JS_CHANGE_EVENT + "');"
-            + "        } "
-            + "      }); "
-            + " } ";
-
-        return String.format(js, idDatepicker);
+        DatePickerInitScriptBuilder scriptBuilder = new DatePickerInitScriptBuilder(new HashMap<>(),
+                component.getMarkupId(), getIdInput(component), datePickerSettings);
+        return scriptBuilder.generateScript();
     }
+
+    private String getIdInput(Component component) {
+        String idInput = null;
+        if (component instanceof MarkupContainer) {
+            idInput = findFormComponentId((MarkupContainer) component);
+        }
+        if (idInput == null) {
+            idInput = component.getMarkupId();
+        }
+        return idInput;
+    }
+
+    private String findFormComponentId(MarkupContainer component) {
+        FormComponent<?> fc = component.visitChildren(FormComponent.class,
+                (IVisitor<FormComponent<?>, FormComponent<?>>) (object, visit) -> visit.stop(object));
+        if (fc != null) {
+            return fc.getMarkupId();
+        }
+        return null;
+    }
+
 }

@@ -17,6 +17,7 @@
 package org.opensingular.flow.core.renderer;
 
 import org.opensingular.flow.core.FlowDefinition;
+import org.opensingular.flow.core.FlowInstance;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,4 +53,11 @@ public interface IFlowRenderer {
      */
     void generatePng(@Nonnull FlowDefinition<?> definition, @Nullable ExecutionHistoryForRendering history,
             @Nonnull OutputStream out) throws IOException;
+
+
+    /** Generates a diagram of the flow instance showing de process highlighting the executed tasks and transitions. */
+    @Nonnull
+    public default byte[] generateHistoryPng(@Nonnull FlowInstance flowInstance) {
+        return generatePng(flowInstance.getFlowDefinition(), ExecutionHistoryForRendering.from(flowInstance));
+    }
 }

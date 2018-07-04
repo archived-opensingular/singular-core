@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-lib</artifactId>
-        <version>1.7.1-SNAPSHOT</version>
+        <version>1.8.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-commons</artifactId>
@@ -35,6 +35,12 @@
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
+        </dependency>
+        <!--for javadoc generation only-->
+        <dependency>
+            <groupId>javax.xml.ws</groupId>
+            <artifactId>jaxws-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
@@ -76,6 +82,7 @@
         </dependency>
 
 
+
         <!-- Joda Time API -->
         <dependency>
             <groupId>joda-time</groupId>
@@ -109,19 +116,5 @@
             <artifactId>hamcrest-library</artifactId>
             <scope>test</scope>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.opensingular</groupId>
-            <artifactId>singular-commons-test</artifactId>
-            <version>${singular.version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.opensingular</groupId>
-                    <artifactId>singular-commons</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        -->
     </dependencies>
 </project>

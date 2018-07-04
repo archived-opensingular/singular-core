@@ -32,46 +32,48 @@ import org.opensingular.form.wicket.util.FormStateUtil;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 class MasterDetailModal extends BFModalWindow {
 
     protected final IModel<String> listLabel;
-    protected final WicketBuildContext           ctx;
-    protected final Component                    table;
-    protected final ViewMode                     viewMode;
-    protected       IModel<SInstance>            currentInstance;
-    protected       IConsumer<AjaxRequestTarget> closeCallback;
-    protected       SViewListByMasterDetail      view;
-    protected       BSContainer<?>               containerExterno;
-    protected       FormStateUtil.FormState      formState;
-    protected       IModel<String>               actionLabel;
-    protected       ActionAjaxButton             addButton;
-    private         IConsumer<AjaxRequestTarget> onHideCallback;
+    protected final WicketBuildContext ctx;
+    protected final Component table;
+    protected final ViewMode viewMode;
+    protected final ISupplier<SViewListByMasterDetail> viewSupplier;
+
+    protected IModel<SInstance> currentInstance;
+    protected IConsumer<AjaxRequestTarget> closeCallback;
+    protected BSContainer<?> containerExterno;
+    protected FormStateUtil.FormState formState;
+    protected IModel<String> actionLabel;
+    protected ActionAjaxButton addButton;
+    private IConsumer<AjaxRequestTarget> onHideCallback;
 
     MasterDetailModal(String id,
-                      IModel<SIList<SInstance>> model,
-                      IModel<String> listLabel,
-                      WicketBuildContext ctx,
-                      ViewMode viewMode,
-                      SViewListByMasterDetail view,
-                      BSContainer<?> containerExterno) {
+            IModel<SIList<SInstance>> model,
+            IModel<String> listLabel,
+            WicketBuildContext ctx,
+            ViewMode viewMode,
+            BSContainer<?> containerExterno) {
         super(id, model, true, false);
 
         this.listLabel = listLabel;
         this.ctx = ctx;
         this.table = ctx.getContainer();
         this.viewMode = viewMode;
-        this.view = view;
         this.containerExterno = containerExterno;
+        this.viewSupplier = ctx.getViewSupplier(SViewListByMasterDetail.class);
 
-        setSize(BSModalBorder.Size.valueOf(view.getModalSize()));
+        setSize(BSModalBorder.Size.valueOf(viewSupplier.get().getModalSize()));
 
         actionLabel = $m.ofValue("");
         addButton = new ActionAjaxButton("btn") {
@@ -93,17 +95,29 @@ class MasterDetailModal extends BFModalWindow {
             this.addLink(BSModalBorder.ButtonStyle.CANCEL, $m.ofValue("Cancelar"), new ActionAjaxLink<Void>("btn-cancelar") {
                 @Override
                 protected void onAction(AjaxRequestTarget target) {
-                    if (closeCallback != null) {
-                        closeCallback.accept(target);
-                    }
-                    rollbackState();
-                    target.add(table);
-                    MasterDetailModal.this.hide(target);
+                    rollbackTheInstance(target);
                 }
 
             });
         }
 
+        getModalBorder().setCloseIconCallback(this::rollbackTheInstance);
+
+    }
+
+    /**
+     * Method responsible for remove the new Instance, or rollback to the old Instance.
+     * It is used by cancel and  close button.
+     *
+     * @param target The target to close the modal.
+     */
+    private void rollbackTheInstance(AjaxRequestTarget target) {
+        if (closeCallback != null) {
+            closeCallback.accept(target);
+        }
+        rollbackState();
+        target.add(table);
+        MasterDetailModal.this.hide(target);
     }
 
     private void saveState() {
@@ -122,9 +136,9 @@ class MasterDetailModal extends BFModalWindow {
 
     void showNew(AjaxRequestTarget target) {
         SIList<SInstance> list = getModelObject();
-        closeCallback = this::revert;
+        closeCallback = target1 -> revert();
         currentInstance = new SInstanceListItemModel<>(getModel(), list.indexOf(list.addNew()));
-        actionLabel.setObject(view.getNewActionLabel());
+        actionLabel.setObject(viewSupplier.get().getNewActionLabel());
         MasterDetailModal.this.configureNewContent(actionLabel.getObject(), target);
     }
 
@@ -133,7 +147,7 @@ class MasterDetailModal extends BFModalWindow {
         currentInstance = forEdit;
         String prefix;
         if (ctx.getViewMode().isEdition()) {
-            prefix = view.getEditActionLabel();
+            prefix = viewSupplier.get().getEditActionLabel();
             actionLabel.setObject(prefix);
         } else {
             prefix = "";
@@ -143,7 +157,7 @@ class MasterDetailModal extends BFModalWindow {
         configureNewContent(prefix, target);
     }
 
-    private void revert(AjaxRequestTarget target) {
+    private void revert() {
         SIList<SInstance> list = getModelObject();
         list.remove(list.size() - 1);
     }
@@ -152,12 +166,12 @@ class MasterDetailModal extends BFModalWindow {
 
         setTitleText($m.get(() -> (prefix + " " + listLabel.getObject()).trim()));
 
-        BSContainer<?> modalBody     = new BSContainer<>("bogoMips");
-        ViewMode             viewModeModal = viewMode;
+        BSContainer<?> modalBody = new BSContainer<>("bogoMips");
+        ViewMode viewModeModal = viewMode;
 
         setBody(modalBody);
 
-        if (!view.isEditEnabled()) {
+        if (!viewSupplier.get().isEditEnabled()) {
             viewModeModal = ViewMode.READ_ONLY;
         }
 
@@ -187,7 +201,6 @@ class MasterDetailModal extends BFModalWindow {
         if (onHideCallback != null)
             onHideCallback.accept(target);
     }
-
 
     @SuppressWarnings("unchecked")
     public IModel<SIList<SInstance>> getModel() {

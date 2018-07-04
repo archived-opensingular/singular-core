@@ -16,6 +16,8 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
+
 import java.util.Optional;
 
 import org.apache.wicket.Component;
@@ -23,8 +25,6 @@ import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.validation.validator.StringValidator;
-
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.view.SView;
@@ -42,18 +42,18 @@ public class TextAreaMapper extends StringMapper {
         final SView view = ctx.getView();
 
         if (view instanceof SViewTextArea) {
-
             SViewTextArea mTextAreaView = (SViewTextArea) view;
+            Integer lines = mTextAreaView.getLines();
 
             final SInstance mi = model.getObject();
             FormComponent<?> textArea = new TextArea<>(mi.getName(), new SInstanceValueModel<>(model));
             textArea.setLabel(labelModel);
-            formGroup.appendTextarea(textArea, mTextAreaView.getLines());
+            formGroup.appendTextarea(textArea, lines);
 
             Optional<Integer> maxSize = Optional.ofNullable(mi.getAttributeValue(SPackageBasic.ATR_MAX_LENGTH));
 
             if (maxSize.isPresent()) {
-                textArea.add(StringValidator.maximumLength(maxSize.get()));
+                textArea.add($b.attr("maxlength", maxSize.get()));
                 textArea.add(new CountDownBehaviour());
             }
 

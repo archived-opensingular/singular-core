@@ -19,6 +19,7 @@
 package org.opensingular.form.wicket.mapper.table;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.Button;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,7 +57,7 @@ public class TableListWithSimpleTypeTest {
     public void testAddItem(){
         tester.getAssertionsForm().getSubComponentWithType(nomes).assertSInstance().isList(0);
 
-        final Button addButton = findAddButton();
+        final AjaxLink addButton = findAddButton();
 
         tester.executeAjaxEvent(addButton, "click");
         tester.getAssertionsForm().getSubComponentWithType(nomes).assertSInstance().isList(1);
@@ -70,7 +71,7 @@ public class TableListWithSimpleTypeTest {
 
     @Test
     public void testRemoveItem(){
-        final Button addButton = findAddButton();
+        final AjaxLink addButton = findAddButton();
 
         tester.getAssertionsForm().getSubComponentWithType(nomes).assertSInstance().isList(0);
 
@@ -88,7 +89,7 @@ public class TableListWithSimpleTypeTest {
 
     @Test
     public void testAddItemAndFillOptions() {
-        final Button addButton = findAddButton();
+        final AjaxLink addButton = findAddButton();
         tester.getAssertionsForm().getSubComponentWithType(nomes).assertSInstance().isList(0);
 
         tester.executeAjaxEvent(addButton, "click");
@@ -104,7 +105,7 @@ public class TableListWithSimpleTypeTest {
 
     @Test
     public void testAddItemFillOptionsAndThenAddOtherItem() {
-        final Button addButton = findAddButton();
+        final AjaxLink addButton = findAddButton();
 
         tester.getAssertionsForm().getSubComponentWithType(nomes).assertSInstance().isList(0);
 
@@ -120,7 +121,7 @@ public class TableListWithSimpleTypeTest {
         tester.getAssertionsForm().getSubComponentWithType(nomes).getSubComponentWithType(elementsType).assertSInstance().isValueEquals(newValue);
     }
 
-    public Button findAddButton(){
-        return tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("AddButton")).getTarget(Button.class);
+    public AjaxLink findAddButton(){
+        return tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("AddButton")).getTarget(AjaxLink.class);
     }
 }

@@ -22,15 +22,14 @@ import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
+import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.lang.Objects;
 import org.opensingular.form.report.extension.ReportMenuExtension;
 import org.opensingular.lib.commons.extension.SingularExtensionUtil;
-import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.report.SingularReport;
 import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.commons.util.Loggable;
@@ -42,7 +41,6 @@ import org.opensingular.lib.wicket.util.toastr.ToastrHelper;
 import org.opensingular.lib.wicket.views.SingularReportPanel;
 
 import javax.annotation.Nonnull;
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -50,11 +48,12 @@ import java.util.List;
  */
 public abstract class ReportPage extends SingularAdminTemplate {
     public static final String IDENTITY_PARAM = "identity";
+    public static final String MESSAGE        = "message";
 
-    private MetronicMenu menu;
-    private Component body;
-    private String identity;
-    private ISupplier<SingularReport> activeReport;
+    private MetronicMenu   menu;
+    private Component      body;
+    private String         identity;
+    private SingularReport activeReport;
 
     public ReportPage(PageParameters parameters) {
         super(parameters);
@@ -62,17 +61,12 @@ public abstract class ReportPage extends SingularAdminTemplate {
             return;
         }
         this.identity = parameters.get(IDENTITY_PARAM).toString(null);
-        Serializable successMessage = Session.get().getAttribute(successMessageAttribute(identity));
+        String successMessage = parameters.get(MESSAGE).toString(null);
         if (successMessage != null) {
             new ToastrHelper(this).addToastrMessage(ToastrType.SUCCESS, (String) successMessage);
-            Session.get().removeAttribute(successMessageAttribute(identity));
         }
     }
 
-    @Nonnull
-    private static String successMessageAttribute(String identity) {
-        return "message_" + Objects.defaultIfNull(identity, "empty");
-    }
 
     @Override
     protected void onInitialize() {
@@ -100,7 +94,7 @@ public abstract class ReportPage extends SingularAdminTemplate {
     }
 
     private void configureExtensionButton(ReportMenuBuilder reportMenuBuilder) {
-        List<ReportMenuExtension> menuExtensions = SingularExtensionUtil.get().findExtensionsByClass(ReportMenuExtension.class);
+        List<ReportMenuExtension> menuExtensions = SingularExtensionUtil.get().findExtensions(ReportMenuExtension.class);
         for (ReportMenuExtension menuExtension : menuExtensions) {
             menuExtension.configure(reportMenuBuilder);
         }
@@ -124,16 +118,16 @@ public abstract class ReportPage extends SingularAdminTemplate {
     protected abstract void configureMenu(ReportMenuBuilder menu);
 
     protected class ReportAjaxMenuItem extends MetronicMenuItem {
-        private final ISupplier<SingularReport> supplier;
+        private final SingularReport report;
 
-        ReportAjaxMenuItem(Icon icon, String title, ISupplier<SingularReport> supplier) {
-            super(icon, title, ReportPage.this.getClass(), new PageParameters().set("identity", supplier.get().getIdentity()));
-            this.supplier = supplier;
+        ReportAjaxMenuItem(Icon icon, String title, SingularReport supplier) {
+            super(icon, title, ReportPage.this.getClass(), new PageParameters().set("identity", supplier.getIdentity()));
+            this.report = supplier;
         }
 
         @Override
         protected boolean isActive() {
-            return supplier.get().getIdentity().equals(identity);
+            return report.getIdentity().equals(identity);
         }
     }
 
@@ -144,7 +138,7 @@ public abstract class ReportPage extends SingularAdminTemplate {
             return new ReportMenuGroupBuilder(group);
         }
 
-        public ReportMenuBuilder addItem(Icon icon, String title, ISupplier<SingularReport> report) {
+        public ReportMenuBuilder addItem(Icon icon, String title, SingularReport report) {
             try {
                 menu.addItem(newMenuItem(icon, title, report));
             } catch (Exception ex) {
@@ -161,7 +155,7 @@ public abstract class ReportPage extends SingularAdminTemplate {
             this.group = group;
         }
 
-        public ReportMenuGroupBuilder addItem(Icon icon, String title, ISupplier<SingularReport> report) {
+        public ReportMenuGroupBuilder addItem(Icon icon, String title, SingularReport report) {
             try {
                 group.addItem(newMenuItem(icon, title, report));
             } catch (Exception ex) {
@@ -177,7 +171,7 @@ public abstract class ReportPage extends SingularAdminTemplate {
         }
     }
 
-    private ReportAjaxMenuItem newMenuItem(Icon icon, String title, ISupplier<SingularReport> report) {
+    private ReportAjaxMenuItem newMenuItem(Icon icon, String title, SingularReport report) {
         ReportAjaxMenuItem newAjaxItem = new ReportAjaxMenuItem(icon, title, report);
         if (newAjaxItem.isActive()) {
             activeReport = report;
@@ -186,13 +180,13 @@ public abstract class ReportPage extends SingularAdminTemplate {
     }
 
     public static void setAsResponsePageWithMessage(Component c, String message, String identity) {
-        if (StringUtils.isNotBlank(message)) {
-            Session.get().setAttribute(successMessageAttribute(identity), message);
-        }
         PageParameters params = new PageParameters();
         if (identity != null) {
             params.add(IDENTITY_PARAM, identity);
         }
-        RequestCycle.get().setResponsePage(c.getPage().getClass(), params);
+        if (StringUtils.isNotBlank(message)) {
+            params.add(MESSAGE, message);
+        }
+        RequestCycle.get().setResponsePage(c.getPage().getClass(), params, RenderPageRequestHandler.RedirectPolicy.NEVER_REDIRECT);
     }
 }
