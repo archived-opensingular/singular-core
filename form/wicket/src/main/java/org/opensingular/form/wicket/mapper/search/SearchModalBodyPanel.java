@@ -193,7 +193,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
 
     private void configureColumns(BSDataTableBuilder<Object, ?, ?> builder, Column column) {
 
-        if (viewSupplier.get().isEnableColumnClick()) {
+        if (viewSupplier.get().isEnableRowClick()) {
             builder.appendPropertyActionColumn(Model.of(column.getLabel()), object -> getCellObject(column, object));
         } else {
             builder.appendPropertyColumn(Model.of(column.getLabel()), object -> getCellObject(column, object));
