@@ -96,10 +96,10 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> implements 
         return appendPropertyColumn(Model.of(headerTitle), propertyExpression);
     }
 
-    public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(IModel<String> displayModel, S sortProperty, IFunction<T, Object> propertyFunction) {
+    public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(IModel<String> displayModel, S sortProperty, IFunction<T, ?> propertyFunction) {
         return appendColumn(new BSPropertyColumn<>(displayModel, sortProperty, propertyFunction));
     }
-    public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(String headerTitle, S sortProperty, IFunction<T, Object> propertyFunction) {
+    public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(String headerTitle, S sortProperty, IFunction<T, ?> propertyFunction) {
         return appendPropertyColumn(Model.of(headerTitle), sortProperty, propertyFunction);
     }
 
@@ -186,7 +186,7 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> implements 
     }
 
     protected BSDataTable<T, S> newDatatable(String id, List<? extends IColumn<T, S>> columns, ISortableDataProvider<T, S> dataProvider) {
-        return new BSDataTable<T, S>(id, new ArrayList<>(columns), dataProvider);
+        return new BSDataTable<>(id, new ArrayList<>(columns), dataProvider);
     }
 
     public BSFlexDataTable<T, S> buildFlex(String id) {

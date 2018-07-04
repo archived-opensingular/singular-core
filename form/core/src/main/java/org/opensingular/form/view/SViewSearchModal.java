@@ -27,7 +27,7 @@ public class SViewSearchModal extends SView implements ConfigurableModal<SViewSe
     private String title = StringUtils.EMPTY;
     private Integer pageSize = 5;
     private ModalSize size;
-    private boolean enableColumnClick;
+    private boolean   enableRowClick;
 
     /**
      * Instantiates a new S view search modal.
@@ -85,8 +85,9 @@ public class SViewSearchModal extends SView implements ConfigurableModal<SViewSe
         this.size = size;
     }
 
-    public SViewSearchModal enableColumnClick(boolean enabled) {
-        this.enableColumnClick = enabled;
+
+    public SViewSearchModal enableRowClick(boolean enabled) {
+        this.enableRowClick = enabled;
         return this;
     }
 
@@ -96,8 +97,8 @@ public class SViewSearchModal extends SView implements ConfigurableModal<SViewSe
      *
      * @return true will enabled, false will not.
      */
-    public boolean isEnableColumnClick() {
-        return enableColumnClick;
+    public boolean isEnableRowClick() {
+        return enableRowClick;
     }
 }
 
