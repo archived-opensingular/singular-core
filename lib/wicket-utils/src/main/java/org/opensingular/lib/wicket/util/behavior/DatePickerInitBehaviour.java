@@ -18,27 +18,14 @@ package org.opensingular.lib.wicket.util.behavior;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.template.PackageTextTemplate;
 import org.apache.wicket.util.visit.IVisitor;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.view.SViewDate;
-import org.opensingular.lib.commons.lambda.ISupplier;
-import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstants;
 
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 public class DatePickerInitBehaviour extends InitScriptBehaviour {
 
-    private final PackageTextTemplate initScript = new PackageTextTemplate(DatePickerInitBehaviour.class, "DatePickerInitBehaviour.js");
+    private static final long serialVersionUID = 8453390368637518965L;
 
     private final DatePickerSettings datePickerSettings;
 
@@ -52,74 +39,29 @@ public class DatePickerInitBehaviour extends InitScriptBehaviour {
 
     @Override
     public String getScript(Component component) {
+        DatePickerInitScriptBuilder scriptBuilder = new DatePickerInitScriptBuilder(new HashMap<>(),
+                component.getMarkupId(), getIdInput(component), datePickerSettings);
+        return scriptBuilder.generateScript();
+    }
 
-        String idDatepicker = component.getMarkupId();
-        String idInput      = component.getMarkupId();
-
+    private String getIdInput(Component component) {
+        String idInput = null;
         if (component instanceof MarkupContainer) {
-            FormComponent<?> fc = ((MarkupContainer) component).visitChildren(FormComponent.class,
-                    (IVisitor<FormComponent<?>, FormComponent<?>>) (object, visit) -> visit.stop(object));
-            if (fc != null) {
-                idInput = fc.getMarkupId();
-            }
+            idInput = findFormComponentId((MarkupContainer) component);
         }
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("datePickerMarkupId", idDatepicker);
-        map.put("inputMarkupId", idInput);
-        map.put("changeEvent", BSDatepickerConstants.JS_CHANGE_EVENT);
-        map.put("configureBeforeShowDay", Boolean.FALSE);
-        map.put("enabledDates", "[]");
-
-        if (datePickerSettings != null) {
-            if (datePickerSettings.hasEnabledDatesFunction()) {
-                configureEnabledDates(map);
-            }
+        if (idInput == null) {
+            idInput = component.getMarkupId();
         }
-        return initScript.asString(map);
+        return idInput;
     }
 
-    private void configureEnabledDates(Map<String, Object> map) {
-        List<Date> enabledDates = datePickerSettings.getEnabledDates();
-        if (enabledDates != null) {
-            final JSONArray        jsonArray        = new JSONArray();
-            final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            for (Date enabledDate : enabledDates) {
-                jsonArray.put(simpleDateFormat.format(enabledDate));
-            }
-            map.put("configureBeforeShowDay", Boolean.TRUE);
-            map.put("enabledDates", jsonArray.toString());
+    private String findFormComponentId(MarkupContainer component) {
+        FormComponent<?> fc = component.visitChildren(FormComponent.class,
+                (IVisitor<FormComponent<?>, FormComponent<?>>) (object, visit) -> visit.stop(object));
+        if (fc != null) {
+            return fc.getMarkupId();
         }
-    }
-
-    public static class DatePickerSettings implements Serializable {
-        private IModel<? extends SInstance> model;
-        private ISupplier<SViewDate>        viewSupplier;
-
-        public DatePickerSettings(ISupplier<SViewDate> viewSupplier, IModel<? extends SInstance> model) {
-            this.viewSupplier = viewSupplier;
-            this.model = model;
-        }
-
-        private Optional<SViewDate> viewSupplier() {
-            return Optional.ofNullable(viewSupplier.get());
-        }
-
-        public boolean hasEnabledDatesFunction() {
-            return viewSupplier()
-                    .map(SViewDate::getEnabledDatesFunction)
-                    .isPresent();
-        }
-
-        public List<Date> getEnabledDates() {
-            if (hasEnabledDatesFunction()) {
-                return viewSupplier()
-                        .map(SViewDate::getEnabledDatesFunction)
-                        .map(i -> i.apply(model.getObject()))
-                        .orElse(null);
-            }
-            return null;
-        }
+        return null;
     }
 
 }
