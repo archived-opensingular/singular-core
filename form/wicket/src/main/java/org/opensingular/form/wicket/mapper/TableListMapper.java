@@ -22,18 +22,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.opensingular.form.wicket.mapper.components.MetronicPanel.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -110,7 +100,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         addInitialNumberOfLines(currentType, iList, ctx.getViewSupplier(SViewListByTable.class));
         return TableListPanel.TableListPanelBuilder.build(id,
                 (h, form) -> buildHeader(h, listModel, ctx),
-                (c, form) -> buildContent(c, form, listModel, ctx, view, isEdition, confirmationModal),
+                (c, form) -> buildContent(c, form, listModel, ctx, isEdition, confirmationModal),
                 (f, form) -> buildFooter(f, form, listModel, ctx));
     }
 
@@ -261,119 +251,4 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         return true;
     }
 
-    private static final class TableElementsView extends ElementsView {
-
-        private final WicketBuildContext ctx;
-        private final Form<?>            form;
-        private final ConfirmationModal  confirmationModal;
-
-        private TableElementsView(String id, IModel<SIList<SInstance>> model, WicketBuildContext ctx, Form<?> form,
-            WebMarkupContainer parentContainer, ConfirmationModal confirmationModal) {
-            super(id, model, parentContainer);
-            this.confirmationModal = confirmationModal;
-            super.setRenderedChildFunction(c -> ((MarkupContainer) c).get("_r"));
-            this.ctx = ctx;
-            this.form = form;
-        }
-
-        @Override
-        protected void populateItem(Item<SInstance> item) {
-
-            final BSTRow row = new BSTRow("_r", BSGridSize.MD);
-            final IModel<SInstance> itemModel = item.getModel();
-            final SInstance instance = itemModel.getObject();
-
-            SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(new FeedbackFence(row))
-                .addInstanceModel(itemModel)
-                .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(row)));
-
-            row.setDefaultModel(itemModel);
-            row.add($b.classAppender("singular-form-table-row can-have-error"));
-            row.add($b.classAppender("has-errors", $m.ofValue(feedbackHandler).map(SValidationFeedbackHandler::containsNestedErrors)));
-
-            if (!(ctx.getView() instanceof SViewListByTable)) {
-                return;
-            }
-
-            final ISupplier<SViewListByTable> viewSupplier = ctx.getViewSupplier(SViewListByTable.class);
-
-            if (viewSupplier.get().isInsertEnabled() && ctx.getViewMode().isEdition()) {
-                final BSTDataCell actionColumn = row.newCol();
-                actionColumn.add($b.attrAppender("style", "width:20px", ";"));
-                appendInserirButton(this, form, ctx, item, actionColumn);
-            }
-
-            if ((instance instanceof SIComposite) && viewSupplier.get().isRenderCompositeFieldsAsColumns()) {
-                final SIComposite ci = (SIComposite) instance;
-                final STypeComposite<?> ct = ci.getType();
-
-
-            if (ctx.getViewMode().isEdition()) {
-                final BSTDataCell actionColumn = row.newCol();
-                actionColumn.add($b.attrAppender("style", "width:20px", ";"));
-                appendRemoverButton(this, form, ctx, item, actionColumn, confirmationModal, viewSupplier);
-            }
-
-            item.add(row);
-        }
-    }
-
-    private static abstract class TableListPanel extends MetronicPanel {
-
-        public TableListPanel(String id) {
-            super(id);
-        }
-
-        public TableListPanel(String id, boolean withForm) {
-            super(id, withForm);
-        }
-
-        @Override
-        public IFunction<TemplatePanel, String> getTemplateFunction() {
-            String wrapper = withForm ? "<form wicket:id='_fo'>%s</form>" : "%s";
-            return (tp) -> String.format(wrapper, ""
-                + "  <div class='list-table-input'>"
-                + "    <div wicket:id='_hd' class='list-table-heading'></div>"
-                + "    <div class='list-table-body' wicket:id='_co' >"
-                + "    </div>"
-                + "    <div wicket:id='_ft' class='list-table-footer'></div>"
-                + "  </div>"
-                + "");
-        }
-
-        public static final class TableListPanelBuilder {
-
-            private TableListPanelBuilder() {}
-
-            public static TableListPanel build(String id,
-                IBiConsumer<BSContainer<?>, Form<?>> buildHeading,
-                IBiConsumer<BSContainer<?>, Form<?>> buildContent,
-                IBiConsumer<BSContainer<?>, Form<?>> buildFooter) {
-                return build(id, true, buildHeading, buildContent, buildFooter);
-            }
-
-            public static TableListPanel build(String id,
-                boolean withForm,
-                IBiConsumer<BSContainer<?>, Form<?>> buildHeading,
-                IBiConsumer<BSContainer<?>, Form<?>> buildContent,
-                IBiConsumer<BSContainer<?>, Form<?>> buildFooter) {
-
-                return new TableListPanel(id, withForm) {
-                    @Override
-                    protected void buildHeading(BSContainer<?> heading, Form<?> form) {
-                        buildHeading.accept(heading, form);
-                    }
-                    @Override
-                    protected void buildContent(BSContainer<?> content, Form<?> form) {
-                        buildContent.accept(content, form);
-                    }
-                    @Override
-                    protected void buildFooter(BSContainer<?> footer, Form<?> form) {
-                        buildFooter.accept(footer, form);
-                    }
-                };
-            }
-
-        }
-    }
 }

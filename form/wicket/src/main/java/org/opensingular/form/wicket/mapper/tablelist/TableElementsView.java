@@ -12,7 +12,6 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.view.AbstractSViewListWithControls;
-import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
@@ -22,6 +21,7 @@ import org.opensingular.form.wicket.mapper.buttons.ElementsView;
 import org.opensingular.form.wicket.mapper.buttons.RemoverButton;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTDataCell;
@@ -34,7 +34,6 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 public class TableElementsView extends ElementsView {
 
     private final WicketBuildContext ctx;
-    private final SView view;
     private final Form<?> form;
     private final ConfirmationModal confirmationModal;
 
@@ -44,16 +43,15 @@ public class TableElementsView extends ElementsView {
         this.confirmationModal = confirmationModal;
         super.setRenderedChildFunction(c -> ((MarkupContainer) c).get("_r"));
         this.ctx = ctx;
-        this.view = ctx.getView();
         this.form = form;
     }
 
     @Override
     protected void populateItem(Item<SInstance> item) {
 
-        final BSTRow row       = new BSTRow("_r", IBSGridCol.BSGridSize.MD);
+        final BSTRow row = new BSTRow("_r", IBSGridCol.BSGridSize.MD);
         final IModel<SInstance> itemModel = item.getModel();
-        final SInstance         instance  = itemModel.getObject();
+        final SInstance instance = itemModel.getObject();
 
         SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(new FeedbackFence(row))
                 .addInstanceModel(itemModel)
@@ -63,20 +61,22 @@ public class TableElementsView extends ElementsView {
         row.add($b.classAppender("singular-form-table-row can-have-error"));
         row.add($b.classAppender("has-errors", $m.ofValue(feedbackHandler).map(SValidationFeedbackHandler::containsNestedErrors)));
 
-        if (!(view instanceof SViewListByTable)) {
+
+        if (!(ctx.getView() instanceof SViewListByTable)) {
             return;
         }
 
-        final SViewListByTable viewListByTable = (SViewListByTable) view;
+        final ISupplier<SViewListByTable> viewSupplier = ctx.getViewSupplier(SViewListByTable.class);
 
-        if (viewListByTable.isInsertEnabled() && ctx.getViewMode().isEdition()) {
+        if (viewSupplier.get().isInsertEnabled() && ctx.getViewMode().isEdition()) {
             final BSTDataCell actionColumn = row.newCol();
             actionColumn.add($b.attrAppender("style", "width:20px", ";"));
             appendInserirButton(this, form, item, actionColumn);
         }
 
-        if ((instance instanceof SIComposite) && viewListByTable.isRenderCompositeFieldsAsColumns()) {
-            final SIComposite       ci = (SIComposite) instance;
+
+        if ((instance instanceof SIComposite) && viewSupplier.get().isRenderCompositeFieldsAsColumns()) {
+            final SIComposite ci = (SIComposite) instance;
             final STypeComposite<?> ct = ci.getType();
 
             for (SType<?> ft : ct.getFields()) {
@@ -90,7 +90,7 @@ public class TableElementsView extends ElementsView {
         if (ctx.getViewMode().isEdition()) {
             final BSTDataCell actionColumn = row.newCol();
             actionColumn.add($b.attrAppender("style", "width:20px", ";"));
-            appendRemoverButton(this, form, item, actionColumn, confirmationModal, viewListByTable);
+            appendRemoverButton(this, form, item, actionColumn, confirmationModal, viewSupplier.get());
         }
 
         item.add(row);
@@ -99,7 +99,7 @@ public class TableElementsView extends ElementsView {
 
     protected RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, Item<SInstance> item,
             BSContainer<?> cell, ConfirmationModal confirmationModal, AbstractSViewListWithControls viewListByTable) {
-        return new RemoverButton("_remover_", form, elementsView,item,confirmationModal){
+        return new RemoverButton("_remover_", form, elementsView, item, confirmationModal) {
             @Override
             protected void behaviorAfterRemoveItem(AjaxRequestTarget target) {
                 behaviorAfterRemoveButton(target);
@@ -107,6 +107,7 @@ public class TableElementsView extends ElementsView {
         }.createRemoverButton(cell, viewListByTable);
     }
 
-    protected void behaviorAfterRemoveButton(AjaxRequestTarget target) {}
+    protected void behaviorAfterRemoveButton(AjaxRequestTarget target) {
+    }
 
 }

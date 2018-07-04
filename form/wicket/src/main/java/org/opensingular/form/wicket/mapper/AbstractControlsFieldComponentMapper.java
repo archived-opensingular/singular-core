@@ -54,16 +54,7 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public abstract class AbstractControlsFieldComponentMapper implements IWicketComponentMapper, ISInstanceActionCapable {
 
-    public final static HintKey<Boolean> NO_DECORATION = new HintKey<Boolean>() {
-        @Override
-        public Boolean getDefaultValue() {
-            return Boolean.FALSE;
-        }
-
-        @Override
-        public boolean isInheritable() {
-            return true;
-        }
+    private final static MetaDataKey<Boolean> MDK_COMPONENT_CONFIGURED = new MetaDataKey<Boolean>() {
     };
 
     private final SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);

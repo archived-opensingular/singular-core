@@ -202,14 +202,14 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
             header.add($b.classAppender("list-icons"));
 
             if ((viewSupplier.get() != null) && (viewSupplier.get().isInsertEnabled()) && ctx.getViewMode().isEdition()) {
-                appendInserirButton(this, form, ctx, item, btnGrid.newColInRow()).add($b.classAppender("pull-right"));
+                appendInserirButton(this, form, item, btnGrid.newColInRow()).add($b.classAppender("pull-right"));
             }
 
             final BSCol btnCell = btnGrid.newColInRow();
 
             if (ctx.getViewMode().isEdition()) {
-                appendRemoverButton(this, form, ctx, item, btnCell, confirmationModal, viewSupplier)
-                    .add($b.classAppender("pull-right"));
+                appendRemoverButton(this, form, item, btnCell, confirmationModal, viewSupplier.get())
+                        .add($b.classAppender("pull-right"));
             }
 
         }

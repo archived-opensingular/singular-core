@@ -37,6 +37,7 @@ import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.type.util.STypeLatitudeLongitudeMapper;
 import org.opensingular.form.view.FileEventListener;
+import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewCurrentLocation;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
