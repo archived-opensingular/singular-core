@@ -78,4 +78,8 @@ public final class InstanceValidators {
     public static MMaxDateValidator maxDate(){
         return MMaxDateValidator.INSTANCE;
     }
+
+    public static MMinDateValidator minDate(){
+        return MMinDateValidator.INSTANCE;
+    }
 }

@@ -16,16 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.selection;
 
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -63,9 +53,19 @@ import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.template.RecursosStaticosSingularTemplate;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
 
-import static com.google.common.collect.Maps.newLinkedHashMap;
-import static org.opensingular.form.wicket.mapper.selection.TypeaheadComponent.generateResultOptions;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import javax.annotation.Nonnull;
+import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static com.google.common.collect.Maps.*;
+import static org.opensingular.form.wicket.mapper.selection.TypeaheadComponent.*;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
 
 
 /**
@@ -84,7 +84,7 @@ public class TypeaheadComponent extends Panel {
         @Override
         public List<HeaderItem> getDependencies() {
             if (getPage() instanceof SingularTemplate) {
-               return RecursosStaticosSingularTemplate.getStyles(((SingularTemplate) getPage()).getCurrentSkinFolder());
+                return RecursosStaticosSingularTemplate.getStyles(((SingularTemplate) getPage()).getCurrentSkinFolder());
             } else {
                 return Collections.emptyList();
             }
@@ -253,7 +253,9 @@ public class TypeaheadComponent extends Panel {
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         response.render(JavaScriptReferenceHeaderItem.forReference(resourceRef("TypeaheadComponent.js")));
-        response.render(OnDomReadyHeaderItem.forScript(createJSFetcher()));
+        if (this.valueField.isEnabled()) {
+            response.render(OnDomReadyHeaderItem.forScript(createJSFetcher()));
+        }
         response.render(CSS_REFERENCE);
     }
 
