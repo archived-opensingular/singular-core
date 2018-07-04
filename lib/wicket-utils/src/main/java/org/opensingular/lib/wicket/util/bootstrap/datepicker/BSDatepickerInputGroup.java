@@ -21,7 +21,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.util.convert.IConverter;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour;
-import org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour.DatePickerSettings;
+import org.opensingular.lib.wicket.util.behavior.DatePickerSettings;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSInputGroup;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 

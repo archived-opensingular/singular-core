@@ -16,6 +16,9 @@
 
 package org.opensingular.form.type.core;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import com.google.common.base.Strings;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -26,10 +29,8 @@ import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.validation.validator.InstanceValidators;
 import org.opensingular.lib.commons.base.SingularUtil;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import static org.opensingular.form.type.basic.SPackageBasic.ATR_MAX_DATE;
+import static org.opensingular.form.type.basic.SPackageBasic.ATR_MIN_DATE;
 
 @SInfoType(name = "Date", spackage = SPackageCore.class)
 public class STypeDate extends STypeSimple<SIDate, Date> {
@@ -98,4 +99,11 @@ public class STypeDate extends STypeSimple<SIDate, Date> {
         return this;
     }
 
+    public STypeDate minDate(Date date) {
+        if (!hasValidator(InstanceValidators.minDate())) {
+            addInstanceValidator(ValidationErrorLevel.ERROR, InstanceValidators.minDate());
+        }
+        asAtr().setAttributeValue(ATR_MIN_DATE, date);
+        return this;
+    }
 }

@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import static org.opensingular.lib.commons.base.SingularProperties.*;
 
@@ -49,7 +50,7 @@ public class SingularEntityInterceptor extends EmptyInterceptor {
     public String onPrepareStatement(String sql) {
         String result = sql;
         for (DatabaseObjectNameReplacement schemaReplacement : schemaReplacements) {
-            result = SqlUtil.replaceSchemaName(result, schemaReplacement.getOriginalObjectName(), schemaReplacement.getObjectNameReplacement());
+            result = SqlUtil.replaceSchemaName(result, Pattern.quote(schemaReplacement.getOriginalObjectName()), schemaReplacement.getObjectNameReplacement());
         }
         return result;
     }
