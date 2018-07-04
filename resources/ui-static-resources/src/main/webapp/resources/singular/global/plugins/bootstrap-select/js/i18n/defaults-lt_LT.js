@@ -23,15 +23,20 @@
 
 (function ($) {
   $.fn.selectpicker.defaults = {
-    noneSelectedText: 'Nessuna selezione',
-    noneResultsText: 'Nessun risultato per {0}',
-    countSelectedText: function (numSelected, numTotal){
-      return (numSelected == 1) ? 'Selezionato {0} di {1}' : 'Selezionati {0} di {1}';
+    noneSelectedText: 'Niekas nepasirinkta',
+    noneResultsText: 'Niekas nesutapo su {0}',
+    countSelectedText: function (numSelected, numTotal) {
+      return (numSelected == 1) ? "{0} elementas pasirinktas" : "{0} elementai(-ų) pasirinkta";
     },
-    maxOptionsText: ['Limite raggiunto ({n} {var} max)', 'Limite del gruppo raggiunto ({n} {var} max)', ['elementi', 'elemento']],
-    multipleSeparator: ', ',
-    selectAllText: 'Seleziona Tutto',
-    deselectAllText: 'Deseleziona Tutto'
+    maxOptionsText: function (numAll, numGroup) {
+      return [
+        (numAll == 1) ? 'Pasiekta riba ({n} elementas daugiausiai)' : 'Riba pasiekta ({n} elementai(-ų) daugiausiai)',
+        (numGroup == 1) ? 'Grupės riba pasiekta ({n} elementas daugiausiai)' : 'Grupės riba pasiekta ({n} elementai(-ų) daugiausiai)'
+      ];
+    },
+    selectAllText: 'Pasirinkti visus',
+    deselectAllText: 'Atmesti visus',
+    multipleSeparator: ', '
   };
 })(jQuery);
 
