@@ -16,14 +16,26 @@
 
 package org.opensingular.form.wicket.mapper.search;
 
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.Optional;
+
 import org.apache.commons.lang3.text.WordUtils;
+import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
@@ -31,8 +43,12 @@ import org.opensingular.form.SingularFormException;
 import org.opensingular.form.converter.SInstanceConverter;
 import org.opensingular.form.converter.SimpleSInstanceConverter;
 import org.opensingular.form.document.RefType;
-import org.opensingular.form.provider.*;
+import org.opensingular.form.provider.Config;
 import org.opensingular.form.provider.Config.Column;
+import org.opensingular.form.provider.FilteredPagedProvider;
+import org.opensingular.form.provider.FilteredProvider;
+import org.opensingular.form.provider.InMemoryFilteredPagedProviderDecorator;
+import org.opensingular.form.provider.ProviderContext;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
@@ -45,27 +61,24 @@ import org.opensingular.lib.wicket.util.datatable.IBSAction;
 import org.opensingular.lib.wicket.util.datatable.column.BSActionPanel;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Iterator;
-import java.util.Optional;
-
 import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 
 @SuppressWarnings("unchecked")
 class SearchModalBodyPanel extends Panel implements Loggable {
 
-    private static final String                FILTER_BUTTON_ID = "filterButton";
-    private static final String                FORM_PANEL_ID    = "formPanel";
-    private static final String                RESULT_TABLE_ID  = "resultTable";
+    private static final String FILTER_BUTTON_ID = "filterButton";
+    private static final String FORM_PANEL_ID = "formPanel";
+    private static final String RESULT_TABLE_ID = "resultTable";
 
-    private final WicketBuildContext           ctx;
-    private final ISupplier<SViewSearchModal>  viewSupplier;
+    private final WicketBuildContext ctx;
+    private final ISupplier<SViewSearchModal> viewSupplier;
+
+    @SuppressWarnings("squid:S1068")
     private final IConsumer<AjaxRequestTarget> selectCallback;
 
-    private SingularFormPanel                  innerSingularFormPanel;
-    private MarkupContainer                    resultTable;
+    private SingularFormPanel innerSingularFormPanel;
+    private MarkupContainer resultTable;
 
     SearchModalBodyPanel(String id, WicketBuildContext ctx, IConsumer<AjaxRequestTarget> selectCallback) {
         super(id);
@@ -80,7 +93,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
             throw new SingularFormException("O provider não foi informado", getInstance());
         }
         if (getInstance().asAtrProvider().getConverter() == null
-            && (getInstance() instanceof SIComposite || getInstance() instanceof SIList)) {
+                && (getInstance() instanceof SIComposite || getInstance() instanceof SIList)) {
             throw new SingularFormException("O tipo não é simples e o converter não foi informado.", getInstance());
         }
     }
@@ -95,12 +108,26 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         filterButton = buildFilterButton();
         resultTable = buildResultTable(getConfig());
 
+        resultTable.add(new Behavior() {
+            @Override
+            public void renderHead(Component component, IHeaderResponse response) {
+                response.render(OnDomReadyHeaderItem.forScript("clickedRow.create();"));
+            }
+        });
+
         add(innerSingularFormPanel);
         add(filterButton);
         add(resultTable);
 
         innerSingularFormPanel.add($b.onEnterDelegate(filterButton, SINGULAR_PROCESS_EVENT));
 
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(JavaScriptReferenceHeaderItem.forReference(new PackageResourceReference(this.getClass(), "SearchModalBodyPanel.js")));
+        response.render(CssHeaderItem.forReference(new PackageResourceReference(this.getClass(), "SearchModalBodyPanel.css")));
     }
 
     private Config getConfig() {
@@ -159,37 +186,43 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         }
 
         builder.appendActionColumn(Model.of(), (actionColumn) -> actionColumn
-            .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(DefaultIcons.ARROW_RIGHT)).titleFunction(m -> "Selecionar"),
-                (IBSAction<Object>) (target, model) -> {
-                    SInstanceConverter converter = getInstance().asAtrProvider().getConverter();
-                    if (converter == null && !(getInstance() instanceof SIComposite || getInstance() instanceof SIList)) {
-                        converter = new SimpleSInstanceConverter<>();
-                    }
-                    if (converter != null) {
-                        converter.fillInstance(getInstance(), (Serializable) model.getObject());
-                    }
-                    selectCallback.accept(target);
-                }));
+                .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(DefaultIcons.ARROW_RIGHT)).titleFunction(m -> "Selecionar"),
+                        (IBSAction<Object>) (target, model) -> {
+                            SInstanceConverter converter = getInstance().asAtrProvider().getConverter();
+                            if (converter == null && !(getInstance() instanceof SIComposite || getInstance() instanceof SIList)) {
+                                converter = new SimpleSInstanceConverter<>();
+                            }
+                            if (converter != null) {
+                                converter.fillInstance(getInstance(), (Serializable) model.getObject());
+                            }
+                            selectCallback.accept(target);
+                        }));
 
         return builder.build(RESULT_TABLE_ID);
     }
 
-    private void configureColumns(BSDataTableBuilder<Object, ?, ?> builder, Column o) {
-        final Column column = o;
-        builder.appendPropertyColumn(Model.of(column.getLabel()), object -> {
-            try {
-                if (column.getProperty() != null) {
-                    final Method getter = object.getClass().getMethod("get" + WordUtils.capitalize(column.getProperty()));
-                    getter.setAccessible(true);
-                    return getter.invoke(object);
-                } else {
-                    return object;
-                }
-            } catch (Exception ex) {
-                getLogger().debug(null, ex);
-                throw new SingularFormException("Não foi possivel recuperar a propriedade '" + column.getProperty() + "' via metodo get na classe " + object.getClass());
+    private void configureColumns(BSDataTableBuilder<Object, ?, ?> builder, Column column) {
+
+        if (viewSupplier.get().isEnableRowClick()) {
+            builder.appendPropertyActionColumn(Model.of(column.getLabel()), object -> getCellObject(column, object));
+        } else {
+            builder.appendPropertyColumn(Model.of(column.getLabel()), object -> getCellObject(column, object));
+        }
+    }
+
+    private Object getCellObject(Column column, Object object) {
+        try {
+            if (column.getProperty() != null) {
+                final Method getter = object.getClass().getMethod("get" + WordUtils.capitalize(column.getProperty()));
+                getter.setAccessible(true);
+                return getter.invoke(object);
+            } else {
+                return object;
             }
-        });
+        } catch (Exception ex) {
+            getLogger().debug(null, ex);
+            throw new SingularFormException("Não foi possivel recuperar a propriedade '" + column.getProperty() + "' via metodo get na classe " + object.getClass(), ex.getCause());
+        }
     }
 
     private SingularFormPanel buildInnerSingularFormPanel() {
