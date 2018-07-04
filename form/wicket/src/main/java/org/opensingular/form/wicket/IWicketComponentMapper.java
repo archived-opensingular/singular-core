@@ -16,15 +16,24 @@
 
 package org.opensingular.form.wicket;
 
+import java.io.Serializable;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.aspect.AspectRef;
+import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
 import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
-
-import java.io.Serializable;
+import org.opensingular.form.wicket.model.AttributeModel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 
 @FunctionalInterface
 public interface IWicketComponentMapper extends Serializable {
@@ -53,9 +62,66 @@ public interface IWicketComponentMapper extends Serializable {
     @FunctionalInterface
     interface HintKey<T> extends Serializable {
         T getDefaultValue();
+
         default boolean isInheritable() {
             return false;
         }
+    }
+
+    HintKey<Boolean> NO_DECORATION = new HintKey<Boolean>() {
+        @Override
+        public Boolean getDefaultValue() {
+            return Boolean.FALSE;
+        }
+
+        @Override
+        public boolean isInheritable() {
+            return true;
+        }
+    };
+
+    /**
+     * Method responsible for create and configurate the label used by the default's inputs by Singular form.
+     *
+     * @param ctx The WicketBuildCOntext, to know if contains the HIDE_LABEL configuration.
+     * @return The Bootstrap label configured.
+     */
+    default BSLabel createLabel(WicketBuildContext ctx) {
+        final AttributeModel<String> labelModel = new AttributeModel<>(ctx.getModel(), SPackageBasic.ATR_LABEL);
+        BSLabel label = new BSLabel("label", labelModel);
+        label.add(DisabledClassBehavior.getInstance());
+        label.setVisible(!ctx.getHint(NO_DECORATION));
+        label.add($b.onConfigure(c -> {
+            if (ctx.getHint(HIDE_LABEL) || StringUtils.isEmpty(labelModel.getObject())) {
+                c.setVisible(false);
+            }
+        }));
+        return label;
+    }
+
+    /**
+     * Method responsible for create the subtitle of the input's form.
+     *
+     * @param formGroup The formGroup what will be added the subtitle.
+     * @param subtitle  The subtitle text.
+     */
+    default void createSubTitle(BSControls formGroup, AttributeModel<String> subtitle) {
+        formGroup.newHelpBlock(subtitle);
+    }
+
+
+    /**
+     * This LabelBar is use for creating the container of the label, including a Css Style.
+     * The container will have the label and the Help icon if exists. <code>SPackageBasic.ATR_HELP</code>
+     *
+     * @param label The label for the input.
+     * @return The container with the label, and a Css class.
+     */
+    default BSControls createLabelBar(Label label) {
+        BSControls labelBar = new BSControls("labelBar")
+                .appendLabel(label);
+        labelBar.add(WicketUtils.$b.classAppender("labelBar"));
+        return labelBar;
     }
 
 }
