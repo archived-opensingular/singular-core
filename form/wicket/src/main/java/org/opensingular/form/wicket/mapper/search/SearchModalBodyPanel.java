@@ -22,9 +22,11 @@ import java.util.Iterator;
 import java.util.Optional;
 
 import org.apache.commons.lang3.text.WordUtils;
+import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
@@ -71,6 +73,8 @@ class SearchModalBodyPanel extends Panel implements Loggable {
 
     private final WicketBuildContext ctx;
     private final ISupplier<SViewSearchModal> viewSupplier;
+
+    @SuppressWarnings("squid:S1068")
     private final IConsumer<AjaxRequestTarget> selectCallback;
 
     private SingularFormPanel innerSingularFormPanel;
@@ -104,6 +108,13 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         filterButton = buildFilterButton();
         resultTable = buildResultTable(getConfig());
 
+        resultTable.add(new Behavior() {
+            @Override
+            public void renderHead(Component component, IHeaderResponse response) {
+                response.render(OnDomReadyHeaderItem.forScript("clickedRow.create();"));
+            }
+        });
+
         add(innerSingularFormPanel);
         add(filterButton);
         add(resultTable);
@@ -115,8 +126,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        response.render(JavaScriptReferenceHeaderItem.forReference(new PackageResourceReference(this.getClass(),"SearchModalBodyPanel.js")));
-        response.render(OnDomReadyHeaderItem.forScript("clickedColumn.create();"));
+        response.render(JavaScriptReferenceHeaderItem.forReference(new PackageResourceReference(this.getClass(), "SearchModalBodyPanel.js")));
         response.render(CssHeaderItem.forReference(new PackageResourceReference(this.getClass(), "SearchModalBodyPanel.css")));
     }
 

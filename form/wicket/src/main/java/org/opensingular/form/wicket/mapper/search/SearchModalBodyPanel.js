@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-var clickedColumn = function () {
+
+var clickedRow = function () {
     return {
         create: function () {
             $('.column-clicked').click(function () {
