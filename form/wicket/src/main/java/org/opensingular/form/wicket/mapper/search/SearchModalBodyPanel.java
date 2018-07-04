@@ -221,7 +221,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
             }
         } catch (Exception ex) {
             getLogger().debug(null, ex);
-            throw new SingularFormException("Não foi possivel recuperar a propriedade '" + column.getProperty() + "' via metodo get na classe " + object.getClass());
+            throw new SingularFormException("Não foi possivel recuperar a propriedade '" + column.getProperty() + "' via metodo get na classe " + object.getClass(), ex.getCause());
         }
     }
 
