@@ -5,9 +5,11 @@
 
     if (${onInit}) {
         $timepicker.timepicker().on('show.timepicker', function (e) {
+
             if (e.time.value == '0:00') {
                 $timepicker.timepicker('setTime', '00:00 AM');
             }
+            $timepicker.trigger("changeTimeEvent");
         });
 
         $timepicker.on('keydown', function (e) {
@@ -36,8 +38,8 @@
             }
         });
 
-        $timepicker.on('remove', function (e) {
-            $(this).timepicker('remove');
-        });
+        // $timepicker.on('remove', function (e) {
+        //     $(this).timepicker('remove');
+        // });
     }
 })();

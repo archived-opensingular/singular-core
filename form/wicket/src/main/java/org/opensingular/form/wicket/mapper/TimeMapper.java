@@ -25,7 +25,9 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.core.STypeTime;
+import org.opensingular.form.wicket.IAjaxUpdateListener;
 import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior;
 import org.opensingular.form.wicket.mapper.datetime.CreateTimePickerBehavior;
 import org.opensingular.form.wicket.model.SIDateTimeModel;
@@ -37,9 +39,11 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
  */
 public class TimeMapper extends AbstractControlsFieldComponentMapper {
 
+    public TextField<String> time;
+
     @Override
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
-        final TextField<String> time = new TextField<>("time",
+        time = new TextField<>("time",
                 new SIDateTimeModel.TimeModel(new SInstanceValueModel<>(ctx.getModel())));
         time.add(new CreateTimePickerBehavior());
         time.add(new InputMaskBehavior(InputMaskBehavior.Masks.TIME));
@@ -54,6 +58,23 @@ public class TimeMapper extends AbstractControlsFieldComponentMapper {
             return format.format(model.getObject().getValue());
         }
         return StringUtils.EMPTY;
+    }
+
+    @Override
+    public void addAjaxUpdate(WicketBuildContext ctx, Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
+        adjustJSEvents(component);
+
+        time.add(AjaxUpdateInputBehavior.forProcess(model, listener))
+                .add(AjaxUpdateInputBehavior.forValidate(model, listener));
+    }
+
+    @Override
+    public void adjustJSEvents(Component comp) {
+        time
+                .add(new SingularEventBehavior()
+                        .setProcessEvent("changeTimeEvent", time)
+                        .setValidateEvent("blur", time));
+
     }
 
 }
