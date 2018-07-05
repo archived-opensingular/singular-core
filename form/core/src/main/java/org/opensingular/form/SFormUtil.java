@@ -239,8 +239,7 @@ public final class SFormUtil {
 
             if (node instanceof SIList<?>) {
                 SIList<?> list = (SIList<?>) node;
-                String listLabel = list.asAtr().getLabel();
-                listLabel = listLabel == null ? "" : listLabel;
+                String listLabel = Optional.ofNullable(list.asAtr().getLabel()).orElse(list.getType().getNameSimple());
                 int index = list.indexOf(child) + 1;
                 labels.add(listLabel + ((index > 0) ? " [" + (index) + ']' : ""));
             } else {

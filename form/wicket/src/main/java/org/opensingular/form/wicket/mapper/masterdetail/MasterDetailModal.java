@@ -96,7 +96,7 @@ class MasterDetailModal extends BFModalWindow {
                 @Override
                 protected void onAction(AjaxRequestTarget target) {
                     rollbackTheInstance(target);
-                    WicketFormProcessing.validateErrors(this.getPage(), target, model.getObject(), false);
+                    WicketFormProcessing.validateErrors(this.getParent(), target, model.getObject(), false);
                 }
 
             });
