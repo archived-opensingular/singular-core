@@ -16,16 +16,13 @@
 
 package org.opensingular.lib.commons.table;
 
-import org.opensingular.lib.commons.base.SingularException;
-
-import javax.annotation.Nonnull;
 import java.io.Serializable;
+import javax.annotation.Nonnull;
+
+import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.ui.Alignment;
 
 public class Column implements Serializable {
-
-    public enum Alignment {
-        LEFT, CENTER, RIGHT
-    }
 
     private String id;
 

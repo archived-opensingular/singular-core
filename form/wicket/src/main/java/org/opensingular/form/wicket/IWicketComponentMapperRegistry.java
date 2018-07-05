@@ -123,6 +123,7 @@ public class IWicketComponentMapperRegistry
         add(STypeSimple.class,     SViewReadOnly.class,                   ReadOnlyControlsFieldComponentMapper::new);
         add(STypeBoolean.class,    SViewSelectionBySelect.class,          BooleanSelectMapper::new);
         add(STypeBoolean.class,                                           BooleanMapper::new);
+        add(STypeBoolean.class,    SViewCheckBoxLabelAbove.class,         BooleanMapper::new);
         add(STypeBoolean.class,    SViewBooleanSwitch.class,              BooleanSwitchMapper::new);
         add(STypeBoolean.class,    SViewBooleanByRadio.class,             BooleanRadioMapper::new);
         add(STypeInteger.class,                                           () -> new NumberMapper<>(Integer.class));
@@ -168,6 +169,7 @@ public class IWicketComponentMapperRegistry
         add(STypeAttachmentList.class, SViewAttachmentList.class,         AttachmentListMapper::new);
         add(STypeCNPJ.class,                                              CNPJMapper::new);
         add(STypeCPF.class,                                               CPFMapper::new);
+        add(STypePassword.class,        SViewPassword.class,              PasswordMapper::new);
         add(STypePassword.class,                                          PasswordMapper::new);
         add(STypeHiddenString.class,                                      InputHiddenMapper::new);
         //@formatter:on

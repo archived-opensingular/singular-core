@@ -107,3 +107,8 @@ div.checker.disabled span.checked:hover {
   position: absolute;
 }
 
+.annotation-toggle-container .annotation-text {
+  overflow-y: auto;
+  max-height: 130px;
+}
+
