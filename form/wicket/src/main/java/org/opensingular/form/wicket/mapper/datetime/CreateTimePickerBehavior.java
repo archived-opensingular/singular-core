@@ -18,14 +18,14 @@
 
 package org.opensingular.form.wicket.mapper.datetime;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Behavior to add script that creates a time picker and register the keydown event to hide the timepicker on tab press
@@ -48,15 +48,22 @@ public class CreateTimePickerBehavior extends Behavior {
         super.renderHead(component, response);
         String markupId = component.getMarkupId(true);
         final String script = String.format("$('#%s').timepicker(%s); ", markupId, getJSONParams())
-                + "$('#" + markupId + "').on('keydown', " +
-                "   function(e){"
-                + "     switch (e.keyCode) { " +
-                "           case 9: $(this).timepicker('hideWidget'); " +
-                "       }"
+
+
+                + "$('#" + markupId + "').timepicker().on('show.timepicker', function(e) {"
+                + " if(e.time.value == '0:00') {"
+                + "     $('#" + markupId + "').timepicker('setTime', '00:00 AM');"
+                + "  } "
+                + "});"
+                + "$('#" + markupId + "').on('keydown', "
+                + "   function(e){"
+                + "     switch (e.keyCode) { "
+                + "           case 9: $(this).timepicker('hideWidget'); "
+                + "       }"
                 + " });"
-                + "$('#" + markupId + "').on('remove', " +
-                "   function(e){" +
-                "       $(this).timepicker('remove'); "
+                + "$('#" + markupId + "').on('remove', "
+                + "   function(e){"
+                + "       $(this).timepicker('remove'); "
                 + " });";
 
         response.render(OnDomReadyHeaderItem.forScript(script));

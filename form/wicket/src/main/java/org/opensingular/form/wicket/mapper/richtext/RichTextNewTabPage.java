@@ -113,8 +113,9 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
             final Map<String, String> params = new HashMap<>();
 
             /*If don't contains the View, i add a view with empty buttons, for default use.*/
-            if (!viewSupplier.optional().isPresent()) {
+            if (!viewSupplier.optional().isPresent() || !(viewSupplier instanceof SViewByRichTextNewTab)) {
                 viewSupplier = (ISupplier<SViewByRichTextNewTab>) SViewByRichTextNewTab::new;
+                getLogger().info("SViewByRichTextNewTab was insert in the RichTextNewTabPage.");
             }
 
             params.put("submitButtonId", submitButton.getMarkupId());
