@@ -38,6 +38,8 @@ import org.apache.wicket.model.ResourceModel;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.ui.Alignment;
 import org.opensingular.lib.wicket.util.behavior.BSSelectInitBehaviour;
+import org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour;
+import org.opensingular.lib.wicket.util.behavior.DatePickerSettings;
 import org.opensingular.lib.wicket.util.behavior.PicklistInitBehaviour;
 import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstants;
 import org.opensingular.lib.wicket.util.feedback.BSFeedbackPanel;
@@ -131,11 +133,11 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         return super.appendTag("div", true, "class='radio-list'", input);
     }
 
-    public BSControls appendDatepicker(Component datepicker) {
-        return this.appendDatepicker(datepicker, null);
+    public BSControls appendDatepicker(Component datepicker, Map<String, ? extends Serializable> options) {
+        return this.appendDatepicker(datepicker, options, null);
     }
 
-    public BSControls appendDatepicker(Component datepicker, Map<String, ? extends Serializable> extraAttributes) {
+    public BSControls appendDatepicker(Component datepicker, Map<String, ? extends Serializable> extraAttributes, DatePickerSettings datePickerSettings) {
         Map<String, Serializable> attrs = new HashMap<>();
         attrs.put("data-date-format", "dd/mm/yyyy");
         attrs.put("data-date-start-date", BSDatepickerConstants.DEFAULT_START_DATE);
@@ -150,7 +152,9 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         inputGroup
                 .appendExtraClasses(" date ")
                 .appendExtraAttributes(attrs)
-                .appendInputText(datepicker.setMetaData(BSDatepickerConstants.KEY_CONTAINER, inputGroup));
+                .appendInputText(datepicker.setMetaData(BSDatepickerConstants.KEY_CONTAINER, inputGroup))
+                .add(new DatePickerInitBehaviour(datePickerSettings));
+        ;
 
         this.appendInputGroup(componentId -> inputGroup);
         return inputGroup;

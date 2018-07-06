@@ -12,13 +12,13 @@ import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior;
 import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour;
 import org.opensingular.lib.wicket.util.behavior.DatePickerSettings;
 import org.opensingular.lib.wicket.util.behavior.SingularDatePickerSettings;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSInputGroup;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
+import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
 import static org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstants.JS_CHANGE_EVENT;
 
 @SuppressWarnings("serial")
@@ -29,13 +29,14 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
     private Component button;
     private TextField inputText;
     private boolean createButton = true;
+    BSInputGroup bsInputGroup;
 
     @SuppressWarnings("unchecked")
     @Override
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
-        inputText = createInputText(ctx, labelModel);
-        BSInputGroup bsInputGroup = (BSInputGroup) formGroup.appendDatepicker(inputText
-                , getOptions(ctx.getModel()));
+        inputText = createInputText(ctx.getModel(), labelModel);
+        bsInputGroup = (BSInputGroup) formGroup.appendDatepicker(inputText
+                , getOptions(ctx.getModel()), getDatePickerSettings(ctx));
         if (isCreateButton()) {
             button = bsInputGroup.newButtonAddon(DefaultIcons.CALENDAR);
         }
@@ -45,23 +46,22 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
     /**
      * Method responsible for configure the input.
      *
-     * @param ctx        The wicket Context.
+     * @param model      The model of the input.
      * @param labelModel The label of the input.
      */
-    public TextField createInputText(WicketBuildContext ctx, IModel<String> labelModel) {
-        TextField comp = getInputData(ctx.getModel());
-        configureInputDateText(ctx, labelModel, comp);
+    public TextField createInputText(IModel<? extends SInstance> model, IModel<String> labelModel) {
+        TextField comp = getInputData(model);
+        configureInputDateText(labelModel, comp);
         return comp;
     }
 
-    private void configureInputDateText(WicketBuildContext ctx, IModel<String> labelModel, TextField comp) {
+    private void configureInputDateText(IModel<String> labelModel, TextField comp) {
         if (labelModel != null) {
             comp.setLabel(labelModel);
         }
         comp
                 .setOutputMarkupId(true)
-                .add(getInputMaskBehavior())
-                .add(new DatePickerInitBehaviour(getDatePickerSettings(ctx)));
+                .add(getInputMaskBehavior());
 
         if (textFieldConfigurer != null) {
             ((IConsumer) textFieldConfigurer).accept(comp);
@@ -112,16 +112,17 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
      * Method to add AjaxEvent's to the Date Mapper. This event's should be add to works fine with dependsON.
      * If this ajaxEvent don't have, can have a error if have a dependsOn with exists = false.
      *
-     * @param model    The model for process and validate.
-     * @param listener The listener for process and validate.
-     * @param componet The component that will be the ajax Event's adding.
-     * @param button   The button addon, if exits. <code>isCreateButton()</code>
+     * @param model     The model for process and validate.
+     * @param listener  The listener for process and validate.
+     * @param component The component that will be the ajax Event's adding.
+     * @param button    The button addon, if exits. <code>isCreateButton()</code>
      */
-    public static void addAjaxEvent(IModel<SInstance> model, IAjaxUpdateListener listener, TextField componet, Component button) {
-        componet
+    static void addAjaxEvent(IModel<SInstance> model, IAjaxUpdateListener listener, TextField component, Component button) {
+        component.add(new SingularEventsHandlers(ADD_TEXT_FIELD_HANDLERS));
+        component
                 .add(new SingularEventBehavior()
-                        .setProcessEvent(JS_CHANGE_EVENT, componet)
-                        .setValidateEvent("blur", componet)
+                        .setProcessEvent(JS_CHANGE_EVENT, component)
+                        .setValidateEvent("blur", component)
                         .setSupportComponents(button))
                 .add(AjaxUpdateInputBehavior.forProcess(model, listener))
                 .add(AjaxUpdateInputBehavior.forValidate(model, listener));

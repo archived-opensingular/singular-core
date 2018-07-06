@@ -22,6 +22,7 @@ import org.opensingular.form.view.date.SViewDateTime;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.DateMapper;
 import org.opensingular.form.wicket.mapper.TimeMapper;
+import org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 
@@ -46,7 +47,10 @@ public class DateTimeContainer extends BSContainer<DateTimeContainer> {
     }
 
     protected Component buildDateField() {
-        dateTextField = new DateMapper().createInputText(ctx, null);
+        DateMapper dateMapper = new DateMapper();
+        dateTextField = dateMapper.createInputText(ctx.getModel(), null);
+
+        dateTextField.add(new DatePickerInitBehaviour(dateMapper.getDatePickerSettings(ctx)));
         return dateTextField;
     }
 

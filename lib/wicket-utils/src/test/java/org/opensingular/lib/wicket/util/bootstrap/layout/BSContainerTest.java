@@ -92,7 +92,7 @@ public class BSContainerTest extends Object {
                     .newFormGroup()
                     .appendCheckbox(new CheckBox("checkbox", Model.of()))
                     .appendCheckboxChoice(new CheckBoxMultipleChoice<>("checkboxchoice", Model.ofList(new ArrayList<>()), Model.ofList(new ArrayList<>())))
-                    .appendDatepicker(new TextField<>("datepicker", valueModel()))
+                    .appendDatepicker(new TextField<>("datepicker", valueModel()), null)
                     .appendDatepicker(new TextField<>("datepicker", valueModel()), new HashMap<>())
                     .appendDiv(new WebMarkupContainer("div"))
                     .appendFeedback(new BSFeedbackPanel("feedback"))

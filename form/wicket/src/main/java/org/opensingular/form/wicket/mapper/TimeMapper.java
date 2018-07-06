@@ -38,6 +38,8 @@ import org.opensingular.form.wicket.model.SIDateTimeModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
+import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
+
 /**
  * Mapper for data type responsible for storing time (hour and minutes).
  */
@@ -86,7 +88,17 @@ public class TimeMapper extends AbstractControlsFieldComponentMapper {
         addAjaxEvent(model, listener, time);
     }
 
+
+    /**
+     * Method to add AjaxEvent's to the Date Mapper. This event's should be add to works fine with dependsON.
+     * If this ajaxEvent don't have, can have a error if have a dependsOn with exists = false.
+     *
+     * @param model     The model for process and validate.
+     * @param listener  The listener for process and validate.
+     * @param component The component that will be the ajax Event's adding.
+     */
     public static void addAjaxEvent(IModel<SInstance> model, IAjaxUpdateListener listener, TextField<String> component) {
+        component.add(new SingularEventsHandlers(ADD_TEXT_FIELD_HANDLERS));
         component
                 .add(new SingularEventBehavior()
                         .setProcessEvent("changeTimeEvent", component)
