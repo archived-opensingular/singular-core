@@ -35,7 +35,7 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         inputText = createInputText(ctx, labelModel);
         BSInputGroup bsInputGroup = (BSInputGroup) formGroup.appendDatepicker(inputText
-                , getOptions(ctx.getModel()), getDatePickerSettings(ctx));
+                , getOptions(ctx.getModel()));
         if (isCreateButton()) {
             button = bsInputGroup.newButtonAddon(DefaultIcons.CALENDAR);
         }

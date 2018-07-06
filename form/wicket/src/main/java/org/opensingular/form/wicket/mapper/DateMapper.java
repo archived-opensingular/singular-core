@@ -25,9 +25,11 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.convert.IConverter;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.view.date.SViewDate;
 import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.converter.DateConverter;
 import org.opensingular.form.wicket.model.SIDateTimeModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.behavior.DatePickerSettings;
@@ -52,13 +54,12 @@ public class DateMapper extends AbstractDateMapper {
 
     @Override
     protected TextField<String> getInputData(IModel<? extends SInstance> model) {
-        return new TextField<>("date", new SIDateTimeModel.DateModel(new SInstanceValueModel<>(model)));
-//        {
-//            @Override
-//            public <C> IConverter<C> getConverter(Class<C> type) {
-//                return (IConverter<C>) new DateConverter(defaultDateFormat());
-//            }
-//        };
+        return new TextField("date", new SIDateTimeModel.DateModel(new SInstanceValueModel<>(model))) {
+            @Override
+            public <C> IConverter<C> getConverter(Class<C> type) {
+                return (IConverter<C>) new DateConverter(defaultDateFormat());
+            }
+        };
     }
 
     private String configureMinDate(IModel<? extends SInstance> model) {
@@ -94,7 +95,6 @@ public class DateMapper extends AbstractDateMapper {
         }
         return StringUtils.EMPTY;
     }
-
 
 
     public static SimpleDateFormat defaultDateFormat() {

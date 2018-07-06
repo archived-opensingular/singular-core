@@ -38,7 +38,6 @@ import org.apache.wicket.model.ResourceModel;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.ui.Alignment;
 import org.opensingular.lib.wicket.util.behavior.BSSelectInitBehaviour;
-import org.opensingular.lib.wicket.util.behavior.DatePickerSettings;
 import org.opensingular.lib.wicket.util.behavior.PicklistInitBehaviour;
 import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstants;
 import org.opensingular.lib.wicket.util.feedback.BSFeedbackPanel;
@@ -133,10 +132,10 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSControls appendDatepicker(Component datepicker) {
-        return this.appendDatepicker(datepicker, null, null);
+        return this.appendDatepicker(datepicker, null);
     }
 
-    public BSControls appendDatepicker(Component datepicker, Map<String, ? extends Serializable> extraAttributes, DatePickerSettings datePickerSettings) {
+    public BSControls appendDatepicker(Component datepicker, Map<String, ? extends Serializable> extraAttributes) {
         Map<String, Serializable> attrs = new HashMap<>();
         attrs.put("data-date-format", "dd/mm/yyyy");
         attrs.put("data-date-start-date", BSDatepickerConstants.DEFAULT_START_DATE);
