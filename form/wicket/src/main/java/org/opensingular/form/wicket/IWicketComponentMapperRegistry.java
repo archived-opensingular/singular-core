@@ -52,6 +52,7 @@ import org.opensingular.form.view.date.SViewDate;
 import org.opensingular.form.view.date.SViewDateTime;
 import org.opensingular.form.view.date.SViewTime;
 import org.opensingular.form.view.richtext.SViewByRichText;
+import org.opensingular.form.view.richtext.SViewByRichTextNewTab;
 import org.opensingular.form.wicket.mapper.BooleanMapper;
 import org.opensingular.form.wicket.mapper.DateMapper;
 import org.opensingular.form.wicket.mapper.DateTimeMapper;
@@ -169,10 +170,12 @@ public class IWicketComponentMapperRegistry
         add(STypeTime.class,        SViewTime.class,                      TimeMapper::new);
         add(STypeTelefoneNacional.class,                                  TelefoneNacionalMapper::new);
         add(STypeHTML.class,                                              PortletRichTextMapper::new);
+        add(STypeHTML.class,        SViewByRichTextNewTab.class,          PortletRichTextMapper::new);
         add(STypeHTML.class,        SViewByRichText.class,                RichTextMapper::new);
         add(STypeAttachmentList.class, SViewAttachmentList.class,         AttachmentListMapper::new);
         add(STypeCNPJ.class,                                              CNPJMapper::new);
         add(STypeCPF.class,                                               CPFMapper::new);
+        add(STypePassword.class,        SViewPassword.class,              PasswordMapper::new);
         add(STypePassword.class,                                          PasswordMapper::new);
         add(STypeHiddenString.class,                                      InputHiddenMapper::new);
         //@formatter:on
