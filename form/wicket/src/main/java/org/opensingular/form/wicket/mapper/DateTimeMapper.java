@@ -21,21 +21,23 @@ import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.core.STypeDateTime;
-import org.opensingular.form.view.SViewDateTime;
+import org.opensingular.form.wicket.IAjaxUpdateListener;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.datetime.DateTimeContainer;
-import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 public class DateTimeMapper extends AbstractControlsFieldComponentMapper {
 
+    private DateTimeContainer dateTimeContainer;
+
     @Override
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
-        final DateTimeContainer dateTimeContainer = new DateTimeContainer(model.getObject().getName(), new SInstanceValueModel<>(model), ctx.getViewSupplier(SViewDateTime.class));
+        dateTimeContainer = new DateTimeContainer(model.getObject().getName(), ctx);
         formGroup.appendDiv(dateTimeContainer);
         return dateTimeContainer;
     }
@@ -47,5 +49,15 @@ public class DateTimeMapper extends AbstractControlsFieldComponentMapper {
             return format.format(model.getObject().getValue());
         }
         return StringUtils.EMPTY;
+    }
+
+
+    @Override
+    public void addAjaxUpdate(WicketBuildContext ctx, Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
+        TextField timePicker = dateTimeContainer.getTimeTextField();
+        TimeMapper.addAjaxEvent(model, listener, timePicker);
+
+        TextField datePicker = dateTimeContainer.getDateTextField();
+        DateMapper.addAjaxEvent(model, listener, datePicker, null);
     }
 }

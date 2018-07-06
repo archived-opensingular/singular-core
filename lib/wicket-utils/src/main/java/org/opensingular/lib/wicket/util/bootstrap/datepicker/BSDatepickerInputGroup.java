@@ -16,7 +16,13 @@
 
 package org.opensingular.lib.wicket.util.bootstrap.datepicker;
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.wicket.Component;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.util.convert.IConverter;
 import org.opensingular.lib.commons.lambda.IConsumer;
@@ -25,11 +31,10 @@ import org.opensingular.lib.wicket.util.behavior.DatePickerSettings;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSInputGroup;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
-import java.util.Date;
-
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
+@Deprecated
 public class BSDatepickerInputGroup extends BSInputGroup {
 
     public enum ViewMode {
@@ -54,6 +59,7 @@ public class BSDatepickerInputGroup extends BSInputGroup {
     private ViewMode startView  = ViewMode.DAYS;
     private ViewMode minView    = ViewMode.DAYS;
     private ViewMode maxView    = ViewMode.MILLENIUM;
+    private HashMap<String, String> options = new HashMap<>();
 
     private DatePickerSettings datePickerSettings;
     private IConsumer<? extends Component> textFieldConfigurer = IConsumer.noop();
@@ -78,14 +84,23 @@ public class BSDatepickerInputGroup extends BSInputGroup {
         if (textfield == null) {
             textfield = newTextField(this.getId());
             textfield.setMetaData(BSDatepickerConstants.KEY_CONTAINER, this);
-            add($b.attr("data-date-format", $m.get(this::getDateFormat)));
-            add($b.attr("data-date-start-date", $m.get(this::getStartDate)));
-            add($b.attr("data-date-end-date", $m.get(this::getEndDate)));
-            add($b.attr("data-date-start-view", $m.get(this::getStartView)));
-            add($b.attr("data-date-min-view-mode", $m.get(this::getMinView)));
-            add($b.attr("data-date-max-view-mode", $m.get(this::getMaxView)));
+            Map<String, Serializable> attrs = new HashMap<>();
+            attrs.put("data-date-format", $m.get(this::getDateFormat));
+            attrs.put("data-date-start-date", $m.get(this::getStartDate));
+            attrs.put("data-date-end-date", $m.get(this::getEndDate));
+            attrs.put("data-date-start-view", $m.get(this::getStartView));
+            attrs.put("data-date-min-view-mode",  $m.get(this::getMinView));
+            attrs.put("data-date-max-view-mode",$m.get(this::getMaxView));
 
+
+            if (options != null) {
+                attrs.putAll(options);
+            }
+            appendExtraAttributes(attrs);
+
+            textfield.add(new AttributeAppender("autocomplete", "off"));
             appendInputText(textfield);
+
             button = newButtonAddon(DefaultIcons.CALENDAR);
             add(new DatePickerInitBehaviour(datePickerSettings));
             add($b.classAppender("date"));
@@ -185,6 +200,15 @@ public class BSDatepickerInputGroup extends BSInputGroup {
 
     public BSDatepickerInputGroup setTextFieldConfigurer(IConsumer<? extends Component> configurer) {
         this.textFieldConfigurer = configurer;
+        return this;
+    }
+
+    public HashMap<String, String> getOptions() {
+        return options;
+    }
+
+    public BSDatepickerInputGroup setOptions(HashMap<String, String> options) {
+        this.options = options;
         return this;
     }
 }

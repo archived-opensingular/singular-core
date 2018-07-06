@@ -18,6 +18,8 @@ package org.opensingular.form.wicket.mapper;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -25,6 +27,8 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.core.STypeTime;
+import org.opensingular.form.view.date.ISViewTime;
+import org.opensingular.form.view.date.SViewTime;
 import org.opensingular.form.wicket.IAjaxUpdateListener;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.AjaxUpdateInputBehavior;
@@ -39,16 +43,33 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
  */
 public class TimeMapper extends AbstractControlsFieldComponentMapper {
 
-    public TextField<String> time;
+    private TextField<String> time;
 
     @Override
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
-        time = new TextField<>("time",
-                new SIDateTimeModel.TimeModel(new SInstanceValueModel<>(ctx.getModel())));
-        time.add(new CreateTimePickerBehavior());
-        time.add(new InputMaskBehavior(InputMaskBehavior.Masks.TIME));
+        time = createTextFieldTime(ctx.getModel(), ctx.getViewSupplier(SViewTime.class).get());
         formGroup.appendInputText(time);
         return time;
+    }
+
+    public TextField<String> createTextFieldTime(IModel<? extends SInstance> model, ISViewTime sViewDateTime) {
+        time = new TextField<>("time", new SIDateTimeModel.TimeModel(new SInstanceValueModel<>(model)));
+        time.add(new CreateTimePickerBehavior(getParams(sViewDateTime)));
+        time.add(new InputMaskBehavior(InputMaskBehavior.Masks.TIME));
+        return time;
+    }
+
+    protected Map<String, Object> getParams(ISViewTime viewSupplier) {
+        final Map<String, Object> params = new TreeMap<>();
+        params.put("defaultTime", Boolean.FALSE);
+        params.put("showMeridian", Boolean.FALSE);
+
+        if (viewSupplier != null) {
+            params.put("showMeridian", viewSupplier.isMode24hs());
+            params.put("minuteStep", viewSupplier.getMinuteStep());
+        }
+
+        return params;
     }
 
     @Override
@@ -62,19 +83,17 @@ public class TimeMapper extends AbstractControlsFieldComponentMapper {
 
     @Override
     public void addAjaxUpdate(WicketBuildContext ctx, Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
-        adjustJSEvents(component);
+        addAjaxEvent(model, listener, time);
+    }
 
-        time.add(AjaxUpdateInputBehavior.forProcess(model, listener))
+    public static void addAjaxEvent(IModel<SInstance> model, IAjaxUpdateListener listener, TextField<String> component) {
+        component
+                .add(new SingularEventBehavior()
+                        .setProcessEvent("changeTimeEvent", component)
+                        .setValidateEvent("blur", component))
+                .add(AjaxUpdateInputBehavior.forProcess(model, listener))
                 .add(AjaxUpdateInputBehavior.forValidate(model, listener));
     }
 
-    @Override
-    public void adjustJSEvents(Component comp) {
-        time
-                .add(new SingularEventBehavior()
-                        .setProcessEvent("changeTimeEvent", time)
-                        .setValidateEvent("blur", time));
-
-    }
 
 }

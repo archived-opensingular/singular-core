@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.view;
+package org.opensingular.form.view.date;
 
-
-import org.opensingular.form.SInstance;
-import org.opensingular.lib.commons.lambda.IFunction;
 
 import java.util.Date;
 import java.util.List;
 
-public class SViewDate extends SView {
+import org.opensingular.form.SInstance;
+import org.opensingular.form.view.SView;
+import org.opensingular.lib.commons.lambda.IFunction;
+
+public class SViewDate extends SView implements ISViewDate {
 
     private boolean autoclose = false;
     private boolean clearBtn = false;

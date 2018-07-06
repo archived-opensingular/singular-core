@@ -25,8 +25,19 @@ import org.apache.wicket.MetaDataKey;
  */
 public class BSDatepickerConstants {
 
+    public enum ViewMode {
+        DAYS, MONTH, YEAR, DECADE, CENTURY, MILLENIUM;
+
+        public String toString() {
+            return name().toLowerCase();
+        }
+    }
+
     private BSDatepickerConstants() {}
-    
+
+    public static final String DEFAULT_DATE_FORMAT     = "dd/MM/yyyy";
+    public static final String DEFAULT_START_DATE      = "01/01/1900";
+    public static final String DEFAULT_END_DATE        = "31/12/2999";
     public static final MetaDataKey<MarkupContainer> KEY_CONTAINER = new MetaDataKey<MarkupContainer>() {};
     public static final String JS_CHANGE_EVENT = "singularChangeDate";
     

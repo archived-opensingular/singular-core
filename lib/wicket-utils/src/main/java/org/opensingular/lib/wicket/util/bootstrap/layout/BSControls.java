@@ -38,12 +38,11 @@ import org.apache.wicket.model.ResourceModel;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.ui.Alignment;
 import org.opensingular.lib.wicket.util.behavior.BSSelectInitBehaviour;
-import org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour;
+import org.opensingular.lib.wicket.util.behavior.DatePickerSettings;
 import org.opensingular.lib.wicket.util.behavior.PicklistInitBehaviour;
 import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstants;
 import org.opensingular.lib.wicket.util.feedback.BSFeedbackPanel;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
-import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
@@ -134,29 +133,28 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSControls appendDatepicker(Component datepicker) {
-        return this.appendDatepicker(datepicker, null);
+        return this.appendDatepicker(datepicker, null, null);
     }
 
-    public BSControls appendDatepicker(Component datepicker, Map<String, String> extraAttributes) {
-        Map<String, String> attrs = new HashMap<String, String>();
+    public BSControls appendDatepicker(Component datepicker, Map<String, ? extends Serializable> extraAttributes, DatePickerSettings datePickerSettings) {
+        Map<String, Serializable> attrs = new HashMap<>();
         attrs.put("data-date-format", "dd/mm/yyyy");
-        attrs.put("data-date-start-date", "01/01/1900");
-        attrs.put("data-date-end-date", "31/12/2999");
+        attrs.put("data-date-start-date", BSDatepickerConstants.DEFAULT_START_DATE);
+        attrs.put("data-date-end-date", BSDatepickerConstants.DEFAULT_END_DATE);
         attrs.put("data-date-start-view", "days");
-        attrs.put("data-date-min-view-mode", "days");
+        attrs.put("data-date-min-view-mode", BSDatepickerConstants.ViewMode.DAYS);
+        attrs.put("data-date-max-view-mode", BSDatepickerConstants.ViewMode.MILLENIUM);
         if (extraAttributes != null)
             attrs.putAll(extraAttributes);
 
-        this.appendInputGroup(componentId -> {
-            BSInputGroup inputGroup = newInputGroup();
-            return (BSInputGroup) inputGroup
-                    .appendExtraClasses(" date ")
-                    .appendExtraAttributes(attrs)
-                    .appendInputText(datepicker.setMetaData(BSDatepickerConstants.KEY_CONTAINER, inputGroup))
-                    .appendButtonAddon(DefaultIcons.CALENDAR)
-                    .add(new DatePickerInitBehaviour());
-        });
-        return this;
+        BSInputGroup inputGroup = newInputGroup();
+        inputGroup
+                .appendExtraClasses(" date ")
+                .appendExtraAttributes(attrs)
+                .appendInputText(datepicker.setMetaData(BSDatepickerConstants.KEY_CONTAINER, inputGroup));
+
+        this.appendInputGroup(componentId -> inputGroup);
+        return inputGroup;
     }
 
     public BSControls appendSelect(Component select) {
