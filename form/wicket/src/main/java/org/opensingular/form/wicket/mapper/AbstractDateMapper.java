@@ -18,7 +18,8 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSInputGroup;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
-import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
+import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.OPTS_ORIGINAL_PROCESS_EVENT;
+import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.OPTS_ORIGINAL_VALIDATE_EVENT;
 import static org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstants.JS_CHANGE_EVENT;
 
 @SuppressWarnings("serial")
@@ -90,13 +91,14 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
         return null;
     }
 
-
-    public boolean isCreateButton() {
+    /**
+     * Method responsible for enable or disabled the creation of the button addon.
+     * By default the button will be created.
+     *
+     * @return True for create;
+     */
+    protected boolean isCreateButton() {
         return createButton;
-    }
-
-    public void setCreateButton(boolean createButton) {
-        this.createButton = createButton;
     }
 
     public void setTextFieldConfigurer(IConsumer<? extends Component> textFieldConfigurer) {
@@ -118,14 +120,17 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
      * @param button    The button addon, if exits. <code>isCreateButton()</code>
      */
     static void addAjaxEvent(IModel<SInstance> model, IAjaxUpdateListener listener, TextField component, Component button) {
-        component.add(new SingularEventsHandlers(ADD_TEXT_FIELD_HANDLERS));
-        component
-                .add(new SingularEventBehavior()
-                        .setProcessEvent(JS_CHANGE_EVENT, component)
-                        .setValidateEvent("blur", component)
-                        .setSupportComponents(button))
+
+        component.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS)
+                .setOption(OPTS_ORIGINAL_PROCESS_EVENT, JS_CHANGE_EVENT)
+                .setOption(OPTS_ORIGINAL_VALIDATE_EVENT, JS_CHANGE_EVENT))
                 .add(AjaxUpdateInputBehavior.forProcess(model, listener))
                 .add(AjaxUpdateInputBehavior.forValidate(model, listener));
+//                .add(new SingularEventBehavior()
+//                        .setProcessEvent(JS_CHANGE_EVENT, component)
+//                        .setValidateEvent(JS_CHANGE_EVENT, component)
+//                        .setSupportComponents(button));
     }
+
 
 }

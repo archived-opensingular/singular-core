@@ -39,13 +39,13 @@ public class CreateTimePickerBehavior extends InitScriptBehaviour {
     private boolean onInit = true;
 
     public CreateTimePickerBehavior(Map<String, Object> params) {
-        this.params.putAll(params);
-    }
-
-    public CreateTimePickerBehavior() {
         this.params.put("defaultTime", Boolean.FALSE);
         this.params.put("showMeridian", Boolean.FALSE);
+        if (params != null) {
+            this.params.putAll(params);
+        }
     }
+
 
     @Override
     public String getScript(Component component) {

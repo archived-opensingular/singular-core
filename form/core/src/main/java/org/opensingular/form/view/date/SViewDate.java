@@ -26,7 +26,7 @@ import org.opensingular.lib.commons.lambda.IFunction;
 
 public class SViewDate extends SView implements ISViewDate {
 
-    private boolean autoclose = false;
+    private boolean autoclose = true;
     private boolean clearBtn = false;
     private Date startDate;
     private boolean todayBtn = false;

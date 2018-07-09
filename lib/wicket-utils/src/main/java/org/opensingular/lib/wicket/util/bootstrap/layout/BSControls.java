@@ -154,7 +154,6 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
                 .appendExtraAttributes(attrs)
                 .appendInputText(datepicker.setMetaData(BSDatepickerConstants.KEY_CONTAINER, inputGroup))
                 .add(new DatePickerInitBehaviour(datePickerSettings));
-        ;
 
         this.appendInputGroup(componentId -> inputGroup);
         return inputGroup;

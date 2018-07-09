@@ -38,13 +38,15 @@ import org.opensingular.form.wicket.model.SIDateTimeModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
-import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
+import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.OPTS_ORIGINAL_PROCESS_EVENT;
+import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.OPTS_ORIGINAL_VALIDATE_EVENT;
 
 /**
  * Mapper for data type responsible for storing time (hour and minutes).
  */
 public class TimeMapper extends AbstractControlsFieldComponentMapper {
 
+    public static final String ON_UPDATE_TIME = "onUpdateTime";
     private TextField<String> time;
 
     @Override
@@ -58,6 +60,7 @@ public class TimeMapper extends AbstractControlsFieldComponentMapper {
         time = new TextField<>("time", new SIDateTimeModel.TimeModel(new SInstanceValueModel<>(model)));
         time.add(new CreateTimePickerBehavior(getParams(sViewDateTime)));
         time.add(new InputMaskBehavior(InputMaskBehavior.Masks.TIME));
+        time.setOutputMarkupId(true);
         return time;
     }
 
@@ -98,13 +101,12 @@ public class TimeMapper extends AbstractControlsFieldComponentMapper {
      * @param component The component that will be the ajax Event's adding.
      */
     public static void addAjaxEvent(IModel<SInstance> model, IAjaxUpdateListener listener, TextField<String> component) {
-        component.add(new SingularEventsHandlers(ADD_TEXT_FIELD_HANDLERS));
-        component
-                .add(new SingularEventBehavior()
-                        .setProcessEvent("changeTimeEvent", component)
-                        .setValidateEvent("blur", component))
-                .add(AjaxUpdateInputBehavior.forProcess(model, listener))
-                .add(AjaxUpdateInputBehavior.forValidate(model, listener));
+        component.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS)
+                .setOption(OPTS_ORIGINAL_VALIDATE_EVENT, ON_UPDATE_TIME)
+                .setOption(OPTS_ORIGINAL_PROCESS_EVENT, ON_UPDATE_TIME))
+                .add(AjaxUpdateInputBehavior.forValidate(model, listener))
+                .add(AjaxUpdateInputBehavior.forProcess(model, listener));
+
     }
 
 
