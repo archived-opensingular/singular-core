@@ -17,6 +17,9 @@
 package org.opensingular.form.view.date;
 
 
+/**
+ * This class will have the same configuration of the Date and Time component.
+ */
 public class SViewDateTime extends SViewDate implements ISViewTime {
 
     private SViewTime sViewTime = new SViewTime();

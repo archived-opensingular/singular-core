@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
@@ -30,13 +31,12 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
     private Component button;
     private TextField inputText;
     private boolean createButton = true;
-    BSInputGroup bsInputGroup;
 
     @SuppressWarnings("unchecked")
     @Override
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         inputText = createInputText(ctx.getModel(), labelModel);
-        bsInputGroup = (BSInputGroup) formGroup.appendDatepicker(inputText
+        BSInputGroup bsInputGroup = (BSInputGroup) formGroup.appendDatepicker(inputText
                 , getOptions(ctx.getModel()), getDatePickerSettings(ctx));
         if (isCreateButton()) {
             button = bsInputGroup.newButtonAddon(DefaultIcons.CALENDAR);
@@ -45,7 +45,8 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
     }
 
     /**
-     * Method responsible for configure the input.
+     * Method responsible for create the input.
+     * This method could be used for create a input data configurated.
      *
      * @param model      The model of the input.
      * @param labelModel The label of the input.
@@ -56,22 +57,9 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
         return comp;
     }
 
-    private void configureInputDateText(IModel<String> labelModel, TextField comp) {
-        if (labelModel != null) {
-            comp.setLabel(labelModel);
-        }
-        comp
-                .setOutputMarkupId(true)
-                .add(getInputMaskBehavior());
-
-        if (textFieldConfigurer != null) {
-            ((IConsumer) textFieldConfigurer).accept(comp);
-        }
-    }
-
     /**
      * Settings for the DatePicker.
-     * <code> http://bootstrap-datepicker.readthedocs.io/en/latest/</code>
+     * This settings can be configurated using the <code>SViewDate</code>.
      *
      * @param ctx The ctx that contanins model and view.
      * @return Return a DatePickerSettings.
@@ -81,12 +69,29 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
         return null;
     }
 
+    /**
+     * The mask of the input, by default will use the FULL_DATE mask.
+     *
+     * @return
+     */
     protected InputMaskBehavior getInputMaskBehavior() {
         return new InputMaskBehavior(InputMaskBehavior.Masks.FULL_DATE);
     }
 
+    /**
+     * The input data with the configuration necessery, some converter for example.
+     *
+     * @param model The model of the instance
+     * @return TextField of the date.
+     */
     protected abstract TextField getInputData(IModel<? extends SInstance> model);
 
+    /**
+     * Method for configure the options of the Bootstrap DatePicker.
+     *
+     * @param model The model of the instance.
+     * @return return a Map with the key (datePicker option) and the value.
+     */
     protected Map<String, ? extends Serializable> getOptions(IModel<? extends SInstance> model) {
         return null;
     }
@@ -119,8 +124,7 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
      * @param component The component that will be the ajax Event's adding.
      * @param button    The button addon, if exits. <code>isCreateButton()</code>
      */
-    static void addAjaxEvent(IModel<SInstance> model, IAjaxUpdateListener listener, TextField component, Component button) {
-
+    static void addAjaxEvent(IModel<SInstance> model, IAjaxUpdateListener listener, TextField component, Component button) {//TODO avaliar se é necessario utilizar o SingularEventBehavior.
         component.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS)
                 .setOption(OPTS_ORIGINAL_PROCESS_EVENT, JS_CHANGE_EVENT)
                 .setOption(OPTS_ORIGINAL_VALIDATE_EVENT, JS_CHANGE_EVENT))
@@ -130,6 +134,26 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
 //                        .setProcessEvent(JS_CHANGE_EVENT, component)
 //                        .setValidateEvent(JS_CHANGE_EVENT, component)
 //                        .setSupportComponents(button));
+    }
+
+    /**
+     * Method responsible for configure the input of the date Text.
+     *
+     * @param labelModel The label of the input.
+     * @param comp       The textFieldComponent that will be configurated.
+     */
+    private void configureInputDateText(IModel<String> labelModel, TextField comp) {
+        if (labelModel != null) {
+            comp.setLabel(labelModel);
+        }
+
+        comp.add(AttributeAppender.append("autocomplete", "off"))
+                .setOutputMarkupId(true)
+                .add(getInputMaskBehavior());
+
+        if (textFieldConfigurer != null) {
+            ((IConsumer) textFieldConfigurer).accept(comp);
+        }
     }
 
 

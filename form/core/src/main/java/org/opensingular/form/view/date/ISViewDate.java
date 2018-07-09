@@ -6,6 +6,10 @@ import java.util.List;
 import org.opensingular.form.SInstance;
 import org.opensingular.lib.commons.lambda.IFunction;
 
+/**
+ * This view will configure the Timer component.
+ * For more information: <code>http://bootstrap-datepicker.readthedocs.io/en/latest/</code>
+ */
 public interface ISViewDate {
 
     IFunction<SInstance, List<Date>> getEnabledDatesFunction();
@@ -55,6 +59,7 @@ public interface ISViewDate {
      * If true, highlights the current date.
      * <p>
      * Default: false
+     * <p> if the Today button is enabled, the todayHighlight will be forced to true.
      */
     SViewDate setTodayHighlight(boolean todayHighlight);
 

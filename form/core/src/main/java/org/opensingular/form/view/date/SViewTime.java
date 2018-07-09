@@ -7,6 +7,7 @@ public class SViewTime extends SView implements ISViewTime {
     private boolean mode24hs = false;
     private Integer minuteStep;
 
+
     public SViewTime setMode24hs(boolean value) {
         mode24hs = value;
         return this;

@@ -23,6 +23,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
@@ -58,9 +59,10 @@ public class TimeMapper extends AbstractControlsFieldComponentMapper {
 
     public TextField<String> createTextFieldTime(IModel<? extends SInstance> model, ISViewTime sViewDateTime) {
         time = new TextField<>("time", new SIDateTimeModel.TimeModel(new SInstanceValueModel<>(model)));
-        time.add(new CreateTimePickerBehavior(getParams(sViewDateTime)));
-        time.add(new InputMaskBehavior(InputMaskBehavior.Masks.TIME));
-        time.setOutputMarkupId(true);
+        time.add(new CreateTimePickerBehavior(getParams(sViewDateTime)))
+                .add(new InputMaskBehavior(InputMaskBehavior.Masks.TIME))
+                .add(AttributeAppender.append("autocomplete", "off"))
+                .setOutputMarkupId(true);
         return time;
     }
 
