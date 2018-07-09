@@ -8,31 +8,35 @@ import org.opensingular.lib.commons.ui.Alignment;
 public class SViewCheckBox extends SView {
 
     /**
-     * Variable for alignment of the checkbox
+     * Variable for configure the alignment of the Label of checkbox.
      * It's useful for <code> SViewListByTable </code>.
      */
-    private Alignment alignment;
+    private Alignment alignmentLabel;
 
     /**
-     * Method for change de alignment of checkbox.
+     * Method for change de alignment label of checkbox.
+     * <p>
+     * If the alignment is configurated,  the label above the checkbox.
+     * <p>
      * <code>CENTER</code> will put the text-align:center.
      * <code>LEFT</code> will put the text-align:left.
      * <code>RIGHT</code> will put the text-align:right.
      *
-     * @param alignment The alignment.
+     * @param alignment The alignment of label.
      * @return <code>this</code>
      */
-    public SViewCheckBox setAlignCheckBox(Alignment alignment) {
-        this.alignment = alignment;
+    public SViewCheckBox setAlignLabelOfCheckBox(Alignment alignment) {
+        this.alignmentLabel = alignment;
         return this;
     }
 
     /**
-     * Returns the alignment.
+     * Returns the alignment of label.
+     * If the alignment was not null, the Label will be put above the checkbox.
      *
      * @return The alignment.
      */
-    public Alignment getAlignment() {
-        return alignment;
+    public Alignment getAlignmentOfLabel() {
+        return alignmentLabel;
     }
 }

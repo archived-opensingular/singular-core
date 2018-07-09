@@ -54,7 +54,7 @@ public class CheckBoxPanel extends Panel {
     private String configureTextAlignStyle(WicketBuildContext ctx) {
         Alignment alignment = null;
         if (ctx.getView() != null && ctx.getView() instanceof SViewCheckBox) {
-            alignment = ((SViewCheckBox) ctx.getView()).getAlignment();
+            alignment = ((SViewCheckBox) ctx.getView()).getAlignmentOfLabel();
         }
         String style = "";
         if (alignment != null) {

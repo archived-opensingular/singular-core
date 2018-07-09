@@ -105,14 +105,14 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
             CheckBox input) {
         final IModel<? extends SInstance> model = ctx.getModel();
         Label label;
-        if (ctx.getView() instanceof SViewCheckBox) {
+        if (viewIsConfigToChangeAlignmentLabel(ctx)) {
             label = createLabel(ctx);
             BSControls labelBar = createLabelBar(label);
             formGroup.appendLabel(labelBar);
 
             final AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
             createSubTitle(formGroup, subtitle);
-            formGroup.appendCheckboxWithoutLabel(input, ((SViewCheckBox) ctx.getView()).getAlignment());
+            formGroup.appendCheckboxWithoutLabel(input, ((SViewCheckBox) ctx.getView()).getAlignmentOfLabel());
 
         } else {
             final AttributeModel<String> labelModel = new AttributeModel<>(model, SPackageBasic.ATR_LABEL);
@@ -129,12 +129,22 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
         });
     }
 
+    /**
+     * Method to verify is the Label of checkBox will be above of the checkbox.
+     *
+     * @param ctx The context.
+     * @return True if the label will be show above.
+     */
+    private boolean viewIsConfigToChangeAlignmentLabel(WicketBuildContext ctx) {
+        return ctx.getView() instanceof SViewCheckBox && ((SViewCheckBox) ctx.getView()).getAlignmentOfLabel() != null;
+    }
+
     protected void buildForVisualization(WicketBuildContext ctx) {
         final BSControls formGroup = ctx.getContainer().newFormGroup();
         final IModel<? extends SInstance> model = ctx.getModel();
 
 
-        if (ctx.getView() instanceof SViewCheckBox) {
+        if (viewIsConfigToChangeAlignmentLabel(ctx)) {
             formGroup.appendLabel(createLabel(ctx));
 
             final AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
