@@ -3,13 +3,13 @@ package org.opensingular.form.view;
 import org.opensingular.lib.commons.ui.Alignment;
 
 /**
- * SView for put the Label Above the CheckBox.
- * It's useful for <code> SViewListByTable </code>.
+ * SView for configure the CheckBox.
  */
-public class SViewCheckBoxLabelAbove extends SView {
+public class SViewCheckBox extends SView {
 
     /**
      * Variable for alignment of the checkbox
+     * It's useful for <code> SViewListByTable </code>.
      */
     private Alignment alignment;
 
@@ -22,13 +22,14 @@ public class SViewCheckBoxLabelAbove extends SView {
      * @param alignment The alignment.
      * @return <code>this</code>
      */
-    public SViewCheckBoxLabelAbove setAlignCheckBox(Alignment alignment) {
+    public SViewCheckBox setAlignCheckBox(Alignment alignment) {
         this.alignment = alignment;
         return this;
     }
 
     /**
      * Returns the alignment.
+     *
      * @return The alignment.
      */
     public Alignment getAlignment() {
