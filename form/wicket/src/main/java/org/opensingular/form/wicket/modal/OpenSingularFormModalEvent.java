@@ -1,5 +1,7 @@
 package org.opensingular.form.wicket.modal;
 
+import java.util.Optional;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -37,7 +39,7 @@ public class OpenSingularFormModalEvent<ST extends SType<SI>, SI extends SInstan
             .add(sfp);
     }
 
-    protected static <SI extends SInstance> AjaxLink<SI> newLink(String id, ModalDelegate<SI> delegate, ActionCallback<SI> action) {
+    protected static <SI extends SInstance> AjaxLink<SI> newLink(String id, ModalDelegate<SI> delegate, Optional<Form<?>> form, ActionCallback<SI> action) {
         return new AjaxLink<SI>(id, delegate.getModel()) {
             @Override
             public void onClick(AjaxRequestTarget target) {
@@ -46,7 +48,7 @@ public class OpenSingularFormModalEvent<ST extends SType<SI>, SI extends SInstan
             }
         };
     }
-    protected static <SI extends SInstance> AjaxButton newButton(String id, ModalDelegate<SI> delegate, ActionCallback<SI> action) {
+    protected static <SI extends SInstance> AjaxButton newButton(String id, ModalDelegate<SI> delegate, Optional<Form<?>> form, ActionCallback<SI> action) {
         return new AjaxButton(id) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {

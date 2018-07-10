@@ -14,6 +14,7 @@ import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.lib.commons.lambda.ITriConsumer;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder.ButtonStyle;
+import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 public class OpenModalEvent<T> implements IOpenModalEvent {
 
@@ -22,7 +23,7 @@ public class OpenModalEvent<T> implements IOpenModalEvent {
     }
 
     protected static interface ActionComponentFactory<C extends Component, T> extends Serializable {
-        C create(String id, ModalDelegate<T> delegate, ActionCallback<T> action);
+        C create(String id, ModalDelegate<T> delegate, Optional<Form<?>> form, ActionCallback<T> action);
     }
 
     @FunctionalInterface
@@ -76,7 +77,7 @@ public class OpenModalEvent<T> implements IOpenModalEvent {
         this.buttonFactory = buttonFactory;
     }
 
-    protected static <T> AjaxLink<T> defaultNewLink(String id, ModalDelegate<T> delegate, ActionCallback<T> action) {
+    protected static <T> AjaxLink<T> defaultNewLink(String id, ModalDelegate<T> delegate, Optional<Form<?>> form, ActionCallback<T> action) {
         return new AjaxLink<T>(id, delegate.getModel()) {
             @Override
             public void onClick(AjaxRequestTarget target) {
@@ -84,8 +85,8 @@ public class OpenModalEvent<T> implements IOpenModalEvent {
             }
         };
     }
-    protected static <T> AjaxButton defaultNewButton(String id, ModalDelegate<T> delegate, ActionCallback<T> action) {
-        return new AjaxButton(id) {
+    protected static <T> AjaxButton defaultNewButton(String id, ModalDelegate<T> delegate, Optional<Form<?>> form, ActionCallback<T> action) {
+        return new AjaxButton(id, form.orElse(null)) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 action.onAction(target, delegate, delegate.getModel());
@@ -150,7 +151,8 @@ public class OpenModalEvent<T> implements IOpenModalEvent {
             return addLink(getModalBorder().newButtonId(), Model.of(label), ButtonStyle.LINK, action);
         }
         public AjaxLink<T> addLink(String id, IModel<String> labelModel, ButtonStyle style, ActionCallback<T> action) {
-            AjaxLink<T> link = newAjaxLink(id, action);
+            Optional<Form<?>> form = WicketUtils.findFirstChild(getModalBorder().getModalBody(), Form.class).map(it -> (Form<?>) it);
+            AjaxLink<T> link = newAjaxLink(id, form, action);
             getModalBorder().addLink(style, labelModel, link);
             return link;
         }
@@ -158,7 +160,8 @@ public class OpenModalEvent<T> implements IOpenModalEvent {
             return addButton(getModalBorder().newButtonId(), Model.of(label), ButtonStyle.PRIMARY, action);
         }
         public AjaxButton addButton(String id, IModel<String> labelModel, ButtonStyle style, ActionCallback<T> action) {
-            AjaxButton button = newAjaxButton(id, action);
+            Optional<Form<?>> form = WicketUtils.findFirstChild(getModalBorder().getModalBody(), Form.class).map(it -> (Form<?>) it);
+            AjaxButton button = newAjaxButton(id, form, action);
             getModalBorder().addButton(style, labelModel, button);
             return button;
         }
@@ -186,11 +189,11 @@ public class OpenModalEvent<T> implements IOpenModalEvent {
         private ActionCallback<T> newCloseAction() {
             return (t, d, i) -> d.close(t);
         }
-        private AjaxLink<T> newAjaxLink(String id, ActionCallback<T> action) {
-            return linkFactory.create(id, ModalDelegate.this, action);
+        private AjaxLink<T> newAjaxLink(String id, Optional<Form<?>> form, ActionCallback<T> action) {
+            return linkFactory.create(id, ModalDelegate.this, form, action);
         }
-        private AjaxButton newAjaxButton(String id, ActionCallback<T> action) {
-            return buttonFactory.create(id, ModalDelegate.this, action);
+        private AjaxButton newAjaxButton(String id, Optional<Form<?>> form, ActionCallback<T> action) {
+            return buttonFactory.create(id, ModalDelegate.this, form, action);
         }
     }
 
