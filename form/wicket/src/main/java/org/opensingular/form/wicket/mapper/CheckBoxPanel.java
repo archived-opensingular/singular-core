@@ -1,6 +1,5 @@
 package org.opensingular.form.wicket.mapper;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -44,7 +43,6 @@ public class CheckBoxPanel extends Panel {
         }
 
         String clazz = checked ? "fa fa-check-square" : "fa fa-square-o";
-        String idSuffix = (mi != null) ? mi.getName() : StringUtils.EMPTY;
         final BSWellBorder wellBorder = BSWellBorder.small("checkBoxPanel");
         wellBorder.add(new AttributeAppender("style", configureTextAlignStyle(ctx)));
         wellBorder.add(new WebMarkupContainer("checked").add(new AttributeAppender("class", clazz)));

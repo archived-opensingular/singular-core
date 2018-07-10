@@ -30,7 +30,7 @@ import org.opensingular.form.view.SViewListByMasterDetail;
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
-@SInfoType(spackage = FormTestPackage.class, newable = false, name = "STypeAnotherComposisteChildListElement")
+@SInfoType(spackage = FormTestPackage.class,  name = "STypeAnotherComposisteChildListElement")
 public class STypeAnotherComposisteChildListElement extends STypeComposite<SIComposite> {
 
 

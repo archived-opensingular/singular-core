@@ -148,6 +148,7 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
 
     }
 
+    @SuppressWarnings("squid:S1854")
     private void createTagForViewCheckBox(BSControls formGroup, WicketBuildContext ctx, boolean showLabelInline) {
         final IModel<? extends SInstance> model = ctx.getModel();
         String idSuffix = (model != null && model.getObject() != null) ? model.getObject().getName() : StringUtils.EMPTY;

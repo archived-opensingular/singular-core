@@ -29,7 +29,7 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewByBlock;
 import org.opensingular.form.view.SViewListByTable;
 
-@SInfoType(spackage = FormTestPackage.class, newable = false, name = "STypeAnotherComposite")
+@SInfoType(spackage = FormTestPackage.class,  name = "STypeAnotherComposite")
 public class STypeAnotherComposite extends STypeComposite<SIComposite> {
 
     public STypeComposite<SIComposite> dadosGerais;
