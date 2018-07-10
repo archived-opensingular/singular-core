@@ -141,7 +141,7 @@ public class SingularClassPathScanner implements Loggable {
         try {
             Class<?> clazz = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
             return Optional.of(clazz.asSubclass(type));
-        } catch (Exception e) {
+        } catch (Throwable e) {//NOSONAR
             getLogger().error(e.getMessage(), e);
         }
         return Optional.empty();

@@ -20,15 +20,15 @@ import org.apache.wicket.Component;
 
 public class CKEditorInitBehaviour extends InitScriptBehaviour {
 
-    private static final String CONFIG;
-
+    private static final String CONFIG_WITH_WIDTH;
+    private static final String CONFIG_WITHOUT_WIDTH;
+    private boolean disablePageLayout;
     static {
-        CONFIG = ""
+        String CONFIG = ""
                 + "{"
                 + " allowedContent : true, "
                 + " skin : 'office2013', "
                 + " language : 'pt-br', "
-                + " width : '215mm', "
                 + " toolbar : [ "
                 + "     { name: 'document', items: ['NewPage', 'Preview', 'Print'] },"
                 + "     { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },"
@@ -41,8 +41,14 @@ public class CKEditorInitBehaviour extends InitScriptBehaviour {
                 + "     { name: 'styles', items: [ 'Styles', 'Format', 'FontSize' ] },"
                 + "     { name: 'colors', items: [ 'TextColor', 'BGColor' ] },"
                 + "     { name: 'tools', items: [ 'Maximize' ] }"
-                + "  ]"
-                + "}";
+                + "  ]";
+
+        CONFIG_WITHOUT_WIDTH = CONFIG + "}";
+        CONFIG_WITH_WIDTH = CONFIG + " , width : '215mm'} ";
+    }
+
+    public CKEditorInitBehaviour(boolean disablePageLayout) {
+        this.disablePageLayout = disablePageLayout;
     }
 
     @Override
@@ -53,7 +59,7 @@ public class CKEditorInitBehaviour extends InitScriptBehaviour {
     public String getScriptString() {
         return ""
                 + " (function(id) { "
-                + "         CKEDITOR.replace(id, " + CONFIG + " );"
+                + "         CKEDITOR.replace(id, " + (disablePageLayout ? CONFIG_WITHOUT_WIDTH : CONFIG_WITH_WIDTH) + " );"
                 + " }('%s')); ";
     }
 

@@ -288,7 +288,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             if (viewSupplier.get().isInsertEnabled() && ctx.getViewMode().isEdition()) {
                 final BSTDataCell actionColumn = row.newCol();
                 actionColumn.add($b.attrAppender("style", "width:20px", ";"));
-                appendInserirButton(this, form, item, actionColumn);
+                appendInserirButton(this, form, ctx, item, actionColumn);
             }
 
             if ((instance instanceof SIComposite) && viewSupplier.get().isRenderCompositeFieldsAsColumns()) {
@@ -306,7 +306,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             if (ctx.getViewMode().isEdition()) {
                 final BSTDataCell actionColumn = row.newCol();
                 actionColumn.add($b.attrAppender("style", "width:20px", ";"));
-                appendRemoverButton(this, form, item, actionColumn, confirmationModal, viewSupplier);
+                appendRemoverButton(this, form, ctx, item, actionColumn, confirmationModal, viewSupplier);
             }
 
             item.add(row);
@@ -358,15 +358,13 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                     protected void buildHeading(BSContainer<?> heading, Form<?> form) {
                         buildHeading.accept(heading, form);
                     }
-
-                    @Override
-                    protected void buildFooter(BSContainer<?> footer, Form<?> form) {
-                        buildFooter.accept(footer, form);
-                    }
-
                     @Override
                     protected void buildContent(BSContainer<?> content, Form<?> form) {
                         buildContent.accept(content, form);
+                    }
+                    @Override
+                    protected void buildFooter(BSContainer<?> footer, Form<?> form) {
+                        buildFooter.accept(footer, form);
                     }
                 };
             }

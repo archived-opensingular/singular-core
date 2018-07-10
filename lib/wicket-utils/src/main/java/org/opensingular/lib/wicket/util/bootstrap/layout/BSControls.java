@@ -16,9 +16,14 @@
 
 package org.opensingular.lib.wicket.util.bootstrap.layout;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
+import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
@@ -31,6 +36,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.ui.Alignment;
 import org.opensingular.lib.wicket.util.behavior.BSSelectInitBehaviour;
 import org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour;
 import org.opensingular.lib.wicket.util.behavior.PicklistInitBehaviour;
@@ -39,13 +45,14 @@ import org.opensingular.lib.wicket.util.feedback.BSFeedbackPanel;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BSControls> {
+
+    public static final MetaDataKey<BSContainer<?>> CHECKBOX_DIV = new MetaDataKey<BSContainer<?>>() {
+    };
+    public static final MetaDataKey<BSContainer<?>> CHECKBOX_LABEL = new MetaDataKey<BSContainer<?>>() {
+    };
 
     private IFeedbackPanelFactory feedbackPanelFactory;
 
@@ -65,17 +72,34 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSControls appendCheckbox(Component checkbox, IModel<?> labelModel) {
-        return this.appendCheckbox(checkbox, new Label("_", labelModel));
+        return this.appendCheckbox(checkbox, new Label("_", labelModel), null);
     }
 
-    public BSControls appendCheckbox(Component checkbox, Component label) {
-        this
-            .appendTag("div", true, "class='checkbox'", new BSContainer<>("_" + checkbox.getId())
-                .appendTag("label", new BSContainer<>("_")
-                    .appendTag("input", false, "type='checkbox'", checkbox)
-                    .appendTag("span", label)));
-        return this;
+    public BSControls appendCheckbox(Component checkbox, Component label, Alignment alignment) {
+        final BSContainer<?> checkboxDiv = new BSContainer<>("_" + checkbox.getId());
+        final BSContainer<?> checkboxLabel = new BSContainer<>("_");
+
+        checkbox.setMetaData(CHECKBOX_DIV, checkboxDiv);
+        checkbox.setMetaData(CHECKBOX_LABEL, checkboxLabel);
+
+        checkboxLabel.appendTag("input", false, "type='checkbox'", checkbox);
+        if (label != null) {
+            checkboxLabel.appendTag("span", label);
+        }
+        String style = "";
+        if (alignment != null) {
+            style = "style= 'text-align:" + alignment.name().toLowerCase() + "'";
+        }
+
+        return this
+                .appendTag("div", true, "class='checkbox'" + style, checkboxDiv
+                        .appendTag("label", checkboxLabel));
     }
+
+    public BSControls appendCheckboxWithoutLabel(Component checkbox, Alignment alignment) {
+        return appendCheckbox(checkbox, null, alignment);
+    }
+
 
     public BSControls appendCheckboxChoice(Component checkbox, boolean inline) {
         return super.appendTag("div", true, inline ? "class='checkbox-inline'" : "class='checkbox-list'", checkbox);
@@ -126,11 +150,11 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         this.appendInputGroup(componentId -> {
             BSInputGroup inputGroup = newInputGroup();
             return (BSInputGroup) inputGroup
-                .appendExtraClasses(" date ")
-                .appendExtraAttributes(attrs)
-                .appendInputText(datepicker.setMetaData(BSDatepickerConstants.KEY_CONTAINER, inputGroup))
-                .appendButtonAddon(DefaultIcons.CALENDAR)
-                .add(new DatePickerInitBehaviour());
+                    .appendExtraClasses(" date ")
+                    .appendExtraAttributes(attrs)
+                    .appendInputText(datepicker.setMetaData(BSDatepickerConstants.KEY_CONTAINER, inputGroup))
+                    .appendButtonAddon(DefaultIcons.CALENDAR)
+                    .add(new DatePickerInitBehaviour());
         });
         return this;
     }
@@ -149,11 +173,11 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         }
         select.add(new AttributeModifier("title", new ResourceModel("BSControls.Select.Title", "")));
         return super.appendTag("select", true,
-            ((bootstrap)
-                ? "class='bs-select form-control'"
-                : "class='form-control'")
-                + (multiple ? "multiple" : ""),
-            select);
+                ((bootstrap)
+                        ? "class='bs-select form-control'"
+                        : "class='form-control'")
+                        + (multiple ? "multiple" : ""),
+                select);
     }
 
     @Deprecated
@@ -178,10 +202,20 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         return appendInputButton(null, button);
     }
 
+    public BSControls appendSubmitButton(Component button) {
+        return appendSubmitButton(null, button);
+    }
+
     public BSControls appendInputButton(String extraClasses, Component button) {
         return super.appendTag("input",
-            false,
-            "type='button' class='btn btn-default " + defaultString(extraClasses) + "'", button);
+                false,
+                "type='button' class='btn btn-default " + defaultString(extraClasses) + "'", button);
+    }
+
+    public BSControls appendSubmitButton(String extraClasses, Component button) {
+        return super.appendTag("button",
+                true,
+                "type='submit' class='btn " + defaultString(extraClasses) + " '", button);
     }
 
     public BSControls appendLinkButton(IModel<?> linkText, AbstractLink link) {
@@ -203,6 +237,7 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     public BSControls appendInputGroup(IBSComponentFactory<BSInputGroup> factory) {
         return appendComponent(factory);
     }
+
     public BSInputGroup newInputGroup() {
         return newComponent(BSInputGroup::new);
     }
@@ -210,6 +245,7 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     public BSControls appendFeedback(Component feedbackComponent) {
         return super.appendTag("span", true, "class='help-block feedback'", feedbackComponent);
     }
+
     public BSControls appendFeedback(Component fence, IFeedbackMessageFilter filter, IConsumer<Component> feedbackComponentConsumer) {
         IFeedbackPanelFactory factory = ObjectUtils.defaultIfNull(feedbackPanelFactory, IFeedbackPanelFactory.DEFAULT);
         Component feedbackComponent = factory.newFeedbackPanel("controlErrors", fence, filter);
@@ -221,13 +257,16 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     public Label newHelpBlock(IModel<String> textModel, boolean escapeLabelString) {
         return super.newTag("span", true, "class='help-block subtitle_comp'", newComponent(id -> (Label) new Label(id, textModel).setEscapeModelStrings(escapeLabelString)));
     }
+
     public Label newHelpBlock(IModel<String> textModel) {
         return newHelpBlock(textModel, true);
     }
+
     public BSControls appendHelpBlock(IModel<String> textModel, boolean escapeLabelString) {
         newHelpBlock(textModel, escapeLabelString);
         return this;
     }
+
     public BSControls appendHelpBlock(IModel<String> textModel) {
         return appendHelpBlock(textModel, true);
     }

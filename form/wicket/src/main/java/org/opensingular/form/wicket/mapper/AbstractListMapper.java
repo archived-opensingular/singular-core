@@ -20,6 +20,7 @@ import org.apache.commons.collections.Factory;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
@@ -62,9 +63,14 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public abstract class AbstractListMapper implements IWicketComponentMapper {
 
-    protected static AddButton appendAddButton(final IModel<SIList<SInstance>> mList, final Form<?> form,
-        final BSContainer<?> cell, boolean footer) {
-        AddButton btn = new AddButton("_add", form, mList);
+    protected static AddButton appendAddButton(
+        final IModel<SIList<SInstance>> mList,
+        final Form<?> form,
+        final WicketBuildContext ctx,
+        final BSContainer<?> cell,
+        boolean footer) {
+
+        AddButton btn = new AddButton("_add", form, ctx, mList);
         cell.newTemplateTag(t -> ""
             + "<button"
             + " wicket:id='_add'"
@@ -76,22 +82,22 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         return btn;
     }
 
-    protected static InserirButton appendInserirButton(ElementsView elementsView, Form<?> form, Item<SInstance> item, BSContainer<?> cell) {
-        InserirButton btn = new InserirButton("_inserir_", elementsView, form, item);
+    protected static InserirButton appendInserirButton(ElementsView elementsView, Form<?> form, WicketBuildContext ctx, Item<SInstance> item, BSContainer<?> cell) {
+        InserirButton btn = new InserirButton("_inserir_", elementsView, form, ctx, item);
         cell
             .newTemplateTag(tp -> ""
                 + "<button"
                 + " wicket:id='_inserir_'"
-                + " class='btn btn-success btn-sm'"
+                + " class='btn btn-sm'"
                 + " style='" + MapperCommons.BUTTON_STYLE + ";margin-top:3px;'><i style='" + MapperCommons.ICON_STYLE + "' class='" + DefaultIcons.PLUS + "'></i>"
                 + "</button>")
             .add(btn);
         return btn;
     }
 
-    protected static RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, Item<SInstance> item,
+    protected static RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, WicketBuildContext ctx, Item<SInstance> item,
         BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<SViewListByTable> viewSupplier) {
-        RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item, confirmationModal);
+        RemoverButton btn = new RemoverButton("_remover_", form, ctx, elementsView, item, confirmationModal);
 
         cell
             .newTemplateTag(tp -> ""
@@ -110,7 +116,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
     protected static void buildFooter(BSContainer<?> footer,
         Form<?> form,
         WicketBuildContext ctx) {
-        Factory createAddButton = () -> new AddButton("_add", form, (IModel<SIList<SInstance>>) ctx.getModel());
+        Factory createAddButton = () -> new AddButton("_add", form, ctx, (IModel<SIList<SInstance>>) ctx.getModel());
         buildFooter(footer, ctx, createAddButton);
 
         SValidationFeedbackPanel feedback = ctx.createFeedbackPanel("feedback");
@@ -297,12 +303,13 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
     }
 
     protected static class InserirButton extends ActionAjaxButton {
-        private final Item<SInstance> item;
-        private final ElementsView    elementsView;
+        private final WicketBuildContext ctx;private final Item<SInstance> item;
+        private final ElementsView elementsView;
 
-        protected InserirButton(String id, ElementsView elementsView, Form<?> form, Item<SInstance> item) {
+        protected InserirButton(String id, ElementsView elementsView, Form<?> form, WicketBuildContext ctx, Item<SInstance> item) {
             super(id, form);
             this.setDefaultFormProcessing(false);
+            this.ctx = ctx;
             this.elementsView = elementsView;
             this.item = item;
             add($b.attr("title", "Nova Linha"));
@@ -312,18 +319,20 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
             elementsView.insertItem(target, item.getIndex());
             target.focusComponent(this);
+            WicketFormProcessing.onFieldProcess(ctx.getContainer(), target, ctx.getModel());
         }
     }
 
     protected static class RemoverButton extends ActionAjaxButton {
-        private final ElementsView      elementsView;
-        private final Item<SInstance>   item;
+        private final WicketBuildContext ctx;private final ElementsView elementsView;
+        private final Item<SInstance> item;
         private final ConfirmationModal confirmationModal;
 
-        protected RemoverButton(String id, Form<?> form, ElementsView elementsView, Item<SInstance> item, ConfirmationModal confirmationModal) {
+        protected RemoverButton(String id, Form<?> form, WicketBuildContext ctx, ElementsView elementsView, Item<SInstance> item, ConfirmationModal confirmationModal) {
             super(id, form);
             this.setOutputMarkupId(true);
             this.setDefaultFormProcessing(false);
+            this.ctx = ctx;
             this.elementsView = elementsView;
             this.item = item;
             add($b.attr("title", "Remover Linha"));
@@ -343,21 +352,26 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
             if (elementsView.getModelObject().isEmpty()) {
                 target.add(this.getForm());
             }
+            WicketFormProcessing.onFieldProcess(ctx.getContainer(), target, ctx.getModel());
         }
     }
 
-    protected static final class AddButton extends ActionAjaxButton {
-        private final IModel<SIList<SInstance>> listModel;
+    protected static final class AddButton extends AjaxLink<String> {
 
-        public AddButton(String id, Form<?> form, IModel<SIList<SInstance>> mList) {
-            super(id, form);
-            this.setDefaultFormProcessing(false);
-            listModel = mList;
+        private final Form<?> form;
+        private final IModel<SIList<SInstance>> listModel;
+        private final WicketBuildContext        ctx;
+
+        public AddButton(String id, Form<?> form, WicketBuildContext ctx, IModel<SIList<SInstance>> mList) {
+            super(id);
+            this.form = form;
+                        this.ctx = ctx;
+            this.listModel = mList;
             add($b.attr("title", "Adicionar Linha"));
         }
 
         @Override
-        protected void onAction(AjaxRequestTarget target, Form<?> form) {
+        public void onClick(AjaxRequestTarget target) {
             final SIList<SInstance> list = listModel.getObject();
             if (list.getType().getMaximumSize() != null && list.getType().getMaximumSize() == list.size()) {
                 target.appendJavaScript(";bootbox.alert('A quantidade máxima de valores foi atingida.');");
@@ -367,7 +381,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                 target.add(form);
                 target.focusComponent(this);
             }
+            WicketFormProcessing.onFieldProcess(ctx.getContainer(), target, ctx.getModel());
         }
-
     }
 }

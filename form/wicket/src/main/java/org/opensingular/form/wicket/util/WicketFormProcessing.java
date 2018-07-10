@@ -16,6 +16,10 @@
 
 package org.opensingular.form.wicket.util;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -38,12 +42,6 @@ import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.lib.commons.util.Loggable;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 /*
  * TODO: depois, acho que esta classe tem que deixar de ter métodos estáticos, e se tornar algo plugável e extensível,
  *  análogo ao RequestCycle do Wicket.
@@ -51,15 +49,11 @@ import java.util.stream.Stream;
  */
 public class WicketFormProcessing extends SingularFormProcessing implements Loggable {
 
-    public final static  MetaDataKey<Boolean> MDK_SKIP_VALIDATION_ON_REQUEST = new MetaDataKey<Boolean>() {
-    };
-    private final static MetaDataKey<Boolean> MDK_PROCESSED                  = new MetaDataKey<Boolean>() {
-    };
-    public final static  MetaDataKey<Boolean> MDK_FIELD_UPDATED              = new MetaDataKey<Boolean>() {
-    };
+    public final static MetaDataKey<Boolean>  MDK_SKIP_VALIDATION_ON_REQUEST = new MetaDataKey<Boolean>() {};
+    private final static MetaDataKey<Boolean> MDK_PROCESSED                  = new MetaDataKey<Boolean>() {};
+    public final static MetaDataKey<Boolean>  MDK_FIELD_UPDATED              = new MetaDataKey<Boolean>() {};
 
-    private WicketFormProcessing() {
-    }
+    private WicketFormProcessing() {}
 
     public static void onFormError(MarkupContainer container, AjaxRequestTarget target) {
         container.visitChildren((c, v) -> {
@@ -72,13 +66,12 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
     }
 
     public static boolean onFormSubmit(MarkupContainer container,
-                                       AjaxRequestTarget target,
-                                       IModel<? extends SInstance> baseInstance,
-                                       boolean validate,
-                                       boolean clearProcessedMetadata) {
+        AjaxRequestTarget target,
+        IModel<? extends SInstance> baseInstance,
+        boolean validate,
+        boolean clearProcessedMetadata) {
         return processAndPrepareForm(container, target, baseInstance, validate, clearProcessedMetadata);
     }
-
 
     public static boolean onFormSubmit(MarkupContainer container, AjaxRequestTarget target, IModel<? extends SInstance> baseInstance, boolean validate) {
         return onFormSubmit(container, target, baseInstance, validate, false);
@@ -89,10 +82,10 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
     }
 
     private static boolean processAndPrepareForm(MarkupContainer container,
-                                                 AjaxRequestTarget target,
-                                                 IModel<? extends SInstance> baseInstanceModel,
-                                                 boolean validate,
-                                                 boolean clearProcessedMetadata) {
+        AjaxRequestTarget target,
+        IModel<? extends SInstance> baseInstanceModel,
+        boolean validate,
+        boolean clearProcessedMetadata) {
 
         if (clearProcessedMetadata) {
             RequestCycle.get().setMetaData(MDK_PROCESSED, null);
@@ -109,17 +102,12 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
             }
 
             final SInstance baseInstance = baseInstanceModel.getObject();
-            final SDocument document     = baseInstance.getDocument();
+            final SDocument document = baseInstance.getDocument();
 
             // Validação do valor do componente
             boolean hasErrors = false;
             if (validate) {
-                InstanceValidationContext validationContext = new InstanceValidationContext();
-                validationContext.validateAll(baseInstance);
-                if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
-                    hasErrors = true;
-                    refreshComponentOrCellContainer(target, container);
-                }
+                hasErrors = validateErrors(container, target, baseInstance, hasErrors);
             }
 
             updateValidationFeedbackOnDescendants(target, container);
@@ -136,6 +124,15 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
         return setAndReturn.apply(Boolean.TRUE);
     }
 
+    public static boolean validateErrors(MarkupContainer container, AjaxRequestTarget target, SInstance baseInstance, boolean hasErrors) {
+        InstanceValidationContext validationContext = new InstanceValidationContext();
+        validationContext.validateAll(baseInstance);
+        if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
+            hasErrors = true;
+            refreshComponentOrCellContainer(target, container);
+        }
+        return hasErrors;
+    }
 
     public static void onFieldValidate(FormComponent<?> formComponent, AjaxRequestTarget target, IModel<? extends SInstance> fieldInstance) {
 
@@ -149,9 +146,8 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
         validate(fieldInstance.getObject());
 
         SValidationFeedbackHandler.findNearest(formComponent)
-                .ifPresent(it -> it.updateValidationMessages(target));
+            .ifPresent(it -> it.updateValidationMessages(target));
     }
-
 
     /**
      * Busca todas as instancias dependentes da instancia informada e executa o update listener.
@@ -163,13 +159,13 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
      * @param instance a instancia
      */
     public static void processDependentTypes(Page page, AjaxRequestTarget target, SInstance instance) {
-        updateBoundedComponents(page, target, new HashSet<>(evaluateUpdateListeners(instance)));
+        updateBoundedComponents(page, target, evaluateUpdateListeners(instance));
     }
 
     /**
      * Atualiza todos os componentes vinculados as instancias informadas
      */
-    private static void updateBoundedComponents(Page page, AjaxRequestTarget target, Set<SInstance> instances) {
+    private static void updateBoundedComponents(Page page, AjaxRequestTarget target, List<SInstance> instances) {
         page.visitChildren(Component.class, new SInstanceBoundedComponentUpdateVisitor(target, instances));
     }
 
@@ -183,20 +179,16 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
 
         boolean skipValidation = isSkipValidationOnRequest();
 
-        Set<SInstance> instancesToUpdateComponents = executeFieldProcessLifecycle(instance, skipValidation);
+        List<SInstance> instancesToUpdateComponents = executeFieldProcessLifecycle(instance, skipValidation);
 
         if (!skipValidation) {
-            WicketBuildContext
-                    .findNearest(component)
-                    .flatMap(ctx -> Optional.of(ctx.getRootContext()))
-                    .flatMap(ctx -> Optional.of(Stream.builder().add(ctx.getRootContainer()).add(ctx.getExternalContainer()).build()))
-                    .ifPresent(containers -> containers.forEach(container -> {
-                        updateValidationFeedbackOnDescendants(target, (MarkupContainer) container);
-                    }));
+            Optional<WicketBuildContext> wbc = WicketBuildContext.findNearest(component);
+            if (wbc.isPresent()) {
+                WicketBuildContext rootContext = wbc.get().getRootContext();
+                updateValidationFeedbackOnDescendants(target, rootContext.getRootContainer());
+                updateValidationFeedbackOnDescendants(target, rootContext.getExternalContainer());
+            }
         }
-
-        /* Recomputing instances set hashtable: instances values could be changed during validation */
-        instancesToUpdateComponents = new HashSet<>(instancesToUpdateComponents);
 
         updateBoundedComponents(component.getPage(), target, instancesToUpdateComponents);
         component.send(component.getPage(), Broadcast.BREADTH, new SingularFormProcessingPayload(instancesToUpdateComponents));
@@ -216,9 +208,8 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
     public static void updateValidationFeedbackOnDescendants(AjaxRequestTarget target, MarkupContainer container) {
         if (container != null) {
             Visits.visitPostOrder(container, (Component comp, IVisit<Void> visit) -> {
-                if (SValidationFeedbackHandler.isBound(comp) && comp.isVisibleInHierarchy()) {
+                if (SValidationFeedbackHandler.isBound(comp) && comp.isVisibleInHierarchy())
                     SValidationFeedbackHandler.get(comp).updateValidationMessages(target);
-                }
             });
         }
     }

@@ -18,6 +18,7 @@ package org.opensingular.flow.core.builder;
 
 import org.opensingular.flow.core.BusinessRoleStrategy;
 import org.opensingular.flow.core.DashboardView;
+import org.opensingular.flow.core.DisplayInfoFlow;
 import org.opensingular.flow.core.FlowDefinition;
 import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.FlowMap;
@@ -40,6 +41,7 @@ import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.flow.core.TaskAccessStrategy;
 import org.opensingular.lib.commons.base.SingularUtil;
 
+import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
 public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extends FlowMap, BUILDER_TASK extends BuilderTask, BUILDER_JAVA extends BuilderJava<?>, BUILDER_PEOPLE extends BuilderHuman<?>, BUILDER_WAIT extends BuilderWait<?>, BUILDER_END extends BuilderEnd<?>, BUILDER_START extends BuilderStart<?>, BUILDER_TRANSITION extends BuilderTransition<?>, BUILDER_ROLE extends BuilderBusinessRole<?>, TASK_DEF extends ITaskDefinition> {
@@ -192,7 +194,18 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extend
     protected BUILDER_TRANSITION addTransition(BuilderTask origin, String actionName, TASK_DEF destination) {
         return newTransition(origin.getTask().addTransition(actionName, getTask(destination)));
     }
-    
+
+    /**
+     * TODO change it to from/go format:
+     * from(task, predicate).go(destinationTask)
+     * this builder should not present methods related with UI configuration, a new builder interface should be created instead i.e: BUILDER_TASK_AUTOMATIC
+     *
+     * @param origin
+     * @param condition
+     * @param destination
+     * @return
+     */
+    @Deprecated
     public BUILDER_TRANSITION addAutomaticTransition(TASK_DEF origin, ITaskPredicate condition, TASK_DEF destination) {
         FLOW_MAP flowMap = getFlowMap();
         return newTransition(flowMap.getTask(origin).addAutomaticTransition(condition, flowMap.getTask(destination)));
@@ -213,5 +226,15 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extend
         for (STask<?> sTask : getFlowMap().getAllTasks()) {
             sTask.addStartedTaskListener(listener);
         }
+    }
+
+    /**
+     * Returns display information of the flow object that may be used to help (guide) the diagram generation of the
+     * flow.
+     * <p>It doesn't affect the runtime of the flow.</p>
+     */
+    @Nonnull
+    public DisplayInfoFlow getDisplayInfo() {
+        return getFlowMap().getDisplayInfo();
     }
 }

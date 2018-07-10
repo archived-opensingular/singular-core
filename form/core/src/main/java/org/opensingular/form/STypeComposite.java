@@ -16,27 +16,6 @@
 
 package org.opensingular.form;
 
-import org.opensingular.form.builder.selection.SSelectionBuilder;
-import org.opensingular.form.builder.selection.SelectionBuilder;
-import org.opensingular.form.type.core.SPackageCore;
-import org.opensingular.form.type.core.STypeBoolean;
-import org.opensingular.form.type.core.STypeDate;
-import org.opensingular.form.type.core.STypeDateTime;
-import org.opensingular.form.type.core.STypeDecimal;
-import org.opensingular.form.type.core.STypeInteger;
-import org.opensingular.form.type.core.STypeMonetary;
-import org.opensingular.form.type.core.STypePassword;
-import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.type.core.STypeTime;
-import org.opensingular.form.type.core.attachment.STypeAttachment;
-import org.opensingular.form.type.util.STypeEMail;
-import org.opensingular.form.view.SView;
-import org.opensingular.form.view.SViewAttachmentList;
-import org.opensingular.form.view.SViewAutoComplete;
-import org.opensingular.form.view.SViewSelectionBySelect;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,10 +26,34 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.opensingular.form.builder.selection.SSelectionBuilder;
+import org.opensingular.form.builder.selection.SelectionBuilder;
+import org.opensingular.form.type.core.SPackageCore;
+import org.opensingular.form.type.core.STypeBoolean;
+import org.opensingular.form.type.core.STypeDate;
+import org.opensingular.form.type.core.STypeDateTime;
+import org.opensingular.form.type.core.STypeDecimal;
+import org.opensingular.form.type.core.STypeInteger;
+import org.opensingular.form.type.core.STypeLong;
+import org.opensingular.form.type.core.STypeMonetary;
+import org.opensingular.form.type.core.STypeFieldRef;
+import org.opensingular.form.type.core.STypePassword;
+import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.core.STypeTime;
+import org.opensingular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.form.type.util.STypeEMail;
+import org.opensingular.form.view.SView;
+import org.opensingular.form.view.SViewAttachmentList;
+import org.opensingular.form.view.SViewAutoComplete;
+import org.opensingular.form.view.SViewSelectionBySelect;
+
 @SInfoType(name = "STypeComposite", spackage = SPackageCore.class)
 public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INSTANCE_TYPE> implements ICompositeType {
 
-    private Map<String, SType<?>> fieldsLocal;
+    private Map<String, SType<?>>          fieldsLocal;
 
     private transient FieldMapOfRecordType fieldsConsolidated;
 
@@ -68,7 +71,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         if (getSuperType().isComposite()) {
             Map<String, SType<?>> fieldsSuper = ((STypeComposite<?>) getSuperType()).fieldsLocal;
             if (fieldsSuper != null) {
-                for (Map.Entry<String,SType<?>> entry: fieldsSuper.entrySet()) {
+                for (Map.Entry<String, SType<?>> entry : fieldsSuper.entrySet()) {
                     addField(entry.getKey(), entry.getValue());
                 }
             }
@@ -83,14 +86,14 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
 
     private void checkNameNewField(@Nonnull String fieldName) {
         Objects.requireNonNull(fieldName);
-        if(fieldsLocal != null && fieldsLocal.containsKey(fieldName)) {
+        if (fieldsLocal != null && fieldsLocal.containsKey(fieldName)) {
             String msg = "Tentativa de criar um segundo campo com o nome '" + fieldName + "' em " + this;
             SingularFormException e = new SingularFormException(msg, this);
             String probableWrongCall = detectIfProbableOnLoadTypeSuperCall(e);
             if (probableWrongCall != null) {
                 e = new SingularFormException(msg +
-                        ". Verifique se não ocorreu uma chamada indevida de super.onLoadType() (nao dever haver " +
-                        "essa chamada) na linha\n   " + probableWrongCall, this);
+                    ". Verifique se não ocorreu uma chamada indevida de super.onLoadType() (nao dever haver " +
+                    "essa chamada) na linha\n   " + probableWrongCall, this);
             }
             throw e;
         }
@@ -98,7 +101,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
 
     private String detectIfProbableOnLoadTypeSuperCall(SingularFormException e) {
         boolean foundFirst = false;
-        for(StackTraceElement element: e.getStackTrace()) {
+        for (StackTraceElement element : e.getStackTrace()) {
             if ("onLoadType".equals(element.getMethodName())) {
                 if (foundFirst) {
                     return element.toString();
@@ -112,9 +115,9 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     }
 
     private <T extends SType<?>> T addInternal(String localName, T type) {
-        if (instanceCount > 0){
+        if (instanceCount > 0) {
             throw new SingularFormException("O MTipo '" + type.getName() +
-                    "' já possui instancias associadas, não é seguro alterar sua definição. ", this);
+                "' já possui instancias associadas, não é seguro alterar sua definição. ", this);
         }
         if (fieldsLocal == null) {
             fieldsLocal = new LinkedHashMap<>();
@@ -140,7 +143,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     }
 
     private FieldMapOfRecordType getFieldsConsolidated() {
-        if(isRecursiveReference()) {
+        if (isRecursiveReference()) {
             return ((STypeComposite<?>) getSuperType()).getFieldsConsolidated();
         }
         if (fieldsConsolidated == null) {
@@ -195,7 +198,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
      */
     @Nonnull
     public <I extends SInstance, T extends SType<I>> STypeList<T, I> addFieldListOf(@Nonnull String fieldSimpleName,
-            @Nonnull Class<T> listTypeClass) {
+        @Nonnull Class<T> listTypeClass) {
         return addFieldListOf(fieldSimpleName, resolveType(listTypeClass));
     }
 
@@ -205,7 +208,17 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     @Nonnull
     public <I extends SInstance, T extends SType<I>> STypeList<T, I> addFieldListOf(@Nonnull String fieldSimpleName, @Nonnull T elementsType) {
         checkNameNewField(fieldSimpleName);
-        STypeList<T, I> newList = createTypeListOf(fieldSimpleName, elementsType);
+        STypeList<T, I> newList = createTypeListOf(fieldSimpleName, null, elementsType);
+        return addInternal(fieldSimpleName, newList);
+    }
+
+    /**
+     * Cria um novo campo lista com o nome informado e sendo o tipo de seus elementos o tipo informado e utilizando o nome de elemento informado
+     */
+    @Nonnull
+    public <I extends SInstance, T extends SType<I>> STypeList<T, I> addFieldListOf(@Nonnull String fieldSimpleName, @Nonnull String elementSimpleName, @Nonnull T elementsType) {
+        checkNameNewField(fieldSimpleName);
+        STypeList<T, I> newList = createTypeListOf(fieldSimpleName, elementSimpleName, elementsType);
         return addInternal(fieldSimpleName, newList);
     }
 
@@ -216,12 +229,12 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
      */
     @Nonnull
     public <I extends SIComposite> STypeList<STypeComposite<I>, I> addFieldListOfComposite(@Nonnull String fieldSimpleName,
-            @Nonnull String simpleNameNewCompositeType) {
+        @Nonnull String simpleNameNewCompositeType) {
         checkNameNewField(fieldSimpleName);
         STypeList<STypeComposite<I>, I> newList = createListOfNewTypeComposite(fieldSimpleName, simpleNameNewCompositeType);
         return addInternal(fieldSimpleName, newList);
     }
-    
+
     /**
      * Cria um novo campo do tipo {@link STypeAttachment} com o nome informado.
      * @param fieldSimpleName - nome do campo
@@ -245,6 +258,15 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         newList.withView(SViewAttachmentList::new);
         newList.setElementsTypeFieldName(fieldName);
         return addInternal(listName, newList);
+    }
+
+    /**
+     * Cria um novo campo do tipo {@link STypeFieldRef} com o nome informado.
+     * @param fieldName - nome do campo
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends SType<I>, I extends SInstance> STypeFieldRef<I> addFieldRef(String fieldName, Class<T> sourceType) {
+        return addField(fieldName, STypeFieldRef.class);
     }
 
     public SType<?> getField(String fieldSimpleName) {
@@ -271,8 +293,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
      *         do tipo pai.
      */
     public Collection<SType<?>> getFieldsLocal() {
-        return isRecursiveReference() ? ((STypeComposite<?>) getSuperType()).getFieldsLocal() :
-                (fieldsLocal == null) ? Collections.emptyList() : fieldsLocal.values();
+        return isRecursiveReference() ? ((STypeComposite<?>) getSuperType()).getFieldsLocal() : (fieldsLocal == null) ? Collections.emptyList() : fieldsLocal.values();
 
     }
 
@@ -316,14 +337,14 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
     public STypeDate addFieldDate(String fieldSimpleName, boolean required) {
         return addField(fieldSimpleName, STypeDate.class, required);
     }
-    
+
     /**
      * Cria um novo campo do tipo {@link STypeTime} com o nome informado.
      */
     public STypeTime addFieldTime(String fieldSimpleName) {
         return addField(fieldSimpleName, STypeTime.class);
     }
-    
+
     /**
      * Cria um novo campo do tipo {@link STypeTime} com o nome informado.
      */
@@ -371,6 +392,20 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
      */
     public STypeInteger addFieldInteger(String fieldSimpleName, boolean required) {
         return addField(fieldSimpleName, STypeInteger.class, required);
+    }
+
+    /**
+     * Cria um novo campo do tipo {@link STypeLong} com o nome informado.
+     */
+    public STypeLong addFieldLong(String fieldSimpleName) {
+        return addField(fieldSimpleName, STypeLong.class);
+    }
+
+    /**
+     * Cria um novo campo do tipo {@link STypeLong} com o nome informado.
+     */
+    public STypeLong addFieldLong(String fieldSimpleName, boolean required) {
+        return addField(fieldSimpleName, STypeLong.class, required);
     }
 
     /**
@@ -436,6 +471,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         return getField(field.getNameSimple());
     }
 
+
     /**
      * Mapa de alto nível que funciona tanto por nome quanto por índice do campo
      * ordenado. Otimiza a performance e mantem a ordem original da criação dos
@@ -445,7 +481,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
 
         private LinkedHashMap<String, FieldRef> fields;
 
-        private List<SType<?>> fieldsList;
+        private List<SType<?>>                  fieldsList;
 
         public int size() {
             return (fields == null) ? 0 : fields.size();
@@ -520,7 +556,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
 
     private static final class FieldRef {
         private final SType<?> field;
-        private int index = -1;
+        private int            index = -1;
 
         public FieldRef(SType<?> field) {
             this.field = field;
@@ -547,7 +583,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
 
     private void initFields(Supplier<INSTANCE_TYPE> instanceRef) {
         Collection<SType> fields = (Collection) getFields();
-        for(SType t : fields) {
+        for (SType t : fields) {
             //Passa uma referência lazy demodo que não precisa fazer busca se o tipo não possui inicialização
             t.init(() -> instanceRef.get().getField(t.getNameSimple()));
         }

@@ -20,6 +20,7 @@ package org.opensingular.form.wicket.mapper.list;
 
 
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.Button;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,7 +76,7 @@ public class PanelListWithCompositeSelectionTest {
 
     @Test
     public void testAddItem() {
-        final Button addButton = findAddButton();
+        final AjaxLink addButton = findAddButton();
 
         tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(0);
 
@@ -91,7 +92,7 @@ public class PanelListWithCompositeSelectionTest {
 
     @Test
     public void testRemoveItem() {
-        final Button addButton = findAddButton();
+        final AjaxLink addButton = findAddButton();
 
         tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(0);
 
@@ -109,7 +110,7 @@ public class PanelListWithCompositeSelectionTest {
 
     @Test
     public void testAddItemAndFillOptions() {
-        final Button addButton = findAddButton();
+        final AjaxLink addButton = findAddButton();
 
         tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(0);
 
@@ -134,7 +135,7 @@ public class PanelListWithCompositeSelectionTest {
 
     @Test
     public void testAddItemFillOptionsAndThenAddOtherItem() {
-        final Button addButton = findAddButton();
+        final AjaxLink addButton = findAddButton();
 
         tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(0);
 
@@ -158,8 +159,8 @@ public class PanelListWithCompositeSelectionTest {
                 .assertSInstance().isValueEquals(listCompositeTypes);
     }
 
-    private Button findAddButton() {
-        return (Button) tester.getAssertionsForm()
+    private AjaxLink findAddButton() {
+        return (AjaxLink) tester.getAssertionsForm()
                 .findSubComponent(b -> b.getClass().getName().contains("AddButton")).getTarget();
     }
 

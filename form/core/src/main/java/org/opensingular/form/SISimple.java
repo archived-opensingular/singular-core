@@ -78,11 +78,6 @@ public class SISimple<NATIVE_TYPE extends Serializable> extends SInstance {
         return getValueWithDefault(destinyClass);
     }
 
-    /** Indica que o valor da instância atual é null. */
-    public boolean isNull() {
-        return getValue() == null;
-    }
-
     @Override
     public boolean isEmptyOfData() {
         return getValue() == null;

@@ -21,7 +21,6 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.export.IExpo
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
-
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
@@ -30,7 +29,7 @@ public class BSPropertyColumn<T, S>
     implements IExportableColumn<T, S>, IRowMergeableColumn<T> {
 
     private final String propertyExpression;
-    private final IFunction<T, Object> propertyFunction;
+    private final IFunction<T, ?> propertyFunction;
 
     public BSPropertyColumn(IModel<String> displayModel, S sortProperty, String propertyExpression) {
         this(displayModel, sortProperty, propertyExpression, null);
@@ -38,13 +37,13 @@ public class BSPropertyColumn<T, S>
     public BSPropertyColumn(IModel<String> displayModel, String propertyExpression) {
         this(displayModel, null, propertyExpression, null);
     }
-    public BSPropertyColumn(IModel<String> displayModel, S sortProperty, IFunction<T, Object> propertyFunction) {
+    public BSPropertyColumn(IModel<String> displayModel, S sortProperty, IFunction<T, ?> propertyFunction) {
         this(displayModel, sortProperty, null, propertyFunction);
     }
-    public BSPropertyColumn(IModel<String> displayModel, IFunction<T, Object> propertyFunction) {
+    public BSPropertyColumn(IModel<String> displayModel, IFunction<T, ?> propertyFunction) {
         this(displayModel, null, null, propertyFunction);
     }
-    private BSPropertyColumn(IModel<String> displayModel, S sortProperty, String propertyExpression, IFunction<T, Object> propertyFunction) {
+    private BSPropertyColumn(IModel<String> displayModel, S sortProperty, String propertyExpression, IFunction<T, ?> propertyFunction) {
         super(displayModel, sortProperty);
         this.propertyExpression = propertyExpression;
         this.propertyFunction = propertyFunction;
@@ -58,7 +57,7 @@ public class BSPropertyColumn<T, S>
     public String getPropertyExpression() {
         return propertyExpression;
     }
-    public IFunction<T, Object> getPropertyFunction() {
+    public IFunction<T, ?> getPropertyFunction() {
         return propertyFunction;
     }
 

@@ -258,10 +258,10 @@ public abstract class SScopeBase implements SScope {
 
     @SuppressWarnings("unchecked")
     @Nonnull
-    final <I extends SInstance, T extends SType<I>> STypeList<T, I> createTypeListOf(@Nonnull String simpleNameNewType, @Nonnull T elementsType) {
+    final <I extends SInstance, T extends SType<I>> STypeList<T, I> createTypeListOf(@Nonnull String simpleNameNewType, @Nullable String elementSimpleName, @Nonnull T elementsType) {
         Preconditions.checkNotNull(elementsType);
         STypeList<T, I> listType = extendType(simpleNameNewType, STypeList.class);
-        listType.setElementsType(elementsType);
+        listType.setElementsType(elementSimpleName, elementsType);
         return listType;
     }
 

@@ -16,6 +16,20 @@
 
 package org.opensingular.form;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
@@ -31,21 +45,6 @@ import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.lib.commons.context.ServiceRegistry;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 
@@ -66,12 +65,10 @@ public final class SFormUtil {
      * tipos dependentes("b") e também dos tipos dependentes do seu dependente("c") para que a avaliação de visibilidade
      * seja avaliada corretamente.
      *
-     * @param
-     *  i the instance from which all dependents types must be notified
-     * @return
-     *  List of dependants SInstances
+     * @param i the instance from which all dependents types must be notified
+     * @return List of dependants SInstances
      */
-    public static Set<SInstance> evaluateUpdateListeners(SInstance i) {
+    public static Iterable<SInstance> evaluateUpdateListeners(SInstance i) {
         return SingularFormProcessing.evaluateUpdateListeners(i);
     }
 
@@ -220,10 +217,13 @@ public final class SFormUtil {
         final Pattern abbreviationPrefix = Pattern.compile("([A-Z]+)([A-Z][a-z])");
         final ImmutableSet<String> upperCaseSpecialCases = ImmutableSet.of("id", "url");
 
-        return StringUtils.capitalize(Stream.of(simpleName).map(s -> lowerUpper.matcher(s).replaceAll(
-                "$1-$2")).map(s -> abbreviationPrefix.matcher(s).replaceAll("$1-$2")).flatMap(s -> Stream.of(s.split(
-                "[-_]+"))).map(s -> (StringUtils.isAllUpperCase(s) ? s : StringUtils.uncapitalize(s))).map(
-                s -> upperCaseSpecialCases.contains(s) ? StringUtils.capitalize(s) : s).collect(joining(" ")));
+        return StringUtils.capitalize(Stream.of(simpleName)
+                .map(s -> lowerUpper.matcher(s).replaceAll("$1-$2"))
+                .map(s -> abbreviationPrefix.matcher(s).replaceAll("$1-$2"))
+                .flatMap(s -> Stream.<String>of(s.split("[-_]+")))
+                .map(s -> (StringUtils.isAllUpperCase(s)) ? s : StringUtils.uncapitalize(s))
+                .map(s -> upperCaseSpecialCases.contains(s) ? StringUtils.capitalize(s) : s)
+                .collect(joining(" ")));
     }
 
     public static String generateUserFriendlyPath(SInstance instance) {
@@ -233,13 +233,13 @@ public final class SFormUtil {
     public static String generateUserFriendlyPath(SInstance instance, SInstance parentContext) {
         LinkedList<String> labels = new LinkedList<>();
         SInstance child = null;
-        for (SInstance node = instance; node != null && !node.equals(parentContext); child = node, node = node.getParent()) {
+        for (SInstance node = instance; (node != null) && (node != parentContext); child = node, node = node.getParent()) {
 
             final String labelNode = node.asAtr().getLabel();
 
             if (node instanceof SIList<?>) {
                 SIList<?> list = (SIList<?>) node;
-                String listLabel = list.asAtr().getLabel();
+                String listLabel = Optional.ofNullable(list.asAtr().getLabel()).orElse(list.getType().getNameSimple());
                 int index = list.indexOf(child) + 1;
                 labels.add(listLabel + ((index > 0) ? " [" + (index) + ']' : ""));
             } else {
@@ -265,6 +265,7 @@ public final class SFormUtil {
         return ClassInspectionCache.getInfo(typeClass, CacheKey.FULL_NAME, SFormUtil::getTypeNameInternal);
     }
 
+    @SuppressWarnings("unchecked")
     private static String getTypeNameInternal(@Nonnull Class<?> typeClass) {
         Class<? extends SPackage> packageClass = getTypePackage((Class<? extends SType<?>>) typeClass);
         return getInfoPackageName(packageClass) + '.' + getTypeSimpleName((Class<? extends SType<?>>) typeClass);
@@ -276,6 +277,7 @@ public final class SFormUtil {
                 SFormUtil::getTypeSimpleNameInternal);
     }
 
+    @SuppressWarnings("unchecked")
     private static SimpleName getTypeSimpleNameInternal(Class<?> typeClass) {
         SInfoType infoType = getInfoType((Class<? extends SType<?>>) typeClass);
         String typeName = infoType.name();
@@ -285,7 +287,7 @@ public final class SFormUtil {
         return new SimpleName(typeName);
     }
 
-    public static Optional<String> getTypeLabel(Class<? extends SType> typeClass) {
+    public static Optional<String> getTypeLabel(Class<? extends SType<?>> typeClass) {
         SInfoType infoType = getInfoType((Class<? extends SType<?>>) typeClass);
         if (StringUtils.isBlank(infoType.label())) {
             return Optional.empty();
@@ -324,12 +326,14 @@ public final class SFormUtil {
     }
 
     @Nonnull
+    @SuppressWarnings("unchecked")
     private static String getInfoPackageNameInternal(@Nonnull Class<?> packageClass) {
         SInfoPackage info = getInfoPackage((Class<? extends SPackage>) packageClass);
         return info != null && !StringUtils.isBlank(info.name()) ? info.name() : packageClass.getName();
     }
 
     @Nonnull
+    @SuppressWarnings("unchecked")
     static String getScopeNameOrException(@Nonnull Class<? extends SScope> scopeClass) {
         if (SPackage.class.isAssignableFrom(scopeClass)) {
             return getInfoPackageName((Class<SPackage>) scopeClass);
@@ -341,6 +345,7 @@ public final class SFormUtil {
     }
 
     @Nonnull
+    @SuppressWarnings("unchecked")
     static Class<? extends SPackage> getPackageClassOrException(@Nonnull Class<? extends SScope> scopeClass) {
         if (SPackage.class.isAssignableFrom(scopeClass)) {
             return (Class<SPackage>) scopeClass;

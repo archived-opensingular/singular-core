@@ -37,7 +37,6 @@
                 $box.find('.fa-file-text').removeClass('fa-file-text').addClass('fa-remove').css('color', 'red');
                 $box.find('.list-item-uploading').removeClass('list-item-uploading').addClass('list-item-uploaded');
                 $box.find('.list-action-remove').removeClass('hidden').click(function (e) {
-                    console.log('blabla');
                     $box.remove();
                     window.FileUploadListPanel.setUploadItemState(panel_id, box_id, null);
                 });
@@ -257,7 +256,7 @@
 
             if (allowed_file_types && allowed_file_types.length > 0) {
                 var file = data.files[0];
-                var extension = file.name.substring(file.name.lastIndexOf(".") + 1);
+                var extension = file.name.substring(file.name.lastIndexOf(".") + 1).toLocaleLowerCase();
                 var invalidType = (jQuery.inArray(file.type, allowed_file_types) < 0);
                 var invalidExtension = (jQuery.inArray(extension, allowed_file_extensions) < 0);
                 if (invalidType && invalidExtension) {

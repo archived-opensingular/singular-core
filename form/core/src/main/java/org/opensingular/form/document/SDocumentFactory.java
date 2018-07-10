@@ -93,7 +93,7 @@ public abstract class SDocumentFactory {
     public final RefSDocumentFactory getDocumentFactoryRef() {
         if (factoryReference == null) {
             factoryReference = createDocumentFactoryRef();
-            if (factoryReference.get() != this) {
+            if (factoryReference.get() != this.factoryReference.get()) {
                 throw new SingularFormException(
                         "A refencia a criada em RefSDocumentFactory.createDocumentFactoryRef() deveria retornar a " +
                                 "mesma instância atual");

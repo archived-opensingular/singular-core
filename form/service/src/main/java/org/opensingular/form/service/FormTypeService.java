@@ -22,6 +22,7 @@ import org.opensingular.form.persistence.entity.FormTypeEntity;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Transactional
 public class FormTypeService  {
@@ -35,18 +36,27 @@ public class FormTypeService  {
     }
 
 
+    @SuppressWarnings("unchecked")
     private FormTypeEntity getOrCreateNewFormTypeEntity(final SType<?> type) {
         String name = type.getName();
         FormTypeEntity formTypeEntity = formTypeDAO.findFormTypeByAbbreviation(name);
         if (formTypeEntity == null) {
             formTypeEntity = new FormTypeEntity();
             formTypeEntity.setAbbreviation(name);
-            formTypeEntity.setLabel(SFormUtil.getTypeLabel(type.getClass())
+            formTypeEntity.setLabel(SFormUtil.getTypeLabel((Class<? extends SType<?>>) type.getClass())
                     .orElse(type.getNameSimple()));
             formTypeEntity.setCacheVersionNumber(1L);//TODO VINICIUS.NUNES
             formTypeDAO.saveOrUpdate(formTypeEntity);
         }
         return formTypeEntity;
+    }
+
+    public List<FormTypeEntity> listAll() {
+        return formTypeDAO.listAll();
+    }
+
+    public FormTypeEntity findFormTypeByAbbreviation(String abbreviation) {
+        return formTypeDAO.findFormTypeByAbbreviation(abbreviation);
     }
 
 }

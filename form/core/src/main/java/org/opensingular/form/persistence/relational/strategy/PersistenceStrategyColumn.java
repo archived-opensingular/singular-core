@@ -32,6 +32,7 @@ import org.opensingular.form.persistence.relational.RelationalSQL;
  * @author Edmundo Andrade
  */
 public class PersistenceStrategyColumn implements PersistenceStrategy {
+    @Override
     public void save(SInstance instance, List<RelationalData> toList) {
         SType<?> field = instance.getType();
         String fieldName = RelationalSQL.column(field);
@@ -47,6 +48,7 @@ public class PersistenceStrategyColumn implements PersistenceStrategy {
                 fieldValue));
     }
 
+    @Override
     public void load(SInstance instance, List<RelationalData> fromList) {
         RelationalSQL.setFieldValue(instance, fromList);
     }

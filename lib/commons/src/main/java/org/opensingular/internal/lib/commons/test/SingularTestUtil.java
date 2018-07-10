@@ -42,6 +42,8 @@ public final class SingularTestUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingularTestUtil.class);
 
+    public static final int DEFAULT_WAIT_TIME_MILLI_AFTER_SHOW_ON_DESKTOP = 5000;
+
     private SingularTestUtil() {
     }
 
@@ -73,7 +75,7 @@ public final class SingularTestUtil {
      * @param code              Código a ser executado e que se espera que gere exception
      * @param expectedException Classe da exceção esperada de ser disparada
      */
-    public static void assertException(RunnableEx code, Class<? extends Exception> expectedException) {
+    public static void assertException(RunnableEx code, Class<? extends Throwable> expectedException) {
         assertException(code, expectedException, null, null);
     }
 
@@ -84,7 +86,7 @@ public final class SingularTestUtil {
      * @param expectedException        Classe da exceção esperada de ser disparada
      * @param expectedExceptionMsgPart (pode ser null) Trecho esperado de ser encontrado na mensagem da exception
      */
-    public static void assertException(RunnableEx code, Class<? extends Exception> expectedException,
+    public static void assertException(RunnableEx code, Class<? extends Throwable> expectedException,
                                        String expectedExceptionMsgPart) {
         assertException(code, expectedException, expectedExceptionMsgPart, null);
     }
@@ -98,7 +100,7 @@ public final class SingularTestUtil {
      * @param failMsgIfNoException     (pode ser null) Mensage to be attacher to the fail mensage in case of no
      *                                 exception is producted from the executed code
      */
-    public static void assertException(@Nonnull RunnableEx code, @Nonnull Class<? extends Exception> expectedException,
+    public static void assertException(@Nonnull RunnableEx code, @Nonnull Class<? extends Throwable> expectedException,
                                        @Nullable String expectedExceptionMsgPart, @Nullable String failMsgIfNoException) {
         try {
             code.run();
@@ -110,9 +112,11 @@ public final class SingularTestUtil {
                 msg += ", pois " + failMsgIfNoException;
             }
             throw new AssertionError(msg);
-        } catch (Exception e) {
+        } catch (Throwable e) { //NOSONAR
             if (findExpectedException(e, expectedException, expectedExceptionMsgPart)) {
                 return;
+            } else if (e instanceof Error) { //NOSONAR
+                throw (Error) e;
             } else {
                 String msg = "Era esperado '" + expectedException.getSimpleName() + "'";
                 msg += " no entanto ocorreu a exceção '" + e.getClass().getSimpleName() + "'";
@@ -124,7 +128,7 @@ public final class SingularTestUtil {
     /**
      * Verifica se encontra a exception esperada na pilha de erro
      */
-    private static boolean findExpectedException(Throwable e, Class<? extends Exception> expectedException,
+    private static boolean findExpectedException(Throwable e, Class<? extends Throwable> expectedException,
                                                  String expectedExceptionMsgPart) {
         if (expectedException.isInstance(e)) {
             if (expectedExceptionMsgPart == null || (e.getMessage() != null && e.getMessage().contains(
@@ -172,8 +176,28 @@ public final class SingularTestUtil {
      * @param fileGenerator The code that will called to fill the temp file before the file be show
      * @see {@link TempFileProvider#create(Object, IConsumerEx)}
      */
-    public static <EX extends Exception> void showFileOnDesktopForUserAndWaitOpening(@Nonnull Object requester,
-            @Nonnull String fileExtension, @Nonnull IConsumerEx<OutputStream, EX> fileGenerator) {
+    public static <E extends Exception> void showFileOnDesktopForUserAndWaitOpening(@Nonnull Object requester,
+            @Nonnull String fileExtension, @Nonnull IConsumerEx<OutputStream, E> fileGenerator) {
+        showFileOnDesktopForUserAndWaitOpening(requester, fileExtension, fileGenerator,
+                DEFAULT_WAIT_TIME_MILLI_AFTER_SHOW_ON_DESKTOP);
+    }
+
+    /**
+     * Create a temp file, call the file generator provided to fill the temp file and then opens the file on the
+     * developers desktop (calls {@link #showFileOnDesktopForUserAndWaitOpening(File)}). This method guaranties that the
+     * file will be deleted.
+     * <p>This method may be used to inspect visually a generated file.</p>
+     *
+     * @param requester     Class or object client of the temp file generation. The name of the class will be used as
+     *                      prefix of the temp file names.
+     * @param fileExtension It doesn't have a dot, it will be added (for example, "png" becomes ".png")
+     * @param fileGenerator The code that will called to fill the temp file before the file be show
+     * @param waitTimeMilliAfterCall Indica o tempo de espera em milisegundo. Se for negativo, não espera.
+     * @see {@link TempFileProvider#create(Object, IConsumerEx)}
+     */
+    public static <E extends Exception> void showFileOnDesktopForUserAndWaitOpening(@Nonnull Object requester,
+            @Nonnull String fileExtension, @Nonnull IConsumerEx<OutputStream, E> fileGenerator,
+            int waitTimeMilliAfterCall) {
         TempFileProvider.create(requester, tmpProvider -> {
             String ext = fileExtension.indexOf('.') == -1 ? '.' + fileExtension : fileExtension;
             File arq = tmpProvider.createTempFile(ext);
@@ -183,17 +207,16 @@ public final class SingularTestUtil {
                 Throwables.throwIfUnchecked(e);
                 throw new SingularTestException(e);
             }
-            showFileOnDesktopForUserAndWaitOpening(arq);
+            showFileOnDesktopForUser(arq, waitTimeMilliAfterCall);
         });
     }
-
 
     /**
      * Abre o arqivo informado com o aplicativo associado no sistema operacional e espera 5 segundos para
      * prosseguir. Útil para inspecionar visualmente um arquivo que acabou de ser gerado por um teste.
      */
     public static void showFileOnDesktopForUserAndWaitOpening(File arq) {
-        showFileOnDesktopForUser(arq, 5000);
+        showFileOnDesktopForUser(arq, DEFAULT_WAIT_TIME_MILLI_AFTER_SHOW_ON_DESKTOP);
     }
 
     /**

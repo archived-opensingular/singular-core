@@ -20,6 +20,7 @@ import org.opensingular.lib.commons.ui.Icon;
 
 public enum DefaultIcons implements Icon {
 
+    ARCHIVE("fa fa-archive"),
     ARROW_RIGHT("fa fa-arrow-right"),
     BAN("icon-ban"),
     BARCODE("fa fa-barcode"),
@@ -40,6 +41,7 @@ public enum DefaultIcons implements Icon {
     COMMENT("fa fa-comment"),
     COUNTRY("icon-globe"),
     CREDIT_CARD("icon-credit-card"),
+    CUBES(" fa fa-cubes "),
     CUP("icon-cup"),
     DASHBOARD("fa fa-dashboard"),
     DIRECTIONS("icon-directions"),
@@ -110,7 +112,9 @@ public enum DefaultIcons implements Icon {
     WALLET("icon-wallet"),
     WARNING("fa fa-warning"),
     WRENCH("icon-wrench"),
-    ARROW_DOWN("fa fa-arrow-down");
+    ARROW_DOWN("fa fa-arrow-down"),
+    FLOPPY("fa fa-floppy-o"),
+    PRINT("fa fa-print");
 
     private final String cssClass;
 
