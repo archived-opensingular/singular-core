@@ -25,7 +25,7 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.view.SViewByBlock;
 
-@SInfoType(spackage = FormTestPackage.class, newable = false, name = "STypeCompositeWithListField")
+@SInfoType(spackage = FormTestPackage.class,  name = "STypeCompositeWithListField")
 public class STypeCompositeWithListField extends STypeComposite<SIComposite> {
 
 

@@ -16,8 +16,6 @@
 
 package org.opensingular.form;
 
-import static java.util.stream.Collectors.*;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -29,10 +27,12 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.processor.ClassInspectionCache;
@@ -46,9 +46,7 @@ import org.opensingular.lib.commons.context.ServiceRegistry;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.ImmutableSet;
+import static java.util.stream.Collectors.joining;
 
 public final class SFormUtil {
 
@@ -67,10 +65,8 @@ public final class SFormUtil {
      * tipos dependentes("b") e também dos tipos dependentes do seu dependente("c") para que a avaliação de visibilidade
      * seja avaliada corretamente.
      *
-     * @param
-     *  i the instance from which all dependents types must be notified
-     * @return
-     *  List of dependants SInstances
+     * @param i the instance from which all dependents types must be notified
+     * @return List of dependants SInstances
      */
     public static Iterable<SInstance> evaluateUpdateListeners(SInstance i) {
         return SingularFormProcessing.evaluateUpdateListeners(i);
@@ -222,12 +218,12 @@ public final class SFormUtil {
         final ImmutableSet<String> upperCaseSpecialCases = ImmutableSet.of("id", "url");
 
         return StringUtils.capitalize(Stream.of(simpleName)
-        		.map(s -> lowerUpper.matcher(s).replaceAll("$1-$2"))
-        		.map(s -> abbreviationPrefix.matcher(s).replaceAll("$1-$2"))
-        		.flatMap(s -> Stream.<String>of(s.split("[-_]+")))
-        		.map(s -> (StringUtils.isAllUpperCase(s)) ? s : StringUtils.uncapitalize(s))
-        		.map(s -> upperCaseSpecialCases.contains(s) ? StringUtils.capitalize(s) : s)
-        		.collect(joining(" ")));
+                .map(s -> lowerUpper.matcher(s).replaceAll("$1-$2"))
+                .map(s -> abbreviationPrefix.matcher(s).replaceAll("$1-$2"))
+                .flatMap(s -> Stream.<String>of(s.split("[-_]+")))
+                .map(s -> (StringUtils.isAllUpperCase(s)) ? s : StringUtils.uncapitalize(s))
+                .map(s -> upperCaseSpecialCases.contains(s) ? StringUtils.capitalize(s) : s)
+                .collect(joining(" ")));
     }
 
     public static String generateUserFriendlyPath(SInstance instance) {
@@ -243,7 +239,7 @@ public final class SFormUtil {
 
             if (node instanceof SIList<?>) {
                 SIList<?> list = (SIList<?>) node;
-                String listLabel = list.asAtr().getLabel();
+                String listLabel = Optional.ofNullable(list.asAtr().getLabel()).orElse(list.getType().getNameSimple());
                 int index = list.indexOf(child) + 1;
                 labels.add(listLabel + ((index > 0) ? " [" + (index) + ']' : ""));
             } else {

@@ -16,7 +16,9 @@
 
 package org.opensingular.form.wicket.mapper.maps;
 
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.LatLng;
@@ -54,24 +56,19 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPanel<T>> {
 
 
     private static final String PANEL_SCRIPT  = "MarkableGoogleMapsPanel.js";
 
-    private static final String                             SINGULAR_GOOGLEMAPS_JS_KEY     = "singular.googlemaps.js.key";
-    private static final String                             SINGULAR_GOOGLEMAPS_STATIC_KEY = "singular.googlemaps.static.key";
     public static final String                              MAP_ID                         = "map";
     public static final String                              MAP_STATIC_ID                  = "mapStatic";
     private final LatLongMarkupIds                          ids;
 
-    private final String                                    singularKeyMaps                = SingularProperties.getOpt(SINGULAR_GOOGLEMAPS_JS_KEY).orElse(null);
-    private final String                                    singularKeyMapStatic           = SingularProperties.getOpt(SINGULAR_GOOGLEMAPS_STATIC_KEY).orElse(null);
+    private final String                                    singularKeyMaps                = SingularProperties.getOpt(SingularProperties.SINGULAR_GOOGLEMAPS_JS_KEY).orElse(null);
+    private final String                                    singularKeyMapStatic           = SingularProperties.getOpt(SingularProperties.SINGULAR_GOOGLEMAPS_STATIC_KEY).orElse(null);
 
     private final IModel<String>                            metaDataModel                  = new Model<>();
     private final boolean                                   visualization;

@@ -16,6 +16,10 @@
 
 package org.opensingular.form.wicket.util;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -37,10 +41,6 @@ import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.lib.commons.util.Loggable;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
 
 /*
  * TODO: depois, acho que esta classe tem que deixar de ter métodos estáticos, e se tornar algo plugável e extensível,
@@ -107,12 +107,7 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
             // Validação do valor do componente
             boolean hasErrors = false;
             if (validate) {
-                InstanceValidationContext validationContext = new InstanceValidationContext();
-                validationContext.validateAll(baseInstance);
-                if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
-                    hasErrors = true;
-                    refreshComponentOrCellContainer(target, container);
-                }
+                hasErrors = validateErrors(container, target, baseInstance, hasErrors);
             }
 
             updateValidationFeedbackOnDescendants(target, container);
@@ -127,6 +122,16 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
             refreshComponentOrCellContainer(target, container);
         }
         return setAndReturn.apply(Boolean.TRUE);
+    }
+
+    public static boolean validateErrors(MarkupContainer container, AjaxRequestTarget target, SInstance baseInstance, boolean hasErrors) {
+        InstanceValidationContext validationContext = new InstanceValidationContext();
+        validationContext.validateAll(baseInstance);
+        if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
+            hasErrors = true;
+            refreshComponentOrCellContainer(target, container);
+        }
+        return hasErrors;
     }
 
     public static void onFieldValidate(FormComponent<?> formComponent, AjaxRequestTarget target, IModel<? extends SInstance> fieldInstance) {

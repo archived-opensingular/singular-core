@@ -18,17 +18,18 @@
 
 package org.opensingular.lib.support.persistence;
 
-import org.hibernate.EmptyInterceptor;
-import org.opensingular.lib.commons.base.SingularProperties;
-import org.opensingular.lib.support.persistence.util.Constants;
-import org.opensingular.lib.support.persistence.util.SqlUtil;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import static org.opensingular.lib.commons.base.SingularProperties.*;
+import org.hibernate.EmptyInterceptor;
+import org.opensingular.lib.commons.base.SingularProperties;
+import org.opensingular.lib.support.persistence.util.Constants;
+
+import static org.opensingular.lib.commons.base.SingularProperties.CUSTOM_SCHEMA_NAME;
 
 @SuppressWarnings("serial")
 public class SingularEntityInterceptor extends EmptyInterceptor {
@@ -47,11 +48,18 @@ public class SingularEntityInterceptor extends EmptyInterceptor {
 
     @Override
     public String onPrepareStatement(String sql) {
-        String result = sql;
+        StringBuilder result = new StringBuilder(sql);
+
         for (DatabaseObjectNameReplacement schemaReplacement : schemaReplacements) {
-            result = SqlUtil.replaceSchemaName(result, schemaReplacement.getOriginalObjectName(), schemaReplacement.getObjectNameReplacement());
+            Pattern p = Pattern.compile(Pattern.quote(schemaReplacement.getOriginalObjectName()));
+            Matcher m = p.matcher(result);
+            int start = 0;
+            while (m.find(start)) {
+                result.replace(m.start(), m.end(), schemaReplacement.getObjectNameReplacement());
+                start = m.start() + schemaReplacement.getObjectNameReplacement().length();
+            }
         }
-        return result;
+        return result.toString();
     }
 
 }
