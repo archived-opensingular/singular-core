@@ -46,7 +46,7 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
 
     /**
      * Method responsible for create the input.
-     * This method could be used for create a input data configurated.
+     * This method could be used for create a input data configured.
      *
      * @param model      The model of the input.
      * @param labelModel The label of the input.
@@ -59,7 +59,7 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
 
     /**
      * Settings for the DatePicker.
-     * This settings can be configurated using the <code>SViewDate</code>.
+     * This settings can be configured using the <code>SViewDate</code>.
      *
      * @param ctx The ctx that contanins model and view.
      * @return Return a DatePickerSettings.
@@ -79,7 +79,7 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
     }
 
     /**
-     * The input data with the configuration necessery, some converter for example.
+     * The input data with the configuration necessary, some converter for example.
      *
      * @param model The model of the instance
      * @return TextField of the date.
@@ -135,7 +135,7 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
      * Method responsible for configure the input of the date Text.
      *
      * @param labelModel The label of the input.
-     * @param comp       The textFieldComponent that will be configurated.
+     * @param comp       The textFieldComponent that will be configured.
      */
     private void configureInputDateText(IModel<String> labelModel, TextField comp) {
         if (labelModel != null) {
