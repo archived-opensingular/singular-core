@@ -23,7 +23,7 @@ import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
 
-@SInfoType(spackage = FormTestPackage.class, newable = false, name = "STypeAnotherComposisteNestedListElement")
+@SInfoType(spackage = FormTestPackage.class,  name = "STypeAnotherComposisteNestedListElement")
 public class STypeAnotherComposisteNestedListElement extends STypeComposite<SIComposite> {
 
     public STypeFooData partida;
