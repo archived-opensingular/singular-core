@@ -112,7 +112,7 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
 
     @Override
     public void addAjaxUpdate(WicketBuildContext ctx, Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
-        addAjaxEvent(model, listener, inputText, button);
+        addAjaxEvent(model, listener, inputText);
     }
 
     /**
@@ -122,18 +122,13 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
      * @param model     The model for process and validate.
      * @param listener  The listener for process and validate.
      * @param component The component that will be the ajax Event's adding.
-     * @param button    The button addon, if exits. <code>isCreateButton()</code>
      */
-    static void addAjaxEvent(IModel<SInstance> model, IAjaxUpdateListener listener, TextField component, Component button) {//TODO avaliar se é necessario utilizar o SingularEventBehavior.
+    static void addAjaxEvent(IModel<SInstance> model, IAjaxUpdateListener listener, TextField component) {
         component.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS)
                 .setOption(OPTS_ORIGINAL_PROCESS_EVENT, JS_CHANGE_EVENT)
                 .setOption(OPTS_ORIGINAL_VALIDATE_EVENT, JS_CHANGE_EVENT))
                 .add(AjaxUpdateInputBehavior.forProcess(model, listener))
                 .add(AjaxUpdateInputBehavior.forValidate(model, listener));
-//                .add(new SingularEventBehavior()
-//                        .setProcessEvent(JS_CHANGE_EVENT, component)
-//                        .setValidateEvent(JS_CHANGE_EVENT, component)
-//                        .setSupportComponents(button));
     }
 
     /**

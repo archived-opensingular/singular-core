@@ -58,6 +58,6 @@ public class DateTimeMapper extends AbstractControlsFieldComponentMapper {
         TimeMapper.addAjaxEvent(model, listener, timePicker);
 
         TextField datePicker = dateTimeContainer.getDateTextField();
-        DateMapper.addAjaxEvent(model, listener, datePicker, null);
+        DateMapper.addAjaxEvent(model, listener, datePicker);
     }
 }
