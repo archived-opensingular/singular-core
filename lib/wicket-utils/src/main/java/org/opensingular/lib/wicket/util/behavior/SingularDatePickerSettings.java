@@ -1,13 +1,13 @@
 package org.opensingular.lib.wicket.util.behavior;
 
-import org.apache.wicket.model.IModel;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.view.SViewDate;
-import org.opensingular.lib.commons.lambda.ISupplier;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import org.apache.wicket.model.IModel;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.view.date.SViewDate;
+import org.opensingular.lib.commons.lambda.ISupplier;
 
 public class SingularDatePickerSettings implements DatePickerSettings {
 

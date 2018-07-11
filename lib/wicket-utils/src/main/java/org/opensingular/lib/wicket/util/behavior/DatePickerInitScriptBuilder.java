@@ -1,17 +1,17 @@
 package org.opensingular.lib.wicket.util.behavior;
 
-import org.apache.wicket.ajax.json.JSONArray;
-import org.apache.wicket.util.template.PackageTextTemplate;
-import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstants;
-
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.ajax.json.JSONArray;
+import org.apache.wicket.util.template.PackageTextTemplate;
+import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstants;
+
 public class DatePickerInitScriptBuilder {
-    private final PackageTextTemplate initScript = new PackageTextTemplate(DatePickerInitBehaviour.class, "DatePickerInitScriptTemplate.js");
+    private final PackageTextTemplate initScript = new PackageTextTemplate(DatePickerInitScriptBuilder.class, "DatePickerInitScriptTemplate.js");
     private final SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd");
     private final SimpleDateFormat datapickerFormat = new SimpleDateFormat("dd/MM/yyyy");
 

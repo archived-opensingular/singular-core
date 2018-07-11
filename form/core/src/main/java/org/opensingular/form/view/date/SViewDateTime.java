@@ -14,29 +14,32 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.view;
+package org.opensingular.form.view.date;
 
 
-public class SViewDateTime extends SView {
+/**
+ * This class will have the same configuration of the Date and Time component.
+ */
+public class SViewDateTime extends SViewDate implements ISViewTime {
 
-    private boolean mode24hs = false;
-    private Integer minuteStep;
+    private SViewTime sViewTime = new SViewTime();
 
     public SViewDateTime setMode24hs(boolean value) {
-        mode24hs = value;
+        sViewTime.setMode24hs(value);
         return this;
     }
 
     public SViewDateTime setMinuteStep(Integer value) {
-        minuteStep = value;
+        sViewTime.setMinuteStep(value);
         return this;
     }
 
     public boolean isMode24hs() {
-        return mode24hs;
+        return sViewTime.isMode24hs();
     }
 
     public Integer getMinuteStep() {
-        return minuteStep;
+        return sViewTime.getMinuteStep();
     }
+
 }
