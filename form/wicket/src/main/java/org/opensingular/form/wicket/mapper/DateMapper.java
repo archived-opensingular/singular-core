@@ -36,9 +36,8 @@ import org.opensingular.lib.wicket.util.behavior.SingularDatePickerSettings;
 
 import static org.opensingular.form.type.basic.SPackageBasic.ATR_MAX_DATE;
 import static org.opensingular.form.type.basic.SPackageBasic.ATR_MIN_DATE;
-import static org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstants.DEFAULT_DATE_FORMAT;
-import static org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstants.DEFAULT_END_DATE;
-import static org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstants.DEFAULT_START_DATE;
+import static org.opensingular.lib.wicket.util.bootstrap.layout.BSControls.*;
+
 
 @SuppressWarnings("serial")
 public class DateMapper extends AbstractDateMapper {
@@ -64,7 +63,7 @@ public class DateMapper extends AbstractDateMapper {
     private String configureMinDate(IModel<? extends SInstance> model) {
         Date date = model.getObject().getAttributeValue(ATR_MIN_DATE);
         if (date == null) {
-            return DEFAULT_START_DATE;
+            return DATEPICKER_DEFAULT_START_DATE;
         }
         return defaultDateFormat().format(date);
     }
@@ -72,7 +71,7 @@ public class DateMapper extends AbstractDateMapper {
     private String configureMaxDate(IModel<? extends SInstance> model) {
         Date date = model.getObject().getAttributeValue(ATR_MAX_DATE);
         if (date == null) {
-            return DEFAULT_END_DATE;
+            return DATEPICKER_DEFAULT_END_DATE;
         }
         return defaultDateFormat().format(date);
     }
@@ -97,7 +96,7 @@ public class DateMapper extends AbstractDateMapper {
 
 
     public static SimpleDateFormat defaultDateFormat() {
-        return new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+        return new SimpleDateFormat(DATEPICKER_DEFAULT_DATE_FORMAT);
     }
 
 }

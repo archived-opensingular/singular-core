@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FeedbackMessage;
@@ -41,7 +42,6 @@ import org.opensingular.lib.wicket.util.behavior.BSSelectInitBehaviour;
 import org.opensingular.lib.wicket.util.behavior.DatePickerInitBehaviour;
 import org.opensingular.lib.wicket.util.behavior.DatePickerSettings;
 import org.opensingular.lib.wicket.util.behavior.PicklistInitBehaviour;
-import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstants;
 import org.opensingular.lib.wicket.util.feedback.BSFeedbackPanel;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 
@@ -49,10 +49,22 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BSControls> {
 
-    public static final MetaDataKey<BSContainer<?>> CHECKBOX_DIV = new MetaDataKey<BSContainer<?>>() {
-    };
-    public static final MetaDataKey<BSContainer<?>> CHECKBOX_LABEL = new MetaDataKey<BSContainer<?>>() {
-    };
+
+    public enum DatePickerViewMode {
+        DAYS, MONTH, YEAR, DECADE, CENTURY, MILLENIUM;
+
+        public String toString() {
+            return name().toLowerCase();
+        }
+    }
+
+
+    public static final String                       DATEPICKER_DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
+    public static final String                       DATEPICKER_DEFAULT_START_DATE  = "01/01/1900";
+    public static final String                       DATEPICKER_DEFAULT_END_DATE    = "31/12/2999";
+    public static final MetaDataKey<MarkupContainer> DATEPICKER_KEY_CONTAINER       = new MetaDataKey<MarkupContainer>() {};
+    public static final MetaDataKey<BSContainer<?>>  CHECKBOX_DIV                   = new MetaDataKey<BSContainer<?>>() {};
+    public static final MetaDataKey<BSContainer<?>>  CHECKBOX_LABEL                 = new MetaDataKey<BSContainer<?>>() {};
 
     private IFeedbackPanelFactory feedbackPanelFactory;
 
@@ -140,11 +152,11 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     public BSControls appendDatepicker(Component datepicker, Map<String, ? extends Serializable> extraAttributes, DatePickerSettings datePickerSettings) {
         Map<String, Serializable> attrs = new HashMap<>();
         attrs.put("data-date-format", "dd/mm/yyyy");
-        attrs.put("data-date-start-date", BSDatepickerConstants.DEFAULT_START_DATE);
-        attrs.put("data-date-end-date", BSDatepickerConstants.DEFAULT_END_DATE);
+        attrs.put("data-date-start-date", DATEPICKER_DEFAULT_START_DATE);
+        attrs.put("data-date-end-date", DATEPICKER_DEFAULT_END_DATE);
         attrs.put("data-date-start-view", "days");
-        attrs.put("data-date-min-view-mode", BSDatepickerConstants.ViewMode.DAYS);
-        attrs.put("data-date-max-view-mode", BSDatepickerConstants.ViewMode.MILLENIUM);
+        attrs.put("data-date-min-view-mode", DatePickerViewMode.DAYS);
+        attrs.put("data-date-max-view-mode", DatePickerViewMode.MILLENIUM);
         if (extraAttributes != null)
             attrs.putAll(extraAttributes);
 
@@ -152,7 +164,7 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         inputGroup
                 .appendExtraClasses(" date ")
                 .appendExtraAttributes(attrs)
-                .appendInputText(datepicker.setMetaData(BSDatepickerConstants.KEY_CONTAINER, inputGroup))
+                .appendInputText(datepicker.setMetaData(DATEPICKER_KEY_CONTAINER, inputGroup))
                 .add(new DatePickerInitBehaviour(datePickerSettings));
 
         this.appendInputGroup(componentId -> inputGroup);
