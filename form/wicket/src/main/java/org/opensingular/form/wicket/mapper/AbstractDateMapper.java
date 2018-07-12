@@ -21,7 +21,8 @@ import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
 import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.OPTS_ORIGINAL_PROCESS_EVENT;
 import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.OPTS_ORIGINAL_VALIDATE_EVENT;
-import static org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstants.JS_CHANGE_EVENT;
+import static org.opensingular.lib.wicket.util.behavior.DatePickerInitScriptBuilder.*;
+
 
 @SuppressWarnings("serial")
 public abstract class AbstractDateMapper extends AbstractControlsFieldComponentMapper {
