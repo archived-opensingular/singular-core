@@ -39,7 +39,7 @@ public class DateBehaviour extends InitScriptBehaviour {
 
     @Override
     public String getScript(Component component) {
-        if(!datePickerSettings.isHideModal().orElse(Boolean.FALSE)) {
+        if(datePickerSettings == null || !datePickerSettings.isHideModal().orElse(Boolean.FALSE)) {
             return new DatePickerInitScriptBuilder(new HashMap<>(),
                     component.getMarkupId(), getIdInput(component), datePickerSettings).generateScript();
         }

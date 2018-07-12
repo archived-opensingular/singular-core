@@ -59,7 +59,7 @@ public class TimeMapper extends AbstractControlsFieldComponentMapper {
 
     public TextField<String> createTextFieldTime(IModel<? extends SInstance> model, ISViewTime viewTime) {
         time = new TextField<>("time", new SIDateTimeModel.TimeModel(new SInstanceValueModel<>(model)));
-        if (checkModalTimerPickerWillHide(viewTime)) {
+        if (checkModalTimerPickerWillShow(viewTime)) {
             time.add(new CreateTimePickerBehavior(getParams(viewTime)));
         }
 
@@ -109,7 +109,7 @@ public class TimeMapper extends AbstractControlsFieldComponentMapper {
     public static void addAjaxEvent(IModel<SInstance> model, IAjaxUpdateListener listener, TextField<String> component, ISViewTime viewTime) {
         SingularEventsHandlers eventsHandlers = new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS);
 
-        if (checkModalTimerPickerWillHide(viewTime)) {
+        if (checkModalTimerPickerWillShow(viewTime)) {
             eventsHandlers.setOption(OPTS_ORIGINAL_VALIDATE_EVENT, ON_UPDATE_TIME)
                     .setOption(OPTS_ORIGINAL_PROCESS_EVENT, ON_UPDATE_TIME);
         }
@@ -124,9 +124,9 @@ public class TimeMapper extends AbstractControlsFieldComponentMapper {
      * Method responsible for containing the rules of the visible modal picker.
      *
      * @param viewTime The view that containing the logic.
-     * @return True if the modal picker will be hide.
+     * @return True if the modal picker will show.
      */
-    private static boolean checkModalTimerPickerWillHide(ISViewTime viewTime) {
+    private static boolean checkModalTimerPickerWillShow(ISViewTime viewTime) {
         return viewTime == null || !viewTime.isModalTimerHide();
     }
 
