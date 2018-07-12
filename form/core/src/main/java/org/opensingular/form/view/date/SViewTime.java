@@ -6,6 +6,7 @@ public class SViewTime extends SView implements ISViewTime {
 
     private boolean mode24hs = false;
     private Integer minuteStep;
+    private boolean hideModalTimer = false;
 
 
     public SViewTime setMode24hs(boolean value) {
@@ -25,5 +26,24 @@ public class SViewTime extends SView implements ISViewTime {
     public Integer getMinuteStep() {
         return minuteStep;
     }
+
+    /**
+     * Default: False (show modal picker).
+     *
+     * @param hide True will hide the timer picker.
+     *             False will show the timer.
+     * @return <code>this</code>
+     */
+    @Override
+    public SViewTime hideModalTimePicker(Boolean hide) {
+        hideModalTimer = hide;
+        return this;
+    }
+
+    @Override
+    public boolean isModalTimerHide() {
+        return hideModalTimer;
+    }
+
 
 }

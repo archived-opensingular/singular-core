@@ -7,6 +7,7 @@ import java.util.Optional;
 
 /**
  * Options to configure the bootstrap datepicker
+ *
  * @see <a href="http://bootstrap-datepicker.readthedocs.io/en/latest/options.html">Bootstrap DatePicker Settings</a>
  */
 public interface DatePickerSettings extends Serializable {
@@ -45,4 +46,9 @@ public interface DatePickerSettings extends Serializable {
      * If true, highlights the current date.
      */
     Optional<Boolean> isTodayHighlight();
+
+    /**
+     * If true, the modal picker date will be hide.
+     */
+    Optional<Boolean> isHideModal();
 }
