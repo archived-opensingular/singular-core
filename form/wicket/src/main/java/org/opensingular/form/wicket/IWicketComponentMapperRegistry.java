@@ -48,6 +48,9 @@ import org.opensingular.form.type.util.STypeLatitudeLongitudeGMaps;
 import org.opensingular.form.type.util.STypeLatitudeLongitudeList;
 import org.opensingular.form.type.util.STypeYearMonth;
 import org.opensingular.form.view.*;
+import org.opensingular.form.view.date.SViewDate;
+import org.opensingular.form.view.date.SViewDateTime;
+import org.opensingular.form.view.date.SViewTime;
 import org.opensingular.form.view.richtext.SViewByRichText;
 import org.opensingular.form.view.richtext.SViewByRichTextNewTab;
 import org.opensingular.form.wicket.mapper.BooleanMapper;
@@ -164,6 +167,7 @@ public class IWicketComponentMapperRegistry
         add(STypeDateTime.class,                                          DateTimeMapper::new);
         add(STypeDateTime.class,    SViewDateTime.class,                  DateTimeMapper::new);
         add(STypeTime.class,                                              TimeMapper::new);
+        add(STypeTime.class,        SViewTime.class,                      TimeMapper::new);
         add(STypeTelefoneNacional.class,                                  TelefoneNacionalMapper::new);
         add(STypeHTML.class,                                              PortletRichTextMapper::new);
         add(STypeHTML.class,        SViewByRichTextNewTab.class,          PortletRichTextMapper::new);
