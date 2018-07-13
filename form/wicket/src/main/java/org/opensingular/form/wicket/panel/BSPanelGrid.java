@@ -16,6 +16,15 @@
 
 package org.opensingular.form.wicket.panel;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MetaDataKey;
@@ -32,19 +41,11 @@ import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.component.SingularFormWicket;
+import org.opensingular.form.wicket.panel.quicknav.QuickNavPanel;
 import org.opensingular.lib.commons.lambda.IBiFunction;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
-
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
@@ -52,7 +53,7 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public abstract class BSPanelGrid extends Panel {
 
-    private static final MetaDataKey<BSTab> TAB_KEY    = new MetaDataKey<BSPanelGrid.BSTab>() {};
+    public static final MetaDataKey<BSTab> TAB_KEY    = new MetaDataKey<BSPanelGrid.BSTab>() {};
 
     private static final String             ID_TAB     = "tab";
     private SingularFormWicket<?>           form       = new SingularFormWicket<>("panel-form");
@@ -118,6 +119,8 @@ public abstract class BSPanelGrid extends Panel {
             "    }\n" +
             "  });\n" +
             "}());\n"));
+
+        add(new QuickNavPanel("help", buildTabControl(ID_TAB)));
     }
 
     @SuppressWarnings("unchecked")
