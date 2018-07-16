@@ -59,6 +59,15 @@ public class RichTextButtonAjaxBehavior extends AbstractDefaultAjaxBehavior {
 
     }
 
+    /**
+     * Method to configure the modal.
+     *
+     * @param target         <code>AjaxRequestTarget</code> to show the modal.
+     * @param text           Text of the richText
+     * @param index          The index of the button.
+     * @param selected       The text selected if existis.
+     * @param richTextAction The type of the action of the button clicked.
+     */
     private void configureModal(AjaxRequestTarget target, String text, Integer index, String selected, RichTextAction richTextAction) {
         Class<? extends SType<?>> stypeActionButton = (Class<? extends SType<?>>) richTextAction.getForm().orElse(null);
         SingularFormPanel singularFormPanel = new SingularFormPanel("modalBody", stypeActionButton);
@@ -70,6 +79,15 @@ public class RichTextButtonAjaxBehavior extends AbstractDefaultAjaxBehavior {
         bfModalWindow.show(target);
     }
 
+    /**
+     * Create the confirm button in the modal.
+     *
+     * @param singularFormPanel The panel of the modal.
+     * @param actionIndex       The index of the button.
+     * @param selected          The text selected if existis.
+     * @param text              All the text in the richText.
+     * @return Confirm Button.
+     */
     private SingularButton createConfirmButton(SingularFormPanel singularFormPanel, int actionIndex, String selected, String text) {
         return new SingularButton("btnConfirmar", singularFormPanel.getInstanceModel()) {
 
@@ -108,6 +126,12 @@ public class RichTextButtonAjaxBehavior extends AbstractDefaultAjaxBehavior {
         throw new NullPointerException("Don't find any implementation of the RichTextContext!");
     }
 
+    /**
+     * Method responsible to create the cancel button.
+     * This button just hide the modal.
+     *
+     * @return The cancel button.
+     */
     private AjaxButton createCancelButton() {
         return new AjaxButton("btnCancelar") {
             @Override

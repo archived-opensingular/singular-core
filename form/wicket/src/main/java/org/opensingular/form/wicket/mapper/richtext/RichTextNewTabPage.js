@@ -39,19 +39,21 @@
             var ids = "";
             //Foi utilizado ',,' para separar cada botão adicionado no RichText.
             var buttonsExtra = buttonsList.split(",,");
-            buttonsExtra.forEach(function (b) {
-                //Foi utilizado #$ para separar cada atributo do botão.
-                var texts = b.split("#$");
-                var id;
-                if (texts[3] === "true") {
-                    //É adicionado extra nos botões que é para ser exibido com a label ao lado.
-                    id = 'extra' + texts[0];
-                } else {
-                    id = texts[0];
-                }
-                ids += id + ",";
-            });
-            ids = ids.slice(0, -1);
+            if(buttonsExtra) {
+                buttonsExtra.forEach(function (b) {
+                    //Foi utilizado #$ para separar cada atributo do botão.
+                    var texts = b.split("#$");
+                    var id;
+                    if (texts[3] === "true") {
+                        //É adicionado extra nos botões que é para ser exibido com a label ao lado.
+                        id = 'extra' + texts[0];
+                    } else {
+                        id = texts[0];
+                    }
+                    ids += id + ",";
+                });
+                ids = ids.slice(0, -1);
+            }
             var editor = CKEDITOR.replace("ck-text-area", {
                 extraPlugins: plugin,
                 allowedContent: true,
@@ -204,26 +206,31 @@
      *  and will add the font-awesome (fa-fa-user), or the icon-simple-line (icon-user).
      */
     function configureIconButtons() {
-        buttonsList.split(",,").forEach(function (b) {
-            var texts = b.split("#$");
+        if (buttonsList) {
+            buttonsList.split(",,").forEach(function (b) {
+                var texts = b.split("#$");
 
-            var id;
-            if (texts[3] === "true") {
-                id = 'extra' + texts[0];
-            } else {
-                id = texts[0];
-            }
+                var id;
+                if (texts[3] === "true") {
+                    id = 'extra' + texts[0];
+                } else {
+                    id = texts[0];
+                }
 
 
-            var classeIcon;
-            if (texts[2].indexOf('fa fa-') >= 0) {
-                classeIcon = ' cke_singular_icon-font-awesome ';
-            } else {
-                classeIcon = ' cke_singular_icon-simple-line ';
-            }
-            $('.cke_button__' + id + '_icon').addClass(texts[2] + classeIcon);
+                var classeIcon;
+                if (texts[2].indexOf('fa fa-') >= 0) {
+                    classeIcon = ' cke_singular_icon-font-awesome ';
+                } else {
+                    classeIcon = ' cke_singular_icon-simple-line ';
+                }
+                $('.cke_button__' + id + '_icon').addClass(texts[2] + classeIcon);
 
-        });
+            });
+        } else {
+            console.log("Don't find extra buttons!");
+        }
+        
     }
 
 

@@ -59,19 +59,18 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+
 public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPanel<T>> {
 
 
     private static final String PANEL_SCRIPT  = "MarkableGoogleMapsPanel.js";
 
-    private static final String                             SINGULAR_GOOGLEMAPS_JS_KEY     = "singular.googlemaps.js.key";
-    private static final String                             SINGULAR_GOOGLEMAPS_STATIC_KEY = "singular.googlemaps.static.key";
     public static final String                              MAP_ID                         = "map";
     public static final String                              MAP_STATIC_ID                  = "mapStatic";
     private final LatLongMarkupIds                          ids;
 
-    private final String                                    singularKeyMaps                = SingularProperties.getOpt(SINGULAR_GOOGLEMAPS_JS_KEY).orElse(null);
-    private final String                                    singularKeyMapStatic           = SingularProperties.getOpt(SINGULAR_GOOGLEMAPS_STATIC_KEY).orElse(null);
+    private final String                                    singularKeyMaps                = SingularProperties.getOpt(SingularProperties.SINGULAR_GOOGLEMAPS_JS_KEY).orElse(null);
+    private final String                                    singularKeyMapStatic           = SingularProperties.getOpt(SingularProperties.SINGULAR_GOOGLEMAPS_STATIC_KEY).orElse(null);
 
     private final IModel<String>                            metaDataModel                  = new Model<>();
     private final boolean                                   visualization;
@@ -166,9 +165,6 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
         currentLocationButton.setDefaultFormProcessing(false);
 
     }
-
-
-
 
     private String generateLatLngMaker(IModel<?> latitudeModel, IModel<?> longitudeModel) {
         if (latitudeModel.getObject() != null && longitudeModel.getObject() != null) {

@@ -25,7 +25,7 @@ import org.opensingular.form.type.core.STypeTime;
 
 import java.util.Calendar;
 
-@SInfoType(spackage = FormTestPackage.class, newable = false, name = "PortoLocalHorario")
+@SInfoType(spackage = FormTestPackage.class,  name = "PortoLocalHorario")
 public class STypeFooData extends StypeFooDataLocation {
 
     

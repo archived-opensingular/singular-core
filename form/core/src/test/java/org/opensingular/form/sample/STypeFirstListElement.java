@@ -30,7 +30,7 @@ import org.opensingular.form.view.SViewListByMasterDetail;
 import java.util.Optional;
 import java.util.UUID;
 
-@SInfoType(spackage = FormTestPackage.class, newable = false, name = "STypeFirstListElement")
+@SInfoType(spackage = FormTestPackage.class,  name = "STypeFirstListElement")
 public class STypeFirstListElement extends STypeComposite<SIComposite> {
 
     public STypeString                                         identificador;
