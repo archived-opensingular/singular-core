@@ -21,7 +21,7 @@ package org.opensingular.form.wicket.mapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
-import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerInputGroup;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSInputGroup;
 import org.opensingular.lib.wicket.util.output.BOutputPanel;
 
 public class DateMapperTest {
@@ -29,7 +29,7 @@ public class DateMapperTest {
     private SingularFormDummyPageTester tester;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         tester = new SingularFormDummyPageTester();
         tester.getDummyPage().setTypeBuilder(root -> {
             root.addFieldDate("data");
@@ -45,7 +45,7 @@ public class DateMapperTest {
 
         tester.getDummyPage().setAsEditView();
         tester.startDummyPage();
-        tester.getAssertionsPage().getSubComponents(BSDatepickerInputGroup.class).hasSize(1);
+        tester.getAssertionsPage().getSubComponents(BSInputGroup.class).hasSize(1);
         tester.getAssertionsForm().getSubComponentWithTypeNameSimple("data").assertSInstance().assertDateValue()
                 .isInSameYearAs(isoDate)
                 .isInSameDayAs(isoDate)

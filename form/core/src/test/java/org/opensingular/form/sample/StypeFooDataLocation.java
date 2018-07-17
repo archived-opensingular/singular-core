@@ -22,7 +22,7 @@ import org.opensingular.form.SInfoType;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeString;
 
-@SInfoType(spackage = FormTestPackage.class, newable = false, name = "PortoLocal")
+@SInfoType(spackage = FormTestPackage.class,  name = "PortoLocal")
 public class StypeFooDataLocation extends STypeFoo {
 
     public STypeString localAtracacao;

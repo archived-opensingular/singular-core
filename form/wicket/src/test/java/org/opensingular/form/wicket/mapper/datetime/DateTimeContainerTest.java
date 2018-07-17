@@ -18,6 +18,13 @@
 
 package org.opensingular.form.wicket.mapper.datetime;
 
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.TextField;
@@ -30,17 +37,8 @@ import org.junit.Test;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeDateTime;
-import org.opensingular.form.view.SViewDateTime;
+import org.opensingular.form.view.date.SViewDateTime;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class DateTimeContainerTest implements Serializable {
 

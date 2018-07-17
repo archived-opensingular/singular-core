@@ -24,7 +24,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeString;
 
-@SInfoType(spackage = FormTestPackage.class, newable = false, name = "CrossReferenceComposite")
+@SInfoType(spackage = FormTestPackage.class,  name = "CrossReferenceComposite")
 public class CrossReferenceComposite extends STypeComposite<SIComposite> {
 
     public STypeString identificador;

@@ -2932,3 +2932,7 @@ div.checker.disabled span.checked:hover {
   margin-left: -7px !important;
   margin-top: -2px !important;
   position: absolute; }
+
+.annotation-toggle-container .annotation-text {
+  overflow-y: auto;
+  max-height: 130px; }
