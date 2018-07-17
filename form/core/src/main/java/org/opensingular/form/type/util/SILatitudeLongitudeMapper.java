@@ -22,12 +22,12 @@ import org.opensingular.form.SIList;
 public class SILatitudeLongitudeMapper extends SIComposite {
 
     @Override
-    public STypeLatitudeLongitudeMapper getType() {
-        return (STypeLatitudeLongitudeMapper) super.getType();
+    public STypeLatitudeLongitudeMultipleMarkable getType() {
+        return (STypeLatitudeLongitudeMultipleMarkable) super.getType();
     }
 
     public boolean hasFile() {
-        STypeLatitudeLongitudeMapper type = getType();
+        STypeLatitudeLongitudeMultipleMarkable type = getType();
         return !getField(type.file).isEmptyOfData();
     }
 

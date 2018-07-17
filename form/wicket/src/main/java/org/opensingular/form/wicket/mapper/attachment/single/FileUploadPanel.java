@@ -93,10 +93,10 @@ public class FileUploadPanel extends Panel implements Loggable {
     private AbstractDefaultAjaxBehavior previewCallBack;
 
     private List<FileEventListener> fileUploadedListeners = new ArrayList<>();
-
     private List<FileEventListener> fileRemovedListeners = new ArrayList<>();
 
-    private IConsumer<AjaxRequestTarget> consumerAfterLoadImage;
+    private IConsumer<AjaxRequestTarget> consumerAfterLoadImage; //Behavior that will be executed after load the image.
+    private IConsumer<AjaxRequestTarget> consumerAfterRemoveImage; //Behavior that will be executed after remove the image.
 
     public FileUploadPanel(String id, IModel<SIAttachment> model, ViewMode viewMode) {
         super(id, model);
@@ -190,7 +190,7 @@ public class FileUploadPanel extends Panel implements Loggable {
             @Override
             protected void respond(AjaxRequestTarget target) {
                 target.add(preview);
-                if(consumerAfterLoadImage != null) {
+                if (consumerAfterLoadImage != null) {
                     consumerAfterLoadImage.accept(target);
                 }
             }
@@ -351,6 +351,9 @@ public class FileUploadPanel extends Panel implements Loggable {
             } else {
                 target.add(FileUploadPanel.this);
             }
+            if (consumerAfterRemoveImage != null) {
+                consumerAfterRemoveImage.accept(target);
+            }
         }
     }
 
@@ -406,5 +409,13 @@ public class FileUploadPanel extends Panel implements Loggable {
 
     public void setConsumerAfterLoadImage(IConsumer<AjaxRequestTarget> consumerAfterLoadImage) {
         this.consumerAfterLoadImage = consumerAfterLoadImage;
+    }
+
+    public IConsumer<AjaxRequestTarget> getConsumerAfterRemoveImage() {
+        return consumerAfterRemoveImage;
+    }
+
+    public void setConsumerAfterRemoveImage(IConsumer<AjaxRequestTarget> consumerAfterRemoveImage) {
+        this.consumerAfterRemoveImage = consumerAfterRemoveImage;
     }
 }

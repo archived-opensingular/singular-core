@@ -20,7 +20,7 @@ import org.opensingular.form.SIList;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.view.FileEventListener;
 
-import static org.opensingular.form.type.util.STypeLatitudeLongitudeMapper.FIELD_POINTS;
+import static org.opensingular.form.type.util.STypeLatitudeLongitudeMultipleMarkable.FIELD_POINTS;
 
 public class FileLatLongUploadListener implements FileEventListener {
 

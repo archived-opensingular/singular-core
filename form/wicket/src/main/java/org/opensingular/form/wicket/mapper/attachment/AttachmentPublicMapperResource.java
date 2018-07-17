@@ -30,17 +30,17 @@ import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.lib.commons.util.Loggable;
 
 /**
- * Shared Resource vinculado a uma sessão.
+ * Shared Resource bound to application.
+ * This shared file will be deleted after the first call.
  *
  * @see DownloadSupportedBehavior
  */
 public class AttachmentPublicMapperResource extends AbstractResource implements Loggable {
 
     private Map<String, Attachment> attachments = new HashMap<>();
-    private String sessionKey;
+    public static final String sessionKey = "publico";
 
-    public AttachmentPublicMapperResource(String sessionKey) {
-        this.sessionKey = sessionKey;
+    public AttachmentPublicMapperResource() {
     }
 
     @Override
@@ -48,7 +48,6 @@ public class AttachmentPublicMapperResource extends AbstractResource implements 
         ResourceResponse resourceResponse = new ResourceResponse();
 
         StringValue attachmentKey = attributes.getParameters().get("attachmentKey");
-
         if (attachmentKey.isNull() || attachmentKey.isEmpty()) {
             return resourceResponse.setStatusCode(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -80,17 +79,17 @@ public class AttachmentPublicMapperResource extends AbstractResource implements 
      * @param name        the file name
      * @param disposition the disposition
      * @param ref         the reference
-     * @return the URL do download
+     * @return the URL for download
      */
     public String addAttachment(String name, ContentDisposition disposition, IAttachmentRef ref) {
         WebApplication app = WebApplication.get();
         attachments.put(ref.getId(), new Attachment(name, disposition, ref));
-        String path = app.getServletContext().getContextPath() + "/" + app.getWicketFilter().getFilterPath() + getDownloadURL(sessionKey, ref.getId());
+        String path = app.getServletContext().getContextPath() + '/' + app.getWicketFilter().getFilterPath() + getDownloadURL(sessionKey, ref.getId());
         return path.replaceAll("\\*", "").replaceAll("//", "/");
     }
 
     public static String getMountPathPublic() {
-        return getDownloadURL("${public}", "${attachmentKey}");
+        return getDownloadURL("publico", "${attachmentKey}");
     }
 
     public static String getDownloadURL(String id, String path) {

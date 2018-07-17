@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
-
 import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.LatLng;
 import org.apache.commons.collections.CollectionUtils;
@@ -60,33 +58,40 @@ import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
+/**
+ * Panel for the Google maps.
+ *
+ * <code>https://developers.google.com/maps/documentation/javascript/kmllayer#kml_feature_details</code>
+ * <code>https://developers.google.com/maps/documentation/javascript/reference/3/kml</code>
+ */
+
 public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPanel<T>> {
 
 
-    private static final String PANEL_SCRIPT  = "MarkableGoogleMapsPanel.js";
+    private static final String PANEL_SCRIPT = "MarkableGoogleMapsPanel.js";
 
-    public static final String                              MAP_ID                         = "map";
-    public static final String                              MAP_STATIC_ID                  = "mapStatic";
-    private final LatLongMarkupIds                          ids;
+    public static final String MAP_ID = "map";
+    public static final String MAP_STATIC_ID = "mapStatic";
+    private final LatLongMarkupIds ids;
 
-    private final String                                    singularKeyMaps                = SingularProperties.getOpt(SingularProperties.SINGULAR_GOOGLEMAPS_JS_KEY).orElse(null);
-    private final String                                    singularKeyMapStatic           = SingularProperties.getOpt(SingularProperties.SINGULAR_GOOGLEMAPS_STATIC_KEY).orElse(null);
+    private final String singularKeyMaps = SingularProperties.getOpt(SingularProperties.SINGULAR_GOOGLEMAPS_JS_KEY).orElse(null);
+    private final String singularKeyMapStatic = SingularProperties.getOpt(SingularProperties.SINGULAR_GOOGLEMAPS_STATIC_KEY).orElse(null);
 
-    private final IModel<String>                            metaDataModel                  = new Model<>();
-    private final boolean                                   visualization;
+    private final IModel<String> metaDataModel = new Model<>();
+    private final boolean visualization;
     private final ISupplier<? extends SViewCurrentLocation> viewSupplier;
 
 
-    private boolean           multipleMarkers;
-    private String            callbackUrl;
-    private String            tableContainerId;
+    private boolean multipleMarkers; //Map for multiple markables, this will change the logic of the creation map.
+    private String callbackUrl;
+    private String tableContainerId;
     private String kmlUrl;
 
-    private final Button       clearButton;
-    private final Button       currentLocationButton;
-    private final WebMarkupContainer verNoMaps;
-    private final ImgMap       mapStatic;
-    private final WebMarkupContainer  map      = new WebMarkupContainer(MAP_ID);
+    private final Button clearButton;
+    private final Button currentLocationButton;
+    private final WebMarkupContainer verNoMaps; //Enable just if not multiple markers.
+    private final ImgMap mapStatic;
+    private final WebMarkupContainer map = new WebMarkupContainer(MAP_ID);
     private final HiddenField<String> metaData = new HiddenField<>("metadados", metaDataModel);
 
 
@@ -106,7 +111,8 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
         }
     }
 
-    public MarkableGoogleMapsPanel(LatLongMarkupIds ids, IModel<? extends SInstance> model, ISupplier<? extends SViewCurrentLocation> viewSupplier, boolean visualization, boolean multipleMarkers) {
+    public MarkableGoogleMapsPanel(LatLongMarkupIds ids, IModel<? extends SInstance> model,
+            ISupplier<? extends SViewCurrentLocation> viewSupplier, boolean visualization, boolean multipleMarkers) {
         super(model.getObject().getName());
         this.visualization = visualization;
         this.ids = ids;
@@ -119,7 +125,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
 
         if (!multipleMarkers) {
 
-            IModel<SInstance> latitudeModel  = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitude.FIELD_LATITUDE));
+            IModel<SInstance> latitudeModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitude.FIELD_LATITUDE));
             IModel<SInstance> longitudeModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitude.FIELD_LONGITUDE));
             LoadableDetachableModel<String> googleMapsLinkModel = $m.loadable(() -> {
                 if (latitudeModel.getObject() != null && longitudeModel.getObject() != null) {
@@ -144,10 +150,10 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
         } else {
             verNoMaps = new WebMarkupContainer("verNoMaps");
             mapStatic = new ImgMap(MAP_STATIC_ID, $m.loadable(() -> {
-                List<String> makerList  = new ArrayList<>();
+                List<String> makerList = new ArrayList<>();
                 List<LatLng> latLngList = new ArrayList<>();
                 ((SILatitudeLongitudeMapper) model.getObject()).getPoints().forEach(m -> {
-                    IModel<?> latitude  = Model.of(m.getLatitude());
+                    IModel<?> latitude = Model.of(m.getLatitude());
                     IModel<?> longitude = Model.of(m.getLongitude());
 
                     LatLng latLng = new LatLng(m.getLatitude().doubleValue(), m.getLongitude().doubleValue());
@@ -174,7 +180,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
     }
 
     private String configureMapToView(List<String> latLngMakerList, IModel<?> zoomModel, List<LatLng> latLngList) {
-        String        latLng = "-15.7922, -47.4609";
+        String latLng = "-15.7922, -47.4609";
         StringBuilder marker = new StringBuilder();
         if (CollectionUtils.isNotEmpty(latLngMakerList)) {
             latLngMakerList.stream()
@@ -219,6 +225,9 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
         return mean;
     }
 
+    /**
+     * Configurations of the Google maps.
+     */
     private void populateMetaData() {
         JSONObject json = new JSONObject();
         json.put("idClearButton", clearButton.getMarkupId(true));

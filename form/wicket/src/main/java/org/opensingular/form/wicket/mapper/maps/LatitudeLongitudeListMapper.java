@@ -35,8 +35,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
-import org.opensingular.form.type.util.STypeLatitudeLongitudeMapper;
-import org.opensingular.form.view.FileEventListener;
+import org.opensingular.form.type.util.STypeLatitudeLongitudeMultipleMarkable;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewCurrentLocation;
 import org.opensingular.form.wicket.WicketBuildContext;
@@ -53,12 +52,31 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
+import static org.opensingular.form.wicket.mapper.attachment.AttachmentPublicMapperResource.sessionKey;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 
+/**
+ * This class is responsible for include a list of markable in the google maps.
+ * <p>
+ * There is a google maps panel.
+ * There is a table with a list of latitude and logitude.
+ * There is a upload file for KML.
+ * <p>
+ * Be careful with KML:
+ * Maximum fetched file size (raw KML, raw GeoRSS, or compressed KMZ 3MB;
+ * Maximum uncompressed KML file size 10MB.
+ * Date: 16/07/2018
+ * </p>
+ */
 public class LatitudeLongitudeListMapper extends TableListMapper {
 
     private WicketBuildContext pointsCtx;
 
+    /**
+     * Target before remove element of table.
+     *
+     * @param target target the pointsCtx.
+     */
     @Override
     protected void behaviorAfterRemoveButtonClick(AjaxRequestTarget target) {
         target.add(pointsCtx.getParent().getContainer());
@@ -67,7 +85,7 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
     @Override
     public void buildView(WicketBuildContext ctx) {
         confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
-        SInstanceFieldModel<SInstance> zoom = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeMapper.FIELD_ZOOM);
+        SInstanceFieldModel<SInstance> zoom = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeMultipleMarkable.FIELD_ZOOM);
         WicketBuildContext zoomCtx = ctx.createChild(ctx.getContainer().newGrid(), ctx.getExternalContainer(), zoom);
         zoomCtx.build();
 
@@ -75,57 +93,30 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
 
         zoomCtx.getContainer().visitChildren((TextField.class), (object, visit) -> {
             String nameSimple = ((SInstanceValueModel<?>) object.getDefaultModel()).getSInstance().getType().getNameSimple();
-            if (nameSimple.equals(STypeLatitudeLongitudeMapper.FIELD_ZOOM)) {
+            if (nameSimple.equals(STypeLatitudeLongitudeMultipleMarkable.FIELD_ZOOM)) {
                 ids.zoomId = object.getMarkupId();
             }
         });
 
-        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(ids, ctx.getModel(), ctx.getViewSupplier(SViewCurrentLocation.class),
-                ctx.getViewMode().isVisualization(), true);
+        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = createMarkableGoogleMapsPanel(ctx, ids);
         BSGrid gridGoogleMaps = ctx.getContainer().newGrid();
 
 
-        IModel<SIList<SInstance>> points = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeMapper.FIELD_POINTS);
+        IModel<SIList<SInstance>> points = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeMultipleMarkable.FIELD_POINTS);
         ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, Boolean.TRUE);
         pointsCtx = ctx.createChild(gridGoogleMaps, ctx.getExternalContainer(), points);
         ctx.getContainer().newFormGroup().appendDiv(googleMapsPanel);
 
-        SView viewPoints = points.getObject().getType().getSuperType().getView();
-        pointsCtx.setView(viewPoints);
+        configureTablePointsView(points);
         TableListPanel table = buildPanel(pointsCtx, "table");
         ctx.getContainer().newFormGroup().appendDiv(table);
 
 
-        IModel<SIAttachment> file = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeMapper.FIELD_FILE);
+        IModel<SIAttachment> file = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeMultipleMarkable.FIELD_FILE);
         WicketBuildContext fileCtx = ctx.createChild(ctx.getContainer().newGrid(), ctx.getExternalContainer(), file);
         fileCtx.build();
 
-        WicketUtils.findFirstChild(fileCtx.getContainer(), FileUploadPanel.class)
-                .ifPresent(panel -> panel.registerFileRemovedListener((FileEventListener) attachment -> {
-                    points.getObject().clearInstance();
-                    table.setVisible(true);
-                    googleMapsPanel.includeKmlFile("");
-                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                    target.add(pointsCtx.getParent().getContainer());
-                }));
-
-//        WicketUtils.findFirstChild(fileCtx.getContainer(), FileUploadPanel.class)
-//                .ifPresent(panel -> panel.registerFileUploadedListener((FileEventListener) attachment -> {
-//                    //Problema aparentemente é que é criado um novo contexto.
-//                    points.getObject().clearInstance();
-//                    table.setVisible(false);
-//AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-    ////                target.add(gridGoogleMaps);
-    //                }));
-
-        WicketUtils.findFirstChild(fileCtx.getContainer(), FileUploadPanel.class)
-                .ifPresent(panel -> panel.setConsumerAfterLoadImage((target) -> {
-                    points.getObject().clearInstance();
-                    table.setVisible(false);
-                    String urlFile = createTempPublicFile(panel);
-                    googleMapsPanel.includeKmlFile(toAbsolutePath() + urlFile);
-                    target.add(pointsCtx.getParent().getContainer());            }));
-
+        createConsumersForUploadPanel(googleMapsPanel, points, table, fileCtx);
 
         AbstractDefaultAjaxBehavior addPoint = createBehaviorAddPoint(points, ctx.getContainer());
         ctx.getContainer().add(addPoint);
@@ -133,47 +124,134 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                 ctx.getContainer().getMarkupId())));
 
         WicketUtils.findFirstChild(ctx.getContainer(), AddButton.class)
-            .ifPresent(button -> button.add(new AjaxEventBehavior("click") {
-                @Override
-                protected void onEvent(AjaxRequestTarget target) {
-                    target.add(googleMapsPanel);
-                }
-            }));
+                .ifPresent(button -> button.add(new AjaxEventBehavior("click") {
+                    @Override
+                    protected void onEvent(AjaxRequestTarget target) {
+                        target.add(googleMapsPanel);
+                    }
+                }));
 
         confirmationModal.registerListener(googleMapsPanel::updateJS);
 
     }
 
-    //TODO verificar se essa logica para criação do arquivo temporario deve permanecer nessa classe.
+    /**
+     * This method is responsible for creating the consumers for the upload panel.
+     * Created a consumer after upload the file, and other after removed the file.
+     *
+     * @param googleMapsPanel The google maps panel.
+     * @param points          The points of the table.
+     * @param table           The table.
+     * @param fileCtx         The file context that will be included the consumers.
+     */
+    private void createConsumersForUploadPanel(MarkableGoogleMapsPanel<SInstance> googleMapsPanel, IModel<SIList<SInstance>> points,
+            TableListPanel table, WicketBuildContext fileCtx) {
+        WicketUtils.findFirstChild(fileCtx.getContainer(), FileUploadPanel.class)
+                .ifPresent(panel -> {
+                    panel.setConsumerAfterLoadImage(target -> {
+                        points.getObject().clearInstance();
+                        table.setVisible(false);
+                        String urlFile = createTempPublicFile(panel);
+                        googleMapsPanel.includeKmlFile(toAbsolutePath() + urlFile);
+                        target.add(pointsCtx.getParent().getContainer());
+                    });
+
+                    panel.setConsumerAfterRemoveImage(target -> {
+                        table.setVisible(true);
+                        googleMapsPanel.includeKmlFile("");
+                        target.add(pointsCtx.getParent().getContainer());
+                    });
+                });
+    }
+
+    /**
+     * Method for configure the view for the ctx of the table.
+     *
+     * @param points The points whose contains the view.
+     */
+    private void configureTablePointsView(IModel<SIList<SInstance>> points) {
+        SView viewPoints = points.getObject().getType().getSuperType().getView();
+        pointsCtx.setView(viewPoints);
+    }
+
+    /**
+     * Method responsible for crate the Markable Google Maps panel.
+     *
+     * @param ctx The context.
+     * @param ids The ids of Latitude and Longitude.
+     * @return <code>MarkableGoogleMapsPanel</code>
+     */
+    private MarkableGoogleMapsPanel<SInstance> createMarkableGoogleMapsPanel(WicketBuildContext ctx, LatLongMarkupIds ids) {
+        return new MarkableGoogleMapsPanel<>(ids, ctx.getModel(), ctx.getViewSupplier(SViewCurrentLocation.class),
+                ctx.getViewMode().isVisualization(), true);
+    }
+
+    /**
+     * Create a public file that will be used by google Maps API for render the KML File.
+     *
+     * @param panel The fileUpload.
+     * @return return a public url for the file.
+     */
     private String createTempPublicFile(FileUploadPanel panel) {
+        //TODO verificar se essa logica para criação do arquivo temporario deve permanecer nessa classe.
         String name = panel.getModel().getObject().getFileName();
         String id = panel.getModel().getObject().getFileId();
 
-        String publico = "publico";
-        WebApplication.get().mountResource(AttachmentPublicMapperResource.getMountPathPublic(),
-                new SharedResourceReference(publico));
-        AttachmentPublicMapperResource attachmentResource = new AttachmentPublicMapperResource(publico);
-        WebApplication.get().getSharedResources().add(publico, attachmentResource);
+        AttachmentPublicMapperResource attachmentResource;
+        if (WebApplication.get().getSharedResources().get(sessionKey) == null) {
+            WebApplication.get().mountResource(AttachmentPublicMapperResource.getMountPathPublic(),
+                    new SharedResourceReference(sessionKey));
+            attachmentResource = new AttachmentPublicMapperResource();
+            WebApplication.get().getSharedResources().add(sessionKey, attachmentResource);
+        } else {
+            attachmentResource = (AttachmentPublicMapperResource) WebApplication.get().getSharedResources().get(sessionKey).getResource();
+        }
 
+        IModel<IAttachmentRef> attachmentRef = getAttachmentModel(panel, id);
+        return attachmentResource.addAttachment(name, ContentDisposition.INLINE, attachmentRef.getObject());
+    }
+
+    /**
+     * Method responsible for retrieve the file uploaded in the form.
+     *
+     * @param panel The file upload panel.
+     * @param id    The id of the file uploaded.
+     * @return The model of the Attachment file.
+     */
+    private IModel<IAttachmentRef> getAttachmentModel(FileUploadPanel panel, String id) {
         IModel<IAttachmentRef> attachmentRef = new Model<>();
         panel.getModelObject()
                 .getDocument()
                 .getAttachmentPersistencePermanentHandler()
                 .ifPresent(c -> attachmentRef.setObject(c.getAttachment(id)));
-        if(attachmentRef.getObject() == null) {
+        if (attachmentRef.getObject() == null) {
             attachmentRef.setObject(panel.getModelObject()
                     .getDocument().getAttachmentPersistenceTemporaryHandler().getAttachment(id));
         }
-        return attachmentResource.addAttachment(name, ContentDisposition.INLINE, attachmentRef.getObject());
+        return attachmentRef;
     }
 
-    //TODO verificar se existe uma forma mais elegante de fazer isso.
+
+    /**
+     * Method for return the absolute Path for the application.
+     *
+     * @return the absolute path for the application.
+     */
     private static String toAbsolutePath() {
+        //TODO verificar se existe uma forma mais elegante de fazer isso.
         HttpServletRequest req = (HttpServletRequest) (RequestCycle.get().getRequest()).getContainerRequest();
         return req.getRequestURL().substring(0, req.getRequestURL().toString().length() - req.getRequestURI().length());
     }
 
 
+    /**
+     * Method responsible for creating latitude and longitude in the map when a markable is adding,
+     * And create a markable in the map when the latitude and longitude is setting.
+     *
+     * @param points    The points whose contains the latitude and longitude data.
+     * @param container The container whose will be rendered.
+     * @return The ajax behavior for include in the JS callback.
+     */
     private AbstractDefaultAjaxBehavior createBehaviorAddPoint(final IModel<SIList<SInstance>> points, BSContainer<?> container) {
         return new AbstractDefaultAjaxBehavior() {
             @Override

@@ -112,11 +112,13 @@
             center: latLong
         });
 
+        var kmlLayer = null;
         if (urlKml !== '' && urlKml != null) {
-            new google.maps.KmlLayer({
+            kmlLayer = new google.maps.KmlLayer({
                 url: urlKml,
                 map: map
             });
+
         } else {
             if (!readOnly) {
                 map.addListener('zoom_changed', function () {
@@ -142,6 +144,19 @@
                 });
             }
         }
+
+        if(kmlLayer) {
+            google.maps.event.addListener(kmlLayer, 'status_changed', function () {
+                if (kmlLayer.getStatus() != google.maps.KmlLayerStatus.OK) {
+                    toastr.error('Arquivo de KML inválido.');
+                    console.log(kmlLayer.getStatus());
+                    // Failure
+
+                }
+            });
+        }
+
+
         return map;
     }
 

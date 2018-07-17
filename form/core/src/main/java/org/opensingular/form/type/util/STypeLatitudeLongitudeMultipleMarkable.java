@@ -25,7 +25,7 @@ import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.view.SViewListByTable;
 
 @SInfoType(name = "LatitudeLongitudeMapper", spackage = SPackageUtil.class)
-public class STypeLatitudeLongitudeMapper extends STypeComposite<SILatitudeLongitudeMapper> {
+public class STypeLatitudeLongitudeMultipleMarkable extends STypeComposite<SILatitudeLongitudeMapper> {
 
     private static final Integer DEFAULT_ZOOM = 4;
 
@@ -40,7 +40,7 @@ public class STypeLatitudeLongitudeMapper extends STypeComposite<SILatitudeLongi
     public STypeHiddenString zoom;
     public STypeAttachment file;
 
-    public STypeLatitudeLongitudeMapper() {
+    public STypeLatitudeLongitudeMultipleMarkable() {
         super(SILatitudeLongitudeMapper.class);
     }
 
@@ -54,10 +54,10 @@ public class STypeLatitudeLongitudeMapper extends STypeComposite<SILatitudeLongi
 
         points.withView(new SViewListByTable().setNewEnabled(list -> {
             SILatitudeLongitudeMapper latLongList = (SILatitudeLongitudeMapper) list.getParent();
-            return !latLongList.hasFile();
+            return latLongList != null && !latLongList.hasFile();
         }).setDeleteEnabled(instance -> {
             SILatitudeLongitudeMapper latLongList = (SILatitudeLongitudeMapper) instance.getParent().getParent();
-            return !latLongList.hasFile();
+            return latLongList != null &&  !latLongList.hasFile();
         }))
             .asAtr().dependsOn(file);
 
