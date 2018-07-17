@@ -336,7 +336,8 @@
                     marker.setVisible(true);
                 },
                 function (failure) {
-                    toastr.error(failure.message);
+                    toastr.error("É necessário que a aplicação esteja em HTTPS");
+                    console.log(failure.message);
                 }
             );
         });

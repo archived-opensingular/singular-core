@@ -87,9 +87,7 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
         ctx.getContainer().newFormGroup().appendDiv(googleMapsPanel);
         createBooleanField(ctx);
         IModel<SIList<SInstance>> points = createPointField(ctx);
-        createUploadField(ctx, googleMapsPanel);
-
-        createConsumersForUploadPanel(googleMapsPanel, points, zoomCtx);
+        createUploadField(ctx, googleMapsPanel, points);
 
         AbstractDefaultAjaxBehavior addPoint = createBehaviorAddPoint(points, ctx.getContainer());
         ctx.getContainer().add(addPoint);
@@ -155,8 +153,9 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
      *
      * @param ctx             The context.
      * @param googleMapsPanel Panel of google maps.
+     * @param points          The list of points of latitude and longitude.
      */
-    private void createUploadField(WicketBuildContext ctx, MarkableGoogleMapsPanel<SInstance> googleMapsPanel) {
+    private void createUploadField(WicketBuildContext ctx, MarkableGoogleMapsPanel<SInstance> googleMapsPanel, IModel<SIList<SInstance>> points) {
         WicketBuildContext uploadCtx = createField(ctx, ctx.getContainer().newGrid(), STypeLatitudeLongitudeMultipleMarkable.FIELD_FILE);
         uploadCtx.getContainer().add(new Behavior() {
 
@@ -166,6 +165,7 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                 googleMapsPanel.populateMetaData(!pointsCtx.getContainer().isVisible());
             }
         });
+        createConsumersForUploadPanel(googleMapsPanel, points, uploadCtx);
     }
 
     /**

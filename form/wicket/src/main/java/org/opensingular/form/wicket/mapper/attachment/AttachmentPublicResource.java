@@ -40,7 +40,7 @@ import org.opensingular.lib.commons.util.Loggable;
 public class AttachmentPublicResource extends AbstractResource implements Loggable {
 
     private Map<String, Attachment> attachments = new HashMap<>();
-    public static final String APPLICATION_KEY = "publico";
+    public static final String APPLICATION_KEY = "public";
 
     public AttachmentPublicResource() { /*Blank constructor*/}
 
