@@ -34,7 +34,7 @@ public class FileLatLongUploadListener implements FileEventListener {
     @SuppressWarnings("unchecked")
     public void accept(SIAttachment attachment) {
         LatlongStrategy strategy = factory.createStrategy(attachment);
-        SILatitudeLongitudeMapper latLong = (SILatitudeLongitudeMapper) attachment.getParent();
+        SILatitudeLongitudeMultipleMarkable latLong = (SILatitudeLongitudeMultipleMarkable) attachment.getParent();
         SIList<SILatitudeLongitude> pointsList = latLong.getField(FIELD_POINTS, SIList.class);
         pointsList.clearInstance();
         attachment.getContentAsInputStream()

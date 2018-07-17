@@ -20,50 +20,67 @@ import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TypeBuilder;
+import org.opensingular.form.type.core.STypeBoolean;
 import org.opensingular.form.type.core.STypeHiddenString;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
+import org.opensingular.form.type.core.attachment.helper.FileTypes;
+import org.opensingular.form.util.SingularPredicates;
+import org.opensingular.form.view.SViewCheckBox;
 import org.opensingular.form.view.SViewListByTable;
 
 @SInfoType(name = "LatitudeLongitudeMapper", spackage = SPackageUtil.class)
-public class STypeLatitudeLongitudeMultipleMarkable extends STypeComposite<SILatitudeLongitudeMapper> {
+public class STypeLatitudeLongitudeMultipleMarkable extends STypeComposite<SILatitudeLongitudeMultipleMarkable> {
 
     private static final Integer DEFAULT_ZOOM = 4;
 
     public static final String FIELD_POINTS = "points";
     public static final String FIELD_ZOOM = "zoom";
     public static final String FIELD_FILE = "file";
-
-    //TODO fazer um enum que tenha varios tipos de files.
-    private static final String KMZ_FILE = "kml";
+    public static final String FILE_UPLOAD_OR_TABLE = "fileUploadOrTable";
 
     public STypeList<STypeLatitudeLongitude, SILatitudeLongitude> points;
     public STypeHiddenString zoom;
     public STypeAttachment file;
+    public STypeBoolean fileUploadOrTable;
 
     public STypeLatitudeLongitudeMultipleMarkable() {
-        super(SILatitudeLongitudeMapper.class);
+        super(SILatitudeLongitudeMultipleMarkable.class);
     }
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
+        fileUploadOrTable = addFieldBoolean("fileUploadOrTable");
+        file = addFieldAttachment(FIELD_FILE);
+        zoom = addField(FIELD_ZOOM, STypeHiddenString.class);
         points = addFieldListOf(FIELD_POINTS, STypeLatitudeLongitude.class);
 
-        file = addFieldAttachment(FIELD_FILE);
-        file.asAtr().allowedFileTypes(KMZ_FILE);
-        zoom = addField(FIELD_ZOOM, STypeHiddenString.class);
+        fileUploadOrTable
+                .withView(SViewCheckBox::new)
+                .asAtr()
+                .help("Ao selecionar a utilização de upload todos os dados da tabela serão removidos.")
+                .label("Utilizar upload de arquivo ");
 
         points.withView(new SViewListByTable().setNewEnabled(list -> {
-            SILatitudeLongitudeMapper latLongList = (SILatitudeLongitudeMapper) list.getParent();
+            SILatitudeLongitudeMultipleMarkable latLongList = (SILatitudeLongitudeMultipleMarkable) list.getParent();
             return latLongList != null && !latLongList.hasFile();
         }).setDeleteEnabled(instance -> {
-            SILatitudeLongitudeMapper latLongList = (SILatitudeLongitudeMapper) instance.getParent().getParent();
-            return latLongList != null &&  !latLongList.hasFile();
+            SILatitudeLongitudeMultipleMarkable latLongList = (SILatitudeLongitudeMultipleMarkable) instance.getParent().getParent();
+            return latLongList != null && !latLongList.hasFile();
         }))
-            .asAtr().dependsOn(file);
+                .asAtr()
+                .dependsOn(file, fileUploadOrTable)
+                .exists(SingularPredicates.typeValueIsFalse(fileUploadOrTable).or(SingularPredicates.typeValueIsNull(fileUploadOrTable)));
 
+        file
+                .asAtr()
+                .allowedFileTypes(FileTypes.KML)
+                .label("Upload de arquivo")
+                .help("Tipos suportados: " + FileTypes.KML)
+                .dependsOn(fileUploadOrTable)
+                .exists(SingularPredicates.typeValueIsTrue(fileUploadOrTable));
 
         zoom.withInitListener(ins -> {
-            if(ins.isEmptyOfData())
+            if (ins.isEmptyOfData())
                 ins.setValue(DEFAULT_ZOOM);
         });
     }

@@ -62,7 +62,8 @@
         } else if (metadados.multipleMarkers) {
             var tableContainerElement = document.getElementById(metadados.tableContainerId);
             var urlKml = metadados.urlKml;
-            configureMapMultipleMarkers(tableContainerElement, zoomElement, metadados.idMap, metadados.idClearButton, JSON.parse(metadados.readOnly), metadados.callbackUrl, urlKml);
+            var isKmlUrlVisible = metadados.isKmlUrlVisible;
+            configureMapMultipleMarkers(tableContainerElement, zoomElement, metadados.idMap, metadados.idClearButton, JSON.parse(metadados.readOnly), metadados.callbackUrl, urlKml, isKmlUrlVisible);
         } else {
             document.getElementById(metadados.idMap).style.visibility = "hidden";
         }
@@ -96,7 +97,7 @@
         return map;
     }
 
-    function configureMapMultipleMarkers(tableContainerElement, zoomElement, idMap, idClearButton, readOnly, callbackUrl, urlKml) {
+    function configureMapMultipleMarkers(tableContainerElement, zoomElement, idMap, idClearButton, readOnly, callbackUrl, urlKml, isKmlUrlVisible) {
         var markers = [];
         var latLong = buildGmapsLatLong();
         var polygon = new google.maps.Polygon({
@@ -133,19 +134,21 @@
             }
 
             if (!readOnly) {
-                map.addListener('click', function (event) {
-                    var params = {'lat': event.latLng.lat(), 'lng': event.latLng.lng()};
-                    Wicket.Ajax.post({u: callbackUrl, ep: params});
+                if (!isKmlUrlVisible) {
+                    map.addListener('click', function (event) {
 
-                    var number = countMarkers(tableContainerElement);
-                    var marker = createMarker(map, event.latLng, polygon, readOnly, true, number + 1);
-                    markers.push(marker);
-                    draw(map, polygon, markers);
-                });
+                        var params = {'lat': event.latLng.lat(), 'lng': event.latLng.lng()};
+                        Wicket.Ajax.post({u: callbackUrl, ep: params});
+                        var number = countMarkers(tableContainerElement);
+                        var marker = createMarker(map, event.latLng, polygon, readOnly, true, number + 1);
+                        markers.push(marker);
+                        draw(map, polygon, markers);
+                    });
+                }
             }
         }
 
-        if(kmlLayer) {
+        if (kmlLayer) {
             google.maps.event.addListener(kmlLayer, 'status_changed', function () {
                 if (kmlLayer.getStatus() != google.maps.KmlLayerStatus.OK) {
                     toastr.error('Arquivo de KML inválido.');

@@ -19,7 +19,7 @@ package org.opensingular.form.type.util;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 
-public class SILatitudeLongitudeMapper extends SIComposite {
+public class SILatitudeLongitudeMultipleMarkable extends SIComposite {
 
     @Override
     public STypeLatitudeLongitudeMultipleMarkable getType() {

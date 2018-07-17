@@ -20,40 +20,33 @@ package org.opensingular.form.wicket.mapper.attachment;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.request.resource.AbstractResource;
 import org.apache.wicket.request.resource.ContentDisposition;
+import org.apache.wicket.request.resource.SharedResourceReference;
 import org.apache.wicket.util.string.StringValue;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.form.wicket.mapper.attachment.single.FileUploadPanel;
 import org.opensingular.lib.commons.util.Loggable;
 
 /**
  * Shared Resource bound to application.
- * <p>
- * This shared file will be deleted after the first call.
- * This shared file should be used for the Google Map Component.
- * This class just accept the google api calls, if it's not will return a FORBIDDEN.
- * <p>
  *
  * @see DownloadSupportedBehavior
  */
-public class AttachmentPublicMapperResource extends AttachmentPublicResource implements Loggable {
+public class AttachmentPublicResource extends AbstractResource implements Loggable {
 
     private Map<String, Attachment> attachments = new HashMap<>();
-    public static final String APPLICATION_MAP_KEY = "public/map";
+    public static final String APPLICATION_KEY = "publico";
 
-    public AttachmentPublicMapperResource() { /*Blank constructor*/}
+    public AttachmentPublicResource() { /*Blank constructor*/}
 
     @Override
     protected ResourceResponse newResourceResponse(Attributes attributes) {
         ResourceResponse resourceResponse = new ResourceResponse();
-        String userAgent = ((HttpServletRequest) attributes.getRequest().getContainerRequest()).getHeader("User-Agent");
-        //Verify if it's google calling the server, if it's not will send a FORBIDDEN.
-        if (!userAgent.equals("google.com")) {
-            return resourceResponse.setStatusCode(HttpServletResponse.SC_FORBIDDEN);
-        }
         StringValue attachmentKey = attributes.getParameters().get("attachmentKey");
         if (attachmentKey.isNull() || attachmentKey.isEmpty()) {
             return resourceResponse.setStatusCode(HttpServletResponse.SC_NOT_FOUND);
@@ -71,11 +64,8 @@ public class AttachmentPublicMapperResource extends AttachmentPublicResource imp
 
         try {
             resourceResponse.setContentDisposition(attachment.contentDisposition);
-            String attachmentContent = configureAttachmentContent(attachmentRef);
-            resourceResponse.setContentType(attachmentContent);
+            resourceResponse.setContentType(attachmentRef.getContentType());
             resourceResponse.setWriteCallback(new AttachmentResourceWriteCallback(resourceResponse, attachmentRef));
-            //Remove the file exactly after read.
-            attachments.remove(attachmentKey.toString());
         } catch (Exception e) {
             getLogger().error("Erro ao recuperar arquivo.", e);
             resourceResponse.setStatusCode(HttpServletResponse.SC_NOT_FOUND);
@@ -85,28 +75,11 @@ public class AttachmentPublicMapperResource extends AttachmentPublicResource imp
     }
 
     /**
-     * Configure the header of Attachment content.
-     *
-     * @param attachmentRef The Attachment that contains the content.
-     * @return The content of attachment configured.
-     */
-    private String configureAttachmentContent(IAttachmentRef attachmentRef) {
-        String attachmentContent;
-        if (!attachmentRef.getContentType().contains("<?xml")) {
-            attachmentContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + attachmentRef.getContentType();
-        } else {
-            attachmentContent = attachmentRef.getContentType();
-        }
-        return attachmentContent;
-    }
-
-    /**
      * @param name        the file name
      * @param disposition the disposition
      * @param ref         the reference
      * @return the URL for download
      */
-    @Override
     public String addAttachment(String name, ContentDisposition disposition, IAttachmentRef ref) {
         WebApplication app = WebApplication.get();
         attachments.put(ref.getId(), new Attachment(name, disposition, ref));
@@ -114,9 +87,37 @@ public class AttachmentPublicMapperResource extends AttachmentPublicResource imp
         return path.replaceAll("\\*", "").replaceAll("//", "/");
     }
 
-    public static String getDownloadURL(String path) {
-        return  '/' + APPLICATION_MAP_KEY + "/download/" + path;
+    public static String getMountPathPublic() {
+        return getDownloadURL("${attachmentKey}");
     }
 
+    public static String getDownloadURL(String path) {
+        return '/' + APPLICATION_KEY + "/download/" + path;
+    }
+
+
+    /**
+     * Create a public file that can be used by other application or session.
+     *
+     * @param panel          The fileUpload.
+     * @param attachmentRef  The Attachment reference.
+     * @param applicationKey This key should be the same used for the <code> getDownloadUrl() </code> method.
+     * @return return a public url for the file.
+     */
+    public static String createTempPublicFile(FileUploadPanel panel, IModel<IAttachmentRef> attachmentRef, String applicationKey) {
+        String name = panel.getModel().getObject().getFileName();
+
+        AttachmentPublicResource attachmentResource;
+        if (WebApplication.get().getSharedResources().get(applicationKey) == null) {
+            WebApplication.get().mountResource(getMountPathPublic(),
+                    new SharedResourceReference(applicationKey));
+            attachmentResource = new AttachmentPublicResource();
+            WebApplication.get().getSharedResources().add(applicationKey, attachmentResource);
+        } else {
+            attachmentResource = (AttachmentPublicResource) WebApplication.get().getSharedResources().get(applicationKey).getResource();
+        }
+
+        return attachmentResource.addAttachment(name, ContentDisposition.INLINE, attachmentRef.getObject());
+    }
 
 }

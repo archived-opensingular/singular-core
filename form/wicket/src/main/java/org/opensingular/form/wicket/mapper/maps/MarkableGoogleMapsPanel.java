@@ -17,7 +17,7 @@
 package org.opensingular.form.wicket.mapper.maps;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.maps.internal.PolylineEncoding;
@@ -44,7 +44,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.json.JSONObject;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.type.util.SILatitudeLongitudeMapper;
+import org.opensingular.form.type.util.SILatitudeLongitudeMultipleMarkable;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.type.util.STypeLatitudeLongitudeGMaps;
 import org.opensingular.form.view.SViewCurrentLocation;
@@ -72,6 +72,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
 
     public static final String MAP_ID = "map";
     public static final String MAP_STATIC_ID = "mapStatic";
+    public static final int HEIGHT = 500;
     private final LatLongMarkupIds ids;
 
     private final String singularKeyMaps = SingularProperties.getOpt(SingularProperties.SINGULAR_GOOGLEMAPS_JS_KEY).orElse(null);
@@ -89,27 +90,10 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
 
     private final Button clearButton;
     private final Button currentLocationButton;
-    private final WebMarkupContainer verNoMaps; //Enable just if not multiple markers.
-    private final ImgMap mapStatic;
+    private WebMarkupContainer verNoMaps; //Enable just if not multiple markers.
+    private ImgMap mapStatic;
     private final WebMarkupContainer map = new WebMarkupContainer(MAP_ID);
     private final HiddenField<String> metaData = new HiddenField<>("metadados", metaDataModel);
-
-
-    @Override
-    public void renderHead(IHeaderResponse response) {
-        super.renderHead(response);
-        final PackageResourceReference customJS = new PackageResourceReference(getClass(), PANEL_SCRIPT);
-        response.render(JavaScriptReferenceHeaderItem.forReference(customJS));
-        if (StringUtils.isNotBlank(singularKeyMapStatic) && StringUtils.isNotBlank(singularKeyMaps)) {
-            response.render(OnDomReadyHeaderItem.forScript("Singular.createSingularMap(" + stringfyId(metaData) + ", '" + singularKeyMaps + "');"));
-        }
-    }
-
-    public void updateJS(AjaxRequestTarget target) {
-        if (StringUtils.isNotBlank(singularKeyMapStatic) && StringUtils.isNotBlank(singularKeyMaps)) {
-            target.appendJavaScript("window.setTimeout(function () {Singular.createSingularMap(" + stringfyId(metaData) + ", '" + singularKeyMaps + "');}, 500);");
-        }
-    }
 
     public MarkableGoogleMapsPanel(LatLongMarkupIds ids, IModel<? extends SInstance> model,
             ISupplier<? extends SViewCurrentLocation> viewSupplier, boolean visualization, boolean multipleMarkers) {
@@ -121,50 +105,10 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
         this.currentLocationButton = new Button("currentLocationButton", $m.ofValue("Marcar Minha Posição"));
         this.multipleMarkers = multipleMarkers;
 
-        IModel<SInstance> zoomModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitudeGMaps.FIELD_ZOOM));
-
-        if (!multipleMarkers) {
-
-            IModel<SInstance> latitudeModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitude.FIELD_LATITUDE));
-            IModel<SInstance> longitudeModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitude.FIELD_LONGITUDE));
-            LoadableDetachableModel<String> googleMapsLinkModel = $m.loadable(() -> {
-                if (latitudeModel.getObject() != null && longitudeModel.getObject() != null) {
-                    String localization = latitudeModel.getObject() + "," + longitudeModel.getObject() + "/@" + latitudeModel.getObject() + "," + longitudeModel.getObject();
-                    return "https://www.google.com.br/maps/place/" + localization + "," + zoomModel.getObject() + "z";
-                } else {
-                    return "https://www.google.com.br/maps/search/-15.7481632,-47.8872134,15";
-                }
-            });
-
-            verNoMaps = new ExternalLink("verNoMaps", googleMapsLinkModel, $m.ofValue("Visualizar no Google Maps")) {
-                @Override
-                protected void onComponentTag(ComponentTag tag) {
-                    super.onComponentTag(tag);
-                    tag.put("target", "_blank");
-                }
-            };
-            mapStatic = new ImgMap(MAP_STATIC_ID, $m.loadable(() -> {
-                String latLng = generateLatLngMaker(latitudeModel, longitudeModel);
-                return configureMapToView(Arrays.asList(latLng), zoomModel, null);
-            }));
+        if (multipleMarkers) {
+            createMapWithMultipleMarkers(model);
         } else {
-            verNoMaps = new WebMarkupContainer("verNoMaps");
-            mapStatic = new ImgMap(MAP_STATIC_ID, $m.loadable(() -> {
-                List<String> makerList = new ArrayList<>();
-                List<LatLng> latLngList = new ArrayList<>();
-                ((SILatitudeLongitudeMapper) model.getObject()).getPoints().forEach(m -> {
-                    IModel<?> latitude = Model.of(m.getLatitude());
-                    IModel<?> longitude = Model.of(m.getLongitude());
-
-                    LatLng latLng = new LatLng(m.getLatitude().doubleValue(), m.getLongitude().doubleValue());
-                    latLngList.add(latLng);
-                    String latLngText = generateLatLngMaker(latitude, longitude);
-                    makerList.add(latLngText);
-                });
-
-                return configureMapToView(makerList, zoomModel, latLngList);
-
-            }));
+            createMapWithoutMultipleMarkers(model);
         }
 
         clearButton.setDefaultFormProcessing(false);
@@ -172,76 +116,14 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
 
     }
 
-    private String generateLatLngMaker(IModel<?> latitudeModel, IModel<?> longitudeModel) {
-        if (latitudeModel.getObject() != null && longitudeModel.getObject() != null) {
-            return latitudeModel.getObject() + "," + longitudeModel.getObject();
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
+        final PackageResourceReference customJS = new PackageResourceReference(getClass(), PANEL_SCRIPT);
+        response.render(JavaScriptReferenceHeaderItem.forReference(customJS));
+        if (StringUtils.isNotBlank(singularKeyMapStatic) && StringUtils.isNotBlank(singularKeyMaps)) {
+            response.render(OnDomReadyHeaderItem.forScript("Singular.createSingularMap(" + stringfyId(metaData) + ", '" + singularKeyMaps + "');"));
         }
-        return null;
-    }
-
-    private String configureMapToView(List<String> latLngMakerList, IModel<?> zoomModel, List<LatLng> latLngList) {
-        String latLng = "-15.7922, -47.4609";
-        StringBuilder marker = new StringBuilder();
-        if (CollectionUtils.isNotEmpty(latLngMakerList)) {
-            latLngMakerList.stream()
-                    .filter(l -> l != null && !l.isEmpty())
-                    .forEach(l -> marker.append("&markers=").append(l));
-            if (StringUtils.isNotEmpty(latLngMakerList.get(0))) {
-                latLng = latLngMakerList.get(0);
-            }
-        }
-
-        latLng = getMeanOfPoints(latLngList, latLng);
-
-        StringBuilder parameters = new StringBuilder();
-        parameters.append("key=").append(singularKeyMapStatic);
-        parameters.append("&size=1000x").append(getHeight() - 35);
-
-
-        parameters.append("&center=").append(latLng);
-        if (multipleMarkers && CollectionUtils.isNotEmpty(latLngMakerList)) {
-            parameters.append("&path=color:0x0ea001AA|weight:0|fillcolor:0xFFB6C1BB");
-            parameters.append("|enc:").append(PolylineEncoding.encode(latLngList));
-        } else {
-            parameters.append("&zoom=").append(zoomModel.getObject());
-        }
-        parameters.append(marker);
-        return "https://maps.googleapis.com/maps/api/staticmap?" + parameters.toString();
-    }
-
-    private String getMeanOfPoints(List<LatLng> latLngList, String latLng) {
-        String mean = latLng;
-        if (CollectionUtils.isNotEmpty(latLngList)) {
-            Model<Double> latModel = new Model<>(Double.valueOf(0));
-            Model<Double> lngModel = new Model<>(Double.valueOf(0));
-            latLngList.forEach(l -> {
-                latModel.setObject(latModel.getObject() + l.lat);
-                lngModel.setObject(lngModel.getObject() + l.lng);
-            });
-            String lat = String.valueOf(latModel.getObject() / latLngList.size());
-            String lng = String.valueOf(lngModel.getObject() / latLngList.size());
-            mean = lat + ", " + lng;
-        }
-        return mean;
-    }
-
-    /**
-     * Configurations of the Google maps.
-     */
-    private void populateMetaData() {
-        JSONObject json = new JSONObject();
-        json.put("idClearButton", clearButton.getMarkupId(true));
-        json.put("idCurrentLocationButton", currentLocationButton.getMarkupId(true));
-        json.put("idMap", map.getMarkupId(true));
-        json.put("idLat", ids.latitudeId);
-        json.put("idLng", ids.longitudeId);
-        json.put("idZoom", ids.zoomId);
-        json.put("readOnly", isReadOnly());
-        json.put("tableContainerId", tableContainerId);
-        json.put("callbackUrl", callbackUrl);
-        json.put("multipleMarkers", multipleMarkers);
-        json.put("urlKml", kmlUrl);
-        metaDataModel.setObject(json.toString());
     }
 
     @Override
@@ -270,20 +152,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
             return templateBuilder.toString();
         });
 
-        Component errorMapStatic = new Label("errorMapStatic", "Não foi encontrada a Key do Google Maps Static no arquivo singular.properties").setVisible(false);
-        Component errorMapJS = new Label("errorMapJS", "Não foi encontrada a Key do Google Maps JS no arquivo singular.properties").setVisible(false);
-
-        panelErrorMsg.add(errorMapJS, errorMapStatic);
-        templatePanel.add(verNoMaps, clearButton, currentLocationButton, map, metaData, mapStatic);
-
-        if (StringUtils.isBlank(singularKeyMapStatic)) {
-            templatePanel.setVisible(false);
-            errorMapStatic.setVisible(true);
-        }
-        if (StringUtils.isBlank(singularKeyMaps)) {
-            templatePanel.setVisible(false);
-            errorMapJS.setVisible(true);
-        }
+        createErrorPanel(panelErrorMsg, templatePanel);
     }
 
     @Override
@@ -308,8 +177,144 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
         populateMetaData();
     }
 
+    public void updateJS(AjaxRequestTarget target) {
+        if (StringUtils.isNotBlank(singularKeyMapStatic) && StringUtils.isNotBlank(singularKeyMaps)) {
+            target.appendJavaScript("window.setTimeout(function () {Singular.createSingularMap(" + stringfyId(metaData) + ", '" + singularKeyMaps + "');}, 500);");
+        }
+    }
+
+    /**
+     * Method that contains the logic of the creation of the maps with multiple marks.
+     *
+     * @param model The model of the google maps. This model should contains the zoom, latitude and longitude.
+     */
+    private void createMapWithMultipleMarkers(IModel<? extends SInstance> model) {
+        IModel<SInstance> zoomModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitudeGMaps.FIELD_ZOOM));
+        verNoMaps = new WebMarkupContainer("verNoMaps");
+        mapStatic = new ImgMap(MAP_STATIC_ID, $m.loadable(() -> {
+            List<String> makerList = new ArrayList<>();
+            List<LatLng> latLngList = new ArrayList<>();
+            ((SILatitudeLongitudeMultipleMarkable) model.getObject()).getPoints().forEach(m -> {
+                IModel<?> latitude = Model.of(m.getLatitude());
+                IModel<?> longitude = Model.of(m.getLongitude());
+
+                if (m.getLatitude() != null && m.getLongitude() != null) {
+                    LatLng latLng = new LatLng(m.getLatitude().doubleValue(), m.getLongitude().doubleValue());
+                    latLngList.add(latLng);
+                    String latLngText = generateLatLngMaker(latitude, longitude);
+                    makerList.add(latLngText);
+                }
+            });
+
+            return configureMapToView(makerList, zoomModel, latLngList);
+
+        }));
+    }
+
+    /**
+     * Method that contains the logic of the creation of the maps with just one mark.
+     *
+     * @param model The model of the google maps. This model should contains the zoom, latitude and longitude.
+     */
+    private void createMapWithoutMultipleMarkers(IModel<? extends SInstance> model) {
+
+        IModel<SInstance> zoomModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitudeGMaps.FIELD_ZOOM));
+        IModel<SInstance> latitudeModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitude.FIELD_LATITUDE));
+        IModel<SInstance> longitudeModel = new SInstanceValueModel<>(new SInstanceFieldModel<>(model, STypeLatitudeLongitude.FIELD_LONGITUDE));
+        LoadableDetachableModel<String> googleMapsLinkModel = $m.loadable(() -> {
+            if (latitudeModel.getObject() != null && longitudeModel.getObject() != null) {
+                String localization = latitudeModel.getObject() + "," + longitudeModel.getObject() + "/@" + latitudeModel.getObject() + "," + longitudeModel.getObject();
+                return "https://www.google.com.br/maps/place/" + localization + "," + zoomModel.getObject() + "z";
+            } else {
+                return "https://www.google.com.br/maps/search/-15.7481632,-47.8872134,15";
+            }
+        });
+
+        verNoMaps = new ExternalLink("verNoMaps", googleMapsLinkModel, $m.ofValue("Visualizar no Google Maps")) {
+            @Override
+            protected void onComponentTag(ComponentTag tag) {
+                super.onComponentTag(tag);
+                tag.put("target", "_blank");
+            }
+        };
+        mapStatic = new ImgMap(MAP_STATIC_ID, $m.loadable(() -> {
+            String latLng = generateLatLngMaker(latitudeModel, longitudeModel);
+            return configureMapToView(Collections.singletonList(latLng), zoomModel, null);
+        }));
+    }
+
+    private String generateLatLngMaker(IModel<?> latitudeModel, IModel<?> longitudeModel) {
+        if (latitudeModel.getObject() != null && longitudeModel.getObject() != null) {
+            return latitudeModel.getObject() + "," + longitudeModel.getObject();
+        }
+        return null;
+    }
+
+    /**
+     * Create a static map for visualization.
+     *
+     * @param latLngMakerList The list of latitude and longitude markers.
+     * @param zoomModel       The selected zoom
+     * @param latLngList      The list of lat and long object.
+     * @return
+     */
+    private String configureMapToView(List<String> latLngMakerList, IModel<?> zoomModel, List<LatLng> latLngList) {
+        String latLng = "-15.7922, -47.4609";
+        StringBuilder marker = new StringBuilder();
+        if (CollectionUtils.isNotEmpty(latLngMakerList)) {
+            latLngMakerList.stream()
+                    .filter(l -> l != null && !l.isEmpty())
+                    .forEach(l -> marker.append("&markers=").append(l));
+            if (StringUtils.isNotEmpty(latLngMakerList.get(0))) {
+                latLng = latLngMakerList.get(0);
+            }
+        }
+
+        StringBuilder parameters = new StringBuilder();
+        parameters.append("key=").append(singularKeyMapStatic);
+        parameters.append("&size=1000x").append(getHeight() - 35);
+
+
+        parameters.append("&center=").append(latLng);
+        if (multipleMarkers && CollectionUtils.isNotEmpty(latLngMakerList) && latLngMakerList.size() > 1) {
+            /*Caso tenha apenas um ponto selecionado não é recomendado deixar o Zoom automatico,
+            pois ele vai para o Zoom mais proximo deixando uma visualização ruim.*/
+            parameters.append("&path=color:0x0ea001AA|weight:0|fillcolor:0xFFB6C1BB");
+            parameters.append("|enc:").append(PolylineEncoding.encode(latLngList));
+        } else {
+            parameters.append("&zoom=").append(zoomModel.getObject());
+        }
+        parameters.append(marker);
+        return "https://maps.googleapis.com/maps/api/staticmap?" + parameters.toString();
+    }
+
+    /**
+     * Configuration the parameters of the Google maps.
+     */
+    void populateMetaData(boolean isKmlUrlVisible) {
+        JSONObject json = new JSONObject();
+        json.put("idClearButton", clearButton.getMarkupId(true));
+        json.put("idCurrentLocationButton", currentLocationButton.getMarkupId(true));
+        json.put("idMap", map.getMarkupId(true));
+        json.put("idLat", ids.latitudeId);
+        json.put("idLng", ids.longitudeId);
+        json.put("idZoom", ids.zoomId);
+        json.put("readOnly", isReadOnly());
+        json.put("tableContainerId", tableContainerId);
+        json.put("callbackUrl", callbackUrl);
+        json.put("multipleMarkers", multipleMarkers);
+        json.put("urlKml", kmlUrl);
+        json.put("isKmlUrlVisible", isKmlUrlVisible);
+        metaDataModel.setObject(json.toString());
+    }
+
+    private void populateMetaData() {
+        populateMetaData(false);
+    }
+
+
     protected Integer getHeight() {
-        return 500;
+        return HEIGHT;
     }
 
     private String stringfyId(Component c) {
@@ -335,6 +340,30 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
 
     public void includeKmlFile(String kmlUrl) {
         this.kmlUrl = kmlUrl;
+    }
+
+    /**
+     * Create panel with erros about the keys of the google maps.
+     * If the google maps keys are not configured, will be added some errors label.
+     *
+     * @param panelErrorMsg The panel that will be added.
+     * @param templatePanel The panel with the google maps. [Will appear just if the keys of google maps is configured].
+     */
+    private void createErrorPanel(TemplatePanel panelErrorMsg, TemplatePanel templatePanel) {
+        Component errorMapStatic = new Label("errorMapStatic", "Não foi encontrada a Key do Google Maps Static no arquivo singular.properties").setVisible(false);
+        Component errorMapJS = new Label("errorMapJS", "Não foi encontrada a Key do Google Maps JS no arquivo singular.properties").setVisible(false);
+
+        panelErrorMsg.add(errorMapJS, errorMapStatic);
+        templatePanel.add(verNoMaps, clearButton, currentLocationButton, map, metaData, mapStatic);
+
+        if (StringUtils.isBlank(singularKeyMapStatic)) {
+            templatePanel.setVisible(false);
+            errorMapStatic.setVisible(true);
+        }
+        if (StringUtils.isBlank(singularKeyMaps)) {
+            templatePanel.setVisible(false);
+            errorMapJS.setVisible(true);
+        }
     }
 
     private static class ImgMap extends WebComponent {
