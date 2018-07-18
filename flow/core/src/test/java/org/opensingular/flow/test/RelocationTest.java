@@ -30,18 +30,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.opensingular.flow.core.DefinitionInfo;
-import org.opensingular.flow.core.ExecutionContext;
-import org.opensingular.flow.core.Flow;
-import org.opensingular.flow.core.FlowDefinition;
-import org.opensingular.flow.core.FlowDefinitionCache;
-import org.opensingular.flow.core.FlowInstance;
-import org.opensingular.flow.core.FlowMap;
-import org.opensingular.flow.core.ITaskDefinition;
-import org.opensingular.flow.core.TaskInstance;
+import org.opensingular.flow.core.*;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.defaults.PermissiveTaskAccessStrategy;
-import org.opensingular.flow.core.ws.BaseSingularRest;
 import org.opensingular.flow.persistence.entity.Actor;
 import org.opensingular.flow.persistence.entity.TaskInstanceEntity;
 import org.opensingular.flow.persistence.entity.TaskVersionEntity;
@@ -113,10 +104,10 @@ public class RelocationTest {
 
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 
-        new BaseSingularRest().relocateTask(p.getKey(), id.getEntityCod().longValue(), "1", null);
+        relocateTask(id, "1", null);
         Assert.assertThat(id.getCurrentTaskOrException().getAllocatedUser(), Matchers.equalTo(testDAO.getSomeUser(1)));
 
-        new BaseSingularRest().relocateTask(p.getKey(), id.getEntityCod().longValue(), "2", 1);
+        relocateTask(id, "2", 1);
         Assert.assertThat((id.getCurrentTaskOrException().getAllocatedUser()), Matchers.equalTo(testDAO.getSomeUser(2)));
     }
 
@@ -127,12 +118,21 @@ public class RelocationTest {
 
         assertThat(id.getCurrentTaskOrException().getAllocatedUser()).isNull();
 
-        new BaseSingularRest().relocateTask(p.getKey(), id.getEntityCod().longValue(), "1", 0);
+        relocateTask(id,"1", 0);
         assertEquals(id.getCurrentTaskOrException().getAllocatedUser(), testDAO.getSomeUser(1));
 
         thrown.expectMessage("Your Task Version Number is Outdated.");
-        new BaseSingularRest().relocateTask(p.getKey(), id.getEntityCod().longValue(), "2", 0);
+        relocateTask(id, "2", 0);
         assertEquals(id.getCurrentTaskOrException().getAllocatedUser(), testDAO.getSomeUser(1));
+    }
+
+
+    public void relocateTask(FlowInstance flowInstance,
+                             String username,
+                             Integer lastVersion) {
+        SUser user = Flow.getConfigBean().getUserService().saveUserIfNeededOrException(username);
+        Integer lastVersion2 = (lastVersion == null) ? Integer.valueOf(0) : lastVersion;
+        flowInstance.getCurrentTaskOrException().relocateTask(user, user, false, "", lastVersion2);
     }
 
     @Test
