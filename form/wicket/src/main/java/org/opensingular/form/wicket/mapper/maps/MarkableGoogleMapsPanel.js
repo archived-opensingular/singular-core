@@ -114,11 +114,23 @@
         });
 
         var kmlLayer = null;
-        if (urlKml !== '' && urlKml != null) {
+        if (urlKml !== '' && urlKml != null && isKmlUrlVisible) {
             kmlLayer = new google.maps.KmlLayer({
                 url: urlKml,
                 map: map
             });
+
+
+            if (kmlLayer && !readOnly) {
+                google.maps.event.addListener(kmlLayer, 'status_changed', function () {
+                    if (kmlLayer.getStatus() != google.maps.KmlLayerStatus.OK) {
+                        toastr.error('Arquivo de KML inválido.');
+                        console.log(kmlLayer.getStatus());
+                        // Failure
+
+                    }
+                });
+            }
 
         } else {
             if (!readOnly) {
@@ -148,16 +160,6 @@
             }
         }
 
-        if (kmlLayer) {
-            google.maps.event.addListener(kmlLayer, 'status_changed', function () {
-                if (kmlLayer.getStatus() != google.maps.KmlLayerStatus.OK) {
-                    toastr.error('Arquivo de KML inválido.');
-                    console.log(kmlLayer.getStatus());
-                    // Failure
-
-                }
-            });
-        }
 
 
         return map;

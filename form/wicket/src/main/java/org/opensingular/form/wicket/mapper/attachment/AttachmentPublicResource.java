@@ -22,14 +22,11 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.resource.AbstractResource;
 import org.apache.wicket.request.resource.ContentDisposition;
-import org.apache.wicket.request.resource.SharedResourceReference;
 import org.apache.wicket.util.string.StringValue;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
-import org.opensingular.form.wicket.mapper.attachment.single.FileUploadPanel;
 import org.opensingular.lib.commons.util.Loggable;
 
 /**
@@ -95,29 +92,5 @@ public class AttachmentPublicResource extends AbstractResource implements Loggab
         return '/' + APPLICATION_KEY + "/download/" + path;
     }
 
-
-    /**
-     * Create a public file that can be used by other application or session.
-     *
-     * @param panel          The fileUpload.
-     * @param attachmentRef  The Attachment reference.
-     * @param applicationKey This key should be the same used for the <code> getDownloadUrl() </code> method.
-     * @return return a public url for the file.
-     */
-    public static String createTempPublicFile(FileUploadPanel panel, IModel<IAttachmentRef> attachmentRef, String applicationKey) {
-        String name = panel.getModel().getObject().getFileName();
-
-        AttachmentPublicResource attachmentResource;
-        if (WebApplication.get().getSharedResources().get(applicationKey) == null) {
-            WebApplication.get().mountResource(getMountPathPublic(),
-                    new SharedResourceReference(applicationKey));
-            attachmentResource = new AttachmentPublicResource();
-            WebApplication.get().getSharedResources().add(applicationKey, attachmentResource);
-        } else {
-            attachmentResource = (AttachmentPublicResource) WebApplication.get().getSharedResources().get(applicationKey).getResource();
-        }
-
-        return attachmentResource.addAttachment(name, ContentDisposition.INLINE, attachmentRef.getObject());
-    }
 
 }

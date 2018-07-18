@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.resource.ContentDisposition;
+import org.apache.wicket.request.resource.SharedResourceReference;
 import org.apache.wicket.util.string.StringValue;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.lib.commons.util.Loggable;
@@ -51,10 +52,11 @@ public class AttachmentPublicMapperResource extends AttachmentPublicResource imp
         ResourceResponse resourceResponse = new ResourceResponse();
         String userAgent = ((HttpServletRequest) attributes.getRequest().getContainerRequest()).getHeader("User-Agent");
         //Verify if it's google calling the server, if it's not will send a FORBIDDEN.
-        if (!userAgent.equals("google.com")) {
+        if (!userAgent.contains("google.com")) {
             return resourceResponse.setStatusCode(HttpServletResponse.SC_FORBIDDEN);
         }
         StringValue attachmentKey = attributes.getParameters().get("attachmentKey");
+        System.out.println(attachmentKey);
         if (attachmentKey.isNull() || attachmentKey.isEmpty()) {
             return resourceResponse.setStatusCode(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -116,6 +118,30 @@ public class AttachmentPublicMapperResource extends AttachmentPublicResource imp
 
     public static String getDownloadURL(String path) {
         return  '/' + APPLICATION_MAP_KEY + "/download/" + path;
+    }
+
+    public static String getMountPathPublic() {
+        return getDownloadURL("${attachmentKey}");
+    }
+
+    /**
+     * Create a public file that can be used by other application or session.
+     *
+     * @param nameFile          The name of file.
+     * @param attachmentRef  The Attachment reference.
+     * @return return a public url for the file.
+     */
+    public static String createTempPublicMapFile(String nameFile, IAttachmentRef attachmentRef) {
+        AttachmentPublicMapperResource attachmentResource;
+        if (WebApplication.get().getSharedResources().get(APPLICATION_MAP_KEY) == null) {
+            WebApplication.get().mountResource(getMountPathPublic(), new SharedResourceReference(APPLICATION_MAP_KEY));
+            attachmentResource = new AttachmentPublicMapperResource();
+            WebApplication.get().getSharedResources().add(APPLICATION_MAP_KEY, attachmentResource);
+        } else {
+            attachmentResource = (AttachmentPublicMapperResource) WebApplication.get().getSharedResources().get(APPLICATION_MAP_KEY).getResource();
+        }
+
+        return attachmentResource.addAttachment(nameFile, ContentDisposition.INLINE, attachmentRef);
     }
 
 

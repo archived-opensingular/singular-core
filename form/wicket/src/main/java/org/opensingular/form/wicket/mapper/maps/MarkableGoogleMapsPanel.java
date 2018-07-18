@@ -162,12 +162,13 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
         visitChildren(FormComponent.class, (comp, visit) -> comp.setEnabled(!isVisualization()));
         this.add(WicketUtils.$b.attrAppender("style", "height: " + getHeight() + "px;", ""));
 
-        map.setVisible(!isVisualization());
+
+        map.setVisible(!isVisualization() || isKmlUrlVisible());
         currentLocationButton.setVisible(SViewCurrentLocation.class.isInstance(viewSupplier.get()) && !isVisualization());
 
         boolean notMultipleAndNotVisualization = !multipleMarkers && !isVisualization();
         clearButton.setVisible(notMultipleAndNotVisualization);
-        mapStatic.setVisible(isVisualization());
+        mapStatic.setVisible(isVisualization() && !isKmlUrlVisible());
         verNoMaps.setVisible(!multipleMarkers && isVisualization());
     }
 
@@ -211,6 +212,13 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
         }));
     }
 
+    private String generateLatLngMaker(IModel<?> latitudeModel, IModel<?> longitudeModel) {
+        if (latitudeModel.getObject() != null && longitudeModel.getObject() != null) {
+            return latitudeModel.getObject() + "," + longitudeModel.getObject();
+        }
+        return null;
+    }
+
     /**
      * Method that contains the logic of the creation of the maps with just one mark.
      *
@@ -241,13 +249,6 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
             String latLng = generateLatLngMaker(latitudeModel, longitudeModel);
             return configureMapToView(Collections.singletonList(latLng), zoomModel, null);
         }));
-    }
-
-    private String generateLatLngMaker(IModel<?> latitudeModel, IModel<?> longitudeModel) {
-        if (latitudeModel.getObject() != null && longitudeModel.getObject() != null) {
-            return latitudeModel.getObject() + "," + longitudeModel.getObject();
-        }
-        return null;
     }
 
     /**
@@ -303,7 +304,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
         json.put("tableContainerId", tableContainerId);
         json.put("callbackUrl", callbackUrl);
         json.put("multipleMarkers", multipleMarkers);
-        json.put("urlKml", kmlUrl);
+        json.put("urlKml", getKmlUrl());
         json.put("isKmlUrlVisible", isKmlUrlVisible);
         metaDataModel.setObject(json.toString());
     }
@@ -336,10 +337,6 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
         this.multipleMarkers = true;
         this.callbackUrl = callbackUrl;
         this.tableContainerId = tableContainerId;
-    }
-
-    public void includeKmlFile(String kmlUrl) {
-        this.kmlUrl = kmlUrl;
     }
 
     /**
@@ -377,6 +374,18 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
             checkComponentTag(tag, "img");
             tag.put("src", StringEscapeUtils.unescapeHtml4(getDefaultModelObjectAsString()));
         }
+    }
+
+    public boolean isKmlUrlVisible() {
+        return StringUtils.isNotEmpty(getKmlUrl());
+    }
+
+    public String getKmlUrl() {
+        return kmlUrl;
+    }
+
+    public void setKmlUrl(String kmlUrl) {
+        this.kmlUrl = kmlUrl;
     }
 
 }

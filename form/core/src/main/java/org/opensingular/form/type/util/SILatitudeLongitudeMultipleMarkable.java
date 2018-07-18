@@ -18,6 +18,7 @@ package org.opensingular.form.type.util;
 
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
+import org.opensingular.form.type.core.attachment.SIAttachment;
 
 public class SILatitudeLongitudeMultipleMarkable extends SIComposite {
 
@@ -30,6 +31,11 @@ public class SILatitudeLongitudeMultipleMarkable extends SIComposite {
         STypeLatitudeLongitudeMultipleMarkable type = getType();
         return !getField(type.file).isEmptyOfData();
     }
+
+    public SIAttachment getFile() {
+        return getField(getType().file);
+    }
+
 
     public SIList<SILatitudeLongitude> getPoints(){
         return getField(getType().points);

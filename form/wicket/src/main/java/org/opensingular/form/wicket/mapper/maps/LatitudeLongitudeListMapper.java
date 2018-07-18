@@ -25,20 +25,19 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.string.StringValue;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.type.util.SILatitudeLongitudeMultipleMarkable;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.type.util.STypeLatitudeLongitudeMultipleMarkable;
 import org.opensingular.form.view.SViewCurrentLocation;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.TableListMapper;
 import org.opensingular.form.wicket.mapper.attachment.AttachmentPublicMapperResource;
-import org.opensingular.form.wicket.mapper.attachment.AttachmentPublicResource;
 import org.opensingular.form.wicket.mapper.attachment.single.FileUploadPanel;
 import org.opensingular.form.wicket.mapper.buttons.AddButton;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
@@ -82,7 +81,7 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
         confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
 
         LatLongMarkupIds ids = new LatLongMarkupIds();
-        WicketBuildContext zoomCtx = createZoomField(ctx, ids);
+        createZoomField(ctx, ids);
         final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = createMarkableGoogleMapsPanel(ctx, ids);
         ctx.getContainer().newFormGroup().appendDiv(googleMapsPanel);
         createBooleanField(ctx);
@@ -125,9 +124,8 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
      *
      * @param ctx              The context.
      * @param latLongMarkupIds A object that contains the Markup Id of Zoom.
-     * @return the field created.
      */
-    private WicketBuildContext createZoomField(WicketBuildContext ctx, LatLongMarkupIds latLongMarkupIds) {
+    private void createZoomField(WicketBuildContext ctx, LatLongMarkupIds latLongMarkupIds) {
         WicketBuildContext zoomCtx = createField(ctx, ctx.getContainer().newGrid(), STypeLatitudeLongitudeMultipleMarkable.FIELD_ZOOM);
         zoomCtx.getContainer().visitChildren((TextField.class), (object, visit) -> {
             String nameSimple = ((SInstanceValueModel<?>) object.getDefaultModel()).getSInstance().getType().getNameSimple();
@@ -135,7 +133,6 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                 latLongMarkupIds.zoomId = object.getMarkupId();
             }
         });
-        return zoomCtx;
     }
 
 
@@ -157,15 +154,24 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
      */
     private void createUploadField(WicketBuildContext ctx, MarkableGoogleMapsPanel<SInstance> googleMapsPanel, IModel<SIList<SInstance>> points) {
         WicketBuildContext uploadCtx = createField(ctx, ctx.getContainer().newGrid(), STypeLatitudeLongitudeMultipleMarkable.FIELD_FILE);
-        uploadCtx.getContainer().add(new Behavior() {
+        createBehaviorWhenUploadFileIsVisible(googleMapsPanel, uploadCtx.getContainer());
+        createConsumersForUploadPanel(googleMapsPanel, points, uploadCtx);
+    }
 
+    /**
+     * If upload panel is visible the populate date have to use kml file rather than list of points.
+     *
+     * @param googleMapsPanel The google maps panel to be configured.
+     * @param uploadCtx       The context of upload
+     */
+    private void createBehaviorWhenUploadFileIsVisible(MarkableGoogleMapsPanel<SInstance> googleMapsPanel, BSContainer uploadCtx) {
+        uploadCtx.add(new Behavior() {
             @Override
             public void onConfigure(Component component) {
                 super.onConfigure(component);
-                googleMapsPanel.populateMetaData(!pointsCtx.getContainer().isVisible());
+                googleMapsPanel.populateMetaData(uploadCtx.isVisible());
             }
         });
-        createConsumersForUploadPanel(googleMapsPanel, points, uploadCtx);
     }
 
     /**
@@ -184,6 +190,7 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
         return buildCtx;
     }
 
+
     /**
      * This method is responsible for creating the consumers for the upload panel.
      * Created a consumer after upload the file, and other after removed the file.
@@ -198,17 +205,26 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                 .ifPresent(panel -> {
                     panel.setConsumerAfterLoadImage(target -> {
                         points.getObject().clearInstance();
-                        //Create a temp file for the Google API use.
-                        String urlFile = AttachmentPublicResource.createTempPublicFile(panel, getAttachmentModel(panel), AttachmentPublicMapperResource.APPLICATION_MAP_KEY);
-                        googleMapsPanel.includeKmlFile(toAbsolutePath() + urlFile);
-                        target.add(pointsCtx.getParent().getContainer());
+                        googleMapsPanel.setKmlUrl(createTempFile(panel.getModel().getObject()));
                     });
 
                     panel.setConsumerAfterRemoveImage(target -> {
-                        googleMapsPanel.includeKmlFile("");
+                        googleMapsPanel.setKmlUrl("");
                         target.add(pointsCtx.getParent().getContainer());
                     });
                 });
+    }
+
+    /**
+     * Create a temp file for the Google API use.
+     *
+     * @param instanceAttachment instance of Attachment.
+     * @return Url file for download.
+     */
+    private String createTempFile(SIAttachment instanceAttachment) {
+        SIAttachment attachment = instanceAttachment;
+        String urlFile = AttachmentPublicMapperResource.createTempPublicMapFile(attachment.getFileName(), attachment.getAttachmentRef());
+        return toAbsolutePath() + urlFile;
     }
 
     /**
@@ -219,30 +235,23 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
      * @return <code>MarkableGoogleMapsPanel</code>
      */
     private MarkableGoogleMapsPanel<SInstance> createMarkableGoogleMapsPanel(WicketBuildContext ctx, LatLongMarkupIds ids) {
-        return new MarkableGoogleMapsPanel<>(ids, ctx.getModel(), ctx.getViewSupplier(SViewCurrentLocation.class),
-                ctx.getViewMode().isVisualization(), true);
-    }
+        return new MarkableGoogleMapsPanel<SInstance>(ids, ctx.getModel(), ctx.getViewSupplier(SViewCurrentLocation.class),
+                ctx.getViewMode().isVisualization(), true) {
 
-    /**
-     * Method responsible for retrieve the file uploaded in the form.
-     *
-     * @param panel The file upload panel.
-     * @return The model of the Attachment file.
-     */
-    private IModel<IAttachmentRef> getAttachmentModel(FileUploadPanel panel) {
-        String id = panel.getModel().getObject().getFileId();
-        IModel<IAttachmentRef> attachmentRef = new Model<>();
-        panel.getModelObject()
-                .getDocument()
-                .getAttachmentPersistencePermanentHandler()
-                .ifPresent(c -> attachmentRef.setObject(c.getAttachment(id)));
-        if (attachmentRef.getObject() == null) {
-            attachmentRef.setObject(panel.getModelObject()
-                    .getDocument().getAttachmentPersistenceTemporaryHandler().getAttachment(id));
-        }
-        return attachmentRef;
+            @Override
+            public String getKmlUrl() {
+                String kmlUrl = super.getKmlUrl();
+                if (kmlUrl == null) {
+                    SILatitudeLongitudeMultipleMarkable currentInstance = ctx.getCurrentInstance();
+                    if (currentInstance.hasFile()) {
+                        kmlUrl = createTempFile(currentInstance.getFile());
+                        setKmlUrl(kmlUrl);
+                    }
+                }
+                return kmlUrl;
+            }
+        };
     }
-
 
     /**
      * Method for return the absolute Path for the application.
