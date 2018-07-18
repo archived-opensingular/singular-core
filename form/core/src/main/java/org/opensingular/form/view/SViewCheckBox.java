@@ -16,7 +16,7 @@ public class SViewCheckBox extends SView {
     /**
      * Method for change de alignment label of checkbox.
      * <p>
-     * If the alignment is configurated,  the label above the checkbox.
+     * If the alignment is configurated,  the label will appear above the checkbox.
      * <p>
      * <code>CENTER</code> will put the text-align:center.
      * <code>LEFT</code> will put the text-align:left.
