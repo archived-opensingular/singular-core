@@ -169,6 +169,7 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
             @Override
             public void onConfigure(Component component) {
                 super.onConfigure(component);
+                //Esse método redesenha o google maps, ele não deve ser chamado no caso do target do consumer AfterLoadImage
                 googleMapsPanel.populateMetaData(uploadCtx.isVisible());
             }
         });
@@ -206,6 +207,7 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                     panel.setConsumerAfterLoadImage(target -> {
                         points.getObject().clearInstance();
                         googleMapsPanel.setKmlUrl(createTempFile(panel.getModel().getObject()));
+                        target.add(pointsCtx.getParent().getContainer());
                     });
 
                     panel.setConsumerAfterRemoveImage(target -> {
@@ -222,8 +224,7 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
      * @return Url file for download.
      */
     private String createTempFile(SIAttachment instanceAttachment) {
-        SIAttachment attachment = instanceAttachment;
-        String urlFile = AttachmentPublicMapperResource.createTempPublicMapFile(attachment.getFileName(), attachment.getAttachmentRef());
+        String urlFile = AttachmentPublicMapperResource.createTempPublicMapFile(instanceAttachment.getFileName(), instanceAttachment.getAttachmentRef());
         return toAbsolutePath() + urlFile;
     }
 

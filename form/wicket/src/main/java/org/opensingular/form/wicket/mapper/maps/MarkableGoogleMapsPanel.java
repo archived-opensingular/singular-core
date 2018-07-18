@@ -292,7 +292,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
     /**
      * Configuration the parameters of the Google maps.
      */
-    void populateMetaData(boolean isKmlUrlVisible) {
+    void populateMetaData(boolean forceKmlUrlVisible) {
         JSONObject json = new JSONObject();
         json.put("idClearButton", clearButton.getMarkupId(true));
         json.put("idCurrentLocationButton", currentLocationButton.getMarkupId(true));
@@ -305,7 +305,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
         json.put("callbackUrl", callbackUrl);
         json.put("multipleMarkers", multipleMarkers);
         json.put("urlKml", getKmlUrl());
-        json.put("isKmlUrlVisible", isKmlUrlVisible);
+        json.put("isKmlUrlVisible", forceKmlUrlVisible);
         metaDataModel.setObject(json.toString());
     }
 
@@ -377,7 +377,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
     }
 
     public boolean isKmlUrlVisible() {
-        return StringUtils.isNotEmpty(getKmlUrl());
+        return StringUtils.isNotBlank(getKmlUrl());
     }
 
     public String getKmlUrl() {

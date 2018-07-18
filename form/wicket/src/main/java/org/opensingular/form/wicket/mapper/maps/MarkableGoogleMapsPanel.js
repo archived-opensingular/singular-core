@@ -121,6 +121,7 @@
             });
 
 
+
             if (kmlLayer && !readOnly) {
                 google.maps.event.addListener(kmlLayer, 'status_changed', function () {
                     if (kmlLayer.getStatus() != google.maps.KmlLayerStatus.OK) {
