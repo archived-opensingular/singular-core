@@ -2,7 +2,6 @@ package org.opensingular.lib.wicket.util.behavior;
 
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.util.template.PackageTextTemplate;
-import org.opensingular.lib.wicket.util.bootstrap.datepicker.BSDatepickerConstants;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -11,7 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 public class DatePickerInitScriptBuilder {
-    private final PackageTextTemplate initScript = new PackageTextTemplate(DatePickerInitBehaviour.class, "DatePickerInitScriptTemplate.js");
+
+    public static final String JS_CHANGE_EVENT = "singularChangeDate";
+
+    private final PackageTextTemplate initScript = new PackageTextTemplate(DatePickerInitScriptBuilder.class, "DatePickerInitScriptTemplate.js");
     private final SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd");
     private final SimpleDateFormat datapickerFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -32,7 +34,7 @@ public class DatePickerInitScriptBuilder {
         setTodayBtn(false);
         setTodayHighlight(false);
         setShowOnFocus(true);
-        changeEvent(BSDatepickerConstants.JS_CHANGE_EVENT);
+        changeEvent(JS_CHANGE_EVENT);
         configureBeforeShowDay(false);
         setEnabledDates(Collections.emptyList());
         setStartDate(null);
