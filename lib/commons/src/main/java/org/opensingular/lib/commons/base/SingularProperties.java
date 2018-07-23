@@ -89,6 +89,7 @@ public interface SingularProperties {
     String SYSTEM_PROPERTY_SINGULAR_SERVER_HOME = "singular.server.home";
     String SINGULAR_EAGER_LOAD_FLOW_DEFINITIONS = "singular.flow.eager.load";
 
+    String SINGULAR_WICKET_DEBUG_ENABLED = "singular.wicket.debug.enabled";
 
     static SingularProperties get() {
         return SingularPropertiesImpl.get();
