@@ -18,16 +18,16 @@ package org.opensingular.flow.schedule.quartz;
 
 import java.util.function.Supplier;
 
+import org.opensingular.flow.schedule.IScheduleData;
 import org.opensingular.flow.schedule.IScheduledJob;
 import org.opensingular.flow.schedule.ScheduledJob;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
-
-import org.opensingular.flow.schedule.IScheduleData;
 
 /**
  * Classe para criação de triggers e jobs do Quartz usando as interfaces definidas.
@@ -38,7 +38,7 @@ public class QuartzTriggerFactory {
      * O {@link Supplier} do job a ser criado.
      * @see IScheduledJob#run()
      */
-    private Supplier<Object> job;
+    private ISupplier<Object> job;
     /**
      * Os dados do job.
      * @see IScheduledJob#getScheduleData()
@@ -106,7 +106,6 @@ public class QuartzTriggerFactory {
     /**
      * Define o identificador do job a ser criado para o trigger.
      *
-     * @param id o(a) id.
      * @return está fábrica.
      * @see IScheduledJob#getId()
      */
@@ -122,7 +121,7 @@ public class QuartzTriggerFactory {
      * @return está fábrica.
      * @see IScheduledJob#run()
      */
-    public QuartzTriggerFactory forJob(Supplier<Object> job) {
+    public QuartzTriggerFactory forJob(ISupplier<Object> job) {
         this.job = job;
         return this;
     }

@@ -16,7 +16,9 @@
 
 package org.opensingular.flow.schedule;
 
-public interface IScheduleData {
+import java.io.Serializable;
+
+public interface IScheduleData extends Serializable {
 
     String getCronExpression();
 

@@ -16,19 +16,18 @@
 
 package org.opensingular.flow.schedule;
 
-import java.util.function.Supplier;
-
 import com.google.common.base.Preconditions;
+import org.opensingular.lib.commons.lambda.ISupplier;
 
 public class ScheduledJob implements IScheduledJob {
 
     private final String id;
 
-    private final Supplier<Object> job;
+    private final ISupplier<Object> job;
 
     private final IScheduleData scheduleData;
 
-    public ScheduledJob(String id, IScheduleData scheduleData, Supplier<Object> job) {
+    public ScheduledJob(String id, IScheduleData scheduleData, ISupplier<Object> job) {
         super();
         this.id = id;
         this.job = job;

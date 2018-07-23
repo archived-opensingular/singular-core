@@ -16,6 +16,11 @@
 
 package org.opensingular.lib.support.spring.util;
 
+import java.util.Optional;
+import javax.annotation.Nonnull;
+import javax.inject.Named;
+
+import org.apache.commons.lang3.ArrayUtils;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.context.SingularContext;
 import org.opensingular.lib.commons.context.SingularSingletonStrategy;
@@ -30,11 +35,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.Order;
-
-import javax.annotation.Nonnull;
-import javax.inject.Named;
-import java.util.Optional;
 
 /**
  * Métodos para localização e retorno do {@link ApplicationContext} atual.
@@ -146,6 +148,30 @@ public class ApplicationContextProvider implements ApplicationContextAware {
     @EventListener
     public void handleContextRefresh(ContextStartedEvent event) {
         setApplicationContext(event.getApplicationContext());
+    }
+
+    /**
+     * Method responsible for return the named of the bean.
+     * <p>
+     * This method is useful for return the name of the creating bean, because the name could be changed with annotation.
+     *
+     * @param bean The bean class.
+     * @return return the bean's name or null if doesn't exists.
+     */
+    public static String getBeanName(Object bean) {
+        String[] names = ApplicationContextProvider.get().getBeanNamesForType(ResolvableType.forClass(bean.getClass()));
+        if (!ArrayUtils.isEmpty(names)) {
+            for (String name : names) {
+                if (ApplicationContextProvider.get().getBean(name).equals(bean)) {
+                    LOGGER.info("==================> bean name:" + name + " class: " + bean.getClass().getName());
+                    return name;
+                }
+            }
+        } else {
+            LOGGER.info("==================> pojo class: " + bean.getClass().getName());
+            return null;
+        }
+        return null;
     }
 
 }

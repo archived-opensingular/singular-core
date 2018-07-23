@@ -16,7 +16,9 @@
 
 package org.opensingular.flow.schedule;
 
-public interface IScheduledJob {
+import java.io.Serializable;
+
+public interface IScheduledJob extends Serializable {
 
     IScheduleData getScheduleData();
 
