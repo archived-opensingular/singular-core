@@ -74,6 +74,10 @@ public interface SingularProperties {
     String SINGULAR_MAIL_SMTP_SSL_TRUST = "singular.mail.smtp.ssl.trust";
     String SINGULAR_MAIL_AUTH = "singular.mail.auth";
 
+    //########    PROPRIEDADES SEGURANÇA    ########
+    String SINGULAR_CSRF_ACCEPT_ORIGINS = "singular.csrf.accept.origins";  //A list separated by comma of accepted origins (host names/domain names)
+    String SINGULAR_CSRF_ENABLED = "singular.csrf.enabled";  //Property for enable CSRF Security.
+
     //########    PROPRIEDADES GERAIS    ########
     String SINGULAR_DEV_MODE = "singular.development";
     String DEFAULT_CAS_ENABLED = "singular.cas.default.enabled";
