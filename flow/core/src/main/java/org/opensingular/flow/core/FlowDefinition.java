@@ -100,7 +100,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
     /**
      * Instancia uma nova definição de fluxo do tipo informado.
      *
-     * @param key
+     * @param instanceClass
      *            a chave do fluxo.
      * @param instanceClass
      *            o tipo da instância da definição a ser instanciada.
@@ -440,7 +440,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
      * Retorna o <i>link resolver</i> deste fluxo para o usuário
      * especificado.
      *
-     * @param usero usuário especificado.
+     * @param user usuário especificado.
      */
     public final Lnk getCreatePageFor(SUser user) {
         return getCreationPageStrategy().getCreatePageFor(this, user);
