@@ -14,20 +14,32 @@
  * limitations under the License.
  */
 
-package org.opensingular.lib.wicket.util.bootstrap.datepicker;
+package org.opensingular.form.view.date;
 
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.MetaDataKey;
 
 /**
- * Classe temporária. Existe porque ninguém se deu ao trabalho de criar um componente específico para o datepicker.
- * @author ronaldtm
+ * This class will have the same configuration of the Date and Time component.
  */
-public class BSDatepickerConstants {
+public class SViewDateTime extends SViewDate implements ISViewTime {
 
-    private BSDatepickerConstants() {}
-    
-    public static final MetaDataKey<MarkupContainer> KEY_CONTAINER = new MetaDataKey<MarkupContainer>() {};
-    public static final String JS_CHANGE_EVENT = "singularChangeDate";
-    
+    private SViewTime sViewTime = new SViewTime();
+
+    public SViewDateTime setMode24hs(boolean value) {
+        sViewTime.setMode24hs(value);
+        return this;
+    }
+
+    public SViewDateTime setMinuteStep(Integer value) {
+        sViewTime.setMinuteStep(value);
+        return this;
+    }
+
+    public boolean isMode24hs() {
+        return sViewTime.isMode24hs();
+    }
+
+    public Integer getMinuteStep() {
+        return sViewTime.getMinuteStep();
+    }
+
 }
