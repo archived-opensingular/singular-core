@@ -16,11 +16,11 @@
 
 package org.opensingular.flow.schedule;
 
-import com.google.common.base.Preconditions;
-
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Builder for {@link IScheduleData}.

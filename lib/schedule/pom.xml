@@ -5,12 +5,12 @@
 
     <parent>
         <groupId>org.opensingular</groupId>
-        <artifactId>singular-flow</artifactId>
+        <artifactId>singular-lib</artifactId>
         <version>1.8.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>singular-flow-schedule</artifactId>
-    <name>[singular :: flow :: schedule]</name>
+    <artifactId>singular-schedule</artifactId>
+    <name>[singular :: lib :: schedule]</name>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -23,6 +23,19 @@
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
         </dependency>
+        <!-- USED IN TESTS -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opensingular</groupId>
+            <artifactId>singular-commons-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
+
 
 </project>

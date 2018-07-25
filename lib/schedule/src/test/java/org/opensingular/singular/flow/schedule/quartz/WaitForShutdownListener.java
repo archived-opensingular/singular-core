@@ -18,12 +18,12 @@
 
 package org.opensingular.singular.flow.schedule.quartz;
 
+import java.util.function.Supplier;
+
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.listeners.SchedulerListenerSupport;
-
-import java.util.function.Supplier;
 
 /**
  * Listener para aguardar a execução de todos os jbos agendados para então fazer o shutdown do quartz.

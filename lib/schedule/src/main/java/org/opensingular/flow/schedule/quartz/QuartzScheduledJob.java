@@ -16,11 +16,10 @@
 
 package org.opensingular.flow.schedule.quartz;
 
+import org.opensingular.flow.schedule.IScheduledJob;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-
-import org.opensingular.flow.schedule.IScheduledJob;
 
 public class QuartzScheduledJob implements Job {
 
