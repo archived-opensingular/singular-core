@@ -19,7 +19,6 @@
 package org.opensingular.form.io;
 
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.xerces.dom.DOMInputImpl;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.util.Loggable;
@@ -33,16 +32,16 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
-public class ClasspathReourceResolver implements LSResourceResolver, Loggable {
+public class ClasspathResourceResolver implements LSResourceResolver, Loggable {
 
 
     private String localPath;
 
-    public ClasspathReourceResolver(String localPath) {
+    public ClasspathResourceResolver(String localPath) {
         this.localPath = localPath;
     }
 
-    public ClasspathReourceResolver() {
+    public ClasspathResourceResolver() {
         this.localPath = "xsd/";
     }
 
@@ -54,10 +53,10 @@ public class ClasspathReourceResolver implements LSResourceResolver, Loggable {
 
     private InputStream getSchemaFromClasspath(String systemId, String localPath) {
         String file = systemId
-                .replaceAll("\\/","_")
-                .replaceAll("\\\\","_")
-                .replaceAll(":","_");
-        getLogger().info("Try to get definitions from classpath: " + localPath + file);
+                .replaceAll("\\/", "_")
+                .replaceAll("\\\\", "_")
+                .replaceAll(":", "_");
+        getLogger().info("Try to get definitions from classpath: {}{}", localPath, file);
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(localPath + file);
     }
 
@@ -69,10 +68,10 @@ public class ClasspathReourceResolver implements LSResourceResolver, Loggable {
         try {
             URI uri = new URI(systemId);
             if (uri.isAbsolute()) {
-                getLogger().info("Get definitions from web: " + systemId);
+                getLogger().info("Get definitions from web: {} ",systemId);
                 return urlToInputStream(uri.toURL(), "text/xml");
             }
-            System.out.println("Get definitions from web: Host: " + baseUri + " Path: " + systemId);
+            getLogger().info("Get definitions from web: Host: {} Path: {} ", baseUri, systemId);
             return getSchemaRelativeToBaseUri(baseUri, systemId);
         } catch (Exception e) {
             throw SingularException.rethrow(e.getMessage(), e);
