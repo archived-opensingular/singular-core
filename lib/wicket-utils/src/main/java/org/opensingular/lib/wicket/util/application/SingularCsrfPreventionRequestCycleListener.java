@@ -324,8 +324,9 @@ public class SingularCsrfPreventionRequestCycleListener extends AbstractRequestC
      * @return the deepest handler that does not implement {@code IRequestHandlerDelegate}
      */
     protected final IRequestHandler unwrap(IRequestHandler handler) {
-        while (handler instanceof IRequestHandlerDelegate)
-            handler = ((IRequestHandlerDelegate) handler).getDelegateHandler();
+        while (handler instanceof IRequestHandlerDelegate) {
+            handler = ((IRequestHandlerDelegate) handler).getDelegateHandler();//NOSONAR
+        }
         return handler;
     }
 
@@ -523,6 +524,7 @@ public class SingularCsrfPreventionRequestCycleListener extends AbstractRequestC
             }
             return target.toString();
         } catch (URISyntaxException e) {
+            getLogger().trace(e.getMessage(), e);
             getLogger().debug("Invalid URI provided: {}, marked conflicting", uri);
             return null;
         }
