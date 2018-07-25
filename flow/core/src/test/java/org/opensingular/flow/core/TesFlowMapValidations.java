@@ -16,6 +16,9 @@
 
 package org.opensingular.flow.core;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -25,12 +28,9 @@ import org.opensingular.flow.core.TesFlowMapValidations.FlowWithFlowValidation.S
 import org.opensingular.flow.core.builder.BuilderHuman;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.property.MetaDataKey;
-import org.opensingular.flow.schedule.ScheduleDataBuilder;
 import org.opensingular.internal.lib.commons.test.RunnableEx;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import org.opensingular.schedule.ScheduleDataBuilder;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

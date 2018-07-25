@@ -16,12 +16,12 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.schedule.IScheduleData;
-import org.opensingular.flow.schedule.IScheduledJob;
-import org.opensingular.flow.schedule.ScheduleDataBuilder;
-
 import java.util.Objects;
 import java.util.function.Supplier;
+
+import org.opensingular.schedule.IScheduleData;
+import org.opensingular.schedule.IScheduledJob;
+import org.opensingular.schedule.ScheduleDataBuilder;
 
 public class FlowScheduledJob implements IScheduledJob {
 
