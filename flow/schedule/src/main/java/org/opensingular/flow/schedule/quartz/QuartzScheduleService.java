@@ -46,13 +46,19 @@ public class QuartzScheduleService implements IScheduleService, Loggable {
     private SingularQuartzSchedulerAcessor quartzSchedulerFactory;
 
     /**
-     * This constructor could be use to set startImmediate false, for waiting something for start the schedule 
-     * @param startImmediate
+     * This constructor could be use to set startImmediate false, for waiting something before start the schedule factory.
+     * <p>Note: In case of use Spring dataSource configuration, this should be used with value false.
+     *
+     * @param startImmediate True for immediate start.
      */
     public QuartzScheduleService(boolean startImmediate) {
         this(false, startImmediate);
     }
 
+    /**
+     * Default constructor.
+     * Default: Start immediate, and don't wait jobs on shutdown.
+     */
     public QuartzScheduleService() {
         this(false, true);
     }
@@ -62,11 +68,10 @@ public class QuartzScheduleService implements IScheduleService, Loggable {
         initialize();
     }
 
-
     public QuartzScheduleService(boolean waitJobsOnShutdown, boolean startImmediate) {
-        if(startImmediate) {
-            quartzSchedulerFactory = new QuartzSingularSchedulerFactory();
-            quartzSchedulerFactory.setWaitForJobsToCompleteOnShutdown(waitJobsOnShutdown);
+        quartzSchedulerFactory = new QuartzSingularSchedulerFactory();
+        quartzSchedulerFactory.setWaitForJobsToCompleteOnShutdown(waitJobsOnShutdown);
+        if (startImmediate) {
             initialize();
         }
     }
@@ -76,6 +81,10 @@ public class QuartzScheduleService implements IScheduleService, Loggable {
         init();
     }
 
+    /**
+     * Method for use configuration of the <code>quartz.properties</code>
+     * If don't have it will use the defauls <code>quartz-default.properties</code>
+     */
     private void configureQuartzProperties() {
         ResourceBundle quartzBundle = null;
         try {
@@ -91,6 +100,11 @@ public class QuartzScheduleService implements IScheduleService, Loggable {
         quartzSchedulerFactory.setConfigLocation(quartzBundle);
     }
 
+    /**
+     * Method for initialize the scheduler.
+     * <p>
+     * Method responsible for add all the trigger's.
+     */
     protected void init() {
         quartzSchedulerFactory.setSchedulerName(SCHEDULER_NAME);
         try {
@@ -135,10 +149,6 @@ public class QuartzScheduleService implements IScheduleService, Loggable {
     @Override
     public Set<JobKey> getAllJobKeys() throws SchedulerException {
         return quartzSchedulerFactory.getAllJobKeys();
-    }
-
-    public SingularQuartzSchedulerAcessor getQuartzSchedulerFactory() {
-        return quartzSchedulerFactory;
     }
 
     public void setQuartzSchedulerFactory(SingularQuartzSchedulerAcessor quartzSchedulerFactory) {
