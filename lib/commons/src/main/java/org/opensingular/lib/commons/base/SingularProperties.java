@@ -85,6 +85,8 @@ public interface SingularProperties {
     String SYSTEM_PROPERTY_SINGULAR_SERVER_HOME = "singular.server.home";
     String SINGULAR_EAGER_LOAD_FLOW_DEFINITIONS = "singular.flow.eager.load";
 
+    String SINGULAR_QUARTZ_JOBSTORE_ENABLED = "singular.quartz.jobstore.enabled";
+
 
     static SingularProperties get() {
         return SingularPropertiesImpl.get();

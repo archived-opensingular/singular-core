@@ -18,13 +18,15 @@
 
 package org.opensingular.singular.flow.schedule.quartz;
 
+import org.junit.Test;
 import org.opensingular.flow.schedule.IScheduledJob;
 import org.opensingular.flow.schedule.ScheduledJob;
-import org.junit.Test;
 import org.opensingular.flow.schedule.quartz.QuartzScheduleService;
-import org.opensingular.flow.schedule.quartz.QuartzSchedulerFactory;
+import org.opensingular.flow.schedule.quartz.QuartzSingularSchedulerFactory;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class QuartzScheduleServiceTest {
 
@@ -37,7 +39,7 @@ public class QuartzScheduleServiceTest {
         assertNull(jobRunResult);
 
 
-        QuartzSchedulerFactory factory = new QuartzSchedulerFactory();
+        QuartzSingularSchedulerFactory factory = new QuartzSingularSchedulerFactory();
         WaitForShutdownListener waiForShutdownListener = new WaitForShutdownListener(factory::getScheduler);
         factory.setSchedulerListeners(waiForShutdownListener);
 

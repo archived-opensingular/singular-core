@@ -15,20 +15,25 @@
  */
 package org.opensingular.flow.schedule.quartz;
 
-import org.opensingular.flow.schedule.IScheduledJob;
-import org.opensingular.lib.commons.base.SingularException;
-import org.quartz.*;
-import org.quartz.impl.RemoteScheduler;
-import org.quartz.impl.SchedulerRepository;
-import org.quartz.impl.StdSchedulerFactory;
-import org.quartz.simpl.SimpleThreadPool;
-import org.quartz.spi.JobFactory;
-
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
+
+import org.opensingular.flow.schedule.IScheduledJob;
+import org.opensingular.lib.commons.base.SingularException;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+import org.quartz.Trigger;
+import org.quartz.impl.RemoteScheduler;
+import org.quartz.impl.SchedulerRepository;
+import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.simpl.SimpleThreadPool;
+import org.quartz.spi.JobFactory;
 
 /**
  * Factory that creates and configures a Quartz {@link org.quartz.Scheduler}.
@@ -52,17 +57,7 @@ import java.util.ResourceBundle;
  * @see org.quartz.SchedulerFactory
  * @see org.quartz.impl.StdSchedulerFactory
  */
-public class QuartzSchedulerFactory extends SchedulerAccessor {
-
-    /**
-     * The PROP_THREAD_COUNT constant.
-     */
-    public static final String PROP_THREAD_COUNT = "org.quartz.threadPool.threadCount";
-
-    /**
-     * The DEFAULT_THREAD_COUNT constant.
-     */
-    public static final int DEFAULT_THREAD_COUNT = 10;
+public class QuartzSingularSchedulerFactory extends SingularSchedulerAccessor {
 
     private Class<? extends SchedulerFactory> schedulerFactoryClass = StdSchedulerFactory.class;
 
@@ -82,20 +77,6 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
 
     private Scheduler scheduler;
 
-    /**
-     * Set the Quartz SchedulerFactory implementation to use.
-     * <p>Default is {@link StdSchedulerFactory}, reading in the standard
-     * {@code quartz.properties} from {@code quartz.jar}.
-     * To use custom Quartz properties, specify the "configLocation"
-     * or "quartzProperties" bean property on this FactoryBean.
-     *
-     * @see org.quartz.impl.StdSchedulerFactory
-     * @see #setConfigLocation
-     * @see #setQuartzProperties
-     */
-    public void setSchedulerFactoryClass(Class<? extends SchedulerFactory> schedulerFactoryClass) {
-        this.schedulerFactoryClass = schedulerFactoryClass;
-    }
 
     /**
      * Set the name of the Scheduler to create via the SchedulerFactory.
@@ -104,6 +85,7 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      * @see org.quartz.SchedulerFactory#getScheduler()
      * @see org.quartz.SchedulerFactory#getScheduler(String)
      */
+    @Override
     public void setSchedulerName(String schedulerName) {
         this.schedulerName = schedulerName;
     }
@@ -116,6 +98,7 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      *
      * @see #setQuartzProperties
      */
+    @Override
     public void setConfigLocation(ResourceBundle configLocation) {
         this.configLocation = configLocation;
     }
@@ -127,6 +110,7 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      *
      * @see #setConfigLocation
      */
+    @Override
     public void setQuartzProperties(Properties quartzProperties) {
         this.quartzProperties = quartzProperties;
     }
@@ -141,6 +125,7 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      *
      * @see QuartzJobFactory
      */
+    @Override
     public void setJobFactory(JobFactory jobFactory) {
         this.jobFactory = jobFactory;
         this.jobFactorySet = true;
@@ -154,6 +139,7 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      * This is not recommended unless you have an existing application that
      * relies on this behavior.
      */
+    @Override
     public void setExposeSchedulerInRepository(boolean exposeSchedulerInRepository) {
         this.exposeSchedulerInRepository = exposeSchedulerInRepository;
     }
@@ -165,6 +151,7 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      *
      * @see org.quartz.Scheduler#shutdown(boolean)
      */
+    @Override
     public void setWaitForJobsToCompleteOnShutdown(boolean waitForJobsToCompleteOnShutdown) {
         this.waitForJobsToCompleteOnShutdown = waitForJobsToCompleteOnShutdown;
     }
@@ -177,6 +164,7 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      * @throws Exception in the event of misconfiguration (such
      * as failure to set an essential property) or if initialization fails.
      */
+    @Override
     public void initialize() throws SingularException {
         try {
             SchedulerFactory schedulerFactory = this.schedulerFactoryClass.newInstance();
@@ -204,13 +192,13 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
     /**
      * Load and/or apply Quartz properties to the given SchedulerFactory.
      *
-     * @param schedulerFactory the SchedulerFactory to initialize
+     * @param schedulerFactory
      */
     private void initSchedulerFactory(SchedulerFactory schedulerFactory) throws SchedulerException, IOException {
         Properties mergedProps = new Properties();
 
         mergedProps.setProperty(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, SimpleThreadPool.class.getName());
-        mergedProps.setProperty(PROP_THREAD_COUNT, Integer.toString(DEFAULT_THREAD_COUNT));
+        mergedProps.setProperty(SINGULAR_PROP_THREAD_COUNT, Integer.toString(SINGULAR_DEFAULT_THREAD_COUNT));
 
         if (this.configLocation != null) {
             if (logger.isInfoEnabled()) {
@@ -287,7 +275,8 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      * <p>The default implementation invokes SchedulerFactory's {@code getScheduler}
      * method. Can be overridden for custom Scheduler creation.
      *
-     * @param schedulerFactory the factory to create the Scheduler with
+     *
+     * @param schedulerFactory
      * @param schedulerName the name of the scheduler to create
      * @return the Scheduler instance
      *
@@ -370,6 +359,7 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      *
      * @throws SchedulerException if could not start Quartz Scheduler.
      */
+    @Override
     public void start() throws SchedulerException {
         start(0);
     }
@@ -381,6 +371,7 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      * @param startupDelay the number of seconds to wait before starting
      * @throws SchedulerException if could not start Quartz Scheduler.
      */
+    @Override
     public void start(int startupDelay) throws SchedulerException {
         if (this.scheduler != null) {
             startScheduler(this.scheduler, startupDelay);
@@ -404,6 +395,7 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      *
      * @see #start()
      */
+    @Override
     public void stop() throws SchedulerException {
         if (this.scheduler != null) {
             this.scheduler.standby();
@@ -416,6 +408,7 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      * @param callback the callback.
      * @throws SchedulerException if could not start Quartz Scheduler.
      */
+    @Override
     public void stop(Runnable callback) throws SchedulerException {
         stop();
         callback.run();
@@ -427,6 +420,7 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      * @see #stop()
      * @see #start()
      */
+    @Override
     public boolean isRunning() {
         if (this.scheduler != null) {
             try {
@@ -443,6 +437,7 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      * Shut down the Quartz scheduler on factory shutdown,
      * stopping all scheduled jobs.
      */
+    @Override
     public void destroy() throws SchedulerException {
         logger.info("Shutting down Quartz Scheduler");
         this.scheduler.shutdown(this.waitForJobsToCompleteOnShutdown);
@@ -454,6 +449,7 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      * @param jobDetail the job detail.
      * @throws SchedulerException if could not start Quartz Scheduler.
      */
+    @Override
     public void addJob(JobDetail jobDetail) throws SchedulerException {
         addJobToScheduler(jobDetail);
     }
@@ -465,8 +461,9 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      * @param jobDetail the job detail.
      * @throws SchedulerException if could not start Quartz Scheduler.
      */
+    @Override
     public void addTrigger(Trigger trigger, JobDetail jobDetail) throws SchedulerException {
-        trigger.getJobDataMap().put(JOB_DETAIL_KEY, jobDetail);
+        trigger.getJobDataMap().put(SINGULAR_JOB_DETAIL_KEY, jobDetail);
         addTriggerToScheduler(trigger);
     }
 
@@ -476,8 +473,9 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      * @param trigger the trigger.
      * @throws SchedulerException if could not start Quartz Scheduler.
      */
+    @Override
     public void addTrigger(Trigger trigger) throws SchedulerException {
-        addJobToScheduler((JobDetail) trigger.getJobDataMap().get(JOB_DETAIL_KEY));
+        addJobToScheduler((JobDetail) trigger.getJobDataMap().get(SINGULAR_JOB_DETAIL_KEY));
         addTriggerToScheduler(trigger);
     }
     /**
@@ -486,7 +484,9 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      * @param jobKey
      * @throws SchedulerException
      */
+    @Override
     public void triggerJob(JobKey jobKey) throws SchedulerException{
         getScheduler().triggerJob(jobKey);
     }
 }
+

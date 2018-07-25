@@ -17,7 +17,6 @@
 package org.opensingular.flow.schedule.quartz;
 
 import java.util.MissingResourceException;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -44,59 +43,36 @@ public class QuartzScheduleService implements IScheduleService, Loggable {
      */
     private static final String DEFAULT_CONFIG_RESOURCE_NAME = "quartz-default";
 
-    private final QuartzSchedulerFactory quartzSchedulerFactory;
+    private SingularQuartzSchedulerAcessor quartzSchedulerFactory;
+
+    public QuartzScheduleService(boolean startImmediate) {
+        this(false, startImmediate);
+    }
 
     public QuartzScheduleService() {
-        this(false);
+        this(false, true);
     }
 
-    public QuartzScheduleService(QuartzSchedulerFactory quartzSchedulerFactory) {
+    public QuartzScheduleService(SingularQuartzSchedulerAcessor quartzSchedulerFactory) {
         this.quartzSchedulerFactory = quartzSchedulerFactory;
-        init();
+        initialize();
     }
 
-    public QuartzScheduleService(boolean waitJobsOnShutdown) {
 
-        Properties prop = new Properties();
-
-        prop.put("org.quartz.scheduler.rmi.export", "true");
-        prop.put("org.quartz.scheduler.rmi.createRegistry", "true");
-        prop.put("org.quartz.scheduler.rmi.registryHost", "localhost");
-        prop.put("org.quartz.scheduler.rmi.registryPort", "1099");
-        prop.put("org.quartz.threadPool.class", "org.quartz.simpl.SimpleThreadPool");
-        prop.put("org.quartz.threadPool.threadCount", "2");
-
-        if (false) {
-            prop.put("org.quartz.scheduler.instanceName", "PetServerScheduler");
-            prop.put("org.quartz.scheduler.instanceId", "PetServer");
-            prop.put("org.quartz.jobStore.class", "org.quartz.simpl.RAMJobStore");
-        } else {
-
-            prop.put("org.quartz.jobStore.useProperties", "false");
-            if (false) {
-                prop.put("org.quartz.dataSource.quartzDataSource.driver", "org.h2.Driver");
-                prop.put("org.quartz.dataSource.quartzDataSource.URL", "jdbc:h2:file:./singulardb");
-                prop.put("org.quartz.dataSource.quartzDataSource.user", "sa");
-                prop.put("org.quartz.dataSource.quartzDataSource.password", "sa");
-            } else {
-                prop.put("org.quartz.dataSource.singular.jndiURL", "java:jboss/datasources/singular");
-            }
-            prop.put("org.quartz.jobStore.class", "org.quartz.impl.jdbcjobstore.JobStoreTX");
-            prop.put("org.quartz.jobStore.driverDelegateClass", "org.quartz.impl.jdbcjobstore.MSSQLDelegate");
-//            prop.put("org.quartz.jobStore.driverDelegateClass", "org.opensingular.flow.schedule.quartz.CustomDelegate");
-            prop.put("org.quartz.jobStore.dataSource", "singular");
-            prop.put("org.quartz.jobStore.tablePrefix", "quartz.qrtz_");
-            prop.put("org.quartz.jobStore.isClustered", "true");
+    public QuartzScheduleService(boolean waitJobsOnShutdown, boolean startImmediate) {
+        if(startImmediate) {
+            quartzSchedulerFactory = new QuartzSingularSchedulerFactory();
+            quartzSchedulerFactory.setWaitForJobsToCompleteOnShutdown(waitJobsOnShutdown);
+            initialize();
         }
+    }
 
-        quartzSchedulerFactory = new QuartzSchedulerFactory();
-        quartzSchedulerFactory.setQuartzProperties(prop);
-        quartzSchedulerFactory.setWaitForJobsToCompleteOnShutdown(waitJobsOnShutdown);
+    private void initialize() {
+        configureQuartzProperties();
         init();
     }
 
-    private void init() {
-        quartzSchedulerFactory.setSchedulerName(SCHEDULER_NAME);
+    private void configureQuartzProperties() {
         ResourceBundle quartzBundle = null;
         try {
             quartzBundle = ResourceBundle.getBundle(CONFIG_RESOURCE_NAME);
@@ -109,6 +85,10 @@ public class QuartzScheduleService implements IScheduleService, Loggable {
         }
 
         quartzSchedulerFactory.setConfigLocation(quartzBundle);
+    }
+
+    protected void init() {
+        quartzSchedulerFactory.setSchedulerName(SCHEDULER_NAME);
         try {
             quartzSchedulerFactory.initialize();
             quartzSchedulerFactory.start();
@@ -153,4 +133,11 @@ public class QuartzScheduleService implements IScheduleService, Loggable {
         return quartzSchedulerFactory.getAllJobKeys();
     }
 
+    public SingularQuartzSchedulerAcessor getQuartzSchedulerFactory() {
+        return quartzSchedulerFactory;
+    }
+
+    public void setQuartzSchedulerFactory(SingularQuartzSchedulerAcessor quartzSchedulerFactory) {
+        this.quartzSchedulerFactory = quartzSchedulerFactory;
+    }
 }

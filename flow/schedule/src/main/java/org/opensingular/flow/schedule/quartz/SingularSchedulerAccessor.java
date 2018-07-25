@@ -15,6 +15,13 @@
  */
 package org.opensingular.flow.schedule.quartz;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.Calendar;
@@ -34,24 +41,17 @@ import org.quartz.simpl.SimpleClassLoadHelper;
 import org.quartz.spi.ClassLoadHelper;
 import org.quartz.xml.XMLSchedulingDataProcessor;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * Common base class for accessing a Quartz Scheduler, i.e. for registering jobs,
  * triggers and listeners on a {@link org.quartz.Scheduler} instance.
  * <p></p>
- * <p>For concrete usage, check out the {@link QuartzSchedulerFactory}.</p>
+ * <p>For concrete usage, check out the {@link QuartzSingularSchedulerFactory}.</p>
  *
  * @author Daniel Bordin
  */
-public abstract class SchedulerAccessor {
+public abstract class SingularSchedulerAccessor implements SingularQuartzSchedulerAcessor {
 
-    protected static final String JOB_DETAIL_KEY = "jobDetail";
+    public static final String SINGULAR_JOB_DETAIL_KEY = "jobDetail";
 
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -70,6 +70,7 @@ public abstract class SchedulerAccessor {
     private JobListener[] globalJobListeners;
 
     private TriggerListener[] globalTriggerListeners;
+
 
     /**
      * Set whether any jobs defined on this SchedulerFactoryBean should overwrite
@@ -288,7 +289,7 @@ public abstract class SchedulerAccessor {
      * @return the job detail.
      */
     private JobDetail findJobDetail(Trigger trigger) {
-        return (JobDetail) trigger.getJobDataMap().remove(JOB_DETAIL_KEY);
+        return (JobDetail) trigger.getJobDataMap().remove(SINGULAR_JOB_DETAIL_KEY);
     }
 
     /**
@@ -362,5 +363,7 @@ public abstract class SchedulerAccessor {
      * Template method that determines the Scheduler to operate on.
      * To be implemented by subclasses.
      */
-    protected abstract Scheduler getScheduler();
+    public abstract Scheduler getScheduler();
+
+
 }

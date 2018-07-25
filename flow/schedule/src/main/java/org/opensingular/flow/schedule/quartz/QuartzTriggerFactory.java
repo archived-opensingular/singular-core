@@ -142,7 +142,7 @@ public class QuartzTriggerFactory {
             triggerBuilder.startNow();
         }
         Trigger trigger = triggerBuilder.build();
-        trigger.getJobDataMap().put(SchedulerAccessor.JOB_DETAIL_KEY, jobDetail);
+        trigger.getJobDataMap().put(SingularSchedulerAccessor.SINGULAR_JOB_DETAIL_KEY, jobDetail);
         return trigger;
     }
 

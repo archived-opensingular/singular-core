@@ -18,17 +18,19 @@
 
 package org.opensingular.singular.flow.schedule.quartz;
 
-import org.opensingular.flow.schedule.IScheduleData;
-import org.opensingular.flow.schedule.ScheduleDataBuilder;
-import org.opensingular.flow.schedule.ScheduledJob;
+import java.util.ResourceBundle;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.opensingular.flow.schedule.IScheduleData;
+import org.opensingular.flow.schedule.ScheduleDataBuilder;
+import org.opensingular.flow.schedule.ScheduledJob;
 import org.opensingular.flow.schedule.quartz.QuartzJobFactory;
 import org.opensingular.flow.schedule.quartz.QuartzScheduledJob;
-import org.opensingular.flow.schedule.quartz.QuartzSchedulerFactory;
+import org.opensingular.flow.schedule.quartz.QuartzSingularSchedulerFactory;
 import org.opensingular.flow.schedule.quartz.QuartzTriggerFactory;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
@@ -37,14 +39,7 @@ import org.quartz.Scheduler;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
-import java.util.ResourceBundle;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class QuartzSchedulerFactoryTest {
 
@@ -58,13 +53,13 @@ public class QuartzSchedulerFactoryTest {
     private final String JOB_NAME = "jobTest";
     private final String JOB_ID = "jobTestID";
 
-    private QuartzSchedulerFactory  quartzSchedulerFactory;
+    private QuartzSingularSchedulerFactory quartzSchedulerFactory;
     private String                  jobRunResult;
     private WaitForShutdownListener waitForShutdownListener;
 
     @Before
     public void setUp() throws Exception {
-        quartzSchedulerFactory = new QuartzSchedulerFactory();
+        quartzSchedulerFactory = new QuartzSingularSchedulerFactory();
         waitForShutdownListener = new WaitForShutdownListener(quartzSchedulerFactory::getScheduler);
         quartzSchedulerFactory.setSchedulerListeners(waitForShutdownListener);
         quartzSchedulerFactory.setSchedulerName(SCHEDULER_NAME);
