@@ -90,7 +90,7 @@ public abstract class SingularSchedulerAccessor implements SingularQuartzSchedul
      * @see org.quartz.xml.XMLSchedulingDataProcessor
      */
     public void setJobSchedulingDataLocation(String jobSchedulingDataLocation) {
-        this.jobSchedulingDataLocations = new String[] {jobSchedulingDataLocation};
+        this.jobSchedulingDataLocations = new String[]{jobSchedulingDataLocation};
     }
 
     /**
@@ -124,7 +124,7 @@ public abstract class SingularSchedulerAccessor implements SingularQuartzSchedul
      * that this FactoryBean creates, to be referenced by Triggers.
      *
      * @param calendars Map with calendar names as keys as Calendar
-     * objects as values
+     *                  objects as values
      * @see org.quartz.Calendar
      */
     public void setCalendars(Map<String, Calendar> calendars) {
@@ -216,7 +216,6 @@ public abstract class SingularSchedulerAccessor implements SingularQuartzSchedul
      * @param jobDetail the job to add
      * @return {@code true} if the job was actually added,
      * {@code false} if it already existed before
-     *
      * @see #setOverwriteExistingJobs
      */
     protected boolean addJobToScheduler(JobDetail jobDetail) throws SchedulerException {
@@ -235,7 +234,6 @@ public abstract class SingularSchedulerAccessor implements SingularQuartzSchedul
      * @param trigger the trigger to add
      * @return {@code true} if the trigger was actually added,
      * {@code false} if it already existed before
-     *
      * @see #setOverwriteExistingJobs
      */
     protected boolean addTriggerToScheduler(Trigger trigger) throws SchedulerException {
@@ -352,7 +350,7 @@ public abstract class SingularSchedulerAccessor implements SingularQuartzSchedul
      * por meio deste objeto.
      *
      * @return um set com todas as chaves, caso não exista nenhuma
-     *          retorna um set vazio.
+     * retorna um set vazio.
      * @throws SchedulerException
      */
     public Set<JobKey> getAllJobKeys() throws SchedulerException {
