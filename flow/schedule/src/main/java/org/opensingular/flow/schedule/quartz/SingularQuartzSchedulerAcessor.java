@@ -12,6 +12,9 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.spi.JobFactory;
 
+/**
+ * Interface responsible for the integration of Quartz Scheduler and Singular.
+ */
 public interface SingularQuartzSchedulerAcessor {
     /**
      * The PROP_THREAD_COUNT constant.

@@ -45,6 +45,10 @@ public class QuartzScheduleService implements IScheduleService, Loggable {
 
     private SingularQuartzSchedulerAcessor quartzSchedulerFactory;
 
+    /**
+     * This constructor could be use to set startImmediate false, for waiting something for start the schedule 
+     * @param startImmediate
+     */
     public QuartzScheduleService(boolean startImmediate) {
         this(false, startImmediate);
     }
