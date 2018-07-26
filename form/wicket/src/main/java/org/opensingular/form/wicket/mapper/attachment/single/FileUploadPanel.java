@@ -216,6 +216,7 @@ public class FileUploadPanel extends Panel implements Loggable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2095")
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         PackageTextTemplate fileUploadJSTemplate = new PackageTextTemplate(FileUploadPanel.class, "FileUploadPanel.js");
