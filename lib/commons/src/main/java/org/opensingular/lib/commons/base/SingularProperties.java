@@ -91,6 +91,8 @@ public interface SingularProperties {
 
     String SINGULAR_WICKET_DEBUG_ENABLED = "singular.wicket.debug.enabled";
 
+    String SINGULAR_FILEUPLOAD_MAXCHUNKSIZE = "singular.fileupload.maxchunksize";
+
     static SingularProperties get() {
         return SingularPropertiesImpl.get();
     }
