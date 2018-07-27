@@ -17,11 +17,13 @@
 package org.opensingular.form.persistence.dao;
 
 import org.hibernate.criterion.Restrictions;
+import org.opensingular.form.SIComposite;
 import org.opensingular.form.persistence.entity.FormEntity;
 import org.opensingular.form.persistence.entity.FormVersionEntity;
 import org.opensingular.lib.support.persistence.BaseDAO;
 
 import java.util.List;
+import java.util.Optional;
 
 public class FormVersionDAO extends BaseDAO<FormVersionEntity, Long> {
 
@@ -46,5 +48,12 @@ public class FormVersionDAO extends BaseDAO<FormVersionEntity, Long> {
         List<FormVersionEntity> formVersionEntities = super.listAll();
         formVersionEntities.forEach(fv -> fv.setIndexed('N'));
         getSession().flush();
+    }
+
+
+    //TODO reqdef
+    public FormVersionEntity findCurrentDraftFormVersionEntityForType(Long cod, String formName) {
+
+        return null;
     }
 }
