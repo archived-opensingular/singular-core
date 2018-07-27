@@ -57,7 +57,7 @@ public class TabMapper implements IWicketComponentMapper {
     @Override
     @SuppressWarnings("unchecked")
     public void buildView(final WicketBuildContext ctx) {
-        final ISupplier<SViewTab> tabViewSupplier = () -> (SViewTab) ctx.getModel().getObject().getType().getView();
+        final ISupplier<SViewTab> tabViewSupplier = () -> (SViewTab) ctx.getView();
 
         BSPanelGrid panel = newGrid(ctx);
 
@@ -163,7 +163,7 @@ public class TabMapper implements IWicketComponentMapper {
                 super.configureColspan();
                 // Configura o tamanho da aba de acordo com os atributos bootstrap informados
                 SIComposite instance = (SIComposite) ctx.getModel().getObject();
-                SViewTab tabView = (SViewTab) instance.getType().getView();
+                SViewTab tabView = (SViewTab) ctx.getView();
                 AtrBootstrap bootstrap = instance.asAtrBootstrap();
                 // da prioridade ao que foi definido na View e nos atributos em seguida
                 configureBSColumns(tabView, bootstrap);
