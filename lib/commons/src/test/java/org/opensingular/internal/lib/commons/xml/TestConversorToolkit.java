@@ -99,17 +99,9 @@ public class TestConversorToolkit {
 
     @Test
     public void testIntFromObject() {
-        Double doubleVal = 123.12;
-        Integer value = ConversorToolkit.getInteger(doubleVal);
-
-        assertEquals(value, (Integer) 123);
-
-        Object test = "123";
-        value = ConversorToolkit.getInteger(test);
-        assertEquals(value, (Integer) 123);
-
-        value = ConversorToolkit.getInteger(test);
-        Assert.assertNull(value);
+        assertEquals((Integer) 123, ConversorToolkit.getInteger(123.12));
+        assertEquals((Integer) 123, ConversorToolkit.getInteger("123"));
+        Assert.assertNull(ConversorToolkit.getInteger(null));
     }
 
     @Test(expected = IllegalArgumentException.class)
