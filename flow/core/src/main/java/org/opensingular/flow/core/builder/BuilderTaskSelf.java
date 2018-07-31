@@ -16,6 +16,8 @@
 
 package org.opensingular.flow.core.builder;
 
+import org.opensingular.flow.core.ITaskDefinition;
+import org.opensingular.flow.core.ITaskPredicate;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.flow.core.TaskAccessStrategy;
@@ -60,4 +62,5 @@ public interface BuilderTaskSelf<SELF extends BuilderTaskSelf<SELF, TASK>, TASK 
         getTask().setMetaDataValue(key, value);
         return self();
     }
+
 }

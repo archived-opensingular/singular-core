@@ -61,17 +61,6 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
             }
         }
 
-
-        for (FlowDefinition<?> definition : singularFlowConfigurationBean.getDefinitions()) {
-            for (STask<?> task : definition.getFlowMap().getTasks()) {
-                List<IConditionalTaskAction> acoesAutomaticas = task.getAutomaticActions();
-                if (!acoesAutomaticas.isEmpty()) {
-                    executeAutomaticActions(singularFlowConfigurationBean, log, definition, task, acoesAutomaticas);
-                }
-
-            }
-        }
-
         return log.toString();
     }
 
@@ -112,20 +101,6 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
         };
     }
 
-    private void executeAutomaticActions(SingularFlowConfigurationBean singularFlowConfigurationBean, StringBuilder log, FlowDefinition<?> flowDefinition, STask<?> task, List<IConditionalTaskAction> acoesAutomaticas) {
-        for (FlowInstance instance : flowDefinition.getDataService().retrieveAllInstancesIn(task)) {
-            TaskInstance taskInstance = instance.getCurrentTaskOrException();
-            for (IConditionalTaskAction action : acoesAutomaticas) {
-                if (action.getPredicate().test(taskInstance)) {
-                    log.append(instance.getFullId()).append(": Condicao Atingida '")
-                            .append(action.getPredicate().getDescription(taskInstance)).append("' executando '")
-                            .append(action.getCompleteDescription()).append("'\n");
-                    action.execute(taskInstance);
-                    singularFlowConfigurationBean.getPersistenceService().commitTransaction();
-                    break;
-                }
-            }
-        }
-    }
+
 
 }

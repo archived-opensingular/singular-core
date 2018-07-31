@@ -67,9 +67,11 @@ public class SampleRequirement extends FlowDefinition<FlowInstance> {
     public static final String ENVIAR_PARA_ANALISE = "Enviar para análise";
     public static final String COLOCAR_EM_EXIGENCIA = "Colocar em exigência";
     public static final String INDEFERIR = "Indeferir";
+    public static final String INDEFERIR_TACITAMENTE = "Indeferir Tácitamente";
     public static final String APROVAR_TECNICO = "Aprovar técnico";
     public static final String APROVAR_GERENTE = "Aprovar gerente";
     public static final String PUBLICAR = "Publicar";
+    public static final String PUBLICAR_TACITAMENTE = "Publicar Tácitamente";
     public static final String DEFERIR = "Deferir";
     public static final String CUMPRIR_EXIGENCIA = "Cumprir exigência";
     public static final String SOLICITAR_AJUSTE_ANALISE = "Solicitar ajuste análise técnica";
@@ -114,8 +116,8 @@ public class SampleRequirement extends FlowDefinition<FlowInstance> {
 
         // Tarefa aguardando analise a mais de um dia é indeferida automaticamente
         ITaskPredicate oneDayTimeLimit = TaskPredicates.timeLimitInDays(1);
-        flow.addAutomaticTransition(AGUARDANDO_ANALISE, oneDayTimeLimit, INDEFERIDO);
-        flow.addAutomaticTransition(AGUARDANDO_GERENTE, oneDayTimeLimit, AGUARDANDO_PUBLICACAO);
+        flow.from(AGUARDANDO_ANALISE).go(INDEFERIR_TACITAMENTE, INDEFERIDO, oneDayTimeLimit);
+        flow.from(AGUARDANDO_GERENTE).go(PUBLICAR_TACITAMENTE, AGUARDANDO_PUBLICACAO, oneDayTimeLimit);
 
         return flow.build();
     }

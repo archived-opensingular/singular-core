@@ -153,7 +153,7 @@ public class SampleRequirementTest extends TestFlowSupport {
         addDaysToTaskTargetDate(currentTask, -3);
         testDAO.update(currentTask);
 
-        new ExecuteWaitingTasksJob(null).run();
+        runAllJobs();
 
         assertLatestTaskName(AGUARDANDO_PUBLICACAO.getName(), ip);
     }

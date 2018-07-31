@@ -17,6 +17,7 @@
 package org.opensingular.flow.core.builder;
 
 import org.opensingular.flow.core.ITaskDefinition;
+import org.opensingular.flow.core.ITaskPredicate;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.flow.core.TaskAccessStrategy;
@@ -37,6 +38,27 @@ public interface BuilderTask {
     }
 
     public BuilderTransition<?> go(String actionName, ITaskDefinition taskRefDestiny);
+
+    /**
+     * Adds an automatic transition to the given {@param taskRefDestiny} using the {@param condition} predicate to
+     * decide when the transition should be made
+     *
+     * @param actionName
+     * @param taskRefDestiny
+     * @param condition
+     * @return
+     */
+    public BuilderTransitionPredicate<?> go(String actionName, ITaskDefinition taskRefDestiny, ITaskPredicate condition);
+
+    /**
+     * Same as  {@link #go(String, ITaskDefinition, ITaskPredicate)}, but it set a default actionName
+     * @param taskRefDestiny
+     * @param condition
+     * @return
+     */
+    default BuilderTransitionPredicate<?> go(ITaskDefinition taskRefDestiny, ITaskPredicate condition) {
+        return go(taskRefDestiny.getName(), taskRefDestiny, condition);
+    }
 
     public BuilderTask uiAccess(TaskAccessStrategy<?> accessStrategy);
 

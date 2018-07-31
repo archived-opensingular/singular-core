@@ -23,6 +23,7 @@ import org.opensingular.flow.core.service.IFlowDefinitionEntityService;
 import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.flow.core.view.IViewLocator;
+import org.opensingular.flow.schedule.IScheduleData;
 import org.opensingular.flow.schedule.IScheduleService;
 import org.opensingular.flow.schedule.ScheduleDataBuilder;
 import org.opensingular.flow.schedule.ScheduledJob;
@@ -41,7 +42,8 @@ import java.util.stream.Collectors;
 
 public abstract class SingularFlowConfigurationBean implements Loggable {
 
-    public static final String PREFIXO = "SGL";
+    public static final String           PREFIXO         = "SGL";
+    private             IScheduleService scheduleService = new QuartzScheduleService();
 
     private String moduleCod;
 
@@ -51,7 +53,6 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
      * @param moduleCod - chave do sistema cadastrado no em <code>TB_MODULO</code>
      */
     protected SingularFlowConfigurationBean(String moduleCod) {
-        super();
         this.moduleCod = moduleCod;
     }
 
@@ -61,9 +62,13 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     final void start() {
         for (final FlowDefinition<?> flowDefinition : getDefinitions()) {
-            for (STaskJava task : flowDefinition.getFlowMap().getJavaTasks()) {
-                if (!task.isImmediateExecution()) {
-                    getScheduleService().schedule(new ScheduledJob(task.getCompleteName(), task.getScheduleData(), () -> executeTask(task)));
+            for (STask<?> task : flowDefinition.getFlowMap().getTasks()) {
+                if (task.isJava() && !task.isImmediateExecution()) {
+                    STaskJava taskJava = (STaskJava) task;
+                    getScheduleService().schedule(new ScheduledJob(taskJava.getCompleteName(), taskJava.getScheduleData(), () -> executeTask(taskJava)));
+                }
+                for (IConditionalTaskAction action : task.getAutomaticActions()) {
+                    getScheduleService().schedule(new ScheduledJob(task.getCompleteName(), action.getScheduleData().orElse(getDefaultSchedule()), () -> executeAutomaticActions(task, action)));
                 }
             }
             for (FlowScheduledJob scheduledJob : flowDefinition.getScheduledJobs()) {
@@ -75,7 +80,11 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     }
 
     protected void configureWaitingTasksJobSchedule() {
-        getScheduleService().schedule(new ExecuteWaitingTasksJob(ScheduleDataBuilder.buildHourly(1)));
+        getScheduleService().schedule(new ExecuteWaitingTasksJob(getDefaultSchedule()));
+    }
+
+    private IScheduleData getDefaultSchedule() {
+        return ScheduleDataBuilder.buildHourly(1);
     }
 
 
@@ -319,7 +328,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     protected abstract IFlowDefinitionEntityService<?, ?, ?, ?, ?, ?, ?, ?> getFlowEntityService();
 
     protected IScheduleService getScheduleService() {
-        return new QuartzScheduleService();
+        return scheduleService;
     }
 
     public final Object executeTask(STaskJava task) {
@@ -338,5 +347,26 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
         } finally {
             getLogger().info("Job executed : {}", task.getName());
         }
+    }
+
+    public final Object executeAutomaticActions(STask<?> task, IConditionalTaskAction action) {
+        try {
+            final IFlowDataService<?>                dataService = task.getFlowMap().getFlowDefinition().getDataService();
+            final Collection<? extends FlowInstance> instances   = dataService.retrieveAllInstancesIn(task);
+            getLogger().info("Start running job: {} - {} instances. ", task.getName(), Optional.of(instances).map(Collection::size).orElse(0));
+            for (FlowInstance instance : instances) {
+                TaskInstance taskInstance = instance.getCurrentTaskOrException();
+                if (action.getPredicate().test(taskInstance)) {
+                    getLogger().info(new StringBuilder(instance.getFullId()).append(": Condicao Atingida '")
+                            .append(action.getPredicate().getDescription(taskInstance)).append("' executando '")
+                            .append(action.getCompleteDescription()).append("'\n").toString());
+                    action.execute(taskInstance);
+                    getPersistenceService().commitTransaction();
+                }
+            }
+        } finally {
+            getLogger().info("Job executed : {}", task.getName());
+        }
+        return null;
     }
 }
