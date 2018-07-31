@@ -648,7 +648,7 @@ public abstract class MElement implements Element, Serializable {
         if (value == null) {
             return addElement(name, (String) null);
         } else {
-            return addElement(name, ConversorToolkit.getDateFromData(value));
+            return addElement(name, ConversorToolkit.getDateFromDate(value));
         }
     }
 
@@ -670,7 +670,7 @@ public abstract class MElement implements Element, Serializable {
             trim = StringUtils.trimToNull(defaultValue);
         }
         if (trim != null) {
-            return addElement(name, ConversorToolkit.getDateFromData(trim));
+            return addElement(name, ConversorToolkit.getDateFromDate(trim));
         }
         return null;
     }
