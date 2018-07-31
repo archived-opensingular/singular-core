@@ -16,17 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static java.util.stream.Collectors.*;
-import static org.apache.commons.lang3.ObjectUtils.*;
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -52,12 +41,25 @@ import org.opensingular.form.wicket.util.SingularFormProcessingPayload;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 
+import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
+
 public class TabMapper implements IWicketComponentMapper {
 
     @Override
     @SuppressWarnings("unchecked")
     public void buildView(final WicketBuildContext ctx) {
-        final ISupplier<SViewTab> tabViewSupplier = () -> (SViewTab) ctx.getModel().getObject().getType().getView();
+        final ISupplier<SViewTab> tabViewSupplier = () -> (SViewTab) ctx.getView();
+
 
         BSPanelGrid panel = newGrid(ctx);
 
@@ -66,6 +68,7 @@ public class TabMapper implements IWicketComponentMapper {
                 @Override
                 protected Set<String> update(Set<String> set) {
                     set.add("singular-container-tab");
+                    set.add("tab-pane active"); //This class have to be inclued. For more information: BSPanelGrid.js
                     return set;
                 }
             });
@@ -110,8 +113,8 @@ public class TabMapper implements IWicketComponentMapper {
                 } else if (payload instanceof SingularFormProcessingPayload) {
                     SingularFormProcessingPayload singularPayload = (SingularFormProcessingPayload) payload;
                     Set<String> typeNames = tabViewSupplier.get().getTabs().stream()
-                        .flatMap(it -> it.getTypesNames().stream())
-                        .collect(Collectors.toSet());
+                            .flatMap(it -> it.getTypesNames().stream())
+                            .collect(Collectors.toSet());
 
                     if (singularPayload.hasUpdatedType(typeNames)) {
                         target.add(panel);
@@ -143,19 +146,19 @@ public class TabMapper implements IWicketComponentMapper {
             protected void onTabCreated(BSTab tab, Component tabComponent) {
                 super.onTabCreated(tab, tabComponent);
                 ISupplier<List<IModel<? extends SInstance>>> subtreeModels = () -> tab.getSubtree().stream()
-                    .map(it -> new SInstanceFieldModel<>(tab.getModel(), it))
-                    .collect(toList());
+                        .map(it -> new SInstanceFieldModel<>(tab.getModel(), it))
+                        .collect(toList());
                 SValidationFeedbackHandler.bindTo(new FeedbackFence(tabComponent))
-                    .addInstanceModels(subtreeModels.get())
-                    .addListener((ISValidationFeedbackHandlerListener) (handler, target, container, baseInstances, oldErrors, newErrors) -> {
-                        if (target != null) {
-                            target.add(tabComponent);
-                        }
-                    });
+                        .addInstanceModels(subtreeModels.get())
+                        .addListener((ISValidationFeedbackHandlerListener) (handler, target, container, baseInstances, oldErrors, newErrors) -> {
+                            if (target != null) {
+                                target.add(tabComponent);
+                            }
+                        });
                 tabComponent.add($b.classAppender("has-errors",
-                    $m.get((ISupplier<Boolean>) () -> subtreeModels.get().stream()
-                        .map(IModel::getObject)
-                        .anyMatch(it -> !SValidationFeedbackHandler.collectNestedErrors(new FeedbackFence(tabComponent)).isEmpty()))));
+                        $m.get((ISupplier<Boolean>) () -> subtreeModels.get().stream()
+                                .map(IModel::getObject)
+                                .anyMatch(it -> !SValidationFeedbackHandler.collectNestedErrors(new FeedbackFence(tabComponent)).isEmpty()))));
             }
 
             @Override
@@ -163,7 +166,7 @@ public class TabMapper implements IWicketComponentMapper {
                 super.configureColspan();
                 // Configura o tamanho da aba de acordo com os atributos bootstrap informados
                 SIComposite instance = (SIComposite) ctx.getModel().getObject();
-                SViewTab tabView = (SViewTab) instance.getType().getView();
+                SViewTab tabView = (SViewTab) ctx.getView();
                 AtrBootstrap bootstrap = instance.asAtrBootstrap();
                 // da prioridade ao que foi definido na View e nos atributos em seguida
                 configureBSColumns(tabView, bootstrap);
@@ -212,9 +215,9 @@ public class TabMapper implements IWicketComponentMapper {
     }
 
     private static class TabAnnotationIconState {
-        boolean                    isAnnotated, hasRejected, hasApproved;
+        boolean isAnnotated, hasRejected, hasApproved;
         private WicketBuildContext ctx;
-        private final SIComposite  instance;
+        private final SIComposite instance;
         private final List<String> subtree;
 
         public TabAnnotationIconState(WicketBuildContext ctx, SIComposite instance, List<String> subtree) {
@@ -239,7 +242,7 @@ public class TabMapper implements IWicketComponentMapper {
                 if (annotatedField.hasAnyAnnotationOnTree()) {
                     checkAnnotation(annotatedField);
                 } else if (ctx.getRootContext().getAnnotationMode().editable() &&
-                    annotatedField.hasAnyAnnotable()) {
+                        annotatedField.hasAnyAnnotable()) {
                     isAnnotated = true;
                 }
             }
