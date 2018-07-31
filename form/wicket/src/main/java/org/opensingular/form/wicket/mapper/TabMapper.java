@@ -68,7 +68,7 @@ public class TabMapper implements IWicketComponentMapper {
                 @Override
                 protected Set<String> update(Set<String> set) {
                     set.add("singular-container-tab");
-                    set.add("tab-pane active"); //This class have to be inclued. For more information: BSPanelGrid.js
+                    set.add("tab-pane active"); //This class have to be included. For more information: BSPanelGrid.js
                     return set;
                 }
             });
