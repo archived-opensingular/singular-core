@@ -17,15 +17,28 @@
 (function () {
     "use strict";
 
+
     var $tabMenuActive = $('.tab-pane.active .container-tabMenu-active'),
         $containerActive = $('.tab-pane.active .container-content-active'),
         $navHeader = $('.page-header.navbar.navbar-fixed-top'),
-        offsetTop = $tabMenuActive.offset().top;
+        offsetTop = ($tabMenuActive.offset().top);
     var width;
     var NAV_PADDING_SCROLL = 15;
     var differenceTopNavWhenScroll;
     var componentToFixPosition;
     configureInitialize();
+
+    $(window).scroll(togglePosition);
+    Wicket.Event.subscribe("/ajax/call/complete", togglePosition);
+
+    $(window).resize(function () {
+        configureInitialize();
+        configureOffSetTop();
+        configureWidth();
+        togglePosition();
+    });
+
+    configureWidth();
 
     function isBellowPageHeader() {
         return differenceTopNavWhenScroll <= $navHeader.height()
@@ -58,8 +71,6 @@
         width = $tabMenuActive.parent().width();
     }
 
-    configureWidth();
-
     function togglePosition() {
         configureInitialize();
 
@@ -85,14 +96,5 @@
             $tabMenuActive.css('width', 'auto');
         }
     }
-
-    $(window).scroll(togglePosition);
-    Wicket.Event.subscribe("/ajax/call/complete", togglePosition);
-
-    $(window).resize(function () {
-        configureOffSetTop();
-        configureWidth();
-        togglePosition();
-    });
 
 }());
