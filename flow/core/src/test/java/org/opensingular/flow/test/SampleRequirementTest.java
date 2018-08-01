@@ -286,7 +286,7 @@ public class SampleRequirementTest extends TestFlowSupport {
         TaskInstanceEntity currentTask = ip.getCurrentTaskOrException().getEntityTaskInstance();
         addDaysToTaskTargetDate(currentTask, -3);
         testDAO.update(currentTask);
-        new ExecuteWaitingTasksJob(null).run();
+        runAllJobs();
         assertEquals(++counterHistory, testDAO.countHistory());
 
         List<TaskInstanceHistoryEntity> lastHistories = testDAO.retrieveLastHistories(1);
