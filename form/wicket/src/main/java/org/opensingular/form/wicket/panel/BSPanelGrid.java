@@ -32,7 +32,6 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.util.template.PackageTextTemplate;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.component.SingularFormWicket;
@@ -102,8 +101,7 @@ public abstract class BSPanelGrid extends Panel implements Loggable {
             public void renderHead(Component component, IHeaderResponse response) {
                 super.renderHead(component, response);
                 response.render(OnDomReadyHeaderItem.forScript("window.BSPANEL.updateClassActive('" + keyActive + "','#" + content.getMarkupId() + "','#" + tabMenu.getMarkupId() + "' );"));
-                response.render(OnDomReadyHeaderItem.forScript(new PackageTextTemplate(BSPanelGrid.class, "BSTabPanelGrid.js").getString()));
-
+                response.render(OnDomReadyHeaderItem.forScript("window.BSPANEL.updateScroll();"));
             }
         });
     }
