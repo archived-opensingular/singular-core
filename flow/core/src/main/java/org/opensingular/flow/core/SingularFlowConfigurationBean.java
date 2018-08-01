@@ -16,15 +16,6 @@
 
 package org.opensingular.flow.core;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.flow.core.entity.IEntityFlowInstance;
 import org.opensingular.flow.core.service.IFlowDataService;
@@ -32,14 +23,25 @@ import org.opensingular.flow.core.service.IFlowDefinitionEntityService;
 import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.flow.core.view.IViewLocator;
-
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.schedule.IScheduleData;
 import org.opensingular.schedule.IScheduleService;
 import org.opensingular.schedule.ScheduleDataBuilder;
 import org.opensingular.schedule.ScheduledJob;
 import org.opensingular.schedule.quartz.QuartzScheduleService;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import static org.opensingular.lib.commons.base.SingularProperties.SINGULAR_QUARTZ_DEFAULT_CRON;
 
 public abstract class SingularFlowConfigurationBean implements Loggable {
 
@@ -49,6 +51,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     private String moduleCod;
 
     private List<FlowInstanceListener> notifiers = new ArrayList<>();
+    private IScheduleData              scheduleData;
 
     /**
      * @param moduleCod - chave do sistema cadastrado no em <code>TB_MODULO</code>
@@ -85,7 +88,15 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     }
 
     private IScheduleData getDefaultSchedule() {
-        return ScheduleDataBuilder.buildHourly(1);
+        if (scheduleData == null) {
+            scheduleData = SingularProperties
+                    .get()
+                    .getPropertyOpt(SINGULAR_QUARTZ_DEFAULT_CRON)
+                    .map(ScheduleDataBuilder::buildFromCron)
+                    .orElse(ScheduleDataBuilder.buildHourly(1));
+            getLogger().info("SINGULAR DEFAULT SCHEDULER DESCRIPTION: {} - CRON EXPRESSION: {}", scheduleData.getDescription(), scheduleData.getCronExpression());
+        }
+        return scheduleData;
     }
 
 
