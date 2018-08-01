@@ -369,9 +369,10 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
             for (FlowInstance instance : instances) {
                 TaskInstance taskInstance = instance.getCurrentTaskOrException();
                 if (action.getPredicate().test(taskInstance)) {
-                    getLogger().info(new StringBuilder(instance.getFullId()).append(": Condicao Atingida '")
-                            .append(action.getPredicate().getDescription(taskInstance)).append("' executando '")
-                            .append(action.getCompleteDescription()).append("'\n").toString());
+                    getLogger().info("{}: Condicao Atingida '{}' executando  {} ",
+                            instance.getFullId(),
+                            action.getPredicate().getDescription(taskInstance),
+                            action.getCompleteDescription());
                     action.execute(taskInstance);
                     getPersistenceService().commitTransaction();
                 }
