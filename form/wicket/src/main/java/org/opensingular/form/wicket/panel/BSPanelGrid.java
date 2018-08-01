@@ -16,6 +16,15 @@
 
 package org.opensingular.form.wicket.panel;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MetaDataKey;
@@ -35,6 +44,7 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.component.SingularFormWicket;
+import org.opensingular.form.wicket.panel.quicknav.QuickNavPanel;
 import org.opensingular.lib.commons.lambda.IBiFunction;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
@@ -56,7 +66,7 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
 public abstract class BSPanelGrid extends Panel implements Loggable {
 
-    private static final MetaDataKey<BSTab> TAB_KEY = new MetaDataKey<BSPanelGrid.BSTab>() {
+    public static final MetaDataKey<BSTab> TAB_KEY = new MetaDataKey<BSPanelGrid.BSTab>() {
     };
 
     private static final String ID_TAB = "tab";
@@ -104,6 +114,8 @@ public abstract class BSPanelGrid extends Panel implements Loggable {
                 response.render(OnDomReadyHeaderItem.forScript("window.BSPANEL.updateScroll();"));
             }
         });
+        add(new QuickNavPanel("help", buildTabControl(ID_TAB)));
+
     }
 
     @SuppressWarnings("unchecked")

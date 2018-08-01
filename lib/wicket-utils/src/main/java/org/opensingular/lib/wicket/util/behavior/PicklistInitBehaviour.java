@@ -16,12 +16,25 @@
 
 package org.opensingular.lib.wicket.util.behavior;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.util.template.PackageTextTemplate;
+import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.util.Loggable;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
-import org.apache.wicket.Component;
 
-
-public class PicklistInitBehaviour extends InitScriptBehaviour {
+/**
+ * Documantion of PickList: https://github.com/lou/multi-select/
+ * <p>
+ * Note: This PickList trigger the <code>picklist:selected</code> javascript event when something is selected ou deslected.
+ * <p>
+ * The event have a delay of 1400ms to happen, this behavior have to be done for grant that all click have a correct action.
+ */
+public class PicklistInitBehaviour extends InitScriptBehaviour implements Loggable {
 
     private final static String BTN_TEMPLATE = "<button %s type='button' class='btn btn-sm blue-hoki btn-block'><i class='fa %s'></i> %s</button>";
     private final static String BTN_ADD = String.format(BTN_TEMPLATE, "id='%s'", "fa-plus", "Adicionar Todos");
@@ -33,30 +46,23 @@ public class PicklistInitBehaviour extends InitScriptBehaviour {
         final String addAllId = UUID.randomUUID().toString();
         final String removeAllId = UUID.randomUUID().toString();
 
-        String jsonConfig = "";
-        jsonConfig += "selectableHeader:" + stringfy(String.format(BTN_ADD, addAllId));
-        jsonConfig += ",";
-        jsonConfig += "selectionHeader:" + stringfy(String.format(BTN_REMOVE, removeAllId));
+        try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "PicklistInitBehaviour.js")) {
+            final String markupId = component.getMarkupId(true);
+            final Map<String, String> params = new HashMap<>();
+            params.put("id", markupId);
+            params.put("addAllId", addAllId);
+            params.put("buttonAdd", stringfy(String.format(BTN_ADD, addAllId)));
+            params.put("buttonRemove", stringfy(String.format(BTN_REMOVE, removeAllId)));
+            params.put("removeAllId", removeAllId);
+            packageTextTemplate.interpolate(params);
+            return packageTextTemplate.asString();
+        } catch (IOException e) {
+            getLogger().error(e.getMessage(), e);
+            throw SingularException.rethrow(e);
+        }
 
-        final String markupId = component.getMarkupId(true);
-
-        String script = "$('#" + markupId + "').multiSelect({" + jsonConfig + "});";
-        script += getOnClickFunction(markupId, addAllId, "select_all");
-        script += getOnClickFunction(markupId, removeAllId, "deselect_all");
-
-        return script;
     }
 
-    private String getOnClickFunction(String select, String button, String option) {
-        String script = ";";
-        script += "$('#{button}').on('click', function(){";
-        script += "    $('#{select}').multiSelect('{option}');";
-        script += "});";
-        return script
-                .replace("{button}", button)
-                .replace("{select}", select)
-                .replace("{option}", option);
-    }
 
     private String stringfy(String string) {
         return "\"" + string + "\"";

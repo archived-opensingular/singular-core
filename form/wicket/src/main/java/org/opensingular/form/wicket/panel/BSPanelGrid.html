@@ -49,14 +49,35 @@
             color: red;
         }
 
+        @media (max-width: 768px) {
+            .quick-nav {
+                display: inline !important;
+            }
+            .tab-navigation {
+                display: none !important;
+            }
+            .tab-content-container {
+                width: 100%  !important;
+            }
+        }
+
+        .quick-nav {
+            display: none;
+        }
+        .tab-navigation {
+            display: inline;
+        }
+
     </style>
 
 </wicket:head>
 
 <wicket:panel xmlns:wicket="http://wicket.apache.org">
+
+    <div wicket:id="help" class="quick-nav"></div>
     <form wicket:id="panel-form">
         <div class="row">
-            <div wicket:id="tab-navigation">
+            <div wicket:id="tab-navigation" class="tab-navigation">
                 <ul wicket:id="tab-menu" class="nav nav-tabs tabs-left" style="background-color: white;">
                     <li role="presentation" wicket:id="tab" class="tab-item">
                         <a wicket:id="tabAnchor" role="tab">
@@ -66,7 +87,7 @@
                     </li>
                 </ul>
             </div>
-            <div wicket:id="tab-content">
+            <div wicket:id="tab-content" class="tab-content-container">
                 <div class="tab-content">
                     <div class="tab-pane active in">
                         <div class="form-body" wicket:id="grid"></div>
