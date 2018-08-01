@@ -144,17 +144,9 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.21.0</version>
-                <configuration>
-                    <argLine>-Djava.locale.providers=COMPAT</argLine>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.1</version>
+                <version>0.7.8</version>
                 <configuration>
                     <destFile>${sonar.jacoco.reportPaths}</destFile>
                     <append>true</append>
@@ -294,7 +286,7 @@
 
     <properties>
         <sonar.issue.ignore.multicriteria>
-            e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,e13,e14,e15,e16,e17,e18,e19,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19,s20,s21,s22,s23,s24,s25,s26,s27,s28,s29,s30,s31,s32,s33,s34,s35,s36,s37,s38,s39,s40,s41,s42,s43,s44,s45,s46,s47,s48,s49,s50,s51,s52,s53,s54,s55,s56,s57,s58,s59
+            e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,e13,e14,e15,e16,e17,e18,e19,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18,s19,s20,s21,s22,s23,s24,s25,s26,s27,s28,s29,s30,s31,s32,s33,s34,s35,s36,s37,s38,s39,s40,s41,s42,s43,s44,s45,s46,s47,s48,s49,s50,s51,s52,s53,s54,s55,s56,s57,s58,s59,s60,s61
         </sonar.issue.ignore.multicriteria>
         <!-- Falso positivo: injeção via construtor -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>squid:S3306</sonar.issue.ignore.multicriteria.e1.ruleKey>
@@ -627,11 +619,19 @@
         </sonar.issue.ignore.multicriteria.s59.ruleKey>
         <sonar.issue.ignore.multicriteria.s59.resourceKey>**/ClasspathResourceResolver.java
         </sonar.issue.ignore.multicriteria.s59.resourceKey>
+        <sonar.issue.ignore.multicriteria.s60.ruleKey>squid:MethodCyclomaticComplexity
+        </sonar.issue.ignore.multicriteria.s60.ruleKey>
+        <sonar.issue.ignore.multicriteria.s60.resourceKey>**/SingularCsrfPreventionRequestCycleListener.java
+        </sonar.issue.ignore.multicriteria.s60.resourceKey>
+        <sonar.issue.ignore.multicriteria.s61.ruleKey>findsecbugs:CRLF_INJECTION_LOGS
+        </sonar.issue.ignore.multicriteria.s61.ruleKey>
+        <sonar.issue.ignore.multicriteria.s61.resourceKey>**/SingularCsrfPreventionRequestCycleListener.java
+        </sonar.issue.ignore.multicriteria.s61.resourceKey>
 
         <!-- Sonar -->
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-        <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
+        <sonar.jacoco.reportPaths>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPaths>
         <sonar.language>java</sonar.language>
 
         <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.url>
