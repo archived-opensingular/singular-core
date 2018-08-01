@@ -419,9 +419,9 @@ public final class ConversorToolkit {
     }
 
     //@formatter:off
-    private static final Pattern PATTERN_URL = Pattern.compile(
+    private static final Pattern PATTERN_URL = Pattern.compile( //NOSONAR
             "(?i)\\b((?:https?://|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s" +
-                    "()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:\'\".,<>???]))"); //NOSONAR
+                    "()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:\'\".,<>???]))");
     //@formatter:on
 
     @Nonnull
