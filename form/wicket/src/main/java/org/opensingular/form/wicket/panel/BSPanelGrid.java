@@ -16,15 +16,6 @@
 
 package org.opensingular.form.wicket.panel;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MetaDataKey;
@@ -114,7 +105,7 @@ public abstract class BSPanelGrid extends Panel implements Loggable {
                 response.render(OnDomReadyHeaderItem.forScript("window.BSPANEL.updateScroll();"));
             }
         });
-        add(new QuickNavPanel("help", buildTabControl(ID_TAB)));
+        add(new QuickNavPanel("help", buildTabControl()));
 
     }
 
@@ -142,7 +133,7 @@ public abstract class BSPanelGrid extends Panel implements Loggable {
     }
 
     private RefreshingView<String> buildTabControl() {
-        return new RefreshingView<String>(BSPanelGrid.ID_TAB) {
+        return new RefreshingView<String>(ID_TAB) {
             @Override
             protected Iterator<IModel<String>> getItemModels() {
                 return tabMap.keySet().stream()

@@ -26,10 +26,6 @@
             $(idTabMenu).addClass(' container-tabMenu-active ');
         }
 
-        function updateClassActive(nameTab, idContent, idTabMenu) {
-            updateContentTabActive(idContent, idTabMenu);
-            updateTabActive(nameTab, idTabMenu, idContent);
-        }
 
         function isTabInsideTab(inside, idTabMenu) {
             var id = $('.container-content-active ' + inside).attr('id');
@@ -38,7 +34,7 @@
             } else if (id == idTabMenu.replace('#', '')) {
                 return true;
             } else {
-                isTabInsideTab(' .container-content-active ' + inside , idTabMenu);
+                isTabInsideTab(' .container-content-active ' + inside, idTabMenu);
             }
         }
 
@@ -53,8 +49,13 @@
             $('.tab-pane.active .container-tabMenu-active li[data-tab-name=' + nameTab + ']').addClass('active');
         }
 
+        function updateClassActive(nameTab, idContent, idTabMenu) {
+            updateContentTabActive(idContent, idTabMenu);
+            updateTabActive(nameTab, idTabMenu, idContent);
+        }
 
-        function updateScroll(){
+
+        function updateScroll() {
 
             var $tabMenuActive = $('.tab-pane.active .container-tabMenu-active'),
                 $containerActive = $('.tab-pane.active .container-content-active'),
@@ -71,8 +72,7 @@
 
             $(window).resize(function () {
                 configureInitialize();
-                configureOffSetTop();
-                configureWidth();
+                reconfigureNavAttributes();
                 togglePosition();
             });
 
@@ -95,14 +95,18 @@
                 if ($tabMenuActive.attr('id') != $('.tab-pane.active .container-tabMenu-active').attr('id')) {
                     $tabMenuActive = $('.tab-pane.active .container-tabMenu-active');
                     $containerActive = $('.tab-pane.active .container-content-active');
-                    configureOffSetTop();
-                    configureWidth();
+                    reconfigureNavAttributes();
                 }
 
             }
 
             function configureOffSetTop() {
                 offsetTop = ($tabMenuActive.offset().top);
+            }
+
+            function reconfigureNavAttributes() {
+                configureOffSetTop();
+                configureWidth();
             }
 
             function configureWidth() {
@@ -112,6 +116,9 @@
             function togglePosition() {
                 configureInitialize();
 
+                if ($(window).scrollTop() == 0) {
+                    reconfigureNavAttributes();
+                }
                 differenceTopNavWhenScroll = offsetTop - $(window).scrollTop();
                 componentToFixPosition = $navHeader.height() + NAV_PADDING_SCROLL + 15 + $tabMenuActive.height();
                 if (isBellowPageHeader()) {
