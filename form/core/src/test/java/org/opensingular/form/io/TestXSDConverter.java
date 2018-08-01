@@ -73,6 +73,7 @@ public class TestXSDConverter  {
 
     private void validateXSD(String xsd) throws IOException, SAXException {
         SchemaFactory factory   = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        factory.setResourceResolver(new ClasspathResourceResolver());
         Schema        schema    = factory.newSchema(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("XMLSchema.xsd")));
         Validator     validator = schema.newValidator();
         validator.validate(new StreamSource(createTempFile("xsd", xsd)));
