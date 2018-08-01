@@ -16,10 +16,6 @@
 
 package org.opensingular.lib.support.spring.util;
 
-import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.inject.Named;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.context.SingularContext;
@@ -37,6 +33,10 @@ import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.Order;
+
+import javax.annotation.Nonnull;
+import javax.inject.Named;
+import java.util.Optional;
 
 /**
  * Métodos para localização e retorno do {@link ApplicationContext} atual.
@@ -163,12 +163,12 @@ public class ApplicationContextProvider implements ApplicationContextAware {
         if (!ArrayUtils.isEmpty(names)) {
             for (String name : names) {
                 if (ApplicationContextProvider.get().getBean(name).equals(bean)) {
-                    LOGGER.info("==================> bean name:" + name + " class: " + bean.getClass().getName());
+                    LOGGER.info("==================> bean name: {} class: {} ", name, bean.getClass().getName());
                     return name;
                 }
             }
         } else {
-            LOGGER.info("==================> pojo class: " + bean.getClass().getName());
+            LOGGER.info("==================> pojo class: {}", bean.getClass().getName());
             return null;
         }
         return null;
