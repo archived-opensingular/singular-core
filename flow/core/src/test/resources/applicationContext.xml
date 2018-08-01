@@ -11,7 +11,7 @@
 
     <bean class="org.opensingular.lib.context.singleton.SpringBoundedSingletonStrategy"/>
 
-    <bean class="org.opensingular.flow.test.TransactionalQuartzScheduledService"/>
+    <bean class="org.opensingular.flow.test.support.SynchronousScheduleService"/>
 
     <bean name="singularFlowConfigurationBean"
           class="org.opensingular.flow.persistence.util.HibernateSingularFlowConfigurationBean">
