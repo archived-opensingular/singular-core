@@ -60,7 +60,6 @@ public class TabMapper implements IWicketComponentMapper {
     public void buildView(final WicketBuildContext ctx) {
         final ISupplier<SViewTab> tabViewSupplier = () -> (SViewTab) ctx.getView();
 
-
         BSPanelGrid panel = newGrid(ctx);
 
         if (ctx.getCurrentInstance().getParent() == null) {
@@ -113,8 +112,8 @@ public class TabMapper implements IWicketComponentMapper {
                 } else if (payload instanceof SingularFormProcessingPayload) {
                     SingularFormProcessingPayload singularPayload = (SingularFormProcessingPayload) payload;
                     Set<String> typeNames = tabViewSupplier.get().getTabs().stream()
-                            .flatMap(it -> it.getTypesNames().stream())
-                            .collect(Collectors.toSet());
+                        .flatMap(it -> it.getTypesNames().stream())
+                        .collect(Collectors.toSet());
 
                     if (singularPayload.hasUpdatedType(typeNames)) {
                         target.add(panel);
