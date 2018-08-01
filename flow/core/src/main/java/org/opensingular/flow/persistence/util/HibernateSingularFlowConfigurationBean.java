@@ -24,7 +24,8 @@ import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.flow.persistence.entity.util.SessionLocator;
 import org.opensingular.flow.persistence.service.DefaultHibernateFlowDefinitionService;
 import org.opensingular.flow.persistence.service.DefaultHibernatePersistenceService;
-import org.opensingular.flow.schedule.IScheduleService;
+
+import org.opensingular.schedule.IScheduleService;
 import org.springframework.util.Assert;
 
 import javax.inject.Inject;

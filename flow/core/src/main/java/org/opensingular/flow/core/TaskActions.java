@@ -17,9 +17,10 @@
 package org.opensingular.flow.core;
 
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.flow.schedule.IScheduleData;
+
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.schedule.IScheduleData;
 
 import java.util.Optional;
 
@@ -79,9 +80,9 @@ public class TaskActions {
     static class ConditionalTaskActionImpl implements IConditionalTaskAction {
 
         private final ITaskPredicate predicate;
-        private final ITaskAction action;
-        private final String destinationTaskAbbreviation;
-        private IScheduleData scheduleData;
+        private final ITaskAction    action;
+        private final String         destinationTaskAbbreviation;
+        private       IScheduleData  scheduleData;
 
         ConditionalTaskActionImpl(ITaskPredicate predicate, ITaskAction action, String destinationTaskAbbreviation) {
             this.predicate = predicate;

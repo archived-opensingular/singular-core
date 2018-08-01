@@ -18,7 +18,8 @@
 
 package org.opensingular.flow.core.builder;
 
-import org.opensingular.flow.schedule.IScheduleData;
+
+import org.opensingular.schedule.IScheduleData;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public interface BuilderTransitionPredicate<SELF extends BuilderTransitionPredicate<SELF>> extends BuilderTransition<SELF> {

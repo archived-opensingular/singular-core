@@ -16,7 +16,9 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.schedule.IScheduleData;
+
+
+import org.opensingular.schedule.IScheduleData;
 
 import java.util.Optional;
 

@@ -29,7 +29,8 @@ import org.opensingular.flow.core.STaskHuman;
 import org.opensingular.flow.core.STaskJava;
 import org.opensingular.flow.core.STaskWait;
 import org.opensingular.flow.core.STransition;
-import org.opensingular.flow.schedule.IScheduleData;
+
+import org.opensingular.schedule.IScheduleData;
 
 import java.util.Objects;
 
