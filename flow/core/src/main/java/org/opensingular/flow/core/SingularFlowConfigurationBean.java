@@ -16,6 +16,15 @@
 
 package org.opensingular.flow.core;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
+
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.flow.core.entity.IEntityFlowInstance;
 import org.opensingular.flow.core.service.IFlowDataService;
@@ -30,15 +39,10 @@ import org.opensingular.flow.schedule.ScheduledJob;
 import org.opensingular.flow.schedule.quartz.QuartzScheduleService;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.util.Loggable;
-
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import org.opensingular.schedule.IScheduleService;
+import org.opensingular.schedule.ScheduleDataBuilder;
+import org.opensingular.schedule.ScheduledJob;
+import org.opensingular.schedule.quartz.QuartzScheduleService;
 
 public abstract class SingularFlowConfigurationBean implements Loggable {
 

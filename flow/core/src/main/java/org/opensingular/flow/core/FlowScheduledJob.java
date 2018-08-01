@@ -16,12 +16,13 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.schedule.IScheduleData;
-import org.opensingular.flow.schedule.IScheduledJob;
-import org.opensingular.flow.schedule.ScheduleDataBuilder;
-
 import java.util.Objects;
 import java.util.function.Supplier;
+
+import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.schedule.IScheduleData;
+import org.opensingular.schedule.IScheduledJob;
+import org.opensingular.schedule.ScheduleDataBuilder;
 
 public class FlowScheduledJob implements IScheduledJob {
 
@@ -29,7 +30,7 @@ public class FlowScheduledJob implements IScheduledJob {
 
     private final String name;
 
-    private Supplier<Object> job;
+    private ISupplier<Object> job;
 
     private IScheduleData scheduleData;
 
@@ -40,7 +41,7 @@ public class FlowScheduledJob implements IScheduledJob {
         this.name = name;
     }
 
-    public FlowScheduledJob call(Supplier<Object> impl) {
+    public FlowScheduledJob call(ISupplier<Object> impl) {
         this.job = impl;
         return this;
     }

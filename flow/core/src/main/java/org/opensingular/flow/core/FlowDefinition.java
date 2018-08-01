@@ -28,8 +28,8 @@ import org.opensingular.flow.core.entity.IEntityTaskDefinition;
 import org.opensingular.flow.core.entity.IEntityTaskInstance;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
-import org.opensingular.flow.core.property.MetaDataMap;
 import org.opensingular.flow.core.property.MetaDataEnabled;
+import org.opensingular.flow.core.property.MetaDataMap;
 import org.opensingular.flow.core.service.IFlowDataService;
 import org.opensingular.flow.core.service.IFlowDefinitionEntityService;
 import org.opensingular.flow.core.service.IPersistenceService;
@@ -38,6 +38,7 @@ import org.opensingular.flow.core.variable.VarService;
 import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.internal.lib.support.spring.injection.SingularSpringInjector;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.net.Lnk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -219,7 +219,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
      * @param name o nome do <i>job</i>.
      * @return o {@link FlowScheduledJob} que encapsula o <i>job</i> criado.
      */
-    protected final FlowScheduledJob addScheduledJob(Supplier<Object> impl, String name) {
+    protected final FlowScheduledJob addScheduledJob(ISupplier<Object> impl, String name) {
         return addScheduledJob(name).call(impl);
     }
 

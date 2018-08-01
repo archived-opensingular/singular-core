@@ -16,12 +16,12 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.schedule.IScheduleData;
-import org.opensingular.flow.schedule.IScheduledJob;
-
 import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
+
+import org.opensingular.schedule.IScheduleData;
+import org.opensingular.schedule.IScheduledJob;
 
 public class ExecuteWaitingTasksJob implements IScheduledJob {
 
