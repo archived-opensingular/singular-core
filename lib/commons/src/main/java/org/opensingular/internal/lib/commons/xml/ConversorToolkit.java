@@ -418,10 +418,11 @@ public final class ConversorToolkit {
         return cs;
     }
 
+    //@formatter:off
     private static final Pattern PATTERN_URL = Pattern.compile(
             "(?i)\\b((?:https?://|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s" +
-                    "()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:\'\".,<>???]))");
-    //NOSONAR
+                    "()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:\'\".,<>???]))"); //NOSONAR
+    //@formatter:on
 
     @Nonnull
     private static String converterURL(@Nonnull String original) {
@@ -579,7 +580,7 @@ public final class ConversorToolkit {
     @Nullable
     public static Double truncate(@Nullable Double value, int decimals) {
         //Uses BigDecimal because sometimes doubles has problemas with "dizimas"
-        return value == null ? null : truncate(BigDecimal.valueOf(value), decimals).doubleValue();
+        return value == null ? null : truncateInternal(BigDecimal.valueOf(value), decimals).doubleValue();
     }
 
     /**
@@ -589,9 +590,11 @@ public final class ConversorToolkit {
      */
     @Nullable
     public static BigDecimal truncate(@Nullable BigDecimal value, int decimals) {
-        if (value == null) {
-            return null;
-        }
+        return value == null ? null : truncateInternal(value, decimals);
+    }
+
+    @Nonnull
+    private static BigDecimal truncateInternal(@Nonnull BigDecimal value, int decimals) {
         return value.setScale(decimals, RoundingMode.DOWN);
     }
 
@@ -656,12 +659,12 @@ public final class ConversorToolkit {
     }
 
     /** Returns true if the number is zero. Null value return false. */
-    public static boolean isZero(Number a) {
+    public static boolean isZero(@Nullable Number a) {
         return a != null && isZeroInternal(a);
     }
 
     /** Returns true if the number is zero or null. */
-    public static boolean isZeroOrNull(Number a) {
+    public static boolean isZeroOrNull(@Nullable Number a) {
         return a == null || isZeroInternal(a);
     }
 
@@ -669,7 +672,7 @@ public final class ConversorToolkit {
     private static boolean isZeroInternal(@Nonnull Number a) {
         if (a instanceof BigDecimal) {
             return ((BigDecimal) a).compareTo(BigDecimal.ZERO) == 0;
-        } else if (isIntegerOrLong(a)) {
+        } else if (a instanceof Integer || a instanceof Long) {
             return a.longValue() == 0;
         }
         return Double.doubleToRawLongBits(a.doubleValue()) == 0;
