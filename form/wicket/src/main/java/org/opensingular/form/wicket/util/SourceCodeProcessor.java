@@ -75,7 +75,7 @@ public class SourceCodeProcessor {
     }
 
     private boolean isNotBeShow(String line) {
-        return line.contains("CaseItem") || line.contains("@Resource") || line.contains("TODO");
+        return line.startsWith("/*hidden*/") || line.contains("TODO");
     }
 
     private int processBlock(String[] lines, int i) {

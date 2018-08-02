@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package org.opensingular.lib.wicket.util.application;
+package org.opensingular.schedule;
 
-import org.opensingular.lib.wicket.util.template.SkinOptions;
+import java.io.Serializable;
 
-public interface SkinnableApplication {
+public interface IScheduleData extends Serializable {
 
-    default void initSkins(SkinOptions skinOptions) {
-        skinOptions.addDefaulSkin("singular");
-    }
+    String getCronExpression();
 
+    String getDescription();
 }
