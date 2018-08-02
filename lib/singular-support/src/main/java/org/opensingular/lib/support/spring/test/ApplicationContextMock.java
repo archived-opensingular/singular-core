@@ -237,7 +237,7 @@ public class ApplicationContextMock extends AnnotationConfigWebApplicationContex
     @SuppressWarnings({"unchecked"})
     public String[] getBeanNamesForType(Class type, boolean includeNonSingletons,
                                         boolean allowEagerInit) {
-        return new String[]{type.getClass().getName()};
+        return new String[]{type.getName()};
     }
 
     @Override

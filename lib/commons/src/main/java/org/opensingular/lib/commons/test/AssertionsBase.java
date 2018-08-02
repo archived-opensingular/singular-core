@@ -30,6 +30,7 @@ import java.util.Optional;
  */
 public abstract class AssertionsBase<SELF extends AssertionsBase<SELF, T>, T> extends AbstractAssert<SELF, T> {
 
+    @SuppressWarnings("CheckReturnValue")
     public AssertionsBase(T target) {
         super(target, AssertionsBase.class);
         as(new DescriptionForTarget(this));//NOSONAR
