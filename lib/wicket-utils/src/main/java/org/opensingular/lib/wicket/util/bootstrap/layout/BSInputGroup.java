@@ -16,6 +16,7 @@
 
 package org.opensingular.lib.wicket.util.bootstrap.layout;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.wicket.AttributeModifier;
@@ -39,8 +40,8 @@ public class BSInputGroup extends BSControls {
         return this;
     }
 
-    public BSInputGroup appendExtraAttributes(Map<String, String> attributes) {
-        for (Map.Entry<String, String> attribute : attributes.entrySet()) {
+    public BSInputGroup appendExtraAttributes(Map<String, ? extends Serializable> attributes) {
+        for (Map.Entry<String, ? extends Serializable> attribute : attributes.entrySet()) {
             this.add(new AttributeModifier(attribute.getKey(), attribute.getValue()));
         }
         return this;

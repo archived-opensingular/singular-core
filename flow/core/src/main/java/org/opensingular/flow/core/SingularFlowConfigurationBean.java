@@ -23,12 +23,14 @@ import org.opensingular.flow.core.service.IFlowDefinitionEntityService;
 import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.flow.core.view.IViewLocator;
-import org.opensingular.flow.schedule.IScheduleService;
-import org.opensingular.flow.schedule.ScheduleDataBuilder;
-import org.opensingular.flow.schedule.ScheduledJob;
-import org.opensingular.flow.schedule.quartz.QuartzScheduleService;
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.commons.util.Loggable;
+import org.opensingular.schedule.IScheduleData;
+import org.opensingular.schedule.IScheduleService;
+import org.opensingular.schedule.ScheduleDataBuilder;
+import org.opensingular.schedule.ScheduledJob;
+import org.opensingular.schedule.quartz.QuartzScheduleService;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -39,19 +41,22 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static org.opensingular.lib.commons.base.SingularProperties.SINGULAR_QUARTZ_DEFAULT_CRON;
+
 public abstract class SingularFlowConfigurationBean implements Loggable {
 
     public static final String PREFIXO = "SGL";
+    private IScheduleService scheduleService = new QuartzScheduleService();
 
     private String moduleCod;
 
     private List<FlowInstanceListener> notifiers = new ArrayList<>();
+    private IScheduleData scheduleData;
 
     /**
      * @param moduleCod - chave do sistema cadastrado no em <code>TB_MODULO</code>
      */
     protected SingularFlowConfigurationBean(String moduleCod) {
-        super();
         this.moduleCod = moduleCod;
     }
 
@@ -61,9 +66,14 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     final void start() {
         for (final FlowDefinition<?> flowDefinition : getDefinitions()) {
-            for (STaskJava task : flowDefinition.getFlowMap().getJavaTasks()) {
-                if (!task.isImmediateExecution()) {
-                    getScheduleService().schedule(new ScheduledJob(task.getCompleteName(), task.getScheduleData(), () -> executeTask(task)));
+            for (STask<?> task : flowDefinition.getFlowMap().getTasks()) {
+                if (task.isJava() && !task.isImmediateExecution()) {
+                    STaskJava taskJava = (STaskJava) task;
+                    getScheduleService().schedule(new ScheduledJob(taskJava.getCompleteName(), taskJava.getScheduleData(), () -> executeTask(taskJava)));
+                }
+                for (IConditionalTaskAction action : task.getAutomaticActions()) {
+                    getScheduleService().schedule(new ScheduledJob(task.getCompleteName() + " - " + action.getPredicate().getName(),
+                            action.getScheduleData().orElse(getDefaultSchedule()), () -> executeAutomaticActions(task, action)));
                 }
             }
             for (FlowScheduledJob scheduledJob : flowDefinition.getScheduledJobs()) {
@@ -75,7 +85,19 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     }
 
     protected void configureWaitingTasksJobSchedule() {
-        getScheduleService().schedule(new ExecuteWaitingTasksJob(ScheduleDataBuilder.buildHourly(1)));
+        getScheduleService().schedule(new ExecuteWaitingTasksJob(getDefaultSchedule()));
+    }
+
+    private IScheduleData getDefaultSchedule() {
+        if (scheduleData == null) {
+            scheduleData = SingularProperties
+                    .get()
+                    .getPropertyOpt(SINGULAR_QUARTZ_DEFAULT_CRON)
+                    .map(ScheduleDataBuilder::buildFromCron)
+                    .orElse(ScheduleDataBuilder.buildHourly(1));
+            getLogger().info("SINGULAR DEFAULT SCHEDULER DESCRIPTION: {} - CRON EXPRESSION: {}", scheduleData.getDescription(), scheduleData.getCronExpression());
+        }
+        return scheduleData;
     }
 
 
@@ -206,8 +228,8 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     @Nonnull
     protected <X extends FlowInstance> Optional<X> getFlowInstanceOpt(@Nonnull String flowInstanceID) {
         Objects.requireNonNull(flowInstanceID);
-        MappingId              mappingId = parseId(flowInstanceID);
-        Optional<FlowInstance> instance  = getFlowInstanceOpt(mappingId.cod);
+        MappingId mappingId = parseId(flowInstanceID);
+        Optional<FlowInstance> instance = getFlowInstanceOpt(mappingId.cod);
         if (instance.isPresent() && mappingId.abbreviation != null) {
             getFlowDefinition(mappingId.abbreviation).checkIfCompatible(instance.get());
         }
@@ -260,16 +282,16 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
         if (instanceID == null || instanceID.length() < 1) {
             throw SingularException.rethrow("O ID da instância não pode ser nulo ou vazio");
         }
-        String parts[]      = instanceID.split("\\.");
+        String parts[] = instanceID.split("\\.");
         String abbreviation = parts[parts.length - 2];
-        String id           = parts[parts.length - 1];
+        String id = parts[parts.length - 1];
         return new MappingId(abbreviation, Integer.parseInt(id));
     }
 
     // TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse
     // estar nesse lugar
     protected static class MappingId {
-        public final String  abbreviation;
+        public final String abbreviation;
         public final Integer cod;
 
         public MappingId(String abbreviation, int cod) {
@@ -319,13 +341,13 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     protected abstract IFlowDefinitionEntityService<?, ?, ?, ?, ?, ?, ?, ?> getFlowEntityService();
 
     protected IScheduleService getScheduleService() {
-        return new QuartzScheduleService();
+        return scheduleService;
     }
 
     public final Object executeTask(STaskJava task) {
         try {
-            final IFlowDataService<?>                dataService = task.getFlowMap().getFlowDefinition().getDataService();
-            final Collection<? extends FlowInstance> instances   = dataService.retrieveAllInstancesIn(task);
+            final IFlowDataService<?> dataService = task.getFlowMap().getFlowDefinition().getDataService();
+            final Collection<? extends FlowInstance> instances = dataService.retrieveAllInstancesIn(task);
             getLogger().info("Start running job: {} - {} instances. ", task.getName(), Optional.ofNullable(instances).map(Collection::size).orElse(0));
             if (task.isCalledInBlock()) {
                 return task.executarByBloco(instances);
@@ -338,5 +360,27 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
         } finally {
             getLogger().info("Job executed : {}", task.getName());
         }
+    }
+
+    public final Object executeAutomaticActions(STask<?> task, IConditionalTaskAction action) {
+        try {
+            final IFlowDataService<?> dataService = task.getFlowMap().getFlowDefinition().getDataService();
+            final Collection<? extends FlowInstance> instances = dataService.retrieveAllInstancesIn(task);
+            getLogger().info("Start running job: {} - {} instances. ", task.getName(), Optional.of(instances).map(Collection::size).orElse(0));
+            for (FlowInstance instance : instances) {
+                TaskInstance taskInstance = instance.getCurrentTaskOrException();
+                if (action.getPredicate().test(taskInstance)) {
+                    getLogger().info("{}: Condicao Atingida '{}' executando  {} ",
+                            instance.getFullId(),
+                            action.getPredicate().getDescription(taskInstance),
+                            action.getCompleteDescription());
+                    action.execute(taskInstance);
+                    getPersistenceService().commitTransaction();
+                }
+            }
+        } finally {
+            getLogger().info("Job executed : {}", task.getName());
+        }
+        return null;
     }
 }
