@@ -14,14 +14,29 @@
  * limitations under the License.
  */
 
-package org.opensingular.lib.wicket.util.application;
+package org.opensingular.schedule;
 
-import org.opensingular.lib.wicket.util.template.SkinOptions;
+class ScheduleDataImpl implements IScheduleData {
 
-public interface SkinnableApplication {
+    private final String cronExpression;
 
-    default void initSkins(SkinOptions skinOptions) {
-        skinOptions.addDefaulSkin("singular");
+    private final String description;
+
+    public ScheduleDataImpl(String cronExpression, String description) {
+        this.cronExpression = cronExpression;
+        this.description = description;
     }
 
+    public String getCronExpression() {
+        return cronExpression;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public String toString() {
+        return "ScheduleDataImpl [cronExpression=" + cronExpression + ", description=" + description + "]";
+    }
 }

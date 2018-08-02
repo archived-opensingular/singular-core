@@ -14,14 +14,28 @@
  * limitations under the License.
  */
 
-package org.opensingular.lib.wicket.util.application;
+package org.opensingular.schedule.quartz;
 
-import org.opensingular.lib.wicket.util.template.SkinOptions;
+import org.opensingular.schedule.IScheduledJob;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 
-public interface SkinnableApplication {
+public class QuartzScheduledJob implements Job {
 
-    default void initSkins(SkinOptions skinOptions) {
-        skinOptions.addDefaulSkin("singular");
+    private IScheduledJob job;
+    private Object lastJobRunResult;
+
+    public QuartzScheduledJob(IScheduledJob job) {
+        this.job = job;
     }
 
+    @Override
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        lastJobRunResult = this.job.run();
+    }
+
+    public Object getLastJobRunResult() {
+        return lastJobRunResult;
+    }
 }
