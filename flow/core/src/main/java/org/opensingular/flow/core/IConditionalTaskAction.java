@@ -16,8 +16,19 @@
 
 package org.opensingular.flow.core;
 
+
+
+import org.opensingular.schedule.IScheduleData;
+
+import java.util.Optional;
+
 public interface IConditionalTaskAction extends ITaskAction {
 
     ITaskPredicate getPredicate();
 
+    String getDestinationTaskAbbreviation();
+
+    Optional<IScheduleData> getScheduleData();
+
+    void setScheduleData(IScheduleData scheduleData);
 }
