@@ -16,11 +16,11 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.schedule.IScheduleData;
-
+import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
+
+import org.opensingular.schedule.IScheduleData;
 
 @SuppressWarnings("unchecked")
 public class STaskJava extends STask<STaskJava> {

@@ -119,7 +119,10 @@ public final class SingularTestUtil {
                 throw (Error) e;
             } else {
                 String msg = "Era esperado '" + expectedException.getSimpleName() + "'";
-                msg += " no entanto ocorreu a exceção '" + e.getClass().getSimpleName() + "'";
+                if (expectedExceptionMsgPart != null) {
+                    msg += " com a mensagem contendo o texto [" + expectedExceptionMsgPart + "]";
+                }
+                msg += " no entanto não ocorreu a exceção conforme esperado (ver pilha abaixo)";
                 throw new AssertionError(msg, e);
             }
         }

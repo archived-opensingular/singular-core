@@ -179,9 +179,9 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
         return transition;
     }
 
-    public void addAutomaticAction(@Nonnull ITaskPredicate predicate, @Nonnull ITaskAction action) {
+    public void addAutomaticAction(@Nonnull ITaskPredicate predicate, @Nonnull ITaskAction action, @Nonnull String destinationTaskAbbreviation) {
         inject(predicate);
-        addAutomaticAction(TaskActions.conditionalAction(predicate, action));
+        addAutomaticAction(TaskActions.conditionalAction(predicate, action, destinationTaskAbbreviation));
     }
 
     private void addAutomaticAction(IConditionalTaskAction action) {
