@@ -14,14 +14,25 @@
  * limitations under the License.
  */
 
-package org.opensingular.lib.wicket.util.application;
+package org.opensingular.schedule;
 
-import org.opensingular.lib.wicket.util.template.SkinOptions;
+import java.util.Set;
 
-public interface SkinnableApplication {
+import org.quartz.JobKey;
+import org.quartz.SchedulerException;
 
-    default void initSkins(SkinOptions skinOptions) {
-        skinOptions.addDefaulSkin("singular");
-    }
+public interface IScheduleService {
+
+    void schedule(IScheduledJob scheduledJob);
+
+    void trigger(IScheduledJob scheduledJob);
+
+    /**
+     * Método para destruir o serviço de agendamento.
+     * Essa assinatura é reconhecida como uma assinatura implícita de destruição de beans pelo spring.
+     */
+    void shutdown();
+
+    Set<JobKey> getAllJobKeys() throws SchedulerException;
 
 }
