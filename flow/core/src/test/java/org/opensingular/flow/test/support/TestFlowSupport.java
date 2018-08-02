@@ -33,11 +33,17 @@ import org.opensingular.flow.core.FlowDefinitionCache;
 import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.SingularFlowConfigurationBean;
 import org.opensingular.flow.core.TestFlowBeanInjection;
+
 import org.opensingular.flow.test.TestDAO;
 import org.opensingular.lib.commons.base.SingularPropertiesImpl;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.context.spring.SpringServiceRegistry;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
+import org.opensingular.schedule.ScheduledJob;
+import org.opensingular.schedule.quartz.QuartzScheduleService;
+import org.quartz.JobKey;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -65,7 +71,7 @@ import java.util.Objects;
 @RunWith(Parameterized.class)
 @Parameterized.UseParametersRunnerFactory(TestFlowSupport.FactoryRunnerParameteziedWithSpring.class)
 @ActiveProfiles(resolver = TestFlowSupport.ParameterizedFlowProfileResolver.class)
-public abstract class TestFlowSupport {
+public abstract class TestFlowSupport implements Loggable {
 
 
     @Parameterized.Parameter(0)
@@ -82,6 +88,9 @@ public abstract class TestFlowSupport {
 
     @Inject
     private ApplicationContextProvider applicationContextProvider;
+
+    @Inject
+    private QuartzScheduleService scheduleService;
 
     protected static MyBean myBeanRef;
 
@@ -108,8 +117,20 @@ public abstract class TestFlowSupport {
         return new AssertionsFlowInstance(target);
     }
 
+    public void runAllJobs() {
+        try {
+            for (JobKey jobKey : scheduleService.getAllJobKeys()) {
+                ScheduledJob scheduledJob = new ScheduledJob(jobKey.getName(), null, null);
+                scheduleService.trigger(scheduledJob);
+                getLogger().info("Runnning job: " + jobKey.getName() + " - " + scheduledJob);
+            }
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
     @BeforeClass
-    public static void invalidateCache(){
+    public static void invalidateCache() {
         FlowDefinitionCache.invalidateAll();
     }
 
@@ -125,7 +146,9 @@ public abstract class TestFlowSupport {
     }
 
 
-    /** Cria um factory de runners que é ao mesmo tempo parametrizada e integrada com o Spring. */
+    /**
+     * Cria um factory de runners que é ao mesmo tempo parametrizada e integrada com o Spring.
+     */
     public static class FactoryRunnerParameteziedWithSpring implements ParametersRunnerFactory {
         @Override
         public Runner createRunnerForTestWithParameters(final TestWithParameters test) throws InitializationError {
@@ -133,12 +156,14 @@ public abstract class TestFlowSupport {
         }
     }
 
-    /** Cria um executor de test que é parametrizada e ao mesmo tempo faz o setup do spring usando profiles. */
+    /**
+     * Cria um executor de test que é parametrizada e ao mesmo tempo faz o setup do spring usando profiles.
+     */
     private static class RunnerParametersWithSpring2 extends SpringJUnit4ClassRunner {
 
         private final FlowTestConfig flowTestConfig;
 
-        private final  BlockJUnit4ClassRunnerWithParameters runnerParam;
+        private final BlockJUnit4ClassRunnerWithParameters runnerParam;
 
         public RunnerParametersWithSpring2(TestWithParameters test) throws InitializationError {
             super(prepare(test));
@@ -180,7 +205,7 @@ public abstract class TestFlowSupport {
         @Override
         public String[] resolve(Class<?> testClass) {
             Objects.requireNonNull(currentProfile);
-            return new String[] {currentProfile};
+            return new String[]{currentProfile};
         }
     }
 

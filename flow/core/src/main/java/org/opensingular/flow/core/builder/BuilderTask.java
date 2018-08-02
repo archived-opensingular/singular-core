@@ -17,6 +17,7 @@
 package org.opensingular.flow.core.builder;
 
 import org.opensingular.flow.core.ITaskDefinition;
+import org.opensingular.flow.core.ITaskPredicate;
 import org.opensingular.flow.core.STask;
 import org.opensingular.flow.core.StartedTaskListener;
 import org.opensingular.flow.core.TaskAccessStrategy;
@@ -27,22 +28,33 @@ import java.io.Serializable;
 
 public interface BuilderTask {
 
-    public STask<?> getTask();
+    STask<?> getTask();
 
     /**
      * Cria uma nova transição da task atual para a task destino informada
      */
-    public default BuilderTransition<?> go(ITaskDefinition taskRefDestiny) {
+    default BuilderTransition<?> go(ITaskDefinition taskRefDestiny) {
         return go(taskRefDestiny.getName(), taskRefDestiny);
     }
 
-    public BuilderTransition<?> go(String actionName, ITaskDefinition taskRefDestiny);
+    BuilderTransition<?> go(String actionName, ITaskDefinition taskRefDestiny);
 
-    public BuilderTask uiAccess(TaskAccessStrategy<?> accessStrategy);
+    /**
+     * Adds an automatic transition to the given {@param taskRefDestiny} using the {@param condition} predicate to
+     * decide when the transition should be made
+     *
+     * @param taskRefDestiny
+     * @param condition
+     * @return
+     */
+    BuilderTransitionPredicate<?> go(ITaskDefinition taskRefDestiny, ITaskPredicate condition);
 
-    public BuilderTask addStartedTaskListener(StartedTaskListener startedTaskListener);
+
+    BuilderTask uiAccess(TaskAccessStrategy<?> accessStrategy);
+
+    BuilderTask addStartedTaskListener(StartedTaskListener startedTaskListener);
 
     @Nonnull
-    public <T extends Serializable> BuilderTask setMetaDataValue(@Nonnull MetaDataKey<T> key, T value);
+    <T extends Serializable> BuilderTask setMetaDataValue(@Nonnull MetaDataKey<T> key, T value);
 
 }

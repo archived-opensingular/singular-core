@@ -97,6 +97,7 @@
             var $modal = $(popupTemplate).modal({show: false});
 
             $('#' + params.file_field_id).fileupload({
+                maxChunkSize: ${maxChunkSize},
                 url: params.upload_url,
                 paramName: params.param_name,
                 singleFileUploads: true,
