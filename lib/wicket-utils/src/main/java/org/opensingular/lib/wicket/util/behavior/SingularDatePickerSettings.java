@@ -64,4 +64,9 @@ public class SingularDatePickerSettings implements DatePickerSettings {
     public Optional<Boolean> isTodayHighlight() {
         return viewSupplier().map(SViewDate::isTodayHighlight);
     }
+
+    @Override
+    public Optional<Boolean> isHideModal() {
+        return viewSupplier().map(SViewDate::isModalHide);
+    }
 }

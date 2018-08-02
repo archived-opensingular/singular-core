@@ -70,6 +70,14 @@ public interface ISViewDate {
      */
     SViewDate setShowOnFocus(boolean showOnFocus);
 
+    /**
+     * This method should be used for hide the modal of date picker.
+     * @param hide True will hide the date picker.
+     *             False will show the date.
+     * @return <code>this</code>
+     */
+    SViewDate hideModalDatePicker(Boolean hide);
+
     boolean isAutoclose();
 
     boolean isClearBtn();
@@ -83,4 +91,10 @@ public interface ISViewDate {
     boolean isShowOnFocus();
 
     IFunction<SInstance, Date> getStartDateFunction();
+
+    /**
+     * This method should return the value of hide date picker.
+     * @return True will hide the picker.
+     */
+    boolean isModalHide();
 }

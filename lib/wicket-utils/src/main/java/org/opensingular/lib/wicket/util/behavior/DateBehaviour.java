@@ -16,32 +16,34 @@
 
 package org.opensingular.lib.wicket.util.behavior;
 
+import java.util.HashMap;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.util.visit.IVisitor;
 
-import java.util.HashMap;
-
-public class DatePickerInitBehaviour extends InitScriptBehaviour {
+public class DateBehaviour extends InitScriptBehaviour {
 
     private static final long serialVersionUID = 8453390368637518965L;
 
     private final DatePickerSettings datePickerSettings;
 
-    public DatePickerInitBehaviour(DatePickerSettings datePickerSettings) {
+    public DateBehaviour(DatePickerSettings datePickerSettings) {
         this.datePickerSettings = datePickerSettings;
     }
 
-    public DatePickerInitBehaviour() {
+    public DateBehaviour() {
         this(null);
     }
 
     @Override
     public String getScript(Component component) {
-        DatePickerInitScriptBuilder scriptBuilder = new DatePickerInitScriptBuilder(new HashMap<>(),
-                component.getMarkupId(), getIdInput(component), datePickerSettings);
-        return scriptBuilder.generateScript();
+        if(datePickerSettings == null || !datePickerSettings.isHideModal().orElse(Boolean.FALSE)) {
+            return new DatePickerInitScriptBuilder(new HashMap<>(),
+                    component.getMarkupId(), getIdInput(component), datePickerSettings).generateScript();
+        }
+        return new DateInputBehavior(getIdInput(component)).generateScript();
     }
 
     private String getIdInput(Component component) {
