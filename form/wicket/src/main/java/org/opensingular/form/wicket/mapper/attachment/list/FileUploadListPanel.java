@@ -24,7 +24,6 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -35,7 +34,7 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
-import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.opensingular.form.SIList;
 import org.opensingular.form.servlet.MimeTypes;
 import org.opensingular.form.type.basic.AtrBasic;
@@ -58,6 +57,7 @@ import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppend
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.form.wicket.util.WicketFormUtils;
+import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.commons.util.Loggable;
@@ -67,10 +67,19 @@ import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
-import static org.apache.commons.lang3.ObjectUtils.*;
-import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.AttachmentKeyStrategy.*;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.opensingular.form.wicket.mapper.attachment.single.FileUploadPanel.DEFAULT_FILE_UPLOAD_MAX_CHUNK_SIZE;
+import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.AttachmentKeyStrategy.PARAM_NAME;
+import static org.opensingular.lib.commons.base.SingularProperties.SINGULAR_FILEUPLOAD_MAXCHUNKSIZE;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 
@@ -87,14 +96,14 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
 public class FileUploadListPanel extends Panel implements Loggable {
 
     private final FileUploadManagerFactory upManagerFactory = new FileUploadManagerFactory();
-    private final UploadResponseWriter     upResponseWriter = new UploadResponseWriter();
+    private final UploadResponseWriter upResponseWriter = new UploadResponseWriter();
 
-    private final Component                 fileField;
-    private final WebMarkupContainer        fileList;
-    private final AddFileBehavior           adder;
-    private final RemoveFileBehavior        remover;
+    private final Component fileField;
+    private final WebMarkupContainer fileList;
+    private final AddFileBehavior adder;
+    private final RemoveFileBehavior remover;
     private final DownloadSupportedBehavior downloader;
-    private final WicketBuildContext        ctx;
+    private final WicketBuildContext ctx;
 
     private AttachmentKey uploadId;
 
@@ -191,9 +200,14 @@ public class FileUploadListPanel extends Panel implements Loggable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2095")
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        response.render(JavaScriptHeaderItem.forReference(resourceRef("FileUploadListPanel.js")));
+        PackageTextTemplate fileUploadJSTemplate = new PackageTextTemplate(FileUploadListPanel.class, "FileUploadListPanel.js");
+        Map<String, String> params = new HashMap<>();
+        params.put("maxChunkSize", SingularProperties.get(SINGULAR_FILEUPLOAD_MAXCHUNKSIZE, DEFAULT_FILE_UPLOAD_MAX_CHUNK_SIZE));
+
+        response.render(OnDomReadyHeaderItem.forScript(fileUploadJSTemplate.interpolate(params).asString()));
         response.render(OnDomReadyHeaderItem.forScript(generateInitJS()));
     }
 
@@ -247,10 +261,6 @@ public class FileUploadListPanel extends Panel implements Loggable {
         return (SIList<SIAttachment>) getDefaultModelObject();
     }
 
-    private PackageResourceReference resourceRef(String resourceName) {
-        return new PackageResourceReference(getClass(), resourceName);
-    }
-
     private String uploadUrl() {
         return AttachmentKeyStrategy.getUploadUrl(getServletRequest(), uploadId);
     }
@@ -265,7 +275,7 @@ public class FileUploadListPanel extends Panel implements Loggable {
 
     public static class LabelWithIcon extends Label {
 
-        private final Icon           icon;
+        private final Icon icon;
         private final IModel<String> forAttrValue;
 
         public LabelWithIcon(String id, IModel<?> model, Icon icon, IModel<String> forAttrValue) {
@@ -301,7 +311,7 @@ public class FileUploadListPanel extends Panel implements Loggable {
 
             try {
                 final String pFileId = getParamFileId("fileId").toString();
-                final String pName   = getParamFileId("name").toString();
+                final String pName = getParamFileId("name").toString();
 
                 getLogger().debug("FileUploadListPanel.AddFileBehavior(fileId={},name={})", pFileId, pName);
 
@@ -343,7 +353,7 @@ public class FileUploadListPanel extends Panel implements Loggable {
 
     private class FilesListView extends RefreshingView<SIAttachment> {
         private final WicketBuildContext ctx;
-        private final ConfirmationModal  confirmationModal;
+        private final ConfirmationModal confirmationModal;
 
         public FilesListView(String id, IModel<SIList<SIAttachment>> listModel, WicketBuildContext ctx) {
             super(id, listModel);
@@ -363,7 +373,7 @@ public class FileUploadListPanel extends Panel implements Loggable {
 
         @Override
         protected Iterator<IModel<SIAttachment>> getItemModels() {
-            final SIList<SIAttachment>       objList   = this.getAttachmentList();
+            final SIList<SIAttachment> objList = this.getAttachmentList();
             final List<IModel<SIAttachment>> modelList = new ArrayList<>();
             for (int i = 0; i < objList.size(); i++)
                 modelList.add(new SInstanceListItemModel<>(this.getAttachmentListModel(), i));

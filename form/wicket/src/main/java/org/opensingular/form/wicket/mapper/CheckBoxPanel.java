@@ -7,7 +7,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.basic.SPackageBasic;
-import org.opensingular.form.view.SViewCheckBoxLabelAbove;
+import org.opensingular.form.view.SViewCheckBox;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.AttributeModel;
 import org.opensingular.lib.commons.ui.Alignment;
@@ -53,8 +53,8 @@ public class CheckBoxPanel extends Panel {
 
     private String configureTextAlignStyle(WicketBuildContext ctx) {
         Alignment alignment = null;
-        if (ctx.getView() != null && ctx.getView() instanceof SViewCheckBoxLabelAbove) {
-            alignment = ((SViewCheckBoxLabelAbove) ctx.getView()).getAlignment();
+        if (ctx.getView() != null && ctx.getView() instanceof SViewCheckBox) {
+            alignment = ((SViewCheckBox) ctx.getView()).getAlignmentOfLabel();
         }
         String style = "";
         if (alignment != null) {

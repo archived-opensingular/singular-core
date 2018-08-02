@@ -37,6 +37,7 @@ import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.protocol.http.PageExpiredException;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.opensingular.form.view.richtext.RichTextAction;
 import org.opensingular.form.view.richtext.SViewByRichTextNewTab;
@@ -62,6 +63,13 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     private AjaxButton submitButton;
     private HiddenField<String> hiddenInput;
     private String markupId;
+
+    /**
+     * Default constructor
+     */
+    public RichTextNewTabPage(){
+        throw new PageExpiredException("Construtor without arguments was called!");
+    }
 
     /**
      * The new Rich Text Page constructor.
@@ -101,11 +109,11 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
 
-        try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "PortletRichTextPanel.js")) {
+        try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "RichTextNewTabPage.js")) {
             final Map<String, String> params = new HashMap<>();
 
             /*If don't contains the View, i add a view with empty buttons, for default use.*/
-            if (!viewSupplier.optional().isPresent() || !(viewSupplier instanceof SViewByRichTextNewTab)) {
+            if (!viewSupplier.optional().isPresent() || !(viewSupplier.get() instanceof SViewByRichTextNewTab)) {
                 viewSupplier = (ISupplier<SViewByRichTextNewTab>) SViewByRichTextNewTab::new;
                 getLogger().info("SViewByRichTextNewTab was insert in the RichTextNewTabPage.");
             }

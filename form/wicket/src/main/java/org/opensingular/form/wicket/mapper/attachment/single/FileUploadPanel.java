@@ -37,6 +37,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceStreamResource;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.servlet.MimeTypes;
@@ -56,18 +57,24 @@ import org.opensingular.form.wicket.mapper.attachment.upload.UploadResponseWrite
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.AttachmentKeyStrategy;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
+import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.commons.util.Loggable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.ServletFileUploadStrategy.PARAM_NAME;
+import static org.opensingular.lib.commons.base.SingularProperties.*;
 
 public class FileUploadPanel extends Panel implements Loggable {
+
+    public static final String DEFAULT_FILE_UPLOAD_MAX_CHUNK_SIZE = "2000000";
 
     private final FileUploadManagerFactory upManagerFactory = new FileUploadManagerFactory();
     private final UploadResponseWriter upResponseWriter = new UploadResponseWriter();
@@ -209,9 +216,14 @@ public class FileUploadPanel extends Panel implements Loggable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2095")
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        response.render(JavaScriptReferenceHeaderItem.forReference(resourceRef("FileUploadPanel.js")));
+        PackageTextTemplate fileUploadJSTemplate = new PackageTextTemplate(FileUploadPanel.class, "FileUploadPanel.js");
+        Map<String, String> params = new HashMap<>();
+        params.put("maxChunkSize", SingularProperties.get(SINGULAR_FILEUPLOAD_MAXCHUNKSIZE, DEFAULT_FILE_UPLOAD_MAX_CHUNK_SIZE));
+
+        response.render(OnDomReadyHeaderItem.forScript(fileUploadJSTemplate.interpolate(params).asString()));
         response.render(OnDomReadyHeaderItem.forScript(generateInitJS()));
     }
 
@@ -271,10 +283,6 @@ public class FileUploadPanel extends Panel implements Loggable {
 
     private Set<String> getAllowedExtensions() {
         return MimeTypes.getExtensionsFormMimeTypes(getAllowedFileTypes(), true);
-    }
-
-    private PackageResourceReference resourceRef(String resourceName) {
-        return new PackageResourceReference(getClass(), resourceName);
     }
 
     public FileUploadField getUploadField() {
