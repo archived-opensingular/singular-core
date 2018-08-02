@@ -16,11 +16,11 @@
 
 package org.opensingular.schedule;
 
+import com.google.common.base.Preconditions;
+
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com.google.common.base.Preconditions;
 
 /**
  * Builder for {@link IScheduleData}.
@@ -40,6 +40,19 @@ public class ScheduleDataBuilder {
         String cronExpression = generateCronExpression("0", "0/" + Integer.toString(minutes), "*", "*", "*", "?", "");
         return new ScheduleDataImpl(cronExpression, description);
     }
+
+    /**
+     *
+     * @param cron
+     * @return
+     * an {@link IScheduleData} built using the cron expression represented by the {@param cron}
+     * The expression is not validated at this time
+     */
+    public static IScheduleData buildFromCron(String cron) {
+        String description = "Expressão cron '" + cron + "'";
+        return new ScheduleDataImpl(cron, description);
+    }
+
 
     public static IScheduleData buildHourly(int hours) {
         String description    = "Repetido a cada " + hours + "h";

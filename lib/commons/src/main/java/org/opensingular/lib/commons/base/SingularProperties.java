@@ -91,6 +91,8 @@ public interface SingularProperties {
 
     String SINGULAR_QUARTZ_JOBSTORE_ENABLED = "singular.quartz.jobstore.enabled";
 
+    String SINGULAR_QUARTZ_DEFAULT_CRON = "singular.quartz.cron.default";
+
     String SINGULAR_WICKET_DEBUG_ENABLED = "singular.wicket.debug.enabled";
 
     static SingularProperties get() {
