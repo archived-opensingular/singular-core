@@ -125,13 +125,14 @@ public class WicketFormProcessing extends SingularFormProcessing implements Logg
     }
 
     public static boolean validateErrors(MarkupContainer container, AjaxRequestTarget target, SInstance baseInstance, boolean hasErrors) {
+        boolean validatedErrors = hasErrors;
         InstanceValidationContext validationContext = new InstanceValidationContext();
         validationContext.validateAll(baseInstance);
         if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
-            hasErrors = true;
+            validatedErrors = true;
             refreshComponentOrCellContainer(target, container);
         }
-        return hasErrors;
+        return validatedErrors;
     }
 
     public static void onFieldValidate(FormComponent<?> formComponent, AjaxRequestTarget target, IModel<? extends SInstance> fieldInstance) {

@@ -16,12 +16,12 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.schedule.IScheduleData;
-import org.opensingular.flow.schedule.IScheduledJob;
-
 import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
+
+import org.opensingular.schedule.IScheduleData;
+import org.opensingular.schedule.IScheduledJob;
 
 public class ExecuteWaitingTasksJob implements IScheduledJob {
 
@@ -58,17 +58,6 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
         for (FlowDefinition<?> definition : singularFlowConfigurationBean.getDefinitions()) {
             for (final STaskWait task : definition.getFlowMap().getWaitTasks()) {
                 executeTaskIfNecessary(singularFlowConfigurationBean, log, today, definition, task);
-            }
-        }
-
-
-        for (FlowDefinition<?> definition : singularFlowConfigurationBean.getDefinitions()) {
-            for (STask<?> task : definition.getFlowMap().getTasks()) {
-                List<IConditionalTaskAction> acoesAutomaticas = task.getAutomaticActions();
-                if (!acoesAutomaticas.isEmpty()) {
-                    executeAutomaticActions(singularFlowConfigurationBean, log, definition, task, acoesAutomaticas);
-                }
-
             }
         }
 
@@ -112,20 +101,6 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
         };
     }
 
-    private void executeAutomaticActions(SingularFlowConfigurationBean singularFlowConfigurationBean, StringBuilder log, FlowDefinition<?> flowDefinition, STask<?> task, List<IConditionalTaskAction> acoesAutomaticas) {
-        for (FlowInstance instance : flowDefinition.getDataService().retrieveAllInstancesIn(task)) {
-            TaskInstance taskInstance = instance.getCurrentTaskOrException();
-            for (IConditionalTaskAction action : acoesAutomaticas) {
-                if (action.getPredicate().test(taskInstance)) {
-                    log.append(instance.getFullId()).append(": Condicao Atingida '")
-                            .append(action.getPredicate().getDescription(taskInstance)).append("' executando '")
-                            .append(action.getCompleteDescription()).append("'\n");
-                    action.execute(taskInstance);
-                    singularFlowConfigurationBean.getPersistenceService().commitTransaction();
-                    break;
-                }
-            }
-        }
-    }
+
 
 }

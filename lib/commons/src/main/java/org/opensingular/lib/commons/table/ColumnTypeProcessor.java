@@ -230,6 +230,10 @@ public interface ColumnTypeProcessor {
             }
             return d1.compareTo(d2);
         }
+
+        public String getDateFormat() {
+            return dateFormat;
+        }
     }
 
     class ColumnTypeProcessorTypeRaw implements ColumnTypeProcessor {
