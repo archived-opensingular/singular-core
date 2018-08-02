@@ -25,6 +25,14 @@ public interface ISViewTime {
     ISViewTime setMinuteStep(Integer value);
 
     /**
+     * This method should be used for hide the modal of time picker.
+     * @param hide True will hide the timer picker.
+     *             False will show the timer.
+     * @return <code>this</code>
+     */
+    ISViewTime hideModalTimePicker(Boolean hide);
+
+    /**
      * True if is 12 AM/PM mode.
      * False if showMeridian is 24hr.
      *
@@ -39,4 +47,11 @@ public interface ISViewTime {
      * @return The number of the step minute.
      */
     Integer getMinuteStep();
+
+
+    /**
+     * This method should return the value of hide timer picker.
+     * @return True will hide the picker.
+     */
+    boolean isModalTimerHide();
 }

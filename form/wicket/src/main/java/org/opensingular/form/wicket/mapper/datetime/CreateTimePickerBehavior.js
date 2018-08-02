@@ -24,6 +24,9 @@
     });
 
     $timepicker.on('keyup', function (e) {
+        /**
+         * Logica responsável por atualizar o valor durante a digitação, para caso seja digitado 900 fique 9:00 ao invez de 90:00
+         */
         if (!(e.keyCode == 8 || e.keyCode == 46)) {
             var timeArray = $timepicker.val().replace(/[^0-9\:]/g, '').split(':');
 
