@@ -22,10 +22,9 @@ import static java.util.stream.Collectors.*;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -37,12 +36,12 @@ import org.apache.wicket.model.Model;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.SInstanceAction;
 import org.opensingular.form.decorator.action.SInstanceAction.ActionHandler;
-import org.opensingular.form.wicket.panel.IOpenModalEvent;
+import org.opensingular.form.wicket.modal.IOpenSingularFormModalEvent;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
-import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder.ButtonStyle;
 import org.opensingular.lib.wicket.util.model.IMappingModel;
 
@@ -50,36 +49,31 @@ import org.opensingular.lib.wicket.util.model.IMappingModel;
  * ESTA CLASSE DE EVENTO NÃO É SERIALIZÁVEL!!!
  * Por isso a classe de botão é estática, para manter o controle das referências. Cuidado com referências implícitas!
  */
-final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
+public final class SInstanceActionOpenModalEvent implements IOpenSingularFormModalEvent {
     private String                                     title;
     private AjaxRequestTarget                          target;
     private IModel<? extends Serializable>             textModel;
     private IModel<? extends SInstance>                instanceModel;
-    private IModel<? extends SInstance>                formInstanceModel;
+    private IModel<? extends SInstance>                modalFormInstanceModel;
     private ISupplier<? extends List<SInstanceAction>> actions;
 
     public SInstanceActionOpenModalEvent(String title,
-        AjaxRequestTarget target,
-        IModel<? extends Serializable> textModel,
-        IModel<? extends SInstance> instanceModel,
-        IModel<? extends SInstance> formInstanceModel,
-        ISupplier<? extends List<SInstanceAction>> actions) {
+            AjaxRequestTarget target,
+            IModel<? extends Serializable> textModel,
+            IModel<? extends SInstance> instanceModel,
+            IModel<? extends SInstance> modalFormInstanceModel,
+            ISupplier<? extends List<SInstanceAction>> actions) {
         this.title = title;
         this.target = target;
         this.textModel = textModel;
         this.instanceModel = instanceModel;
-        this.formInstanceModel = formInstanceModel;
+        this.modalFormInstanceModel = modalFormInstanceModel;
         this.actions = actions;
     }
 
     @Override
-    public String getModalTitle() {
-        return this.title;
-    }
-
-    @Override
-    public AjaxRequestTarget getTarget() {
-        return this.target;
+    public Optional<AjaxRequestTarget> getTarget() {
+        return Optional.ofNullable(this.target);
     }
 
     @Override
@@ -92,32 +86,31 @@ final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
                     .add($b.visibleIf($m.isNotNullOrEmpty(this.textModel)))
             : new WebMarkupContainer("textPanel");
 
-        Component formPanel = (formInstanceModel != null)
-            ? new SingularFormPanel("formPanel", true)
-                .setInstanceCreator(new ModelGetterSupplier<SInstance>(formInstanceModel))
-                .add($b.visibleIf($m.isNotNullOrEmpty(this.formInstanceModel)))
+        Component modalFormPanel = (modalFormInstanceModel != null)
+            ? new SingularFormPanel("modalFormPanel", true)
+                .setInstanceCreator(new ModelGetterSupplier<SInstance>(modalFormInstanceModel))
+                .add($b.visibleIf($m.isNotNullOrEmpty(this.modalFormInstanceModel)))
             : new WebMarkupContainer("formPanel");
 
         return new TemplatePanel(id, ""
             + "<div wicket:id='textPanel'></div>"
-            + "<div wicket:id='formPanel'></div>")
+            + "<div wicket:id='modalFormPanel'></div>")
                 .add(textPanel)
-                .add(formPanel)
-                .setDefaultModel((formInstanceModel != null) ? formInstanceModel : $m.ofValue());
+                .add(modalFormPanel)
+                .setDefaultModel((modalFormInstanceModel != null) ? modalFormInstanceModel : $m.ofValue());
     }
     @Override
-    public Iterator<ButtonDef> getFooterButtons(IConsumer<AjaxRequestTarget> closeCallback) {
-        final List<ButtonDef> buttons = new ArrayList<IOpenModalEvent.ButtonDef>();
+    public void configureModal(BSModalBorder modal, Component bodyContent) {
+        modal.setTitleText(Model.of(this.title));
+
         List<SInstanceAction> actionsList = actions.get();
         for (int i = 0; i < actionsList.size(); i++) {
             final SInstanceAction action = actionsList.get(i);
-
-            final ButtonStyle style = resolveButtonStyle(action.getType());
-            final Model<String> label = Model.of(action.getText());
-            final FooterButton button = new FooterButton("action" + i, action, instanceModel, formInstanceModel);
-            buttons.add(new ButtonDef(style, label, button));
+            modal.addButton(
+                resolveButtonStyle(action.getType()),
+                Model.of(action.getText()),
+                new FooterButton("action" + i, action, instanceModel, modalFormInstanceModel));
         }
-        return buttons.iterator();
     }
 
     private static ButtonStyle resolveButtonStyle(SInstanceAction.ActionType actionType) {
@@ -141,17 +134,17 @@ final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
     static final class FooterButton extends ActionAjaxButton {
 
         private final IModel<? extends SInstance> instanceSupplier;
-        private final IModel<? extends SInstance> formInstanceModel;
+        private final IModel<? extends SInstance> modalFormInstanceModel;
         private final SInstanceAction             action;
 
         private FooterButton(String id,
-            SInstanceAction action,
-            IModel<? extends SInstance> instanceSupplier,
-            IModel<? extends SInstance> formInstanceModel) {
+                SInstanceAction action,
+                IModel<? extends SInstance> instanceSupplier,
+                IModel<? extends SInstance> modalFormInstanceModel) {
             super(id);
             this.action = action;
             this.instanceSupplier = instanceSupplier;
-            this.formInstanceModel = formInstanceModel;
+            this.modalFormInstanceModel = modalFormInstanceModel;
         }
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
@@ -160,15 +153,15 @@ final class SInstanceActionOpenModalEvent implements IOpenModalEvent {
                 List<Object> childContextList = Arrays.asList(
                     target,
                     form,
-                    formInstanceModel,
-                    (formInstanceModel == null) ? null : formInstanceModel.getObject(),
+                    modalFormInstanceModel,
+                    (modalFormInstanceModel == null) ? null : modalFormInstanceModel.getObject(),
                     this)
                     .stream()
                     .filter(it -> it != null)
                     .collect(toList());
                 actionHandler.onAction(
                     action,
-                    new ModelGetterSupplier<SInstance>(formInstanceModel),
+                    new ModelGetterSupplier<SInstance>(modalFormInstanceModel),
                     new WicketSIconActionDelegate(
                         instanceSupplier,
                         childContextList));

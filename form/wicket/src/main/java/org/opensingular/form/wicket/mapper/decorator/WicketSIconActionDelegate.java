@@ -39,11 +39,11 @@ import org.opensingular.form.decorator.action.SInstanceAction;
 import org.opensingular.form.decorator.action.SInstanceAction.ActionsFactory;
 import org.opensingular.form.decorator.action.SInstanceAction.FormDelegate;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
-import org.opensingular.form.wicket.panel.ICloseModalEvent;
 import org.opensingular.form.wicket.util.WicketFormUtils;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.ref.Out;
 import org.opensingular.lib.commons.util.HTMLUtil;
+import org.opensingular.lib.wicket.util.modal.ICloseModalEvent;
 
 /**
  * Implementação de <code>SInstanceAction.Delegate</code> integrada com a infraestrutura Wicket.
@@ -75,10 +75,10 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate, Seri
         Out<FormDelegate> formDelegate,
         String title,
         Serializable text,
-        ISupplier<SInstance> formInstance,
+        ISupplier<SInstance> modalFormInstance,
         ActionsFactory actionsFactory) {
 
-        IModel<? extends SInstance> formInstanceModel = Optional.ofNullable(formInstance)
+        IModel<? extends SInstance> formInstanceModel = Optional.ofNullable(modalFormInstance)
             .map(it -> it.get())
             .map(it -> new SInstanceRootModel<>(it))
             .orElse(null);
