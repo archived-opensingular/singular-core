@@ -44,7 +44,11 @@ import org.opensingular.lib.commons.base.SingularUtil;
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
-public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extends FlowMap, BUILDER_TASK extends BuilderTask, BUILDER_JAVA extends BuilderJava<?>, BUILDER_PEOPLE extends BuilderHuman<?>, BUILDER_WAIT extends BuilderWait<?>, BUILDER_END extends BuilderEnd<?>, BUILDER_START extends BuilderStart<?>, BUILDER_TRANSITION extends BuilderTransition<?>, BUILDER_TRANSITION_PREDICATE extends BuilderTransitionPredicate<?>, BUILDER_ROLE extends BuilderBusinessRole<?>, TASK_DEF extends ITaskDefinition> {
+public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extends FlowMap,
+        BUILDER_TASK extends BuilderTask, BUILDER_JAVA extends BuilderJava<?>, BUILDER_PEOPLE extends BuilderHuman<?>,
+        BUILDER_WAIT extends BuilderWait<?>, BUILDER_END extends BuilderEnd<?>, BUILDER_START extends BuilderStart<?>,
+        BUILDER_TRANSITION extends BuilderTransition<?>, BUILDER_TRANSITION_PREDICATE extends BuilderTransitionPredicate<?>,
+        BUILDER_ROLE extends BuilderBusinessRole<?>, TASK_DEF extends ITaskDefinition> {
 
     private final FLOW_MAP flowMap;
 
@@ -124,7 +128,8 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extend
     }
 
     public BUILDER_ROLE addBusinessRole(String description, boolean automaticUserAllocation) {
-        return newBusinessRole(getFlowMap().addRoleDefinition(description, SingularUtil.convertToJavaIdentity(description, true), SFlowUtil.dummyBusinessRoleStrategy(), automaticUserAllocation));
+        return newBusinessRole(getFlowMap().addRoleDefinition(description, SingularUtil.convertToJavaIdentity(description, true),
+                SFlowUtil.dummyBusinessRoleStrategy(), automaticUserAllocation));
     }
 
     public BUILDER_JAVA addJavaTask(TASK_DEF taskDefinition) {
@@ -203,7 +208,8 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extend
     }
 
 
-    public FlowBuilder<DEF, FLOW_MAP, BUILDER_TASK, BUILDER_JAVA, BUILDER_PEOPLE, BUILDER_WAIT, BUILDER_END, BUILDER_START, BUILDER_TRANSITION, BUILDER_TRANSITION_PREDICATE, BUILDER_ROLE, TASK_DEF> addDashboardView(DashboardView dashboardView) {
+    public FlowBuilder<DEF, FLOW_MAP, BUILDER_TASK, BUILDER_JAVA, BUILDER_PEOPLE, BUILDER_WAIT, BUILDER_END,
+            BUILDER_START, BUILDER_TRANSITION, BUILDER_TRANSITION_PREDICATE, BUILDER_ROLE, TASK_DEF> addDashboardView(DashboardView dashboardView) {
         getFlowMap().addDashboardView(dashboardView);
         return this;
     }

@@ -19,7 +19,6 @@ package org.opensingular.flow.core;
 import org.apache.commons.lang3.StringUtils;
 
 import org.opensingular.lib.commons.lambda.IConsumer;
-import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.schedule.IScheduleData;
 
 import java.util.Optional;

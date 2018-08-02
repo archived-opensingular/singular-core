@@ -45,13 +45,13 @@ import static org.opensingular.lib.commons.base.SingularProperties.SINGULAR_QUAR
 
 public abstract class SingularFlowConfigurationBean implements Loggable {
 
-    public static final String           PREFIXO         = "SGL";
-    private             IScheduleService scheduleService = new QuartzScheduleService();
+    public static final String PREFIXO = "SGL";
+    private IScheduleService scheduleService = new QuartzScheduleService();
 
     private String moduleCod;
 
     private List<FlowInstanceListener> notifiers = new ArrayList<>();
-    private IScheduleData              scheduleData;
+    private IScheduleData scheduleData;
 
     /**
      * @param moduleCod - chave do sistema cadastrado no em <code>TB_MODULO</code>
@@ -72,7 +72,8 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
                     getScheduleService().schedule(new ScheduledJob(taskJava.getCompleteName(), taskJava.getScheduleData(), () -> executeTask(taskJava)));
                 }
                 for (IConditionalTaskAction action : task.getAutomaticActions()) {
-                    getScheduleService().schedule(new ScheduledJob(task.getCompleteName(), action.getScheduleData().orElse(getDefaultSchedule()), () -> executeAutomaticActions(task, action)));
+                    getScheduleService().schedule(new ScheduledJob(task.getCompleteName() + " - " + action.getPredicate().getName(),
+                            action.getScheduleData().orElse(getDefaultSchedule()), () -> executeAutomaticActions(task, action)));
                 }
             }
             for (FlowScheduledJob scheduledJob : flowDefinition.getScheduledJobs()) {
@@ -227,8 +228,8 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     @Nonnull
     protected <X extends FlowInstance> Optional<X> getFlowInstanceOpt(@Nonnull String flowInstanceID) {
         Objects.requireNonNull(flowInstanceID);
-        MappingId              mappingId = parseId(flowInstanceID);
-        Optional<FlowInstance> instance  = getFlowInstanceOpt(mappingId.cod);
+        MappingId mappingId = parseId(flowInstanceID);
+        Optional<FlowInstance> instance = getFlowInstanceOpt(mappingId.cod);
         if (instance.isPresent() && mappingId.abbreviation != null) {
             getFlowDefinition(mappingId.abbreviation).checkIfCompatible(instance.get());
         }
@@ -281,16 +282,16 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
         if (instanceID == null || instanceID.length() < 1) {
             throw SingularException.rethrow("O ID da instância não pode ser nulo ou vazio");
         }
-        String parts[]      = instanceID.split("\\.");
+        String parts[] = instanceID.split("\\.");
         String abbreviation = parts[parts.length - 2];
-        String id           = parts[parts.length - 1];
+        String id = parts[parts.length - 1];
         return new MappingId(abbreviation, Integer.parseInt(id));
     }
 
     // TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse
     // estar nesse lugar
     protected static class MappingId {
-        public final String  abbreviation;
+        public final String abbreviation;
         public final Integer cod;
 
         public MappingId(String abbreviation, int cod) {
@@ -345,8 +346,8 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     public final Object executeTask(STaskJava task) {
         try {
-            final IFlowDataService<?>                dataService = task.getFlowMap().getFlowDefinition().getDataService();
-            final Collection<? extends FlowInstance> instances   = dataService.retrieveAllInstancesIn(task);
+            final IFlowDataService<?> dataService = task.getFlowMap().getFlowDefinition().getDataService();
+            final Collection<? extends FlowInstance> instances = dataService.retrieveAllInstancesIn(task);
             getLogger().info("Start running job: {} - {} instances. ", task.getName(), Optional.ofNullable(instances).map(Collection::size).orElse(0));
             if (task.isCalledInBlock()) {
                 return task.executarByBloco(instances);
@@ -363,8 +364,8 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     public final Object executeAutomaticActions(STask<?> task, IConditionalTaskAction action) {
         try {
-            final IFlowDataService<?>                dataService = task.getFlowMap().getFlowDefinition().getDataService();
-            final Collection<? extends FlowInstance> instances   = dataService.retrieveAllInstancesIn(task);
+            final IFlowDataService<?> dataService = task.getFlowMap().getFlowDefinition().getDataService();
+            final Collection<? extends FlowInstance> instances = dataService.retrieveAllInstancesIn(task);
             getLogger().info("Start running job: {} - {} instances. ", task.getName(), Optional.of(instances).map(Collection::size).orElse(0));
             for (FlowInstance instance : instances) {
                 TaskInstance taskInstance = instance.getCurrentTaskOrException();

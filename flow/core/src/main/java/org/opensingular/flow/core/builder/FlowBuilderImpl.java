@@ -121,7 +121,7 @@ public class FlowBuilderImpl extends
         }
 
         @Override
-        public BuilderTransitionPredicate<?> go(String actionName, ITaskDefinition taskRefDestiny, ITaskPredicate condition) {
+        public BuilderTransitionPredicate<?> go(ITaskDefinition taskRefDestiny, ITaskPredicate condition) {
             FlowMap flowMap = getFlowBuilder().getFlowMap();
             return getFlowBuilder().newAutomaticTransition(getTask().addAutomaticTransition(condition, flowMap.getTask(taskRefDestiny)));
         }
