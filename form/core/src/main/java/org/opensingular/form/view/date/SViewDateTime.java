@@ -42,4 +42,16 @@ public class SViewDateTime extends SViewDate implements ISViewTime {
         return sViewTime.getMinuteStep();
     }
 
+    @Override
+    public ISViewTime hideModalTimePicker(Boolean hide) {
+        sViewTime.hideModalTimePicker(hide);
+        return this;
+    }
+
+    @Override
+    public boolean isModalTimerHide() {
+        return sViewTime.isModalTimerHide();
+    }
+
+
 }

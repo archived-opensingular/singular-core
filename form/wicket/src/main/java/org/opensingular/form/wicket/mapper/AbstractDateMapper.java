@@ -8,6 +8,8 @@ import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.view.date.ISViewDate;
+import org.opensingular.form.view.date.SViewDate;
 import org.opensingular.form.wicket.IAjaxUpdateListener;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.AjaxUpdateInputBehavior;
@@ -21,7 +23,7 @@ import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
 import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.OPTS_ORIGINAL_PROCESS_EVENT;
 import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.OPTS_ORIGINAL_VALIDATE_EVENT;
-import static org.opensingular.lib.wicket.util.behavior.DatePickerInitScriptBuilder.*;
+import static org.opensingular.lib.wicket.util.behavior.DatePickerInitScriptBuilder.JS_CHANGE_EVENT;
 
 
 @SuppressWarnings("serial")
@@ -29,7 +31,6 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
 
     private IConsumer<? extends Component> textFieldConfigurer = IConsumer.noop();
 
-    private Component button;
     private TextField inputText;
     private boolean createButton = true;
 
@@ -39,8 +40,9 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
         inputText = createInputText(ctx.getModel(), labelModel);
         BSInputGroup bsInputGroup = (BSInputGroup) formGroup.appendDatepicker(inputText
                 , getOptions(ctx.getModel()), getDatePickerSettings(ctx));
-        if (isCreateButton()) {
-            button = bsInputGroup.newButtonAddon(DefaultIcons.CALENDAR);
+        ISViewDate viewDate = ctx.getViewSupplier(SViewDate.class).get();
+        if (isCreateButton() && checkModalPickerWillHide(viewDate)) {
+            bsInputGroup.newButtonAddon(DefaultIcons.CALENDAR);
         }
         return inputText;
     }
@@ -99,7 +101,7 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
 
     /**
      * Method responsible for enable or disabled the creation of the button addon.
-     * By default the button will be created.
+     * By default the button will be created [true].
      *
      * @return True for create;
      */
@@ -113,7 +115,7 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
 
     @Override
     public void addAjaxUpdate(WicketBuildContext ctx, Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
-        addAjaxEvent(model, listener, inputText);
+        addAjaxEvent(model, listener, inputText, ctx.getViewSupplier(SViewDate.class).get());
     }
 
     /**
@@ -123,11 +125,18 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
      * @param model     The model for process and validate.
      * @param listener  The listener for process and validate.
      * @param component The component that will be the ajax Event's adding.
+     * @param viewDate  View of the date.
      */
-    static void addAjaxEvent(IModel<SInstance> model, IAjaxUpdateListener listener, TextField component) {
-        component.add(new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS)
-                .setOption(OPTS_ORIGINAL_PROCESS_EVENT, JS_CHANGE_EVENT)
-                .setOption(OPTS_ORIGINAL_VALIDATE_EVENT, JS_CHANGE_EVENT))
+    static void addAjaxEvent(IModel<SInstance> model, IAjaxUpdateListener listener, TextField component, ISViewDate viewDate) {
+
+        SingularEventsHandlers eventsHandlers = new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS);
+
+        if (checkModalPickerWillHide(viewDate)) {
+            eventsHandlers.setOption(OPTS_ORIGINAL_VALIDATE_EVENT, JS_CHANGE_EVENT)
+                    .setOption(OPTS_ORIGINAL_PROCESS_EVENT, JS_CHANGE_EVENT);
+        }
+
+        component.add(eventsHandlers)
                 .add(AjaxUpdateInputBehavior.forProcess(model, listener))
                 .add(AjaxUpdateInputBehavior.forValidate(model, listener));
     }
@@ -150,6 +159,16 @@ public abstract class AbstractDateMapper extends AbstractControlsFieldComponentM
         if (textFieldConfigurer != null) {
             ((IConsumer) textFieldConfigurer).accept(comp);
         }
+    }
+
+    /**
+     * Method responsible for containing the rules of the visible modal picker.
+     *
+     * @param viewDate The view that containing the logic.
+     * @return True if the modal picker will be hide.
+     */
+    private static boolean checkModalPickerWillHide(ISViewDate viewDate) {
+        return viewDate == null || !viewDate.isModalHide();
     }
 
 
