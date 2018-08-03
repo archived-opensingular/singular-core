@@ -72,6 +72,7 @@
 
             if (verifyIfButtonUploadIsDisplayed()) {
                 $('#' + params.file_field_id).fileupload({
+                    maxChunkSize: ${maxChunkSize},
                     url: params.upload_url,
                     paramName: params.param_name,
                     singleFileUploads: true,
@@ -177,13 +178,13 @@
                 FileUploadPanel.resetFormElement(e);
                 return false;
             }
-            
+
             if (maxSize && data.files[0].size > maxSize) {
             	toastr.error("Arquivo não pode ser maior que " + FileUploadPanel.humaneSize(maxSize));
             	FileUploadPanel.resetFormElement(e);
             	return false;
             }
-            
+
             if (allowed_file_types && allowed_file_types.length > 0) {
             	var file = data.files[0];
             	var extension 		 = file.name.substring(file.name.lastIndexOf(".") + 1).toLocaleLowerCase();
