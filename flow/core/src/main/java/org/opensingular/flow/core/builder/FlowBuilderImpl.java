@@ -18,7 +18,9 @@ package org.opensingular.flow.core.builder;
 
 import org.opensingular.flow.core.FlowDefinition;
 import org.opensingular.flow.core.FlowMap;
+import org.opensingular.flow.core.IConditionalTaskAction;
 import org.opensingular.flow.core.ITaskDefinition;
+import org.opensingular.flow.core.ITaskPredicate;
 import org.opensingular.flow.core.SBusinessRole;
 import org.opensingular.flow.core.SStart;
 import org.opensingular.flow.core.STask;
@@ -28,10 +30,12 @@ import org.opensingular.flow.core.STaskJava;
 import org.opensingular.flow.core.STaskWait;
 import org.opensingular.flow.core.STransition;
 
+import org.opensingular.schedule.IScheduleData;
+
 import java.util.Objects;
 
 public class FlowBuilderImpl extends
-        FlowBuilder<FlowDefinition<?>, FlowMap, BuilderTask, BuilderJava<?>, BuilderHuman<?>, BuilderWait<?>, BuilderEnd<?>, BuilderStart<?>, BuilderTransition<?>, BuilderBusinessRole<?>, ITaskDefinition> {
+        FlowBuilder<FlowDefinition<?>, FlowMap, BuilderTask, BuilderJava<?>, BuilderHuman<?>, BuilderWait<?>, BuilderEnd<?>, BuilderStart<?>, BuilderTransition<?>, BuilderTransitionPredicate<?>, BuilderBusinessRole<?>, ITaskDefinition> {
 
     public FlowBuilderImpl(FlowDefinition<?> flowDefinition) {
         super(flowDefinition);
@@ -78,16 +82,21 @@ public class FlowBuilderImpl extends
     }
 
     @Override
+    protected BuilderTransitionPredicate<?> newAutomaticTransition(STransition transition) {
+        return new ImplBuilderTransitionPredicate<>(this, transition);
+    }
+
+    @Override
     protected BuilderBusinessRole<?> newBusinessRole(SBusinessRole businessRole) {
         return new ImplBuilderBusinessRole<>(businessRole);
     }
 
     public static class ImplBuilderTask<SELF extends ImplBuilderTask<SELF, TASK>, TASK extends STask<?>> implements BuilderTaskSelf<SELF, TASK> {
 
-        private final FlowBuilder<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> flowBuilder;
-        private final TASK task;
+        private final FlowBuilder<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> flowBuilder;
+        private final TASK                                            task;
 
-        public ImplBuilderTask(FlowBuilder<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> flowBuilder, TASK task) {
+        public ImplBuilderTask(FlowBuilder<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> flowBuilder, TASK task) {
             this.flowBuilder = flowBuilder;
             this.task = task;
         }
@@ -109,6 +118,12 @@ public class FlowBuilderImpl extends
         @Override
         public BuilderTransition<?> go(String actionName, ITaskDefinition taskRefDestiny) {
             return getFlowBuilder().addTransition(this, actionName, taskRefDestiny);
+        }
+
+        @Override
+        public BuilderTransitionPredicate<?> go(ITaskDefinition taskRefDestiny, ITaskPredicate condition) {
+            FlowMap flowMap = getFlowBuilder().getFlowMap();
+            return getFlowBuilder().newAutomaticTransition(getTask().addAutomaticTransition(condition, flowMap.getTask(taskRefDestiny)));
         }
     }
 
@@ -174,6 +189,25 @@ public class FlowBuilderImpl extends
         @Override
         public FlowBuilder getFlowBuilder() {
             return flowBuilder;
+        }
+    }
+
+    public static class ImplBuilderTransitionPredicate<SELF extends ImplBuilderTransitionPredicate<SELF>> extends ImplBuilderTransition<SELF> implements
+            BuilderTransitionPredicate<SELF> {
+
+        public ImplBuilderTransitionPredicate(FlowBuilder flowBuilder, STransition transition) {
+            super(flowBuilder, transition);
+        }
+
+        @Override
+        public BuilderTransition<SELF> setCustomSchedule(IScheduleData scheduleData) {
+            for (IConditionalTaskAction automaticAction : getTransition().getOrigin().getAutomaticActions()) {
+                if (this.getTransition().getDestination().getAbbreviation().equals(automaticAction.getDestinationTaskAbbreviation())) {
+                    automaticAction.setScheduleData(scheduleData);
+                    break;
+                }
+            }
+            return this;
         }
     }
 

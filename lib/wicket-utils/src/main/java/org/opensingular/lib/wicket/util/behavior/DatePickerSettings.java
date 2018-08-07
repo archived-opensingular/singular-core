@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.opensingular.lib.wicket.util.behavior;
 
 import java.io.Serializable;
@@ -7,6 +23,7 @@ import java.util.Optional;
 
 /**
  * Options to configure the bootstrap datepicker
+ *
  * @see <a href="http://bootstrap-datepicker.readthedocs.io/en/latest/options.html">Bootstrap DatePicker Settings</a>
  */
 public interface DatePickerSettings extends Serializable {
@@ -45,4 +62,9 @@ public interface DatePickerSettings extends Serializable {
      * If true, highlights the current date.
      */
     Optional<Boolean> isTodayHighlight();
+
+    /**
+     * If true, the modal picker date will be hide.
+     */
+    Optional<Boolean> isHideModal();
 }
