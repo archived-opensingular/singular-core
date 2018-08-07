@@ -23,10 +23,13 @@ import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
 
+/**
+ * This Button will not validate the form, will just save.
+ */
 public abstract class SingularButton extends AjaxButton {
 
     private final IModel<? extends SInstance> currentInstance;
-    
+
     public SingularButton(String id, IModel<? extends SInstance> currentInstance) {
         super(id);
         this.currentInstance = currentInstance;
@@ -35,12 +38,12 @@ public abstract class SingularButton extends AjaxButton {
     @Override
     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
         super.onSubmit(target, form);
-        
+
         //HACK: a solução que eu preferia usar faria o onSubmit() final, mas daí quebraria a compatibilidade. Discutir.
         if (isShouldProcessFormSubmitWithoutValidation())
             WicketFormProcessing.onFormSubmit(form, target, getCurrentInstance(), false);
     }
-    
+
     protected boolean isShouldProcessFormSubmitWithoutValidation() {
         return true;
     }

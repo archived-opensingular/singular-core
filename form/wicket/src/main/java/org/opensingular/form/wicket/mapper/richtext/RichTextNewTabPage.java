@@ -1,26 +1,20 @@
 /*
+ * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
- *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
- *  *
- *  * Licensed under the Apache License, Version 2.0 (the "License");
- *  *  you may not use this file except in compliance with the License.
- *  * You may obtain a copy of the License at
- *  *
- *  * http://www.apache.org/licenses/LICENSE-2.0
- *  *
- *  * Unless required by applicable law or agreed to in writing, software
- *  * distributed under the License is distributed on an "AS IS" BASIS,
- *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  * See the License for the specific language governing permissions and
- *  * limitations under the License.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.opensingular.form.wicket.mapper.richtext;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -47,6 +41,10 @@ import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.template.RecursosStaticosSingularTemplate;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
 import org.wicketstuff.annotation.mount.MountPath;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @MountPath("richtextnewtabpage")
 public class RichTextNewTabPage extends WebPage implements Loggable {
@@ -113,7 +111,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
             final Map<String, String> params = new HashMap<>();
 
             /*If don't contains the View, i add a view with empty buttons, for default use.*/
-            if (!viewSupplier.optional().isPresent() || !(viewSupplier.get() instanceof SViewByRichTextNewTab)) {
+            if (!viewSupplier.optional().isPresent()) {
                 viewSupplier = (ISupplier<SViewByRichTextNewTab>) SViewByRichTextNewTab::new;
                 getLogger().info("SViewByRichTextNewTab was insert in the RichTextNewTabPage.");
             }

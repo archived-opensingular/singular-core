@@ -178,7 +178,7 @@ public class MasterDetailPanel extends Panel {
 
     private BSDataTable<SInstance, ?> newTable(String id) {
 
-        final BSDataTableBuilder<SInstance, ?, ?> builder = new MasterDetailBSDataTableBuilder<>(newDataProvider()).withNoRecordsToolbar();
+        final BSDataTableBuilder<SInstance, Object, ?> builder = new MasterDetailBSDataTableBuilder<>(newDataProvider()).withNoRecordsToolbar();
         final BSDataTable<SInstance, ?> dataTable;
 
         ISupplier<SViewListByMasterDetail> viewSupplier = ctx.getViewSupplier(SViewListByMasterDetail.class);
@@ -236,7 +236,7 @@ public class MasterDetailPanel extends Panel {
 
     private void configureColumns(
         List<SViewListByMasterDetail.Column> mapColumns,
-        BSDataTableBuilder<SInstance, ?, ?> builder,
+        BSDataTableBuilder<SInstance, Object, ?> builder,
         IModel<? extends SInstance> model,
         MasterDetailModal modal,
         WicketBuildContext ctx,
@@ -404,7 +404,7 @@ public class MasterDetailPanel extends Panel {
      * serialização do lambda do appendPropertyColumn
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void propertyColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder,
+    private void propertyColumnAppender(BSDataTableBuilder<SInstance, Object, ?> builder,
         IModel<String> labelModel, IModel<String> sTypeNameModel,
         IFunction<SInstance, String> displayValueFunction) {
         IFunction<SIComposite, SInstance> toInstance = composto -> {
@@ -416,7 +416,7 @@ public class MasterDetailPanel extends Panel {
             return (SInstance) composto.findDescendant(sType).orElse(null);
         };
         IFunction<SInstance, Object> propertyFunction = o -> displayValueFunction.apply(toInstance.apply((SIComposite) o));
-        builder.appendColumn(new BSPropertyColumn(labelModel, propertyFunction) {
+        builder.appendColumn(new BSPropertyColumn<SInstance, Object>(labelModel, propertyFunction) {
             @Override
             public IModel getDataModel(IModel rowModel) {
                 return new ISInstanceAwareModel<Object>() {
@@ -444,7 +444,7 @@ public class MasterDetailPanel extends Panel {
         });
     }
 
-    private BaseDataProvider<SInstance, ?> newDataProvider() {
+    private BaseDataProvider<SInstance, Object> newDataProvider() {
         return new SIListDataProvider(list);
     }
 
