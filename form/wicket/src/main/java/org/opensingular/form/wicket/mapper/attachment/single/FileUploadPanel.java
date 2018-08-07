@@ -16,13 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.attachment.single;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -32,7 +25,6 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
@@ -42,7 +34,6 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceStreamResource;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.opensingular.form.SIList;
@@ -64,18 +55,21 @@ import org.opensingular.form.wicket.mapper.attachment.upload.UploadResponseWrite
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.AttachmentKeyStrategy;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
+import org.opensingular.lib.commons.base.SingularProperties;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.util.Loggable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.ServletFileUploadStrategy.PARAM_NAME;
-import static org.opensingular.lib.commons.base.SingularProperties.*;
+import static org.opensingular.lib.commons.base.SingularProperties.SINGULAR_FILEUPLOAD_MAXCHUNKSIZE;
 
 public class FileUploadPanel extends Panel implements Loggable {
 
