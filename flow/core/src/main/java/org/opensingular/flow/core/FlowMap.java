@@ -453,12 +453,20 @@ public class FlowMap {
 
     @SuppressWarnings("StatementWithEmptyBody")
     private void checkRouteToTheEnd() {
-        final Set<STask<?>> tasks = new HashSet<>(tasksByName.values());
+        Set<STask<?>> tasks = new HashSet<>(tasksByName.values());
+        Set<STask<?>> taskWithoutOut = tasks.stream().filter(t -> t.getTransitions().isEmpty() ||
+                t.getTransitions().stream().allMatch(trans -> trans.getDestination().equals(t))).collect(
+                Collectors.toSet());
+        if (!taskWithoutOut.isEmpty()) {
+            throw new SingularFlowException(
+                    "The following tasks have no way to reach the end (without out transition): \n" +
+                            joinTaskNames(tasks), this);
+        }
         while (removeIfReachesTheEnd(tasks)) {
             /* CORPO VAZIO */
         }
         if (!tasks.isEmpty()) {
-            throw new SingularFlowException("The following tasks have no way to reach the end: "
+            throw new SingularFlowException("The following tasks have no way to reach the end (circular reference): \n"
                     + joinTaskNames(tasks), this);
         }
     }
@@ -470,7 +478,7 @@ public class FlowMap {
     }
 
     private static String joinTaskNames(Set<STask<?>> tasks) {
-        return tasks.stream().map(STask::getName).collect(Collectors.joining(", "));
+        return tasks.stream().map(STask::toString).collect(Collectors.joining(";\n     ", "     ", ";"));
     }
 
     /**

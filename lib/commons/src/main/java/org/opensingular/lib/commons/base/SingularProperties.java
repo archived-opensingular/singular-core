@@ -74,6 +74,10 @@ public interface SingularProperties {
     String SINGULAR_MAIL_SMTP_SSL_TRUST = "singular.mail.smtp.ssl.trust";
     String SINGULAR_MAIL_AUTH = "singular.mail.auth";
 
+    //########    PROPRIEDADES SEGURANÇA    ########
+    String SINGULAR_CSRF_ACCEPT_ORIGINS = "singular.csrf.accept.origins";  //A list separated by comma of accepted origins (host names/domain names)
+    String SINGULAR_CSRF_ENABLED = "singular.csrf.enabled";  //Property for enable CSRF Security.
+
     //########    PROPRIEDADES GERAIS    ########
     String SINGULAR_DEV_MODE = "singular.development";
     String DEFAULT_CAS_ENABLED = "singular.cas.default.enabled";
@@ -85,6 +89,13 @@ public interface SingularProperties {
     String SYSTEM_PROPERTY_SINGULAR_SERVER_HOME = "singular.server.home";
     String SINGULAR_EAGER_LOAD_FLOW_DEFINITIONS = "singular.flow.eager.load";
 
+    String SINGULAR_QUARTZ_JOBSTORE_ENABLED = "singular.quartz.jobstore.enabled";
+
+    String SINGULAR_QUARTZ_DEFAULT_CRON = "singular.quartz.cron.default";
+
+    String SINGULAR_WICKET_DEBUG_ENABLED = "singular.wicket.debug.enabled";
+
+    String SINGULAR_FILEUPLOAD_MAXCHUNKSIZE = "singular.fileupload.maxchunksize";
 
     static SingularProperties get() {
         return SingularPropertiesImpl.get();

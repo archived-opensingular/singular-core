@@ -18,10 +18,6 @@
 
 package org.opensingular.form.wicket.mapper.richtext;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -47,6 +43,10 @@ import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.template.RecursosStaticosSingularTemplate;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
 import org.wicketstuff.annotation.mount.MountPath;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @MountPath("richtextnewtabpage")
 public class RichTextNewTabPage extends WebPage implements Loggable {
@@ -113,7 +113,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
             final Map<String, String> params = new HashMap<>();
 
             /*If don't contains the View, i add a view with empty buttons, for default use.*/
-            if (!viewSupplier.optional().isPresent() || !(viewSupplier instanceof SViewByRichTextNewTab)) {
+            if (!viewSupplier.optional().isPresent()) {
                 viewSupplier = (ISupplier<SViewByRichTextNewTab>) SViewByRichTextNewTab::new;
                 getLogger().info("SViewByRichTextNewTab was insert in the RichTextNewTabPage.");
             }

@@ -16,6 +16,13 @@
 
 package org.opensingular.form.persistence.dao;
 
+import java.io.InputStream;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -25,13 +32,6 @@ import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.support.persistence.BaseDAO;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.io.InputStream;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
 @SuppressWarnings("serial")
 @Transactional(Transactional.TxType.MANDATORY)
@@ -61,7 +61,7 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
     public void delete(Long id) {
         Optional<T> t = get(id);
         if (t.isPresent()) {
-            T    entity     = t.get();
+            T entity = t.get();
             Long codContent = entity.getCodContent();
             delete(entity);
             attachmentContentDao.delete(codContent);
@@ -92,8 +92,8 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
      */
     private String truncateNameIfNeeded(String s) {
         if (s != null && s.length() > 200) {
-            String extension      = "";
-            int    lastIndexOfDot = s.lastIndexOf('.');
+            String extension = "";
+            int lastIndexOfDot = s.lastIndexOf('.');
             if (lastIndexOfDot > 0) {
                 extension = s.substring(lastIndexOfDot, s.length());
             }
@@ -118,11 +118,15 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
         hql.append(" WHERE a.creationDate < :ontem ");
         hql.append(" AND NOT EXISTS ( ");
         hql.append("    SELECT 1 FROM ").append(AbstractFormAttachmentEntity.class.getName()).append(" as fa ");
-        hql.append("    WHERE fa.cod.attachmentCod = a.cod ");
+        hql.append("    WHERE fa.cod.attachmentCod = a.cod )");
+        hql.append(" AND NOT EXISTS ( ");
+        hql.append("    SELECT 1 FROM  EmailEntity as ee"); //The entity is hard code because don't have dependecy of the entity class.
+        hql.append("    LEFT JOIN ee.attachments as attach");
+        hql.append("    WHERE attach = a");
         hql.append(" ) ");
 
         Query query = getSession().createQuery(hql.toString());
-        Date  ontem = new DateTime().minusDays(1).toDate();
+        Date ontem = new DateTime().minusDays(1).toDate();
         query.setParameter("ontem", ontem);
 
         return query.list();

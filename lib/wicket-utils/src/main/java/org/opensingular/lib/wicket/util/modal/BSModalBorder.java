@@ -19,7 +19,6 @@ package org.opensingular.lib.wicket.util.modal;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -378,30 +377,18 @@ public class BSModalBorder extends Border {
     public void hide(AjaxRequestTarget target) {
         if (this.isVisible()) {
 
-            // limpo os valores, pois erros de validacao impedem o formulario de se ser recarregado 
+            // limpo os valores, pois erros de validacao impedem o formulario de se ser recarregado
             clearInputs();
 
             this.setVisible(false);
-
-            final AbstractDefaultAjaxBehavior onHideCallBackBehavior = new AbstractDefaultAjaxBehavior() {
-                private boolean executed = false;
-                @Override
-                protected void respond(AjaxRequestTarget target) {
-                    if (onHideCallBack != null)
-                        onHideCallBack.accept(target);
-                }
-                @Override
-                public boolean isTemporary(Component component) {
-                    return executed;
-                }
-            };
-            getPage().add(onHideCallBackBehavior);
 
             if (target != null) {
                 final String blockingFunction = "hide_hidden_wicket_modal";
                 target.prependJavaScript(blockingFunction + "|" + getHideJavaScriptCallback(blockingFunction));
                 target.add(this);
-                target.appendJavaScript(onHideCallBackBehavior.getCallbackScript());
+                if(onHideCallBack != null) {
+                    onHideCallBack.accept(target);
+                }
             }
         }
     }
