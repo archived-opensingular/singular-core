@@ -34,13 +34,13 @@ public class FormCacheValueDAO extends BaseDAO<FormCacheValueEntity, Long> {
         query.setParameter("formVersion", formVersion);
 
         int result = query.executeUpdate();
-        getLogger().info("{} itens excluidos na atualização dos dados indexados", result);
+        getLogger().info("{} itens excluídos na atualização dos dados indexados", result);
     }
 
     public void deleteAllIndexedData() {
         Query query = getSession().createQuery("delete FormCacheValueEntity");
 
         int result = query.executeUpdate();
-        getLogger().info("{} itens excluidos na atualização dos dados indexados", result);
+        getLogger().info("{} itens excluídos na atualização dos dados indexados", result);
     }
 }
