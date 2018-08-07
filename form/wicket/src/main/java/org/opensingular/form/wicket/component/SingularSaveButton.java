@@ -19,9 +19,11 @@ package org.opensingular.form.wicket.component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
-
 import org.opensingular.form.SInstance;
 
+/**
+ * Button able to configure if have or not validate.
+ */
 public abstract class SingularSaveButton extends SingularValidationButton {
 
     private boolean validate;
