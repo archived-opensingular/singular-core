@@ -16,10 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.maps;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.LatLng;
 import org.apache.commons.collections.CollectionUtils;
@@ -55,6 +51,10 @@ import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
@@ -96,7 +96,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
     private final HiddenField<String> metaData = new HiddenField<>("metadados", metaDataModel);
 
     public MarkableGoogleMapsPanel(LatLongMarkupIds ids, IModel<? extends SInstance> model,
-            ISupplier<? extends SViewCurrentLocation> viewSupplier, boolean visualization, boolean multipleMarkers) {
+                                   ISupplier<? extends SViewCurrentLocation> viewSupplier, boolean visualization, boolean multipleMarkers) {
         super(model.getObject().getName());
         this.visualization = visualization;
         this.ids = ids;

@@ -63,7 +63,7 @@
             var tableContainerElement = document.getElementById(metadados.tableContainerId);
             var urlKml = metadados.urlKml;
             var isKmlUrlVisible = metadados.isKmlUrlVisible;
-            configureMapMultipleMarkers(tableContainerElement, zoomElement, metadados.idMap, metadados.idClearButton, JSON.parse(metadados.readOnly), metadados.callbackUrl, urlKml, isKmlUrlVisible);
+            configureMapMultipleMarkers(metadados.idLat, metadados.idLng, tableContainerElement, zoomElement, metadados.idMap, metadados.idClearButton, JSON.parse(metadados.readOnly), metadados.callbackUrl, urlKml, isKmlUrlVisible);
         } else {
             document.getElementById(metadados.idMap).style.visibility = "hidden";
         }
@@ -81,6 +81,7 @@
             zoomElement.value = map.zoom;
         });
 
+
         var marker = configureMarker(latLong, latElement, lngElement, map, readOnly);
         configureFieldsEvents(latElement, lngElement, map, marker, idClearButton, readOnly, idCurrentLocationButton);
 
@@ -97,9 +98,10 @@
         return map;
     }
 
-    function configureMapMultipleMarkers(tableContainerElement, zoomElement, idMap, idClearButton, readOnly, callbackUrl, urlKml, isKmlUrlVisible) {
+    function configureMapMultipleMarkers(lat, lng, tableContainerElement, zoomElement, idMap, idClearButton, readOnly, callbackUrl, urlKml, isKmlUrlVisible) {
         var markers = [];
-        var latLong = buildGmapsLatLong();
+        var latLong = buildGmapsLatLong(lat, lng);
+
         var polygon = new google.maps.Polygon({
             strokeColor: '#FF0000',
             strokeOpacity: 0.8,
@@ -119,7 +121,6 @@
                 url: urlKml,
                 map: map
             });
-
 
 
             if (kmlLayer && !readOnly) {
@@ -149,8 +150,7 @@
             if (!readOnly) {
                 if (!isKmlUrlVisible) {
                     map.addListener('click', function (event) {
-
-                        var params = {'lat': event.latLng.lat(), 'lng': event.latLng.lng()};
+                        var params = {'lat': event.latLng.lat(), 'lng': event.latLng.lng(), 'zoom': zoomElement.value};
                         Wicket.Ajax.post({u: callbackUrl, ep: params});
                         var number = countMarkers(tableContainerElement);
                         var marker = createMarker(map, event.latLng, polygon, readOnly, true, number + 1);
@@ -162,11 +162,13 @@
         }
 
 
-
         return map;
     }
 
     function configureMarkers(tableContainerElement, map, readOnly, markers, polygon) {
+
+        var bounds = new google.maps.LatLngBounds();
+        var markersVisible = [];
         jQuery(tableContainerElement)
             .find('.list-table-body table tbody tr')
             .each(function (index) {
@@ -186,9 +188,20 @@
                     latLng = buildGmapsLatLong(valLat, valLng);
                 }
 
-                markers.push(createMarker(map, latLng, polygon, readOnly, false, index + 1));
-            })
-        ;
+                var mark = createMarker(map, latLng, polygon, readOnly, false, index + 1);
+                if (mark.position) {
+                    bounds.extend(mark.position);
+                    markersVisible.push(mark);
+                }
+                markers.push(mark);
+            });
+        if (markersVisible != null && markersVisible.length >= 1) {
+            if(markersVisible.length == 1){
+                map.setCenter(markersVisible[0].position);
+            } else {
+                map.fitBounds(bounds);
+            }
+        }
     }
 
     function createMarker(map, latLng, polygon, readOnly, animate, number) {
@@ -268,9 +281,7 @@
                     draw(map, polygon, markers);
                 });
 
-            })
-        ;
-
+            });
     }
 
     function configureMarker(latLong, latElement, lngElement, map, readOnly) {

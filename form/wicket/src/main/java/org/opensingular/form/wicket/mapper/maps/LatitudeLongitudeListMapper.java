@@ -16,8 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.maps;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxEventBehavior;
@@ -35,17 +33,18 @@ import org.opensingular.form.type.util.SILatitudeLongitudeMultipleMarkable;
 import org.opensingular.form.type.util.STypeLatitudeLongitude;
 import org.opensingular.form.type.util.STypeLatitudeLongitudeMultipleMarkable;
 import org.opensingular.form.view.SViewCurrentLocation;
+import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.mapper.TableListMapper;
 import org.opensingular.form.wicket.mapper.attachment.AttachmentPublicMapperResource;
 import org.opensingular.form.wicket.mapper.attachment.single.FileUploadPanel;
 import org.opensingular.form.wicket.mapper.buttons.AddButton;
-import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
+import org.opensingular.form.wicket.mapper.tablelist.TableElementsView;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
-import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 
@@ -62,33 +61,22 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
  * Date: 16/07/2018
  * </p>
  */
-public class LatitudeLongitudeListMapper extends TableListMapper {
+public class LatitudeLongitudeListMapper implements IWicketComponentMapper {
 
     private WicketBuildContext pointsCtx;
 
-    /**
-     * Target before remove element of table.
-     *
-     * @param target target the pointsCtx.
-     */
-    @Override
-    protected void behaviorAfterRemoveButtonClick(AjaxRequestTarget target) {
-        target.add(pointsCtx.getParent().getContainer());
-    }
-
     @Override
     public void buildView(WicketBuildContext ctx) {
-        confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
-
         LatLongMarkupIds ids = new LatLongMarkupIds();
-        createZoomField(ctx, ids);
+        SInstanceFieldModel<SInstance> zoomInstance = createZoomField(ctx, ids);
+
         final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = createMarkableGoogleMapsPanel(ctx, ids);
         ctx.getContainer().newFormGroup().appendDiv(googleMapsPanel);
         createBooleanField(ctx);
-        IModel<SIList<SInstance>> points = createPointField(ctx);
+        IModel<SIList<SInstance>> points = createPointField(ctx, googleMapsPanel);
         createUploadField(ctx, googleMapsPanel, points);
 
-        AbstractDefaultAjaxBehavior addPoint = createBehaviorAddPoint(points, ctx.getContainer());
+        AbstractDefaultAjaxBehavior addPoint = createBehaviorAddPoint(points, zoomInstance);
         ctx.getContainer().add(addPoint);
         googleMapsPanel.add($b.onConfigure(c -> googleMapsPanel.enableMultipleMarkers(addPoint.getCallbackUrl().toString(),
                 ctx.getContainer().getMarkupId())));
@@ -101,21 +89,24 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                     }
                 }));
 
-        confirmationModal.registerListener(googleMapsPanel::updateJS);
-
     }
 
     /**
      * Method for create and configure the points field.
      * The points field is a <code>STypeList</code> for latitude and longitude.
      *
-     * @param ctx The context.
+     * @param ctx             The context.
+     * @param googleMapsPanel The google maps panel.
      * @return A list with the points.
      */
-    private IModel<SIList<SInstance>> createPointField(WicketBuildContext ctx) {
+    private IModel<SIList<SInstance>> createPointField(WicketBuildContext ctx, MarkableGoogleMapsPanel<SInstance> googleMapsPanel) {
         IModel<SIList<SInstance>> points = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeMultipleMarkable.FIELD_POINTS);
         pointsCtx = ctx.createChild(ctx.getContainer().newGrid(), ctx.getExternalContainer(), points);
         pointsCtx.build();
+
+        //The behavior when remove a item, and a listener to create the map.
+        WicketUtils.findFirstChild(pointsCtx.getContainer(), TableElementsView.class)
+                .ifPresent(panel -> panel.getConfirmationModal().registerListener(googleMapsPanel::updateJS));
         return points;
     }
 
@@ -124,17 +115,17 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
      *
      * @param ctx              The context.
      * @param latLongMarkupIds A object that contains the Markup Id of Zoom.
+     * @return return a instance of zoom.
      */
-    private void createZoomField(WicketBuildContext ctx, LatLongMarkupIds latLongMarkupIds) {
-        WicketBuildContext zoomCtx = createField(ctx, ctx.getContainer().newGrid(), STypeLatitudeLongitudeMultipleMarkable.FIELD_ZOOM);
-        zoomCtx.getContainer().visitChildren((TextField.class), (object, visit) -> {
-            String nameSimple = ((SInstanceValueModel<?>) object.getDefaultModel()).getSInstance().getType().getNameSimple();
-            if (nameSimple.equals(STypeLatitudeLongitudeMultipleMarkable.FIELD_ZOOM)) {
-                latLongMarkupIds.zoomId = object.getMarkupId();
-            }
-        });
-    }
+    private SInstanceFieldModel<SInstance> createZoomField(WicketBuildContext ctx, LatLongMarkupIds latLongMarkupIds) {
+        SInstanceFieldModel<SInstance> zoomInstance = new SInstanceFieldModel<>(ctx.getModel(), STypeLatitudeLongitudeMultipleMarkable.FIELD_ZOOM);
+        WicketBuildContext zoomCtx = ctx.createChild(ctx.getContainer().newGrid(), ctx.getExternalContainer(), zoomInstance);
+        zoomCtx.build();
+        WicketUtils.findFirstChild(zoomCtx.getContainer(), TextField.class)
+                .ifPresent(object -> latLongMarkupIds.zoomId = object.getMarkupId());
 
+        return zoomInstance;
+    }
 
     /**
      * Create the boolean type.
@@ -201,7 +192,7 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
      * @param fileCtx         The file context that will be included the consumers.
      */
     private void createConsumersForUploadPanel(MarkableGoogleMapsPanel<SInstance> googleMapsPanel, IModel<SIList<SInstance>> points,
-            WicketBuildContext fileCtx) {
+                                               WicketBuildContext fileCtx) {
         WicketUtils.findFirstChild(fileCtx.getContainer(), FileUploadPanel.class)
                 .ifPresent(panel -> {
                     panel.setConsumerAfterLoadImage(target -> {
@@ -267,13 +258,14 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
 
     /**
      * Method responsible for creating latitude and longitude in the map when a markable is adding,
-     * And create a markable in the map when the latitude and longitude is setting.
+     * this will also create a markable in the map when the latitude and longitude is setting.
      *
-     * @param points    The points whose contains the latitude and longitude data.
-     * @param container The container whose will be rendered.
+     *
+     * @param points       The points whose contains the latitude and longitude data.
+     * @param zoomInstance
      * @return The ajax behavior for include in the JS callback.
      */
-    private AbstractDefaultAjaxBehavior createBehaviorAddPoint(final IModel<SIList<SInstance>> points, BSContainer<?> container) {
+    private AbstractDefaultAjaxBehavior createBehaviorAddPoint(final IModel<SIList<SInstance>> points, SInstanceFieldModel<SInstance> zoomInstance) {
         return new AbstractDefaultAjaxBehavior() {
             @Override
             protected void respond(AjaxRequestTarget target) {
@@ -283,8 +275,16 @@ public class LatitudeLongitudeListMapper extends TableListMapper {
                 StringValue lng = RequestCycle.get().getRequest().getRequestParameters().getParameterValue("lng");
                 sInstance.setValue(STypeLatitudeLongitude.FIELD_LATITUDE, lat.toString("").replaceAll("\\.", ","));
                 sInstance.setValue(STypeLatitudeLongitude.FIELD_LONGITUDE, lng.toString("").replaceAll("\\.", ","));
+                updateZoomInstance();
+                target.add(pointsCtx.getContainer());
+            }
 
-                target.add(container);
+            /**
+             * This method update the zoom instance.
+             */
+            private void updateZoomInstance() {
+                StringValue zoom = RequestCycle.get().getRequest().getRequestParameters().getParameterValue("zoom");
+                zoomInstance.getObject().setValue(zoom);
             }
         };
     }

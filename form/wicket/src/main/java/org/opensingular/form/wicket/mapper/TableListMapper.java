@@ -16,12 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -57,6 +51,12 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTDataCell;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTSection;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
@@ -64,7 +64,6 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 public class TableListMapper extends AbstractListMapper implements ISInstanceActionCapable {
 
     private SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
-
     public ConfirmationModal  confirmationModal;
 
     @Override
@@ -84,7 +83,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         }
 
         ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, Boolean.TRUE);
-          confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
+        confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
         ctx.getContainer().appendComponent((String id) -> buildPanel(ctx,  id));
     }
 
@@ -169,12 +168,8 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         final WebMarkupContainer notEmptyContent = new WebMarkupContainer("not-empty-content");
         final BSTSection         tableHeader       = new BSTSection("_h").setTagName("thead");
         final WebMarkupContainer tableBody         = new WebMarkupContainer("_b");
-        final ElementsView       tableRows         = new TableElementsView("_e", list, ctx, form, tableBody, confirmationModal){
-        @Override
-            protected void behaviorAfterRemoveButton(AjaxRequestTarget target) {
-                behaviorAfterRemoveButtonClick(target);
-            }
-        };final WebMarkupContainer tableFooter       = new WebMarkupContainer("_ft");
+        final ElementsView       tableRows         = new TableElementsView("_e", list, ctx, form, tableBody, confirmationModal);
+        final WebMarkupContainer tableFooter       = new WebMarkupContainer("_ft");
         final BSContainer<?>     footerBody        = new BSContainer<>("_fb");
         final SType<SInstance>   elementsType      = list.getObject().getElementsType();final ISupplier<SViewListByTable> viewSupplier = ctx.getViewSupplier(SViewListByTable.class);
 
@@ -240,15 +235,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         content.getParent().add(dependsOnModifier(list));
     }
 
-    protected void behaviorAfterRemoveButtonClick(AjaxRequestTarget target) {
-        /*Método para ser sobrescrito.*/
-    }
-
     private static boolean shouldRenderHeaderForSType(SType<?> type, ISupplier<SViewListByTable> viewSupplier) {
-        if (viewSupplier.get().isRenderCompositeFieldsAsColumns() && (!type.asAtr().isExists() || !type.asAtr().isVisible())) {
-            return false;
-        }
-        return true;
+        return !viewSupplier.get().isRenderCompositeFieldsAsColumns() || (type.asAtr().isExists() && type.asAtr().isVisible());
     }
-
 }

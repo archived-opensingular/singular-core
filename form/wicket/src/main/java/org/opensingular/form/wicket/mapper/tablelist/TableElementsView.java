@@ -1,7 +1,6 @@
 package org.opensingular.form.wicket.mapper.tablelist;
 
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.Item;
@@ -11,18 +10,15 @@ import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
-import org.opensingular.form.view.AbstractSViewListWithControls;
 import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.mapper.buttons.ElementsView;
-import org.opensingular.form.wicket.mapper.buttons.RemoverButton;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
 import org.opensingular.lib.commons.lambda.ISupplier;
-import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTDataCell;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTRow;
@@ -97,18 +93,7 @@ public class TableElementsView extends ElementsView {
 
     }
 
-    @Override
-    protected RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, Item<SInstance> item,
-            BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<? extends AbstractSViewListWithControls> viewListByTable) {
-        return new RemoverButton("_remover_", form, elementsView, item, confirmationModal) {
-            @Override
-            protected void behaviorAfterRemoveItem(AjaxRequestTarget target) {
-                behaviorAfterRemoveButton(target);
-            }
-        }.createRemoverButton(cell, viewListByTable);
+    public ConfirmationModal getConfirmationModal() {
+        return confirmationModal;
     }
-
-    protected void behaviorAfterRemoveButton(AjaxRequestTarget target) {
-    }
-
 }
