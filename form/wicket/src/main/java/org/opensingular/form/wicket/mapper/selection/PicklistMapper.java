@@ -23,10 +23,8 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 @SuppressWarnings("serial")
 public class PicklistMapper extends MultipleSelectMapper {
-
     @Override
     protected Component appendFormGroup(BSControls formGroup, WicketBuildContext ctx) {
         return formGroup.appendPicklist(retrieveChoices(ctx.getModel(), new ReadOnlyModelValue(ctx.getModel())));
     }
-
 }

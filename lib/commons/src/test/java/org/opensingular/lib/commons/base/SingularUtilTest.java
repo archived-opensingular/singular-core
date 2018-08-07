@@ -18,13 +18,14 @@
 
 package org.opensingular.lib.commons.base;
 
-import static org.junit.Assert.*;
-
-import java.util.Date;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.opensingular.lib.commons.dto.HtmlToPdfDTO;
+
+import java.util.Date;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class SingularUtilTest {
 
@@ -49,6 +50,7 @@ public class SingularUtilTest {
         SingularUtil.propagate(new NullPointerException());
     }
 
+    @Test
     public void areEqualTest() {
         assertTrue(SingularUtil.areEqual(1, 1, it -> it));
 
@@ -68,13 +70,17 @@ public class SingularUtilTest {
         A aNull = new A(1, null, null);
         A b = new A(2, "B", new Date());
 
+        assertFalse(SingularUtil.areEqual(a, null));
+        assertFalse(SingularUtil.areEqual(null, b));
+        assertFalse(SingularUtil.areEqual(a, 10));
         assertTrue(SingularUtil.areEqual(a, a));
-        assertFalse(SingularUtil.areEqual(a, aAlt));
+        assertTrue(SingularUtil.areEqual(a, aAlt));
         assertTrue(SingularUtil.areEqual(a, aAlt, it -> it.i));
         assertFalse(SingularUtil.areEqual(a, aAlt, it -> it.i, it -> it.s, it -> it.d));
-        assertFalse(SingularUtil.areEqual(a, aNull, it -> it.i));
+        assertTrue(SingularUtil.areEqual(a, aNull, it -> it.i));
+        assertFalse(SingularUtil.areEqual(a, b, it -> it.i));
         assertFalse(SingularUtil.areEqual(a, aNull, it -> it.i, it -> it.s, it -> it.d));
-        assertFalse(SingularUtil.areEqual(a, b));
+        assertTrue(SingularUtil.areEqual(a, b));
         assertFalse(SingularUtil.areEqual(a, b, it -> it.i, it -> it.s, it -> it.d));
     }
 }
