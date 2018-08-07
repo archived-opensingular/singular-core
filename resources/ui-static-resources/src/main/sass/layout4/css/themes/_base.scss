@@ -26,7 +26,6 @@
     /* Header search bar, toggler button & top menu */
     .page-header.navbar {
         background: $header-bg-color;
-        border-bottom: 1px solid $bg-color;
 
         /* Top notification menu/bar */
         .top-menu {
@@ -664,7 +663,6 @@
 
         .page-header.navbar {
              background: $header-bg-color;
-             border-bottom: 1px solid $header-mobile-menu-border;
 
             /* Top menu */
             .page-top {
