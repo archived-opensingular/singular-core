@@ -295,7 +295,7 @@ public abstract class SingularStudioSimpleCRUDPanel<STYPE extends SType<INSTANCE
         protected void respond(AjaxRequestTarget ajaxRequestTarget) {
             getFormPersistence().delete(getFormKey(model.getObject()));
             showListContent(ajaxRequestTarget);
-            new ToastrHelper(SingularStudioSimpleCRUDPanel.this).addToastrMessage(ToastrType.INFO, "Item excluido com sucesso.");
+            new ToastrHelper(SingularStudioSimpleCRUDPanel.this).addToastrMessage(ToastrType.INFO, "Item excluído com sucesso.");
         }
     }
 
