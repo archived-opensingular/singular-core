@@ -21,6 +21,7 @@ import java.text.MessageFormat;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.core.util.string.JavaScriptUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
 import org.opensingular.lib.commons.lambda.ISupplier;
@@ -71,7 +72,7 @@ public class ToastrHelper implements Serializable {
     public static String generateJs(Exception exception, ToastrType toastrType, boolean withDocumentReadyFunction) {
         ToastrSettings settings = getDefaultSettings();
         settings.getToastrType().setValue(toastrType);
-        settings.getNotificationTitle().setValue(exception.getMessage());
+        settings.getNotificationTitle().setValue(JavaScriptUtils.escapeQuotes(exception.getMessage()).toString());
 
         ToastJsGenerator generator = new ToastJsGenerator(settings, withDocumentReadyFunction);
         return generator.generateJs();
