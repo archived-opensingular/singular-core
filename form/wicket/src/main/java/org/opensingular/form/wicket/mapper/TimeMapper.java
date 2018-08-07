@@ -16,11 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -39,15 +34,22 @@ import org.opensingular.form.wicket.model.SIDateTimeModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.TreeMap;
+
 import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.OPTS_ORIGINAL_PROCESS_EVENT;
 import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.OPTS_ORIGINAL_VALIDATE_EVENT;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 
 /**
  * Mapper for data type responsible for storing time (hour and minutes).
  */
 public class TimeMapper extends AbstractControlsFieldComponentMapper {
 
-    public static final String ON_UPDATE_TIME = "onUpdateTime";
+    public static final String ON_VALIDATE_TIME = "onValidateTime";
+    private static final String ON_PROCESS_TIME = "onProcessTime";
     private TextField<String> time;
 
     @Override
@@ -60,6 +62,7 @@ public class TimeMapper extends AbstractControlsFieldComponentMapper {
     public TextField<String> createTextFieldTime(IModel<? extends SInstance> model, ISViewTime viewTime) {
         time = new TextField<>("time", new SIDateTimeModel.TimeModel(new SInstanceValueModel<>(model)));
         if (checkModalTimerPickerWillShow(viewTime)) {
+            time.add($b.classAppender(" sgl-timer-picker "));
             time.add(new CreateTimePickerBehavior(getParams(viewTime)));
         }
 
@@ -96,7 +99,6 @@ public class TimeMapper extends AbstractControlsFieldComponentMapper {
         addAjaxEvent(model, listener, time, ctx.getViewSupplier(SViewTime.class).get());
     }
 
-
     /**
      * Method to add AjaxEvent's to the Date Mapper. This event's should be add to works fine with dependsON.
      * If this ajaxEvent don't have, can have a error if have a dependsOn with exists = false.
@@ -110,8 +112,8 @@ public class TimeMapper extends AbstractControlsFieldComponentMapper {
         SingularEventsHandlers eventsHandlers = new SingularEventsHandlers(SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS);
 
         if (checkModalTimerPickerWillShow(viewTime)) {
-            eventsHandlers.setOption(OPTS_ORIGINAL_VALIDATE_EVENT, ON_UPDATE_TIME)
-                    .setOption(OPTS_ORIGINAL_PROCESS_EVENT, ON_UPDATE_TIME);
+            eventsHandlers.setOption(OPTS_ORIGINAL_PROCESS_EVENT, ON_PROCESS_TIME)
+                    .setOption(OPTS_ORIGINAL_VALIDATE_EVENT, ON_VALIDATE_TIME);
         }
 
         component.add(eventsHandlers)
@@ -129,6 +131,5 @@ public class TimeMapper extends AbstractControlsFieldComponentMapper {
     private static boolean checkModalTimerPickerWillShow(ISViewTime viewTime) {
         return viewTime == null || !viewTime.isModalTimerHide();
     }
-
 
 }
