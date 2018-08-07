@@ -57,7 +57,7 @@ public class STypeLatitudeLongitudeMultipleMarkable extends STypeComposite<SILat
         fileUploadOrTable
                 .withView(SViewCheckBox::new)
                 .asAtr()
-                .help("Ao selecionar a utilização de upload todos os dados da tabela serão removidos.")
+                .help("Ao selecionar a utilização de upload todos os dados da tabela serão removidos. Os tipos suportados são: " + FileTypes.KML)
                 .label("Utilizar upload de arquivo ");
 
         points.withView(new SViewListByTable().setNewEnabled(list -> {
@@ -75,7 +75,6 @@ public class STypeLatitudeLongitudeMultipleMarkable extends STypeComposite<SILat
                 .asAtr()
                 .allowedFileTypes(FileTypes.KML)
                 .label("Upload de arquivo")
-                .help("Tipos suportados: " + FileTypes.KML)
                 .dependsOn(fileUploadOrTable)
                 .exists(SingularPredicates.typeValueIsTrue(fileUploadOrTable));
 
