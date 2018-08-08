@@ -45,7 +45,6 @@
                 SINGULAR_PROCESS    = 'singular:process',
                 SINGULAR_VALIDATE   = 'singular:validate';
 
-            //console.log(container);
             $('#' + container + ' span').first()
                                         .addClass("input-icon input-icon-sm right")
                                         .prepend('<i class="fa fa-chevron-down"></i>');
@@ -140,22 +139,27 @@
             }
 
             function appendClearButton() {
-                typeaheadFieldJQueryRef.attr('readonly', true);
-                typeaheadFieldJQueryRef.after(clear);
+                if(typeaheadFieldJQueryRef.is(':enabled')) {
+                    typeaheadFieldJQueryRef.attr('readonly', true);
+                    typeaheadFieldJQueryRef.after(clear);
 
-                var jQueryRefClearButton = $('#' + container + '_clear');
+                    var jQueryRefClearButton = $('#' + container + '_clear');
 
-                jQueryRefClearButton.on('click', onClearClick);
-                jQueryRefClearButton.on('click', onClearMouseDown);
+                    jQueryRefClearButton.on('click', onClearClick);
+                    jQueryRefClearButton.on('click', onClearMouseDown);
 
+
+                    Typeahead_.disable();
+                }
+                //If it's disabled, the span will be hide too.
                 $('#' + container + ' > span > .fa-chevron-down').hide();
 
-                Typeahead_.disable();
             }
 
             typeaheadFieldJQueryRef.on('typeahead:selected', function (event, selection) {
                 clearCalled = false;
                 updateValue(selection.key);
+
                 appendClearButton();
                 if (subscriberMetadata.jumpToNext) {
                     onTypeaheadFieldBlur();

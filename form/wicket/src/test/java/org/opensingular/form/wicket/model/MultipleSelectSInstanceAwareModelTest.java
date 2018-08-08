@@ -67,7 +67,11 @@ public class MultipleSelectSInstanceAwareModelTest {
             PackageBuilder myPackage = SDictionary.create().createNewPackage("org.opensingular");
             STypeComposite<SIComposite> rootComposite = myPackage.createCompositeType("compostoRaiz");
             alphabet = rootComposite.addFieldListOf("alphabet", STypeString.class);
-            alphabet.selectionOf(Arrays.asList("ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()).toArray());
+            List<String> options = new ArrayList<>();
+            for(char c : "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()) {
+                options.add(new String(new char[] {c}));
+            }
+            alphabet.selectionOf(options.toArray());
             root = rootComposite.newInstance();
         }
 

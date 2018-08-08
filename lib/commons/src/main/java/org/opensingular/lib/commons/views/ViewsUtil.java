@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -83,8 +83,8 @@ public class ViewsUtil {
         }
     }
 
-    @Nullable
-    private ViewGenerator findDirectCompatiable(@Nonnull ViewGenerator viewGenerator, @Nonnull ViewOutputFormatExportable format) {
+    @Nonnull
+    private ViewGenerator findDirectCompatible(@Nonnull ViewGenerator viewGenerator, @Nonnull ViewOutputFormatExportable format) {
         if (viewGenerator.isDirectCompatibleWith(format)) {
             return viewGenerator;
         } else if (viewGenerator instanceof ViewMultiGenerator) {

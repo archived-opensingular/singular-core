@@ -96,7 +96,7 @@ public class BSTabPanel extends Panel {
 
                 tabAnchor.add(new Label("header-text", item.getModelObject().getLeft()));
 
-                configureChangeUrlOnTabClick(currentPanel.getMarkupId(), tabAnchor);
+                configureChangeUrlOnTabClick(currentPanel, tabAnchor);
 
                 item.add(tabAnchor);
             }
@@ -107,19 +107,19 @@ public class BSTabPanel extends Panel {
     }
 
     /**
-     * When Tab is clicked the url of page will change to have the id of the tab.
+     * When Tab is clicked the url of page will be changed to have the id of the tab.
      * <p>
      * Note: This behavior is used by showcase to have static url's for each component.
      *
-     * @param currentPanelId The currentPanel id.
-     * @param tabAnchor      The Tab will be clicked.
+     * @param currentPanel The currentPanel id.
+     * @param tabAnchor    The Tab will be clicked.
      */
-    private void configureChangeUrlOnTabClick(String currentPanelId, WebMarkupContainer tabAnchor) {
+    private void configureChangeUrlOnTabClick(Panel currentPanel, WebMarkupContainer tabAnchor) {
         if (withChangeUrl) {
             tabAnchor.add(new AjaxEventBehavior("click") {
                 @Override
                 protected void onEvent(AjaxRequestTarget target) {
-                    target.appendJavaScript("window.BSTAB.changeUrl('" + currentPanelId + "','#" + currentPanelId + "')");
+                    target.appendJavaScript("window.BSTAB.changeUrl('" + currentPanel.getMarkupId() + "','#" + currentPanel.getMarkupId() + "')");
                 }
             });
         }
