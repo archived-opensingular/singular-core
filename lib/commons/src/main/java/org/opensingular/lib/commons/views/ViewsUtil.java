@@ -83,8 +83,8 @@ public class ViewsUtil {
         }
     }
 
-    @Nullable
-    private ViewGenerator findDirectCompatiable(@Nonnull ViewGenerator viewGenerator, @Nonnull ViewOutputFormatExportable format) {
+    @Nonnull
+    private ViewGenerator findDirectCompatible(@Nonnull ViewGenerator viewGenerator, @Nonnull ViewOutputFormatExportable format) {
         if (viewGenerator.isDirectCompatibleWith(format)) {
             return viewGenerator;
         } else if (viewGenerator instanceof ViewMultiGenerator) {

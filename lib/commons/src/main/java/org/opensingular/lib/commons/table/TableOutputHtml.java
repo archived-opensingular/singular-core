@@ -17,6 +17,7 @@
 package org.opensingular.lib.commons.table;
 
 import com.google.common.base.Predicates;
+import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
 import org.opensingular.lib.commons.net.WebRef;
 import org.opensingular.lib.commons.views.format.ViewOutputHtml;
 
@@ -99,7 +100,7 @@ public class TableOutputHtml extends TableOutput {
     }
 
     @Override
-    public void generateTableStart(OutputTableContext ctx, TableTool tableTool) {
+    public void generateTableStart(@Nonnull OutputTableContext ctx, @Nonnull TableTool tableTool) {
         println();
         print("<table id='" + tableid + "' cellpadding='0' cellspacing='0'");
         if (tableTool.isStrippedLines()) {
@@ -115,7 +116,7 @@ public class TableOutputHtml extends TableOutput {
     }
 
     @Override
-    public void generateTableEnd(OutputTableContext ctx, TableTool tableTool) {
+    public void generateTableEnd(@Nonnull OutputTableContext ctx, @Nonnull TableTool tableTool) {
         println("</table>");
         println();
         println("<script type='text/javascript'>");
@@ -151,7 +152,7 @@ public class TableOutputHtml extends TableOutput {
     }
 
     @Override
-    public void generateLineSimpleStart(OutputTableContext ctx, LineInfo line, int lineAlternation) {
+    public void generateLineSimpleStart(@Nonnull OutputTableContext ctx, @Nonnull LineInfo line, int lineAlternation) {
         if (lineAlternation != -1) {
             line.getDecorator().setCssClass(lineAlternation == 0 ? "T_ls0" : "T_ls1");
         }
@@ -161,12 +162,12 @@ public class TableOutputHtml extends TableOutput {
     }
 
     @Override
-    public void generateLineSimpleEnd(OutputTableContext ctx) {
+    public void generateLineSimpleEnd(@Nonnull OutputTableContext ctx) {
         println("  </tr>");
     }
 
     @Override
-    public void generateLineTreeStart(OutputTableContext ctx, LineInfo line, int level) {
+    public void generateLineTreeStart(@Nonnull OutputTableContext ctx, @Nonnull LineInfo line, int level) {
         if (ctx.getDecorator().getCssClass() == null) {
             ctx.getDecorator().setCssClass(level <= 4 ? "T_R_" + level : "T_R_N");
         }
@@ -177,33 +178,33 @@ public class TableOutputHtml extends TableOutput {
     }
 
     @Override
-    public void generateLineTreeEnd(OutputTableContext ctx) {
+    public void generateLineTreeEnd(@Nonnull OutputTableContext ctx) {
         println("  </tr>");
     }
 
     @Override
-    public void generateTitleBlockStart(OutputTableContext ctx) {
+    public void generateTitleBlockStart(@Nonnull OutputTableContext ctx) {
         getOut().println("<thead class=\"T_thead\">");
     }
 
     @Override
-    public void generateTitleBlockEnd(OutputTableContext ctx) {
+    public void generateTitleBlockEnd(@Nonnull OutputTableContext ctx) {
         getOut().println("</thead>");
     }
 
     @Override
-    public void generateTitleLineStart(OutputTableContext ctx, boolean superTitleLine) {
+    public void generateTitleLineStart(@Nonnull OutputTableContext ctx, boolean superTitleLine) {
         getOut().println("  <tr>");
     }
 
     @Override
-    public void generateTitleLineEnd(OutputTableContext ctx, boolean superTitleLine) {
+    public void generateTitleLineEnd(@Nonnull OutputTableContext ctx, boolean superTitleLine) {
         getOut().println("  </tr>");
     }
 
     @Override
-    public void generateTitleCell(OutputTableContext ctx, Column column, int rowSpan, boolean asSubTitle,
-                                  boolean columnWithSeparator) {
+    public void generateTitleCell(@Nonnull OutputTableContext ctx, @Nonnull Column column, int rowSpan,
+            boolean asSubTitle, boolean columnWithSeparator) {
         PrintWriter out = getOut();
         out.print("   <th");
         if (column.getWidth() != null) {
@@ -282,7 +283,8 @@ public class TableOutputHtml extends TableOutput {
     }
 
     @Override
-    public void generateTitleCellSuper(OutputTableContext ctx, Column column, int colSpan, boolean cColumnWithSeparator) {
+    public void generateTitleCellSuper(@Nonnull OutputTableContext ctx, @Nonnull Column column, int colSpan,
+            boolean cColumnWithSeparator) {
         PrintWriter out = getOut();
         out.print("   <th");
         if (colSpan > 1) {
@@ -416,7 +418,7 @@ public class TableOutputHtml extends TableOutput {
         if (type instanceof ColumnTypeProcessor.ColumnTypeProcessorTypeRaw) {
             return s;
         }
-        return AlocproToolkit.plainTextToHtml(s, false);
+        return ConversorToolkit.plainTextToHtml(s, false);
     }
 
     private void cellTagsOpen(@Nonnull OutputCellContext ctx, InfoCell cell, Column column, PrintWriter out) {
