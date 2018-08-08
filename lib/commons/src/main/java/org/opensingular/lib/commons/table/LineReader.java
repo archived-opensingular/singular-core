@@ -24,12 +24,12 @@ import java.io.Serializable;
  * @author Daniel C. Bordin
  */
 @FunctionalInterface
-public interface LineReader<K extends Object> extends Serializable {
+public interface LineReader<K> extends Serializable {
 
     /**
-     * Mtodo chamado para que seja preenchido os valores das colunas para o
+     * Método chamado para que seja preenchido os valores das colunas para o
      * objeto atual.
      */
-    public void retrieveValues(LineReadContext ctx, K current, LineInfo line);
+    void retrieveValues(LineReadContext ctx, K current, LineInfo line);
 
 }
