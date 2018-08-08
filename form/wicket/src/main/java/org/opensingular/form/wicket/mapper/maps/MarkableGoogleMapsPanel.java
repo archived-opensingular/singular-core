@@ -307,6 +307,7 @@ public class MarkableGoogleMapsPanel<T> extends BSContainer<MarkableGoogleMapsPa
         json.put("urlKml", getKmlUrl());
         json.put("isKmlUrlVisible", forceKmlUrlVisible);
         metaDataModel.setObject(json.toString());
+        metaData.inputChanged();
     }
 
     private void populateMetaData() {

@@ -69,7 +69,8 @@ public class STypeLatitudeLongitudeMultipleMarkable extends STypeComposite<SILat
         }))
                 .asAtr()
                 .dependsOn(file, fileUploadOrTable)
-                .exists(SingularPredicates.typeValueIsFalse(fileUploadOrTable).or(SingularPredicates.typeValueIsNull(fileUploadOrTable)));
+                .exists(SingularPredicates.typeValueIsFalse(fileUploadOrTable)
+                        .or(SingularPredicates.typeValueIsNull(fileUploadOrTable)));
 
         file
                 .asAtr()
