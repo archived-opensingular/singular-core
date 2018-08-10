@@ -30,7 +30,7 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
 
     private String actionColumnLabel = "Ações";
 
-    private SType<?> typeSortableColumn;
+    private SType<?> sortableColumn;
     private boolean ascendingMode = true;
 
     public SViewListByMasterDetail disableEdit() {
@@ -79,19 +79,31 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
         this.modalSize = size;
     }
 
-    public SViewListByMasterDetail setTypeSortableColumn(SType<?> typeSortableColumn) {
-        this.typeSortableColumn = typeSortableColumn;
-        return this;
+    /**
+     * Method for choosen a default sortable Column.
+     * Note: Will use ASC mode.
+     *
+     * @param sortableColumn The column that will be sortable in the initialize.
+     * @return <code>this</code>
+     */
+    public SViewListByMasterDetail setSortableColumn(SType<?> sortableColumn) {
+        return this.setSortableColumn(sortableColumn, true);
     }
 
-    public SViewListByMasterDetail setTypeSortableColumn(SType<?> typeSortableColumn, boolean ascendingMode) {
-        this.typeSortableColumn = typeSortableColumn;
+    /**
+     * @param sortableColumn The column that will be sortable in the initialize.
+     * @param ascendingMode  True for ASC.
+     *                       False for DESC.
+     * @return <code>this</code>
+     */
+    public SViewListByMasterDetail setSortableColumn(SType<?> sortableColumn, boolean ascendingMode) {
+        this.sortableColumn = sortableColumn;
         this.ascendingMode = ascendingMode;
         return this;
     }
 
-    public SType<?> getTypeSortableColumn() {
-        return typeSortableColumn;
+    public SType<?> getSortableColumn() {
+        return sortableColumn;
     }
 
     public boolean isAscendingMode() {
