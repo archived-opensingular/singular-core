@@ -21,6 +21,7 @@ import org.opensingular.form.SType;
 import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
 import org.opensingular.lib.commons.lambda.IFunction;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +80,24 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      */
     @SuppressWarnings("unchecked")
     public final SELF col(SType<?> type, String customLabel, IFunction<SInstance, String> displayFunction) {
-        columns.add(new Column(type.getName(), customLabel, type.getNameSimple(), displayFunction));
+        return col(type, customLabel, displayFunction, true);
+    }
+
+    /**
+     * Add a column with all configuration.
+     *
+     * @param type            The type of the column.
+     * @param customLabel     A custom Label for the column.
+     *                        Null for use the default of the type.
+     * @param displayFunction A rule for the display.
+     *                        Null if don't have a rule for diplay.
+     * @param order           True for enable the order for the column, false for not.
+     * @return <code>This</code>
+     */
+    @SuppressWarnings("unchecked")
+    public final SELF col(SType<?> type, @Nullable String customLabel, @Nullable IFunction<SInstance, String> displayFunction, boolean order) {
+        String nameSortableProperty = order ? type.getNameSimple() : null;
+        columns.add(new Column(type.getName(), customLabel, nameSortableProperty, displayFunction));
         return (SELF) this;
     }
 
@@ -106,11 +124,6 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
     @SuppressWarnings("unchecked")
     public final SELF col(String customLabel, IFunction<SInstance, String> displayFunction) {
         columns.add(new Column(null, customLabel, null, displayFunction));
-        return (SELF) this;
-    }
-
-    public final SELF col(String customLabel, String columnSortName, IFunction<SInstance, String> displayFunction) {
-        columns.add(new Column(null, customLabel, columnSortName, displayFunction));
         return (SELF) this;
     }
 

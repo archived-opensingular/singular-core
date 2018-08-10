@@ -16,6 +16,7 @@
 
 package org.opensingular.form.wicket.mapper.masterdetail;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -179,11 +180,10 @@ public class MasterDetailPanel extends Panel {
     }
 
     private BSDataTable<SInstance, ?> newTable(String id) {
-
-        final BSDataTableBuilder<SInstance, String, ?> builder = new MasterDetailBSDataTableBuilder<>(newDataProvider()).withNoRecordsToolbar();
+        ISupplier<SViewListByMasterDetail> viewSupplier = ctx.getViewSupplier(SViewListByMasterDetail.class);
+        final BSDataTableBuilder<SInstance, String, ?> builder = new MasterDetailBSDataTableBuilder<>(newDataProvider(viewSupplier)).withNoRecordsToolbar();
         final BSDataTable<SInstance, ?> dataTable;
 
-        ISupplier<SViewListByMasterDetail> viewSupplier = ctx.getViewSupplier(SViewListByMasterDetail.class);
         configureColumns(viewSupplier.get().getColumns(), builder, list, modal, ctx, ctx.getViewMode(), viewSupplier);
         dataTable = builder.build(id);
 
@@ -447,58 +447,47 @@ public class MasterDetailPanel extends Panel {
         });
     }
 
-    private BaseDataProvider<SInstance, String> newDataProvider() {
-        return new SIListDataProvider(list);
+    private BaseDataProvider<SInstance, String> newDataProvider(ISupplier<SViewListByMasterDetail> viewSupplier) {
+        return new SIListDataProvider(list, viewSupplier);
     }
 
     static class SIListDataProvider extends BaseDataProvider<SInstance, String> {
         private final IModel<SIList<SInstance>> list;
+        private final ISupplier<SViewListByMasterDetail> viewSupplier;
 
-        public SIListDataProvider(IModel<SIList<SInstance>> list) {
+        public SIListDataProvider(IModel<SIList<SInstance>> list, ISupplier<SViewListByMasterDetail> viewSupplier) {
             this.list = list;
+            this.viewSupplier = viewSupplier;
         }
 
         @Override
         public Iterator<SInstance> iterator(int first, int count, String sortProperty, boolean ascending) {
             final SIList<SInstance> siList = list.getObject();
-            final List<SInstance> list = new ArrayList<>();
+            final List<SInstance> sortableList = new ArrayList<>();
+            final List<SInstance> listOfPage = new ArrayList<>();
 
-            if (StringUtils.isNotEmpty(sortProperty)) {
-                siList.getValues().sort(new Comparator<SInstance>() {
-                    @Override
-                    public int compare(SInstance instanceList1, SInstance instanceList2) {
-                        Optional<SInstance> obj1 = getObjectBySortProperty(instanceList1);
-                        Optional<SInstance> obj2 = getObjectBySortProperty(instanceList2);
-
-                        if (obj1.isPresent() && obj2.isPresent()
-                                && obj1.get() instanceof SIComparable
-                                && obj2.get() instanceof SIComparable) {
-                            if (ascending) {
-                                return ((SIComparable) obj1.get()).compareTo((SIComparable) obj2.get());
-                            } else {
-                                return ((SIComparable) obj2.get()).compareTo((SIComparable) obj1.get());
-                            }
-                        }
-                        return 0;
-                    }
-
-                    private Optional<SInstance> getObjectBySortProperty(SInstance instance) {
-                        if (instance != null && instance.getValue() instanceof ArrayList) {
-                            return (Optional<SInstance>) ((ArrayList) instance.getValue())
-                                    .parallelStream()
-                                    .filter(i -> ((SInstance) i).getType().getNameSimple().equals(sortProperty))
-                                    .findFirst();
-                        }
-                        return Optional.empty();
-                    }
-                });
+            String sortableProperty = sortProperty;
+            boolean ascMode = ascending;
+            if (StringUtils.isEmpty(sortableProperty) && viewSupplier != null) {
+                SViewListByMasterDetail view = viewSupplier.get();
+                if (view.getTypeSortableColumn() != null) {
+                    sortableProperty = view.getTypeSortableColumn().getNameSimple();
+                }
+                ascMode = view.isAscendingMode();
             }
 
-            for (int i = 0; (i < count) && (i + first < siList.size()); i++) {
-                list.add(siList.get(i + first));
+            for (int i = 0; i < siList.size(); i++) {
+                sortableList.add(siList.get(i));
             }
 
-            return list.iterator();
+            if (StringUtils.isNotEmpty(sortableProperty) && CollectionUtils.isNotEmpty(sortableList)) {
+                sortableList.sort(new ProviderMasterDetailCompator(sortableProperty, ascMode));
+            }
+            for (int i = 0; (i < count) && (i + first < sortableList.size()); i++) {
+                listOfPage.add(sortableList.get(i + first));
+            }
+
+            return listOfPage.iterator();
         }
 
         @Override
@@ -509,6 +498,46 @@ public class MasterDetailPanel extends Panel {
         @Override
         public IModel<SInstance> model(SInstance object) {
             return new SInstanceListItemModel<>(list, list.getObject().indexOf(object));
+        }
+    }
+
+
+    public static class ProviderMasterDetailCompator implements Comparator<SInstance> {
+
+        private String sortableProperty;
+        private boolean ascMode;
+
+        ProviderMasterDetailCompator(String sortableProperty, boolean ascMode) {
+            this.sortableProperty = sortableProperty;
+            this.ascMode = ascMode;
+        }
+
+        @Override
+        public int compare(SInstance instanceList1, SInstance instanceList2) {
+
+            Optional<SInstance> obj1 = getObjectBySortProperty(instanceList1);
+            Optional<SInstance> obj2 = getObjectBySortProperty(instanceList2);
+
+            if (obj1.isPresent() && obj2.isPresent()
+                    && obj1.get() instanceof SIComparable
+                    && obj2.get() instanceof SIComparable) {
+                if (ascMode) {
+                    return ((SIComparable) obj1.get()).compareTo((SIComparable) obj2.get());
+                } else {
+                    return ((SIComparable) obj2.get()).compareTo((SIComparable) obj1.get());
+                }
+            }
+            return ascMode ? -1 : 1;
+        }
+
+        private Optional<SInstance> getObjectBySortProperty(SInstance instance) {
+            if (instance != null && instance.getValue() instanceof ArrayList) {
+                return (Optional<SInstance>) ((ArrayList) instance.getValue())
+                        .parallelStream()
+                        .filter(i -> ((SInstance) i).getType().getNameSimple().equals(sortableProperty))
+                        .findFirst();
+            }
+            return Optional.empty();
         }
     }
 }

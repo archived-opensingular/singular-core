@@ -16,6 +16,7 @@
 
 package org.opensingular.form.view;
 
+import org.opensingular.form.SType;
 import org.opensingular.form.enums.ModalSize;
 
 public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<SViewListByMasterDetail>
@@ -28,6 +29,9 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
     private ModalSize modalSize;
 
     private String actionColumnLabel = "Ações";
+
+    private SType<?> typeSortableColumn;
+    private boolean ascendingMode = true;
 
     public SViewListByMasterDetail disableEdit() {
         this.editEnabled = false;
@@ -47,7 +51,7 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
         this.newActionLabel = actionLabel;
         return this;
     }
-    
+
     public String getNewActionLabel() {
         return newActionLabel;
     }
@@ -56,7 +60,7 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
         this.editActionLabel = actionLabel;
         return this;
     }
-    
+
     public String getEditActionLabel() {
         return editActionLabel;
     }
@@ -73,5 +77,24 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
     @Override
     public void setModalSize(ModalSize size) {
         this.modalSize = size;
+    }
+
+    public SViewListByMasterDetail setTypeSortableColumn(SType<?> typeSortableColumn) {
+        this.typeSortableColumn = typeSortableColumn;
+        return this;
+    }
+
+    public SViewListByMasterDetail setTypeSortableColumn(SType<?> typeSortableColumn, boolean ascendingMode) {
+        this.typeSortableColumn = typeSortableColumn;
+        this.ascendingMode = ascendingMode;
+        return this;
+    }
+
+    public SType<?> getTypeSortableColumn() {
+        return typeSortableColumn;
+    }
+
+    public boolean isAscendingMode() {
+        return ascendingMode;
     }
 }

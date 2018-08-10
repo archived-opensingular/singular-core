@@ -58,7 +58,7 @@ public class MasterDetailPanelDataSourceTest {
         IModel<SIList<SInstance>> model = Shortcuts.$m.loadable(() -> stStringList.newInstance(SInstance.class));
         SIList<SInstance> list = model.getObject();
 
-        MasterDetailPanel.SIListDataProvider dataProvider = new MasterDetailPanel.SIListDataProvider(model);
+        MasterDetailPanel.SIListDataProvider dataProvider = new MasterDetailPanel.SIListDataProvider(model, null);
 
         list.addElement(sistring("01"));
         list.addElement(sistring("02"));
