@@ -15,7 +15,6 @@
 
 	<modules>
 		<module>core</module>
-		<module>schedule</module>
 	</modules>
 
 	<dependencies>

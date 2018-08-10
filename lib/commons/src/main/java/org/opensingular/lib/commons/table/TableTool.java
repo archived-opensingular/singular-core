@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -17,6 +17,7 @@
 package org.opensingular.lib.commons.table;
 
 import com.google.common.base.Predicates;
+import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.commons.views.ViewGeneratorProvider;
@@ -298,8 +299,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
         List<Column> visible = new ArrayList<>(columns.size());
         String superTitle = null;
         boolean addedSuperTitleGroupSeparator = false;
-        for (int i = 0; i < columns.size(); i++) {
-            Column c = columns.get(i);
+        for (Column c : columns) {
             if (!shouldShowColumn(ctx, c)) {
                 continue;
             }
@@ -343,7 +343,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
 
     @SuppressWarnings("unchecked")
     public <T> void setReaderByLine(Iterable<? extends T> list, LineReader<T> reader) {
-        this.reader = GeneratorUtil.toTreeLineReader((Object) list, (LineReader<Object>) reader);
+        this.reader = GeneratorUtil.toTreeLineReader(list, (LineReader<Object>) reader);
         simpleTable = true;
     }
 
@@ -649,7 +649,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
             ctxCell.setColumnProcessor(ColumnType.PERCENT.getProcessor());
             if (ctxCell.getValue() instanceof Number) {
                 Number value = (Number) ctxCell.getValue();
-                value = AlocproToolkit.divide(value, ctxCell.getColumn().getValueForPercentageCalculation());
+                value = ConversorToolkit.divide(value, ctxCell.getColumn().getValueForPercentageCalculation());
                 ctxCell.setValue(value);
             }
         }
@@ -666,7 +666,7 @@ public final class TableTool implements ViewMultiGenerator, Serializable {
             } else if (cell.getValueReal() instanceof Number) {
                 value = (Number) cell.getValueReal();
             }
-            total.setValue(AlocproToolkit.add(total.getValueAsNumberOrNull(), value));
+            total.setValue(ConversorToolkit.add(total.getValueAsNumberOrNull(), value));
         }
     }
 

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.opensingular</groupId>
+        <artifactId>singular-lib</artifactId>
+        <version>1.9.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>singular-schedule</artifactId>
+    <name>[singular :: libs :: singular-schedule]</name>
+    <description>Módulo destinado a integrar o Quartz ao Singular. </description>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.opensingular</groupId>
+            <artifactId>singular-commons</artifactId>
+        </dependency>
+        <!-- Quartz framework -->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+        </dependency>
+        <!-- USED IN TESTS -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opensingular</groupId>
+            <artifactId>singular-commons-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+
+
+</project>

@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.opensingular.form.view.date;
 
 /**
@@ -25,6 +41,14 @@ public interface ISViewTime {
     ISViewTime setMinuteStep(Integer value);
 
     /**
+     * This method should be used for hide the modal of time picker.
+     * @param hide True will hide the timer picker.
+     *             False will show the timer.
+     * @return <code>this</code>
+     */
+    ISViewTime hideModalTimePicker(Boolean hide);
+
+    /**
      * True if is 12 AM/PM mode.
      * False if showMeridian is 24hr.
      *
@@ -39,4 +63,11 @@ public interface ISViewTime {
      * @return The number of the step minute.
      */
     Integer getMinuteStep();
+
+
+    /**
+     * This method should return the value of hide timer picker.
+     * @return True will hide the picker.
+     */
+    boolean isModalTimerHide();
 }

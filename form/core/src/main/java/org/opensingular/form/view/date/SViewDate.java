@@ -32,6 +32,7 @@ public class SViewDate extends SView implements ISViewDate {
     private boolean todayBtn = false;
     private boolean todayHighlight = false;
     private boolean showOnFocus = true;
+    private boolean hideModal = false;
     private IFunction<SInstance, List<Date>> enabledDatesFunction;
     private IFunction<SInstance, Date> startDateFunction;
 
@@ -42,6 +43,7 @@ public class SViewDate extends SView implements ISViewDate {
     /**
      * Function to retrieve the enabled dates that can be selected
      */
+    @Override
     public SViewDate setEnabledDatesFunction(IFunction<SInstance, List<Date>> enabledDatesFunction) {
         this.enabledDatesFunction = enabledDatesFunction;
         return this;
@@ -52,6 +54,7 @@ public class SViewDate extends SView implements ISViewDate {
      * <p>
      * Default: false
      */
+    @Override
     public SViewDate setAutoclose(boolean autoclose) {
         this.autoclose = autoclose;
         return this;
@@ -63,6 +66,7 @@ public class SViewDate extends SView implements ISViewDate {
      * <p>
      * Default: false
      */
+    @Override
     public SViewDate setClearBtn(boolean clearBtn) {
         this.clearBtn = clearBtn;
         return this;
@@ -73,6 +77,7 @@ public class SViewDate extends SView implements ISViewDate {
      * <p>
      * Default: null
      */
+    @Override
     public SViewDate setStartDate(Date startDate) {
         this.startDate = startDate;
         return this;
@@ -83,6 +88,7 @@ public class SViewDate extends SView implements ISViewDate {
      * <p>
      * Default: null
      */
+    @Override
     public SViewDate setStartDateFunction(IFunction<SInstance, Date> startDateFunction) {
         this.startDateFunction = startDateFunction;
         return this;
@@ -93,6 +99,7 @@ public class SViewDate extends SView implements ISViewDate {
      * <p>
      * Default: false
      */
+    @Override
     public SViewDate setTodayBtn(boolean todayBtn) {
         this.todayBtn = todayBtn;
         return this;
@@ -103,6 +110,7 @@ public class SViewDate extends SView implements ISViewDate {
      * <p>
      * Default: false
      */
+    @Override
     public SViewDate setTodayHighlight(boolean todayHighlight) {
         this.todayHighlight = todayHighlight;
         return this;
@@ -113,36 +121,64 @@ public class SViewDate extends SView implements ISViewDate {
      * <p>
      * Default: true
      */
+    @Override
     public SViewDate setShowOnFocus(boolean showOnFocus) {
         this.showOnFocus = showOnFocus;
         return this;
     }
 
+    /**
+     * Default: False (show modal picker).
+     *
+     * @param hide True will hide the date picker.
+     *             False will show the date.
+     * @return <code>this</code>
+     */
+    @Override
+    public SViewDate hideModalDatePicker(Boolean hide) {
+        this.hideModal = hide;
+        return this;
+    }
+
+    @Override
     public boolean isAutoclose() {
         return autoclose;
     }
 
+    @Override
     public boolean isClearBtn() {
         return clearBtn;
     }
 
+    @Override
     public Date getStartDate() {
         return startDate;
     }
 
+    @Override
     public boolean isTodayBtn() {
         return todayBtn;
     }
 
+    @Override
     public boolean isTodayHighlight() {
         return todayHighlight;
     }
 
+    @Override
     public boolean isShowOnFocus() {
         return showOnFocus;
     }
 
+    @Override
     public IFunction<SInstance, Date> getStartDateFunction() {
         return startDateFunction;
     }
+
+    @Override
+    public boolean isModalHide() {
+        return hideModal;
+    }
+
+
 }

@@ -16,6 +16,7 @@
 
 package org.opensingular.internal.lib.support.spring.injection;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -67,18 +68,20 @@ public class SingularInjectorBySpringTest {
         Basic1 basic1 = inject(new Basic1());
         Assert.assertNotNull(basic1.myMockService);
         Assert.assertEquals("A", basic1.fieldA);
-        System.out.println(basic1.myMockService.getClass());
-        System.out.println(basic1.fieldA.getClass());
-        basic1.myMockService.hashCode();
-        assertFalse(basic1.myMockService.equals(basic1.myMockService));
+        Assertions.assertThat(basic1.fieldA).isExactlyInstanceOf(String.class);
+        Assertions.assertThat(basic1.myMockService.hashCode()).isNotNull();
+        Assertions.assertThat(basic1.myMockService).isSameAs(basic1.myMockService);
+        //The proxied equals doesn't work. Should it?
+        Assertions.assertThat(basic1.myMockService).isNotEqualTo(basic1.myMockService);
 
         //Call a second time to test caches
         basic1 = inject(new Basic1());
         Assert.assertNotNull(basic1.myMockService);
         Assert.assertEquals("Y", basic1.myMockService.getResult());
         Assert.assertEquals("A", basic1.fieldA);
-        System.out.println(basic1.myMockService.getClass());
-        System.out.println(basic1.fieldA.getClass());
+        Assertions.assertThat(basic1.fieldA).isExactlyInstanceOf(String.class);
+        Assertions.assertThat(basic1.myMockService).isNotExactlyInstanceOf(MyMockService.class).isNotExactlyInstanceOf(
+                MyMockInterfaceImpl.class);
     }
 
     private static class Basic1 {
