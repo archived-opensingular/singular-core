@@ -131,6 +131,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
          */
         private int compareTheObject(Optional<SInstance> obj1, Optional<SInstance> obj2) {
             if (obj1.isPresent() && obj2.isPresent()
+                    && obj1.get().getValue() != null && obj2.get().getValue() != null
                     && obj1.get() instanceof SIComparable
                     && obj2.get() instanceof SIComparable) {
                 if (ascMode) {

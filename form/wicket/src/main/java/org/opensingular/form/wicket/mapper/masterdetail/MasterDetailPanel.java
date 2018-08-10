@@ -183,6 +183,7 @@ public class MasterDetailPanel extends Panel {
         dataTable = builder.build(id);
 
         dataTable.setOnNewRowItem((IConsumer<Item<SInstance>>) rowItem -> {
+            rowItem.setOutputMarkupId(true);
             SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(new FeedbackFence(rowItem))
                     .addInstanceModel(rowItem.getModel())
                     .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(rowItem)));
