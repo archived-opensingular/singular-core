@@ -16,6 +16,9 @@
 
 package org.opensingular.flow.core;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -25,11 +28,13 @@ import org.opensingular.flow.core.TesFlowMapValidations.FlowWithFlowValidation.S
 import org.opensingular.flow.core.builder.BuilderHuman;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.property.MetaDataKey;
-import org.opensingular.flow.schedule.ScheduleDataBuilder;
 import org.opensingular.internal.lib.commons.test.RunnableEx;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
+import org.opensingular.schedule.ScheduleDataBuilder;
 
+import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -81,7 +86,7 @@ public class TesFlowMapValidations {
     }
 
     @Test
-    public void dontConfigHumanTask() {
+    public void doesNotConfigHumanTask() {
         condicions = new ValidationConditions();
         condicions.configPeopleAccessStrategy = false;
         assertException(() -> new FlowWithFlowValidation().getFlowMap(), "Não foi definida a estrategia de verificação de acesso da tarefa");
@@ -92,10 +97,50 @@ public class TesFlowMapValidations {
     }
 
     @Test
-    public void taskWithoutPathToEnd() {
-        condicions = new ValidationConditions();
-        condicions.createTaskWithoutPathToEnd = true;
-        assertException(() -> new FlowWithFlowValidation().getFlowMap(), "no way to reach the end");
+    public void taskWithoutPathToEndWithoutTransition() {
+        assertException(f -> {
+            ITaskDefinition first = ITaskDefinition.of("First");
+            ITaskDefinition end = ITaskDefinition.of("End");
+
+            f.addWaitTask(first);
+            f.addEndTask(end);
+
+            f.setStartTask(first);
+        }, "no way to reach the end (without out transition)");
+    }
+
+    @Test
+    public void taskWithoutPathToEndWithSelfReference() {
+        assertException(f -> {
+            ITaskDefinition first = ITaskDefinition.of("First");
+            ITaskDefinition end = ITaskDefinition.of("End");
+
+            f.addWaitTask(first);
+            f.addEndTask(end);
+
+            f.setStartTask(first);
+            f.from(first).go("selfReference", first);
+        }, "no way to reach the end (without out transition)");
+    }
+
+    @Test
+    public void taskWithoutPathToEndWithCircularReference() {
+        assertException(f -> {
+            ITaskDefinition first = ITaskDefinition.of("First");
+            ITaskDefinition second = ITaskDefinition.of("Second");
+            ITaskDefinition end = ITaskDefinition.of("End");
+
+            f.addWaitTask(first);
+            f.addWaitTask(second);
+            f.addEndTask(end);
+
+            f.setStartTask(first);
+            f.from(first).go(second).thenGo(first);
+        }, "no way to reach the end (circular reference)");
+    }
+
+    public static void assertException(@Nonnull Consumer<FlowBuilderImpl> flowCreator, String expectedExceptionMsg) {
+        assertException(() -> SFlowUtil.instanceForDebug(flowCreator).getFlowMap(), expectedExceptionMsg);
     }
 
     @Test
@@ -185,10 +230,7 @@ public class TesFlowMapValidations {
             }
 
             f.from(StepsDI.StepWait).go(StepsDI.StepPeople).thenGo(StepsDI.StepJava);
-
-            if (! condicions.createTaskWithoutPathToEnd) {
-                f.from(StepsDI.StepJava).go(StepsDI.End);
-            }
+            f.from(StepsDI.StepJava).go(StepsDI.End);
 
             f.forEach(builder -> builder.setMetaDataValue(FLAG, Boolean.TRUE));
             return f.build();
@@ -203,7 +245,6 @@ public class TesFlowMapValidations {
         public boolean configStart = true;
         public boolean configPeopleExecutionPage = true;
         public boolean configPeopleAccessStrategy = true;
-        public boolean createTaskWithoutPathToEnd = false;
         public boolean javaTaskSetCode = true;
         public boolean javaTaskSetCodeByBlock = false;
     }

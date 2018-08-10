@@ -16,15 +16,14 @@
 
 package org.opensingular.lib.commons.base;
 
+import com.google.common.base.Throwables;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.text.Normalizer;
 import java.util.function.Function;
-
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.DigestUtils;
-
-import com.google.common.base.Throwables;
 
 public final class SingularUtil {
 
@@ -92,7 +91,7 @@ public final class SingularUtil {
     public static <T> boolean areEqual(T a, Object b, Function<T, Object>... propertyFunctions) {
         if (a == b)
             return true;
-        if (b == null)
+        if (a == null || b == null)
             return false;
         if (a.getClass() != b.getClass())
             return false;

@@ -114,8 +114,8 @@ public class SampleRequirement extends FlowDefinition<FlowInstance> {
 
         // Tarefa aguardando analise a mais de um dia é indeferida automaticamente
         ITaskPredicate oneDayTimeLimit = TaskPredicates.timeLimitInDays(1);
-        flow.addAutomaticTransition(AGUARDANDO_ANALISE, oneDayTimeLimit, INDEFERIDO);
-        flow.addAutomaticTransition(AGUARDANDO_GERENTE, oneDayTimeLimit, AGUARDANDO_PUBLICACAO);
+        flow.from(AGUARDANDO_ANALISE).go(INDEFERIDO, oneDayTimeLimit);
+        flow.from(AGUARDANDO_GERENTE).go(AGUARDANDO_PUBLICACAO, oneDayTimeLimit);
 
         return flow.build();
     }

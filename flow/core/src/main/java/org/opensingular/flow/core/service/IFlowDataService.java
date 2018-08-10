@@ -57,6 +57,7 @@ public interface IFlowDataService<I extends FlowInstance> {
 
     List<I> retrieveAllInstancesIn(ITaskDefinition... tasks);
 
+    @Nonnull
     List<I> retrieveAllInstancesIn(STask<?> task);
 
     List<I> retrieveAllInstancesIn(Date startDate, Date endDate, boolean showEnded, ITaskDefinition... tasksNames);
