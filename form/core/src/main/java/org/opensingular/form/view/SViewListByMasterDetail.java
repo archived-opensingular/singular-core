@@ -16,6 +16,7 @@
 
 package org.opensingular.form.view;
 
+import org.opensingular.form.SType;
 import org.opensingular.form.enums.ModalSize;
 
 public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<SViewListByMasterDetail>
@@ -28,6 +29,10 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
     private ModalSize modalSize;
 
     private String actionColumnLabel = "Ações";
+
+    private SType<?> sortableColumn;
+    private boolean ascendingMode = true;
+    private boolean disableSort = false;
 
     public SViewListByMasterDetail disableEdit() {
         this.editEnabled = false;
@@ -47,7 +52,7 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
         this.newActionLabel = actionLabel;
         return this;
     }
-    
+
     public String getNewActionLabel() {
         return newActionLabel;
     }
@@ -56,7 +61,7 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
         this.editActionLabel = actionLabel;
         return this;
     }
-    
+
     public String getEditActionLabel() {
         return editActionLabel;
     }
@@ -73,5 +78,56 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
     @Override
     public void setModalSize(ModalSize size) {
         this.modalSize = size;
+    }
+
+    /**
+     * Method for choosen a default sortable Column.
+     * Note: Will use ASC mode.
+     *
+     * @param sortableColumn The column that will be sortable in the initialize.
+     * @return <code>this</code>
+     */
+    public SViewListByMasterDetail setSortableColumn(SType<?> sortableColumn) {
+        return this.setSortableColumn(sortableColumn, true);
+    }
+
+    /**
+     * @param sortableColumn The column that will be sortable in the initialize.
+     * @param ascendingMode  True for ASC.
+     *                       False for DESC.
+     * @return <code>this</code>
+     */
+    public SViewListByMasterDetail setSortableColumn(SType<?> sortableColumn, boolean ascendingMode) {
+        this.sortableColumn = sortableColumn;
+        this.ascendingMode = ascendingMode;
+        return this;
+    }
+
+    public SType<?> getSortableColumn() {
+        return sortableColumn;
+    }
+
+    public boolean isAscendingMode() {
+        return ascendingMode;
+    }
+
+    /**
+     * Method for disabled the Sort of the columns.
+     * <p>
+     * Note: The method <code>#setSortableColumn</code> will continuing working.
+     * <p>
+     * Default: False [Enable sort].
+     *
+     * @param disableSort True will disabled.
+     *                    False will enabled.
+     * @return <code>this</code>
+     */
+    public SViewListByMasterDetail setDisableSort(boolean disableSort) {
+        this.disableSort = disableSort;
+        return this;
+    }
+
+    public boolean isDisableSort() {
+        return disableSort;
     }
 }
