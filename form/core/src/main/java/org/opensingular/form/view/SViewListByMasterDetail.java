@@ -32,6 +32,7 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
 
     private SType<?> sortableColumn;
     private boolean ascendingMode = true;
+    private boolean disableSort = false;
 
     public SViewListByMasterDetail disableEdit() {
         this.editEnabled = false;
@@ -108,5 +109,25 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
 
     public boolean isAscendingMode() {
         return ascendingMode;
+    }
+
+    /**
+     * Method for disabled the Sort of the columns.
+     * <p>
+     * Note: The method <code>#setSortableColumn</code> will continuing working.
+     * <p>
+     * Default: False [Enable sort].
+     *
+     * @param disableSort True will disabled.
+     *                    False will enabled.
+     * @return <code>this</code>
+     */
+    public SViewListByMasterDetail setDisableSort(boolean disableSort) {
+        this.disableSort = disableSort;
+        return this;
+    }
+
+    public boolean isDisableSort() {
+        return disableSort;
     }
 }

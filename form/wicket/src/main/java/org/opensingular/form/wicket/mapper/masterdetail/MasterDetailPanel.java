@@ -262,10 +262,11 @@ public class MasterDetailPanel extends Panel {
                             col.getCustomLabel(), col.getColumnSortName(), col.getDisplayValueFunction())));
         }
 
+        final boolean disabledSort = viewSupplier.get().isDisableSort();
         for (ColumnType columnType : columnTypes) {
             final String label = columnType.getCustomLabel(model.getObject());
             final String typeName = columnType.getTypeName();
-            final String columnSort = columnType.getColumnSortName();
+            final String columnSort = disabledSort ? null : columnType.getColumnSortName();
             final IModel<String> labelModel = $m.ofValue(label);
             propertyColumnAppender(builder, labelModel, $m.get(() -> typeName), columnSort, columnType.getDisplayFunction());
         }
