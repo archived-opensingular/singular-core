@@ -53,9 +53,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.opensingular.form.wicket.mapper.components.MetronicPanel.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class PanelListMapper extends AbstractListMapper implements ISInstanceActionCapable {
 
@@ -183,8 +184,9 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
             Model<Serializable> model = new Model<Serializable>() {
                 @Override
                 public Serializable getObject() {
-                    if (viewSupplier.get().getHeaderPath() != null) {
-                        return Optional.ofNullable(item.getModelObject().getValue(viewSupplier.get().getHeaderPath())).orElse("").toString();
+                    SViewListByForm viewSupplier = (SViewListByForm) ctx.getView();
+                    if (viewSupplier.getHeaderPath() != null) {
+                        return Optional.ofNullable(item.getModelObject().getValue(viewSupplier.getHeaderPath())).orElse("").toString();
                     } else {
                         return item.getModelObject().toStringDisplay();
                     }
