@@ -16,8 +16,6 @@
 
 package org.opensingular.lib.wicket.util.modal;
 
-import java.util.function.Predicate;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.event.Broadcast;
@@ -30,18 +28,5 @@ public interface ICloseModalEvent {
 
     default void bubble(Component component) {
         component.send(component, Broadcast.BUBBLE, this);
-    }
-
-    static ICloseModalEvent of(AjaxRequestTarget target, Predicate<Component> predicate) {
-        return new ICloseModalEvent() {
-            @Override
-            public boolean matchesBodyContent(Component bodyComponent) {
-                return predicate.test(bodyComponent);
-            }
-            @Override
-            public AjaxRequestTarget getTarget() {
-                return target;
-            }
-        };
     }
 }

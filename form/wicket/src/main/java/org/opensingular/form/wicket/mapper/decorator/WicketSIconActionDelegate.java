@@ -41,7 +41,7 @@ import org.opensingular.form.wicket.util.WicketFormUtils;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.ref.Out;
 import org.opensingular.lib.commons.util.HTMLUtil;
-import org.opensingular.lib.wicket.util.modal.ICloseModalEvent;
+import org.opensingular.lib.wicket.util.modal.CloseModalEvent;
 
 /**
  * Implementação de <code>SInstanceAction.Delegate</code> integrada com a infraestrutura Wicket.
@@ -150,9 +150,8 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate, Seri
                 it.getDefaultModelObject(),
                 (formInstanceModel == null) ? null : formInstanceModel.getObject());
 
-            ICloseModalEvent evt = ICloseModalEvent.of(findAjaxRequestTarget(), predicate);
             if (component != null)
-                component.send(component, Broadcast.BUBBLE, evt);
+                new CloseModalEvent(findAjaxRequestTarget(), predicate).bubble(component);
         }
         @Override
         public SInstance getFormInstance() {
