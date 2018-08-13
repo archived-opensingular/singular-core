@@ -18,6 +18,7 @@
         <module>commons-test</module>
         <module>wicket-utils</module>
         <module>singular-support</module>
+        <module>singular-schedule</module>
     </modules>
 
     <build>

@@ -16,8 +16,6 @@
 
 package org.opensingular.form.wicket;
 
-import java.io.Serializable;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
@@ -31,6 +29,8 @@ import org.opensingular.form.wicket.model.AttributeModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
+
+import java.io.Serializable;
 
 import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
@@ -83,7 +83,7 @@ public interface IWicketComponentMapper extends Serializable {
     /**
      * Method responsible for create and configurate the label used by the default's inputs by Singular form.
      *
-     * @param ctx The WicketBuildCOntext, to know if contains the HIDE_LABEL configuration.
+     * @param ctx The WicketBuildCOntext, to know if contains the <code>HIDE_LABEL</code> configuration.
      * @return The Bootstrap label configured.
      */
     default BSLabel createLabel(WicketBuildContext ctx) {

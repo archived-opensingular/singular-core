@@ -603,7 +603,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
     public void testListInstantionWithoutElementTypeDefinied() {
         SDictionary dictionary = createTestDictionary();
 
-        SIList<SIString> siList = dictionary.newInstance(STypeList.class);
+        SIList<SIString> siList = (SIList<SIString>) dictionary.newInstance(STypeList.class);
 
         SingularTestUtil.assertException(() -> siList.addNew(), SingularFormException.class,
                 "doesn't have the type of its elements");

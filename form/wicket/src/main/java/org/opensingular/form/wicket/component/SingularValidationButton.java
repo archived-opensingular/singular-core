@@ -22,6 +22,9 @@ import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
 
+/**
+ * This button should be used to validate the form and save.
+ */
 public abstract class SingularValidationButton extends SingularButton {
 
     public SingularValidationButton(String id, IModel<? extends SInstance> currentInstance) {

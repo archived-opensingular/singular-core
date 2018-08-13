@@ -19,7 +19,6 @@ package org.opensingular.lib.wicket.util.modal;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -46,6 +45,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.visit.IVisitor;
 import org.opensingular.form.enums.ModalSize;
+import org.opensingular.form.validation.ValidationError;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.wicket.util.ajax.AjaxErrorEventPayload;
 import org.opensingular.lib.wicket.util.feedback.BSFeedbackPanel;
@@ -53,26 +53,27 @@ import org.opensingular.lib.wicket.util.feedback.NotContainedFeedbackMessageFilt
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class BSModalBorder extends Border {
 
     private static final String BUTTON_LABEL = "label";
 
     public enum ButtonStyle {
         //@formatter:off
-        EMPTY       (""),
-        DEFAULT     ("btn-default"),
-        PRIMARY     ("btn-primary"),
-        LINK        ("btn-link"),
-        DANGER      ("btn-danger"),
-        BLUE        ("blue"),
-        CANCEL      ("cancel-btn"),
-        CONFIRM     ("confirm-btn");
+        EMPTY(""),
+        DEFAULT("btn-default"),
+        PRIMARY("btn-primary"),
+        LINK("btn-link"),
+        DANGER("btn-danger"),
+        BLUE("blue"),
+        CANCEL("cancel-btn"),
+        CONFIRM("confirm-btn");
         //@formatter:on
 
         private String cssClass;
@@ -107,7 +108,7 @@ public class BSModalBorder extends Border {
 
         public static Size valueOf(ModalSize modalSize) {
             if (modalSize != null) {
-                for (Size size : values() ) {
+                for (Size size : values()) {
                     if (size.name().equalsIgnoreCase(modalSize.name())) {
                         return size;
                     }
@@ -117,24 +118,24 @@ public class BSModalBorder extends Border {
         }
     }
 
-    private static final String          DIALOG           = "dialog";
-    private static final String          CLOSE_ICON       = "closeIcon";
-    private static final String          COMPRESS_ICON    = "compressIcon";
-    private static final String          EXPAND_ICON      = "expandIcon";
-    private static final String          TITLE            = "title";
-    private static final String          HEADER           = "header";
-    private static final String          FOOTER           = "footer";
+    private static final String DIALOG = "dialog";
+    private static final String CLOSE_ICON = "closeIcon";
+    private static final String COMPRESS_ICON = "compressIcon";
+    private static final String EXPAND_ICON = "expandIcon";
+    private static final String TITLE = "title";
+    private static final String HEADER = "header";
+    private static final String FOOTER = "footer";
 
-    private Size                         size             = Size.NORMAL;
-    private boolean                      dismissible      = false;
-    private boolean                      withAutoFocus    = true;
+    private Size size = Size.NORMAL;
+    private boolean dismissible = false;
+    private boolean withAutoFocus = true;
 
-    private final RepeatingView          buttonsContainer = new RepeatingView("buttons");
-    protected BSFeedbackPanel            feedbackGeral    = newFeedbackPanel("feedbackGeral", this, newIFeedbackMessageFilter());
+    private final RepeatingView buttonsContainer = new RepeatingView("buttons");
+    protected BSFeedbackPanel feedbackGeral = newFeedbackPanel("feedbackGeral", this, newIFeedbackMessageFilter());
 
-    private final Component              closeIcon;
-    private final Component              compressIcon;
-    private final Component              expandIcon;
+    private final Component closeIcon;
+    private final Component compressIcon;
+    private final Component expandIcon;
     private IConsumer<AjaxRequestTarget> closeIconCallBack;
     private IConsumer<AjaxRequestTarget> onHideCallBack;
 
@@ -176,25 +177,25 @@ public class BSModalBorder extends Border {
         footer.setOutputMarkupId(true);
 
         addToBorder(dialog
-            .add(header
-                .add(closeIcon)
-                .add(compressIcon)
-                .add(expandIcon)
-                .add(title))
-            .add(body)
-            .add(footer
-                .add(feedbackGeral)
-                .add(buttonsFragment
-                    .add(buttonsContainer)))
-            .add(new AttributeAppender("class", modalSizeModel, " ")));
+                .add(header
+                        .add(closeIcon)
+                        .add(compressIcon)
+                        .add(expandIcon)
+                        .add(title))
+                .add(body)
+                .add(footer
+                        .add(feedbackGeral)
+                        .add(buttonsFragment
+                                .add(buttonsContainer)))
+                .add(new AttributeAppender("class", modalSizeModel, " ")));
 
         dialog.add($b.onReadyScript(comp -> JQuery.$(comp) + ".on('keypress', function (e) {"
-            + "  var buttons = $(this).find('.btn-primary:visible');"
-            + "  if (e.target.tagName.toLowerCase() != 'textarea' && buttons.length > 0 && e.which === 13) {"
-            + "    e.preventDefault();"
-            + "    $(buttons[buttons.length - 1]).click();"
-            + "  }"
-            + "});"));
+                + "  var buttons = $(this).find('.btn-primary:visible');"
+                + "  if (e.target.tagName.toLowerCase() != 'textarea' && buttons.length > 0 && e.which === 13) {"
+                + "    e.preventDefault();"
+                + "    $(buttons[buttons.length - 1]).click();"
+                + "  }"
+                + "});"));
 
         add(new AttributeAppender("class", Model.of("modal fade modal-scroll"), " "));
         add(new AttributeAppender("style", Model.of("visibility:visible"), ";"));
@@ -203,6 +204,8 @@ public class BSModalBorder extends Border {
 
         setVisible(false);
         setMinimizable(false);
+
+        getModalBody().add(new WebMarkupContainer("warning-panel").setVisible(false));
     }
 
     @Override
@@ -250,8 +253,8 @@ public class BSModalBorder extends Border {
             button.setLabel(label);
         }
         buttonsContainer.addOrReplace(button
-            .add(newButtonLabel(BUTTON_LABEL, button))
-            .add(new AttributeAppender("class", style.cssClassModel(), " ")));
+                .add(newButtonLabel(BUTTON_LABEL, button))
+                .add(new AttributeAppender("class", style.cssClassModel(), " ")));
 
         return this;
     }
@@ -270,8 +273,8 @@ public class BSModalBorder extends Border {
 
     public BSModalBorder addLink(ButtonStyle style, IModel<String> label, AjaxLink<?> button) {
         buttonsContainer.addOrReplace(button
-            .add(newLinkLabel(BUTTON_LABEL, button, label))
-            .add(new AttributeAppender("class", style.cssClassModel(), " ")));
+                .add(newLinkLabel(BUTTON_LABEL, button, label))
+                .add(new AttributeAppender("class", style.cssClassModel(), " ")));
         return this;
     }
 
@@ -384,30 +387,18 @@ public class BSModalBorder extends Border {
     public void hide(@Nullable AjaxRequestTarget target) {
         if (this.isVisible()) {
 
-            // limpo os valores, pois erros de validacao impedem o formulario de se ser recarregado 
+            // limpo os valores, pois erros de validacao impedem o formulario de se ser recarregado
             clearInputs();
 
             this.setVisible(false);
-
-            final AbstractDefaultAjaxBehavior onHideCallBackBehavior = new AbstractDefaultAjaxBehavior() {
-                private boolean executed = false;
-                @Override
-                protected void respond(AjaxRequestTarget target) {
-                    if (onHideCallBack != null)
-                        onHideCallBack.accept(target);
-                }
-                @Override
-                public boolean isTemporary(Component component) {
-                    return executed;
-                }
-            };
-            getPage().add(onHideCallBackBehavior);
 
             if (target != null) {
                 final String blockingFunction = "hide_hidden_wicket_modal";
                 target.prependJavaScript(blockingFunction + "|" + getHideJavaScriptCallback(blockingFunction));
                 target.add(this);
-                target.appendJavaScript(onHideCallBackBehavior.getCallbackScript());
+                if (onHideCallBack != null) {
+                    onHideCallBack.accept(target);
+                }
             }
         }
     }
@@ -441,19 +432,19 @@ public class BSModalBorder extends Border {
 
     public String getShowJavaScriptCallback() {
         StringBuilder sb = JQuery.$(this)
-            .append(".modal({")
-            .append("keyboard:").append(isDismissible())
-            .append(",backdrop:").append(isDismissible() ? "true" : "'static'")
-            .append("})");
+                .append(".modal({")
+                .append("keyboard:").append(isDismissible())
+                .append(",backdrop:").append(isDismissible() ? "true" : "'static'")
+                .append("})");
         if (withAutoFocus) {
             sb.append(""
-                + "\n.on('shown.bs.modal',function(evt) {"
-                + "\n $(this).find('.modal-body')"
-                + "\n  .find('input:not([type=hidden]),select,textarea,button,object,a')"
-                + "\n  .filter(':visible')"
-                + "\n  .first()"
-                + "\n  .each(function(){ this.focus(); });"
-                + "\n})");
+                    + "\n.on('shown.bs.modal',function(evt) {"
+                    + "\n $(this).find('.modal-body')"
+                    + "\n  .find('input:not([type=hidden]),select,textarea,button,object,a')"
+                    + "\n  .filter(':visible')"
+                    + "\n  .first()"
+                    + "\n  .each(function(){ this.focus(); });"
+                    + "\n})");
         }
         return sb.toString();
     }
@@ -503,51 +494,51 @@ public class BSModalBorder extends Border {
 
     protected Component newCompressIcon(String id) {
         return new WebMarkupContainer(id)
-            .add($b.onReadyScript(comp -> JQuery.$(comp) + ""
-                + ".on('click', function() {"
-                + JQuery.$(expandIcon) + ".show();"
-                + JQuery.$(compressIcon) + ".hide();"
-                + JQuery.$(getModalBody()) + ".slideUp();"
-                + JQuery.$(getModalFooter()) + ".slideUp();"
-                + " $('.modal-backdrop.fade.in').css('opacity',0.2);"
-                + "})"
-                + ";"))
-            .add(new Behavior() {
-                @Override
-                public void renderHead(Component component, IHeaderResponse response) {
-                    super.renderHead(component, response);
-                    response.render(CssHeaderItem.forCSS(""
-                        + ".modal-header-icon {"
-                        + " background-color: transparent;"
-                        + " float: right;"
-                        + " border: 0;"
-                        + " margin: 0;"
-                        + " padding: 0;"
-                        + " border-image: none;"
-                        + " line-height: 14px;"
-                        + " margin-top: -4px;"
-                        + " margin-right: 8px;"
-                        + " color: #ccc;"
-                        + "}"
-                        + ".modal-header-icon:hover {"
-                        + " color: #888;"
-                        + "}",
-                        "ModalBorder_modal-header-icon"));
-                }
-            });
+                .add($b.onReadyScript(comp -> JQuery.$(comp) + ""
+                        + ".on('click', function() {"
+                        + JQuery.$(expandIcon) + ".show();"
+                        + JQuery.$(compressIcon) + ".hide();"
+                        + JQuery.$(getModalBody()) + ".slideUp();"
+                        + JQuery.$(getModalFooter()) + ".slideUp();"
+                        + " $('.modal-backdrop.fade.in').css('opacity',0.2);"
+                        + "})"
+                        + ";"))
+                .add(new Behavior() {
+                    @Override
+                    public void renderHead(Component component, IHeaderResponse response) {
+                        super.renderHead(component, response);
+                        response.render(CssHeaderItem.forCSS(""
+                                        + ".modal-header-icon {"
+                                        + " background-color: transparent;"
+                                        + " float: right;"
+                                        + " border: 0;"
+                                        + " margin: 0;"
+                                        + " padding: 0;"
+                                        + " border-image: none;"
+                                        + " line-height: 14px;"
+                                        + " margin-top: -4px;"
+                                        + " margin-right: 8px;"
+                                        + " color: #ccc;"
+                                        + "}"
+                                        + ".modal-header-icon:hover {"
+                                        + " color: #888;"
+                                        + "}",
+                                "ModalBorder_modal-header-icon"));
+                    }
+                });
     }
 
     protected Component newExpandIcon(String id) {
         return new WebMarkupContainer(id).add($b.onReadyScript(comp -> JQuery.$(comp) + ""
-            + ".on('click', function() {"
-            + JQuery.$(expandIcon) + ".hide();"
-            + JQuery.$(compressIcon) + ".show();"
-            + JQuery.$(getModalBody()) + ".slideDown();"
-            + JQuery.$(getModalFooter()) + ".slideDown();"
-            + " $('.modal-backdrop.fade.in').css('opacity','');"
-            + "})"
-            + ".css('display','none')"
-            + ";"));
+                + ".on('click', function() {"
+                + JQuery.$(expandIcon) + ".hide();"
+                + JQuery.$(compressIcon) + ".show();"
+                + JQuery.$(getModalBody()) + ".slideDown();"
+                + JQuery.$(getModalFooter()) + ".slideDown();"
+                + " $('.modal-backdrop.fade.in').css('opacity','');"
+                + "})"
+                + ".css('display','none')"
+                + ";"));
     }
 
     protected Component newTitle(String id, IModel<?> titleModel) {
@@ -588,5 +579,14 @@ public class BSModalBorder extends Border {
     public BSModalBorder setWithAutoFocus(boolean withAutoFocus) {
         this.withAutoFocus = withAutoFocus;
         return this;
+    }
+
+    /**
+     * This method will update the warning to show all the warning erros.
+     *
+     * @param retrieveWarningErrors The warning erros.
+     */
+    public void updateWarnings(List<ValidationError> retrieveWarningErrors) {
+        getModalBody().addOrReplace(new WarningPanel("warning-panel", retrieveWarningErrors));
     }
 }

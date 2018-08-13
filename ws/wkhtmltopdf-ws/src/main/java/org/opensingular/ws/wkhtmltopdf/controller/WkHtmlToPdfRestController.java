@@ -22,7 +22,11 @@ import org.opensingular.lib.commons.util.Loggable;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,14 +39,16 @@ public class WkHtmlToPdfRestController implements Loggable {
     @ResponseBody
     @RequestMapping(value = CONVERT_HTML_TO_PDF_PATH, method = RequestMethod.POST, produces = "application/pdf")
     public ResponseEntity<InputStreamResource> convertHtmlToPdf(@RequestBody HtmlToPdfDTO dto) {
-        try {
-            File file = PDFUtil.getInstance().convertHTML2PDF(dto.getBody(), dto.getHeader(), dto.getFooter(), dto.getAdditionalParams());
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType("application/octet-stream"))
-                    .contentLength(file.length())
-                    .body(new InputStreamResource(new FileInputStream(file)));
-        } catch (Exception ex) {
-            getLogger().error(ex.getMessage(), ex);
+        if(dto != null) {
+            try {
+                File file = PDFUtil.getInstance().convertHTML2PDF(dto.getBody(), dto.getHeader(), dto.getFooter(), dto.getAdditionalParams());
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType("application/octet-stream"))
+                        .contentLength(file.length())
+                        .body(new InputStreamResource(new FileInputStream(file)));
+            } catch (Exception ex) {
+                getLogger().error(ex.getMessage(), ex);
+            }
         }
         return null;
     }
