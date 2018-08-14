@@ -138,7 +138,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
          * @return return the result of the <code>SIComparable#compareTo</code>.
          */
         private int compareTheObject(Optional<SInstance> obj1, Optional<SInstance> obj2) {
-            if (hasValue(obj1, obj2) && isInstanceOfSIComparable(obj1, obj2)) {
+            if (hasValue(obj1, obj2) && isInstanceOfSIComparable(obj1.get(), obj2.get())) {
                 Integer compareToNullResult = nullsFirstLogic(obj1.get(), obj2.get());
                 if (compareToNullResult != null) {
                     return compareToNullResult;
@@ -158,8 +158,8 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
         }
 
 
-        private boolean isInstanceOfSIComparable(Optional<SInstance> obj1, Optional<SInstance> obj2) {
-            return obj1.get() instanceof SIComparable && obj2.get() instanceof SIComparable;
+        private boolean isInstanceOfSIComparable(SInstance obj1, SInstance obj2) {
+            return obj1 instanceof SIComparable && obj2 instanceof SIComparable;
         }
 
         /**
