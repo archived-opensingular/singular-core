@@ -186,10 +186,8 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             final STypeComposite<?> compositeElementsType = (STypeComposite<?>) elementsType;
             final BSTRow row = tableHeader.newRow();
 
-            //TODO CRIAR UMA LOGICA PARA RENDERIZAR ISSO AO ADICIONAR UM NOVO ELEMENTO.
-            if(list.getObject().stream().anyMatch(s -> viewSupplier.get().getButtonsConfig().isEditEnabled(s)) && isEdition) {
-                row.newTHeaderCell($m.ofValue(""));
-            }
+            //Todo verificar uma maneira de criar apenas se houver editação habilitada.
+            row.newTHeaderCell($m.ofValue(""));
 
             Collection<SType<?>> fields = compositeElementsType
                     .getFields()
@@ -287,8 +285,8 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
 
             final ISupplier<SViewListByTable> viewSupplier = ctx.getViewSupplier(SViewListByTable.class);
 
+            final BSTDataCell actionColumn = row.newCol();
             if (viewSupplier.get().getButtonsConfig().isEditEnabled(item.getModelObject()) && ctx.getViewMode().isEdition()) {
-                final BSTDataCell actionColumn = row.newCol();
                 actionColumn.add($b.attrAppender("style", "width:20px", ";"));
                 appendInserirButton(this, form, ctx, item, actionColumn);
             }
@@ -306,9 +304,9 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             }
 
             if (ctx.getViewMode().isEdition() && viewSupplier.get().getButtonsConfig().isDeleteEnabled(item.getModelObject())) {
-                final BSTDataCell actionColumn = row.newCol();
-                actionColumn.add($b.attrAppender("style", "width:20px", ";"));
-                appendRemoverButton(this, form, ctx, item, actionColumn, confirmationModal, viewSupplier);
+                final BSTDataCell actionColumnRemove = row.newCol();
+                actionColumnRemove.add($b.attrAppender("style", "width:20px", ";"));
+                appendRemoverButton(this, form, ctx, item, actionColumnRemove, confirmationModal, viewSupplier);
             }
 
             item.add(row);
