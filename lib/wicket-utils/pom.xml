@@ -99,7 +99,10 @@
       <artifactId>junit</artifactId>
       <scope>compile</scope>
     </dependency>
-
+    <dependency>
+        <groupId>org.apache.wicket</groupId>
+        <artifactId>wicket-devutils</artifactId>
+    </dependency>
   </dependencies>
 
 </project>
