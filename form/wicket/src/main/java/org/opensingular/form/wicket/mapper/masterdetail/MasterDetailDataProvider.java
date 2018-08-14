@@ -76,11 +76,13 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
         boolean ascMode = ascending;
         List<SInstance> sortableList = new ArrayList<>(siList.getValues());
         if (CollectionUtils.isNotEmpty(sortableList)) {
-            if (StringUtils.isEmpty(sortProperty) && viewSupplier != null) {
-                SViewListByMasterDetail view = viewSupplier.get();
-                ascMode = view.isAscendingMode();
-                if (view.getSortableColumn() != null) {
-                    sortableList.sort(new ProviderMasterDetailCompator(view.getSortableColumn().getNameSimple(), ascMode));
+            if (StringUtils.isEmpty(sortProperty)) {
+                if (viewSupplier != null) {
+                    SViewListByMasterDetail view = viewSupplier.get();
+                    ascMode = view.isAscendingMode();
+                    if (view.getSortableColumn() != null) {
+                        sortableList.sort(new ProviderMasterDetailCompator(view.getSortableColumn().getNameSimple(), ascMode));
+                    }
                 }
             } else {
                 sortableList.sort(new ProviderMasterDetailCompator(sortProperty, ascMode));
