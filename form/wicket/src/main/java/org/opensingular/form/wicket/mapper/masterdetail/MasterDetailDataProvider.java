@@ -141,7 +141,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
                     && (obj1.get().getValue() != null || obj2.get().getValue() != null)
                     && obj1.get() instanceof SIComparable
                     && obj2.get() instanceof SIComparable) {
-                Integer compareToNullResult = nullsFirstLogic(obj1, obj2);
+                Integer compareToNullResult = nullsFirstLogic(obj1.get(), obj2.get());
                 if (compareToNullResult != null) {
                     return compareToNullResult;
                 }
@@ -155,12 +155,20 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
             return ascMode ? -1 : 1;
         }
 
-        private Integer nullsFirstLogic(Optional<SInstance> obj1, Optional<SInstance> obj2) {
-            if (obj1.get().getValue() == null) {
-                return -1; //This will use the NULLSFISRT Logic.
+        /**
+         * This method will use the logic NullsFirst. The null elements will be shown in the begin of the list.
+         *
+         * @param obj1 first object to be compare.
+         * @param obj2 second object to be compare.
+         * @return The sortOrder to put the null element in the begin, or null if the two elements have value.
+         */
+        @Nullable
+        private Integer nullsFirstLogic(SInstance obj1, SInstance obj2) {
+            if (obj1.getValue() == null) {
+                return -1;
             }
-            if (obj2.get().getValue() == null) {
-                return 1; //This will use the NULLSFISRT Logic.
+            if (obj2.getValue() == null) {
+                return 1;
             }
             return null; //The two objects have value.
         }
