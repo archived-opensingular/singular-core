@@ -25,6 +25,7 @@ import org.opensingular.form.type.core.SIComparable;
 import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 
 import javax.annotation.Nullable;
@@ -72,19 +73,18 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
      * @return sortable List.
      */
     private List<SInstance> populateSortList(SIList<SInstance> siList, @Nullable String sortProperty, boolean ascending) {
-        String sortableProperty = sortProperty;
         boolean ascMode = ascending;
-        if (StringUtils.isEmpty(sortableProperty) && viewSupplier != null) {
-            SViewListByMasterDetail view = viewSupplier.get();
-            if (view.getSortableColumn() != null) {
-                sortableProperty = view.getSortableColumn().getNameSimple();
-            }
-            ascMode = view.isAscendingMode();
-        }
-
         List<SInstance> sortableList = new ArrayList<>(siList.getValues());
-        if (StringUtils.isNotEmpty(sortableProperty) && CollectionUtils.isNotEmpty(sortableList)) {
-            sortableList.sort(new ProviderMasterDetailCompator(sortableProperty, ascMode));
+        if (CollectionUtils.isNotEmpty(sortableList)) {
+            if (StringUtils.isEmpty(sortProperty) && viewSupplier != null) {
+                SViewListByMasterDetail view = viewSupplier.get();
+                ascMode = view.isAscendingMode();
+                if (view.getSortableColumn() != null) {
+                    sortableList.sort(new ProviderMasterDetailCompator(view.getSortableColumn().getNameSimple(), ascMode));
+                }
+            } else {
+                sortableList.sort(new ProviderMasterDetailCompator(sortProperty, ascMode));
+            }
         }
         return sortableList;
     }
@@ -103,7 +103,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
      * A comparator for sort the master detail list.
      * Note: This compator use the <code>SIComparable</code> for compare the Instance's of the list.
      */
-    public static class ProviderMasterDetailCompator implements Comparator<SInstance> {
+    public static class ProviderMasterDetailCompator implements Comparator<SInstance>, Loggable {
 
         private String sortableProperty;
         private boolean ascMode;
@@ -124,6 +124,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
          * This will sort the two object passed.
          * <p>
          * Note: The sort will happen just if the two optional object exists, and the value is a instanceOf SIComparable.
+         * Note: If some object in comparable is null, the logic will be the NULLSFIRST.
          *
          * @param obj1 The first object to be comparable.
          * @param obj2 The second object to be comparable.
@@ -131,16 +132,31 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
          */
         private int compareTheObject(Optional<SInstance> obj1, Optional<SInstance> obj2) {
             if (obj1.isPresent() && obj2.isPresent()
-                    && obj1.get().getValue() != null && obj2.get().getValue() != null
+                    && (obj1.get().getValue() != null || obj2.get().getValue() != null)
                     && obj1.get() instanceof SIComparable
                     && obj2.get() instanceof SIComparable) {
+                Integer compareToNullResult = nullsFirstLogic(obj1, obj2);
+                if (compareToNullResult != null) {
+                    return compareToNullResult;
+                }
+
                 if (ascMode) {
                     return ((SIComparable) obj1.get()).compareTo((SIComparable) obj2.get());
-                } else {
-                    return ((SIComparable) obj2.get()).compareTo((SIComparable) obj1.get());
                 }
+                return ((SIComparable) obj2.get()).compareTo((SIComparable) obj1.get());
             }
+            getLogger().info("The comparator will be the natural compare.");
             return ascMode ? -1 : 1;
+        }
+
+        private Integer nullsFirstLogic(Optional<SInstance> obj1, Optional<SInstance> obj2) {
+            if (obj1.get().getValue() == null) {
+                return -1; //This will use the NULLSFISRT Logic.
+            }
+            if (obj2.get().getValue() == null) {
+                return 1; //This will use the NULLSFISRT Logic.
+            }
+            return null; //The two objects have value.
         }
 
         /**
