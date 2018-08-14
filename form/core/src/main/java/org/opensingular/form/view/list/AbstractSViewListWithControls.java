@@ -23,6 +23,7 @@ import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.lib.commons.ui.Icon;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class AbstractSViewListWithControls<SELF extends AbstractSViewList> extends AbstractSViewList {
@@ -30,37 +31,33 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
     private IFunction<SIList, Boolean> newEnabled = list -> Boolean.TRUE;
     private int initialLines;
     private String label;
-    private ButtonsConfig buttonsConfig = new ButtonsConfig();
+    private ButtonsConfig buttonsConfig;
 
     public ButtonsConfig getButtonsConfig() {
+        if(buttonsConfig == null){
+            buttonsConfig = new ButtonsConfig();
+        }
         return buttonsConfig;
     }
 
-    public SELF configureEditButton(String hint, IPredicate<SInstance> visibleFor, Icon icon) {
+    public SELF configureEditButton(String hint, @Nullable IPredicate<SInstance> visibleFor, Icon icon) {
         getButtonsConfig().setEditButton(new ButtonAction(visibleFor, hint, icon));
         return (SELF) this;
     }
-    public SELF configureEditButton(IPredicate<SInstance> visibleFor) {
+    public SELF configureEditButton(@Nullable IPredicate<SInstance> visibleFor) {
         getButtonsConfig().setEditButton(new ButtonAction(visibleFor, "Editar", null));
         return (SELF) this;
     }
 
-    public SELF configureDeleteButton(String hint, IPredicate<SInstance> visibleFor, Icon icon) {
+    public SELF configureDeleteButton(String hint, @Nullable IPredicate<SInstance> visibleFor, Icon icon) {
         getButtonsConfig().setDeleteButton(new ButtonAction(visibleFor, hint, icon));
         return (SELF) this;
     }
 
-    public SELF configureDeleteButton(IPredicate<SInstance> visibleFor) {
+    public SELF configureDeleteButton(@Nullable IPredicate<SInstance> visibleFor) {
         getButtonsConfig().setDeleteButton(new ButtonAction(visibleFor, "Remover", null));
         return (SELF) this;
     }
-
-
-    public boolean isInsertEnabled() {
-        return true;
-        //TODO VERIFICAR ISSO AQUI.
-    }
-
 
     public final boolean isNewEnabled(SIList list) {
         return newEnabled.apply(list);

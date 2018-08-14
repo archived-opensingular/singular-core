@@ -27,6 +27,7 @@ import org.opensingular.lib.commons.ui.Icon;
 public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<SViewListByMasterDetail>
         implements ConfigurableModal<SViewListByMasterDetail> {
 
+    private ButtonsMasterDetailConfig buttonsConfig = new ButtonsMasterDetailConfig();
     private boolean editEnabled = true;
     private String newActionLabel = "Adicionar";
 
@@ -137,7 +138,10 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
     }
 
     public ButtonsMasterDetailConfig getButtonsConfig() {
-        return new ButtonsMasterDetailConfig();
+        if (buttonsConfig == null) {
+            buttonsConfig = new ButtonsMasterDetailConfig();
+        }
+        return buttonsConfig;
     }
 
     public SViewListByMasterDetail configureViewButton(String hint, IPredicate<SInstance> visibleFor, Icon icon) {

@@ -104,13 +104,13 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         addInitialNumberOfLines(currentType, iList, ctx.getViewSupplier(SViewListByTable.class));
 
         return TableListPanel.TableListPanelBuilder.build(id,
-            (h, form) -> buildHeader(h, form, list, ctx, isEdition),
-            (c, form) -> builContent(c, form, list, ctx, isEdition, confirmationModal),
-            (f, form) -> buildFooter(f, form, ctx));
+                (h, form) -> buildHeader(h, form, list, ctx, isEdition),
+                (c, form) -> builContent(c, form, list, ctx, isEdition, confirmationModal),
+                (f, form) -> buildFooter(f, form, ctx));
     }
 
     private void buildHeader(BSContainer<?> header, Form<?> form, IModel<SIList<SInstance>> list,
-        WicketBuildContext ctx, boolean isEdition) {
+                             WicketBuildContext ctx, boolean isEdition) {
 
         final IModel<String> label = $m.ofValue(ctx.getCurrentInstance().getType().asAtr().getLabel());
         final Label title = new Label("_title", label);
@@ -120,19 +120,19 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         header.appendTag("span", title);
 
         IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
-            this,
-            RequestCycle.get().find(AjaxRequestTarget.class),
-            list,
-            list.getObject(),
-            ctx,
-            ctx.getContainer());
+                this,
+                RequestCycle.get().find(AjaxRequestTarget.class),
+                list,
+                list.getObject(),
+                ctx,
+                ctx.getContainer());
 
         SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
-            header,
-            this.instanceActionsProviders,
-            list,
-            false,
-            internalContextListProvider);
+                header,
+                this.instanceActionsProviders,
+                list,
+                false,
+                internalContextListProvider);
 
         final SType<SInstance> elementsType = list.getObject().getElementsType();
 
@@ -143,21 +143,21 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
     }
 
     private void builContent(BSContainer<?> content, Form<?> form, IModel<SIList<SInstance>> list,
-        WicketBuildContext ctx, boolean isEdition, ConfirmationModal confirmationModal) {
+                             WicketBuildContext ctx, boolean isEdition, ConfirmationModal confirmationModal) {
 
         final String markup = ""
-            + " <div class='list-table-empty' wicket:id='empty-content'>                                             "
-            + "     <p class='list-table-empty-message'>Nenhum item foi adicionado. </p>                             "
-            + " </div>                                                                                               "
-            + " <div wicket:id='not-empty-content'>                                                                  "
-            + "     <table class='table table-condensed table-unstyled' style='margin-bottom:0px'>                   "
-            + "          <thead wicket:id='_h'></thead>                                                              "
-            + "          <tbody wicket:id='_b'><wicket:container wicket:id='_e'><tr wicket:id='_r'></tr></wicket:container></tbody> "
-            + "          <tfoot wicket:id='_ft'>                                                                     "
-            + "              <tr><td colspan='99' wicket:id='_fb'></td></tr>                                         "
-            + "          </tfoot>                                                                                    "
-            + "     </table>                                                                                         "
-            + " </div>                                                                                               ";
+                + " <div class='list-table-empty' wicket:id='empty-content'>                                             "
+                + "     <p class='list-table-empty-message'>Nenhum item foi adicionado. </p>                             "
+                + " </div>                                                                                               "
+                + " <div wicket:id='not-empty-content'>                                                                  "
+                + "     <table class='table table-condensed table-unstyled' style='margin-bottom:0px'>                   "
+                + "          <thead wicket:id='_h'></thead>                                                              "
+                + "          <tbody wicket:id='_b'><wicket:container wicket:id='_e'><tr wicket:id='_r'></tr></wicket:container></tbody> "
+                + "          <tfoot wicket:id='_ft'>                                                                     "
+                + "              <tr><td colspan='99' wicket:id='_fb'></td></tr>                                         "
+                + "          </tfoot>                                                                                    "
+                + "     </table>                                                                                         "
+                + " </div>                                                                                               ";
 
         final TemplatePanel template = content.newTemplateTag(tp -> markup);
 
@@ -186,16 +186,18 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             final STypeComposite<?> compositeElementsType = (STypeComposite<?>) elementsType;
             final BSTRow row = tableHeader.newRow();
 
-            if (viewSupplier.get().isInsertEnabled() && isEdition) {
-                //TODO VERIFICAR ISSO AQUI.
+            if(list.getObject().stream().anyMatch(s -> viewSupplier.get().getButtonsConfig().isEditEnabled(s)) && isEdition) {
+                row.newTHeaderCell($m.ofValue(""));
+            }
+            if(list.getObject().stream().anyMatch(s -> viewSupplier.get().getButtonsConfig().isDeleteEnabled(s)) && isEdition) {
                 row.newTHeaderCell($m.ofValue(""));
             }
 
             Collection<SType<?>> fields = compositeElementsType
-                .getFields()
-                .stream()
-                .filter(t -> shouldRenderHeaderForSType(t, viewSupplier))
-                .collect(Collectors.toList());
+                    .getFields()
+                    .stream()
+                    .filter(t -> shouldRenderHeaderForSType(t, viewSupplier))
+                    .collect(Collectors.toList());
 
             int sumWidthPref = fields.stream().mapToInt((x) -> x.asAtrBootstrap().getColPreference(1)).sum();
 
@@ -233,12 +235,12 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         tableFooter.add($b.onConfigure(c -> c.setVisible(!(viewSupplier.get().isNewEnabled(list.getObject()) && isEdition))));
 
         template
-            .add(notEmptyContent
-                .add(tableHeader)
-                .add(tableBody
-                    .add(tableRows))
-                .add(tableFooter
-                    .add(footerBody)));
+                .add(notEmptyContent
+                        .add(tableHeader)
+                        .add(tableBody
+                                .add(tableRows))
+                        .add(tableFooter
+                                .add(footerBody)));
 
         content.getParent().add(dependsOnModifier(list));
     }
@@ -254,11 +256,11 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
     private static final class TableElementsView extends ElementsView {
 
         private final WicketBuildContext ctx;
-        private final Form<?>            form;
-        private final ConfirmationModal  confirmationModal;
+        private final Form<?> form;
+        private final ConfirmationModal confirmationModal;
 
         private TableElementsView(String id, IModel<SIList<SInstance>> model, WicketBuildContext ctx, Form<?> form,
-            WebMarkupContainer parentContainer, ConfirmationModal confirmationModal) {
+                                  WebMarkupContainer parentContainer, ConfirmationModal confirmationModal) {
             super(id, model, parentContainer);
             this.confirmationModal = confirmationModal;
             super.setRenderedChildFunction(c -> ((MarkupContainer) c).get("_r"));
@@ -274,8 +276,8 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             final SInstance instance = itemModel.getObject();
 
             SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(new FeedbackFence(row))
-                .addInstanceModel(itemModel)
-                .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(row)));
+                    .addInstanceModel(itemModel)
+                    .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(row)));
 
             row.setDefaultModel(itemModel);
             row.add($b.classAppender("singular-form-table-row can-have-error"));
@@ -305,7 +307,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                 ctx.createChild(row.newCol(), ctx.getExternalContainer(), itemModel).setHint(HIDE_LABEL, Boolean.FALSE).build();
             }
 
-            if (ctx.getViewMode().isEdition()) {
+            if (ctx.getViewMode().isEdition() && viewSupplier.get().getButtonsConfig().isDeleteEnabled(item.getModelObject())) {
                 final BSTDataCell actionColumn = row.newCol();
                 actionColumn.add($b.attrAppender("style", "width:20px", ";"));
                 appendRemoverButton(this, form, ctx, item, actionColumn, confirmationModal, viewSupplier);
@@ -329,41 +331,44 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         public IFunction<TemplatePanel, String> getTemplateFunction() {
             String wrapper = withForm ? "<form wicket:id='_fo'>%s</form>" : "%s";
             return (tp) -> String.format(wrapper, ""
-                + "  <div class='list-table-input'>"
-                + "    <div wicket:id='_hd' class='list-table-heading'></div>"
-                + "    <div class='list-table-body' wicket:id='_co' >"
-                + "    </div>"
-                + "    <div wicket:id='_ft' class='list-table-footer'></div>"
-                + "  </div>"
-                + "");
+                    + "  <div class='list-table-input'>"
+                    + "    <div wicket:id='_hd' class='list-table-heading'></div>"
+                    + "    <div class='list-table-body' wicket:id='_co' >"
+                    + "    </div>"
+                    + "    <div wicket:id='_ft' class='list-table-footer'></div>"
+                    + "  </div>"
+                    + "");
         }
 
         public static final class TableListPanelBuilder {
 
-            private TableListPanelBuilder() {}
+            private TableListPanelBuilder() {
+            }
 
             public static TableListPanel build(String id,
-                IBiConsumer<BSContainer<?>, Form<?>> buildHeading,
-                IBiConsumer<BSContainer<?>, Form<?>> buildContent,
-                IBiConsumer<BSContainer<?>, Form<?>> buildFooter) {
+                                               IBiConsumer<BSContainer<?>, Form<?>> buildHeading,
+                                               IBiConsumer<BSContainer<?>, Form<?>> buildContent,
+                                               IBiConsumer<BSContainer<?>, Form<?>> buildFooter) {
                 return build(id, true, buildHeading, buildContent, buildFooter);
             }
 
             public static TableListPanel build(String id,
-                boolean withForm,
-                IBiConsumer<BSContainer<?>, Form<?>> buildHeading,
-                IBiConsumer<BSContainer<?>, Form<?>> buildContent,
-                IBiConsumer<BSContainer<?>, Form<?>> buildFooter) {
+                                               boolean withForm,
+                                               IBiConsumer<BSContainer<?>, Form<?>> buildHeading,
+                                               IBiConsumer<BSContainer<?>, Form<?>> buildContent,
+                                               IBiConsumer<BSContainer<?>, Form<?>> buildFooter) {
 
                 return new TableListPanel(id, withForm) {
                     @Override
                     protected void buildHeading(BSContainer<?> heading, Form<?> form) {
                         buildHeading.accept(heading, form);
                     }
+
                     @Override
                     protected void buildContent(BSContainer<?> content, Form<?> form) {
                         buildContent.accept(content, form);
                     }
+
                     @Override
                     protected void buildFooter(BSContainer<?> footer, Form<?> form) {
                         buildFooter.accept(footer, form);

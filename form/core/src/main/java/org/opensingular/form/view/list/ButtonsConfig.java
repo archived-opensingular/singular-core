@@ -20,8 +20,13 @@ import org.opensingular.form.SInstance;
 
 public class ButtonsConfig {
 
-    private ButtonAction editButton = new ButtonAction(null, "Editar", null);
-    private ButtonAction deleteButton = new ButtonAction(null, "Remover", null);
+    private ButtonAction editButton;
+    private ButtonAction deleteButton;
+
+    public ButtonsConfig() {
+        editButton = new ButtonAction(f -> false, "Editar", null);
+        deleteButton = new ButtonAction(f -> true, "Remover", null);
+    }
 
     public ButtonAction getEditButton() {
         return editButton;

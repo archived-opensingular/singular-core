@@ -107,8 +107,6 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                 + "</button>")
             .add(btn);
 
-        btn.add($b.onConfigure(c -> viewSupplier.optional()
-            .ifPresent(view -> c.setVisible(view.getButtonsConfig().isDeleteEnabled(item.getModelObject())))));
         return btn;
     }
 
