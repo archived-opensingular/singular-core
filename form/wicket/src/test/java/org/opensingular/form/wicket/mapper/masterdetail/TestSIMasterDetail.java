@@ -21,7 +21,7 @@ import org.opensingular.form.SIComposite;
 import javax.annotation.Nonnull;
 import java.time.YearMonth;
 
-public class SIMasterDetailTest extends SIComposite {
+public class TestSIMasterDetail extends SIComposite {
 
 
     @Nonnull

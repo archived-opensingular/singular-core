@@ -56,6 +56,16 @@
     </dependency>
 
     <dependency>
+      <groupId>de.ruedigermoeller</groupId>
+      <artifactId>fst</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.lz4</groupId>
+      <artifactId>lz4-java</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.opensingular</groupId>
       <artifactId>singular-form-core</artifactId>
     </dependency>
