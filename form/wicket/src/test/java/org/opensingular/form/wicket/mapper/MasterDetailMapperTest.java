@@ -26,7 +26,7 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.country.brazil.STypeCPF;
 import org.opensingular.form.type.util.STypeYearMonth;
-import org.opensingular.form.view.SViewListByMasterDetail;
+import org.opensingular.form.view.list.SViewListByMasterDetail;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 

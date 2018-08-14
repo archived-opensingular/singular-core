@@ -37,7 +37,7 @@ import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.validation.ValidationError;
 import org.opensingular.form.validation.ValidationErrorLevel;
-import org.opensingular.form.view.SViewListByMasterDetail;
+import org.opensingular.form.view.list.SViewListByMasterDetail;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
@@ -300,7 +300,7 @@ public class MasterDetailPanel extends Panel {
                 .iconeModel(Model.of(DefaultIcons.REMOVE))
                 .titleFunction(rowModel -> "Remover")
                 .labelModel($m.ofValue("Remover"))
-                .visibleFor(m -> viewSupplier.get().isDeleteEnabled(m.getObject()));
+                .visibleFor(m -> viewSupplier.get().getButtonsConfig().isDeleteEnabled(m.getObject()));
     }
 
     private IBSAction<SInstance> buildRemoveAction(IModel<? extends SInstance> model, WicketBuildContext ctx) {
@@ -316,12 +316,24 @@ public class MasterDetailPanel extends Panel {
     }
 
     private BSActionPanel.ActionConfig<SInstance> buildViewOrEditActionConfig(ViewMode viewMode, ISupplier<SViewListByMasterDetail> viewSupplier) {
-        final Icon openModalIcon = viewMode.isEdition() && viewSupplier.get().isEditEnabled() ? DefaultIcons.PENCIL : DefaultIcons.EYE;
+        final Icon openModalIcon = DefaultIcons.PENCIL;
         return new BSActionPanel.ActionConfig<SInstance>()
                 .iconeModel(Model.of(openModalIcon))
                 .styleClasses(Model.of("list-detail-edit"))
-                .titleFunction(rowModel -> viewMode.isEdition() && viewSupplier.get().isEditEnabled() ? "Editar" : "Visualizar");
+                .visibleFor(instance -> viewMode.isEdition() && viewSupplier.get().isEditEnabled())
+                .titleFunction(rowModel -> "Editar");
     }
+
+//    private BSActionPanel.ActionConfig<SInstance> buildViewActionConfig(ViewMode viewMode, ISupplier<SViewListByMasterDetail> viewSupplier) {
+//        ButtonsMasterDetailConfig.ButtonMasterDetail button = viewSupplier.get().getButtonsConfig().getViewButton();
+//
+//        final Icon openModalIcon = button.getIcon() != null ? button.getIcon() : DefaultIcons.EYE;
+//        return new BSActionPanel.ActionConfig<SInstance>()
+//                .iconeModel(Model.of(openModalIcon))
+//                .styleClasses(Model.of("list-detail-edit"))
+//                .visibleFor(modelInstance -> viewMode.isVisualization() && button.getVisibleFor().test(modelInstance.getObject()))
+//                .titleFunction(rowModel -> button.getHint());
+//    }
 
     private IBSAction<SInstance> buildViewOrEditAction(MasterDetailModal modal, WicketBuildContext ctx) {
         return (target, rowModel) -> modal.showExisting(target, rowModel, ctx);

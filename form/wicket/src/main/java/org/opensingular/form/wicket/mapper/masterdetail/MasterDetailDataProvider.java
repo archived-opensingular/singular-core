@@ -22,7 +22,7 @@ import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.type.core.SIComparable;
-import org.opensingular.form.view.SViewListByMasterDetail;
+import org.opensingular.form.view.list.SViewListByMasterDetail;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;

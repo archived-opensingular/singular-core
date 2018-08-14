@@ -351,7 +351,7 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
             builder.appendActionColumn($m.ofValue(""), actionColumn -> {
                 if (viewMode.isEdition()) {
 
-                    IFunction<IModel<?>, Boolean> visibleFor = m -> viewSupplier.get().isDeleteEnabled((SInstance) m.getObject());
+                    IFunction<IModel<?>, Boolean> visibleFor = m -> viewSupplier.get().getButtonsConfig().isDeleteEnabled((SInstance) m.getObject());
 
                     actionColumn.appendAction(new BSActionPanel.ActionConfig().visibleFor(visibleFor)
                         .iconeModel(Model.of(DefaultIcons.MINUS), Model.of(MapperCommons.ICON_STYLE))

@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.view;
+package org.opensingular.form.view.list;
 
+import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
+import org.opensingular.form.enums.ButtonsMasterDetailConfig;
 import org.opensingular.form.enums.ModalSize;
+import org.opensingular.form.view.ConfigurableModal;
+import org.opensingular.lib.commons.lambda.IPredicate;
+import org.opensingular.lib.commons.ui.Icon;
 
 public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<SViewListByMasterDetail>
         implements ConfigurableModal<SViewListByMasterDetail> {
@@ -130,4 +135,14 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
     public boolean isDisableSort() {
         return disableSort;
     }
+
+    public ButtonsMasterDetailConfig getButtonsConfig() {
+        return new ButtonsMasterDetailConfig();
+    }
+
+    public SViewListByMasterDetail configureViewButton(String hint, IPredicate<SInstance> visibleFor, Icon icon) {
+        getButtonsConfig().setViewButton(new ButtonAction(visibleFor, hint, icon));
+        return this;
+    }
+
 }

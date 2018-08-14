@@ -23,7 +23,7 @@ import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeHiddenString;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.view.SViewAttachment;
-import org.opensingular.form.view.SViewListByTable;
+import org.opensingular.form.view.list.SViewListByTable;
 
 @SInfoType(name = "LatitudeLongitudeList", spackage = SPackageUtil.class)
 public class STypeLatitudeLongitudeList extends STypeComposite<SILatitudeLongitudeList> {
@@ -51,7 +51,7 @@ public class STypeLatitudeLongitudeList extends STypeComposite<SILatitudeLongitu
         points.withView(new SViewListByTable().setNewEnabled(list -> {
             SILatitudeLongitudeList latLongList = (SILatitudeLongitudeList) list.getParent();
             return !latLongList.hasFile();
-        }).setDeleteEnabled(instance -> {
+        }).configureDeleteButton(instance -> {
             SILatitudeLongitudeList latLongList = (SILatitudeLongitudeList) instance.getParent().getParent();
             return !latLongList.hasFile();
         }))

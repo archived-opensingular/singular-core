@@ -16,9 +16,6 @@
 
 package org.opensingular.form.wicket;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeAttachmentList;
@@ -47,10 +44,35 @@ import org.opensingular.form.type.country.brazil.STypeTelefoneNacional;
 import org.opensingular.form.type.util.STypeLatitudeLongitudeGMaps;
 import org.opensingular.form.type.util.STypeLatitudeLongitudeList;
 import org.opensingular.form.type.util.STypeYearMonth;
-import org.opensingular.form.view.*;
+import org.opensingular.form.view.SMultiSelectionByCheckboxView;
+import org.opensingular.form.view.SMultiSelectionByPicklistView;
+import org.opensingular.form.view.SMultiSelectionBySelectView;
+import org.opensingular.form.view.SView;
+import org.opensingular.form.view.SViewAttachment;
+import org.opensingular.form.view.SViewAttachmentImage;
+import org.opensingular.form.view.SViewAttachmentList;
+import org.opensingular.form.view.SViewAutoComplete;
+import org.opensingular.form.view.SViewBooleanByRadio;
+import org.opensingular.form.view.SViewBooleanSwitch;
+import org.opensingular.form.view.SViewBreadcrumb;
+import org.opensingular.form.view.SViewByBlock;
+import org.opensingular.form.view.SViewCheckBox;
+import org.opensingular.form.view.SViewCurrentLocation;
+import org.opensingular.form.view.SViewPassword;
+import org.opensingular.form.view.SViewReadOnly;
+import org.opensingular.form.view.SViewSearchModal;
+import org.opensingular.form.view.SViewSelectionByRadio;
+import org.opensingular.form.view.SViewSelectionBySelect;
+import org.opensingular.form.view.SViewTab;
+import org.opensingular.form.view.SViewTextArea;
+import org.opensingular.form.view.SViewTree;
+import org.opensingular.form.view.ViewResolver;
 import org.opensingular.form.view.date.SViewDate;
 import org.opensingular.form.view.date.SViewDateTime;
 import org.opensingular.form.view.date.SViewTime;
+import org.opensingular.form.view.list.SViewListByForm;
+import org.opensingular.form.view.list.SViewListByMasterDetail;
+import org.opensingular.form.view.list.SViewListByTable;
 import org.opensingular.form.view.richtext.SViewByRichText;
 import org.opensingular.form.view.richtext.SViewByRichTextNewTab;
 import org.opensingular.form.wicket.mapper.BooleanMapper;
@@ -93,6 +115,9 @@ import org.opensingular.form.wicket.mapper.selection.MultipleSelectBSMapper;
 import org.opensingular.form.wicket.mapper.selection.PicklistMapper;
 import org.opensingular.form.wicket.mapper.selection.RadioMapper;
 import org.opensingular.form.wicket.mapper.selection.SelectMapper;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author Daniel C. Bordin on 25/08/2017.

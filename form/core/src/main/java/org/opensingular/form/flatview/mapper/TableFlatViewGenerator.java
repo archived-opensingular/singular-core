@@ -17,11 +17,15 @@
 package org.opensingular.form.flatview.mapper;
 
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.form.*;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
 import org.opensingular.form.flatview.AbstractFlatViewGenerator;
 import org.opensingular.form.flatview.FlatViewContext;
 import org.opensingular.form.flatview.FlatViewGenerator;
-import org.opensingular.form.view.SViewListByTable;
+import org.opensingular.form.view.list.SViewListByTable;
 import org.opensingular.lib.commons.canvas.DocumentCanvas;
 import org.opensingular.lib.commons.canvas.EmptyDocumentCanvas;
 import org.opensingular.lib.commons.canvas.FormItem;

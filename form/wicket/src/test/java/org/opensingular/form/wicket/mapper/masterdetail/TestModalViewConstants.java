@@ -18,10 +18,10 @@
 
 package org.opensingular.form.wicket.mapper.masterdetail;
 
-import org.opensingular.form.view.SViewListByMasterDetail;
-import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.junit.Assert;
 import org.junit.Test;
+import org.opensingular.form.view.list.SViewListByMasterDetail;
+import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 
 import java.util.Arrays;
 

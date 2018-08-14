@@ -22,7 +22,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.junit.Test;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.type.core.STypeMonetary;
-import org.opensingular.form.view.SViewListByMasterDetail;
+import org.opensingular.form.view.list.SViewListByMasterDetail;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import java.math.BigDecimal;

@@ -25,7 +25,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.view.SViewListByMasterDetail;
+import org.opensingular.form.view.list.SViewListByMasterDetail;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -96,8 +96,8 @@ public class STypeFirstListElement extends STypeComposite<SIComposite> {
         theNestedTroublesomeList.withMaximumSizeOf(1);
         theNestedTroublesomeList.withView(() -> new SViewListByMasterDetail()
                 .fullSize()
-                .disableInsert()
-                .disableDelete()
+                .configureEditButton(f -> false)
+                .configureDeleteButton(f -> false)
                 .disableNew()
                 .col("Habilitação Técnica", "Editar anexos de habilitação técnica"));
 

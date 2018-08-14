@@ -31,8 +31,8 @@ import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
-import org.opensingular.form.view.AbstractSViewListWithControls;
-import org.opensingular.form.view.SViewListByTable;
+import org.opensingular.form.view.list.AbstractSViewListWithControls;
+import org.opensingular.form.view.list.SViewListByTable;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackPanel;
@@ -108,7 +108,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
             .add(btn);
 
         btn.add($b.onConfigure(c -> viewSupplier.optional()
-            .ifPresent(view -> c.setVisible(view.isDeleteEnabled(item.getModelObject())))));
+            .ifPresent(view -> c.setVisible(view.getButtonsConfig().isDeleteEnabled(item.getModelObject())))));
         return btn;
     }
 

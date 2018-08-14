@@ -26,7 +26,7 @@ import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
-import org.opensingular.form.view.SViewListByMasterDetail;
+import org.opensingular.form.view.list.SViewListByMasterDetail;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.util.Shortcuts;

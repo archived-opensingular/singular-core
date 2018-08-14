@@ -32,7 +32,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
-import org.opensingular.form.view.SViewListByForm;
+import org.opensingular.form.view.list.SViewListByForm;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
@@ -53,9 +53,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.opensingular.form.wicket.mapper.components.MetronicPanel.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class PanelListMapper extends AbstractListMapper implements ISInstanceActionCapable {
 
@@ -197,7 +198,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
 
             header.add($b.classAppender("list-icons"));
 
-            if ((viewSupplier.get() != null) && (viewSupplier.get().isInsertEnabled()) && ctx.getViewMode().isEdition()) {
+            if ((viewSupplier.get() != null) && (viewSupplier.get().getButtonsConfig().isEditEnabled(item.getModelObject())) && ctx.getViewMode().isEdition()) {
                 appendInserirButton(this, form, ctx, item, btnGrid.newColInRow()).add($b.classAppender("pull-right"));
             }
 
@@ -224,7 +225,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
             .newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + DefaultIcons.REMOVE + "' />")
             .add(btn);
         if (viewSupplier.get() != null)
-            btn.add($b.onConfigure(c -> c.setVisible(viewSupplier.get().isDeleteEnabled(item.getModelObject()))));
+            btn.add($b.onConfigure(c -> c.setVisible(viewSupplier.get().getButtonsConfig().isDeleteEnabled(item.getModelObject()))));
         return btn;
     }
 

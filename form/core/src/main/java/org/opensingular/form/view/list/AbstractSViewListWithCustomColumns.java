@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.view;
+package org.opensingular.form.view.list;
 
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;

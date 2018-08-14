@@ -21,17 +21,21 @@ package org.opensingular.form.flatview;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.form.*;
+import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SDictionary;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
 import org.opensingular.form.flatview.mapper.BlockFlatViewGenerator;
 import org.opensingular.form.flatview.mapper.SelectionFlatViewGenerator;
 import org.opensingular.form.flatview.mapper.TabFlatViewGenerator;
 import org.opensingular.form.flatview.mapper.TableFlatViewGenerator;
 import org.opensingular.form.view.SViewByBlock;
-import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.form.view.SViewSelectionBySelect;
 import org.opensingular.form.view.SViewTab;
+import org.opensingular.form.view.list.SViewListByTable;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class FlatViewGeneratorRegistryTest {
     PackageBuilder fooBarpackage;

@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.view;
+package org.opensingular.form.enums;
 
-public class SViewListByTable extends AbstractSViewListWithControls<SViewListByTable> {
+import org.opensingular.form.view.list.ButtonAction;
+import org.opensingular.form.view.list.ButtonsConfig;
 
-    private boolean renderCompositeFieldsAsColumns = true;
+public class ButtonsMasterDetailConfig extends ButtonsConfig {
 
-    public boolean isRenderCompositeFieldsAsColumns() {
-        return renderCompositeFieldsAsColumns;
+    private ButtonAction viewButton = new ButtonAction(null, "Visualizar", null);
+
+    public ButtonAction getViewButton() {
+        return viewButton;
     }
 
-    public SViewListByTable setRenderCompositeFieldsAsColumns(boolean renderCompositeFieldsAsColumns) {
-        this.renderCompositeFieldsAsColumns = renderCompositeFieldsAsColumns;
-        return this;
+    public void setViewButton(ButtonAction viewButton) {
+        this.viewButton = viewButton;
     }
 }

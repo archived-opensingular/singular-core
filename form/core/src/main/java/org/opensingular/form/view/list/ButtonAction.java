@@ -14,29 +14,33 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.view;
+package org.opensingular.form.view.list;
 
-import org.opensingular.form.view.list.AbstractSViewListWithCustomColumns;
+import org.opensingular.form.SInstance;
+import org.opensingular.lib.commons.lambda.IPredicate;
+import org.opensingular.lib.commons.ui.Icon;
 
-public class SViewBreadcrumb extends AbstractSViewListWithCustomColumns<SViewBreadcrumb> {
+public class ButtonAction {
 
-    private boolean editEnabled = true;
-    private boolean showTable = true;
+    private IPredicate<SInstance> visibleFor;
+    private String hint;
+    private Icon icon;
 
-    public SViewBreadcrumb disableEdit() {
-        this.editEnabled = false;
-        return this;
+    public ButtonAction(IPredicate<SInstance> visibleFor, String hint, Icon icon) {
+        this.visibleFor = visibleFor;
+        this.hint = hint;
+        this.icon = icon;
     }
 
-    public boolean isEditEnabled() {
-        return editEnabled;
+    public IPredicate<SInstance> getVisibleFor() {
+        return visibleFor;
     }
 
-    public boolean isShowTable() {
-        return showTable;
+    public String getHint() {
+        return hint;
     }
 
-    public void setShowTable(boolean showTable) {
-        this.showTable = showTable;
+    public Icon getIcon() {
+        return icon;
     }
 }

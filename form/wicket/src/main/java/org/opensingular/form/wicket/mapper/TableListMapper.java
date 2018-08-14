@@ -16,15 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static org.opensingular.form.wicket.mapper.components.MetronicPanel.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -44,7 +35,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
-import org.opensingular.form.view.SViewListByTable;
+import org.opensingular.form.view.list.SViewListByTable;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
@@ -66,6 +57,16 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTDataCell;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTSection;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class TableListMapper extends AbstractListMapper implements ISInstanceActionCapable {
 
@@ -186,6 +187,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             final BSTRow row = tableHeader.newRow();
 
             if (viewSupplier.get().isInsertEnabled() && isEdition) {
+                //TODO VERIFICAR ISSO AQUI.
                 row.newTHeaderCell($m.ofValue(""));
             }
 
@@ -285,7 +287,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
 
             final ISupplier<SViewListByTable> viewSupplier = ctx.getViewSupplier(SViewListByTable.class);
 
-            if (viewSupplier.get().isInsertEnabled() && ctx.getViewMode().isEdition()) {
+            if (viewSupplier.get().getButtonsConfig().isEditEnabled(item.getModelObject()) && ctx.getViewMode().isEdition()) {
                 final BSTDataCell actionColumn = row.newCol();
                 actionColumn.add($b.attrAppender("style", "width:20px", ";"));
                 appendInserirButton(this, form, ctx, item, actionColumn);

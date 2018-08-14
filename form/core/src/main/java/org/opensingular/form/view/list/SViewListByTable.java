@@ -14,29 +14,18 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.view;
+package org.opensingular.form.view.list;
 
-import org.opensingular.form.view.list.AbstractSViewListWithCustomColumns;
+public class SViewListByTable extends AbstractSViewListWithControls<SViewListByTable> {
 
-public class SViewBreadcrumb extends AbstractSViewListWithCustomColumns<SViewBreadcrumb> {
+    private boolean renderCompositeFieldsAsColumns = true;
 
-    private boolean editEnabled = true;
-    private boolean showTable = true;
+    public boolean isRenderCompositeFieldsAsColumns() {
+        return renderCompositeFieldsAsColumns;
+    }
 
-    public SViewBreadcrumb disableEdit() {
-        this.editEnabled = false;
+    public SViewListByTable setRenderCompositeFieldsAsColumns(boolean renderCompositeFieldsAsColumns) {
+        this.renderCompositeFieldsAsColumns = renderCompositeFieldsAsColumns;
         return this;
-    }
-
-    public boolean isEditEnabled() {
-        return editEnabled;
-    }
-
-    public boolean isShowTable() {
-        return showTable;
-    }
-
-    public void setShowTable(boolean showTable) {
-        this.showTable = showTable;
     }
 }

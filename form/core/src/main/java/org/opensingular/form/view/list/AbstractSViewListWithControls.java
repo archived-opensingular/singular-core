@@ -14,34 +14,58 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.view;
+package org.opensingular.form.view.list;
 
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.view.AbstractSViewList;
 import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.commons.lambda.IPredicate;
+import org.opensingular.lib.commons.ui.Icon;
 
 import java.util.Optional;
 
 public class AbstractSViewListWithControls<SELF extends AbstractSViewList> extends AbstractSViewList {
 
     private IFunction<SIList, Boolean> newEnabled = list -> Boolean.TRUE;
-    private IFunction<SInstance, Boolean> deleteEnabled = si -> Boolean.TRUE;
-    private boolean insertEnabled = false;
     private int initialLines;
     private String label;
+    private ButtonsConfig buttonsConfig = new ButtonsConfig();
+
+    public ButtonsConfig getButtonsConfig() {
+        return buttonsConfig;
+    }
+
+    public SELF configureEditButton(String hint, IPredicate<SInstance> visibleFor, Icon icon) {
+        getButtonsConfig().setEditButton(new ButtonAction(visibleFor, hint, icon));
+        return (SELF) this;
+    }
+    public SELF configureEditButton(IPredicate<SInstance> visibleFor) {
+        getButtonsConfig().setEditButton(new ButtonAction(visibleFor, "Editar", null));
+        return (SELF) this;
+    }
+
+    public SELF configureDeleteButton(String hint, IPredicate<SInstance> visibleFor, Icon icon) {
+        getButtonsConfig().setDeleteButton(new ButtonAction(visibleFor, hint, icon));
+        return (SELF) this;
+    }
+
+    public SELF configureDeleteButton(IPredicate<SInstance> visibleFor) {
+        getButtonsConfig().setDeleteButton(new ButtonAction(visibleFor, "Remover", null));
+        return (SELF) this;
+    }
+
+
+    public boolean isInsertEnabled() {
+        return true;
+        //TODO VERIFICAR ISSO AQUI.
+    }
 
 
     public final boolean isNewEnabled(SIList list) {
         return newEnabled.apply(list);
     }
 
-    public final boolean isDeleteEnabled(SInstance instance) {
-        return deleteEnabled.apply(instance);
-    }
-
-    public final boolean isInsertEnabled() {
-        return insertEnabled;
-    }
 
     public int getInitialNumberOfLines() {
         return initialLines;
@@ -51,24 +75,8 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
         return setNewEnabled(true);
     }
 
-    public final SELF enableDelete() {
-        return setDeleteEnabled(true);
-    }
-
-    public final SELF enabledInsert() {
-        return setInsertEnabled(true);
-    }
-
     public final SELF disableNew() {
         return setNewEnabled(false);
-    }
-
-    public final SELF disableInsert() {
-        return setInsertEnabled(false);
-    }
-
-    public final SELF disableDelete() {
-        return setDeleteEnabled(false);
     }
 
     /**
@@ -88,21 +96,6 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
 
     public final SELF setNewEnabled(IFunction<SIList, Boolean> enabledFunction) {
         this.newEnabled = enabledFunction;
-        return (SELF) this;
-    }
-
-    public final SELF setDeleteEnabled(boolean deleteEnabled) {
-        this.deleteEnabled = list -> deleteEnabled;
-        return (SELF) this;
-    }
-
-    public final SELF setDeleteEnabled(IFunction<SInstance, Boolean> deleteEnabled) {
-        this.deleteEnabled = deleteEnabled;
-        return (SELF) this;
-    }
-
-    public final SELF setInsertEnabled(boolean insertEnabled) {
-        this.insertEnabled = insertEnabled;
         return (SELF) this;
     }
 

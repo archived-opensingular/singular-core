@@ -23,7 +23,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.view.SViewListByMasterDetail;
+import org.opensingular.form.view.list.SViewListByMasterDetail;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.component.BFModalWindow;
 import org.opensingular.form.wicket.enums.ViewMode;

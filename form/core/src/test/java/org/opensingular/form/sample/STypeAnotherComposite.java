@@ -27,7 +27,7 @@ import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewByBlock;
-import org.opensingular.form.view.SViewListByTable;
+import org.opensingular.form.view.list.SViewListByTable;
 
 @SInfoType(spackage = FormTestPackage.class,  name = "STypeAnotherComposite")
 public class STypeAnotherComposite extends STypeComposite<SIComposite> {
