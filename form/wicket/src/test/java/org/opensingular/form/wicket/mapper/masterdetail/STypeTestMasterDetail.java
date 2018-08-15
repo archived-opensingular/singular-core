@@ -25,13 +25,13 @@ import org.opensingular.form.type.util.STypeYearMonth;
 import javax.annotation.Nonnull;
 
 @SInfoType(spackage = MasterDetailTestPackage.class)
-public class STypeTestMasterDetail extends STypeComposite<SIMasterDetailTest> {
+public class STypeTestMasterDetail extends STypeComposite<TestSIMasterDetail> {
 
     public STypeYearMonth inicio;
     public STypeString    empresa;
 
     public STypeTestMasterDetail() {
-        super(SIMasterDetailTest.class);
+        super(TestSIMasterDetail.class);
     }
 
 

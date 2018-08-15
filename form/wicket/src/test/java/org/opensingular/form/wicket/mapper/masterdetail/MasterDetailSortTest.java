@@ -39,7 +39,7 @@ import java.util.Iterator;
 
 public class MasterDetailSortTest {
 
-    private static STypeList<STypeTestMasterDetail, SIMasterDetailTest> mockMasterDetail;
+    private static STypeList<STypeTestMasterDetail, TestSIMasterDetail> mockMasterDetail;
     private static SingularFormDummyPageTester tester;
 
     private static void baseType(STypeComposite<?> mockType) {
@@ -56,7 +56,7 @@ public class MasterDetailSortTest {
 
     }
 
-    private static void fillWithBlankValues(SIList<SIMasterDetailTest> list) {
+    private static void fillWithBlankValues(SIList<TestSIMasterDetail> list) {
         STypeTestMasterDetail type = mockMasterDetail.getElementsType();
         for (int i = 0; i < 5; i++) {
             SIComposite experiencia = list.addNew();
@@ -85,11 +85,11 @@ public class MasterDetailSortTest {
     public void sortDefaultItemsMasterDetail() {
         SIList<SInstance> instances = tester.getAssertionsForm().getSubComponentWithType(mockMasterDetail).assertSInstance().getTarget(SIList.class);
         Assert.assertEquals(5, instances.size());
-        YearMonth yearMax = ((SIMasterDetailTest) instances.get(0)).getDataInicio();
+        YearMonth yearMax = ((TestSIMasterDetail) instances.get(0)).getDataInicio();
         //Validar se há alguma data maior que a data do primeiro elemento[Top da lista] -> O correto é não existir.
         Assert.assertFalse(instances
                 .stream()
-                .map(s -> ((SIMasterDetailTest) s).getDataInicio())
+                .map(s -> ((TestSIMasterDetail) s).getDataInicio())
                 .anyMatch(dt -> yearMax.compareTo(dt) < 0));
 
 
@@ -102,14 +102,14 @@ public class MasterDetailSortTest {
         Iterator<SInstance> instanceIterable = dataProvider.iterator(0, 10, null, true);
 
         //Verifica se após a ordenação default da view [Odernação pela data de forma descrescente] se o primeiro elemento de fato é o maior elemento.
-        Assert.assertTrue(newMaxYear.compareTo(((SIMasterDetailTest) instanceIterable.next()).getDataInicio()) == 0);
+        Assert.assertTrue(newMaxYear.compareTo(((TestSIMasterDetail) instanceIterable.next()).getDataInicio()) == 0);
 
 
     }
 
     private YearMonth includeNewMaxYearElement(SIList<SInstance> instances) {
         YearMonth newMaxYear = YearMonth.now().plusYears(5);
-        ((SIMasterDetailTest) instances.addNew()).setDataInicio(newMaxYear);
+        ((TestSIMasterDetail) instances.addNew()).setDataInicio(newMaxYear);
         Assert.assertEquals(6, instances.size());
         return newMaxYear;
     }

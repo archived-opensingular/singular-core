@@ -16,6 +16,8 @@
 
 package org.opensingular.lib.wicket.util.template;
 
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.devutils.debugbar.DebugBar;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
 import org.apache.wicket.markup.head.filter.JavaScriptFilteredIntoFooterHeaderResponse;
@@ -60,6 +62,9 @@ public abstract class SingularTemplate extends WebPage {
         getApplication()
                 .getJavaScriptLibrarySettings()
                 .setJQueryReference(new PackageResourceReference(SingularTemplate.class, "empty.js"));
+        DebugBar debugBar = new DebugBar("debugBar");
+        debugBar.add(AttributeModifier.append("style", "position:fixed; z-index:999999;"));
+        add(debugBar);
         add(new Label("pageTitle", getPageTitleModel()));
         add(new HeaderResponseContainer(JAVASCRIPT_CONTAINER, JAVASCRIPT_CONTAINER));
         add(new KeepSessionAliveBehavior());
