@@ -184,9 +184,9 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
             Model<Serializable> model = new Model<Serializable>() {
                 @Override
                 public Serializable getObject() {
-                    SViewListByForm viewSupplier = (SViewListByForm) ctx.getView();
-                    if (viewSupplier.getHeaderPath() != null) {
-                        return Optional.ofNullable(item.getModelObject().getValue(viewSupplier.getHeaderPath())).orElse("").toString();
+                    SViewListByForm view = (SViewListByForm) ctx.getView();
+                    if (view.getHeaderPath() != null) {
+                        return Optional.ofNullable(item.getModelObject().getValue(view.getHeaderPath())).orElse("").toString();
                     } else {
                         return item.getModelObject().toStringDisplay();
                     }
