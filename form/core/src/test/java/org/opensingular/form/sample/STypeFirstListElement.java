@@ -96,8 +96,8 @@ public class STypeFirstListElement extends STypeComposite<SIComposite> {
         theNestedTroublesomeList.withMaximumSizeOf(1);
         theNestedTroublesomeList.withView(() -> new SViewListByMasterDetail()
                 .fullSize()
-                .configureEditButton(f -> false)
-                .configureDeleteButton(f -> false)
+                .configureEditButtonPerRow(f -> false)
+                .configureDeleteButtonPerRow(f -> false)
                 .disableNew()
                 .col("Habilitação Técnica", "Editar anexos de habilitação técnica"));
 

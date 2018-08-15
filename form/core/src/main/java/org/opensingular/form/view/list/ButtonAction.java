@@ -20,7 +20,9 @@ import org.opensingular.form.SInstance;
 import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.lib.commons.ui.Icon;
 
-public class ButtonAction {
+import java.io.Serializable;
+
+public class ButtonAction implements Serializable {
 
     private IPredicate<SInstance> visibleFor;
     private String hint;
@@ -42,5 +44,9 @@ public class ButtonAction {
 
     public Icon getIcon() {
         return icon;
+    }
+
+    public boolean isEnabled(SInstance instance) {
+        return getVisibleFor() == null || getVisibleFor().test(instance);
     }
 }

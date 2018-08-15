@@ -34,28 +34,29 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
     private ButtonsConfig buttonsConfig;
 
     public ButtonsConfig getButtonsConfig() {
-        if(buttonsConfig == null){
+        if (buttonsConfig == null) {
             buttonsConfig = new ButtonsConfig();
         }
         return buttonsConfig;
     }
 
-    public SELF configureEditButton(String hint, @Nullable IPredicate<SInstance> visibleFor, Icon icon) {
+    public SELF configureEditButtonPerRow(String hint, @Nullable IPredicate<SInstance> visibleFor, Icon icon) {
         getButtonsConfig().setEditButton(new ButtonAction(visibleFor, hint, icon));
         return (SELF) this;
     }
-    public SELF configureEditButton(@Nullable IPredicate<SInstance> visibleFor) {
-        getButtonsConfig().setEditButton(new ButtonAction(visibleFor, "Editar", null));
+
+    public SELF configureEditButtonPerRow(@Nullable IPredicate<SInstance> visibleFor) {
+        getButtonsConfig().setEditButton(new ButtonAction(visibleFor, ButtonsConfig.EDITAR_HINT, null));
         return (SELF) this;
     }
 
-    public SELF configureDeleteButton(String hint, @Nullable IPredicate<SInstance> visibleFor, Icon icon) {
+    public SELF configureDeleteButtonPerRow(String hint, @Nullable IPredicate<SInstance> visibleFor, Icon icon) {
         getButtonsConfig().setDeleteButton(new ButtonAction(visibleFor, hint, icon));
         return (SELF) this;
     }
 
-    public SELF configureDeleteButton(@Nullable IPredicate<SInstance> visibleFor) {
-        getButtonsConfig().setDeleteButton(new ButtonAction(visibleFor, "Remover", null));
+    public SELF configureDeleteButtonPerRow(@Nullable IPredicate<SInstance> visibleFor) {
+        getButtonsConfig().setDeleteButton(new ButtonAction(visibleFor, ButtonsConfig.REMOVER_HINT, null));
         return (SELF) this;
     }
 
@@ -78,6 +79,7 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
 
     /**
      * Configure the number of empty lines that must be added to SIList
+     *
      * @param numberOfLines
      * @return
      */

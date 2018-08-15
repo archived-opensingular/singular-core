@@ -16,6 +16,7 @@
 
 package org.opensingular.form.view.list;
 
+import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.enums.ButtonsMasterDetailConfig;
@@ -27,8 +28,8 @@ import org.opensingular.lib.commons.ui.Icon;
 public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<SViewListByMasterDetail>
         implements ConfigurableModal<SViewListByMasterDetail> {
 
-    private ButtonsMasterDetailConfig buttonsConfig = new ButtonsMasterDetailConfig();
-    private boolean editEnabled = true;
+    private ButtonsMasterDetailConfig buttonsConfig;
+    private boolean editFieldsInModalEnabled = true;
     private String newActionLabel = "Adicionar";
 
     private String editActionLabel = "Atualizar";
@@ -40,13 +41,13 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
     private boolean ascendingMode = true;
     private boolean disableSort = false;
 
-    public SViewListByMasterDetail disableEdit() {
-        this.editEnabled = false;
+    public SViewListByMasterDetail disabledEditFieldsInModal() {
+        this.editFieldsInModalEnabled = false;
         return this;
     }
 
     public boolean isEditEnabled() {
-        return editEnabled;
+        return editFieldsInModalEnabled;
     }
 
     public SViewListByMasterDetail withActionColumnLabel(String actionColumnLabel) {
@@ -137,6 +138,7 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
         return disableSort;
     }
 
+    @Override
     public ButtonsMasterDetailConfig getButtonsConfig() {
         if (buttonsConfig == null) {
             buttonsConfig = new ButtonsMasterDetailConfig();
@@ -144,9 +146,18 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
         return buttonsConfig;
     }
 
-    public SViewListByMasterDetail configureViewButton(String hint, IPredicate<SInstance> visibleFor, Icon icon) {
-        getButtonsConfig().setViewButton(new ButtonAction(visibleFor, hint, icon));
+    public SViewListByMasterDetail configureViewButtonInEditionPerRow(String hint, IPredicate<SInstance> visibleFor, Icon icon) {
+        getButtonsConfig().setViewButtonInEdition(new ButtonAction(visibleFor, hint, icon));
+        return this;
+    }
+    public SViewListByMasterDetail configureViewButtonInEditionPerRow(IPredicate<SInstance> visibleFor) {
+        getButtonsConfig().setViewButtonInEdition(new ButtonAction(visibleFor, ButtonsMasterDetailConfig.VISUALIZAR_HINT, null));
         return this;
     }
 
+    public boolean haveAnyActionButton(SIList<SInstance> object) {
+        return object.stream().anyMatch(s -> getButtonsConfig().isDeleteEnabled(s)
+                || getButtonsConfig().isEditEnabled(s)
+                || getButtonsConfig().isViewEnabled(s));
+    }
 }

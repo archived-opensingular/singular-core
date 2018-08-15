@@ -51,7 +51,7 @@ public class STypeLatitudeLongitudeList extends STypeComposite<SILatitudeLongitu
         points.withView(new SViewListByTable().setNewEnabled(list -> {
             SILatitudeLongitudeList latLongList = (SILatitudeLongitudeList) list.getParent();
             return !latLongList.hasFile();
-        }).configureDeleteButton(instance -> {
+        }).configureDeleteButtonPerRow(instance -> {
             SILatitudeLongitudeList latLongList = (SILatitudeLongitudeList) instance.getParent().getParent();
             return !latLongList.hasFile();
         }))

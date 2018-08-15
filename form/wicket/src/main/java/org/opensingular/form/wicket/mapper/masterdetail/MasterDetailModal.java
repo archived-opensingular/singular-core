@@ -39,6 +39,8 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 
+import javax.annotation.Nullable;
+
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
@@ -59,11 +61,11 @@ class MasterDetailModal extends BFModalWindow {
     private IConsumer<AjaxRequestTarget> onHideCallback;
 
     MasterDetailModal(String id,
-            IModel<SIList<SInstance>> model,
-            IModel<String> listLabel,
-            WicketBuildContext ctx,
-            ViewMode viewMode,
-            BSContainer<?> containerExterno) {
+                      IModel<SIList<SInstance>> model,
+                      IModel<String> listLabel,
+                      WicketBuildContext ctx,
+                      ViewMode viewMode,
+                      BSContainer<?> containerExterno) {
         super(id, model, true, false);
 
         this.listLabel = listLabel;
@@ -140,10 +142,19 @@ class MasterDetailModal extends BFModalWindow {
         closeCallback = target1 -> revert();
         currentInstance = new SInstanceListItemModel<>(getModel(), list.indexOf(list.addNew()));
         actionLabel.setObject(viewSupplier.get().getNewActionLabel());
-        MasterDetailModal.this.configureNewContent(actionLabel.getObject(), target);
+        MasterDetailModal.this.configureNewContent(actionLabel.getObject(), target, null);
     }
 
-    void showExisting(AjaxRequestTarget target, IModel<SInstance> forEdit, WicketBuildContext ctx) {
+    /**
+     * Method for show the modal.
+     *
+     * @param target   The ajaxTarget.
+     * @param forEdit  The instance of the modal.
+     * @param ctx      The context.
+     * @param viewMode The viewMode, this is useful for force READ_ONLY case.
+     *                 If it's null, it will use a rule of view to get the viewMode.
+     */
+    void showExisting(AjaxRequestTarget target, IModel<SInstance> forEdit, WicketBuildContext ctx, @Nullable ViewMode viewMode) {
         closeCallback = null;
         currentInstance = forEdit;
         String prefix;
@@ -155,7 +166,7 @@ class MasterDetailModal extends BFModalWindow {
             actionLabel.setObject("Fechar");
         }
         saveState();
-        configureNewContent(prefix, target);
+        configureNewContent(prefix, target, viewMode);
     }
 
     private void revert() {
@@ -163,7 +174,13 @@ class MasterDetailModal extends BFModalWindow {
         list.remove(list.size() - 1);
     }
 
-    private void configureNewContent(String prefix, AjaxRequestTarget target) {
+    /**
+     * @param prefix
+     * @param target
+     * @param viewModeReadOnly The viewMode, this is useful for force READ_ONLY case.
+     *                         If it's null, it will use a rule of view to get the viewMode.
+     */
+    private void configureNewContent(String prefix, AjaxRequestTarget target, @Nullable ViewMode viewModeReadOnly) {
 
         setTitleText($m.get(() -> (prefix + " " + listLabel.getObject()).trim()));
 
@@ -172,7 +189,8 @@ class MasterDetailModal extends BFModalWindow {
 
         setBody(modalBody);
 
-        if (!viewSupplier.get().isEditEnabled()) {
+        boolean isEnabled = !viewSupplier.get().isEditEnabled() || ViewMode.READ_ONLY == viewModeReadOnly;
+        if (isEnabled) {
             viewModeModal = ViewMode.READ_ONLY;
         }
 

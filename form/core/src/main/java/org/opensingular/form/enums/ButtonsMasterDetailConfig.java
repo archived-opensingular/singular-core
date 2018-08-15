@@ -16,18 +16,32 @@
 
 package org.opensingular.form.enums;
 
+import org.opensingular.form.SInstance;
 import org.opensingular.form.view.list.ButtonAction;
 import org.opensingular.form.view.list.ButtonsConfig;
 
 public class ButtonsMasterDetailConfig extends ButtonsConfig {
 
-    private ButtonAction viewButton = new ButtonAction(null, "Visualizar", null);
+    public static final String VISUALIZAR_HINT = "Visualizar";
+    /**
+     * The visible button rule visible will be used just in the edition, in the view mode will always be visible.
+     */
+    private ButtonAction viewButtonInEdition = new ButtonAction(f -> false, VISUALIZAR_HINT, null);
 
-    public ButtonAction getViewButton() {
-        return viewButton;
+    public ButtonsMasterDetailConfig() {
+        super();
+        setEditButton(new ButtonAction(f -> true, EDITAR_HINT, null));
     }
 
-    public void setViewButton(ButtonAction viewButton) {
-        this.viewButton = viewButton;
+    public ButtonAction getViewButtonInEdition() {
+        return viewButtonInEdition;
+    }
+
+    public void setViewButtonInEdition(ButtonAction viewButtonInEdition) {
+        this.viewButtonInEdition = viewButtonInEdition;
+    }
+
+    public boolean isViewEnabled(SInstance instance) {
+        return viewButtonInEdition.isEnabled(instance);
     }
 }

@@ -20,12 +20,14 @@ import org.opensingular.form.SInstance;
 
 public class ButtonsConfig {
 
+    public static final String EDITAR_HINT = "Editar";
+    public static final String REMOVER_HINT = "Remover";
     private ButtonAction editButton;
     private ButtonAction deleteButton;
 
     public ButtonsConfig() {
-        editButton = new ButtonAction(f -> false, "Editar", null);
-        deleteButton = new ButtonAction(f -> true, "Remover", null);
+        editButton = new ButtonAction(f -> false, EDITAR_HINT, null);
+        deleteButton = new ButtonAction(f -> true, REMOVER_HINT, null);
     }
 
     public ButtonAction getEditButton() {
@@ -45,10 +47,10 @@ public class ButtonsConfig {
     }
 
     public boolean isDeleteEnabled(SInstance instance) {
-        return deleteButton.getVisibleFor() == null || deleteButton.getVisibleFor().test(instance);
+        return deleteButton.isEnabled(instance);
     }
 
     public boolean isEditEnabled(SInstance instance) {
-        return editButton.getVisibleFor() == null || editButton.getVisibleFor().test(instance);
+        return editButton.isEnabled(instance);
     }
 }

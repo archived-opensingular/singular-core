@@ -37,6 +37,7 @@ import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.validation.ValidationError;
 import org.opensingular.form.validation.ValidationErrorLevel;
+import org.opensingular.form.view.list.ButtonAction;
 import org.opensingular.form.view.list.SViewListByMasterDetail;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
@@ -73,6 +74,7 @@ import org.opensingular.lib.wicket.util.scripts.Scripts;
 import org.opensingular.lib.wicket.util.util.JavaScriptUtils;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -159,7 +161,7 @@ public class MasterDetailPanel extends Panel {
         actionsContainer = new BSContainer<>("actionsContainer");
         body = new WebMarkupContainer("body");
         footer = new WebMarkupContainer("footer");
-        addButton = newAddAjaxLink();
+        addButton = newAddAjaxLink(ctx);
         addButtonLabel = new Label("addButtonLabel", Model.of(AbstractListMapper.defineLabel(ctx)));
         table = newTable("table");
         feedback = ctx.createFeedbackCompactPanel("feedback");
@@ -175,7 +177,7 @@ public class MasterDetailPanel extends Panel {
     }
 
     private BSDataTable<SInstance, ?> newTable(String id) {
-        ISupplier<SViewListByMasterDetail> viewSupplier = ctx.getViewSupplier(SViewListByMasterDetail.class);
+        final ISupplier<SViewListByMasterDetail> viewSupplier = ctx.getViewSupplier(SViewListByMasterDetail.class);
         final BSDataTableBuilder<SInstance, String, ?> builder = new MasterDetailBSDataTableBuilder<>(newDataProvider(viewSupplier)).withNoRecordsToolbar();
         final BSDataTable<SInstance, ?> dataTable;
 
@@ -213,11 +215,12 @@ public class MasterDetailPanel extends Panel {
         return label;
     }
 
-    private AjaxLink<String> newAddAjaxLink() {
+    private AjaxLink<String> newAddAjaxLink(WicketBuildContext ctx) {
+        final ISupplier<SViewListByMasterDetail> viewSupplier = ctx.getViewSupplier(SViewListByMasterDetail.class);
         return new AjaxLink<String>("addButton") {
             @Override
             public void onClick(AjaxRequestTarget target) {
-                final SInstance si = ctx.getModel().getObject();
+                final SInstance si = MasterDetailPanel.this.ctx.getModel().getObject();
                 if (si instanceof SIList) {
                     final SIList<?> sil = (SIList<?>) si;
                     if (sil.getType().getMaximumSize() != null && sil.getType().getMaximumSize() == sil.size()) {
@@ -229,7 +232,25 @@ public class MasterDetailPanel extends Panel {
                     }
                 }
             }
+
+            @Override
+            protected void onConfigure() {
+                super.onConfigure();
+
+                setVisible(canCreateNewElement(viewSupplier));
+            }
         };
+    }
+
+    /**
+     * This method verify if the user has permission to create a new element in the list.
+     * Note: If can create a new element, we will be always enabled to edit.
+     *
+     * @param viewSupplier The view.
+     * @return True if can create new element.
+     */
+    private boolean canCreateNewElement(ISupplier<SViewListByMasterDetail> viewSupplier) {
+        return viewSupplier.get().isNewEnabled(list.getObject());
     }
 
     private void configureColumns(
@@ -283,24 +304,31 @@ public class MasterDetailPanel extends Panel {
                                       WicketBuildContext ctx,
                                       ViewMode vm,
                                       ISupplier<SViewListByMasterDetail> viewSupplier) {
-        builder.appendActionColumn($m.ofValue(viewSupplier.get().getActionColumnLabel()), ac -> {
-            ac.appendAction(buildViewOrEditActionConfig(vm, viewSupplier), buildViewOrEditAction(modal, ctx));
-            if (vm.isEdition()) {
-                ac.appendAction(buildRemoveActionConfig(viewSupplier), buildRemoveAction(model, ctx));
-            }
-            ac.appendAction(buildShowErrorsActionConfig(model), buildShowErrorsAction());
-            if (ctx.getAnnotationMode().enabled())
-                ac.appendAction(buildShowAnnotationsActionConfig(), buildViewOrEditAction(modal, ctx));
-        });
+        if (canCreateNewElement(viewSupplier) || viewSupplier.get().haveAnyActionButton(list.getObject())) {
+            //If user can create new element must have at last one action, probably edit.
+            builder.appendActionColumn($m.ofValue(viewSupplier.get().getActionColumnLabel()), ac -> {
+                ac.appendAction(buildEditActionConfig(vm, viewSupplier), buildViewOrEditAction(modal, ctx, null));
+                ac.appendAction(buildViewActionConfig(vm, viewSupplier), buildViewOrEditAction(modal, ctx, ViewMode.READ_ONLY));
+                if (vm.isEdition()) {
+                    ac.appendAction(buildRemoveActionConfig(viewSupplier), buildRemoveAction(model, ctx));
+                }
+                ac.appendAction(buildShowErrorsActionConfig(model), buildShowErrorsAction());
+                if (ctx.getAnnotationMode().enabled())
+                    ac.appendAction(buildShowAnnotationsActionConfig(), buildViewOrEditAction(modal, ctx, null));
+            });
+        }
     }
 
     private BSActionPanel.ActionConfig<SInstance> buildRemoveActionConfig(ISupplier<SViewListByMasterDetail> viewSupplier) {
+        ButtonAction buttonDelete = viewSupplier.get().getButtonsConfig().getDeleteButton();
+
+        final Icon actionIcon = buttonDelete.getIcon() != null ? buttonDelete.getIcon() : DefaultIcons.REMOVE;
         return new BSActionPanel.ActionConfig<SInstance>()
                 .styleClasses(Model.of("list-detail-remove"))
-                .iconeModel(Model.of(DefaultIcons.REMOVE))
-                .titleFunction(rowModel -> "Remover")
+                .iconeModel(Model.of(actionIcon))
+                .titleFunction(rowModel -> buttonDelete.getHint())
                 .labelModel($m.ofValue("Remover"))
-                .visibleFor(m -> viewSupplier.get().getButtonsConfig().isDeleteEnabled(m.getObject()));
+                .visibleFor(m -> buttonDelete.isEnabled(m.getObject()));
     }
 
     private IBSAction<SInstance> buildRemoveAction(IModel<? extends SInstance> model, WicketBuildContext ctx) {
@@ -315,28 +343,39 @@ public class MasterDetailPanel extends Panel {
         };
     }
 
-    private BSActionPanel.ActionConfig<SInstance> buildViewOrEditActionConfig(ViewMode viewMode, ISupplier<SViewListByMasterDetail> viewSupplier) {
-        final Icon openModalIcon = DefaultIcons.PENCIL;
+    private BSActionPanel.ActionConfig<SInstance> buildEditActionConfig(ViewMode viewMode, ISupplier<SViewListByMasterDetail> viewSupplier) {
+        ButtonAction buttonEdit = viewSupplier.get().getButtonsConfig().getEditButton();
+
+        final Icon actionIcon = buttonEdit.getIcon() != null ? buttonEdit.getIcon() : DefaultIcons.PENCIL;
         return new BSActionPanel.ActionConfig<SInstance>()
-                .iconeModel(Model.of(openModalIcon))
+                .iconeModel(Model.of(actionIcon))
                 .styleClasses(Model.of("list-detail-edit"))
-                .visibleFor(instance -> viewMode.isEdition() && viewSupplier.get().isEditEnabled())
-                .titleFunction(rowModel -> "Editar");
+                .visibleFor(instance -> viewMode.isEdition() && buttonEdit.isEnabled(instance.getObject()))
+                .titleFunction(rowModel -> buttonEdit.getHint());
     }
 
-//    private BSActionPanel.ActionConfig<SInstance> buildViewActionConfig(ViewMode viewMode, ISupplier<SViewListByMasterDetail> viewSupplier) {
-//        ButtonsMasterDetailConfig.ButtonMasterDetail button = viewSupplier.get().getButtonsConfig().getViewButton();
-//
-//        final Icon openModalIcon = button.getIcon() != null ? button.getIcon() : DefaultIcons.EYE;
-//        return new BSActionPanel.ActionConfig<SInstance>()
-//                .iconeModel(Model.of(openModalIcon))
-//                .styleClasses(Model.of("list-detail-edit"))
-//                .visibleFor(modelInstance -> viewMode.isVisualization() && button.getVisibleFor().test(modelInstance.getObject()))
-//                .titleFunction(rowModel -> button.getHint());
-//    }
+    private BSActionPanel.ActionConfig<SInstance> buildViewActionConfig(ViewMode viewMode, ISupplier<SViewListByMasterDetail> viewSupplier) {
+        ButtonAction buttonView = viewSupplier.get().getButtonsConfig().getViewButtonInEdition();
 
-    private IBSAction<SInstance> buildViewOrEditAction(MasterDetailModal modal, WicketBuildContext ctx) {
-        return (target, rowModel) -> modal.showExisting(target, rowModel, ctx);
+        final Icon actionIcon = buttonView.getIcon() != null ? buttonView.getIcon() : DefaultIcons.EYE;
+        return new BSActionPanel.ActionConfig<SInstance>()
+                .iconeModel(Model.of(actionIcon))
+                .styleClasses(Model.of("list-detail-edit"))
+                .visibleFor(modelInstance -> viewMode.isVisualization() || buttonView.isEnabled(modelInstance.getObject()))
+                .titleFunction(rowModel -> buttonView.getHint());
+    }
+
+    /**
+     * Method to create a action to show modal for the rowModel.
+     *
+     * @param modal    The modal to be showing.
+     * @param ctx      The context.
+     * @param viewMode The viewMode, this is useful for force READ_ONLY case.
+     *                 If it's null, it will use a rule of view to get the viewMode.
+     * @return Instance of BiConsumer action.
+     */
+    private IBSAction<SInstance> buildViewOrEditAction(MasterDetailModal modal, WicketBuildContext ctx, @Nullable ViewMode viewMode) {
+        return (target, rowModel) -> modal.showExisting(target, rowModel, ctx, viewMode);
     }
 
     private BSActionPanel.ActionConfig<SInstance> buildShowErrorsActionConfig(IModel<? extends SInstance> model) {
