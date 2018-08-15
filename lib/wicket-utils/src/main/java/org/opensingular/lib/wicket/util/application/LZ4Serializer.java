@@ -21,10 +21,7 @@ import net.jpountz.lz4.LZ4Factory;
 import net.jpountz.lz4.LZ4FastDecompressor;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wicket.serialize.ISerializer;
-import org.nustaq.serialization.FSTConfiguration;
-import org.opensingular.lib.commons.scan.SingularClassPathScanner;
 
-import java.io.Serializable;
 import java.nio.ByteBuffer;
 
 /**
@@ -34,13 +31,15 @@ import java.nio.ByteBuffer;
 public class LZ4Serializer implements ISerializer {
 
 
-    private final LZ4Factory          factory      = LZ4Factory.fastestInstance();
-    private final LZ4Compressor       compressor   = factory.fastCompressor();
-    private final LZ4FastDecompressor decompressor = factory.fastDecompressor();
-    private final ISerializer serializer;
+    private final LZ4Compressor       compressor;
+    private final LZ4FastDecompressor decompressor;
+    private final ISerializer         serializer;
 
     public LZ4Serializer(ISerializer serializer) {
+        LZ4Factory factory = LZ4Factory.fastestInstance();
         this.serializer = serializer;
+        this.compressor = factory.fastCompressor();
+        this.decompressor = factory.fastDecompressor();
     }
 
     public LZ4Serializer() {
@@ -49,15 +48,15 @@ public class LZ4Serializer implements ISerializer {
 
     @Override
     public byte[] serialize(Object object) {
-        byte[] content = serializer.serialize(object);
-        int length = content.length;
+        byte[] content     = serializer.serialize(object);
+        int    length      = content.length;
         byte[] lengthBytes = ByteBuffer.allocate(4).putInt(length).array();
         return ArrayUtils.addAll(lengthBytes, compressor.compress(content));
     }
 
     @Override
     public Object deserialize(byte[] data) {
-        int length = ByteBuffer.wrap(ArrayUtils.subarray(data, 0, 4)).getInt();
+        int    length  = ByteBuffer.wrap(ArrayUtils.subarray(data, 0, 4)).getInt();
         byte[] content = ArrayUtils.subarray(data, 4, data.length);
         return serializer.deserialize(decompressor.decompress(content, length));
     }
