@@ -25,9 +25,11 @@ import org.opensingular.form.type.core.SIComparable;
 import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -72,21 +74,26 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
      * @return sortable List.
      */
     private List<SInstance> populateSortList(SIList<SInstance> siList, @Nullable String sortProperty, boolean ascending) {
-        String sortableProperty = sortProperty;
-        boolean ascMode = ascending;
-        if (StringUtils.isEmpty(sortableProperty) && viewSupplier != null) {
-            SViewListByMasterDetail view = viewSupplier.get();
-            if (view.getSortableColumn() != null) {
-                sortableProperty = view.getSortableColumn().getNameSimple();
-            }
-            ascMode = view.isAscendingMode();
-        }
-
         List<SInstance> sortableList = new ArrayList<>(siList.getValues());
-        if (StringUtils.isNotEmpty(sortableProperty) && CollectionUtils.isNotEmpty(sortableList)) {
-            sortableList.sort(new ProviderMasterDetailCompator(sortableProperty, ascMode));
+        if (CollectionUtils.isNotEmpty(sortableList)) {
+            if (StringUtils.isEmpty(sortProperty)) {
+                sortListByConfigView(sortableList);
+            } else {
+                sortableList.sort(new ProviderMasterDetailCompator(sortProperty, ascending));
+            }
         }
         return sortableList;
+    }
+
+    private void sortListByConfigView(List<SInstance> sortableList) {
+        if (viewSupplier != null) {
+            boolean ascMode;
+            SViewListByMasterDetail view = viewSupplier.get();
+            ascMode = view.isAscendingMode();
+            if (view.getSortableColumn() != null) {
+                sortableList.sort(new ProviderMasterDetailCompator(view.getSortableColumn().getNameSimple(), ascMode));
+            }
+        }
     }
 
     @Override
@@ -103,7 +110,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
      * A comparator for sort the master detail list.
      * Note: This compator use the <code>SIComparable</code> for compare the Instance's of the list.
      */
-    public static class ProviderMasterDetailCompator implements Comparator<SInstance> {
+    public static class ProviderMasterDetailCompator implements Comparator<SInstance>, Loggable, Serializable {
 
         private String sortableProperty;
         private boolean ascMode;
@@ -124,23 +131,53 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
          * This will sort the two object passed.
          * <p>
          * Note: The sort will happen just if the two optional object exists, and the value is a instanceOf SIComparable.
+         * Note: If some object in comparable is null, the logic will be the NULLSFIRST.
          *
          * @param obj1 The first object to be comparable.
          * @param obj2 The second object to be comparable.
          * @return return the result of the <code>SIComparable#compareTo</code>.
          */
         private int compareTheObject(Optional<SInstance> obj1, Optional<SInstance> obj2) {
-            if (obj1.isPresent() && obj2.isPresent()
-                    && obj1.get().getValue() != null && obj2.get().getValue() != null
-                    && obj1.get() instanceof SIComparable
-                    && obj2.get() instanceof SIComparable) {
+            if (hasValue(obj1, obj2) && isInstanceOfSIComparable(obj1.get(), obj2.get())) {
+                Integer compareToNullResult = nullsFirstLogic(obj1.get(), obj2.get());
+                if (compareToNullResult != null) {
+                    return compareToNullResult;
+                }
                 if (ascMode) {
                     return ((SIComparable) obj1.get()).compareTo((SIComparable) obj2.get());
-                } else {
-                    return ((SIComparable) obj2.get()).compareTo((SIComparable) obj1.get());
                 }
+                return ((SIComparable) obj2.get()).compareTo((SIComparable) obj1.get());
             }
+            getLogger().info("The comparator will be the natural compare.");
             return ascMode ? -1 : 1;
+        }
+
+        private boolean hasValue(Optional<SInstance> obj1, Optional<SInstance> obj2) {
+            return obj1.isPresent() && obj2.isPresent()
+                    && (obj1.get().getValue() != null || obj2.get().getValue() != null);
+        }
+
+
+        private boolean isInstanceOfSIComparable(SInstance obj1, SInstance obj2) {
+            return obj1 instanceof SIComparable && obj2 instanceof SIComparable;
+        }
+
+        /**
+         * This method will use the logic NullsFirst. The null elements will be shown in the begin of the list.
+         *
+         * @param obj1 first object to be compare.
+         * @param obj2 second object to be compare.
+         * @return The sortOrder to put the null element in the begin, or null if the two elements have value.
+         */
+        @Nullable
+        private Integer nullsFirstLogic(SInstance obj1, SInstance obj2) {
+            if (obj1.getValue() == null) {
+                return -1;
+            }
+            if (obj2.getValue() == null) {
+                return 1;
+            }
+            return null; //The two objects have value.
         }
 
         /**
