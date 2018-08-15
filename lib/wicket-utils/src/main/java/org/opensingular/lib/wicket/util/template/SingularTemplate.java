@@ -64,21 +64,11 @@ public abstract class SingularTemplate extends WebPage {
         getApplication()
                 .getJavaScriptLibrarySettings()
                 .setJQueryReference(new PackageResourceReference(SingularTemplate.class, "empty.js"));
-        add(buildDebugBar("debugBar"));
         add(new Label("pageTitle", getPageTitleModel()));
         add(new HeaderResponseContainer(JAVASCRIPT_CONTAINER, JAVASCRIPT_CONTAINER));
         add(new KeepSessionAliveBehavior());
     }
 
-    private WebMarkupContainer buildDebugBar(String id) {
-        if (RuntimeConfigurationType.DEVELOPMENT == getApplication().getConfigurationType()) {
-            DebugBar debugBar = new DebugBar(id);
-            debugBar.add(AttributeModifier.append("style", "position:fixed; z-index:999999;"));
-            return debugBar;
-        } else {
-            return new WebMarkupContainer(id);
-        }
-    }
 
     @Override
     public void renderHead(IHeaderResponse response) {
