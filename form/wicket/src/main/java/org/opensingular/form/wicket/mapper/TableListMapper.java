@@ -135,12 +135,14 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             false,
             internalContextListProvider);
 
-        title.add(new ClassAttributeModifier() {
-            @Override
-            protected Set<String> update(Set<String> oldClasses) {
-                return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, list.getObject());
-            }
-        });
+        header.add($b.onConfigure(c ->
+                title.add(new ClassAttributeModifier() {
+                    @Override
+                    protected Set<String> update(Set<String> oldClasses) {
+                        return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, list.getObject());
+                    }
+                })
+        ));
 
     }
 
