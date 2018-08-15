@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -16,7 +16,6 @@
 
 package org.opensingular.internal.lib.wicket.test;
 
-import com.google.common.base.Throwables;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
@@ -27,9 +26,6 @@ import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.base.SingularProperties;
 
-import java.io.ByteArrayInputStream;
-import java.io.EOFException;
-import java.io.ObjectInputStream;
 import java.util.logging.Logger;
 
 /**
@@ -45,14 +41,15 @@ import java.util.logging.Logger;
  */
 public class WicketSerializationDebugUtil {
 
-    private WicketSerializationDebugUtil() {}
+    private WicketSerializationDebugUtil() {
+    }
 
     /**
      * Adiciona o verificado de página serializáveis na aplicação se estiver no modo de desenvolvimento. Veja mais em
      * {@link #configurePageSerializationDebug(Application, Class)}.
      */
     public static void configurePageSerializationDebugIfInDevelopmentMode(Application application,
-            Class<?> targetClassLog) {
+                                                                          Class<?> targetClassLog) {
         if (SingularProperties.get().isTrue(SingularProperties.SINGULAR_DEV_MODE)) {
             configurePageSerializationDebug(application, targetClassLog);
         }
@@ -77,7 +74,9 @@ public class WicketSerializationDebugUtil {
 //        }
     }
 
-    /** Apenas para implementação de JUnit. */
+    /**
+     * Apenas para implementação de JUnit.
+     */
     final static String getLastVerificationResult(Application application) {
         for (IComponentOnAfterRenderListener listener : application.getComponentOnAfterRenderListeners()) {
             if (listener instanceof DebugSerializationListener) {
@@ -87,7 +86,9 @@ public class WicketSerializationDebugUtil {
         return null;
     }
 
-    /** Listener da execução do ciclo de vida da chamada para verifica necessidades de teste de serialização. */
+    /**
+     * Listener da execução do ciclo de vida da chamada para verifica necessidades de teste de serialização.
+     */
     private static class DebugSerializationRequestCycleListeners extends AbstractRequestCycleListener {
         private final DebugSerializationListener debugger;
 
@@ -108,18 +109,22 @@ public class WicketSerializationDebugUtil {
         }
     }
 
-    /** Listener Wicket para executar a verificação da página como serializável. */
+    /**
+     * Listener Wicket para executar a verificação da página como serializável.
+     */
     private static class DebugSerializationListener implements IComponentOnAfterRenderListener {
 
         private final ThreadLocal<Component> componentThreadLocal = new ThreadLocal<>();
-        private final Logger logger;
-        private String lastVerification;
+        private final Logger                 logger;
+        private       String                 lastVerification;
 
         public DebugSerializationListener(Class<?> targetClassLog) {
             logger = Logger.getLogger(targetClassLog.getName());
         }
 
-        /** Limpa a requesição antes de começar um novo ciclo. */
+        /**
+         * Limpa a requesição antes de começar um novo ciclo.
+         */
         public void clearCurrentThread() {
             componentThreadLocal.remove();
         }
@@ -149,7 +154,9 @@ public class WicketSerializationDebugUtil {
             componentThreadLocal.set(c);
         }
 
-        /** Verifica se ficou alguma execução de serialização pendente para testar. */
+        /**
+         * Verifica se ficou alguma execução de serialização pendente para testar.
+         */
         public void runSerializationIfNecessary() {
             Component c = componentThreadLocal.get();
             if (c != null) {
@@ -163,7 +170,7 @@ public class WicketSerializationDebugUtil {
 
         private void tryComponentSerialization(Component c) {
             //Serialization
-            long time = System.currentTimeMillis();
+            long   time   = System.currentTimeMillis();
             byte[] result = c.getApplication().getFrameworkSettings().getSerializer().serialize(c);
             time = System.currentTimeMillis() - time;
 
@@ -178,7 +185,7 @@ public class WicketSerializationDebugUtil {
 
                 //Deserialization
                 time = System.currentTimeMillis();
-                Object last = readAllObjects(result);
+                Object last = readAllObjects(result, c);
                 time = System.currentTimeMillis() - time;
 
                 msg += " deserialization=" + SingularIOUtils.humanReadableMiliSeconds(time);
@@ -192,25 +199,11 @@ public class WicketSerializationDebugUtil {
             }
         }
 
-        /** Lê todos os objetos serialziados, retornando o último. */
-        private Object readAllObjects(byte[] content) {
-            Object last = null;
-            try {
-                ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(content));
-                Object o;
-                do {
-                    o = in.readObject();
-                    if (o != null) {
-                        last = o;
-                    }
-                } while (o != null);
-            } catch (Exception e) {
-                if (! (e instanceof EOFException)) {
-                    Throwables.throwIfUnchecked(e);
-                    throw SingularException.rethrow(e);
-                }
-            }
-            return last;
+        /**
+         * Lê todos os objetos serialziados, retornando o último.
+         */
+        private Object readAllObjects(byte[] content, Component c) {
+            return c.getApplication().getFrameworkSettings().getSerializer().deserialize(content);
         }
     }
 

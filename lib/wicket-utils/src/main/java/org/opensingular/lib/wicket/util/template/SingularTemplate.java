@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http:/www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,10 +16,14 @@
 
 package org.opensingular.lib.wicket.util.template;
 
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.RuntimeConfigurationType;
+import org.apache.wicket.devutils.debugbar.DebugBar;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
 import org.apache.wicket.markup.head.filter.JavaScriptFilteredIntoFooterHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderResponseDecorator;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
@@ -56,7 +60,7 @@ public abstract class SingularTemplate extends WebPage {
         getApplication().setHeaderResponseDecorator(JAVASCRIPT_DECORATOR);
 
         /*Essa estratégia é utilizada para garantir que o jquery será sempre carregado pois está fixo no html
-        * sem esse artificio páginas sem componentes ajax do wicket apresentarão erros de javascript.*/
+         * sem esse artificio páginas sem componentes ajax do wicket apresentarão erros de javascript.*/
         getApplication()
                 .getJavaScriptLibrarySettings()
                 .setJQueryReference(new PackageResourceReference(SingularTemplate.class, "empty.js"));
@@ -65,13 +69,14 @@ public abstract class SingularTemplate extends WebPage {
         add(new KeepSessionAliveBehavior());
     }
 
+
     @Override
     public void renderHead(IHeaderResponse response) {
         RecursosStaticosSingularTemplate.getStyles(getCurrentSkinFolder()).forEach(response::render);
         RecursosStaticosSingularTemplate.getJavaScriptsUrls().forEach(response::render);
     }
 
-    protected IModel<String> getPageTitleModel(){
+    protected IModel<String> getPageTitleModel() {
         return new StringResourceModel("label.page.title.local").setDefaultValue("");
     }
 

@@ -75,12 +75,6 @@
 }
 
 .has-error {
-  input {
-    background: url('data:image/svg+xml;utf8,#{($svg-alert)}') no-repeat calc(100% - 10px) 50%;
-    background-size: 18px 18px;
-    z-index: 3;
-  }
-
   .fa.fa-chevron-down {
     display: none;
   }

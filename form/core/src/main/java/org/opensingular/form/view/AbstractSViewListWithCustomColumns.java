@@ -16,19 +16,20 @@
 
 package org.opensingular.form.view;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
 import org.opensingular.lib.commons.lambda.IFunction;
 
+import javax.annotation.Nullable;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Representa listagens que possuem uma tabela de apenas leitura cujas as
  * colunas a serem exibidas podem ser configuradas.
- * 
+ *
  * @author Daniel C. Bordin
  */
 public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSViewListWithCustomColumns<SELF>> extends AbstractSViewListWithControls<SELF> {
@@ -65,7 +66,7 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      * Adiciona uma coluna cujo conteúdo será o subcampo informado, o titulo da
      * coluna específico e o conteudo de cada célula será cálculado
      * dinamicamente mediante o template do FreeMarker informado.
-     * 
+     *
      * @see FormFreemarkerUtil
      */
     public final SELF col(SType<?> type, String customLabel, String freeMarkerTemplateString) {
@@ -79,7 +80,24 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      */
     @SuppressWarnings("unchecked")
     public final SELF col(SType<?> type, String customLabel, IFunction<SInstance, String> displayFunction) {
-        columns.add(new Column(type.getName(), customLabel, displayFunction));
+        return col(type, customLabel, displayFunction, true);
+    }
+
+    /**
+     * Add a column with all configuration.
+     *
+     * @param type            The type of the column.
+     * @param customLabel     A custom Label for the column.
+     *                        Null for use the default of the type.
+     * @param displayFunction A rule for the display.
+     *                        Null if don't have a rule for diplay.
+     * @param order           True for enable the order for the column, false for not.
+     * @return <code>This</code>
+     */
+    @SuppressWarnings("unchecked")
+    public final SELF col(SType<?> type, @Nullable String customLabel, @Nullable IFunction<SInstance, String> displayFunction, boolean order) {
+        String nameSortableProperty = order ? type.getNameSimple() : null;
+        columns.add(new Column(type.getName(), customLabel, nameSortableProperty, displayFunction));
         return (SELF) this;
     }
 
@@ -87,6 +105,7 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      * Adiciona uma coluna cujo o conteúdo será calculado dinamicamente para
      * cada instância de cada linha mediante o template do FreeMarker informado.
      * A função recebe a instância da linha inteira (o tipo da lista)
+     *
      * @see FormFreemarkerUtil
      */
     public final SELF col(String customLabel, String freeMarkerTemplateString) {
@@ -97,16 +116,14 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      * Adiciona uma coluna cujo o conteúdo será cálculado dinamicamente para
      * cada instância de cada linha. A função recebe a instância da linha
      * inteira (o tipo da lista).
-     * 
-     * @param customLabel
-     *            Label da coluna
-     * @param displayFunction
-     *            Conversor da instância da linha (um composite) na string de
-     *            conteúdo da celula
+     *
+     * @param customLabel     Label da coluna
+     * @param displayFunction Conversor da instância da linha (um composite) na string de
+     *                        conteúdo da celula
      */
     @SuppressWarnings("unchecked")
     public final SELF col(String customLabel, IFunction<SInstance, String> displayFunction) {
-        columns.add(new Column(null, customLabel, displayFunction));
+        columns.add(new Column(null, customLabel, null, displayFunction));
         return (SELF) this;
     }
 
@@ -114,19 +131,23 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
         return columns;
     }
 
-    /** PARA USO INTERNO */
+    /**
+     * PARA USO INTERNO
+     */
     public static class Column implements Serializable {
 
         private String typeName;
         private String customLabel;
+        private String columnSortName;
         private IFunction<SInstance, String> displayValueFunction;
 
         public Column() {
         }
 
-        public Column(String typeName, String customLabel, IFunction<SInstance, String> displayValueFunction) {
+        public Column(String typeName, String customLabel, String columnSortName, IFunction<SInstance, String> displayValueFunction) {
             this.typeName = typeName;
             this.customLabel = customLabel;
+            this.columnSortName = columnSortName;
             this.displayValueFunction = displayValueFunction;
         }
 
@@ -136,6 +157,10 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
 
         public String getCustomLabel() {
             return customLabel;
+        }
+
+        public String getColumnSortName() {
+            return columnSortName;
         }
 
         public IFunction<SInstance, String> getDisplayValueFunction() {

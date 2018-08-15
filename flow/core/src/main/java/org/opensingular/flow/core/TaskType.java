@@ -16,6 +16,8 @@
 
 package org.opensingular.flow.core;
 
+import java.util.Arrays;
+
 public enum TaskType implements IEntityTaskType {
 
     JAVA("J", "Java", "design/imagens/execute.png"),
@@ -41,6 +43,10 @@ public enum TaskType implements IEntityTaskType {
         }
 
         return null;
+    }
+
+    public static TaskType retrieveById(Integer id) {
+       return Arrays.asList(values()).get(id);
     }
 
     @Override

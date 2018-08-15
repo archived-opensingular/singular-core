@@ -1,0 +1,202 @@
+.quick-nav {
+  position: fixed;
+  z-index: 10103;
+  right: 10px;
+  margin-top: -30px;
+  pointer-events: none;
+}
+
+.quick-nav ul>li a>i {
+  width: 16px;
+  font-size: 18px;
+  right: 24px;
+  top: 16px;
+  color: #ebebeb;
+}
+
+.quick-nav-trigger {
+  position: absolute;
+  z-index: 10103;
+  top: 0;
+  right: 0;
+  height: 60px;
+  width: 60px;
+  border-radius: 50%!important;
+  overflow: hidden;
+  white-space: nowrap;
+  color: transparent;
+  pointer-events: auto;
+}
+
+.quick-nav .quick-nav-bg {
+  position: absolute;
+  z-index: 10102;
+  top: 0;
+  right: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: 30px !important;
+  background: $color-primary;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .2);
+}
+
+.quick-nav.nav-is-visible .quick-nav-bg {
+  height: 100%;
+  opacity: 0.5;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, .2);
+}
+
+
+.quick-nav ul {
+  position: relative;
+  z-index: 10103;
+  padding: 60px 0 0;
+  visibility: hidden;
+  transition: visibility .3s;
+  list-style: none;
+  text-align: right;
+}
+
+.quick-nav-trigger span, .quick-nav-trigger span::after, .quick-nav-trigger span::before {
+  position: absolute;
+  width: 16px;
+  height: 2px;
+  background-color: $color-primary-bg;
+}
+
+.nav-is-visible .quick-nav-trigger span {
+  background-color: transparent;
+}
+
+.quick-nav-trigger span::before {
+  webkit-transform: translateY(-6px);
+  -moz-transform: translateY(-6px);
+  -ms-transform: translateY(-6px);
+  -o-transform: translateY(-6px);
+  transform: translateY(-6px);
+}
+
+.quick-nav-trigger span::after {
+  webkit-transform: translateY(6px);
+  -moz-transform: translateY(6px);
+  -ms-transform: translateY(6px);
+  -o-transform: translateY(6px);
+  transform: translateY(6px);
+}
+
+.nav-is-visible .quick-nav-trigger span::before {
+  webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+.nav-is-visible .quick-nav-trigger span::after {
+  webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.quick-nav-trigger span::after, .quick-nav-trigger span::before {
+  content: '';
+  top: 0;
+  left: 0;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  backface-visibility: hidden;
+  webkit-transition: transform .2s;
+  -moz-transition: transform .2s;
+  -ms-transition: transform .2s;
+  -o-transition: transform .2s;
+  transition: transform .2s;
+}
+
+.quick-nav-trigger span::after, .quick-nav-trigger span::before {
+  content: '';
+  top: 0;
+  left: 0;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  backface-visibility: hidden;
+  webkit-transition: transform .2s;
+  -moz-transition: transform .2s;
+  -ms-transition: transform .2s;
+  -o-transition: transform .2s;
+  transition: transform .2s;
+}
+
+.quick-nav-trigger span {
+  webkit-transition: background-color .2s;
+  -moz-transition: background-color .2s;
+  -ms-transition: background-color .2s;
+  -o-transition: background-color .2s;
+  transition: background-color .2s;
+  left: 50%;
+  top: 50%;
+  bottom: auto;
+  right: auto;
+  webkit-transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -ms-transform: translateX(-50%) translateY(-50%);
+  -o-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.quick-nav.nav-is-visible ul {
+  visibility: visible;
+}
+
+.quick-nav.nav-is-visible {
+  pointer-events: auto;
+}
+
+.quick-nav.nav-is-visible+.quick-nav-overlay {
+  background: rgba(0, 0, 0, .8);
+  display: block;
+  transition: background .7s ease-out;
+}
+.quick-nav-overlay {
+  display: none;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  position: fixed;
+  z-index: 10101;
+  background: 0 0;
+}
+
+.quick-nav ul>li a {
+  position: relative;
+  display: block;
+  height: 50px;
+  line-height: 50px;
+  padding: 0 calc(1em + 60px) 0 1em;
+  font-size: 1.4rem;
+  webkit-transition: color .2s;
+  -moz-transition: color .2s;
+  -ms-transition: color .2s;
+  -o-transition: color .2s;
+  transition: color .2s;
+}
+
+.quick-nav .active span {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.quick-nav ul>li span {
+  color: $color-primary-bg;
+  font-weight: 400;
+  display: block;
+}
+
+.tab-item.has-errors > a > span {
+  border-bottom-style: dotted;
+  border-bottom-color: red;
+  border-bottom-width: 2px;
+  line-height: 25px;
+}

@@ -24,7 +24,7 @@ import org.opensingular.internal.lib.wicket.test.SingularSimpleWicketTestCase;
 public class SingularReportPanelTest extends SingularSimpleWicketTestCase {
 
     @Test
-    public void testRendering() throws Exception {
+    public void testRendering() {
         getTester().startPage(new MockSingularReportPage(id -> new BlankSingularReportPanel(id, null)));
         getTester().assertRenderedPage(MockSingularReportPage.class);
     }

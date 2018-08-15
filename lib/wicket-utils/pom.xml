@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.opensingular</groupId>
     <artifactId>singular-lib</artifactId>
-    <version>1.8.0.2</version>
+    <version>1.8.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>singular-wicket-utils</artifactId>
@@ -56,6 +56,16 @@
     </dependency>
 
     <dependency>
+      <groupId>de.ruedigermoeller</groupId>
+      <artifactId>fst</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.lz4</groupId>
+      <artifactId>lz4-java</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.opensingular</groupId>
       <artifactId>singular-form-core</artifactId>
     </dependency>
@@ -99,7 +109,10 @@
       <artifactId>junit</artifactId>
       <scope>compile</scope>
     </dependency>
-
+    <dependency>
+        <groupId>org.apache.wicket</groupId>
+        <artifactId>wicket-devutils</artifactId>
+    </dependency>
   </dependencies>
 
 </project>
