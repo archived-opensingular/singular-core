@@ -161,7 +161,7 @@ public class MasterDetailPanel extends Panel {
         actionsContainer = new BSContainer<>("actionsContainer");
         body = new WebMarkupContainer("body");
         footer = new WebMarkupContainer("footer");
-        addButton = newAddAjaxLink(ctx);
+        addButton = newAddAjaxLink();
         addButtonLabel = new Label("addButtonLabel", Model.of(AbstractListMapper.defineLabel(ctx)));
         table = newTable("table");
         feedback = ctx.createFeedbackCompactPanel("feedback");
@@ -215,8 +215,7 @@ public class MasterDetailPanel extends Panel {
         return label;
     }
 
-    private AjaxLink<String> newAddAjaxLink(WicketBuildContext ctx) {
-        final ISupplier<SViewListByMasterDetail> viewSupplier = ctx.getViewSupplier(SViewListByMasterDetail.class);
+    private AjaxLink<String> newAddAjaxLink() {
         return new AjaxLink<String>("addButton") {
             @Override
             public void onClick(AjaxRequestTarget target) {
@@ -231,13 +230,6 @@ public class MasterDetailPanel extends Panel {
                         modal.showNew(target);
                     }
                 }
-            }
-
-            @Override
-            protected void onConfigure() {
-                super.onConfigure();
-
-                setVisible(canCreateNewElement(viewSupplier));
             }
         };
     }
