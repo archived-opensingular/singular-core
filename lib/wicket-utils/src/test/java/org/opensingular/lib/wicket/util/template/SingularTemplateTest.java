@@ -27,10 +27,12 @@ public class SingularTemplateTest {
     @Test
     public void test() {
         WicketTester tester = new WicketTester(new WicketUtilsDummyApplication());
-        tester.startPage(new SingularTemplate() {
-        });
-        
+        tester.startPage(new SingularTemplateTest.AdmTemplate());
         tester.assertNoErrorMessage();
+    }
+
+    private static class AdmTemplate extends SingularTemplate {
+
     }
 
 }
