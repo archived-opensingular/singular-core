@@ -16,11 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
@@ -39,7 +34,7 @@ import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
 import org.opensingular.form.wicket.enums.ViewMode;
-import org.opensingular.form.wicket.mapper.behavior.RequiredBehaviorUtil;
+import org.opensingular.form.wicket.mapper.behavior.RequiredLabelClassAppender;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.AttributeModel;
@@ -48,6 +43,11 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
 import org.opensingular.lib.wicket.util.output.BOutputPanel;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
@@ -153,12 +153,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
      */
     private void configureAjaxListeners(WicketBuildContext ctx, IModel<? extends SInstance> model, BSLabel label, Component input) {
         input.add($b.onConfigure(c -> {
-            label.add(new ClassAttributeModifier() {
-                @Override
-                protected Set<String> update(Set<String> oldClasses) {
-                    return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
-                }
-            });
+            label.add(new RequiredLabelClassAppender(model));
             configureJSForComponent(ctx, input);
         }));
         configureJSForComponent(ctx, input);
