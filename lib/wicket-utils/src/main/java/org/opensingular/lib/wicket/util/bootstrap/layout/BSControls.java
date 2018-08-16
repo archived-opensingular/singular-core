@@ -251,7 +251,9 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSInputGroup newInputGroup() {
-        return newComponent(BSInputGroup::new);
+        BSInputGroup bsInputGroup = new BSInputGroup(newChildId());
+        getItems().add(bsInputGroup);
+        return bsInputGroup;
     }
 
     public BSControls appendFeedback(Component feedbackComponent) {

@@ -16,14 +16,6 @@
 
 package org.opensingular.lib.wicket.util.util;
 
-import static java.util.stream.Collectors.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
-
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -44,10 +36,22 @@ import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.wicket.util.behavior.ConditionalAttributeAppender;
+import org.opensingular.lib.wicket.util.behavior.ConditionalAttributeModifier;
 import org.opensingular.lib.wicket.util.behavior.FormChoiceAjaxUpdateBehavior;
 import org.opensingular.lib.wicket.util.behavior.FormComponentAjaxUpdateBehavior;
 import org.opensingular.lib.wicket.util.behavior.IAjaxUpdateConfiguration;
+import org.opensingular.lib.wicket.util.behavior.OnConfigureFunctionalBehaviour;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.util.stream.Collectors.joining;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 @SuppressWarnings("serial")
 public interface IBehaviorsMixin extends Serializable {
@@ -57,14 +61,10 @@ public interface IBehaviorsMixin extends Serializable {
     }
 
     default AttributeAppender attrAppender(String attribute, Serializable valueOrModel, String separator, IModel<Boolean> enabledModel) {
-        return new AttributeAppender(attribute,
-            (valueOrModel instanceof IModel<?>) ? (IModel<?>) valueOrModel : Model.of(valueOrModel),
-            separator) {
-            @Override
-            public boolean isEnabled(Component component) {
-                return Boolean.TRUE.equals(enabledModel.getObject());
-            }
-        };
+        ConditionalAttributeAppender conditionalAttributeAppender = new ConditionalAttributeAppender(attribute,
+                (valueOrModel instanceof IModel<?>) ? (IModel<?>) valueOrModel : Model.of(valueOrModel), separator);
+        conditionalAttributeAppender.setEnabled(enabledModel);
+        return conditionalAttributeAppender;
     }
 
     default AttributeModifier attrRemover(String attribute, Serializable patternToRemove, boolean isolateWord) {
@@ -82,37 +82,37 @@ public interface IBehaviorsMixin extends Serializable {
     }
 
     default AttributeModifier attr(String attribute, Serializable valueOrModel, IModel<Boolean> enabledModel) {
-        return new AttributeModifier(attribute,
-            (valueOrModel instanceof IModel<?>) ? (IModel<?>) valueOrModel : Model.of(valueOrModel)) {
-            @Override
-            public boolean isEnabled(Component component) {
-                return enabledModel.getObject();
-            }
-        };
+        ConditionalAttributeModifier conditionalAttributeModifier = new ConditionalAttributeModifier(attribute,
+                (valueOrModel instanceof IModel<?>) ? (IModel<?>) valueOrModel : Model.of(valueOrModel));
+        conditionalAttributeModifier.setEnabled(enabledModel);
+        return conditionalAttributeModifier;
     }
 
     default AttributeAppender styleAppender(IModel<? extends Map<String, String>> stylesModel) {
         return styleAppender(stylesModel, $m.ofValue(Boolean.TRUE));
     }
+
     default AttributeAppender styleAppender(IModel<? extends Map<String, String>> stylesModel, IModel<Boolean> enabledModel) {
         IModel<Object> stylesStringModel = $m.map(stylesModel, styles -> styles.entrySet().stream()
-            .map(it -> it.getKey() + ":" + it.getValue())
-            .collect(joining(";")));
+                .map(it -> it.getKey() + ":" + it.getValue())
+                .collect(joining(";")));
         return attrAppender("style", stylesStringModel, ";", enabledModel);
     }
+
     default AttributeAppender styleAppender(Map<String, String> styles) {
         return styleAppender(styles, $m.ofValue(Boolean.TRUE));
     }
+
     default AttributeAppender styleAppender(Map<String, String> styles, IModel<Boolean> enabledModel) {
-    	return styleAppender($m.ofValue(new HashMap<>(styles)), enabledModel);
+        return styleAppender($m.ofValue(new HashMap<>(styles)), enabledModel);
     }
 
     default AttributeAppender styleAppender(String name, Serializable valueOrModel, IModel<Boolean> enabledModel) {
         return attrAppender(
-            "style",
-            $m.map($m.wrapValue(valueOrModel), it -> name + ":" + it),
-            ";",
-            enabledModel);
+                "style",
+                $m.map($m.wrapValue(valueOrModel), it -> name + ":" + it),
+                ";",
+                enabledModel);
     }
 
     default AttributeAppender classAppender(Serializable valueOrModel) {
@@ -120,96 +120,49 @@ public interface IBehaviorsMixin extends Serializable {
     }
 
     default AttributeAppender classAppender(Serializable valueOrModel, IModel<Boolean> enabledModel) {
-        $m.map($m.wrapValue(valueOrModel), it -> {
-            return (it instanceof Collection<?>)
+        $m.map($m.wrapValue(valueOrModel), it -> (it instanceof Collection<?>)
                 ? ((Collection<?>) it).stream()
-                    .map(s -> s.toString())
-                    .collect(joining(" "))
-                : it;
-        });
+                .map(Object::toString)
+                .collect(joining(" "))
+                : it);
         return attrAppender("class", valueOrModel, " ", enabledModel);
     }
 
     default Behavior renderBodyOnly(IModel<Boolean> renderBodyOnly) {
-        return new Behavior() {
-            @Override
-            public void onConfigure(Component component) {
-                component.setRenderBodyOnly(renderBodyOnly.getObject());
-            }
-        };
+        return OnConfigureFunctionalBehaviour.of(c -> c.setRenderBodyOnly(renderBodyOnly.getObject()));
     }
 
     default Behavior notVisibleIf(ISupplier<Boolean> model) {
-        return new Behavior() {
-            @Override
-            public void onConfigure(Component component) {
-                component.setVisible(!model.get());
-            }
-        };
+        return OnConfigureFunctionalBehaviour.of(c -> c.setVisible(!model.get()));
     }
 
     default Behavior visibleIf(ISupplier<Boolean> model) {
-        return new Behavior() {
-            @Override
-            public void onConfigure(Component component) {
-                component.setVisible(model.get());
-            }
-        };
+        return OnConfigureFunctionalBehaviour.of(c -> c.setVisible(model.get()));
     }
 
+    @SuppressWarnings("unchecked")
     default <T> Behavior visibleIfModelObject(IPredicate<T> predicate) {
-        return new Behavior() {
-            @Override
-            @SuppressWarnings("unchecked")
-            public void onConfigure(Component component) {
-                component.setVisible(predicate.test((T) component.getDefaultModelObject()));
-            }
-        };
+        return OnConfigureFunctionalBehaviour.of(c -> c.setVisible(predicate.test((T) c.getDefaultModelObject())));
     }
 
     default Behavior visibleIf(IModel<Boolean> model) {
-        return new Behavior() {
-            @Override
-            public void onConfigure(Component component) {
-                component.setVisible(model.getObject());
-            }
-        };
+        return OnConfigureFunctionalBehaviour.of(c -> c.setVisible(model.getObject()));
     }
 
     default Behavior visibleIfAlso(Component otherComponent) {
-        return new Behavior() {
-            @Override
-            public void onConfigure(Component component) {
-                component.setVisible(otherComponent.isVisibleInHierarchy());
-            }
-        };
+        return OnConfigureFunctionalBehaviour.of(c -> c.setVisible(otherComponent.isVisibleInHierarchy()));
     }
 
     default Behavior enabledIf(ISupplier<Boolean> supplier) {
-        return new Behavior() {
-            @Override
-            public void onConfigure(Component component) {
-                component.setEnabled(supplier.get());
-            }
-        };
+        return OnConfigureFunctionalBehaviour.of(c -> c.setEnabled(supplier.get()));
     }
 
     default Behavior enabledIf(IModel<Boolean> model) {
-        return new Behavior() {
-            @Override
-            public void onConfigure(Component component) {
-                component.setEnabled(model.getObject());
-            }
-        };
+        return OnConfigureFunctionalBehaviour.of(c -> c.setEnabled(model.getObject()));
     }
 
     default Behavior onConfigure(IConsumer<Component> onConfigure) {
-        return new Behavior() {
-            @Override
-            public void onConfigure(Component component) {
-                IConsumer.noopIfNull(onConfigure).accept(component);
-            }
-        };
+        return OnConfigureFunctionalBehaviour.of(onConfigure);
     }
 
     default Behavior onComponentTag(IBiConsumer<Component, ComponentTag> onComponentTag) {
@@ -247,7 +200,7 @@ public interface IBehaviorsMixin extends Serializable {
 
     default Behavior on(String event, IFunction<Component, CharSequence> scriptFunction) {
         return onReadyScript(comp -> String.format("Wicket.Event.add('%s', '%s', function(event) { %s; });",
-            comp.getMarkupId(), event, scriptFunction.apply(comp)));
+                comp.getMarkupId(), event, scriptFunction.apply(comp)));
     }
 
     default Behavior onReadyScript(ISupplier<CharSequence> scriptSupplier) {
@@ -256,7 +209,7 @@ public interface IBehaviorsMixin extends Serializable {
 
     default Behavior onReadyScript(IFunction<Component, CharSequence> scriptFunction) {
         return onReadyScript(scriptFunction,
-            comp -> comp.isVisibleInHierarchy() && comp.isEnabledInHierarchy());
+                comp -> comp.isVisibleInHierarchy() && comp.isEnabledInHierarchy());
     }
 
     default Behavior onReadyScript(IFunction<Component, CharSequence> scriptFunction, IFunction<Component, Boolean> isEnabled) {
@@ -264,10 +217,10 @@ public interface IBehaviorsMixin extends Serializable {
             @Override
             public void renderHead(Component component, IHeaderResponse response) {
                 response.render(OnDomReadyHeaderItem.forScript(""
-                    + "(function(){"
-                    + "'use strict';"
-                    + scriptFunction.apply(component)
-                    + "})();"));
+                        + "(function(){"
+                        + "'use strict';"
+                        + scriptFunction.apply(component)
+                        + "})();"));
             }
 
             @Override
@@ -279,8 +232,8 @@ public interface IBehaviorsMixin extends Serializable {
 
     default Behavior onEnterDelegate(Component newTarget, String originalTargetEvent) {
         return $b.onReadyScript(c -> JQuery.on(c, "keypress", "if((e.keyCode || e.which) == 13){" +
-            (originalTargetEvent != null ? "$(e.target).trigger('" + originalTargetEvent + "');" : "") +
-            "e.preventDefault(); " + JQuery.$(newTarget) + ".click();}"));
+                (originalTargetEvent != null ? "$(e.target).trigger('" + originalTargetEvent + "');" : "") +
+                "e.preventDefault(); " + JQuery.$(newTarget) + ".click();}"));
     }
 
 }
