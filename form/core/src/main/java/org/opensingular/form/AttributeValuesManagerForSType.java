@@ -37,19 +37,9 @@ final class AttributeValuesManagerForSType extends AttributeValuesManager<SType<
         return getAttributeValueInTheContextOf(getOwner(), null, ref, resultClass);
     }
 
-    @Nonnull
-    public SInstance getCreating(@Nonnull AttrInternalRef ref) {
-        SInstance entry = get(ref);
-        if (entry == null) {
-            if (ref.isResolved()) {
-                entry = createNewAttribute(ref);
-            } else {
-                entry = createTemporaryAttribute();
-                entry.setAsAttribute(ref, getOwner());
-            }
-            set(ref, entry);
-        }
-        return entry;
+    @Override
+    void setEntryAsAttribute(@Nonnull SInstance entry, @Nonnull AttrInternalRef ref) {
+        entry.setAsAttribute(ref, getOwner());
     }
 
     @Nonnull
@@ -57,7 +47,7 @@ final class AttributeValuesManagerForSType extends AttributeValuesManager<SType<
         for (SType<?> current = getOwner(); current != null; current = current.getSuperType()) {
             SType<?> attrType = current.getAttributeDefinedLocally(ref);
             if (attrType != null) {
-                return set(ref, attrType.newAttributeInstanceFor(getOwner()));
+                return Objects.requireNonNull(set(ref, attrType.newAttributeInstanceFor(getOwner())));
             }
         }
         throw new SingularFormException(
@@ -66,7 +56,8 @@ final class AttributeValuesManagerForSType extends AttributeValuesManager<SType<
     }
 
     @Nullable
-    final static <V> V getAttributeValueInTheContextOf(@Nonnull final SType<?> target, @Nullable SInstance contextInstance,
+    @SuppressWarnings("unchecked")
+    static <V> V getAttributeValueInTheContextOf(@Nonnull final SType<?> target, @Nullable SInstance contextInstance,
             @Nonnull AttrInternalRef ref, @Nullable Class<V> resultClass) {
         Objects.requireNonNull(target);
         Objects.requireNonNull(ref);
@@ -87,7 +78,7 @@ final class AttributeValuesManagerForSType extends AttributeValuesManager<SType<
     }
 
     @Nonnull
-    final static SType<?> getAttributeDefinedHierarchy(@Nonnull SType<?> type, @Nonnull AttrInternalRef ref) {
+    static SType<?> getAttributeDefinedHierarchy(@Nonnull SType<?> type, @Nonnull AttrInternalRef ref) {
         Objects.requireNonNull(type);
         Objects.requireNonNull(ref);
         for (SType<?> current = type; current != null; current = current.getSuperType()) {
@@ -100,14 +91,23 @@ final class AttributeValuesManagerForSType extends AttributeValuesManager<SType<
     }
 
     @Nullable
-    final static SInstance findAttributeInstance(@Nonnull SType<?> target, @Nonnull AttrInternalRef ref) {
-        for (SType<?> current = target; current != null; current = current.getSuperType()) {
-            SInstance instance = current.getAttributeDirectly(ref);
-            if (instance != null) {
-                return instance;
+    static SInstance findAttributeInstance(@Nonnull SType<?> target, @Nonnull AttrInternalRef ref) {
+        return findAttributeInstance(target, ref, null);
+    }
+
+    @Nullable
+    private static SInstance findAttributeInstance(@Nonnull SType<?> target, @Nonnull AttrInternalRef ref,
+            @Nullable SType<?> stopTypeNotIncluded) {
+        SInstance instance = null;
+        for (SType<?> type = target; instance == null && type != stopTypeNotIncluded && type != null; type = type.getSuperType()) {
+            instance = type.getAttributeDirectly(ref);
+            if (instance == null && target.getComplementarySuperType().isPresent() && type.getSuperType() != null) {
+                SType<?> complementary = target.getComplementarySuperType().get();
+                SType<?> stop = SFormUtil.findCommonType(type.getSuperType(), complementary);
+                instance = findAttributeInstance(complementary, ref, stop);
             }
         }
-        return null;
+        return instance;
     }
 
 }

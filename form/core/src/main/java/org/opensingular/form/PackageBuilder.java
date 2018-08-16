@@ -71,7 +71,7 @@ public class PackageBuilder {
 
     @Nonnull
     public <T extends SType<?>> T createType(@Nullable String simpleNameNewType, @Nonnull T parentType) {
-        return sPackage.extendType(SimpleName.ofNullable(simpleNameNewType), parentType);
+        return sPackage.extendType(simpleNameNewType, parentType);
     }
 
     @Nonnull

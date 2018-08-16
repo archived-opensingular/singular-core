@@ -51,7 +51,7 @@ public final class ArrUtil {
         T[] content = original;
         if (content == null) {
             if (value == null) {
-                return content;
+                return null;
             }
             content = (T[]) Array.newInstance(classArray, Math.max(index + 1, defaultMaxSize));
         } else if (content.length <= index) {

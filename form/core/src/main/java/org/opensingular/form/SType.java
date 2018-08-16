@@ -87,6 +87,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
      */
     private SType<I> superType;
 
+    /** Represents a second parent type in case o multiple inheritance. */
+    private SType<?> complementarySuperType;
+
     private SView view;
 
     /**
@@ -138,8 +141,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         // Esse método será implementado nas classes derevidas se precisarem
     }
 
+    /** Extends the current type creating a new one with the current type as super type (parent type). */
     @Nonnull
-    final <S extends SType<?>> S extend(@Nullable SimpleName simpleName) {
+    final <S extends SType<?>> S extend(@Nullable SimpleName simpleName, @Nullable SType<?> complementarySuperType) {
         SimpleName nameResolved = SFormUtil.resolveName(simpleName, this);
 
         S newType;
@@ -150,6 +154,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         }
         ((SType<I>) newType).nameSimple = nameResolved;
         ((SType<I>) newType).superType = this;
+        ((SType<?>) newType).complementarySuperType = complementarySuperType;
         return newType;
     }
 
@@ -190,9 +195,22 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return nameSimple;
     }
 
+    /** Return the super type (parent type) of the current type. Returns null only for the parent of all types. */
     @Nullable
     public SType<I> getSuperType() {
+        if (superType == null && getClass() != SType.class) {
+            throw new SingularFormException("This type isn't ready to use", this);
+        }
         return superType;
+    }
+
+    /**
+     * Returns a reference to the secondary super type, if it exists. This secondary super type is use for a source o
+     * complementary attributes.
+     */
+    @Nonnull
+    public Optional<SType<?>> getComplementarySuperType() {
+        return Optional.ofNullable(complementarySuperType);
     }
 
     public Class<I> getInstanceClass() {
@@ -257,6 +275,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         SType<I> current = this;
         while (current != null) {
             if (current == parentTypeCandidate) {
+                return true;
+            } else if (current.complementarySuperType != null && current.complementarySuperType.isTypeOf(
+                    parentTypeCandidate)) {
                 return true;
             }
             current = current.superType;
@@ -754,6 +775,10 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         if (superType != null && (!isAttribute() || !isSelfReference())) {
             appendable.append(" extend ");
             appendNameAndId(appendable, superType);
+            if (complementarySuperType != null) {
+                appendable.append(", ");
+                appendNameAndId(appendable, complementarySuperType);
+            }
             if (this.isList()) {
                 STypeList<?, ?> list = (STypeList<?, ?>) this;
                 if (list.getElementsType() != null) {

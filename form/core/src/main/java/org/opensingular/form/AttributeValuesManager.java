@@ -95,7 +95,7 @@ abstract class AttributeValuesManager<OWNER extends SAttributeEnabled> {
      * dicionário.
      */
     @Nonnull
-    protected final SInstance createTemporaryAttribute() {
+    private SInstance createTemporaryAttribute() {
         SType<?> attrType = getOwner().getDictionary().getType(STypeString.class);
         SInstance attr = attrType.newInstance(getOwner().getDictionary().getInternalDicionaryDocument());
         attr.setAttributeShouldMigrate();
@@ -120,18 +120,33 @@ abstract class AttributeValuesManager<OWNER extends SAttributeEnabled> {
     }
 
     @Nonnull
-    protected abstract SInstance getCreating(@Nonnull AttrInternalRef ref);
+    private SInstance getCreating(@Nonnull AttrInternalRef ref) {
+        SInstance entry = get(ref);
+        if (entry == null) {
+            if (ref.isResolved()) {
+                entry = createNewAttribute(ref);
+            } else {
+                entry = createTemporaryAttribute();
+                setEntryAsAttribute(entry, ref);
+            }
+            set(ref, entry);
+        }
+        return entry;
+    }
 
-    public <V> void setAttributeCalculation(@Nonnull AtrRef<?, ?, V> atr, @Nullable SimpleValueCalculation<V> value) {
+    abstract void setEntryAsAttribute(@Nonnull SInstance entry, @Nonnull AttrInternalRef ref);
+
+    final <V> void setAttributeCalculation(@Nonnull AtrRef<?, ?, V> atr, @Nullable SimpleValueCalculation<V> value) {
         setAttributeCalculation(getAttributeReferenceOrException(atr), null, value);
     }
 
-    public <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
+    final <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
             @Nullable SimpleValueCalculation<V> valueCalculation) {
         setAttributeCalculation(getAttributeReferenceOrException(attributeFullName), subPath, valueCalculation);
     }
 
-    public <V> void setAttributeCalculation(@Nonnull AttrInternalRef ref, @Nullable String subPath,
+    @SuppressWarnings("unchecked")
+    private <V> void setAttributeCalculation(@Nonnull AttrInternalRef ref, @Nullable String subPath,
             @Nullable SimpleValueCalculation<V> valueCalculation) {
         SInstance instanceAtr = getCreating(ref);
         if (subPath != null) {
@@ -146,18 +161,18 @@ abstract class AttributeValuesManager<OWNER extends SAttributeEnabled> {
     }
 
     @Nonnull
-    protected final AttrInternalRef getAttributeReferenceOrException(@Nonnull String attributeFullName) {
+    private AttrInternalRef getAttributeReferenceOrException(@Nonnull String attributeFullName) {
         return getOwner().getDictionary().getAttributeReferenceOrException(attributeFullName);
     }
 
     @Nonnull
-    protected final AttrInternalRef getAttributeReferenceOrException(@Nonnull AtrRef<?, ?, ?> atr) {
+    private AttrInternalRef getAttributeReferenceOrException(@Nonnull AtrRef<?, ?, ?> atr) {
         return getOwner().getDictionary().getAttributeReferenceOrException(atr);
     }
 
     /** Retorna o atributo se houver um associada diretamente ao objeto alvo. */
     @Nonnull
-    public static Optional<SInstance> staticGetAttributeDirectly(@Nonnull SAttributeEnabled target,
+    static Optional<SInstance> staticGetAttributeDirectly(@Nonnull SAttributeEnabled target,
             @Nullable AttributeValuesManager attributes, @Nonnull String fullName) {
         if (attributes == null) {
             return Optional.empty();
@@ -168,13 +183,13 @@ abstract class AttributeValuesManager<OWNER extends SAttributeEnabled> {
 
     /** Retorna o atributo se houver um associada diretamente ao objeto alvo. */
     @Nullable
-    public static SInstance staticGetAttributeDirectly(@Nullable AttributeValuesManager attributes,
+    static SInstance staticGetAttributeDirectly(@Nullable AttributeValuesManager attributes,
             @Nonnull AttrInternalRef ref) {
         return attributes == null ? null : attributes.get(ref);
     }
 
     @Nonnull
-    public static Collection<SInstance> staticGetAttributes(@Nullable AttributeValuesManager attributes) {
+    static Collection<SInstance> staticGetAttributes(@Nullable AttributeValuesManager attributes) {
         return attributes == null ? Collections.emptyList() : ArrUtil.arrayAsCollection(attributes.attributes);
     }
 }

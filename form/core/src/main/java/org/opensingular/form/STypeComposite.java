@@ -16,19 +16,6 @@
 
 package org.opensingular.form;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.opensingular.form.builder.selection.SSelectionBuilder;
 import org.opensingular.form.builder.selection.SelectionBuilder;
 import org.opensingular.form.type.core.SPackageCore;
@@ -36,10 +23,10 @@ import org.opensingular.form.type.core.STypeBoolean;
 import org.opensingular.form.type.core.STypeDate;
 import org.opensingular.form.type.core.STypeDateTime;
 import org.opensingular.form.type.core.STypeDecimal;
+import org.opensingular.form.type.core.STypeFieldRef;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeLong;
 import org.opensingular.form.type.core.STypeMonetary;
-import org.opensingular.form.type.core.STypeFieldRef;
 import org.opensingular.form.type.core.STypePassword;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.STypeTime;
@@ -49,6 +36,18 @@ import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewAttachmentList;
 import org.opensingular.form.view.SViewAutoComplete;
 import org.opensingular.form.view.SViewSelectionBySelect;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 @SInfoType(name = "STypeComposite", spackage = SPackageCore.class)
 public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INSTANCE_TYPE> implements ICompositeType {
@@ -68,15 +67,26 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
 
     @Override
     protected void extendSubReference() {
-        if (getSuperType().isComposite()) {
-            Map<String, SType<?>> fieldsSuper = ((STypeComposite<?>) getSuperType()).fieldsLocal;
-            if (fieldsSuper != null) {
-                for (Map.Entry<String, SType<?>> entry : fieldsSuper.entrySet()) {
-                    addField(entry.getKey(), entry.getValue());
-                }
-            }
-            fieldsConsolidated = null;
+        if (!getSuperType().isComposite()) {
+            return;
         }
+        Map<String, SType<?>> fieldsSuper = ((STypeComposite<?>) getSuperType()).fieldsLocal;
+        Map<String, SType<?>> complementaryFields = getComplementarySuperType().map(
+                t -> ((STypeComposite<?>) t).fieldsLocal).orElse(null);
+        if (fieldsSuper != null) {
+            for (Map.Entry<String, SType<?>> entry : fieldsSuper.entrySet()) {
+                SType<?> complementary = complementaryFields == null ? null : complementaryFields.get(entry.getKey());
+                addFieldInternal(entry.getKey(), entry.getValue(), complementary);
+            }
+        }
+        fieldsConsolidated = null;
+    }
+
+    /** Return the super type (parent type) of the current type. */
+    @Override
+    @Nonnull
+    public final SType<INSTANCE_TYPE> getSuperType() {
+        return Objects.requireNonNull(super.getSuperType());
     }
 
     @Override
@@ -187,9 +197,24 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
      */
     @Nonnull
     public <T extends SType<?>> T addField(@Nullable String fieldSimpleName, @Nonnull T parentType) {
+        return addFieldInternal(fieldSimpleName, parentType, null);
+    }
+
+    @Nonnull
+    private <T extends SType<?>> T addFieldInternal(@Nullable String fieldSimpleName, @Nonnull T parentType,
+            @Nullable SType<?> complementarySuperType) {
         SimpleName name = SFormUtil.resolveName(SimpleName.ofNullable(fieldSimpleName), parentType);
         checkNameNewField(name.get());
-        T field = extendType(name, parentType);
+        if (isRecursiveReference()) {
+            throw new SingularFormException(
+                    "Can't add field '" + name + "' to " + this + " because it's a recursive reference.", this);
+        }
+        T field;
+        if (complementarySuperType == null) {
+            field = extendType(name, parentType);
+        } else {
+            field = extendMultipleTypes(name, parentType, complementarySuperType);
+        }
         return addInternal(name.get(), field);
     }
 
@@ -292,9 +317,9 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
      * @return campos declarados neste tipo específico, não incluindo os campos
      *         do tipo pai.
      */
+    @Nonnull
     public Collection<SType<?>> getFieldsLocal() {
         return isRecursiveReference() ? ((STypeComposite<?>) getSuperType()).getFieldsLocal() : (fieldsLocal == null) ? Collections.emptyList() : fieldsLocal.values();
-
     }
 
     // --------------------------------------------------------------------------
