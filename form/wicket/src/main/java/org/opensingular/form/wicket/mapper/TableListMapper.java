@@ -41,6 +41,7 @@ import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
+import org.opensingular.form.wicket.mapper.behavior.RequiredBehaviorUtil;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
@@ -134,11 +135,14 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                 false,
                 internalContextListProvider);
 
-        final SType<SInstance> elementsType = list.getObject().getElementsType();
-
-        if (!elementsType.isComposite() && elementsType.asAtr().isRequired()) {
-            title.add($b.classAppender("singular-form-required"));
-        }
+        header.add($b.onConfigure(c ->
+                title.add(new ClassAttributeModifier() {
+                    @Override
+                    protected Set<String> update(Set<String> oldClasses) {
+                        return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, list.getObject());
+                    }
+                })
+        ));
 
     }
 
