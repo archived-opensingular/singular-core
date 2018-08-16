@@ -16,24 +16,21 @@
 
 (function (htmlContainer, hiddenInput, callbackUrl, isEnabled, showSaveButton, buttonsList, submitButtonId, classDisableDoubleClick) {
 
-
     $(document).ready(function () {
-        appendFunctions(window.opener);
+        if (!opener) {
+            var msgException = "A página foi aberta de forma indevida!";
+            toastr.options = {
+                "timeOut": "10000",
+                "positionClass": "toast-top-center"
+            };
+            toastr.error(msgException);
+        } else {
+            appendFunctions(window.opener);
+        }
     });
 
     function appendFunctions(opener) {
         $(function () {
-
-            if (!opener) {
-                var msgException = "A página do requerimento foi aberta de forma indevida! <b>Não será possivel salvar o Requerimento.</b>";
-                toastr.options = {
-                    "timeOut": "10000",
-                    "positionClass": "toast-top-center"
-                };
-                toastr.error(msgException);
-                isEnabled = false;
-            }
-
             var plugin;
             if (isEnabled === "true") {
                 if (showSaveButton === "true") {
