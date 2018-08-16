@@ -23,8 +23,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opensingular.form.io.SFormXMLUtil;
+import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeHTML;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.internal.lib.commons.xml.MElement;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @RunWith(Parameterized.class)
 public class TestSInstance extends TestCaseForm {
@@ -104,5 +108,19 @@ public class TestSInstance extends TestCaseForm {
         assertException(() -> block.getValue("a.b", Object.class), SingularFormException.class,
                 "Não suporta leitura de subCampos");
 
+    }
+
+    @Test
+    public void testIsTypeOf() {
+        SDictionary dic = createTestDictionary();
+        SIString s = dic.getType(STypeString.class).newInstance();
+        assertTrue(s.isTypeOf(dic.getType(STypeString.class)));
+        assertTrue(s.isTypeOf(dic.getType(SType.class)));
+        assertFalse(s.isTypeOf(dic.getType(STypeHTML.class)));
+        assertFalse(s.isTypeOf(dic.getType(STypeList.class)));
+
+        assertThatThrownBy(() -> s.isTypeOf(createTestDictionary().getType(STypeList.class)))
+                .isExactlyInstanceOf(SingularFormException.class).hasMessageContaining(
+                "foi criado em outro dicionário");
     }
 }

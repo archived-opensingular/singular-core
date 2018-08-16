@@ -16,20 +16,6 @@
 
 package org.opensingular.form;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
@@ -45,6 +31,20 @@ import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.lib.commons.context.ServiceRegistry;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 
@@ -126,7 +126,7 @@ public final class SFormUtil {
             } else {
                 if (c == '.') {
                     waitingBegin = true;
-                } else if (!isLetter(c) && !isDigit(c) && !isSpecialCaracter(c)) {
+                } else if (!isLetter(c) && !isDigit(c) && !isSpecialCharacter(c)) {
                     return false;
                 }
             }
@@ -134,8 +134,37 @@ public final class SFormUtil {
         return !waitingBegin; //Can't end after a dot or have length zero
     }
 
-    private static boolean isSpecialCaracter(char c) {
+    private static boolean isSpecialCharacter(char c) {
         return c == '$';
+    }
+
+    /** Checks if the instance is in the same dictionary of scope. If not, throws a exception. */
+    static final void verifySameDictionary(@Nonnull SScope scope, @Nonnull SInstance instance) {
+        if (scope.getDictionary() != instance.getDictionary()) {
+            throw new SingularFormException(
+                    "O dicionário da instância " + instance + " não é o mesmo dicionário do tipo " + scope +
+                            ". Foram carregados em separado", instance);
+        }
+    }
+
+    /** Checks if both scopes are using the same dictionary. If not, throws a exception. */
+    static final void verifySameDictionary(@Nonnull SScope scope1, @Nonnull SScope scope2) {
+        if (scope1.getDictionary() != scope2.getDictionary()) {
+            throw new SingularFormException(scope2.getName() + "(" + scope2.getClass().getName() +
+                    ") foi criado em outro dicionário, que não o de " + scope1.getName() + "(" +
+                    scope1.getClass().getName() + ")");
+        }
+    }
+
+    /** Finds the common parent type of the two types. */
+    @Nonnull
+    static final SType<?> findCommonType(@Nonnull SType<?> type1, @Nonnull SType<?> type2) {
+        verifySameDictionary(type1, type2);
+        for (SType<?> current = type1; ; current = current.getSuperType()) {
+            if (type2.isTypeOf(current)) {
+                return current;
+            }
+        }
     }
 
     @Nonnull
