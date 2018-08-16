@@ -22,6 +22,7 @@ public class ButtonsConfig {
 
     public static final String EDITAR_HINT = "Editar";
     public static final String REMOVER_HINT = "Remover";
+    private boolean editVisible = false; //This variable is used to determine if will have a column for edit.
     private ButtonAction editButton;
     private ButtonAction deleteButton;
 
@@ -35,7 +36,12 @@ public class ButtonsConfig {
     }
 
     protected void setEditButton(ButtonAction editButton) {
+        setEditButton(editButton, true);
+    }
+
+    protected void setEditButton(ButtonAction editButton, boolean editVisible) {
         this.editButton = editButton;
+        this.editVisible = editVisible;
     }
 
     public ButtonAction getDeleteButton() {
@@ -52,5 +58,11 @@ public class ButtonsConfig {
 
     public boolean isEditEnabled(SInstance instance) {
         return editButton.isEnabled(instance);
+    }
+
+
+    //TODO verify a way to encapsulate this logic.
+    public boolean isEditVisible() {
+        return editVisible;
     }
 }

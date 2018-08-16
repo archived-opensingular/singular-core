@@ -174,6 +174,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         final WebMarkupContainer notEmptyContent = new WebMarkupContainer("not-empty-content");
         final BSTSection tableHeader = new BSTSection("_h").setTagName("thead");
         final WebMarkupContainer tableBody = new WebMarkupContainer("_b");
+
         final ElementsView tableRows = new TableElementsView("_e", list, ctx, form, tableBody, confirmationModal);
         final WebMarkupContainer tableFooter = new WebMarkupContainer("_ft");
         final BSContainer<?> footerBody = new BSContainer<>("_fb");
@@ -184,10 +185,11 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
 
         if (elementsType.isComposite()) {
             final STypeComposite<?> compositeElementsType = (STypeComposite<?>) elementsType;
-            final BSTRow row = tableHeader.newRow();
 
-            //Todo verificar uma maneira de criar apenas se houver editação habilitada.
-            row.newTHeaderCell($m.ofValue(""));
+            final BSTRow rowHeader = tableHeader.newRow();
+            if (viewSupplier.get().getButtonsConfig().isEditVisible()) {
+                rowHeader.newTHeaderCell($m.ofValue(""));
+            }
 
             Collection<SType<?>> fields = compositeElementsType
                     .getFields()
@@ -200,7 +202,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             IConsumer<SType<?>> columnCallback = field -> {
                 final Integer preferentialWidth = field.asAtrBootstrap().getColPreference(1);
                 final IModel<String> headerModel = $m.ofValue(field.asAtr().getLabel());
-                final BSTDataCell cell = row.newTHeaderCell(headerModel);
+                final BSTDataCell cell = rowHeader.newTHeaderCell(headerModel);
                 final String width = String.format("width:%.0f%%;", (100.0 * preferentialWidth) / sumWidthPref);
                 final boolean requiredField = field.asAtr().isRequired();
 
@@ -240,6 +242,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
 
         content.getParent().add(dependsOnModifier(list));
     }
+
 
     private static boolean shouldRenderHeaderForSType(SType<?> type, ISupplier<SViewListByTable> viewSupplier) {
         if (viewSupplier.get().isRenderCompositeFieldsAsColumns() && (!type.asAtr().isExists() || !type.asAtr().isVisible())) {
@@ -285,10 +288,12 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
 
             final ISupplier<SViewListByTable> viewSupplier = ctx.getViewSupplier(SViewListByTable.class);
 
-            final BSTDataCell actionColumn = row.newCol();
-            if (viewSupplier.get().getButtonsConfig().isEditEnabled(item.getModelObject()) && ctx.getViewMode().isEdition()) {
-                actionColumn.add($b.attrAppender("style", "width:20px", ";"));
-                appendInserirButton(this, form, ctx, item, actionColumn);
+            if (viewSupplier.get().getButtonsConfig().isEditVisible()) {
+                final BSTDataCell actionColumn = row.newCol();
+                if (viewSupplier.get().getButtonsConfig().isEditEnabled(item.getModelObject()) && ctx.getViewMode().isEdition()) {
+                    actionColumn.add($b.attrAppender("style", "width:20px", ";"));
+                    appendInserirButton(this, form, ctx, item, actionColumn);
+                }
             }
 
             if ((instance instanceof SIComposite) && viewSupplier.get().isRenderCompositeFieldsAsColumns()) {
@@ -308,6 +313,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                 actionColumnRemove.add($b.attrAppender("style", "width:20px", ";"));
                 appendRemoverButton(this, form, ctx, item, actionColumnRemove, confirmationModal, viewSupplier);
             }
+
 
             item.add(row);
         }

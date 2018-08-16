@@ -40,8 +40,8 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
         return buttonsConfig;
     }
 
-    public SELF configureEditButtonPerRow(String hint, @Nullable IPredicate<SInstance> visibleFor, Icon icon) {
-        getButtonsConfig().setEditButton(new ButtonAction(visibleFor, hint, icon));
+    public SELF configureEditButtonPerRow(String hint, @Nullable IPredicate<SInstance> visibleFor, Icon icon, boolean visibleEditColumn) {
+        getButtonsConfig().setEditButton(new ButtonAction(visibleFor, hint, icon), visibleEditColumn);
         return (SELF) this;
     }
 
