@@ -20,6 +20,8 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.internal.PathReader;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Optional;
@@ -105,8 +107,11 @@ public class DocumentDiff implements Serializable {
 
     /** Retorna o primeiro diff que encotrar na árvore que é do tipo informado ou de sub tipo do tipo informado. */
     final Optional<DiffInfo> findFirst(SType<?> field) {
-        return findFirst(diff -> (diff.getOriginal() != null && diff.getOriginal().getType().isTypeOf(field)) ||
-                (diff.getNewer() != null && diff.getNewer().getType().isTypeOf(field)));
+        return findFirst(diff -> isType(diff.getOriginal(), field) || isType(diff.getNewer(), field));
+    }
+
+    private static boolean isType(@Nullable SInstance instance, @Nonnull SType<?> field) {
+        return instance != null && instance.getDictionary() == field.getDictionary() && instance.isTypeOf(field);
     }
 
     /** Retorna a informação de diff para a instância informada, que deve ser da instância original. */
