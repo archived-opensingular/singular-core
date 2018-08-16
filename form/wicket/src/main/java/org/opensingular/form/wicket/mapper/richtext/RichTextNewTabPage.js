@@ -24,6 +24,16 @@
     function appendFunctions(opener) {
         $(function () {
 
+            if (!opener) {
+                var msgException = "A página do requerimento foi aberta de forma indevida! <b>Não será possivel salvar o Requerimento.</b>";
+                toastr.options = {
+                    "timeOut": "10000",
+                    "positionClass": "toast-top-center"
+                };
+                toastr.error(msgException);
+                isEnabled = false;
+            }
+
             var plugin;
             if (isEnabled === "true") {
                 if (showSaveButton === "true") {
@@ -39,7 +49,7 @@
             var ids = "";
             //Foi utilizado ',,' para separar cada botão adicionado no RichText.
             var buttonsExtra = buttonsList.split(",,");
-            if(buttonsExtra) {
+            if (buttonsExtra) {
                 buttonsExtra.forEach(function (b) {
                     //Foi utilizado #$ para separar cada atributo do botão.
                     var texts = b.split("#$");
@@ -230,7 +240,7 @@
         } else {
             console.log("Don't find extra buttons!");
         }
-        
+
     }
 
 
