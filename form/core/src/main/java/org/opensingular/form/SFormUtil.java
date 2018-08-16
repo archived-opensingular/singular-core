@@ -16,20 +16,6 @@
 
 package org.opensingular.form;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
@@ -45,6 +31,21 @@ import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.lib.commons.context.ServiceRegistry;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
+import org.opensingular.lib.commons.lambda.IFunction;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 
@@ -412,4 +413,23 @@ public final class SFormUtil {
             registry.lookupSingularInjector().inject(newInstance);
         }
     }
+
+    /**
+     *
+     * This method will create a function that find a SInstance in a SIComposite.
+     *
+     * @param sTypeName The full name of the instance.
+     * @return Function that will receive a SIComposite and return the SInstance according the parameter in method.
+     */
+    public static IFunction<SIComposite, SInstance> createFuntionForInstanceComposite(String sTypeName) {
+        return composto -> {
+            if (sTypeName == null || composto == null) {
+                return composto;
+            }
+
+            SType<?> sType = composto.getDictionary().getType(sTypeName);
+            return (SInstance) composto.findDescendant(sType).orElse(null);
+        };
+    }
+
 }

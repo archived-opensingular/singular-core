@@ -246,13 +246,13 @@ public class MasterDetailPanel extends Panel {
         if (mapColumns.isEmpty()) {
             final SType<?> type = ((SIList<?>) model.getObject()).getElementsType();
             if (type instanceof STypeSimple) {
-                columnTypes.add(new ColumnType(type.getName(), null, type.getNameSimple()));
+                columnTypes.add(new ColumnType(type.getName(), null, type.getName()));
             } else if (type.isComposite()) {
                 ((STypeComposite<?>) type)
                         .getFields()
                         .stream()
                         .filter(sType -> sType instanceof STypeSimple)
-                        .forEach(sType -> columnTypes.add(new ColumnType(sType.getName(), null, sType.getNameSimple())));
+                        .forEach(sType -> columnTypes.add(new ColumnType(sType.getName(), null, sType.getName())));
             }
         } else {
             mapColumns.forEach((col) -> columnTypes.add(
@@ -268,7 +268,7 @@ public class MasterDetailPanel extends Panel {
             final String typeName = columnType.getTypeName();
             final String columnSort = disabledSort ? null : columnType.getColumnSortName();
             final IModel<String> labelModel = $m.ofValue(label);
-            propertyColumnAppender(builder, labelModel, $m.get(() -> typeName), columnSort, columnType.getDisplayFunction());
+            propertyColumnAppender(builder, labelModel, typeName, columnSort, columnType.getDisplayFunction());
         }
 
         actionColumnAppender(builder, model, modal, ctx, viewMode, viewSupplier);
@@ -404,16 +404,9 @@ public class MasterDetailPanel extends Panel {
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void propertyColumnAppender(BSDataTableBuilder<SInstance, String, ?> builder,
-                                        IModel<String> labelModel, IModel<String> sTypeNameModel, String columnSortName,
+                                        IModel<String> labelModel, String sTypeNameModel, String columnSortName,
                                         IFunction<SInstance, String> displayValueFunction) {
-        IFunction<SIComposite, SInstance> toInstance = composto -> {
-            String sTypeName = sTypeNameModel.getObject();
-            if (sTypeName == null || composto == null) {
-                return composto;
-            }
-            SType<?> sType = composto.getDictionary().getType(sTypeName);
-            return (SInstance) composto.findDescendant(sType).orElse(null);
-        };
+        IFunction<SIComposite, SInstance> toInstance = SFormUtil.createFuntionForInstanceComposite(sTypeNameModel);
         IFunction<SInstance, Object> propertyFunction = o -> displayValueFunction.apply(toInstance.apply((SIComposite) o));
         builder.appendColumn(new BSPropertyColumn<SInstance, String>(labelModel, columnSortName, propertyFunction) {
             @Override
@@ -436,7 +429,7 @@ public class MasterDetailPanel extends Panel {
 
                     @Override
                     public SInstance getSInstance() {
-                        return toInstance.apply((SIComposite) rowModel.getObject());
+                        return (SInstance) rowModel.getObject();
                     }
                 };
             }

@@ -19,8 +19,12 @@ package org.opensingular.form.wicket.mapper.masterdetail;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.model.IModel;
+import org.opensingular.form.SFormUtil;
+import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.SIComparable;
 import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
@@ -35,6 +39,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * This is the provider of the master detail table.
@@ -91,7 +96,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
             SViewListByMasterDetail view = viewSupplier.get();
             ascMode = view.isAscendingMode();
             if (view.getSortableColumn() != null) {
-                sortableList.sort(new ProviderMasterDetailCompator(view.getSortableColumn().getNameSimple(), ascMode));
+                sortableList.sort(new ProviderMasterDetailCompator(view.getSortableColumn().getName(), ascMode));
             }
         }
     }
@@ -122,8 +127,8 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
 
         @Override
         public int compare(SInstance instanceList1, SInstance instanceList2) {
-            Optional<SInstance> obj1 = getObjectBySortProperty(instanceList1);
-            Optional<SInstance> obj2 = getObjectBySortProperty(instanceList2);
+            Optional<? extends SInstance> obj1 = getInstanceBySortProperty(instanceList1);
+            Optional<? extends SInstance> obj2 = getInstanceBySortProperty(instanceList2);
             return compareTheObject(obj1, obj2);
         }
 
@@ -137,7 +142,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
          * @param obj2 The second object to be comparable.
          * @return return the result of the <code>SIComparable#compareTo</code>.
          */
-        private int compareTheObject(Optional<SInstance> obj1, Optional<SInstance> obj2) {
+        private int compareTheObject(Optional<? extends SInstance> obj1, Optional<? extends SInstance> obj2) {
             if (hasValue(obj1, obj2) && isInstanceOfSIComparable(obj1.get(), obj2.get())) {
                 Integer compareToNullResult = nullsFirstLogic(obj1.get(), obj2.get());
                 if (compareToNullResult != null) {
@@ -148,11 +153,11 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
                 }
                 return ((SIComparable) obj2.get()).compareTo((SIComparable) obj1.get());
             }
-            getLogger().info("The comparator will be the natural compare.");
+            getLogger().info("Don't find a comparable to the objects: " + obj1 + " - " + obj2);
             return ascMode ? -1 : 1;
         }
 
-        private boolean hasValue(Optional<SInstance> obj1, Optional<SInstance> obj2) {
+        private boolean hasValue(Optional<? extends SInstance> obj1, Optional<? extends SInstance> obj2) {
             return obj1.isPresent() && obj2.isPresent()
                     && (obj1.get().getValue() != null || obj2.get().getValue() != null);
         }
@@ -183,17 +188,45 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
         /**
          * This method will try to find the object to be sortable.
          *
-         * @param instance The instance containing a list of objects, the columns of the master detail.
+         * @param rowInstance The instance containing a list of objects, the columns of the master detail.
          * @return Optional with the sortable object.
          */
-        private Optional<SInstance> getObjectBySortProperty(SInstance instance) {
-            if (instance != null && instance.getValue() instanceof ArrayList) {
-                return (Optional<SInstance>) ((ArrayList) instance.getValue())
-                        .parallelStream()
-                        .filter(i -> ((SInstance) i).getType().getNameSimple().equals(sortableProperty))
+        private Optional<? extends SInstance> getInstanceBySortProperty(SInstance rowInstance) {
+            if (rowInstance instanceof SIComposite) {
+                Optional<? extends SInstance> currentSortInstance = rowInstance.getChildren()
+                        .stream()
+                        .filter(isCurrentSortInstance())
                         .findFirst();
+
+                if (currentSortInstance.isPresent() && currentSortInstance.get().getType() instanceof STypeComposite) {
+                    return Optional.of(SFormUtil
+                            .createFuntionForInstanceComposite(sortableProperty)
+                            .apply((SIComposite) currentSortInstance.get()));
+                }
+                return currentSortInstance;
+
             }
             return Optional.empty();
+        }
+
+        /**
+         * This method create a predicate for verify if the instance have a element with the sortableProperty.
+         * <p>Note: This verify with the name of the Stype.
+         *
+         * @return Predicate verify if have a Stype with the <code>sortableProperty</code> for a SIntance.
+         */
+        private Predicate<SInstance> isCurrentSortInstance() {
+            return i -> {
+                SType type = i.getType();
+                boolean hasElement;
+                hasElement = type.getName().equals(sortableProperty);
+                if (!hasElement && type instanceof STypeComposite) {
+                    hasElement = SFormUtil
+                            .createFuntionForInstanceComposite(sortableProperty)
+                            .apply(((SIComposite) i)) != null;
+                }
+                return hasElement;
+            };
         }
 
     }
