@@ -126,9 +126,18 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
 
         @Override
         public int compare(SInstance instanceList1, SInstance instanceList2) {
-            Optional<? extends SInstance> obj1 = getInstanceBySortProperty(instanceList1);
-            Optional<? extends SInstance> obj2 = getInstanceBySortProperty(instanceList2);
-            return compareTheObject(obj1, obj2);
+            SInstance s1 = getInstanceBySortProperty(instanceList1).orElse(null);
+            SInstance s2 = getInstanceBySortProperty(instanceList2).orElse(null);
+            if (s1 != null && s2 != null) {
+                return compareInstances(s1, s2);
+            }
+            if (s1 != null) {
+                return ascMode ? 1 : -1;
+            }
+            if (s2 != null) {
+                return ascMode ? -1 : 1;
+            }
+            return 0;
         }
 
         /**
@@ -137,28 +146,28 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
          * Note: The sort will happen just if the two optional object exists, and the value is a instanceOf SIComparable.
          * Note: If some object in comparable is null, the logic will be the NULLSFIRST.
          *
-         * @param obj1 The first object to be comparable.
-         * @param obj2 The second object to be comparable.
+         * @param s1 The first instance to be compared.
+         * @param s2 The second instance to be compared.
          * @return return the result of the <code>SIComparable#compareTo</code>.
          */
-        private int compareTheObject(Optional<? extends SInstance> obj1, Optional<? extends SInstance> obj2) {
-            if (hasValue(obj1, obj2) && isInstanceOfSIComparable(obj1.get(), obj2.get())) {
-                Integer compareToNullResult = nullsFirstLogic(obj1.get(), obj2.get());
+        @SuppressWarnings("unchecked")
+        private int compareInstances(SInstance s1, SInstance s2) {
+            if (hasValue(s1, s2) && isInstanceOfSIComparable(s1, s2)) {
+                Integer compareToNullResult = nullsFirstLogic(s1, s2);
                 if (compareToNullResult != null) {
                     return compareToNullResult;
                 }
                 if (ascMode) {
-                    return ((SIComparable) obj1.get()).compareTo((SIComparable) obj2.get());
+                    return ((SIComparable) s1).compareTo((SIComparable) s2);
                 }
-                return ((SIComparable) obj2.get()).compareTo((SIComparable) obj1.get());
+                return ((SIComparable) s2).compareTo((SIComparable) s1);
             }
-            getLogger().info("Don't find a comparable to the objects: {} - {} ", obj1, obj2);
+            getLogger().info("The follow instances can't be compared because they don't implements {} : {} - {} ", SIComparable.class.getName(), s1, s2);
             return ascMode ? -1 : 1;
         }
 
-        private boolean hasValue(Optional<? extends SInstance> obj1, Optional<? extends SInstance> obj2) {
-            return obj1.isPresent() && obj2.isPresent()
-                    && (obj1.get().getValue() != null || obj2.get().getValue() != null);
+        private boolean hasValue(SInstance obj1, SInstance obj2) {
+            return obj1.isNotEmptyOfData() || obj2.isNotEmptyOfData();
         }
 
 
@@ -212,7 +221,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
          */
         private Predicate<SInstance> isCurrentSortInstance() {
             return i -> i.getType().getName().equals(sortableProperty)
-                    ||  SFormUtil.findChildByName( i, sortableProperty).isPresent();
+                    || SFormUtil.findChildByName(i, sortableProperty).isPresent();
         }
 
     }
