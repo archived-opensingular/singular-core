@@ -115,9 +115,8 @@ public class PortletRichTextPanel extends Panel implements Loggable {
             }
 
             @Override
-            protected void onComponentTag(ComponentTag tag) {
-                super.onComponentTag(tag);
-                tag.put("target", "_blank" + htmlContent.getMarkupId());
+            protected CharSequence getOnClickScript(CharSequence url) {
+                return "window.open('" + url + "', '_blank" + htmlContent.getMarkupId() + "');";
             }
         };
     }
