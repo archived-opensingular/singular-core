@@ -105,12 +105,11 @@ public class AssertionsSType extends AssertionsSAttributeEnabled<AssertionsSType
     @Nonnull
     public AssertionsSType isDirectComplementaryExtensionOf(@Nullable SType<?> expectedComplementarySuperType) {
         if (expectedComplementarySuperType == null) {
-            if (!getTarget().getComplementarySuperType().isPresent()) {
-                return this;
+            Optional<SType<?>> complementary = getTarget().getComplementarySuperType();
+            if (complementary.isPresent()) {
+                throw new AssertionError(errorMsg("Complementary super type invalid", null, complementary.get()));
             }
-            throw new AssertionError(
-                    errorMsg("Complementary super type invalid", null, getTarget().getComplementarySuperType().get()));
-
+            return this;
         }
         isNotSameAs(expectedComplementarySuperType);
         if (getTarget().getComplementarySuperType().orElse(null) != expectedComplementarySuperType) {
@@ -212,23 +211,18 @@ public class AssertionsSType extends AssertionsSAttributeEnabled<AssertionsSType
      */
     @Nonnull
     public AssertionsSType isComplementaryExtensionCorrect(@Nonnull SType<?> complementarySuperType) {
-        try {
-            isDirectComplementaryExtensionOf(complementarySuperType);
-            if (getTarget().isComposite()) {
-                Assertions.assertThat(complementarySuperType).isInstanceOf(STypeComposite.class);
-                if (!getTarget().isRecursiveReference()) {
-                    for (SType<?> fieldSuper : ((STypeComposite<?>) complementarySuperType).getFields()) {
-                        field(fieldSuper.getNameSimple()).isComplementaryExtensionCorrect(fieldSuper);
-                    }
+        isDirectComplementaryExtensionOf(complementarySuperType);
+        if (getTarget().isComposite()) {
+            Assertions.assertThat(complementarySuperType).isInstanceOf(STypeComposite.class);
+            if (!getTarget().isRecursiveReference()) {
+                for (SType<?> fieldSuper : ((STypeComposite<?>) complementarySuperType).getFields()) {
+                    field(fieldSuper.getNameSimple()).isComplementaryExtensionCorrect(fieldSuper);
                 }
-            } else if (getTarget().isList()) {
-                Assertions.assertThat(complementarySuperType).isInstanceOf(STypeList.class);
-                listElementType().isComplementaryExtensionCorrect(
-                        ((STypeList<?, ?>) complementarySuperType).getElementsType());
             }
-        } catch (AssertionError e) {
-            throw new AssertionError("for " + getTarget() + " the complementaryExtension " + complementarySuperType +
-                    " isn't correct. See stacktrace bellow.", e);
+        } else if (getTarget().isList()) {
+            Assertions.assertThat(complementarySuperType).isInstanceOf(STypeList.class);
+            listElementType().isComplementaryExtensionCorrect(
+                    ((STypeList<?, ?>) complementarySuperType).getElementsType());
         }
         return this;
     }

@@ -19,6 +19,7 @@ package org.opensingular.form;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Representa um mapa de valores de atributos associados a um {@link SType}.
@@ -101,10 +102,12 @@ final class AttributeValuesManagerForSType extends AttributeValuesManager<SType<
         SInstance instance = null;
         for (SType<?> type = target; instance == null && type != stopTypeNotIncluded && type != null; type = type.getSuperType()) {
             instance = type.getAttributeDirectly(ref);
-            if (instance == null && target.getComplementarySuperType().isPresent() && type.getSuperType() != null) {
-                SType<?> complementary = target.getComplementarySuperType().get();
-                SType<?> stop = SFormUtil.findCommonType(type.getSuperType(), complementary);
-                instance = findAttributeInstance(complementary, ref, stop);
+            if (instance == null) {
+                Optional<SType<?>> complementary = target.getComplementarySuperType();
+                if (complementary.isPresent() && type.getSuperType() != null) {
+                    SType<?> stop = SFormUtil.findCommonType(type.getSuperType(), complementary.get());
+                    instance = findAttributeInstance(complementary.get(), ref, stop);
+                }
             }
         }
         return instance;

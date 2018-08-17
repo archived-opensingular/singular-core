@@ -274,10 +274,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         SFormUtil.verifySameDictionary(this, parentTypeCandidate);
         SType<I> current = this;
         while (current != null) {
-            if (current == parentTypeCandidate) {
-                return true;
-            } else if (current.complementarySuperType != null && current.complementarySuperType.isTypeOf(
-                    parentTypeCandidate)) {
+            if (current == parentTypeCandidate ||
+                    (current.complementarySuperType != null && current.complementarySuperType.isTypeOf(
+                            parentTypeCandidate))) {
                 return true;
             }
             current = current.superType;
@@ -299,7 +298,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return this instanceof STypeComposite;
     }
 
-    final AttrInternalRef getAttrInternalRef() {
+    private AttrInternalRef getAttrInternalRef() {
         return attrInternalRef;
     }
 
