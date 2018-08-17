@@ -16,14 +16,10 @@
 
 package org.opensingular.lib.wicket.util.template;
 
-import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.RuntimeConfigurationType;
-import org.apache.wicket.devutils.debugbar.DebugBar;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
 import org.apache.wicket.markup.head.filter.JavaScriptFilteredIntoFooterHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderResponseDecorator;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
