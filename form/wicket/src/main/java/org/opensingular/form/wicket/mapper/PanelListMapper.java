@@ -32,6 +32,8 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
+import org.opensingular.form.view.list.AbstractSViewListWithControls;
+import org.opensingular.form.view.list.ButtonAction;
 import org.opensingular.form.view.list.SViewListByForm;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
@@ -41,6 +43,7 @@ import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.ReadOnlyCurrentInstanceModel;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSCol;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
@@ -200,7 +203,8 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
             header.add($b.classAppender("list-icons"));
 
             if ((viewSupplier.get() != null) && (viewSupplier.get().getButtonsConfig().isEditEnabled(item.getModelObject())) && ctx.getViewMode().isEdition()) {
-                appendInserirButton(this, form, ctx, item, btnGrid.newColInRow()).add($b.classAppender("pull-right"));
+                ButtonAction editButton = viewSupplier.get().getButtonsConfig().getEditButton();
+                appendInserirButton(this, form, ctx, item, btnGrid.newColInRow(), editButton).add($b.classAppender("pull-right"));
             }
 
             final BSCol btnCell = btnGrid.newColInRow();
@@ -219,11 +223,15 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
         }
     }
 
+
+    //TODO verificar se não deve utilziar o remove button da classe AbstractListMapper
     protected static RemoverButton appendRemoverIconButton(ElementsView elementsView, Form<?> form, WicketBuildContext ctx, Item<SInstance> item,
-        BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<SViewListByForm> viewSupplier) {
-        final RemoverButton btn = new RemoverButton("_remover_", form, ctx, elementsView, item, confirmationModal);
+        BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<? extends AbstractSViewListWithControls> viewSupplier) {
+        ButtonAction deleteButton = viewSupplier.get().getButtonsConfig().getDeleteButton();
+        Icon icon = Optional.ofNullable(deleteButton.getIcon()).orElse(DefaultIcons.REMOVE);
+        final RemoverButton btn = new RemoverButton("_remover_", form, ctx, elementsView, item, confirmationModal, deleteButton.getHint());
         cell
-            .newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + DefaultIcons.REMOVE + "' />")
+            .newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + icon+ "' />")
             .add(btn);
         if (viewSupplier.get() != null)
             btn.add($b.onConfigure(c -> c.setVisible(viewSupplier.get().getButtonsConfig().isDeleteEnabled(item.getModelObject()))));

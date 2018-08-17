@@ -35,6 +35,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
+import org.opensingular.form.view.list.ButtonAction;
 import org.opensingular.form.view.list.SViewListByTable;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
@@ -296,7 +297,8 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                 final BSTDataCell actionColumn = row.newCol();
                 if (viewSupplier.get().getButtonsConfig().isEditEnabled(item.getModelObject()) && ctx.getViewMode().isEdition()) {
                     actionColumn.add($b.attrAppender("style", "width:20px", ";"));
-                    appendInserirButton(this, form, ctx, item, actionColumn);
+                    ButtonAction editButton = viewSupplier.get().getButtonsConfig().getEditButton();
+                    appendInserirButton(this, form, ctx, item, actionColumn, editButton);
                 }
             }
 

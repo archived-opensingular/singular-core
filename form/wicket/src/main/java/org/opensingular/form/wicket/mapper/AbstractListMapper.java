@@ -32,7 +32,7 @@ import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.view.list.AbstractSViewListWithControls;
-import org.opensingular.form.view.list.SViewListByTable;
+import org.opensingular.form.view.list.ButtonAction;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackPanel;
@@ -43,6 +43,7 @@ import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.form.wicket.util.WicketFormUtils;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 import org.opensingular.lib.wicket.util.behavior.FadeInOnceBehavior;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
@@ -52,6 +53,7 @@ import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 import org.opensingular.lib.wicket.util.util.Shortcuts;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -64,56 +66,58 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 public abstract class AbstractListMapper implements IWicketComponentMapper {
 
     protected static AddButton appendAddButton(
-        final IModel<SIList<SInstance>> mList,
-        final Form<?> form,
-        final WicketBuildContext ctx,
-        final BSContainer<?> cell,
-        boolean footer) {
+            final IModel<SIList<SInstance>> mList,
+            final Form<?> form,
+            final WicketBuildContext ctx,
+            final BSContainer<?> cell,
+            boolean footer) {
 
         AddButton btn = new AddButton("_add", form, ctx, mList);
         cell.newTemplateTag(t -> ""
-            + "<button"
-            + " wicket:id='_add'"
-            + " class='btn btn-sm " + (footer ? "" : "pull-right") + "'"
-            + " style='" + MapperCommons.BUTTON_STYLE + ";"
-            + (footer ? "margin-top:3px;margin-right:7px;" : "") + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + DefaultIcons.PLUS + "'></i>"
-            + "</button>").add(btn);
+                + "<button"
+                + " wicket:id='_add'"
+                + " class='btn btn-sm " + (footer ? "" : "pull-right") + "'"
+                + " style='" + MapperCommons.BUTTON_STYLE + ";"
+                + (footer ? "margin-top:3px;margin-right:7px;" : "") + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + DefaultIcons.PLUS + "'></i>"
+                + "</button>").add(btn);
 
         return btn;
     }
 
-    protected static InserirButton appendInserirButton(ElementsView elementsView, Form<?> form, WicketBuildContext ctx, Item<SInstance> item, BSContainer<?> cell) {
-        InserirButton btn = new InserirButton("_inserir_", elementsView, form, ctx, item);
+    protected static InserirButton appendInserirButton(ElementsView elementsView, Form<?> form, WicketBuildContext ctx, Item<SInstance> item, BSContainer<?> cell, ButtonAction editButton) {
+        InserirButton btn = new InserirButton("_inserir_", elementsView, form, ctx, item, editButton.getHint());
+        Icon icon = Optional.ofNullable(editButton.getIcon()).orElse(DefaultIcons.PLUS);
         cell
-            .newTemplateTag(tp -> ""
-                + "<button"
-                + " wicket:id='_inserir_'"
-                + " class='btn btn-sm'"
-                + " style='" + MapperCommons.BUTTON_STYLE + ";margin-top:3px;'><i style='" + MapperCommons.ICON_STYLE + "' class='" + DefaultIcons.PLUS + "'></i>"
-                + "</button>")
-            .add(btn);
+                .newTemplateTag(tp -> ""
+                        + "<button"
+                        + " wicket:id='_inserir_'"
+                        + " class='btn btn-sm'"
+                        + " style='" + MapperCommons.BUTTON_STYLE + ";margin-top:3px;'><i style='" + MapperCommons.ICON_STYLE + "' class='" + icon + "'></i>"
+                        + "</button>")
+                .add(btn);
         return btn;
     }
 
     protected static RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, WicketBuildContext ctx, Item<SInstance> item,
-        BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<SViewListByTable> viewSupplier) {
-        RemoverButton btn = new RemoverButton("_remover_", form, ctx, elementsView, item, confirmationModal);
-
+                                                       BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<? extends AbstractSViewListWithControls> viewSupplier) {
+        ButtonAction removeButton = viewSupplier.get().getButtonsConfig().getDeleteButton();
+        RemoverButton btn = new RemoverButton("_remover_", form, ctx, elementsView, item, confirmationModal, removeButton.getHint());
+        Icon icon = Optional.ofNullable(removeButton.getIcon()).orElse(DefaultIcons.REMOVE);
         cell
-            .newTemplateTag(tp -> ""
-                + "<button wicket:id='_remover_' class='singular-remove-btn'>"
-                + "     <i "
-                + "      style='" + MapperCommons.ICON_STYLE + " 'class='" + DefaultIcons.REMOVE + "' />"
-                + "</button>")
-            .add(btn);
+                .newTemplateTag(tp -> ""
+                        + "<button wicket:id='_remover_' class='singular-remove-btn'>"
+                        + "     <i "
+                        + "      style='" + MapperCommons.ICON_STYLE + " 'class='" + icon + "' />"
+                        + "</button>")
+                .add(btn);
 
         return btn;
     }
 
     @SuppressWarnings("unchecked")
     protected static void buildFooter(BSContainer<?> footer,
-        Form<?> form,
-        WicketBuildContext ctx) {
+                                      Form<?> form,
+                                      WicketBuildContext ctx) {
         Factory createAddButton = () -> new AddButton("_add", form, ctx, (IModel<SIList<SInstance>>) ctx.getModel());
         buildFooter(footer, ctx, createAddButton);
 
@@ -132,7 +136,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
 
     public static boolean canAddItems(WicketBuildContext ctx) {
         return ((AbstractSViewListWithControls<?>) ctx.getView()).isNewEnabled((SIList<?>) ctx.getModel().getObject())
-            && ctx.getViewMode().isEdition();
+                && ctx.getViewMode().isEdition();
     }
 
     protected static String createButtonMarkup(WicketBuildContext ctx) {
@@ -155,12 +159,12 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         SType<?> type = ctx.getCurrentInstance().getType();
         AbstractSViewListWithControls<?> view = (AbstractSViewListWithControls<?>) ctx.getView();
         return view.label().orElse(
-            Optional.ofNullable(Optional.ofNullable(type.asAtr().getItemLabel()).orElseGet(() -> type.asAtr().getLabel()))
-                .map((x) -> {
-                    String[] parts = x.trim().split(" ");
-                    return "Adicionar " + parts[0];
-                })
-                .orElse("Adicionar item"));
+                Optional.ofNullable(Optional.ofNullable(type.asAtr().getItemLabel()).orElseGet(() -> type.asAtr().getLabel()))
+                        .map((x) -> {
+                            String[] parts = x.trim().split(" ");
+                            return "Adicionar " + parts[0];
+                        })
+                        .orElse("Adicionar item"));
     }
 
     protected void addInitialNumberOfLines(SType<?> currentType, SIList<?> list, ISupplier<? extends AbstractSViewListWithControls<?>> viewSupplier) {
@@ -174,7 +178,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
 
     protected static abstract class ElementsView extends RefreshingView<SInstance> {
 
-        private final WebMarkupContainer        parentContainer;
+        private final WebMarkupContainer parentContainer;
         private IFunction<Component, Component> renderedChildFunction = c -> c;
 
         public ElementsView(String id, IModel<SIList<SInstance>> model, WebMarkupContainer parentContainer) {
@@ -275,10 +279,10 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                 return $parent.append(".prepend(").append(emptyMarkupString).append(");");
             }
             return findChildByInstance(getModelObject().get(index - 1))
-                .map(component -> $parent.append(".find('#")
-                    .append(renderedChildFunction.apply(component).getMarkupId())
-                    .append("').after(").append(emptyMarkupString).append(");"))
-                .orElseGet(() -> $parent.append(".append(").append(emptyMarkupString).append(");"));
+                    .map(component -> $parent.append(".find('#")
+                            .append(renderedChildFunction.apply(component).getMarkupId())
+                            .append("').after(").append(emptyMarkupString).append(");"))
+                    .orElseGet(() -> $parent.append(".append(").append(emptyMarkupString).append(");"));
         }
 
         private Optional<Component> findChildByInstance(SInstance instance) {
@@ -300,17 +304,19 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         }
     }
 
-    protected static class InserirButton extends ActionAjaxButton {
-        private final WicketBuildContext ctx;private final Item<SInstance> item;
+    public static class InserirButton extends ActionAjaxButton {
+        private final WicketBuildContext ctx;
+        private final Item<SInstance> item;
         private final ElementsView elementsView;
 
-        protected InserirButton(String id, ElementsView elementsView, Form<?> form, WicketBuildContext ctx, Item<SInstance> item) {
+
+        protected InserirButton(String id, ElementsView elementsView, Form<?> form, WicketBuildContext ctx, Item<SInstance> item, @Nullable String title) {
             super(id, form);
             this.setDefaultFormProcessing(false);
             this.ctx = ctx;
             this.elementsView = elementsView;
             this.item = item;
-            add($b.attr("title", "Nova Linha"));
+            add($b.attr("title", Optional.ofNullable(title).orElse("Nova Linha")));
         }
 
         @Override
@@ -321,19 +327,20 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         }
     }
 
-    protected static class RemoverButton extends ActionAjaxButton {
-        private final WicketBuildContext ctx;private final ElementsView elementsView;
+    public static class RemoverButton extends ActionAjaxButton {
+        private final WicketBuildContext ctx;
+        private final ElementsView elementsView;
         private final Item<SInstance> item;
         private final ConfirmationModal confirmationModal;
 
-        protected RemoverButton(String id, Form<?> form, WicketBuildContext ctx, ElementsView elementsView, Item<SInstance> item, ConfirmationModal confirmationModal) {
+        protected RemoverButton(String id, Form<?> form, WicketBuildContext ctx, ElementsView elementsView, Item<SInstance> item, ConfirmationModal confirmationModal, @Nullable String title) {
             super(id, form);
             this.setOutputMarkupId(true);
             this.setDefaultFormProcessing(false);
             this.ctx = ctx;
             this.elementsView = elementsView;
             this.item = item;
-            add($b.attr("title", "Remover Linha"));
+            add($b.attr("title", Optional.ofNullable(title).orElse("Remover Linha")));
 
             this.confirmationModal = confirmationModal;
         }
@@ -358,12 +365,12 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
 
         private final Form<?> form;
         private final IModel<SIList<SInstance>> listModel;
-        private final WicketBuildContext        ctx;
+        private final WicketBuildContext ctx;
 
         public AddButton(String id, Form<?> form, WicketBuildContext ctx, IModel<SIList<SInstance>> mList) {
             super(id);
             this.form = form;
-                        this.ctx = ctx;
+            this.ctx = ctx;
             this.listModel = mList;
             add($b.attr("title", "Adicionar Linha"));
         }
