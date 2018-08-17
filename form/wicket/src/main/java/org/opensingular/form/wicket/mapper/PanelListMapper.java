@@ -186,12 +186,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
             Model<Serializable> model = new Model<Serializable>() {
                 @Override
                 public Serializable getObject() {
-                    SViewListByForm view = (SViewListByForm) ctx.getView();
-                    if (view.getHeaderPath() != null) {
-                        return Optional.ofNullable(item.getModelObject().getValue(view.getHeaderPath())).orElse("").toString();
-                    } else {
-                        return item.getModelObject().toStringDisplay();
-                    }
+                    return item.getModelObject().toStringDisplay();
                 }
             };
             title.newTemplateTag(tp -> "<span wicket:id='_title' ></span>")
