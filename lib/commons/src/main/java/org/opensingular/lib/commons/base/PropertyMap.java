@@ -141,7 +141,7 @@ public final class PropertyMap {
         PropertyEntry current = entries.get(key);
         if (current != null) {
             SingularPropertyException e = new SingularPropertyException("The property '" + key +
-                    "' is already definied. It's not allowed to have the same property set twice.");
+                    "' is already defined. It's not allowed to have the same property set twice.");
             e.add("key", key);
             e.add("current Source", current.getSource());
             e.add("new Source", source);
