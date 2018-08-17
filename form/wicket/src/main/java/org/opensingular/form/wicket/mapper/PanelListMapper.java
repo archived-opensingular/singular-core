@@ -89,67 +89,67 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
         ctx.configureContainer(label);
 
         return MetronicPanel.MetronicPanelBuilder.build(id,
-            (heading, form) -> {
-                heading.appendTag("span", new Label("_title", label));
+                (heading, form) -> {
+                    heading.appendTag("span", new Label("_title", label));
 
-                IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
-                    this,
-                    RequestCycle.get().find(AjaxRequestTarget.class),
-                    listModel,
-                    listModel.getObject(),
-                    ctx,
-                    ctx.getContainer());
+                    IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
+                            this,
+                            RequestCycle.get().find(AjaxRequestTarget.class),
+                            listModel,
+                            listModel.getObject(),
+                            ctx,
+                            ctx.getContainer());
 
-                SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
-                    heading,
-                    this.instanceActionsProviders,
-                    listModel,
-                    false,
-                    internalContextListProvider);
+                    SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
+                            heading,
+                            this.instanceActionsProviders,
+                            listModel,
+                            false,
+                            internalContextListProvider);
 
-                heading.add($b.visibleIf(() -> !ctx.getHint(HIDE_LABEL)
-                    || !this.instanceActionsProviders.actionList(listModel).isEmpty()));
-            },
-            (content, form) -> {
+                    heading.add($b.visibleIf(() -> !ctx.getHint(HIDE_LABEL)
+                            || !this.instanceActionsProviders.actionList(listModel).isEmpty()));
+                },
+                (content, form) -> {
 
-                TemplatePanel list = content.newTemplateTag(t -> ""
-                    + "    <ul wicket:id='_u' class='list-group list-by-form'>"
-                    + "      <li wicket:id='_e' class='list-group-item' style='margin-bottom:15px'>"
-                    + "         <div wicket:id='_r'></div>"
-                    + "      </li>"
-                    + "      <div wicket:id='_empty' class='list-by-form-empty-state'>"
-                    + "         <span>Nenhum item foi adicionado</span>"
-                    + "      </div>"
-                    + "    </ul>");
+                    TemplatePanel list = content.newTemplateTag(t -> ""
+                            + "    <ul wicket:id='_u' class='list-group list-by-form'>"
+                            + "      <li wicket:id='_e' class='list-group-item' style='margin-bottom:15px'>"
+                            + "         <div wicket:id='_r'></div>"
+                            + "      </li>"
+                            + "      <div wicket:id='_empty' class='list-by-form-empty-state'>"
+                            + "         <span>Nenhum item foi adicionado</span>"
+                            + "      </div>"
+                            + "    </ul>");
 
-                final WebMarkupContainer container = new WebMarkupContainer("_u");
-                final PanelElementsView elements = new PanelElementsView("_e", listModel, ctx, form, container);
-                final WebMarkupContainer empty = new WebMarkupContainer("_empty");
+                    final WebMarkupContainer container = new WebMarkupContainer("_u");
+                    final PanelElementsView elements = new PanelElementsView("_e", listModel, ctx, form, container);
+                    final WebMarkupContainer empty = new WebMarkupContainer("_empty");
 
-                list
-                    .add(container
-                        .add(elements
-                            .add($b.onConfigure(c -> c.setVisible(!listModel.getObject().isEmpty()))))
-                        .add(empty
-                            .add($b.onConfigure(c -> c.setVisible(listModel.getObject().isEmpty())))));
-                content.getParent()
-                    .add(dependsOnModifier(listModel));
-            },
-            (f, form) -> buildFooter(f, form, ctx));
+                    list
+                            .add(container
+                                    .add(elements
+                                            .add($b.onConfigure(c -> c.setVisible(!listModel.getObject().isEmpty()))))
+                                    .add(empty
+                                            .add($b.onConfigure(c -> c.setVisible(listModel.getObject().isEmpty())))));
+                    content.getParent()
+                            .add(dependsOnModifier(listModel));
+                },
+                (f, form) -> buildFooter(f, form, ctx));
 
     }
 
     private static final class PanelElementsView extends ElementsView {
 
-        private final Form<?>            form;
+        private final Form<?> form;
         private final WicketBuildContext ctx;
-        private final ConfirmationModal  confirmationModal;
+        private final ConfirmationModal confirmationModal;
 
         private PanelElementsView(String id,
-            IModel<SIList<SInstance>> model,
-            WicketBuildContext ctx,
-            Form<?> form,
-            WebMarkupContainer parentContainer) {
+                                  IModel<SIList<SInstance>> model,
+                                  WicketBuildContext ctx,
+                                  Form<?> form,
+                                  WebMarkupContainer parentContainer) {
             super(id, model, parentContainer);
             this.ctx = ctx;
             this.form = form;
@@ -160,11 +160,10 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
         public void renderHead(IHeaderResponse response) {
             super.renderHead(response);
             PackageResourceReference cssFile =
-                new PackageResourceReference(this.getClass(), "PanelElementsView.js");
+                    new PackageResourceReference(this.getClass(), "PanelElementsView.js");
             JavaScriptHeaderItem javascriptItem = JavaScriptHeaderItem.forReference(cssFile);
 
             response.render(javascriptItem);
-            // response.render(OnDomReadyHeaderItem.forScript("appendListItemEvent();"));
         }
 
         @Override
@@ -196,24 +195,30 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
                 }
             };
             title.newTemplateTag(tp -> "<span wicket:id='_title' ></span>")
-                .add(new Label("_title", model));
+                    .add(new Label("_title", model));
 
             final BSGrid btnGrid = header.newCol(1).newGrid();
 
             header.add($b.classAppender("list-icons"));
 
-            if ((viewSupplier.get() != null) && (viewSupplier.get().getButtonsConfig().isEditEnabled(item.getModelObject())) && ctx.getViewMode().isEdition()) {
+            if (isEdition(viewSupplier) && (viewSupplier.get().getButtonsConfig().isEditEnabled(item.getModelObject()))) {
                 ButtonAction editButton = viewSupplier.get().getButtonsConfig().getEditButton();
-                appendInserirButton(this, form, ctx, item, btnGrid.newColInRow(), editButton).add($b.classAppender("pull-right"));
+                appendInserirButton(this, form, ctx, item, title, editButton)
+                        .add($b.classAppender("pull-left"))
+                        .add($b.attrAppender("style", " margin-right:10px", ";"));
             }
 
             final BSCol btnCell = btnGrid.newColInRow();
 
-            if (ctx.getViewMode().isEdition()) {
+            if (isEdition(viewSupplier) && viewSupplier.get().getButtonsConfig().isDeleteEnabled(item.getModelObject())) {
                 appendRemoverIconButton(this, form, ctx, item, btnCell, confirmationModal, viewSupplier)
-                    .add($b.classAppender("pull-right"));
+                        .add($b.classAppender("pull-right"));
             }
 
+        }
+
+        private boolean isEdition(ISupplier<SViewListByForm> viewSupplier) {
+            return viewSupplier.get() != null && ctx.getViewMode().isEdition();
         }
 
         private void buildBody(Item<SInstance> item, BSGrid grid) {
@@ -226,13 +231,13 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
 
     //TODO verificar se não deve utilziar o remove button da classe AbstractListMapper
     protected static RemoverButton appendRemoverIconButton(ElementsView elementsView, Form<?> form, WicketBuildContext ctx, Item<SInstance> item,
-        BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<? extends AbstractSViewListWithControls> viewSupplier) {
+                                                           BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<? extends AbstractSViewListWithControls> viewSupplier) {
         ButtonAction deleteButton = viewSupplier.get().getButtonsConfig().getDeleteButton();
         Icon icon = Optional.ofNullable(deleteButton.getIcon()).orElse(DefaultIcons.REMOVE);
         final RemoverButton btn = new RemoverButton("_remover_", form, ctx, elementsView, item, confirmationModal, deleteButton.getHint());
         cell
-            .newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + icon+ "' />")
-            .add(btn);
+                .newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + icon + "' />")
+                .add(btn);
         if (viewSupplier.get() != null)
             btn.add($b.onConfigure(c -> c.setVisible(viewSupplier.get().getButtonsConfig().isDeleteEnabled(item.getModelObject()))));
         return btn;

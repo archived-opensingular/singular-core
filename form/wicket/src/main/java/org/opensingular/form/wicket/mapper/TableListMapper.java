@@ -35,6 +35,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
+import org.opensingular.form.view.list.AbstractSViewListWithControls;
 import org.opensingular.form.view.list.ButtonAction;
 import org.opensingular.form.view.list.SViewListByTable;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
@@ -293,7 +294,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
 
             final ISupplier<SViewListByTable> viewSupplier = ctx.getViewSupplier(SViewListByTable.class);
 
-            if (viewSupplier.get().getButtonsConfig().isEditVisible()) {
+            if (isEdition(viewSupplier) && viewSupplier.get().getButtonsConfig().isEditVisible()) {
                 final BSTDataCell actionColumn = row.newCol();
                 if (viewSupplier.get().getButtonsConfig().isEditEnabled(item.getModelObject()) && ctx.getViewMode().isEdition()) {
                     actionColumn.add($b.attrAppender("style", "width:20px", ";"));
@@ -314,7 +315,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                 ctx.createChild(row.newCol(), ctx.getExternalContainer(), itemModel).setHint(HIDE_LABEL, Boolean.FALSE).build();
             }
 
-            if (ctx.getViewMode().isEdition() && viewSupplier.get().getButtonsConfig().isDeleteEnabled(item.getModelObject())) {
+            if (isEdition(viewSupplier) && viewSupplier.get().getButtonsConfig().isDeleteEnabled(item.getModelObject())) {
                 final BSTDataCell actionColumnRemove = row.newCol();
                 actionColumnRemove.add($b.attrAppender("style", "width:20px", ";"));
                 appendRemoverButton(this, form, ctx, item, actionColumnRemove, confirmationModal, viewSupplier);
@@ -323,7 +324,12 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
 
             item.add(row);
         }
+
+        private boolean isEdition(ISupplier<? extends AbstractSViewListWithControls> viewSupplier) {
+            return viewSupplier.get() != null && ctx.getViewMode().isEdition();
+        }
     }
+
 
     private static abstract class TableListPanel extends MetronicPanel {
 
