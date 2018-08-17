@@ -23,7 +23,6 @@ import org.opensingular.form.SFormUtil;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.SIComparable;
 import org.opensingular.form.view.SViewListByMasterDetail;
@@ -197,14 +196,10 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
                         .stream()
                         .filter(isCurrentSortInstance())
                         .findFirst();
-
                 if (currentSortInstance.isPresent() && currentSortInstance.get().getType() instanceof STypeComposite) {
-                    return Optional.of(SFormUtil
-                            .createFuntionForInstanceComposite(sortableProperty)
-                            .apply((SIComposite) currentSortInstance.get()));
+                    return SFormUtil.findChildByName(currentSortInstance.get(), sortableProperty);
                 }
                 return currentSortInstance;
-
             }
             return Optional.empty();
         }
@@ -216,17 +211,8 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
          * @return Predicate verify if have a Stype with the <code>sortableProperty</code> for a SIntance.
          */
         private Predicate<SInstance> isCurrentSortInstance() {
-            return i -> {
-                SType type = i.getType();
-                boolean hasElement;
-                hasElement = type.getName().equals(sortableProperty);
-                if (!hasElement && type instanceof STypeComposite) {
-                    hasElement = SFormUtil
-                            .createFuntionForInstanceComposite(sortableProperty)
-                            .apply((SIComposite) i) != null;
-                }
-                return hasElement;
-            };
+            return i -> i.getType().getName().equals(sortableProperty)
+                    ||  SFormUtil.findChildByName( i, sortableProperty).isPresent();
         }
 
     }

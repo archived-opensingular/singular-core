@@ -415,21 +415,17 @@ public final class SFormUtil {
     }
 
     /**
-     *
-     * This method will create a function that find a SInstance in a SIComposite.
-     *
-     * @param sTypeName The full name of the instance.
-     * @return Function that will receive a SIComposite and return the SInstance according the parameter in method.
+     * Find a child by the name ({@link SType#getName()})
+     * @param parent the parent instance
+     * @param childName the complete name of the child {@link SType#getName()}
+     * @return the chield
      */
-    public static IFunction<SIComposite, SInstance> createFuntionForInstanceComposite(String sTypeName) {
-        return composto -> {
-            if (sTypeName == null || composto == null) {
-                return composto;
-            }
-
-            SType<?> sType = composto.getDictionary().getType(sTypeName);
-            return (SInstance) composto.findDescendant(sType).orElse(null);
-        };
+    public static Optional<? extends SInstance> findChildByName(@Nonnull SInstance parent, @Nonnull String childName) {
+        if(parent instanceof SIComposite) {
+            SType<?> sType = parent.getDictionary().getType(childName);
+            return ((SIComposite)parent).findDescendant(sType);
+        }
+        return Optional.empty();
     }
 
 }

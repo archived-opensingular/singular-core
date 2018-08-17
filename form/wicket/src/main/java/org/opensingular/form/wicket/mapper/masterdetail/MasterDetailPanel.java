@@ -27,7 +27,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.SFormUtil;
-import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -406,15 +405,14 @@ public class MasterDetailPanel extends Panel {
     private void propertyColumnAppender(BSDataTableBuilder<SInstance, String, ?> builder,
                                         IModel<String> labelModel, String sTypeNameModel, String columnSortName,
                                         IFunction<SInstance, String> displayValueFunction) {
-        IFunction<SIComposite, SInstance> toInstance = SFormUtil.createFuntionForInstanceComposite(sTypeNameModel);
-        IFunction<SInstance, Object> propertyFunction = o -> displayValueFunction.apply(toInstance.apply((SIComposite) o));
+        IFunction<SInstance, Object> propertyFunction = o -> displayValueFunction.apply(findChildByNameOrElseParent((SInstance) o, sTypeNameModel));
         builder.appendColumn(new BSPropertyColumn<SInstance, String>(labelModel, columnSortName, propertyFunction) {
             @Override
             public IModel getDataModel(IModel rowModel) {
                 return new ISInstanceAwareModel<Object>() {
                     @Override
                     public Object getObject() {
-                        return propertyFunction.apply((SInstance) rowModel.getObject());
+                        return displayValueFunction.apply(getSInstance());
                     }
 
                     @Override
@@ -429,11 +427,17 @@ public class MasterDetailPanel extends Panel {
 
                     @Override
                     public SInstance getSInstance() {
-                        return toInstance.apply((SIComposite) rowModel.getObject());
+                        return findChildByNameOrElseParent((SInstance) rowModel.getObject(), sTypeNameModel);
                     }
                 };
             }
         });
+    }
+
+    private SInstance findChildByNameOrElseParent(SInstance parent, String childName) {
+        return SFormUtil.findChildByName(parent, childName)
+                .map(SInstance.class::cast)
+                .orElse(parent);
     }
 
     private BaseDataProvider<SInstance, String> newDataProvider(ISupplier<SViewListByMasterDetail> viewSupplier) {
