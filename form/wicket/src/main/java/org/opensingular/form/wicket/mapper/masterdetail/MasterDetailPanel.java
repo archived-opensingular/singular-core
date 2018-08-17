@@ -53,7 +53,6 @@ import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
-import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
@@ -78,7 +77,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -89,25 +87,25 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class MasterDetailPanel extends Panel {
 
-    private final WicketBuildContext        ctx;
+    private final WicketBuildContext ctx;
     private final IModel<SIList<SInstance>> list;
-    private final MasterDetailModal         modal;
+    private final MasterDetailModal modal;
     private final SInstanceActionsProviders instanceActionsProviders;
 
-    private SingularFormWicket<?>           form;
-    private WebMarkupContainer              head;
-    private Label                           headLabel;
-    private BSContainer<?>                  actionsContainer;
-    private WebMarkupContainer              body;
-    private Component                       table;
-    private WebMarkupContainer              footer;
-    private AjaxLink<?>                     addButton;
-    private Label                           addButtonLabel;
+    private SingularFormWicket<?> form;
+    private WebMarkupContainer head;
+    private Label headLabel;
+    private BSContainer<?> actionsContainer;
+    private WebMarkupContainer body;
+    private Component table;
+    private WebMarkupContainer footer;
+    private AjaxLink<?> addButton;
+    private Label addButtonLabel;
     private SValidationFeedbackCompactPanel feedback;
     private ConfirmationModal confirmationModal;
 
     public MasterDetailPanel(String id, WicketBuildContext ctx, IModel<SIList<SInstance>> list, MasterDetailModal modal,
-        SInstanceActionsProviders instanceActionsProviders) {
+                             SInstanceActionsProviders instanceActionsProviders) {
         super(id);
         this.ctx = ctx;
         this.list = list;
@@ -127,30 +125,30 @@ public class MasterDetailPanel extends Panel {
 
     private void addComponents() {
         add(form
-            .add(head
-                .add(headLabel)
-                .add(actionsContainer))
-            .add(body
-                .add(table))
-            .add(footer
-                .add(addButton
-                    .add(addButtonLabel)))
-            .add(feedback));
+                .add(head
+                        .add(headLabel)
+                        .add(actionsContainer))
+                .add(body
+                        .add(table))
+                .add(footer
+                        .add(addButton
+                                .add(addButtonLabel)))
+                .add(feedback));
 
         IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
-            this,
-            RequestCycle.get().find(AjaxRequestTarget.class),
-            ctx.getModel(),
-            ctx.getModel().getObject(),
-            ctx,
-            ctx.getContainer());
+                this,
+                RequestCycle.get().find(AjaxRequestTarget.class),
+                ctx.getModel(),
+                ctx.getModel().getObject(),
+                ctx,
+                ctx.getContainer());
 
         SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
-            actionsContainer,
-            this.instanceActionsProviders,
-            ctx.getModel(),
-            false,
-            internalContextListProvider);
+                actionsContainer,
+                this.instanceActionsProviders,
+                ctx.getModel(),
+                false,
+                internalContextListProvider);
 
     }
 
@@ -177,18 +175,18 @@ public class MasterDetailPanel extends Panel {
     }
 
     private BSDataTable<SInstance, ?> newTable(String id) {
-
-        final BSDataTableBuilder<SInstance, Object, ?> builder = new MasterDetailBSDataTableBuilder<>(newDataProvider()).withNoRecordsToolbar();
+        ISupplier<SViewListByMasterDetail> viewSupplier = ctx.getViewSupplier(SViewListByMasterDetail.class);
+        final BSDataTableBuilder<SInstance, String, ?> builder = new MasterDetailBSDataTableBuilder<>(newDataProvider(viewSupplier)).withNoRecordsToolbar();
         final BSDataTable<SInstance, ?> dataTable;
 
-        ISupplier<SViewListByMasterDetail> viewSupplier = ctx.getViewSupplier(SViewListByMasterDetail.class);
         configureColumns(viewSupplier.get().getColumns(), builder, list, modal, ctx, ctx.getViewMode(), viewSupplier);
         dataTable = builder.build(id);
 
         dataTable.setOnNewRowItem((IConsumer<Item<SInstance>>) rowItem -> {
+            rowItem.setOutputMarkupId(true);
             SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(new FeedbackFence(rowItem))
-                .addInstanceModel(rowItem.getModel())
-                .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(rowItem)));
+                    .addInstanceModel(rowItem.getModel())
+                    .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(rowItem)));
             rowItem.add($b.classAppender("singular-form-table-row can-have-error"));
             rowItem.add($b.classAppender("has-errors", $m.ofValue(feedbackHandler).map(SValidationFeedbackHandler::containsNestedErrors)));
         });
@@ -235,40 +233,42 @@ public class MasterDetailPanel extends Panel {
     }
 
     private void configureColumns(
-        List<SViewListByMasterDetail.Column> mapColumns,
-        BSDataTableBuilder<SInstance, Object, ?> builder,
-        IModel<? extends SInstance> model,
-        MasterDetailModal modal,
-        WicketBuildContext ctx,
-        ViewMode viewMode,
-        ISupplier<SViewListByMasterDetail> viewSupplier) {
+            List<SViewListByMasterDetail.Column> mapColumns,
+            BSDataTableBuilder<SInstance, String, ?> builder,
+            IModel<? extends SInstance> model,
+            MasterDetailModal modal,
+            WicketBuildContext ctx,
+            ViewMode viewMode,
+            ISupplier<SViewListByMasterDetail> viewSupplier) {
 
         final List<ColumnType> columnTypes = new ArrayList<>();
 
         if (mapColumns.isEmpty()) {
             final SType<?> type = ((SIList<?>) model.getObject()).getElementsType();
             if (type instanceof STypeSimple) {
-                columnTypes.add(new ColumnType(type.getName(), null));
+                columnTypes.add(new ColumnType(type.getName(), null, type.getNameSimple()));
             } else if (type.isComposite()) {
                 ((STypeComposite<?>) type)
-                    .getFields()
-                    .stream()
-                    .filter(sType -> sType instanceof STypeSimple)
-                    .forEach(sType -> columnTypes.add(new ColumnType(sType.getName(), null)));
+                        .getFields()
+                        .stream()
+                        .filter(sType -> sType instanceof STypeSimple)
+                        .forEach(sType -> columnTypes.add(new ColumnType(sType.getName(), null, sType.getNameSimple())));
             }
         } else {
             mapColumns.forEach((col) -> columnTypes.add(
-                new ColumnType(
-                    Optional.ofNullable(col.getTypeName())
-                        .orElse(null),
-                    col.getCustomLabel(), col.getDisplayValueFunction())));
+                    new ColumnType(
+                            Optional.ofNullable(col.getTypeName())
+                                    .orElse(null),
+                            col.getCustomLabel(), col.getColumnSortName(), col.getDisplayValueFunction())));
         }
 
+        final boolean disabledSort = viewSupplier.get().isDisableSort();
         for (ColumnType columnType : columnTypes) {
             final String label = columnType.getCustomLabel(model.getObject());
             final String typeName = columnType.getTypeName();
+            final String columnSort = disabledSort ? null : columnType.getColumnSortName();
             final IModel<String> labelModel = $m.ofValue(label);
-            propertyColumnAppender(builder, labelModel, $m.get(() -> typeName), columnType.getDisplayFunction());
+            propertyColumnAppender(builder, labelModel, $m.get(() -> typeName), columnSort, columnType.getDisplayFunction());
         }
 
         actionColumnAppender(builder, model, modal, ctx, viewMode, viewSupplier);
@@ -278,11 +278,11 @@ public class MasterDetailPanel extends Panel {
      * Adiciona as ações a coluna de ações de mestre detalhe.
      */
     private void actionColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder,
-        IModel<? extends SInstance> model,
-        MasterDetailModal modal,
-        WicketBuildContext ctx,
-        ViewMode vm,
-        ISupplier<SViewListByMasterDetail> viewSupplier) {
+                                      IModel<? extends SInstance> model,
+                                      MasterDetailModal modal,
+                                      WicketBuildContext ctx,
+                                      ViewMode vm,
+                                      ISupplier<SViewListByMasterDetail> viewSupplier) {
         builder.appendActionColumn($m.ofValue(viewSupplier.get().getActionColumnLabel()), ac -> {
             ac.appendAction(buildViewOrEditActionConfig(vm, viewSupplier), buildViewOrEditAction(modal, ctx));
             if (vm.isEdition()) {
@@ -296,11 +296,11 @@ public class MasterDetailPanel extends Panel {
 
     private BSActionPanel.ActionConfig<SInstance> buildRemoveActionConfig(ISupplier<SViewListByMasterDetail> viewSupplier) {
         return new BSActionPanel.ActionConfig<SInstance>()
-            .styleClasses(Model.of("list-detail-remove"))
-            .iconeModel(Model.of(DefaultIcons.REMOVE))
-            .titleFunction(rowModel -> "Remover")
-            .labelModel($m.ofValue("Remover"))
-            .visibleFor(m -> viewSupplier.get().isDeleteEnabled(m.getObject()));
+                .styleClasses(Model.of("list-detail-remove"))
+                .iconeModel(Model.of(DefaultIcons.REMOVE))
+                .titleFunction(rowModel -> "Remover")
+                .labelModel($m.ofValue("Remover"))
+                .visibleFor(m -> viewSupplier.get().isDeleteEnabled(m.getObject()));
     }
 
     private IBSAction<SInstance> buildRemoveAction(IModel<? extends SInstance> model, WicketBuildContext ctx) {
@@ -311,7 +311,6 @@ public class MasterDetailPanel extends Panel {
                 t.add(ctx.getContainer());
                 WicketFormProcessing.onFieldProcess(MasterDetailPanel.this.form, t, model);
             };
-            //            target.add(confirmationModal);
             confirmationModal.show(target, confirmationAction);
         };
     }
@@ -319,9 +318,9 @@ public class MasterDetailPanel extends Panel {
     private BSActionPanel.ActionConfig<SInstance> buildViewOrEditActionConfig(ViewMode viewMode, ISupplier<SViewListByMasterDetail> viewSupplier) {
         final Icon openModalIcon = viewMode.isEdition() && viewSupplier.get().isEditEnabled() ? DefaultIcons.PENCIL : DefaultIcons.EYE;
         return new BSActionPanel.ActionConfig<SInstance>()
-            .iconeModel(Model.of(openModalIcon))
-            .styleClasses(Model.of("list-detail-edit"))
-            .titleFunction(rowModel -> viewMode.isEdition() && viewSupplier.get().isEditEnabled() ? "Editar" : "Visualizar");
+                .iconeModel(Model.of(openModalIcon))
+                .styleClasses(Model.of("list-detail-edit"))
+                .titleFunction(rowModel -> viewMode.isEdition() && viewSupplier.get().isEditEnabled() ? "Editar" : "Visualizar");
     }
 
     private IBSAction<SInstance> buildViewOrEditAction(MasterDetailModal modal, WicketBuildContext ctx) {
@@ -330,11 +329,11 @@ public class MasterDetailPanel extends Panel {
 
     private BSActionPanel.ActionConfig<SInstance> buildShowErrorsActionConfig(IModel<? extends SInstance> model) {
         return new BSActionPanel.ActionConfig<SInstance>()
-            .iconeModel(IReadOnlyModel.of(() -> DefaultIcons.EXCLAMATION_TRIANGLE))
-            .styleClasses(Model.of("red"))
-            .titleFunction(rowModel -> IMappingModel.of(rowModel).map(it -> (it.getNestedValidationErrors().size() + " erro(s) encontrado(s)")).getObject())
-            .visibleFor(rowModel -> !rowModel.getObject().getNestedValidationErrors().isEmpty())
-            .style($m.ofValue(MapperCommons.BUTTON_STYLE));
+                .iconeModel(IReadOnlyModel.of(() -> DefaultIcons.EXCLAMATION_TRIANGLE))
+                .styleClasses(Model.of("red"))
+                .titleFunction(rowModel -> IMappingModel.of(rowModel).map(it -> (it.getNestedValidationErrors().size() + " erro(s) encontrado(s)")).getObject())
+                .visibleFor(rowModel -> !rowModel.getObject().getNestedValidationErrors().isEmpty())
+                .style($m.ofValue(MapperCommons.BUTTON_STYLE));
     }
 
     private IBSAction<SInstance> buildShowErrorsAction() {
@@ -346,18 +345,18 @@ public class MasterDetailPanel extends Panel {
                 Collection<ValidationError> errors = baseInstance.getNestedValidationErrors();
                 if ((errors != null) && !errors.isEmpty()) {
                     String alertLevel = errors.stream()
-                        .map(ValidationError::getErrorLevel).max(Comparator.naturalOrder())
-                        .map(it -> it.le(ValidationErrorLevel.WARNING) ? "alert-warning" : "alert-danger")
-                        .orElse(null);
+                            .map(ValidationError::getErrorLevel).max(Comparator.naturalOrder())
+                            .map(it -> it.le(ValidationErrorLevel.WARNING) ? "alert-warning" : "alert-danger")
+                            .orElse(null);
 
                     final StringBuilder sb = new StringBuilder("<div><ul class='list-unstyled alert ").append(alertLevel).append("'>");
                     for (ValidationError error : errors) {
                         Optional<SInstance> inst = doc.findInstanceById(error.getInstanceId());
                         inst.ifPresent(sInstance -> sb.append("<li>")
-                            .append(SFormUtil.generateUserFriendlyPath(sInstance, baseInstance))
-                            .append(": ")
-                            .append(error.getMessage())
-                            .append("</li>"));
+                                .append(SFormUtil.generateUserFriendlyPath(sInstance, baseInstance))
+                                .append(": ")
+                                .append(error.getMessage())
+                                .append("</li>"));
                     }
                     sb.append("</ul></div>");
 
@@ -378,35 +377,35 @@ public class MasterDetailPanel extends Panel {
         IPredicate<SInstance> hasAnyAnnotable = it -> it.asAtrAnnotation().hasAnyAnnotable();
         IPredicate<SInstance> hasAnyAnnotation = it -> it.asAtrAnnotation().hasAnyAnnotationOnTree();
         //@formatter:off
-        IFunction<SInstance, String> titleFunc = it -> 
-            hasAnyRefusal   .test(it) ? "Possui anotação rejeitada"
-          : hasAnyAnnotation.test(it) ? "Possui anotação"
-          : hasAnyAnnotable .test(it) ? "Possui anotável"
-          : null;
+        IFunction<SInstance, String> titleFunc = it ->
+                hasAnyRefusal.test(it) ? "Possui anotação rejeitada"
+                        : hasAnyAnnotation.test(it) ? "Possui anotação"
+                        : hasAnyAnnotable.test(it) ? "Possui anotável"
+                        : null;
 
         IFunction<SInstance, IModel<Icon>> iconFunc = it ->
-            $m.ofValue(
-            hasAnyRefusal   .test(it) ? Icon.of("annotation-icon annotation-icon-rejected")
-          : hasAnyAnnotation.test(it) ? Icon.of("annotation-icon annotation-icon-approved")
-          : hasAnyAnnotable .test(it) ? Icon.of("annotation-icon annotation-icon-empty")
-          : null
-        );
+                $m.ofValue(
+                        hasAnyRefusal.test(it) ? Icon.of("annotation-icon annotation-icon-rejected")
+                                : hasAnyAnnotation.test(it) ? Icon.of("annotation-icon annotation-icon-approved")
+                                : hasAnyAnnotable.test(it) ? Icon.of("annotation-icon annotation-icon-empty")
+                                : null
+                );
         //@formatter:on
 
         return new BSActionPanel.ActionConfig<SInstance>()
-            .iconFunction(rowModel -> iconFunc.apply(rowModel.getObject()))
-            .titleFunction(rowModel -> titleFunc.apply(rowModel.getObject()))
-            .style($m.ofValue("line-height:1em; font-size: 1em;"));
+                .iconFunction(rowModel -> iconFunc.apply(rowModel.getObject()))
+                .titleFunction(rowModel -> titleFunc.apply(rowModel.getObject()))
+                .style($m.ofValue("line-height:1em; font-size: 1em;"));
     }
 
     /**
      * property column isolado em outro método para isolar o escopo de
      * serialização do lambda do appendPropertyColumn
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void propertyColumnAppender(BSDataTableBuilder<SInstance, Object, ?> builder,
-        IModel<String> labelModel, IModel<String> sTypeNameModel,
-        IFunction<SInstance, String> displayValueFunction) {
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private void propertyColumnAppender(BSDataTableBuilder<SInstance, String, ?> builder,
+                                        IModel<String> labelModel, IModel<String> sTypeNameModel, String columnSortName,
+                                        IFunction<SInstance, String> displayValueFunction) {
         IFunction<SIComposite, SInstance> toInstance = composto -> {
             String sTypeName = sTypeNameModel.getObject();
             if (sTypeName == null || composto == null) {
@@ -416,7 +415,7 @@ public class MasterDetailPanel extends Panel {
             return (SInstance) composto.findDescendant(sType).orElse(null);
         };
         IFunction<SInstance, Object> propertyFunction = o -> displayValueFunction.apply(toInstance.apply((SIComposite) o));
-        builder.appendColumn(new BSPropertyColumn<SInstance, Object>(labelModel, propertyFunction) {
+        builder.appendColumn(new BSPropertyColumn<SInstance, String>(labelModel, columnSortName, propertyFunction) {
             @Override
             public IModel getDataModel(IModel rowModel) {
                 return new ISInstanceAwareModel<Object>() {
@@ -444,33 +443,8 @@ public class MasterDetailPanel extends Panel {
         });
     }
 
-    private BaseDataProvider<SInstance, Object> newDataProvider() {
-        return new SIListDataProvider(list);
+    private BaseDataProvider<SInstance, String> newDataProvider(ISupplier<SViewListByMasterDetail> viewSupplier) {
+        return new MasterDetailDataProvider(list, viewSupplier);
     }
 
-    static class SIListDataProvider extends BaseDataProvider<SInstance, Object> {
-        private final IModel<SIList<SInstance>> list;
-        public SIListDataProvider(IModel<SIList<SInstance>> list) {
-            this.list = list;
-        }
-
-        @Override
-        public Iterator<SInstance> iterator(int first, int count, Object sortProperty, boolean ascending) {
-            final SIList<SInstance> siList = list.getObject();
-            final List<SInstance> list = new ArrayList<>();
-            for (int i = 0; (i < count) && (i + first < siList.size()); i++)
-                list.add(siList.get(i + first));
-            return list.iterator();
-        }
-
-        @Override
-        public long size() {
-            return list.getObject().size();
-        }
-
-        @Override
-        public IModel<SInstance> model(SInstance object) {
-            return new SInstanceListItemModel<>(list, list.getObject().indexOf(object));
-        }
-    }
 }

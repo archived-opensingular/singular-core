@@ -16,14 +16,21 @@
 
 (function (htmlContainer, hiddenInput, callbackUrl, isEnabled, showSaveButton, buttonsList, submitButtonId, classDisableDoubleClick) {
 
-
     $(document).ready(function () {
-        appendFunctions(window.opener);
+        if (!opener) {
+            var msgException = "A página foi aberta de forma indevida!";
+            toastr.options = {
+                "timeOut": "10000",
+                "positionClass": "toast-top-center"
+            };
+            toastr.error(msgException);
+        } else {
+            appendFunctions(window.opener);
+        }
     });
 
     function appendFunctions(opener) {
         $(function () {
-
             var plugin;
             if (isEnabled === "true") {
                 if (showSaveButton === "true") {
@@ -39,7 +46,7 @@
             var ids = "";
             //Foi utilizado ',,' para separar cada botão adicionado no RichText.
             var buttonsExtra = buttonsList.split(",,");
-            if(buttonsExtra) {
+            if (buttonsExtra) {
                 buttonsExtra.forEach(function (b) {
                     //Foi utilizado #$ para separar cada atributo do botão.
                     var texts = b.split("#$");
@@ -230,7 +237,7 @@
         } else {
             console.log("Don't find extra buttons!");
         }
-        
+
     }
 
 

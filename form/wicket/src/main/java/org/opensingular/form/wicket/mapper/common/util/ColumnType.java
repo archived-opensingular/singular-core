@@ -26,20 +26,26 @@ public class ColumnType {
 
     private final String                       typeName;
     private final String                       customLabel;
+    private final String                       columnSortName;
     private final IFunction<SInstance, String> displayFunction;
 
-    public ColumnType(String typeName, String customLabel, IFunction<SInstance, String> displayFunction) {
+    public ColumnType(String typeName, String customLabel, String columnSortName, IFunction<SInstance, String> displayFunction) {
         this.typeName = typeName;
         this.customLabel = customLabel;
+        this.columnSortName = columnSortName;
         this.displayFunction = displayFunction != null ? displayFunction : SInstance::toStringDisplay;
     }
 
-    public ColumnType(String typeName, String customLabel) {
-        this(typeName, customLabel, null);
+    public ColumnType(String typeName, String customLabel, String columnSortName) {
+        this(typeName, customLabel, columnSortName, null);
     }
 
     public SType<?> getType(SInstance instance) {
         return typeName == null ? null : instance.getDictionary().getType(typeName);
+    }
+
+    public String getColumnSortName() {
+        return columnSortName;
     }
 
     public String getTypeName() {

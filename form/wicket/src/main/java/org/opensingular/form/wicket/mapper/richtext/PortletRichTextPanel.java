@@ -16,9 +16,8 @@
 
 package org.opensingular.form.wicket.mapper.richtext;
 
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.core.request.handler.PageProvider;
-import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -28,7 +27,6 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.view.richtext.SViewByRichTextNewTab;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
@@ -37,9 +35,9 @@ import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
 import java.util.Optional;
 
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.opensingular.lib.wicket.util.jquery.JQuery.*;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.opensingular.lib.wicket.util.jquery.JQuery.$;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public class PortletRichTextPanel extends Panel implements Loggable {
 
@@ -47,7 +45,7 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     private Label               htmlContent;
     private Label               label;
     private WicketBuildContext  ctx;
-    private boolean visibleMode = true;
+    private boolean             visibleMode = true;
 
     @Override
     public void renderHead(IHeaderResponse response) {
@@ -104,31 +102,23 @@ public class PortletRichTextPanel extends Panel implements Loggable {
         htmlContent.setEscapeModelStrings(false);
     }
 
+
     private WebMarkupContainer createButtonOpenEditor() {
         return new Link<String>("button") {
 
             @Override
             public void onClick() {
-            }
-
-            @Override
-            protected void onComponentTag(ComponentTag tag) {
-                super.onComponentTag(tag);
-                tag.put("target", "_blank");
-            }
-
-            @Override
-            protected CharSequence getURL() {
-                RichTextNewTabPage richTextNewTabPage = new RichTextNewTabPage(label.getDefaultModelObject().toString(),
+                throw new RestartResponseException(new RichTextNewTabPage(label.getDefaultModelObject().toString(),
                         visibleMode,
                         PortletRichTextPanel.this.ctx.getViewSupplier(SViewByRichTextNewTab.class),
-                        hiddenInput, htmlContent.getMarkupId());
-                return RequestCycle.get().urlFor(
-                        new RenderPageRequestHandler(
-                                new PageProvider(richTextNewTabPage)));
+                        hiddenInput, htmlContent.getMarkupId()));
+            }
+
+            @Override
+            protected CharSequence getOnClickScript(CharSequence url) {
+                return "window.open('" + url + "', '_blank" + htmlContent.getMarkupId() + "');";
             }
         };
-
     }
 
     public boolean isVisibleMode() {
