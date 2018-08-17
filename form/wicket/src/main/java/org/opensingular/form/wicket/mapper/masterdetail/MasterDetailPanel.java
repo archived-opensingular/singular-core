@@ -457,7 +457,8 @@ public class MasterDetailPanel extends Panel {
             SType<?> sType = composto.getDictionary().getType(sTypeName);
             return (SInstance) composto.findDescendant(sType).orElse(null);
         };
-        IFunction<SInstance, Object> propertyFunction = o -> displayValueFunction.apply(toInstance.apply((SIComposite) o));
+        IFunction<SInstance, Object> propertyFunction = o -> o instanceof SIComposite ? displayValueFunction.apply(toInstance.apply((SIComposite) o)) : o;
+        ;
         builder.appendColumn(new BSPropertyColumn<SInstance, String>(labelModel, columnSortName, propertyFunction) {
             @Override
             public IModel getDataModel(IModel rowModel) {
@@ -479,7 +480,7 @@ public class MasterDetailPanel extends Panel {
 
                     @Override
                     public SInstance getSInstance() {
-                        return toInstance.apply((SIComposite) rowModel.getObject());
+                        return rowModel.getObject() instanceof SIComposite ? toInstance.apply((SIComposite) rowModel.getObject()) : (SInstance) rowModel.getObject();
                     }
                 };
             }

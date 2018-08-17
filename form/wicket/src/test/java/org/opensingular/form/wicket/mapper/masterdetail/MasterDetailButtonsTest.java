@@ -20,82 +20,52 @@ import org.apache.wicket.markup.html.link.AbstractLink;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
 import org.opensingular.form.view.list.SViewListByMasterDetail;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
-import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
+import org.opensingular.form.wicket.mapper.list.ListTestUtil;
+import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import org.opensingular.lib.wicket.util.resource.IconeView;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
-
 public class MasterDetailButtonsTest {
 
-    private static STypeList<STypeTestMasterDetail, TestSIMasterDetail> mockMasterDetailView;
-    private static STypeList<STypeTestMasterDetail, TestSIMasterDetail> mockMasterDetail;
     private static SingularFormDummyPageTester tester;
-
-    private static void baseTypeForView(STypeComposite<?> mockType) {
-
-        mockMasterDetailView = mockType.addFieldListOf("mockMasterDetailView", STypeTestMasterDetail.class);
-        mockMasterDetailView.withView(new SViewListByMasterDetail()
-                .configureEditButtonPerRow(f -> false)
-                .configureDeleteButtonPerRow(f -> false)
-                .configureViewButtonInEditionPerRow(f -> true)
-                .disableNew());
-
-        MasterDetailButtonsTest.fillWithBlankValues(mockMasterDetailView);
-
-    }
-
-    private static void baseTypeDefault(STypeComposite<?> mockType) {
-        mockMasterDetail = mockType.addFieldListOf("mockMasterDetail", STypeTestMasterDetail.class);
-        mockMasterDetail.withView(new SViewListByMasterDetail());
-    }
-
-
-    private static void fillWithBlankValues(STypeList<STypeTestMasterDetail, TestSIMasterDetail> element) {
-        element.withInitListener(list -> {
-            STypeTestMasterDetail type = element.getElementsType();
-            for (int i = 0; i < 1; i++) {
-                SIComposite experiencia = list.addNew();
-                LocalDate localDate = LocalDate.now();
-                experiencia.setValue(type.inicio, Date.from(localDate.minusMonths(i).atStartOfDay(ZoneId.systemDefault()).toInstant()));
-            }
-        });
-    }
 
     @Before
     public void setUp() {
         tester = new SingularFormDummyPageTester();
     }
 
-
     @Test
     public void verifyHaveJustViewAction() {
-        tester.getDummyPage().setTypeBuilder(MasterDetailButtonsTest::baseTypeForView);
+        ISupplier<SViewListByMasterDetail> viewListByMasterDetail =  (ISupplier<SViewListByMasterDetail>) () -> new SViewListByMasterDetail()
+                .configureEditButtonPerRow(f -> false)
+                .configureDeleteButtonPerRow(f -> false)
+                .configureViewButtonInEditionPerRow(f -> true)
+                .disableNew();
+
+        tester.getDummyPage().setTypeBuilder(s -> ListTestUtil.buildTableForButons(s, viewListByMasterDetail));
         tester.startDummyPage();
         tester.getAssertionsForm().findSubComponent(b -> b instanceof IconeView && ((IconeView) b).getIcone() == DefaultIcons.EYE).isNotNull();
         tester.getAssertionsForm().findSubComponent(b -> b instanceof IconeView && ((IconeView) b).getIcone() == DefaultIcons.PENCIL).isNull();
         tester.getAssertionsForm().findSubComponent(b -> b instanceof IconeView && ((IconeView) b).getIcone() == DefaultIcons.REMOVE).isNull();
-        AbstractLink linkAddNewElement = findMasterDetailLink();
+        AbstractLink linkAddNewElement = ListTestUtil.findMasterDetailLink(tester);
         Assert.assertTrue(!linkAddNewElement.isVisible() || !linkAddNewElement.isVisibleInHierarchy());
     }
 
     @Test
     public void verifyHaveDefaultsActions() {
         //Defaults actions: Edit Remove
-        tester.getDummyPage().setTypeBuilder(MasterDetailButtonsTest::baseTypeDefault);
+
+        ISupplier<SViewListByMasterDetail> viewListByMasterDetail = (ISupplier<SViewListByMasterDetail>) SViewListByMasterDetail::new;
+
+        tester.getDummyPage().setTypeBuilder(s -> ListTestUtil.buildTableForButons(s, viewListByMasterDetail));
         tester.startDummyPage();
 
-        AbstractLink linkAddNewElement = findMasterDetailLink();
+        AbstractLink linkAddNewElement = ListTestUtil.findMasterDetailLink(tester);
         Assert.assertTrue(linkAddNewElement.isVisible() || linkAddNewElement.isVisibleInHierarchy());
-        clickAddMasterDetailButton();
-        tester.getAssertionsForm().getSubComponentWithType(mockMasterDetail).assertSInstance().isList(1);
+        ListTestUtil.clickAddMasterDetailButton(tester);
+        tester.getAssertionsForm().getSubComponentWithType(ListTestUtil.getBuildTableForButons()).assertSInstance().isList(2);
 
         tester.getAssertionsForm().findSubComponent(b -> b instanceof IconeView && ((IconeView) b).getIcone() == DefaultIcons.EYE).isNull();
         tester.getAssertionsForm().findSubComponent(b -> b instanceof IconeView && ((IconeView) b).getIcone() == DefaultIcons.PENCIL).isNotNull();
@@ -103,18 +73,6 @@ public class MasterDetailButtonsTest {
     }
 
 
-    private void clickAddMasterDetailButton() {
-        tester.executeAjaxEvent(findMasterDetailLink(), "click");
-        tester.executeAjaxEvent(findMasterDetailModalLink(), "click");
-    }
-
-    private ActionAjaxButton findMasterDetailModalLink() {
-        return tester.getAssertionsForm().findSubComponent(b -> b instanceof ActionAjaxButton).getTarget(ActionAjaxButton.class);
-    }
-
-    private AbstractLink findMasterDetailLink() {
-        return tester.getAssertionsForm().getSubComponentWithId("addButton").getTarget(AbstractLink.class);
-    }
 
 
 }

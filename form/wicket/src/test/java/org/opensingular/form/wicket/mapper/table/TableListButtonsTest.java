@@ -16,55 +16,20 @@
 
 package org.opensingular.form.wicket.mapper.table;
 
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.STypeList;
-import org.opensingular.form.type.core.SIString;
-import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.view.list.ButtonsConfig;
 import org.opensingular.form.view.list.SViewListByTable;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.form.wicket.mapper.AbstractListMapper;
-import org.opensingular.lib.wicket.util.resource.DefaultIcons;
+import org.opensingular.form.wicket.mapper.list.ListTestUtil;
+import org.opensingular.lib.commons.lambda.ISupplier;
 
 
 public class TableListButtonsTest {
 
-    private static STypeList<STypeString, SIString> disableAllButons;
-    private static STypeList<STypeString, SIString> enableAllButton;
-
-    private static SingularFormDummyPageTester tester;
-
-    private static void buildDisableAllButtons(STypeComposite<?> mockType){
-        disableAllButons = mockType.addFieldListOf("nomes", STypeString.class);
-
-        disableAllButons.withView(new SViewListByTable()
-                .configureDeleteButtonPerRow(f -> false)
-                .disableNew());
-
-        TableListButtonsTest.fillWithBlankValues(disableAllButons);
-
-        disableAllButons.asAtr().label("Nomes");
-    }
-    private static void buildEnableAllButtons(STypeComposite<?> mockType){
-        enableAllButton = mockType.addFieldListOf("nomes", STypeString.class);
-
-        enableAllButton.withView(new SViewListByTable()
-                .configureEditButtonPerRow(ButtonsConfig.EDITAR_HINT, null, DefaultIcons.PUZZLE, true));
-
-        TableListButtonsTest.fillWithBlankValues(enableAllButton);
-
-        enableAllButton.asAtr().label("Nomes");
-    }
-
-    private static void fillWithBlankValues(STypeList<STypeString, SIString> element) {
-        element.withInitListener(list -> list.addNew().setValue("01"));
-    }
-
+    protected SingularFormDummyPageTester tester;
 
     @Before
     public void setUp(){
@@ -73,25 +38,31 @@ public class TableListButtonsTest {
 
     @Test
     public void verifyDontHaveActionButton() {
-        tester.getDummyPage().setTypeBuilder(TableListButtonsTest::buildDisableAllButtons);
+
+        ISupplier<SViewListByTable> viewListByTable = (ISupplier<SViewListByTable>) () -> new SViewListByTable()
+                .configureDeleteButtonPerRow(f -> false)
+                .disableNew();
+
+        tester.getDummyPage().setTypeBuilder(m -> ListTestUtil.buildTableForButons(m, viewListByTable));
         tester.startDummyPage();
         tester.getAssertionsForm().findSubComponent(b -> b instanceof AbstractListMapper.InserirButton).isNull();
         tester.getAssertionsForm().findSubComponent(b -> b instanceof AbstractListMapper.RemoverButton).isNull();
-        AbstractLink linkAddNewElement = findAddButton();
+        AbstractLink linkAddNewElement = ListTestUtil.findAddButton(tester);
         Assert.assertTrue(!linkAddNewElement.isVisible() || !linkAddNewElement.isVisibleInHierarchy());
     }
+
     @Test
     public void verifyHaveAllActionButtons() {
         //Table List contains 3 buttons : Edit, New, Remove
-        tester.getDummyPage().setTypeBuilder(TableListButtonsTest::buildEnableAllButtons);
+        ISupplier<SViewListByTable> viewListByTable = (ISupplier<SViewListByTable>) () -> new SViewListByTable()
+                .configureEditButtonPerRow(s -> true);
+
+        tester.getDummyPage().setTypeBuilder(m -> ListTestUtil.buildTableForButons(m, viewListByTable));
         tester.startDummyPage();
         tester.getAssertionsForm().findSubComponent(b -> b instanceof AbstractListMapper.InserirButton).isNotNull();
         tester.getAssertionsForm().findSubComponent(b -> b instanceof AbstractListMapper.RemoverButton).isNotNull();
-        AbstractLink linkAddNewElement = findAddButton();
+        AbstractLink linkAddNewElement = ListTestUtil.findAddButton(tester);
         Assert.assertTrue(linkAddNewElement.isVisible() || linkAddNewElement.isVisibleInHierarchy());
     }
 
-    public AjaxLink findAddButton(){
-        return tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("AddButton")).getTarget(AjaxLink.class);
-    }
 }

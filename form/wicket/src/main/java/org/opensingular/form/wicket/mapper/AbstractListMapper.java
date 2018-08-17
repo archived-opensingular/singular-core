@@ -361,7 +361,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         }
     }
 
-    protected static final class AddButton extends AjaxLink<String> {
+    public static final class AddButton extends AjaxLink<String> {
 
         private final Form<?> form;
         private final IModel<SIList<SInstance>> listModel;
