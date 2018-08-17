@@ -181,7 +181,7 @@ public class MasterDetailPanel extends Panel {
         final BSDataTableBuilder<SInstance, String, ?> builder = new MasterDetailBSDataTableBuilder<>(newDataProvider(viewSupplier)).withNoRecordsToolbar();
         final BSDataTable<SInstance, ?> dataTable;
 
-        configureColumns(viewSupplier.get().getColumns(), builder, list, modal, ctx, ctx.getViewMode(), viewSupplier);
+        configureColumns(viewSupplier.get().getColumns(), builder, modal, ctx, ctx.getViewMode(), viewSupplier);
         dataTable = builder.build(id);
 
         dataTable.setOnNewRowItem((IConsumer<Item<SInstance>>) rowItem -> {
@@ -248,7 +248,6 @@ public class MasterDetailPanel extends Panel {
     private void configureColumns(
             List<SViewListByMasterDetail.Column> mapColumns,
             BSDataTableBuilder<SInstance, String, ?> builder,
-            IModel<? extends SInstance> model,
             MasterDetailModal modal,
             WicketBuildContext ctx,
             ViewMode viewMode,
@@ -257,7 +256,7 @@ public class MasterDetailPanel extends Panel {
         final List<ColumnType> columnTypes = new ArrayList<>();
 
         if (mapColumns.isEmpty()) {
-            final SType<?> type = ((SIList<?>) model.getObject()).getElementsType();
+            final SType<?> type = list.getObject().getElementsType();
             if (type instanceof STypeSimple) {
                 columnTypes.add(new ColumnType(type.getName(), null, type.getNameSimple()));
             } else if (type.isComposite()) {
@@ -268,7 +267,7 @@ public class MasterDetailPanel extends Panel {
                         .forEach(sType -> columnTypes.add(new ColumnType(sType.getName(), null, sType.getNameSimple())));
             }
         } else {
-            mapColumns.forEach((col) -> columnTypes.add(
+            mapColumns.forEach(col -> columnTypes.add(
                     new ColumnType(
                             Optional.ofNullable(col.getTypeName())
                                     .orElse(null),
@@ -277,21 +276,20 @@ public class MasterDetailPanel extends Panel {
 
         final boolean disabledSort = viewSupplier.get().isDisableSort();
         for (ColumnType columnType : columnTypes) {
-            final String label = columnType.getCustomLabel(model.getObject());
+            final String label = columnType.getCustomLabel(list.getObject());
             final String typeName = columnType.getTypeName();
             final String columnSort = disabledSort ? null : columnType.getColumnSortName();
             final IModel<String> labelModel = $m.ofValue(label);
             propertyColumnAppender(builder, labelModel, $m.get(() -> typeName), columnSort, columnType.getDisplayFunction());
         }
 
-        actionColumnAppender(builder, model, modal, ctx, viewMode, viewSupplier);
+        actionColumnAppender(builder, modal, ctx, viewMode, viewSupplier);
     }
 
     /**
      * Adiciona as ações a coluna de ações de mestre detalhe.
      */
     private void actionColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder,
-                                      IModel<? extends SInstance> model,
                                       MasterDetailModal modal,
                                       WicketBuildContext ctx,
                                       ViewMode vm,
@@ -301,10 +299,10 @@ public class MasterDetailPanel extends Panel {
             builder.appendActionColumn($m.ofValue(viewSupplier.get().getActionColumnLabel()), ac -> {
                 if (vm.isEdition()) {
                     ac.appendAction(buildEditActionConfig(viewSupplier), buildViewOrEditAction(modal, ctx, null));
-                    ac.appendAction(buildRemoveActionConfig(viewSupplier), buildRemoveAction(model, ctx));
+                    ac.appendAction(buildRemoveActionConfig(viewSupplier), buildRemoveAction(ctx));
                 }
                 ac.appendAction(buildViewActionConfig(vm, viewSupplier), buildViewOrEditAction(modal, ctx, ViewMode.READ_ONLY));
-                ac.appendAction(buildShowErrorsActionConfig(model), buildShowErrorsAction());
+                ac.appendAction(buildShowErrorsActionConfig(), new ShowErrorsAction());
                 if (ctx.getAnnotationMode().enabled()) {
                     ac.appendAction(buildShowAnnotationsActionConfig(), buildViewOrEditAction(modal, ctx, null));
                 }
@@ -324,13 +322,12 @@ public class MasterDetailPanel extends Panel {
                 .visibleFor(m -> buttonDelete.isEnabled(m.getObject()));
     }
 
-    private IBSAction<SInstance> buildRemoveAction(IModel<? extends SInstance> model, WicketBuildContext ctx) {
+    private IBSAction<SInstance> buildRemoveAction(WicketBuildContext ctx) {
         return (target, rowModel) -> {
             IConsumer<AjaxRequestTarget> confirmationAction = t -> {
-                final SIList<?> list = ((SIList<?>) model.getObject());
-                list.remove(list.indexOf(rowModel.getObject()));
+                list.getObject().remove(list.getObject().indexOf(rowModel.getObject()));
                 t.add(ctx.getContainer());
-                WicketFormProcessing.onFieldProcess(MasterDetailPanel.this.form, t, model);
+                WicketFormProcessing.onFieldProcess(MasterDetailPanel.this.form, t, list);
             };
             confirmationModal.show(target, confirmationAction);
         };
@@ -371,50 +368,15 @@ public class MasterDetailPanel extends Panel {
         return (target, rowModel) -> modal.showExisting(target, rowModel, ctx, viewMode);
     }
 
-    private BSActionPanel.ActionConfig<SInstance> buildShowErrorsActionConfig(IModel<? extends SInstance> model) {
+    private BSActionPanel.ActionConfig<SInstance> buildShowErrorsActionConfig() {
         return new BSActionPanel.ActionConfig<SInstance>()
                 .iconeModel(IReadOnlyModel.of(() -> DefaultIcons.EXCLAMATION_TRIANGLE))
                 .styleClasses(Model.of("red"))
-                .titleFunction(rowModel -> IMappingModel.of(rowModel).map(it -> (it.getNestedValidationErrors().size() + " erro(s) encontrado(s)")).getObject())
+                .titleFunction(rowModel -> IMappingModel.of(rowModel).map(it -> it.getNestedValidationErrors().size() + " erro(s) encontrado(s)").getObject())
                 .visibleFor(rowModel -> !rowModel.getObject().getNestedValidationErrors().isEmpty())
                 .style($m.ofValue(MapperCommons.BUTTON_STYLE));
     }
 
-    private IBSAction<SInstance> buildShowErrorsAction() {
-        return new IBSAction<SInstance>() {
-            @Override
-            public void execute(AjaxRequestTarget target, IModel<SInstance> model) {
-                SInstance baseInstance = model.getObject();
-                SDocument doc = baseInstance.getDocument();
-                Collection<ValidationError> errors = baseInstance.getNestedValidationErrors();
-                if ((errors != null) && !errors.isEmpty()) {
-                    String alertLevel = errors.stream()
-                            .map(ValidationError::getErrorLevel).max(Comparator.naturalOrder())
-                            .map(it -> it.le(ValidationErrorLevel.WARNING) ? "alert-warning" : "alert-danger")
-                            .orElse(null);
-
-                    final StringBuilder sb = new StringBuilder("<div><ul class='list-unstyled alert ").append(alertLevel).append("'>");
-                    for (ValidationError error : errors) {
-                        Optional<SInstance> inst = doc.findInstanceById(error.getInstanceId());
-                        inst.ifPresent(sInstance -> sb.append("<li>")
-                                .append(SFormUtil.generateUserFriendlyPath(sInstance, baseInstance))
-                                .append(": ")
-                                .append(error.getMessage())
-                                .append("</li>"));
-                    }
-                    sb.append("</ul></div>");
-
-                    target.appendJavaScript(";bootbox.alert('" + JavaScriptUtils.javaScriptEscape(sb.toString()) + "');");
-                    target.appendJavaScript(Scripts.multipleModalBackDrop());
-                }
-            }
-
-            @Override
-            public boolean isVisible(IModel<SInstance> model) {
-                return model != null && model.getObject() != null && model.getObject().hasNestedValidationErrors();
-            }
-        };
-    }
 
     private BSActionPanel.ActionConfig<SInstance> buildShowAnnotationsActionConfig() {
         IPredicate<SInstance> hasAnyRefusal = it -> it.asAtrAnnotation().hasAnyRefusal();
@@ -490,6 +452,40 @@ public class MasterDetailPanel extends Panel {
 
     private BaseDataProvider<SInstance, String> newDataProvider(ISupplier<SViewListByMasterDetail> viewSupplier) {
         return new MasterDetailDataProvider(list, viewSupplier);
+    }
+
+    private class ShowErrorsAction implements IBSAction<SInstance> {
+            @Override
+            public void execute(AjaxRequestTarget target, IModel<SInstance> model) {
+                SInstance baseInstance = model.getObject();
+                SDocument doc = baseInstance.getDocument();
+                Collection<ValidationError> errors = baseInstance.getNestedValidationErrors();
+                if ((errors != null) && !errors.isEmpty()) {
+                    String alertLevel = errors.stream()
+                            .map(ValidationError::getErrorLevel).max(Comparator.naturalOrder())
+                            .map(it -> it.le(ValidationErrorLevel.WARNING) ? "alert-warning" : "alert-danger")
+                            .orElse(null);
+
+                    final StringBuilder sb = new StringBuilder("<div><ul class='list-unstyled alert ").append(alertLevel).append("'>");
+                    for (ValidationError error : errors) {
+                        Optional<SInstance> inst = doc.findInstanceById(error.getInstanceId());
+                        inst.ifPresent(sInstance -> sb.append("<li>")
+                                .append(SFormUtil.generateUserFriendlyPath(sInstance, baseInstance))
+                                .append(": ")
+                                .append(error.getMessage())
+                                .append("</li>"));
+                    }
+                    sb.append("</ul></div>");
+
+                    target.appendJavaScript(";bootbox.alert('" + JavaScriptUtils.javaScriptEscape(sb.toString()) + "');");
+                    target.appendJavaScript(Scripts.multipleModalBackDrop());
+                }
+            }
+
+            @Override
+            public boolean isVisible(IModel<SInstance> model) {
+                return model != null && model.getObject() != null && model.getObject().hasNestedValidationErrors();
+            }
     }
 
 }
