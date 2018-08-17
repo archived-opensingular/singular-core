@@ -429,7 +429,7 @@ public class MasterDetailPanel extends Panel {
 
                     @Override
                     public SInstance getSInstance() {
-                        return (SInstance) rowModel.getObject();
+                        return toInstance.apply((SIComposite) rowModel.getObject());
                     }
                 };
             }
