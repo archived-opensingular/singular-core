@@ -28,6 +28,9 @@ public class ButtonsMasterDetailConfig extends ButtonsConfig {
      */
     private ButtonAction viewButtonInEdition = new ButtonAction(f -> false, VISUALIZAR_HINT, null);
 
+    /**
+     * Will overriding the edit button to be always visible.
+     */
     public ButtonsMasterDetailConfig() {
         super();
         setEditButton(new ButtonAction(f -> true, EDITAR_HINT, null));

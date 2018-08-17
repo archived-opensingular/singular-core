@@ -16,9 +16,17 @@
 
 package org.opensingular.form.view.list;
 
+import org.opensingular.form.SInstance;
+import org.opensingular.lib.commons.lambda.IPredicate;
+import org.opensingular.lib.commons.ui.Icon;
+
+import javax.annotation.Nullable;
+
 public class SViewListByTable extends AbstractSViewListWithControls<SViewListByTable> {
 
     private boolean renderCompositeFieldsAsColumns = true;
+    private boolean editVisible = false; //This variable is used to determine if will have a column for edit.
+
 
     public boolean isRenderCompositeFieldsAsColumns() {
         return renderCompositeFieldsAsColumns;
@@ -27,5 +35,62 @@ public class SViewListByTable extends AbstractSViewListWithControls<SViewListByT
     public SViewListByTable setRenderCompositeFieldsAsColumns(boolean renderCompositeFieldsAsColumns) {
         this.renderCompositeFieldsAsColumns = renderCompositeFieldsAsColumns;
         return this;
+    }
+
+    /**
+     * @param visibleFor  The predicate for show the button of the row.
+     *                    For use this logic, the visibleEdit have to be true.
+     * @param visibleEdit False will override the Predicate logic and will hide the button for all rows.
+     *                    True will use the predicate logic.
+     * @return <code>this</code>
+     */
+    public SViewListByTable configureEditButtonPerRow(@Nullable IPredicate<SInstance> visibleFor, boolean visibleEdit) {
+        return configureEditButtonPerRow(ButtonsConfig.EDITAR_HINT, visibleFor, null, visibleEdit);
+    }
+
+    /**
+     * Configure the edit button.
+     * This button will able to insert new line.
+     *
+     * @param visibleFor  The logic for show the button of the row.
+     *                    Null for enable in all cases.
+     * @param hint        The hint of the button.
+     * @param icon        The icon of the button.
+     *                    Null for use the default.
+     * @param visibleEdit False will override the Predicate logic and will hide the button for all rows.
+     *                    True will use the predicate logic.
+     * @return <code>this</code>
+     */
+    public SViewListByTable configureEditButtonPerRow(String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon, boolean visibleEdit) {
+        this.editVisible = visibleEdit;
+        getButtonsConfig().setEditButton(new ButtonAction(visibleFor, hint, icon));
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SViewListByTable configureEditButtonPerRow(String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon) {
+        this.editVisible = true;
+        return super.configureEditButtonPerRow(hint, visibleFor, icon);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SViewListByTable configureEditButtonPerRow(@Nullable IPredicate<SInstance> visibleFor) {
+        this.editVisible = true;
+        return super.configureEditButtonPerRow(visibleFor);
+    }
+
+    /**
+     * If edit button can be visible this method will return true.
+     *
+     * @return True if edit button could be visible. False if the edit button will never be visible.
+     */
+    public boolean isEditVisible() {
+        return editVisible;
     }
 }

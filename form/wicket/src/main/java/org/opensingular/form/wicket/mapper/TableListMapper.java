@@ -193,7 +193,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             final STypeComposite<?> compositeElementsType = (STypeComposite<?>) elementsType;
 
             final BSTRow rowHeader = tableHeader.newRow();
-            if (viewSupplier.get().getButtonsConfig().isEditVisible()) {
+            if (viewSupplier.get().isEditVisible()) {
                 rowHeader.newTHeaderCell($m.ofValue(""));
             }
 
@@ -294,7 +294,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
 
             final ISupplier<SViewListByTable> viewSupplier = ctx.getViewSupplier(SViewListByTable.class);
 
-            if (isEdition(viewSupplier) && viewSupplier.get().getButtonsConfig().isEditVisible()) {
+            if (isEdition(viewSupplier) && viewSupplier.get().isEditVisible()) {
                 final BSTDataCell actionColumn = row.newCol();
                 if (viewSupplier.get().getButtonsConfig().isEditEnabled(item.getModelObject()) && ctx.getViewMode().isEdition()) {
                     actionColumn.add($b.attrAppender("style", "width:20px", ";"));

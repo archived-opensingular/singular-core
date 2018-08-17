@@ -57,7 +57,7 @@ public class PanelListButtonsTest {
     public void verifyHaveAllActionButtons() {
 
         ISupplier<SViewListByForm> viewListByForm = (ISupplier<SViewListByForm>) () -> new SViewListByForm()
-                .configureEditButtonPerRow(ButtonsConfig.EDITAR_HINT, null, DefaultIcons.PUZZLE, true);
+                .configureEditButtonPerRow(ButtonsConfig.EDITAR_HINT, null, DefaultIcons.PUZZLE);
 
         //Table List contains 3 buttons : Edit, New, Remove
         tester.getDummyPage().setTypeBuilder(m -> ListTestUtil.buildTableForButons(m, viewListByForm));

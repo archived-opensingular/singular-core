@@ -20,15 +20,26 @@ import org.opensingular.form.SInstance;
 import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.lib.commons.ui.Icon;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 
+/**
+ * This class represent's the button of the tables components.
+ */
 public class ButtonAction implements Serializable {
 
-    private IPredicate<SInstance> visibleFor;
-    private String hint;
-    private Icon icon;
+    private IPredicate<SInstance> visibleFor; //Logic for showing the button of the row.
+    private String hint; //The hint of the button.
+    private Icon icon; //The icon of the button.
 
-    public ButtonAction(IPredicate<SInstance> visibleFor, String hint, Icon icon) {
+    /**
+     * @param visibleFor The logic for show the button of the row.
+     *                   Null for enable in all cases.
+     * @param hint       The hint of the button.
+     * @param icon       The icon of the button.
+     *                   Null for use the default.
+     */
+    public ButtonAction(@Nullable IPredicate<SInstance> visibleFor, String hint, @Nullable Icon icon) {
         this.visibleFor = visibleFor;
         this.hint = hint;
         this.icon = icon;

@@ -18,14 +18,26 @@ package org.opensingular.form.view.list;
 
 import org.opensingular.form.SInstance;
 
+/**
+ * This class is responsible for configure the buttons of the Tables component's.
+ * Note: This configuraion is used just in the EDIT MODE. <code>ViewMode#EDIT</code>
+ *
+ * @see SViewListByMasterDetail
+ * @see SViewListByTable
+ * @see SViewListByForm
+ */
 public class ButtonsConfig {
 
     public static final String EDITAR_HINT = "Editar";
     public static final String REMOVER_HINT = "Remover";
-    private boolean editVisible = false; //This variable is used to determine if will have a column for edit.
+
     private ButtonAction editButton;
     private ButtonAction deleteButton;
 
+    /**
+     * By default the Edit button will always be invisible,
+     * and the delete button will show.
+     */
     public ButtonsConfig() {
         editButton = new ButtonAction(f -> false, EDITAR_HINT, null);
         deleteButton = new ButtonAction(f -> true, REMOVER_HINT, null);
@@ -35,13 +47,9 @@ public class ButtonsConfig {
         return editButton;
     }
 
-    protected void setEditButton(ButtonAction editButton) {
-        setEditButton(editButton, true);
-    }
 
-    protected void setEditButton(ButtonAction editButton, boolean editVisible) {
+    protected void setEditButton(ButtonAction editButton) {
         this.editButton = editButton;
-        this.editVisible = editVisible;
     }
 
     public ButtonAction getDeleteButton() {
@@ -52,17 +60,24 @@ public class ButtonsConfig {
         this.deleteButton = deleteButton;
     }
 
+    /**
+     * Verify is delete button is enabled by the instance of the row.
+     *
+     * @param instance The instance of the row.
+     * @return True for enable, false for not.
+     */
     public boolean isDeleteEnabled(SInstance instance) {
         return deleteButton.isEnabled(instance);
     }
 
+    /**
+     * Verify is edit button is enabled by the instance of the row.
+     *
+     * @param instance The instance of the row.
+     * @return True for enable, false for not.
+     */
     public boolean isEditEnabled(SInstance instance) {
         return editButton.isEnabled(instance);
     }
 
-
-    //TODO verify a way to encapsulate this logic.
-    public boolean isEditVisible() {
-        return editVisible;
-    }
 }

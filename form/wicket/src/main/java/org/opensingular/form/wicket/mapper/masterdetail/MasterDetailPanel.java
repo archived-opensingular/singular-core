@@ -299,14 +299,15 @@ public class MasterDetailPanel extends Panel {
         if (canCreateNewElement(viewSupplier) || viewSupplier.get().haveAnyActionButton(list.getObject())) {
             //If user can create new element must have at last one action, probably edit.
             builder.appendActionColumn($m.ofValue(viewSupplier.get().getActionColumnLabel()), ac -> {
-                ac.appendAction(buildEditActionConfig(vm, viewSupplier), buildViewOrEditAction(modal, ctx, null));
-                ac.appendAction(buildViewActionConfig(vm, viewSupplier), buildViewOrEditAction(modal, ctx, ViewMode.READ_ONLY));
                 if (vm.isEdition()) {
+                    ac.appendAction(buildEditActionConfig(viewSupplier), buildViewOrEditAction(modal, ctx, null));
                     ac.appendAction(buildRemoveActionConfig(viewSupplier), buildRemoveAction(model, ctx));
                 }
+                ac.appendAction(buildViewActionConfig(vm, viewSupplier), buildViewOrEditAction(modal, ctx, ViewMode.READ_ONLY));
                 ac.appendAction(buildShowErrorsActionConfig(model), buildShowErrorsAction());
-                if (ctx.getAnnotationMode().enabled())
+                if (ctx.getAnnotationMode().enabled()) {
                     ac.appendAction(buildShowAnnotationsActionConfig(), buildViewOrEditAction(modal, ctx, null));
+                }
             });
         }
     }
@@ -335,25 +336,25 @@ public class MasterDetailPanel extends Panel {
         };
     }
 
-    private BSActionPanel.ActionConfig<SInstance> buildEditActionConfig(ViewMode viewMode, ISupplier<SViewListByMasterDetail> viewSupplier) {
+    private BSActionPanel.ActionConfig<SInstance> buildEditActionConfig(ISupplier<SViewListByMasterDetail> viewSupplier) {
         ButtonAction buttonEdit = viewSupplier.get().getButtonsConfig().getEditButton();
 
         final Icon actionIcon = buttonEdit.getIcon() != null ? buttonEdit.getIcon() : DefaultIcons.PENCIL;
         return new BSActionPanel.ActionConfig<SInstance>()
                 .iconeModel(Model.of(actionIcon))
                 .styleClasses(Model.of("list-detail-edit"))
-                .visibleFor(instance -> viewMode.isEdition() && buttonEdit.isEnabled(instance.getObject()))
+                .visibleFor(instance -> buttonEdit.isEnabled(instance.getObject()))
                 .titleFunction(rowModel -> buttonEdit.getHint());
     }
 
-    private BSActionPanel.ActionConfig<SInstance> buildViewActionConfig(ViewMode viewMode, ISupplier<SViewListByMasterDetail> viewSupplier) {
+    private BSActionPanel.ActionConfig<SInstance> buildViewActionConfig(ViewMode vm, ISupplier<SViewListByMasterDetail> viewSupplier) {
         ButtonAction buttonView = viewSupplier.get().getButtonsConfig().getViewButtonInEdition();
 
         final Icon actionIcon = buttonView.getIcon() != null ? buttonView.getIcon() : DefaultIcons.EYE;
         return new BSActionPanel.ActionConfig<SInstance>()
                 .iconeModel(Model.of(actionIcon))
                 .styleClasses(Model.of("list-detail-edit"))
-                .visibleFor(modelInstance -> viewMode.isVisualization() || buttonView.isEnabled(modelInstance.getObject()))
+                .visibleFor(modelInstance -> vm.isVisualization() || buttonView.isEnabled(modelInstance.getObject()))
                 .titleFunction(rowModel -> buttonView.getHint());
     }
 

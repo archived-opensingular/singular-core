@@ -25,6 +25,8 @@ import org.opensingular.form.view.ConfigurableModal;
 import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.lib.commons.ui.Icon;
 
+import javax.annotation.Nullable;
+
 public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<SViewListByMasterDetail>
         implements ConfigurableModal<SViewListByMasterDetail> {
 
@@ -41,11 +43,21 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
     private boolean ascendingMode = true;
     private boolean disableSort = false;
 
+    /**
+     * This method will disable the edition of the element's of the Master detail.
+     *
+     * @return <code>this</code>
+     */
     public SViewListByMasterDetail disabledEditFieldsInModal() {
         this.editFieldsInModalEnabled = false;
         return this;
     }
 
+    /**
+     * This method will return if the edit fields is enable of not.
+     *
+     * @return True for enable the edit fields, false for not.
+     */
     public boolean isEditEnabled() {
         return editFieldsInModalEnabled;
     }
@@ -138,6 +150,7 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
         return disableSort;
     }
 
+    /** {@inheritDoc} */
     @Override
     public ButtonsMasterDetailConfig getButtonsConfig() {
         if (buttonsConfig == null) {
@@ -146,15 +159,36 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
         return buttonsConfig;
     }
 
-    public SViewListByMasterDetail configureViewButtonInEditionPerRow(String hint, IPredicate<SInstance> visibleFor, Icon icon) {
+    /**
+     * Configure the view button.
+     *
+     * @param visibleFor The logic for show the button of the row.
+     *                   Null for enable in all cases.
+     * @param hint       The hint of the button.
+     * @param icon       The icon of the button.
+     *                   Null for use the default.
+     * @return <code>this</code>
+     */
+    public SViewListByMasterDetail configureViewButtonInEditionPerRow(String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon) {
         getButtonsConfig().setViewButtonInEdition(new ButtonAction(visibleFor, hint, icon));
         return this;
     }
+
+    /**
+     * @param visibleFor The predicate for show the button of the row.
+     *                   For use this logic, the visibleEdit have to be true.
+     * @return <code>this</code>
+     */
     public SViewListByMasterDetail configureViewButtonInEditionPerRow(IPredicate<SInstance> visibleFor) {
-        getButtonsConfig().setViewButtonInEdition(new ButtonAction(visibleFor, ButtonsMasterDetailConfig.VISUALIZAR_HINT, null));
-        return this;
+        return configureViewButtonInEditionPerRow(ButtonsMasterDetailConfig.VISUALIZAR_HINT, visibleFor, null);
     }
 
+    /**
+     * This method will verify if have any action button visible.
+     *
+     * @param object The list of all rows in the table.
+     * @return True if have any button, false for not.
+     */
     public boolean haveAnyActionButton(SIList<SInstance> object) {
         return object.stream().anyMatch(s -> getButtonsConfig().isDeleteEnabled(s)
                 || getButtonsConfig().isEditEnabled(s)

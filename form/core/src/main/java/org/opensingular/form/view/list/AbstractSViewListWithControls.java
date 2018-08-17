@@ -33,6 +33,11 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
     private String label;
     private ButtonsConfig buttonsConfig;
 
+    /**
+     * Return the class configurated by the user, or a new instance.
+     *
+     * @return Return the class that contains all buttons configurated.
+     */
     public ButtonsConfig getButtonsConfig() {
         if (buttonsConfig == null) {
             buttonsConfig = new ButtonsConfig();
@@ -40,26 +45,52 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
         return buttonsConfig;
     }
 
-    public SELF configureEditButtonPerRow(String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon, boolean visibleEditColumn) {
-        getButtonsConfig().setEditButton(new ButtonAction(visibleFor, hint, icon), visibleEditColumn);
+    /**
+     * Configure the edit button.
+     * <p>
+     * Note:This button in some view's can be a insert new line.
+     *
+     * @param visibleFor The logic for show the button of the row.
+     *                   Null for enable in all cases.
+     * @param hint       The hint of the button.
+     * @param icon       The icon of the button.
+     *                   Null for use the default.
+     * @return <code>this</code>
+     */
+    public SELF configureEditButtonPerRow(String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon) {
+        getButtonsConfig().setEditButton(new ButtonAction(visibleFor, hint, icon));
         return (SELF) this;
     }
 
     public SELF configureEditButtonPerRow(@Nullable IPredicate<SInstance> visibleFor) {
-        getButtonsConfig().setEditButton(new ButtonAction(visibleFor, ButtonsConfig.EDITAR_HINT, null));
-        return (SELF) this;
+        return configureEditButtonPerRow(ButtonsConfig.EDITAR_HINT, visibleFor, null);
     }
 
+    /**
+     * Configure the delete button.
+     *
+     * @param visibleFor The logic for show the button of the row.
+     *                   Null for enable in all cases.
+     * @param hint       The hint of the button.
+     * @param icon       The icon of the button.
+     *                   Null for use the default.
+     * @return <code>this</code>
+     */
     public SELF configureDeleteButtonPerRow(String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon) {
         getButtonsConfig().setDeleteButton(new ButtonAction(visibleFor, hint, icon));
         return (SELF) this;
     }
 
     public SELF configureDeleteButtonPerRow(@Nullable IPredicate<SInstance> visibleFor) {
-        getButtonsConfig().setDeleteButton(new ButtonAction(visibleFor, ButtonsConfig.REMOVER_HINT, null));
-        return (SELF) this;
+        return configureDeleteButtonPerRow(ButtonsConfig.REMOVER_HINT, visibleFor, null);
     }
 
+    /**
+     * This method verify if the button in the footer of the table will be visible.
+     *
+     * @param list All element's of the table
+     * @return True for visible, false for not.
+     */
     public final boolean isNewEnabled(SIList list) {
         return newEnabled.apply(list);
     }
@@ -69,10 +100,20 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
         return initialLines;
     }
 
+    /**
+     * This method will show the button in the footer of the table.
+     *
+     * @return <code>this</code>
+     */
     public final SELF enableNew() {
         return setNewEnabled(true);
     }
 
+    /**
+     * This method will hide the button in the footer of the table.
+     *
+     * @return <code>this</code>
+     */
     public final SELF disableNew() {
         return setNewEnabled(false);
     }
