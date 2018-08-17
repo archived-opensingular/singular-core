@@ -421,7 +421,7 @@ public class MasterDetailPanel extends Panel {
             return (SInstance) composto.findDescendant(sType).orElse(null);
         };
         IFunction<SInstance, Object> propertyFunction = o -> o instanceof SIComposite ? displayValueFunction.apply(toInstance.apply((SIComposite) o)) : o;
-        ;
+
         builder.appendColumn(new BSPropertyColumn<SInstance, String>(labelModel, columnSortName, propertyFunction) {
             @Override
             public IModel getDataModel(IModel rowModel) {
