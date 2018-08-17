@@ -16,20 +16,6 @@
 
 package org.opensingular.form;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
@@ -45,6 +31,21 @@ import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.lib.commons.context.ServiceRegistry;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
+import org.opensingular.lib.commons.lambda.IFunction;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 
@@ -412,4 +413,19 @@ public final class SFormUtil {
             registry.lookupSingularInjector().inject(newInstance);
         }
     }
+
+    /**
+     * Find a child by the name ({@link SType#getName()})
+     * @param parent the parent instance
+     * @param childName the complete name of the child {@link SType#getName()}
+     * @return the chield
+     */
+    public static Optional<? extends SInstance> findChildByName(@Nonnull SInstance parent, @Nonnull String childName) {
+        if(parent instanceof SIComposite) {
+            SType<?> sType = parent.getDictionary().getType(childName);
+            return ((SIComposite)parent).findDescendant(sType);
+        }
+        return Optional.empty();
+    }
+
 }
