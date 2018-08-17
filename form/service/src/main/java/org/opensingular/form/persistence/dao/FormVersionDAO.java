@@ -50,10 +50,4 @@ public class FormVersionDAO extends BaseDAO<FormVersionEntity, Long> {
         getSession().flush();
     }
 
-
-    //TODO reqdef
-    public FormVersionEntity findCurrentDraftFormVersionEntityForType(Long cod, String formName) {
-
-        return null;
-    }
 }
