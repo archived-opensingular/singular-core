@@ -153,7 +153,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
                 }
                 return ((SIComparable) obj2.get()).compareTo((SIComparable) obj1.get());
             }
-            getLogger().info("Don't find a comparable to the objects: " + obj1 + " - " + obj2);
+            getLogger().info("Don't find a comparable to the objects: {} - {} ", obj1, obj2);
             return ascMode ? -1 : 1;
         }
 
@@ -223,7 +223,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
                 if (!hasElement && type instanceof STypeComposite) {
                     hasElement = SFormUtil
                             .createFuntionForInstanceComposite(sortableProperty)
-                            .apply(((SIComposite) i)) != null;
+                            .apply((SIComposite) i) != null;
                 }
                 return hasElement;
             };
