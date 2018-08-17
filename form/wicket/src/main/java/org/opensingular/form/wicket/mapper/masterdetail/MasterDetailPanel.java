@@ -27,7 +27,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.SFormUtil;
-import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -258,13 +257,13 @@ public class MasterDetailPanel extends Panel {
         if (mapColumns.isEmpty()) {
             final SType<?> type = list.getObject().getElementsType();
             if (type instanceof STypeSimple) {
-                columnTypes.add(new ColumnType(type.getName(), null, type.getNameSimple()));
+                columnTypes.add(new ColumnType(type.getName(), null, type.getName()));
             } else if (type.isComposite()) {
                 ((STypeComposite<?>) type)
                         .getFields()
                         .stream()
                         .filter(sType -> sType instanceof STypeSimple)
-                        .forEach(sType -> columnTypes.add(new ColumnType(sType.getName(), null, sType.getNameSimple())));
+                        .forEach(sType -> columnTypes.add(new ColumnType(sType.getName(), null, sType.getName())));
             }
         } else {
             mapColumns.forEach(col -> columnTypes.add(
@@ -280,7 +279,7 @@ public class MasterDetailPanel extends Panel {
             final String typeName = columnType.getTypeName();
             final String columnSort = disabledSort ? null : columnType.getColumnSortName();
             final IModel<String> labelModel = $m.ofValue(label);
-            propertyColumnAppender(builder, labelModel, $m.get(() -> typeName), columnSort, columnType.getDisplayFunction());
+            propertyColumnAppender(builder, labelModel, typeName, columnSort, columnType.getDisplayFunction());
         }
 
         actionColumnAppender(builder, modal, ctx, viewMode, viewSupplier);
@@ -410,25 +409,16 @@ public class MasterDetailPanel extends Panel {
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void propertyColumnAppender(BSDataTableBuilder<SInstance, String, ?> builder,
-                                        IModel<String> labelModel, IModel<String> sTypeNameModel, String columnSortName,
+                                        IModel<String> labelModel, String sTypeNameModel, String columnSortName,
                                         IFunction<SInstance, String> displayValueFunction) {
-        IFunction<SIComposite, SInstance> toInstance = composto -> {
-            String sTypeName = sTypeNameModel.getObject();
-            if (sTypeName == null || composto == null) {
-                return composto;
-            }
-            SType<?> sType = composto.getDictionary().getType(sTypeName);
-            return (SInstance) composto.findDescendant(sType).orElse(null);
-        };
-        IFunction<SInstance, Object> propertyFunction = o -> o instanceof SIComposite ? displayValueFunction.apply(toInstance.apply((SIComposite) o)) : o;
-
+        IFunction<SInstance, Object> propertyFunction = o -> displayValueFunction.apply(findChildByNameOrElseParent((SInstance) o, sTypeNameModel));
         builder.appendColumn(new BSPropertyColumn<SInstance, String>(labelModel, columnSortName, propertyFunction) {
             @Override
             public IModel getDataModel(IModel rowModel) {
                 return new ISInstanceAwareModel<Object>() {
                     @Override
                     public Object getObject() {
-                        return propertyFunction.apply((SInstance) rowModel.getObject());
+                        return displayValueFunction.apply(getSInstance());
                     }
 
                     @Override
@@ -443,11 +433,17 @@ public class MasterDetailPanel extends Panel {
 
                     @Override
                     public SInstance getSInstance() {
-                        return rowModel.getObject() instanceof SIComposite ? toInstance.apply((SIComposite) rowModel.getObject()) : (SInstance) rowModel.getObject();
+                        return findChildByNameOrElseParent((SInstance) rowModel.getObject(), sTypeNameModel);
                     }
                 };
             }
         });
+    }
+
+    private SInstance findChildByNameOrElseParent(SInstance parent, String childName) {
+        return SFormUtil.findChildByName(parent, childName)
+                .map(SInstance.class::cast)
+                .orElse(parent);
     }
 
     private BaseDataProvider<SInstance, String> newDataProvider(ISupplier<SViewListByMasterDetail> viewSupplier) {

@@ -96,7 +96,7 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      */
     @SuppressWarnings("unchecked")
     public final SELF col(SType<?> type, @Nullable String customLabel, @Nullable IFunction<SInstance, String> displayFunction, boolean order) {
-        String nameSortableProperty = order ? type.getNameSimple() : null;
+        String nameSortableProperty = order ? type.getName() : null;
         columns.add(new Column(type.getName(), customLabel, nameSortableProperty, displayFunction));
         return (SELF) this;
     }

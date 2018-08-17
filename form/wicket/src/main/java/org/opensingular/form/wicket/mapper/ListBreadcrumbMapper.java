@@ -308,13 +308,13 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
             if (mapColumns.isEmpty()) {
                 SType<?> type = ((SIList<?>) model.getObject()).getElementsType();
                 if (type instanceof STypeSimple) {
-                    columnTypes.add(new ColumnType(type.getName(), null, type.getNameSimple()));
+                    columnTypes.add(new ColumnType(type.getName(), null, null));
                 } else if (type.isComposite()) {
                     ((STypeComposite<?>) type)
                         .getFields()
                         .stream()
                         .filter(sType -> sType instanceof STypeSimple)
-                        .forEach(sType -> columnTypes.add(new ColumnType(sType.getName(), null, sType.getNameSimple())));
+                        .forEach(sType -> columnTypes.add(new ColumnType(sType.getName(), null, null)));
 
                 }
             } else {
