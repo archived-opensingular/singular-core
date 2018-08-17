@@ -76,10 +76,6 @@
         </dependency>
 
         <!-- WICKET Development Tools -->
-        <dependency>
-            <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-devutils</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>com.atlassian.commonmark</groupId>
