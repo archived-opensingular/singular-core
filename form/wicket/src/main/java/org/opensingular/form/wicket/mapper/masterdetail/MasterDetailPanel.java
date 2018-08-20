@@ -450,7 +450,7 @@ public class MasterDetailPanel extends Panel {
         return new MasterDetailDataProvider(list, viewSupplier);
     }
 
-    private class ShowErrorsAction implements IBSAction<SInstance> {
+    private static class ShowErrorsAction implements IBSAction<SInstance> {
             @Override
             public void execute(AjaxRequestTarget target, IModel<SInstance> model) {
                 SInstance baseInstance = model.getObject();
