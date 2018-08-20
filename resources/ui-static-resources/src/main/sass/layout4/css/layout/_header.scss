@@ -18,6 +18,7 @@ Page Header
   filter: none;
   background-image: none;
 
+
   /* Fixed header */
   &.navbar-fixed-top {
     z-index: $zindex-header-fixed;
@@ -182,6 +183,7 @@ Page Header
       padding: 0;
       margin-right: 20px;
       display: block;
+      width: 700px;
 
       > li.dropdown {
         margin: 0px;
@@ -617,6 +619,7 @@ Page Header
       /* Top menu */
       .top-menu {
         .navbar-nav {
+          width: 480px;
           > li.dropdown-user {
             .dropdown-toggle {
               .username.username-hide-on-mobile {
@@ -775,6 +778,7 @@ Page Header
     /* Top Menu */
     .top-menu {
       .navbar-nav {
+        width: 480px;
         display: inline-block;
         margin: 0 10px 0 0;
 
@@ -864,7 +868,7 @@ Page Header
       float: right;
 
       .navbar-nav {
-
+        width: 400px;
         > li.dropdown {
 
           > .dropdown-toggle {
