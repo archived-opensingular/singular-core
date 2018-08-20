@@ -16,18 +16,9 @@
 
 package org.opensingular.form.type.country.brazil;
 
-import org.opensingular.form.SIComposite;
+import org.opensingular.form.type.generic.SIGenericComposite;
 
-import javax.annotation.Nonnull;
-
-public class SIUF extends SIComposite {
-
-    @Nonnull
-    @Override
-    public STypeUF getType() {
-        return (STypeUF) super.getType();
-    }
-
+public class SIUF extends SIGenericComposite<STypeUF> {
     public String getSigla() {
         return getField(getType().sigla).getValue();
     }

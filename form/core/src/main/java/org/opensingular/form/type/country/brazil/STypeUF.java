@@ -21,10 +21,11 @@ import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.generic.STGenericComposite;
 import org.opensingular.lib.commons.util.Loggable;
 
 @SInfoType(name = "UnidadeFederacao", spackage = SPackageCountryBrazil.class)
-public class STypeUF extends STypeComposite<SIUF> implements Loggable {
+public class STypeUF extends STGenericComposite<SIUF> implements Loggable {
 
     public STypeString sigla;
     public STypeString nome;
