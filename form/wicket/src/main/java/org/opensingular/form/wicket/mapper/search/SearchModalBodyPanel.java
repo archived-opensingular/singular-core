@@ -16,11 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.search;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Iterator;
-import java.util.Optional;
-
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -32,6 +27,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
@@ -61,6 +57,11 @@ import org.opensingular.lib.wicket.util.datatable.IBSAction;
 import org.opensingular.lib.wicket.util.datatable.column.BSActionPanel;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.Optional;
+
 import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 
@@ -70,6 +71,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
     private static final String FILTER_BUTTON_ID = "filterButton";
     private static final String FORM_PANEL_ID = "formPanel";
     private static final String RESULT_TABLE_ID = "resultTable";
+    public static final String FILTRAR = "Filtrar";
 
     private final WicketBuildContext ctx;
     private final ISupplier<SViewSearchModal> viewSupplier;
@@ -146,13 +148,16 @@ class SearchModalBodyPanel extends Panel implements Loggable {
     }
 
     private AjaxButton buildFilterButton() {
-        return new AjaxButton(FILTER_BUTTON_ID) {
+        AjaxButton ajaxButton = new AjaxButton(FILTER_BUTTON_ID) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 super.onSubmit(target, form);
                 target.add(resultTable);
             }
         };
+        String buttonLabel = viewSupplier.get().getButtonLabel();
+        ajaxButton.add(new Label("label", Optional.ofNullable(buttonLabel).orElse(FILTRAR)));
+        return ajaxButton;
     }
 
     private WebMarkupContainer buildResultTable(Config config) {
