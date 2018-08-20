@@ -294,14 +294,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
 
             final ISupplier<SViewListByTable> viewSupplier = ctx.getViewSupplier(SViewListByTable.class);
 
-            if (isEdition(viewSupplier) && viewSupplier.get().isEditVisible()) {
-                final BSTDataCell actionColumn = row.newCol();
-                if (viewSupplier.get().getButtonsConfig().isEditEnabled(item.getModelObject()) && ctx.getViewMode().isEdition()) {
-                    actionColumn.add($b.attrAppender("style", "width:20px", ";"));
-                    ButtonAction editButton = viewSupplier.get().getButtonsConfig().getEditButton();
-                    appendInserirButton(this, form, ctx, item, actionColumn, editButton);
-                }
-            }
+            createEditButton(item, row, viewSupplier);
 
             if ((instance instanceof SIComposite) && viewSupplier.get().isRenderCompositeFieldsAsColumns()) {
                 final SIComposite ci = (SIComposite) instance;
@@ -315,14 +308,29 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                 ctx.createChild(row.newCol(), ctx.getExternalContainer(), itemModel).setHint(HIDE_LABEL, Boolean.FALSE).build();
             }
 
+            createRemoveButton(item, row, viewSupplier);
+
+
+            item.add(row);
+        }
+
+        private void createRemoveButton(Item<SInstance> item, BSTRow row, ISupplier<SViewListByTable> viewSupplier) {
             if (isEdition(viewSupplier) && viewSupplier.get().getButtonsConfig().isDeleteEnabled(item.getModelObject())) {
                 final BSTDataCell actionColumnRemove = row.newCol();
                 actionColumnRemove.add($b.attrAppender("style", "width:20px", ";"));
                 appendRemoverButton(this, form, ctx, item, actionColumnRemove, confirmationModal, viewSupplier);
             }
+        }
 
-
-            item.add(row);
+        private void createEditButton(Item<SInstance> item, BSTRow row, ISupplier<SViewListByTable> viewSupplier) {
+            if (isEdition(viewSupplier) && viewSupplier.get().isEditVisible()) {
+                final BSTDataCell actionColumn = row.newCol();
+                if (viewSupplier.get().getButtonsConfig().isEditEnabled(item.getModelObject()) && ctx.getViewMode().isEdition()) {
+                    actionColumn.add($b.attrAppender("style", "width:20px", ";"));
+                    ButtonAction editButton = viewSupplier.get().getButtonsConfig().getEditButton();
+                    appendInserirButton(this, form, ctx, item, actionColumn, editButton);
+                }
+            }
         }
 
         private boolean isEdition(ISupplier<? extends AbstractSViewListWithControls> viewSupplier) {
