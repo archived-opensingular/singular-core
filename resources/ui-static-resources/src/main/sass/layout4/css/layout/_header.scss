@@ -18,7 +18,6 @@ Page Header
   filter: none;
   background-image: none;
 
-
   /* Fixed header */
   &.navbar-fixed-top {
     z-index: $zindex-header-fixed;
@@ -71,6 +70,7 @@ Page Header
   .page-top {
     height: $header-height;
     float: right;
+    text-align: right;
   }
 
   /* Search box */
@@ -183,7 +183,6 @@ Page Header
       padding: 0;
       margin-right: 20px;
       display: block;
-      width: 700px;
 
       > li.dropdown {
         margin: 0px;
@@ -476,6 +475,13 @@ Page Header
             font-size: $header-top-menu-user-font-size;
             font-weight: $header-top-menu-user-font-weight;
 
+            display: inline-block;
+            width: 600px;
+            padding-top: 12px;
+            white-space: nowrap;
+            overflow: hidden !important;
+            text-overflow: ellipsis;
+
             i {
               margin-left: 30px;
             }
@@ -619,11 +625,10 @@ Page Header
       /* Top menu */
       .top-menu {
         .navbar-nav {
-          width: 480px;
           > li.dropdown-user {
             .dropdown-toggle {
-              .username.username-hide-on-mobile {
-                display: none;
+              .username.username-width-config {
+                width: 450px;
               }
             }
           }
@@ -754,6 +759,16 @@ Page Header
       }
     }
 
+    .navbar-nav {
+      > li.dropdown-user {
+        .dropdown-toggle {
+          .username.username-width-config {
+            width: 400px;
+          }
+        }
+      }
+    }
+
     /* Search form */
     .search-form {
       margin-left: 0;
@@ -778,7 +793,6 @@ Page Header
     /* Top Menu */
     .top-menu {
       .navbar-nav {
-        width: 480px;
         display: inline-block;
         margin: 0 10px 0 0;
 
@@ -868,7 +882,7 @@ Page Header
       float: right;
 
       .navbar-nav {
-        width: 400px;
+
         > li.dropdown {
 
           > .dropdown-toggle {
@@ -930,8 +944,8 @@ Page Header
           .dropdown-toggle {
             padding: $header-top-menu-user-item-padding-on-mobile;
 
-            .username.username-hide-on-mobile {
-              display: none;
+            .username.username-width-config {
+              width: 300px;
             }
 
             img {
@@ -968,6 +982,18 @@ Page Header
         &:before {
           right: 9px;
           left: auto;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 350px) {
+  .navbar-nav {
+    > li.dropdown-user {
+      .dropdown-toggle {
+        .username.username-width-config {
+          width: 250px !important;
         }
       }
     }
