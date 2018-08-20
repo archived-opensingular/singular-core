@@ -47,7 +47,7 @@ import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackCompactPanel;
 import org.opensingular.form.wicket.mapper.AbstractListMapper;
 import org.opensingular.form.wicket.mapper.MapperCommons;
-import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppender;
+import org.opensingular.form.wicket.mapper.behavior.RequiredLabelClassAppender;
 import org.opensingular.form.wicket.mapper.common.util.ColumnType;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
@@ -209,7 +209,7 @@ public class MasterDetailPanel extends Panel {
         Label label = new Label("headLabel", labelModel);
 
         if (ctx.getViewMode() != null && ctx.getViewMode().isEdition()) {
-            label.add(new RequiredListLabelClassAppender(ctx.getModel()));
+            label.add(new RequiredLabelClassAppender(ctx.getModel()));
         }
         return label;
     }
