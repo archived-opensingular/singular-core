@@ -27,6 +27,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
@@ -75,6 +76,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
     private static final String FILTER_BUTTON_ID = "filterButton";
     private static final String FORM_PANEL_ID = "formPanel";
     private static final String RESULT_TABLE_ID = "resultTable";
+    public static final String FILTRAR = "Filtrar";
 
     private final WicketBuildContext ctx;
     private final ISupplier<SViewSearchModal> viewSupplier;
@@ -113,6 +115,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         innerSingularFormPanel = buildInnerSingularFormPanel();
         filterButton = buildFilterButton();
         resultTable = buildResultTable(getConfig());
+
         resultTable.add(new Behavior() {
             @Override
             public void renderHead(Component component, IHeaderResponse response) {
@@ -151,7 +154,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
     }
 
     private AjaxButton buildFilterButton() {
-        return new AjaxButton(FILTER_BUTTON_ID) {
+        AjaxButton ajaxButton = new AjaxButton(FILTER_BUTTON_ID) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 super.onSubmit(target, form);
@@ -165,6 +168,9 @@ class SearchModalBodyPanel extends Panel implements Loggable {
                 target.add(resultTable);
             }
         };
+        String buttonLabel = viewSupplier.get().getButtonLabel();
+        ajaxButton.add(new Label("label", Optional.ofNullable(buttonLabel).orElse(FILTRAR)));
+        return ajaxButton;
     }
 
     private WebMarkupContainer buildResultTable(Config config) {
