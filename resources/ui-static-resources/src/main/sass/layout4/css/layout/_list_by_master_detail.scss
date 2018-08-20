@@ -199,3 +199,11 @@ $has-error-table-color: #fdd5df;
 .has-error.list-detail-input .table tbody tr td {
   color: $has-error-font-color;
 }
+
+.list-detail-input .table thead tr th a {
+  color: rgba(74, 74, 74, 0.7) !important;
+}
+.list-detail-input .table thead tr th {
+  position: static !important; /*This config is for correct the display in firefox*/
+  color: rgba(74, 74, 74, 0.7) !important;
+}
