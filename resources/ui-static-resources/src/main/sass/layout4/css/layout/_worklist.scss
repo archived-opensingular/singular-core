@@ -1,7 +1,6 @@
 @import '../../../singular_variables';
 
 .worklist {
-  padding: 15px;
 
   thead tr {
 
@@ -40,12 +39,6 @@
         background-color: $worklist-element-bg-color-on-hover;
       }
 
-      &:last-child {
-        td {
-          border-bottom: 1px solid $worklist-table-line-color !important; // cor da linha após a ultima linha da tabela.
-        }
-      }
-
     }
   }
 
@@ -81,14 +74,3 @@
     text-decoration: none;
   }
 }
-
-
-//CREATE BACKGROUND COLOR and config the color of no rows when table is empty
-
-//.norecords-tr {
-//  background-color: $bg-color;
-//}
-//
-//.norecords-tr > td {
-//  color: $worklist-table-head-font-color
-//}
