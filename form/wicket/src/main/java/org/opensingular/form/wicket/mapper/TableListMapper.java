@@ -16,6 +16,7 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -114,7 +115,13 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         WicketBuildContext ctx, boolean isEdition) {
 
         final IModel<String> label = $m.ofValue(ctx.getCurrentInstance().getType().asAtr().getLabel());
-        final Label title = new Label("_title", label);
+        final Label title = new Label("_title", label){
+            @Override
+            protected void onConfigure() {
+                super.onConfigure();
+                setVisible(StringUtils.isNotBlank(label.getObject()));
+            }
+        };
 
         ctx.configureContainer(label);
 
