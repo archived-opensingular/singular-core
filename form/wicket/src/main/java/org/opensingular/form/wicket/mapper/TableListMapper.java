@@ -115,13 +115,8 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         WicketBuildContext ctx, boolean isEdition) {
 
         final IModel<String> label = $m.ofValue(ctx.getCurrentInstance().getType().asAtr().getLabel());
-        final Label title = new Label("_title", label){
-            @Override
-            protected void onConfigure() {
-                super.onConfigure();
-                setVisible(StringUtils.isNotBlank(label.getObject()));
-            }
-        };
+        final Label title = new Label("_title", label);
+        title.add($b.visibleIfModelObject(StringUtils::isNotBlank));
 
         ctx.configureContainer(label);
 
