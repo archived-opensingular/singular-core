@@ -2942,36 +2942,36 @@ Login page
   -moz-border-radius: 15px 15px 15px 15px !important;
   -webkit-border-radius: 15px 15px 15px 15px !important; }
 
-.login .content .form-actions .checkbox {
+.login .content .form-submit .checkbox {
   margin-left: 0;
   padding-left: 0; }
 
-.login .content .forget-form .form-actions {
+.login .content .forget-form .form-submit {
   border: 0;
   margin-bottom: 0;
   padding-bottom: 20px; }
 
-.login .content .register-form .form-actions {
+.login .content .register-form .form-submit {
   border: 0;
   margin-bottom: 0;
   padding-bottom: 0px; }
 
-.login .content .form-actions .btn {
+.login .content .form-submit .btn {
   margin-top: 1px;
   float: right; }
 
-.login .content .form-actions .btn {
+.login .content .form-submit .btn {
   font-weight: 600;
   padding: 10px 20px !important; }
 
-.login .content .form-actions .btn-default {
+.login .content .form-submit .btn-default {
   font-weight: 600;
   padding: 10px 25px !important;
   color: #6c7a8d;
   background-color: #ffffff;
   border: none; }
 
-.login .content .form-actions .btn-default:hover {
+.login .content .form-submit .btn-default:hover {
   background-color: #fafaff;
   color: #45b6af; }
 
@@ -3016,6 +3016,12 @@ Login page
   padding: 10px;
   color: #5D5D5D;
   font-size: 13px; }
+
+.login .logo img.logo-sso {
+  height: auto; }
+
+.page-content-wrapper .page-content {
+  min-height: auto !important; }
 
 @media (max-width: 440px) {
   /***
