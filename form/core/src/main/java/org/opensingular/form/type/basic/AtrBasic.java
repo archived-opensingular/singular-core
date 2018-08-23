@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -91,6 +90,11 @@ public class AtrBasic extends STranslatorForAttribute {
 
     public AtrBasic basicMask(String mask) {
         setAttributeValue(SPackageBasic.ATR_BASIC_MASK, mask);
+        return this;
+    }
+
+    public AtrBasic regexMask(String pattern) {
+        setAttributeValue(SPackageBasic.ATR_REGEX_MASK, pattern);
         return this;
     }
 

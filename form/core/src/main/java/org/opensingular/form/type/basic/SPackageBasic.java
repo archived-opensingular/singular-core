@@ -72,6 +72,7 @@ public class SPackageBasic extends SPackage {
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_EMPTY_TO_NULL         = new AtrRef<>(SPackageBasic.class, "emptyToNull"           , STypeBoolean.class, SIBoolean.class, Boolean.class);
     public static final AtrRef<STypeString, SIString, String>                     ATR_SUBTITLE              = new AtrRef<>(SPackageBasic.class, "subtitle"              , STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeString, SIString, String>                     ATR_BASIC_MASK            = new AtrRef<>(SPackageBasic.class, "basicMask"             , STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeString, SIString, String>                     ATR_REGEX_MASK            = new AtrRef<>(SPackageBasic.class, "regexMask"             , STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_MAX_LENGTH            = new AtrRef<>(SPackageBasic.class, "maxLength"             , STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_INTEGER_MAX_LENGTH    = new AtrRef<>(SPackageBasic.class, "integerMaxLength"      , STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_FRACTIONAL_MAX_LENGTH = new AtrRef<>(SPackageBasic.class, "fractionalMaxLength"   , STypeInteger.class, SIInteger.class, Integer.class);
@@ -148,6 +149,7 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_LABEL);
         pb.createAttributeIntoType(SType.class, ATR_SUBTITLE);
         pb.createAttributeIntoType(SType.class, ATR_BASIC_MASK);
+        pb.createAttributeIntoType(SType.class, ATR_REGEX_MASK);
         pb.createAttributeIntoType(SType.class, ATR_VISIBLE);
         pb.createAttributeIntoType(SType.class, ATR_ENABLED);
         pb.createAttributeIntoType(SType.class, ATR_VISIBLE_FUNCTION);
@@ -192,6 +194,7 @@ public class SPackageBasic extends SPackage {
         pb.getAttribute(ATR_LABEL).asAtr().label("Label")/*.editSize(30)*/.maxLength(50);
         pb.getAttribute(ATR_SUBTITLE).asAtr().label("Subtitle")/*.editSize(30)*/.maxLength(50);
         pb.getAttribute(ATR_BASIC_MASK).asAtr().label("Basic mask")/*.editSize(30)*/.maxLength(20);
+        pb.getAttribute(ATR_REGEX_MASK).asAtr().label("Regex mask")/*.editSize(30)*/.maxLength(50);
         pb.getAttribute(ATR_MAX_LENGTH).asAtr().label("Maximum length")/*.editSize(30)*/.maxLength(4);
         pb.getAttribute(ATR_INTEGER_MAX_LENGTH).asAtr().label("Integer maximum length")/*.editSize(30)*/.maxLength(4);
         pb.getAttribute(ATR_FRACTIONAL_MAX_LENGTH).asAtr().label("Fractional maximum length")/*.editSize(30)*/.maxLength(4);
