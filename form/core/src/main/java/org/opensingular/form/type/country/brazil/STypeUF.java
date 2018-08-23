@@ -21,13 +21,18 @@ import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.generic.STGenericComposite;
 import org.opensingular.lib.commons.util.Loggable;
 
 @SInfoType(name = "UnidadeFederacao", spackage = SPackageCountryBrazil.class)
-public class STypeUF extends STypeComposite<SIComposite> implements Loggable {
+public class STypeUF extends STGenericComposite<SIUF> implements Loggable {
 
     public STypeString sigla;
     public STypeString nome;
+
+    public STypeUF() {
+        super(SIUF.class);
+    }
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
@@ -44,8 +49,8 @@ public class STypeUF extends STypeComposite<SIComposite> implements Loggable {
                 .id(sigla)
                 .display("${nome!} - ${sigla!}")
                 .simpleProvider(listBuilder -> {
-                    fillAL(listBuilder.add().get());
                     fillAC(listBuilder.add().get());
+                    fillAL(listBuilder.add().get());
                     fillAP(listBuilder.add().get());
                     fillAM(listBuilder.add().get());
                     fillBA(listBuilder.add().get());
