@@ -24,6 +24,15 @@ import java.util.Set;
 
 public class RequiredBehaviorUtil {
 
+    /**
+     * This method is responsible for include the css class for te required field.
+     * Note: Prefer use <code>RequiredLabelClassAppender</code>
+     *
+     * @param oldClasses The class Css.
+     * @param instance   The instance of object.
+     * @return Set with the classes Css that will be included.
+     * @see RequiredLabelClassAppender
+     */
     public static Set<String> updateRequiredClasses(Set<String> oldClasses, SInstance instance) {
         Boolean required = Optional.ofNullable(instance.getAttributeValue(SPackageBasic.ATR_REQUIRED)).orElse(Boolean.FALSE);
         if (instance.getType().isList()) {

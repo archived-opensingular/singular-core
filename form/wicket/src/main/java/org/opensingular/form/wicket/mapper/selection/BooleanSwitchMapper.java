@@ -16,15 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.selection;
 
-import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
@@ -38,17 +29,22 @@ import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.view.SViewBooleanSwitch;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.mapper.BooleanMapper;
 import org.opensingular.form.wicket.mapper.SingularEventsHandlers;
-import org.opensingular.form.wicket.mapper.behavior.RequiredBehaviorUtil;
+import org.opensingular.form.wicket.mapper.behavior.RequiredLabelClassAppender;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.AttributeModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.commons.lambda.IFunction;
-import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 
 public class BooleanSwitchMapper implements IWicketComponentMapper, ISInstanceActionCapable {
 
@@ -71,13 +67,7 @@ public class BooleanSwitchMapper implements IWicketComponentMapper, ISInstanceAc
 
         ctx.configure(this, input);
 
-        label.add(new ClassAttributeModifier() {
-            @Override
-            protected Set<String> update(Set<String> oldClasses) {
-                oldClasses.add("control-label");
-                return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
-            }
-        });
+        label.add(new RequiredLabelClassAppender(model, "control-label"));
 
         final SViewBooleanSwitch<Boolean> view = (SViewBooleanSwitch<Boolean>) ctx.getView();
         final Optional<String> onColor = view.getColor(Boolean.TRUE);

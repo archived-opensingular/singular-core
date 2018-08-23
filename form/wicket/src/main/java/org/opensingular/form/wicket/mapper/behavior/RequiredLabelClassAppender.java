@@ -16,23 +16,42 @@
 
 package org.opensingular.form.wicket.mapper.behavior;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.type.basic.SPackageBasic;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
-public class RequiredListLabelClassAppender extends ClassAttributeModifier {
+/**
+ * Class responsible for include the Required class CSS.
+ */
+public class RequiredLabelClassAppender extends ClassAttributeModifier {
 
     private final IModel<? extends SInstance> model;
+    private List<String> classesCss;
 
-    public RequiredListLabelClassAppender(IModel<? extends SInstance> model) {
+    public RequiredLabelClassAppender(IModel<? extends SInstance> model) {
         this.model = model;
+    }
+
+    /**
+     * @param model   The model.
+     * @param classes The classes Css to be included in the update model.
+     */
+    public RequiredLabelClassAppender(IModel<? extends SInstance> model, String... classes) {
+        this(model);
+        classesCss = Arrays.asList(classes);
+
     }
 
     @Override
     protected Set<String> update(Set<String> oldClasses) {
+        if (CollectionUtils.isNotEmpty(classesCss)) {
+            oldClasses.addAll(classesCss);
+        }
         return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
     }
 
