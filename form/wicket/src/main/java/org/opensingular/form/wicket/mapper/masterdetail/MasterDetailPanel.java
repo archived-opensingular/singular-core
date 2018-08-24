@@ -16,6 +16,7 @@
 
 package org.opensingular.form.wicket.mapper.masterdetail;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -435,6 +436,9 @@ public class MasterDetailPanel extends Panel {
     }
 
     private SInstance findChildByNameOrElseParent(SInstance parent, String childName) {
+        if(StringUtils.isEmpty(childName)){
+            return parent;
+        }
         return SFormUtil.findChildByName(parent, childName)
                 .map(SInstance.class::cast)
                 .orElse(parent);
