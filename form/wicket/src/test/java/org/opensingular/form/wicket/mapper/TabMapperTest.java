@@ -16,12 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import de.danielbechler.diff.ObjectDifferBuilder;
-import de.danielbechler.diff.circular.CircularReferenceExceptionHandler;
-import de.danielbechler.diff.introspection.PropertyAccessExceptionHandler;
-import de.danielbechler.diff.introspection.PropertyReadException;
-import de.danielbechler.diff.node.DiffNode;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.serialize.java.JavaSerializer;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.tester.TagTester;
