@@ -28,7 +28,7 @@ public class RegexMaskBehaviour extends InputMaskBehavior {
     }
 
     /**
-     * <p>Retorna o <i>script</i> que extenda a definição do InputMask para utilizar um regex.</p>
+     * <p>Retorna o <i>script</i> que extenda a definição do InputMask para utilizar um regex como validador da máscara.</p>
      *
      * @return o <i>javascript</i> gerado.
      */

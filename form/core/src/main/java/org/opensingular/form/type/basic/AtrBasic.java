@@ -93,6 +93,16 @@ public class AtrBasic extends STranslatorForAttribute {
         return this;
     }
 
+    /**
+     * For usage on {{@link #(org.opensingular.form.type.core.STypeString)}} only.
+     * Allows adding a mask to an {{@link #(AtrBasic)}} using a simple regular expression
+     * It only works for validating the whole field's pattern. It's not possible to set a regex defining specific amount of characters.
+     * Compliant {@param pattern}: "[a-zA-Z ]"
+     * Non compliant {@param pattern}: "[a-zA-Z ]{3}"
+     *
+     * @param pattern The regular expression pattern used to validate the mask
+     * @return this AtrBasic with ATR_REGEX_MASK
+     */
     public AtrBasic regexMask(String pattern) {
         setAttributeValue(SPackageBasic.ATR_REGEX_MASK, pattern);
         return this;
