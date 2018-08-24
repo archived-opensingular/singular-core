@@ -22,8 +22,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
 import org.apache.wicket.markup.html.form.CheckGroup;
 import org.apache.wicket.markup.html.form.FormComponent;
@@ -41,7 +39,10 @@ import org.opensingular.lib.wicket.util.behavior.ConditionalAttributeModifier;
 import org.opensingular.lib.wicket.util.behavior.FormChoiceAjaxUpdateBehavior;
 import org.opensingular.lib.wicket.util.behavior.FormComponentAjaxUpdateBehavior;
 import org.opensingular.lib.wicket.util.behavior.IAjaxUpdateConfiguration;
+import org.opensingular.lib.wicket.util.behavior.OnComponentTagFunctionalBehaviour;
 import org.opensingular.lib.wicket.util.behavior.OnConfigureFunctionalBehaviour;
+import org.opensingular.lib.wicket.util.behavior.RenderHeadFunctionalBehavior;
+import org.opensingular.lib.wicket.util.behavior.UpdateValueAttributeAppender;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 
 import java.io.Serializable;
@@ -68,13 +69,7 @@ public interface IBehaviorsMixin extends Serializable {
     }
 
     default AttributeModifier attrRemover(String attribute, Serializable patternToRemove, boolean isolateWord) {
-        return new AttributeModifier(attribute, patternToRemove) {
-            @Override
-            protected String newValue(String currentValue, String replacementValue) {
-                String regex = (isolateWord) ? "\\b" + replacementValue + "\\b" : replacementValue;
-                return currentValue.replaceAll(regex, "");
-            }
-        };
+        return new UpdateValueAttributeAppender(attribute, patternToRemove, isolateWord);
     }
 
     default AttributeModifier attr(String attribute, Serializable valueOrModel) {
@@ -166,12 +161,7 @@ public interface IBehaviorsMixin extends Serializable {
     }
 
     default Behavior onComponentTag(IBiConsumer<Component, ComponentTag> onComponentTag) {
-        return new Behavior() {
-            @Override
-            public void onComponentTag(Component component, ComponentTag tag) {
-                IBiConsumer.noopIfNull(onComponentTag).accept(component, tag);
-            }
-        };
+        return new OnComponentTagFunctionalBehaviour(onComponentTag);
     }
 
     default <C extends Component> IAjaxUpdateConfiguration<C> addAjaxUpdate(C component) {
@@ -213,21 +203,7 @@ public interface IBehaviorsMixin extends Serializable {
     }
 
     default Behavior onReadyScript(IFunction<Component, CharSequence> scriptFunction, IFunction<Component, Boolean> isEnabled) {
-        return new Behavior() {
-            @Override
-            public void renderHead(Component component, IHeaderResponse response) {
-                response.render(OnDomReadyHeaderItem.forScript(""
-                        + "(function(){"
-                        + "'use strict';"
-                        + scriptFunction.apply(component)
-                        + "})();"));
-            }
-
-            @Override
-            public boolean isEnabled(Component component) {
-                return isEnabled.apply(component);
-            }
-        };
+        return new RenderHeadFunctionalBehavior(scriptFunction, isEnabled);
     }
 
     default Behavior onEnterDelegate(Component newTarget, String originalTargetEvent) {
