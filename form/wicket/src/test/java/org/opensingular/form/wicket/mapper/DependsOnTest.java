@@ -21,6 +21,9 @@ package org.opensingular.form.wicket.mapper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.serialize.java.JavaSerializer;
+import org.apache.wicket.util.lang.Bytes;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.form.STypeComposite;
@@ -112,6 +115,34 @@ public class DependsOnTest {
         DropDownChoice elementChoices = options().element(1).getTarget(DropDownChoice.class);
 
         assertThat(elementChoices.getChoices()).containsOnly(OPTIONS.get("fruits").toArray());
+    }
+
+    @Test
+    public void testSerialization(){
+        JavaSerializer javaSerializer = new JavaSerializer("");
+
+        AssertionsWComponent categoryAssertion = tester.getAssertionsForm().getSubComponentWithType(category);
+        categoryAssertion.assertSInstance().getTarget().setValue("fruits");
+
+        tester.executeAjaxEvent(categoryAssertion.getTarget(), SINGULAR_PROCESS_EVENT);
+
+        byte[] serializedPage = javaSerializer.serialize(tester.getDummyPage());
+        System.out.println(Bytes.bytes(serializedPage.length));
+
+        for (int i = 0; i < 1000; i++) {
+
+            categoryAssertion.assertSInstance().getTarget().setValue("fruits");
+
+            tester.executeAjaxEvent(categoryAssertion.getTarget(), SINGULAR_PROCESS_EVENT);
+
+            byte[] serializedPage2 = javaSerializer.serialize(tester.getDummyPage());
+
+
+            Assert.assertEquals(serializedPage.length, serializedPage2.length);
+        }
+
+        System.out.println(Bytes.bytes(serializedPage.length));
+
     }
 
     // WITH SELECTED VALUES
