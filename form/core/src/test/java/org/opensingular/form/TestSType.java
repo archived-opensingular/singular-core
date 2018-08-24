@@ -16,6 +16,7 @@
 
 package org.opensingular.form;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +27,7 @@ import org.opensingular.form.TestSType.MyPackageA.MyTypeBB;
 import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeDecimal;
+import org.opensingular.form.type.core.STypeString;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 
 import java.util.List;
@@ -38,6 +40,20 @@ public class TestSType extends TestCaseForm {
 
     public TestSType(TestFormConfig testFormConfig) {
         super(testFormConfig);
+    }
+
+    @Test
+    public void testIsTypeOf() {
+        SDictionary dic1 = createTestDictionary();
+        SDictionary dic2 = createTestDictionary();
+        assertTrue(dic1.getType(STypeString.class).isTypeOf(dic1.getType(STypeString.class)));
+        assertTrue(dic1.getType(STypeString.class).isTypeOf(dic1.getType(STypeSimple.class)));
+        //noinspection unchecked
+        assertFalse(dic1.getType(STypeSimple.class).isTypeOf(dic1.getType(STypeString.class)));
+
+        Assertions.assertThatThrownBy(() -> dic1.getType(STypeString.class).isTypeOf(dic2.getType(STypeString.class)))
+                .isExactlyInstanceOf(SingularFormException.class).hasMessageContaining(
+                "foi criado em outro dicionário");
     }
 
     @Test
