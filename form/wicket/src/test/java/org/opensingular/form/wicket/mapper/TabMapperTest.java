@@ -17,10 +17,10 @@
 package org.opensingular.form.wicket.mapper;
 
 import org.apache.wicket.serialize.java.JavaSerializer;
-import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.tester.TagTester;
 import org.junit.Assert;
 import org.junit.Test;
+import org.opensingular.form.ObjectMeta;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
@@ -31,12 +31,17 @@ import org.opensingular.form.wicket.helpers.DummyPage;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * @author Daniel C. Bordin on 03/04/2017.
  */
 public class TabMapperTest {
+
+
 
     @Test
     public void test_Edit() {
@@ -79,42 +84,89 @@ public class TabMapperTest {
     }
 
     @Test
-    public void testTabSerialization() {
+    public void testTabSerialization() throws IllegalAccessException {
         SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
         ctx.getDummyPage().setTypeBuilder(TabMapperTest::createSimpleForm);
         ctx.startDummyPage();
 
+        clickAndCompare(1, 1, ctx);
+        clickAndCompare(1, 100, ctx);
+        clickAndCompare(1, 1000, ctx);
+
+
+    }
+
+    private void clickAndCompare(int numberOfclicksFirstCase, int numberOfClicksSecondCase, SingularFormDummyPageTester ctx) throws IllegalAccessException {
+
         JavaSerializer javaSerializer = new JavaSerializer("");
-        System.out.println(Bytes.bytes(javaSerializer.serialize(ctx.getDummyPage()).length));
 
         AssertionsWComponent assertionsTab = getAssertionsTab(ctx);
 
-        clickOnTab(ctx, assertionsTab, 1);
-        assertTabMenuActive(ctx, "experiencia", true);
-        assertTabContent(assertionsTab, "experiencia");
 
-        byte[] oneClick = javaSerializer.serialize(ctx.getDummyPage());
-
-        clickOnTab(ctx, assertionsTab, 1);
-        assertTabMenuActive(ctx, "experiencia", true);
-        assertTabContent(assertionsTab, "experiencia");
-
-        byte[] twoClicks = javaSerializer.serialize(ctx.getDummyPage());
-
-        DummyPage pageOneClick = (DummyPage) javaSerializer.deserialize(oneClick);
-
-        DummyPage pageTwoClicks = (DummyPage) javaSerializer.deserialize(twoClicks);
-
-        System.out.println("Equals: " + pageOneClick.equals(pageTwoClicks));
-
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < numberOfclicksFirstCase; i++) {
             clickOnTab(ctx, assertionsTab, 1);
             assertTabMenuActive(ctx, "experiencia", true);
             assertTabContent(assertionsTab, "experiencia");
-
-            System.out.println(Bytes.bytes(javaSerializer.serialize(ctx.getDummyPage()).length));
         }
+
+        byte[] firstCase = javaSerializer.serialize(ctx.getDummyPage());
+
+
+        for (int i = 0; i < numberOfClicksSecondCase; i++) {
+            clickOnTab(ctx, assertionsTab, 1);
+            assertTabMenuActive(ctx, "experiencia", true);
+            assertTabContent(assertionsTab, "experiencia");
+        }
+
+        byte[] secondCase = javaSerializer.serialize(ctx.getDummyPage());
+
+        DummyPage pageFirstCase = (DummyPage) javaSerializer.deserialize(firstCase);
+
+        Map<String, List<ObjectMeta.ObjectData>> mapFirstCase = ObjectMeta.hihihi(pageFirstCase);
+
+        DummyPage pageSecondCase = (DummyPage) javaSerializer.deserialize(secondCase);
+
+        Map<String, List<ObjectMeta.ObjectData>> mapSecondCase = ObjectMeta.hihihi(pageSecondCase);
+
+        for (Map.Entry<String, List<ObjectMeta.ObjectData>> e : mapSecondCase.entrySet()) {
+            List<ObjectMeta.ObjectData> metaTwo = e.getValue();
+            List<ObjectMeta.ObjectData> metaOne = mapFirstCase.get(e.getKey());
+            if (metaTwo != null && metaOne != null) {
+                if (metaOne.size() != metaTwo.size()) {
+                    System.out.println("Diff On " + e.getKey() + " -> was: " + metaOne.size() + " now is: " + metaTwo.size());
+                }
+            } else {
+                System.out.println("NULL em UM");
+            }
+        }
+
+        List<ObjectMeta.ObjectData> one = mapFirstCase.get(String.class.getName());
+        List<ObjectMeta.ObjectData> two = mapSecondCase.get(String.class.getName());
+
+        for (ObjectMeta.ObjectData objectData : two) {
+            if (!one.stream().map(o -> o.value).collect(Collectors.toList()).contains(objectData.value)) {
+                System.out.println("not found:" + objectData.value);
+                ObjectMeta.printPath(objectData);
+            }
+        }
+
+        for (ObjectMeta.ObjectData objectData : one) {
+            if (!two.stream().map(o -> o.value).collect(Collectors.toList()).contains(objectData.value)) {
+                System.out.println("not found:" + objectData.value);
+                ObjectMeta.printPath(objectData);
+            }
+        }
+
+        if (secondCase.length != firstCase.length){
+            double limiar = 0.0001D;
+            double value = Double.valueOf(Math.abs(secondCase.length-firstCase.length))/Double.valueOf(Math.min(firstCase.length, secondCase.length));
+            Assert.assertTrue("Tamanho da serializacao difere em mais de "+limiar*100+"% entre chamadas",value < limiar);
+        }
+
+
     }
+
+
 
     public void testTab(Consumer<SingularFormDummyPageTester> config) {
         SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
