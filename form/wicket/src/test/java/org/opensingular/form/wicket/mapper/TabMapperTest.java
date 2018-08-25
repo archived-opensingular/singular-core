@@ -16,6 +16,9 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.serialize.ISerializer;
+import org.apache.wicket.serialize.java.DeflatedJavaSerializer;
 import org.apache.wicket.serialize.java.JavaSerializer;
 import org.apache.wicket.util.tester.TagTester;
 import org.junit.Assert;
@@ -29,10 +32,14 @@ import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
 import org.opensingular.form.wicket.helpers.DummyPage;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
+import org.opensingular.lib.wicket.util.application.FSTSerializer;
+import org.opensingular.lib.wicket.util.application.LZ4Serializer;
 
 import javax.annotation.Nonnull;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -40,7 +47,6 @@ import java.util.stream.Collectors;
  * @author Daniel C. Bordin on 03/04/2017.
  */
 public class TabMapperTest {
-
 
 
     @Test
@@ -93,6 +99,40 @@ public class TabMapperTest {
         clickAndCompare(1, 100, ctx);
         clickAndCompare(1, 1000, ctx);
 
+
+    }
+
+    @Test
+    public void testTabSerializationSpeed() throws InterruptedException {
+        SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
+        ctx.getDummyPage().setTypeBuilder(TabMapperTest::createSimpleForm);
+        ctx.startDummyPage();
+        WebPage page = ctx.getDummyPage();
+
+        System.gc();
+        Thread.yield();
+        Thread.sleep(10);
+
+        Map<String, ISerializer> map = new TreeMap<>();
+
+
+        map.put("java", new JavaSerializer(""));
+        map.put("fst", new FSTSerializer());
+        map.put("lz4-fst", new LZ4Serializer(new FSTSerializer()));
+        map.put("lz4-java", new LZ4Serializer(new JavaSerializer("1")));
+        map.put("java deflated", new DeflatedJavaSerializer("21"));
+
+        for (int i = 0; i < 10; i++) {
+            System.out.println("Rodada " + (i + 1));
+            for (Map.Entry<String, ISerializer> o : map.entrySet()) {
+                long milis = new Date().getTime();
+                o.getValue().serialize(page);
+                System.out.println("Tempo gasto " + o.getKey() + "(ms):" + (new Date().getTime() - milis));
+                System.gc();
+                Thread.yield();
+                Thread.sleep(10);
+            }
+        }
 
     }
 
@@ -157,15 +197,14 @@ public class TabMapperTest {
             }
         }
 
-        if (secondCase.length != firstCase.length){
+        if (secondCase.length != firstCase.length) {
             double limiar = 0.0001D;
-            double value = Double.valueOf(Math.abs(secondCase.length-firstCase.length))/Double.valueOf(Math.min(firstCase.length, secondCase.length));
-            Assert.assertTrue("Tamanho da serializacao difere em mais de "+limiar*100+"% entre chamadas",value < limiar);
+            double value  = Double.valueOf(Math.abs(secondCase.length - firstCase.length)) / Double.valueOf(Math.min(firstCase.length, secondCase.length));
+            Assert.assertTrue("Tamanho da serializacao difere em mais de " + limiar * 100 + "% entre chamadas", value < limiar);
         }
 
 
     }
-
 
 
     public void testTab(Consumer<SingularFormDummyPageTester> config) {
