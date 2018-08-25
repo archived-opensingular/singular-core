@@ -21,7 +21,6 @@ import net.vidageek.mirror.dsl.Mirror;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -39,6 +38,20 @@ public class ObjectMeta {
             className = o.getClass().getName();
             value = o;
             parent = p;
+        }
+    }
+
+    public static void printPaths(List<ObjectMeta.ObjectData> objectData) {
+        for (ObjectMeta.ObjectData o : objectData) {
+            printPath(o);
+            System.out.println("\n\n");
+        }
+    }
+
+    public static void printPath(ObjectMeta.ObjectData o) {
+        if (o != null) {
+            printPath(o.parent);
+            System.out.println("[" + o.id + "]" + o.value.getClass().getName());
         }
     }
 
