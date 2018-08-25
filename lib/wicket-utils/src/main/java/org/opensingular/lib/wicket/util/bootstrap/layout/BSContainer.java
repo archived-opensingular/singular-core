@@ -30,6 +30,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.bootstrap.BootstrapSize;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
@@ -41,6 +42,7 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     private String                tagName;
     private String                cssClass = null, innerStyle = null;
     protected final RepeatingView items    = new RepeatingView("_");
+    private IConsumer<BSContainer<?>> detachListener = c -> {};
 
     public BSContainer(String id) {
         super(id);
@@ -48,6 +50,18 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
 
     public BSContainer(String id, IModel<?> model) {
         super(id, model);
+    }
+
+
+
+    @Override
+    protected void onDetach() {
+        super.onDetach();
+        detachListener.accept(this);
+    }
+
+    public void setDetachListener(IConsumer<BSContainer<?>> detachListener) {
+        this.detachListener = detachListener;
     }
 
     public BSContainer(String id, String tagName) {
