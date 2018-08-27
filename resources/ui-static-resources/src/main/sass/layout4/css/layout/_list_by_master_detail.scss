@@ -156,6 +156,11 @@ $has-error-table-color: #fdd5df;
   border-bottom: 1px solid $has-error-table-color;
 }
 
+.has-error.list-detail-input .table thead tr th a {
+  color: $has-error-font-color;
+  border-bottom: 1px solid $has-error-table-color;
+}
+
 .has-error .list-detail-body .table tfoot .list-detail-empty td {
   border: 1px solid $has-error-table-color;
   color: $has-error-font-color;
