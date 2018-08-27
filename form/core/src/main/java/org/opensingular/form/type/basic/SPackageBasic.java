@@ -64,7 +64,7 @@ public class SPackageBasic extends SPackage {
     public static final String NAME = SDictionary.SINGULAR_PACKAGES_PREFIX + "basic";
 
     //@formatter:off
-    public static final AtrRef<?, ?, Object>                             ATR_DEFAULT_IF_NULL    = AtrRef.ofSelfReference(SPackageBasic.class, "defaultIfNull");
+    public static final AtrRef<?, ?, Object>                                      ATR_DEFAULT_IF_NULL       = AtrRef.ofSelfReference(SPackageBasic.class, "defaultIfNull");
     public static final AtrRef<?, ?, Object>                                      ATR_INITIAL_VALUE         = AtrRef.ofSelfReference(SPackageBasic.class, "initialValue" );
     public static final AtrRef<STypeString, SIString, String>                     ATR_LABEL                 = new AtrRef<>(SPackageBasic.class, "label"                 , STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_TRIM                  = new AtrRef<>(SPackageBasic.class, "trim"                  , STypeBoolean.class, SIBoolean.class, Boolean.class);
@@ -99,10 +99,10 @@ public class SPackageBasic extends SPackage {
     public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_MINIMUM_SIZE          = new AtrRef<>(SPackageBasic.class, "minimumSize"           , STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_MAXIMUM_SIZE          = new AtrRef<>(SPackageBasic.class, "maximumSize"           , STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeLong, SILong, Long>                           ATR_MAX_FILE_SIZE         = new AtrRef<>(SPackageBasic.class, "maxFileSize"           , STypeLong.class, SILong.class, Long.class);
-    public static final AtrRef<STypeString, SIString, String>                ATR_ALLOWED_FILE_TYPES = new AtrRef<>(SPackageBasic.class, "allowedFileTypes"      , STypeString.class, SIString.class, String.class);
-    public static final AtrRef<STypeBoolean, SIBoolean, Boolean>             ATR_UPPER_CASE_TEXT    = new AtrRef<>(SPackageBasic.class, "uppperCaseText"        , STypeBoolean.class, SIBoolean.class, Boolean.class);
-    public static final AtrRef<STypeDate, SIDate, Date>                      ATR_MAX_DATE           = new AtrRef<>(SPackageBasic.class, "maxDate"               , STypeDate.class, SIDate.class, Date.class);
-    public static final AtrRef<STypeDate, SIDate, Date>                      ATR_MIN_DATE           = new AtrRef<>(SPackageBasic.class, "minDate"               , STypeDate.class, SIDate.class, Date.class);
+    public static final AtrRef<STypeString, SIString, String>                     ATR_ALLOWED_FILE_TYPES    = new AtrRef<>(SPackageBasic.class, "allowedFileTypes"      , STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_UPPER_CASE_TEXT       = new AtrRef<>(SPackageBasic.class, "uppperCaseText"        , STypeBoolean.class, SIBoolean.class, Boolean.class);
+    public static final AtrRef<STypeDate, SIDate, Date>                           ATR_MAX_DATE              = new AtrRef<>(SPackageBasic.class, "maxDate"               , STypeDate.class, SIDate.class, Date.class);
+    public static final AtrRef<STypeDate, SIDate, Date>                           ATR_MIN_DATE              = new AtrRef<>(SPackageBasic.class, "minDate"               , STypeDate.class, SIDate.class, Date.class);
 
 
     public static final AtrRef<STypeSupplier<Collection<SType<?>>>, SISupplier<Collection<SType<?>>>, Supplier<Collection<AtrBasic.DelayedDependsOnResolver>>>
