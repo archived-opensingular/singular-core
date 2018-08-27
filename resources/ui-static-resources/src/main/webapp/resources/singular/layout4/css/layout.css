@@ -370,7 +370,8 @@ Page Header
       padding-top: 12px; }
   .page-header.navbar .page-top {
     height: 70px;
-    float: right; }
+    float: right;
+    text-align: right; }
   .page-header.navbar .search-form {
     margin: 22px 20px 0 0;
     display: inline-block;
@@ -634,7 +635,13 @@ Page Header
             display: table-cell;
             vertical-align: middle;
             font-size: 14px;
-            font-weight: 600; }
+            font-weight: 600;
+            display: inline-block;
+            width: 600px;
+            padding-top: 12px;
+            white-space: nowrap;
+            overflow: hidden !important;
+            text-overflow: ellipsis; }
             .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle > .username i {
               margin-left: 30px; }
           .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle > img {
@@ -711,8 +718,8 @@ Page Header
   /* Boxed layout */
   .page-boxed .page-header.navbar {
     /* Top menu */ }
-    .page-boxed .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle .username.username-hide-on-mobile {
-      display: none; }
+    .page-boxed .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle .username.username-width-config {
+      width: 450px; }
     .page-boxed .page-header.navbar .top-menu .navbar-nav > li.dropdown-language .dropdown-toggle .langname {
       display: none; } }
 
@@ -779,6 +786,8 @@ Page Header
       display: none !important; }
     .page-header.navbar .menu-toggler.responsive-toggler {
       display: inline-block; }
+    .page-header.navbar .navbar-nav > li.dropdown-user .dropdown-toggle .username.username-width-config {
+      width: 400px; }
     .page-header.navbar .search-form {
       margin-left: 0; }
       .page-header.navbar .search-form.open {
@@ -873,8 +882,8 @@ Page Header
           margin-right: 60px; }
       .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle {
         padding: 25px 6px 18px 6px; }
-        .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle .username.username-hide-on-mobile {
-          display: none; }
+        .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle .username.username-width-config {
+          width: 300px; }
         .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle img {
           margin-left: 0; }
       .page-header.navbar .top-menu .navbar-nav > li.dropdown-language .dropdown-toggle {
@@ -893,6 +902,10 @@ Page Header
         .page-header.navbar .page-actions .dropdown-menu:before {
           right: 9px;
           left: auto; } }
+
+@media (max-width: 350px) {
+  .navbar-nav > li.dropdown-user .dropdown-toggle .username.username-width-config {
+    width: 250px !important; } }
 
 /***
 Pace - Page Progress
@@ -2298,6 +2311,9 @@ Theme Panel
   color: #e82724;
   border-bottom: 1px solid #fdd5df; }
 
+.has-error.list-detail-input .table thead tr th a {
+  color: #e82724; }
+
 .has-error .list-detail-body .table tfoot .list-detail-empty td {
   border: 1px solid #fdd5df;
   color: #e82724;
@@ -2335,12 +2351,12 @@ Theme Panel
   color: #e82724; }
 
 .list-detail-input .table thead tr th a {
-  color: rgba(74, 74, 74, 0.7) !important; }
+  color: rgba(74, 74, 74, 0.7); }
 
 .list-detail-input .table thead tr th {
+  color: rgba(74, 74, 74, 0.7);
   position: static !important;
-  /*This config is for correct the display in firefox*/
-  color: rgba(74, 74, 74, 0.7) !important; }
+  /*This config is for correct the display in firefox*/ }
 
 .list-table-input {
   margin-bottom: 15px; }
