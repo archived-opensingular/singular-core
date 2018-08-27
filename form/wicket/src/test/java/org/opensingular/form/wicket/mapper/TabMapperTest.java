@@ -20,6 +20,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.serialize.ISerializer;
 import org.apache.wicket.serialize.java.DeflatedJavaSerializer;
 import org.apache.wicket.serialize.java.JavaSerializer;
+import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.tester.TagTester;
 import org.junit.Assert;
 import org.junit.Test;
@@ -87,44 +88,6 @@ public class TabMapperTest {
         assertTabMenuActive(ctx, "experiencia", true);
         assertTabMenuActive(ctx, "informacoes", false);
         assertTabContent(assertionsTab, "experiencia");
-    }
-
-    @Test
-    public void testTabSerialization() {
-        SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
-        ctx.getDummyPage().setTypeBuilder(TabMapperTest::createSimpleForm);
-        ctx.startDummyPage();
-
-        JavaSerializer javaSerializer = new JavaSerializer("");
-        System.out.println(Bytes.bytes(javaSerializer.serialize(ctx.getDummyPage()).length));
-
-        AssertionsWComponent assertionsTab = getAssertionsTab(ctx);
-
-        clickOnTab(ctx, assertionsTab, 1);
-        assertTabMenuActive(ctx, "experiencia", true);
-        assertTabContent(assertionsTab, "experiencia");
-
-        byte[] oneClick = javaSerializer.serialize(ctx.getDummyPage());
-
-        clickOnTab(ctx, assertionsTab, 1);
-        assertTabMenuActive(ctx, "experiencia", true);
-        assertTabContent(assertionsTab, "experiencia");
-
-        byte[] twoClicks = javaSerializer.serialize(ctx.getDummyPage());
-
-        DummyPage pageOneClick = (DummyPage) javaSerializer.deserialize(oneClick);
-
-        DummyPage pageTwoClicks = (DummyPage) javaSerializer.deserialize(twoClicks);
-
-        System.out.println("Equals: " + pageOneClick.equals(pageTwoClicks));
-
-        for (int i = 0; i < 100; i++) {
-            clickOnTab(ctx, assertionsTab, 1);
-            assertTabMenuActive(ctx, "experiencia", true);
-            assertTabContent(assertionsTab, "experiencia");
-
-            System.out.println(Bytes.bytes(javaSerializer.serialize(ctx.getDummyPage()).length));
-        }
     }
 
     @Test
