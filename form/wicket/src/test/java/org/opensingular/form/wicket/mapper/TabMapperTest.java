@@ -16,6 +16,8 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import org.apache.wicket.serialize.java.JavaSerializer;
+import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.tester.TagTester;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,6 +27,7 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewTab;
 import org.opensingular.form.wicket.enums.AnnotationMode;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
+import org.opensingular.form.wicket.helpers.DummyPage;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import javax.annotation.Nonnull;
@@ -75,6 +78,44 @@ public class TabMapperTest {
         assertTabContent(assertionsTab, "experiencia");
     }
 
+    @Test
+    public void testTabSerialization() {
+        SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
+        ctx.getDummyPage().setTypeBuilder(TabMapperTest::createSimpleForm);
+        ctx.startDummyPage();
+
+        JavaSerializer javaSerializer = new JavaSerializer("");
+        System.out.println(Bytes.bytes(javaSerializer.serialize(ctx.getDummyPage()).length));
+
+        AssertionsWComponent assertionsTab = getAssertionsTab(ctx);
+
+        clickOnTab(ctx, assertionsTab, 1);
+        assertTabMenuActive(ctx, "experiencia", true);
+        assertTabContent(assertionsTab, "experiencia");
+
+        byte[] oneClick = javaSerializer.serialize(ctx.getDummyPage());
+
+        clickOnTab(ctx, assertionsTab, 1);
+        assertTabMenuActive(ctx, "experiencia", true);
+        assertTabContent(assertionsTab, "experiencia");
+
+        byte[] twoClicks = javaSerializer.serialize(ctx.getDummyPage());
+
+        DummyPage pageOneClick = (DummyPage) javaSerializer.deserialize(oneClick);
+
+        DummyPage pageTwoClicks = (DummyPage) javaSerializer.deserialize(twoClicks);
+
+        System.out.println("Equals: " + pageOneClick.equals(pageTwoClicks));
+
+        for (int i = 0; i < 100; i++) {
+            clickOnTab(ctx, assertionsTab, 1);
+            assertTabMenuActive(ctx, "experiencia", true);
+            assertTabContent(assertionsTab, "experiencia");
+
+            System.out.println(Bytes.bytes(javaSerializer.serialize(ctx.getDummyPage()).length));
+        }
+    }
+
     public void testTab(Consumer<SingularFormDummyPageTester> config) {
         SingularFormDummyPageTester ctx = new SingularFormDummyPageTester();
         ctx.getDummyPage().setTypeBuilder(TabMapperTest::createSimpleForm);
@@ -101,15 +142,15 @@ public class TabMapperTest {
 
     private void assertTabMenuActive(SingularFormDummyPageTester ctx, String tabName, boolean expected) {
         Assert.assertEquals(String.format("Tab %s is not active on the menu.", tabName), expected,
-            TagTester.createTagByAttribute(ctx.getLastResponseAsString(), "data-tab-name", tabName)
-                    .getAttributeContains("class", "active")
+                TagTester.createTagByAttribute(ctx.getLastResponseAsString(), "data-tab-name", tabName)
+                        .getAttributeContains("class", "active")
         );
     }
 
     private void assertTabContent(AssertionsWComponent assertionsTab, String... expectedInstancesName) {
         AssertionsWComponent content = assertionsTab.getSubComponentWithId("tab-content").isNotNull();
         content.getSubComponentsWithSInstance().hasSize(expectedInstancesName.length);
-        for(String name : expectedInstancesName) {
+        for (String name : expectedInstancesName) {
             content.getSubComponentWithTypeNameSimple(name).isNotNull();
         }
     }
@@ -124,12 +165,12 @@ public class TabMapperTest {
 
     private static void createSimpleForm(STypeComposite testForm) {
 
-        STypeString nome = testForm.addFieldString("nome");
+        STypeString  nome  = testForm.addFieldString("nome");
         STypeInteger idade = testForm.addFieldInteger("idade");
 
         STypeComposite experiencia = testForm.addFieldComposite("experiencia");
-        STypeString empresa = experiencia.addFieldString("empresa", true);
-        STypeString cargo = experiencia.addFieldString("cargo", true);
+        STypeString    empresa     = experiencia.addFieldString("empresa", true);
+        STypeString    cargo       = experiencia.addFieldString("cargo", true);
         experiencia.asAtr().label("Experiencias");
         experiencia.asAtrAnnotation().setAnnotated();
 

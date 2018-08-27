@@ -122,7 +122,9 @@ public class BSGrid extends BSContainer<BSGrid> {
     }
 
     public <R extends BSRow> R newRow(IBiFunction<String, IBSGridCol.BSGridSize, R> factory) {
-        return newComponent(id -> factory.apply(id, getDefaultGridSize()));
+        R comp = factory.apply(newChildId(), getDefaultGridSize());
+        getItems().add(comp);
+        return comp;
     }
 
     public BSGrid appendRow(IBSComponentFactory<BSRow> factory) {
