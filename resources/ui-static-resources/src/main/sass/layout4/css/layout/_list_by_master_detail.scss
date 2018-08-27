@@ -158,7 +158,6 @@ $has-error-table-color: #fdd5df;
 
 .has-error.list-detail-input .table thead tr th a {
   color: $has-error-font-color;
-  border-bottom: 1px solid $has-error-table-color;
 }
 
 .has-error .list-detail-body .table tfoot .list-detail-empty td {
@@ -205,10 +204,12 @@ $has-error-table-color: #fdd5df;
   color: $has-error-font-color;
 }
 
-.list-detail-input .table thead tr th a {
-  color: rgba(74, 74, 74, 0.7) !important;
+.list-detail-input .table thead tr th  a {
+  color: $table-head-font-color;
 }
+
 .list-detail-input .table thead tr th {
+  color: $table-head-font-color;
   position: static !important; /*This config is for correct the display in firefox*/
-  color: rgba(74, 74, 74, 0.7) !important;
+
 }
