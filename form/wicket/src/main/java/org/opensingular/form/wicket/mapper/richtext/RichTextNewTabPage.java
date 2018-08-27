@@ -55,12 +55,12 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     private ISupplier<SViewByRichTextNewTab> viewSupplier;
     private IModel<String> modelTextArea;
 
-    private boolean visibleMode;
+    private boolean                     readOnly;
     private AbstractDefaultAjaxBehavior eventSaveCallbackBehavior;
-    private BFModalWindow bfModalWindow;
-    private AjaxButton submitButton;
-    private HiddenField<String> hiddenInput;
-    private String markupId;
+    private BFModalWindow               bfModalWindow;
+    private AjaxButton                  submitButton;
+    private HiddenField<String>         hiddenInput;
+    private String                      markupId;
 
     /**
      * Default constructor
@@ -73,14 +73,14 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
      * The new Rich Text Page constructor.
      *
      * @param title        The title of page.
-     * @param visibleMode  True if is just visible model; False if is editable.
+     * @param readOnly  True if is just readOnly model; False if is editable.
      * @param viewSupplier The suplier of new Tab View.
      * @param hiddenInput  The hidden input of the Page who calls.
      * @param markupId     The markupId of the Label of the Page who calls.
      */
-    public RichTextNewTabPage(String title, boolean visibleMode, ISupplier<SViewByRichTextNewTab> viewSupplier,
-            HiddenField<String> hiddenInput, String markupId) {
-        this.visibleMode = visibleMode;
+    public RichTextNewTabPage(String title, boolean readOnly, ISupplier<SViewByRichTextNewTab> viewSupplier,
+                              HiddenField<String> hiddenInput, String markupId) {
+        this.readOnly = readOnly;
         this.viewSupplier = viewSupplier;
         this.hiddenInput = hiddenInput;
         this.markupId = markupId;
@@ -126,7 +126,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
             params.put("showSaveButton", String.valueOf(this.viewSupplier.get().isShowSaveButton()));
             params.put("htmlContainer", this.markupId);
             params.put("callbackUrl", eventSaveCallbackBehavior.getCallbackUrl().toString());
-            params.put("isEnabled", String.valueOf(visibleMode));
+            params.put("isEnabled", String.valueOf(!readOnly));
 
             params.put("buttonsList", this.renderButtonsList());
             packageTextTemplate.interpolate(params);
