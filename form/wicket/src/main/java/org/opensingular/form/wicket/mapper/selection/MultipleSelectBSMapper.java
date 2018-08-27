@@ -18,6 +18,7 @@ package org.opensingular.form.wicket.mapper.selection;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
+import org.opensingular.form.view.SMultiSelectionBySelectView;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.ReadOnlyModelValue;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
@@ -28,7 +29,8 @@ public class MultipleSelectBSMapper extends MultipleSelectMapper {
     @Override
     protected Component appendFormGroup(BSControls formGroup, WicketBuildContext ctx) {
         final ListMultipleChoice<?> choices = retrieveChoices(ctx.getModel(), new ReadOnlyModelValue(ctx.getModel()));
-        formGroup.appendSelect(choices.setMaxRows(5), true);
+        String attrExtra = ((SMultiSelectionBySelectView) ctx.getView()).isWithLiveFilter() ? "data-live-search='true'" : "";
+        formGroup.appendSelect(choices.setMaxRows(5), true, attrExtra);
         return choices;
     }
 }
