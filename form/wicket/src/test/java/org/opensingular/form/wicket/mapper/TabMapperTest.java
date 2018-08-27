@@ -20,7 +20,6 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.serialize.ISerializer;
 import org.apache.wicket.serialize.java.DeflatedJavaSerializer;
 import org.apache.wicket.serialize.java.JavaSerializer;
-import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.tester.TagTester;
 import org.junit.Assert;
 import org.junit.Test;
