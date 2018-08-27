@@ -158,10 +158,6 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
         AbstractSViewListWithControls<?> view = (AbstractSViewListWithControls<?>) ctx.getView();
         return view.label().orElse(
             Optional.ofNullable(Optional.ofNullable(type.asAtr().getItemLabel()).orElseGet(() -> type.asAtr().getLabel()))
-                .map((x) -> {
-                    String[] parts = x.trim().split(" ");
-                    return "Adicionar " + parts[0];
-                })
                 .orElse("Adicionar item"));
     }
 
