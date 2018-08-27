@@ -2298,6 +2298,10 @@ Theme Panel
   color: #e82724;
   border-bottom: 1px solid #fdd5df; }
 
+.has-error.list-detail-input .table thead tr th a {
+  color: #e82724;
+  border-bottom: 1px solid #fdd5df; }
+
 .has-error .list-detail-body .table tfoot .list-detail-empty td {
   border: 1px solid #fdd5df;
   color: #e82724;
