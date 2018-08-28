@@ -176,7 +176,7 @@ public class WicketSerializationDebugUtil {
 
             String msg = "Serialization: target=" + c.getClass().getName() + " size=" +
                     (result == null ? "EXCEPTION" : SingularIOUtils.humanReadableByteCount(result.length)) +
-                    " serialization=" + SingularIOUtils.humanReadableMiliSeconds(time);
+                    " serialization=" + SingularIOUtils.humanReadableMilliSeconds(time);
             try {
                 if (result == null) {
                     throw new SingularException("Erro serializando a página " + c.getClass().getName() +
@@ -188,7 +188,7 @@ public class WicketSerializationDebugUtil {
                 Object last = readAllObjects(result, c);
                 time = System.currentTimeMillis() - time;
 
-                msg += " deserialization=" + SingularIOUtils.humanReadableMiliSeconds(time);
+                msg += " deserialization=" + SingularIOUtils.humanReadableMilliSeconds(time);
                 Class<?> classLast = (last == null ? null : last.getClass());
                 if (c.getClass() != classLast) {
                     msg += " !!!! DESERIALIZATED CLASS NOT OF EXPECTED TYPE result=" + classLast;

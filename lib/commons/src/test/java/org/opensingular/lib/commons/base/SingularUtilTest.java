@@ -18,10 +18,12 @@
 
 package org.opensingular.lib.commons.base;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opensingular.lib.commons.dto.HtmlToPdfDTO;
 
+import java.io.IOException;
 import java.util.Date;
 
 import static org.junit.Assert.assertFalse;
@@ -43,11 +45,22 @@ public class SingularUtilTest {
 
         convertedValue = SingularUtil.convertToJavaIdentity(test, true, false);
         Assert.assertEquals("UmTesteParaVerificarOQueEleConverte", convertedValue);
+
+        Assertions.assertThatThrownBy(() -> SingularUtil.convertToJavaIdentity("99", false)).isExactlyInstanceOf(
+                SingularException.class).hasMessageContaining("it's no possible to convert");
+        Assertions.assertThatThrownBy(() -> SingularUtil.convertToJavaIdentity("", false)).isExactlyInstanceOf(
+                SingularException.class).hasMessageContaining("it's no possible to convert");
+        Assertions.assertThatThrownBy(() -> SingularUtil.convertToJavaIdentity("  ", false)).isExactlyInstanceOf(
+                SingularException.class).hasMessageContaining("it's no possible to convert");
     }
 
-    @Test(expected = NullPointerException.class)
-    public void propragateExceptionTest() {
-        SingularUtil.propagate(new NullPointerException());
+    @Test
+    public void propagateExceptionTest() {
+        NullPointerException e = new NullPointerException();
+        Assertions.assertThatThrownBy(() -> SingularUtil.propagate(e)).isSameAs(e);
+
+        Assertions.assertThatThrownBy(() -> SingularUtil.propagate(new IOException("Test"))).isExactlyInstanceOf(
+                SingularException.class).hasCauseExactlyInstanceOf(IOException.class);
     }
 
     @Test
@@ -55,9 +68,9 @@ public class SingularUtilTest {
         assertTrue(SingularUtil.areEqual(1, 1, it -> it));
 
         class A {
-            int    i;
-            String s;
-            Date   d;
+            private int i;
+            private String s;
+            private Date d;
             public A(int i, String s, Date d) {
                 this.i = i;
                 this.s = s;

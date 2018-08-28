@@ -31,7 +31,11 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Objects;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Oferece métodos utilitários para apoio a contrução de testes.
@@ -162,7 +166,7 @@ public final class SingularTestUtil {
         time = System.currentTimeMillis() - time;
         double resultPerSecond = 1000.0 * count / time;
         System.out.println("-------------------------------------------");
-        System.out.println("  " + testName + ": T=" + SingularIOUtils.humanReadableMiliSeconds(time) + " R=" + count +
+        System.out.println("  " + testName + ": T=" + SingularIOUtils.humanReadableMilliSeconds(time) + " R=" + count +
                 "  qtd/seg=" + ConversorToolkit.printNumber(resultPerSecond, 0));
         return count;
     }
@@ -177,7 +181,7 @@ public final class SingularTestUtil {
      *                      prefix of the temp file names.
      * @param fileExtension It doesn't have a dot, it will be added (for example, "png" becomes ".png")
      * @param fileGenerator The code that will called to fill the temp file before the file be show
-     * @see {@link TempFileProvider#create(Object, IConsumerEx)}
+     * @see TempFileProvider#create(Object, IConsumerEx)
      */
     public static <E extends Exception> void showFileOnDesktopForUserAndWaitOpening(@Nonnull Object requester,
             @Nonnull String fileExtension, @Nonnull IConsumerEx<OutputStream, E> fileGenerator) {
@@ -196,7 +200,7 @@ public final class SingularTestUtil {
      * @param fileExtension It doesn't have a dot, it will be added (for example, "png" becomes ".png")
      * @param fileGenerator The code that will called to fill the temp file before the file be show
      * @param waitTimeMilliAfterCall Indica o tempo de espera em milisegundo. Se for negativo, não espera.
-     * @see {@link TempFileProvider#create(Object, IConsumerEx)}
+     * @see TempFileProvider#create(Object, IConsumerEx)
      */
     public static <E extends Exception> void showFileOnDesktopForUserAndWaitOpening(@Nonnull Object requester,
             @Nonnull String fileExtension, @Nonnull IConsumerEx<OutputStream, E> fileGenerator,
@@ -268,30 +272,85 @@ public final class SingularTestUtil {
      * just created by a test.
      */
     public static void showHtmlContentOnDesktopForUserAndWaitOpening(@Nonnull String content) {
-        showFileOnDesktopForUserAndWaitOpening(SingularTestUtil.class, "html", out -> {
-            IOUtils.write(content, out);
-        });
+        showFileOnDesktopForUserAndWaitOpening(SingularTestUtil.class, "html", out -> IOUtils.write(content, out));
     }
 
-    private static class SingularTestException extends RuntimeException {
-        public SingularTestException() {
+    static class SingularTestException extends RuntimeException {
+        SingularTestException() {
         }
 
-        public SingularTestException(String message) {
+        SingularTestException(String message) {
             super(message);
         }
 
-        public SingularTestException(String message, Throwable cause) {
+        SingularTestException(String message, Throwable cause) {
             super(message, cause);
         }
 
-        public SingularTestException(Throwable cause) {
+        SingularTestException(Throwable cause) {
             super(cause);
         }
 
-        public SingularTestException(String message, Throwable cause, boolean enableSuppression,
+        SingularTestException(String message, Throwable cause, boolean enableSuppression,
                 boolean writableStackTrace) {
             super(message, cause, enableSuppression, writableStackTrace);
+        }
+    }
+
+
+    /**
+     * Unzips the resource (relative to the informed class) from the class path if it's name ends with '.zip' extension
+     * then look for a entry with same file name of zip but with the indicated file extension. With the resource isn't a
+     * zip, returns it as the InputStream.
+     */
+    @Nonnull
+    public static InputStream unzipFromResourceIfNecessary(@Nonnull Class<?> ref, @Nonnull String resourceName,
+            @Nonnull String expectedExtension) {
+        Objects.requireNonNull(ref);
+        Objects.requireNonNull(resourceName);
+        Objects.requireNonNull(expectedExtension);
+        InputStream in;
+        if (resourceName.endsWith(".zip")) {
+            String name = resourceName.substring(0, resourceName.length() - 3) + expectedExtension;
+            in = SingularTestUtil.unzipFromResource(ref, resourceName, name);
+        } else {
+            in = ref.getResourceAsStream(resourceName);
+        }
+        if (in == null) {
+            throw new SingularTestException("Resource '" + resourceName + "' not found in reference to " + ref.getName());
+        }
+        return in;
+    }
+
+    /**
+     * Unzips the resource from the classpath relative to the informed class then return de unzip file entry with the
+     * informed entryName.
+     */
+    @Nonnull
+    public static InputStream unzipFromResource(@Nonnull Class<?> ref, @Nonnull String resourceName,
+            @Nonnull String entryName) {
+        Objects.requireNonNull(ref);
+        Objects.requireNonNull(entryName);
+        InputStream in = ref.getResourceAsStream(Objects.requireNonNull(resourceName));
+        if (in == null) {
+            throw new SingularTestException("Resource '" + resourceName + "' not found in reference to " + ref.getName());
+        }
+        ZipInputStream in2 = new ZipInputStream(in);
+        try {
+            ZipEntry entry;
+            while ((entry = in2.getNextEntry()) != null) {
+                if (entry.getName().equals(entryName)) {
+                    break;
+                }
+            }
+            if (entry == null) {
+                in2.close();
+                throw new SingularTestException("Wasn't found the entry " + entryName + " in " + resourceName);
+            }
+            return in2;
+        } catch (Exception e) {
+            Throwables.throwIfUnchecked(e);
+            throw new SingularTestException(e);
         }
     }
 }

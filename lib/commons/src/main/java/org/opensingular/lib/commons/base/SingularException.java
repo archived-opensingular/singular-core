@@ -16,6 +16,8 @@
 
 package org.opensingular.lib.commons.base;
 
+import org.opensingular.lib.commons.util.Loggable;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -23,8 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
-
-import org.opensingular.lib.commons.util.Loggable;
 
 /**
  * The base class of all runtime exceptions for Singular.
@@ -48,7 +48,7 @@ public class SingularException extends RuntimeException implements Loggable {
      *
      * @param msg the error message
      */
-    public SingularException(String msg) {
+    public SingularException(@Nullable String msg) {
         super(msg);
     }
 
@@ -59,7 +59,7 @@ public class SingularException extends RuntimeException implements Loggable {
      * @param cause the exception or error that caused this exception to be
      *              thrown
      */
-    protected SingularException(Throwable cause) {
+    protected SingularException(@Nullable Throwable cause) {
         super(cause);
     }
 
@@ -71,19 +71,22 @@ public class SingularException extends RuntimeException implements Loggable {
      * @param cause the exception or error that caused this exception to be
      *              thrown
      */
-    protected SingularException(String msg, Throwable cause) {
+    protected SingularException(@Nullable String msg, @Nullable Throwable cause) {
         super(msg, cause);
     }
 
-    public static SingularException rethrow(Throwable e) {
+    @Nonnull
+    public static SingularException rethrow(@Nullable Throwable e) {
         return rethrow(null, e);
     }
 
-    public static SingularException rethrow(String message) {
+    @Nonnull
+    public static SingularException rethrow(@Nullable String message) {
         return rethrow(message, null);
     }
 
-    public static SingularException rethrow(String message, Throwable e) {
+    @Nonnull
+    public static SingularException rethrow(@Nullable String message, @Nullable Throwable e) {
         if (e instanceof SingularException) {
             return (SingularException) e;
         } else {
@@ -92,7 +95,7 @@ public class SingularException extends RuntimeException implements Loggable {
     }
 
     /** Verifica se já foi adicinada uma informação de detalhe com o label informado. */
-    public boolean containsEntry(String label) {
+    public boolean containsEntry(@Nonnull String label) {
         return entries != null && entries.stream().anyMatch(e -> Objects.equals(label, e.label));
     }
 
@@ -101,7 +104,8 @@ public class SingularException extends RuntimeException implements Loggable {
      *
      * @param value Valor da informação (pode ser null)
      */
-    public SingularException add(Object value) {
+    @Nonnull
+    public SingularException add(@Nullable Object value) {
         return add(0, null, value);
     }
 
@@ -111,7 +115,8 @@ public class SingularException extends RuntimeException implements Loggable {
      * @param label Label da informação (pode ser null)
      * @param value Valor da informação (pode ser null)
      */
-    public SingularException add(String label, Object value) {
+    @Nonnull
+    public SingularException add(@Nullable String label, @Nullable Object value) {
         return add(0, label, value);
     }
 
@@ -139,7 +144,8 @@ public class SingularException extends RuntimeException implements Loggable {
      * @param label Label da informação (pode ser null)
      * @param value Valor da informação (pode ser null)
      */
-    public SingularException add(int level, String label, Object value) {
+    @Nonnull
+    public SingularException add(int level, @Nullable String label, @Nullable Object value) {
         if (label != null || value != null) {
             if (entries == null) {
                 entries = new ArrayList<>();
@@ -153,6 +159,7 @@ public class SingularException extends RuntimeException implements Loggable {
      * Gera a mensagem de erro da Exception adicionando as informações adicionais (se tiverem sido incluidas).
      */
     @Override
+    @Nullable
     public String getMessage() {
         if (entries == null) {
             return super.getMessage();
@@ -193,7 +200,7 @@ public class SingularException extends RuntimeException implements Loggable {
         public final String label;
         public final String value;
 
-        public InfoEntry(int level, String label, String value) {
+        InfoEntry(int level, @Nullable String label, @Nullable String value) {
             this.level = level;
             this.label = label;
             this.value = value;
