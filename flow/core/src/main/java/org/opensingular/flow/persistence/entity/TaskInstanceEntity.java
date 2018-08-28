@@ -29,7 +29,7 @@ import javax.persistence.Table;
 @Entity
 @SequenceGenerator(name = AbstractTaskInstanceEntity.PK_GENERATOR_NAME, sequenceName = Constants.SCHEMA + ".SQ_CO_INSTANCIA_TAREFA", schema = Constants.SCHEMA)
 @Table(name = "TB_INSTANCIA_TAREFA", schema = Constants.SCHEMA)
-@Check(constraints ="TP_CURRENT_INSTANCE IN ('Y', 'N', 'X')")
+@Check(constraints ="TP_CURRENT_INSTANCE IN ('S', 'N', 'X')")
 public class TaskInstanceEntity extends AbstractTaskInstanceEntity<Actor, FlowInstanceEntity, TaskVersionEntity, TaskTransitionVersionEntity, ExecutionVariableEntity, TaskInstanceHistoryEntity> {
     private static final long serialVersionUID = 1L;
 
