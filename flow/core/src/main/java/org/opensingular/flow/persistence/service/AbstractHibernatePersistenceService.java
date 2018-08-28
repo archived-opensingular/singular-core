@@ -24,6 +24,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.opensingular.flow.core.CurrentInstanceStatus;
 import org.opensingular.flow.core.Flow;
 import org.opensingular.flow.core.SUser;
 import org.opensingular.flow.core.SingularFlowException;
@@ -153,6 +154,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         Date agora = new Date();
         TASK_INSTANCE taskInstance = newTaskInstance(flowInstance, taskVersion);
         taskInstance.setBeginDate(agora);
+        taskInstance.setCurrentInstanceStatus(CurrentInstanceStatus.YES);
         if (taskVersion.isEnd()) {
             flowInstance.setEndDate(agora);
             taskInstance.setEndDate(agora);
@@ -186,7 +188,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         task.setEndDate(new Date());
         IEntityTaskTransitionVersion transition = task.getTaskVersion().getTransition(transitionAbbreviation);
         task.setExecutedTransition(transition);
-
+        task.setCurrentInstanceStatus(CurrentInstanceStatus.NO);
         if (resolvedUser != null) {
             task.setResponsibleUser(resolvedUser);
         }
