@@ -14,27 +14,31 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.wicket.mapper.masterdetail;
+package org.opensingular.form.type.util;
 
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.type.core.attachment.SIAttachment;
 
-import javax.annotation.Nonnull;
-import java.time.YearMonth;
+public class SILatitudeLongitudeMultipleMarkable extends SIComposite {
 
-public class SIMasterDetailTest extends SIComposite {
-
-
-    @Nonnull
     @Override
-    public STypeTestMasterDetail getType() {
-        return (STypeTestMasterDetail) super.getType();
+    public STypeLatitudeLongitudeMultipleMarkable getType() {
+        return (STypeLatitudeLongitudeMultipleMarkable) super.getType();
     }
 
-    public YearMonth getDataInicio() {
-        return getField(getType().inicio).getValue();
+    public boolean hasFile() {
+        STypeLatitudeLongitudeMultipleMarkable type = getType();
+        return !getField(type.file).isEmptyOfData();
     }
 
-    public void setDataInicio(YearMonth dataInicio) {
-        getField(getType().inicio).setValue(dataInicio);
+    public SIAttachment getFile() {
+        return getField(getType().file);
     }
+
+
+    public SIList<SILatitudeLongitude> getPoints(){
+        return getField(getType().points);
+    }
+
 }

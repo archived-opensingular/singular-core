@@ -20,7 +20,7 @@ import org.opensingular.form.SIList;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.view.FileEventListener;
 
-import static org.opensingular.form.type.util.STypeLatitudeLongitudeList.FIELD_POINTS;
+import static org.opensingular.form.type.util.STypeLatitudeLongitudeMultipleMarkable.FIELD_POINTS;
 
 public class FileLatLongUploadListener implements FileEventListener {
 
@@ -34,7 +34,7 @@ public class FileLatLongUploadListener implements FileEventListener {
     @SuppressWarnings("unchecked")
     public void accept(SIAttachment attachment) {
         LatlongStrategy strategy = factory.createStrategy(attachment);
-        SILatitudeLongitudeList latLong = (SILatitudeLongitudeList) attachment.getParent();
+        SILatitudeLongitudeMultipleMarkable latLong = (SILatitudeLongitudeMultipleMarkable) attachment.getParent();
         SIList<SILatitudeLongitude> pointsList = latLong.getField(FIELD_POINTS, SIList.class);
         pointsList.clearInstance();
         attachment.getContentAsInputStream()

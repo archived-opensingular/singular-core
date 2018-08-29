@@ -28,7 +28,7 @@ public class PortletRichTextMapper extends StringMapper {
 
     @Override
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
-        return formGroup.newComponent(id -> new PortletRichTextPanel(id, ctx));
+        return formGroup.newComponent(id -> new PortletRichTextPanel(id, ctx, false));
     }
 
     @Override
@@ -36,8 +36,7 @@ public class PortletRichTextMapper extends StringMapper {
         final IModel<? extends SInstance> model = ctx.getModel();
         final SInstance mi = model.getObject();
 
-        PortletRichTextPanel richTextPanel = new PortletRichTextPanel(mi.getName(), ctx);
-        richTextPanel.setVisibleMode(false);
+        PortletRichTextPanel richTextPanel = new PortletRichTextPanel(mi.getName(), ctx, true);
         formGroup.appendTag("div", richTextPanel);
 
         return richTextPanel;

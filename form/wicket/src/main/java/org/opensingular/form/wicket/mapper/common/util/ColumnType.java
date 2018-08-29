@@ -22,21 +22,30 @@ import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.lambda.IFunction;
 
+import javax.annotation.Nullable;
+
 public class ColumnType {
 
-    private final String                       typeName;
-    private final String                       customLabel;
-    private final String                       columnSortName;
+    private final String typeName;
+    private final String customLabel;
+    private final String columnSortName; //The ColumnSort Name have to use the same name of the SType.
     private final IFunction<SInstance, String> displayFunction;
 
-    public ColumnType(String typeName, String customLabel, String columnSortName, IFunction<SInstance, String> displayFunction) {
+    /**
+     * @param typeName        The name of the column.
+     * @param customLabel     A custom label for the column.
+     * @param columnSortName  The ColumnSort Name have to use the same name of the SType.
+     *                        Null for don't able the column sort.
+     * @param displayFunction Function for display some value.
+     */
+    public ColumnType(String typeName, String customLabel, @Nullable String columnSortName, IFunction<SInstance, String> displayFunction) {
         this.typeName = typeName;
         this.customLabel = customLabel;
         this.columnSortName = columnSortName;
         this.displayFunction = displayFunction != null ? displayFunction : SInstance::toStringDisplay;
     }
 
-    public ColumnType(String typeName, String customLabel, String columnSortName) {
+    public ColumnType(String typeName, String customLabel, @Nullable String columnSortName) {
         this(typeName, customLabel, columnSortName, null);
     }
 

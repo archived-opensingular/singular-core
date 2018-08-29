@@ -16,6 +16,11 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -32,8 +37,11 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
+import org.opensingular.form.view.AbstractSViewListWithControls;
 import org.opensingular.form.view.SViewListByForm;
 import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.mapper.buttons.ElementsView;
+import org.opensingular.form.wicket.mapper.buttons.RemoverButton;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
@@ -48,14 +56,19 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.opensingular.form.wicket.mapper.components.MetronicPanel.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class PanelListMapper extends AbstractListMapper implements ISInstanceActionCapable {
 
@@ -135,7 +148,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
 
     }
 
-    private static final class PanelElementsView extends ElementsView {
+    private final class PanelElementsView extends ElementsView {
 
         private final Form<?>            form;
         private final WicketBuildContext ctx;
@@ -198,14 +211,14 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
             header.add($b.classAppender("list-icons"));
 
             if ((viewSupplier.get() != null) && (viewSupplier.get().isInsertEnabled()) && ctx.getViewMode().isEdition()) {
-                appendInserirButton(this, form, ctx, item, btnGrid.newColInRow()).add($b.classAppender("pull-right"));
+                appendInserirButton(this, form, item, btnGrid.newColInRow()).add($b.classAppender("pull-right"));
             }
 
             final BSCol btnCell = btnGrid.newColInRow();
 
             if (ctx.getViewMode().isEdition()) {
-                appendRemoverIconButton(this, form, ctx, item, btnCell, confirmationModal, viewSupplier)
-                    .add($b.classAppender("pull-right"));
+                appendRemoverButton(this, form, item, btnCell, confirmationModal, viewSupplier)
+                        .add($b.classAppender("pull-right"));
             }
 
         }
@@ -215,17 +228,21 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
             body.add($b.classAppender("list-item-body"));
             ctx.createChild(body.newCol(12), ctx.getExternalContainer(), item.getModel()).build();
         }
+
+        @Override
+        protected RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, Item<SInstance> item,
+                BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<? extends AbstractSViewListWithControls> viewSupplier) {
+            final RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item, confirmationModal);
+            cell.newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + DefaultIcons.REMOVE + "' />")
+                    .add(btn);
+            if (viewSupplier.get() != null) {
+                btn.add($b.onConfigure(c -> c.setVisible(viewSupplier.get().isDeleteEnabled(item.getModelObject()))));
+            }
+            return btn;
+        }
+
     }
 
-    protected static RemoverButton appendRemoverIconButton(ElementsView elementsView, Form<?> form, WicketBuildContext ctx, Item<SInstance> item,
-        BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<SViewListByForm> viewSupplier) {
-        final RemoverButton btn = new RemoverButton("_remover_", form, ctx, elementsView, item, confirmationModal);
-        cell
-            .newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + DefaultIcons.REMOVE + "' />")
-            .add(btn);
-        if (viewSupplier.get() != null)
-            btn.add($b.onConfigure(c -> c.setVisible(viewSupplier.get().isDeleteEnabled(item.getModelObject()))));
-        return btn;
-    }
+
 
 }

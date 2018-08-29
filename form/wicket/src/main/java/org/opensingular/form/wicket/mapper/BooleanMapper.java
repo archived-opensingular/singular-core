@@ -16,12 +16,7 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
@@ -36,7 +31,7 @@ import org.opensingular.form.view.SViewCheckBox;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
-import org.opensingular.form.wicket.mapper.behavior.RequiredBehaviorUtil;
+import org.opensingular.form.wicket.mapper.behavior.RequiredLabelClassAppender;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.AttributeModel;
@@ -45,6 +40,9 @@ import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.opensingular.form.wicket.mapper.SingularEventsHandlers.FUNCTION.ADD_TEXT_FIELD_HANDLERS;
 
@@ -121,12 +119,7 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
         }
 
         adjustJSEvents(ctx, label);
-        label.add(new ClassAttributeModifier() {
-            @Override
-            protected Set<String> update(Set<String> oldClasses) {
-                return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
-            }
-        });
+        label.add(new RequiredLabelClassAppender(model));
     }
 
     /**

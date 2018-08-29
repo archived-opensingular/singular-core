@@ -28,22 +28,7 @@ import org.junit.Test;
 public class SingularAdminTemplateTest extends WicketTestCase {
     @Test
     public void testRendering() throws Exception {
-        tester.startPage(new SingularAdminTemplate() {
-            @Override
-            protected IModel<String> getContentTitle() {
-                return Model.of("");
-            }
-
-            @Override
-            protected IModel<String> getContentSubtitle() {
-                return Model.of("");
-            }
-
-            @Override
-            protected boolean isWithMenu() {
-                return false;
-            }
-        });
+        tester.startPage(new AdmTemplate());
         assertTrue(SingularAdminTemplate.class.isAssignableFrom(tester.getLastRenderedPage().getClass()));
     }
 
@@ -53,5 +38,22 @@ public class SingularAdminTemplateTest extends WicketTestCase {
     }
 
     private class AdminApp extends MockApplication implements SingularAdminApp {
+    }
+
+    private static class AdmTemplate extends SingularAdminTemplate {
+        @Override
+        protected IModel<String> getContentTitle() {
+            return Model.of("");
+        }
+
+        @Override
+        protected IModel<String> getContentSubtitle() {
+            return Model.of("");
+        }
+
+        @Override
+        protected boolean isWithMenu() {
+            return false;
+        }
     }
 }
