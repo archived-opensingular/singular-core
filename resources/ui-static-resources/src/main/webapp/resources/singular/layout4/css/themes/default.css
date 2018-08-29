@@ -19,7 +19,6 @@ body {
 /* Header search bar, toggler button & top menu */
 .page-header.navbar {
   background: #FFFFFF;
-  border-bottom: 1px solid #e8e9f0;
   /* Top notification menu/bar */
   /* Header seaech box */
   /* Menu Toggler */ }
@@ -332,7 +331,6 @@ body {
   /* 767px */
   .page-header.navbar {
     background: #FFFFFF;
-    border-bottom: 1px solid white;
     /* Top menu */ }
     .page-header.navbar .page-top {
       background: #FFFFFF; }
@@ -345,6 +343,11 @@ body {
 .page-spinner-bar > div,
 .block-spinner-bar > div {
   background: #51c3b1; }
+
+.force-inline-block {
+  display: inline-block;
+  margin-bottom: 0;
+  vertical-align: middle; }
 
 .toast-success {
   background-color: #1BBC9B; }

@@ -26,7 +26,7 @@ import org.opensingular.form.type.basic.AtrXML;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 
-@SInfoType(spackage = FormTestPackage.class, newable = false, name = "STypeTroublesomeListElement")
+@SInfoType(spackage = FormTestPackage.class,  name = "STypeTroublesomeListElement")
 public class STypeTroublesomeListElement extends STypeComposite<SIComposite> {
 
     private final String PDF = "pdf";

@@ -18,11 +18,6 @@
 
 package org.opensingular.lib.wicket.util.bootstrap.layout;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -46,6 +41,11 @@ import org.opensingular.lib.wicket.util.SingleFormDummyPage;
 import org.opensingular.lib.wicket.util.WicketUtilsDummyApplication;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.BSGridSize;
 import org.opensingular.lib.wicket.util.feedback.BSFeedbackPanel;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class BSContainerTest extends Object {
 
@@ -92,7 +92,7 @@ public class BSContainerTest extends Object {
                     .newFormGroup()
                     .appendCheckbox(new CheckBox("checkbox", Model.of()))
                     .appendCheckboxChoice(new CheckBoxMultipleChoice<>("checkboxchoice", Model.ofList(new ArrayList<>()), Model.ofList(new ArrayList<>())))
-                    .appendDatepicker(new TextField<>("datepicker", valueModel()))
+                    .appendDatepicker(new TextField<>("datepicker", valueModel()), null)
                     .appendDatepicker(new TextField<>("datepicker", valueModel()), new HashMap<>())
                     .appendDiv(new WebMarkupContainer("div"))
                     .appendFeedback(new BSFeedbackPanel("feedback"))
@@ -110,7 +110,7 @@ public class BSContainerTest extends Object {
                     .appendLinkButton(valueModel(), new ExternalLink("linkbutton", Model.of("http://localhost:8080")))
                     .appendRadioChoice(new RadioChoice<>("radiochoice", valueModel(), listModel()))
                     .appendSelect(new DropDownChoice<>("select", valueModel(), listModel()))
-                    .appendSelect(new ListMultipleChoice<>("select", listModel(), listModel()), true)
+                    .appendSelect(new ListMultipleChoice<>("select", listModel(), listModel()), true, null)
                     .appendStaticText(new BSLabel("statictext", valueModel()))
                     .appendTag("i", new WebMarkupContainer("i"))
                     .appendTextarea(new TextArea<>("textarea", valueModel()), 3);

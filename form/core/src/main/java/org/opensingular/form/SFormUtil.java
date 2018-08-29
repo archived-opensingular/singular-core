@@ -16,8 +16,25 @@
 
 package org.opensingular.form;
 
-import static java.util.stream.Collectors.*;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
+import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.internal.PathReader;
+import org.opensingular.form.processor.ClassInspectionCache;
+import org.opensingular.form.processor.ClassInspectionCache.CacheKey;
+import org.opensingular.form.type.core.SPackageBootstrap;
+import org.opensingular.form.type.core.SPackagePersistence;
+import org.opensingular.form.type.country.brazil.SPackageCountryBrazil;
+import org.opensingular.form.type.util.SPackageUtil;
+import org.opensingular.internal.lib.commons.injection.SingularInjector;
+import org.opensingular.lib.commons.context.ServiceRegistry;
+import org.opensingular.lib.commons.context.ServiceRegistryLocator;
+import org.opensingular.lib.commons.internal.function.SupplierUtil;
+import org.opensingular.lib.commons.lambda.IFunction;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -32,23 +49,19 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
-import org.apache.commons.lang3.StringUtils;
-import org.opensingular.form.internal.PathReader;
-import org.opensingular.form.processor.ClassInspectionCache;
-import org.opensingular.form.processor.ClassInspectionCache.CacheKey;
-import org.opensingular.form.type.core.SPackageBootstrap;
-import org.opensingular.form.type.core.SPackagePersistence;
-import org.opensingular.form.type.country.brazil.SPackageCountryBrazil;
-import org.opensingular.form.type.util.SPackageUtil;
-import org.opensingular.internal.lib.commons.injection.SingularInjector;
-import org.opensingular.lib.commons.context.ServiceRegistry;
-import org.opensingular.lib.commons.context.ServiceRegistryLocator;
-import org.opensingular.lib.commons.internal.function.SupplierUtil;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.ImmutableSet;
+import static java.util.stream.Collectors.joining;
 
 public final class SFormUtil {
 
@@ -67,10 +80,8 @@ public final class SFormUtil {
      * tipos dependentes("b") e também dos tipos dependentes do seu dependente("c") para que a avaliação de visibilidade
      * seja avaliada corretamente.
      *
-     * @param
-     *  i the instance from which all dependents types must be notified
-     * @return
-     *  List of dependants SInstances
+     * @param i the instance from which all dependents types must be notified
+     * @return List of dependants SInstances
      */
     public static Iterable<SInstance> evaluateUpdateListeners(SInstance i) {
         return SingularFormProcessing.evaluateUpdateListeners(i);
@@ -130,7 +141,7 @@ public final class SFormUtil {
             } else {
                 if (c == '.') {
                     waitingBegin = true;
-                } else if (!isLetter(c) && !isDigit(c) && !isSpecialCaracter(c)) {
+                } else if (!isLetter(c) && !isDigit(c) && !isSpecialCharacter(c)) {
                     return false;
                 }
             }
@@ -138,8 +149,37 @@ public final class SFormUtil {
         return !waitingBegin; //Can't end after a dot or have length zero
     }
 
-    private static boolean isSpecialCaracter(char c) {
+    private static boolean isSpecialCharacter(char c) {
         return c == '$';
+    }
+
+    /** Checks if the instance is in the same dictionary of scope. If not, throws a exception. */
+    static final void verifySameDictionary(@Nonnull SScope scope, @Nonnull SInstance instance) {
+        if (scope.getDictionary() != instance.getDictionary()) {
+            throw new SingularFormException(
+                    "O dicionário da instância " + instance + " não é o mesmo dicionário do tipo " + scope +
+                            ". Foram carregados em separado", instance);
+        }
+    }
+
+    /** Checks if both scopes are using the same dictionary. If not, throws a exception. */
+    static final void verifySameDictionary(@Nonnull SScope scope1, @Nonnull SScope scope2) {
+        if (scope1.getDictionary() != scope2.getDictionary()) {
+            throw new SingularFormException(scope2.getName() + "(" + scope2.getClass().getName() +
+                    ") foi criado em outro dicionário, que não o de " + scope1.getName() + "(" +
+                    scope1.getClass().getName() + ")");
+        }
+    }
+
+    /** Finds the common parent type of the two types. */
+    @Nonnull
+    static final SType<?> findCommonType(@Nonnull SType<?> type1, @Nonnull SType<?> type2) {
+        verifySameDictionary(type1, type2);
+        for (SType<?> current = type1; ; current = current.getSuperType()) {
+            if (type2.isTypeOf(current)) {
+                return current;
+            }
+        }
     }
 
     @Nonnull
@@ -222,12 +262,12 @@ public final class SFormUtil {
         final ImmutableSet<String> upperCaseSpecialCases = ImmutableSet.of("id", "url");
 
         return StringUtils.capitalize(Stream.of(simpleName)
-        		.map(s -> lowerUpper.matcher(s).replaceAll("$1-$2"))
-        		.map(s -> abbreviationPrefix.matcher(s).replaceAll("$1-$2"))
-        		.flatMap(s -> Stream.<String>of(s.split("[-_]+")))
-        		.map(s -> (StringUtils.isAllUpperCase(s)) ? s : StringUtils.uncapitalize(s))
-        		.map(s -> upperCaseSpecialCases.contains(s) ? StringUtils.capitalize(s) : s)
-        		.collect(joining(" ")));
+                .map(s -> lowerUpper.matcher(s).replaceAll("$1-$2"))
+                .map(s -> abbreviationPrefix.matcher(s).replaceAll("$1-$2"))
+                .flatMap(s -> Stream.<String>of(s.split("[-_]+")))
+                .map(s -> (StringUtils.isAllUpperCase(s)) ? s : StringUtils.uncapitalize(s))
+                .map(s -> upperCaseSpecialCases.contains(s) ? StringUtils.capitalize(s) : s)
+                .collect(joining(" ")));
     }
 
     public static String generateUserFriendlyPath(SInstance instance) {
@@ -243,7 +283,7 @@ public final class SFormUtil {
 
             if (node instanceof SIList<?>) {
                 SIList<?> list = (SIList<?>) node;
-                String listLabel = list.asAtr().getLabel();
+                String listLabel = Optional.ofNullable(list.asAtr().getLabel()).orElse(list.getType().getNameSimple());
                 int index = list.indexOf(child) + 1;
                 labels.add(listLabel + ((index > 0) ? " [" + (index) + ']' : ""));
             } else {
@@ -416,4 +456,19 @@ public final class SFormUtil {
             registry.lookupSingularInjector().inject(newInstance);
         }
     }
+
+    /**
+     * Find a child by the name ({@link SType#getName()})
+     * @param parent the parent instance
+     * @param childName the complete name of the child {@link SType#getName()}
+     * @return the chield
+     */
+    public static Optional<? extends SInstance> findChildByName(@Nonnull SInstance parent, @Nonnull String childName) {
+        if(parent instanceof SIComposite) {
+            SType<?> sType = parent.getDictionary().getType(childName);
+            return ((SIComposite)parent).findDescendant(sType);
+        }
+        return Optional.empty();
+    }
+
 }

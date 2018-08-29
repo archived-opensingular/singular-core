@@ -50,6 +50,7 @@ import org.opensingular.form.wicket.model.AbstractSInstanceAwareModel;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.wicket.util.template.RecursosStaticosSingularTemplate;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
 
 import javax.annotation.Nonnull;
@@ -83,7 +84,7 @@ public class TypeaheadComponent extends Panel {
         @Override
         public List<HeaderItem> getDependencies() {
             if (getPage() instanceof SingularTemplate) {
-                return ((SingularTemplate) getPage()).getStyles();
+                return RecursosStaticosSingularTemplate.getStyles(((SingularTemplate) getPage()).getCurrentSkinFolder());
             } else {
                 return Collections.emptyList();
             }

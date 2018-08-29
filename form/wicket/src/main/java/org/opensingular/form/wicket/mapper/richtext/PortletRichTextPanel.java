@@ -16,28 +16,24 @@
 
 package org.opensingular.form.wicket.mapper.richtext;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.RestartResponseException;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.HiddenField;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.util.template.PackageTextTemplate;
+import org.opensingular.form.view.richtext.SViewByRichTextNewTab;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
+
+import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.opensingular.lib.wicket.util.jquery.JQuery.$;
@@ -45,57 +41,51 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public class PortletRichTextPanel extends Panel implements Loggable {
 
-    private HiddenField hiddenInput;
-    private Label       htmlContent;
-    private Label       label;
-    private String      hash;
-    private WicketBuildContext ctx;
-    private boolean visibleMode = true;
+    private HiddenField<String> hiddenInput;
+    private Label               htmlContent;
+    private Label               label;
+    private WicketBuildContext  ctx;
+    private boolean             readOnlyMode = true;
+    private WebMarkupContainer  buttonEditar;
 
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "PortletRichTextPanel.js")) {
-            final Map<String, String> params = new HashMap<>();
-            params.put("label", (String) label.getDefaultModel().getObject());
-            params.put("htmlContainer", htmlContent.getMarkupId());
-            params.put("hiddenInput", hiddenInput.getMarkupId());
-            params.put("hash", hash);
-            params.put("html", richTextNewTabHtml().retrieveHtml());
-            params.put("isEnabled", String.valueOf(visibleMode));
-            packageTextTemplate.interpolate(params);
-            response.render(JavaScriptHeaderItem.forScript(packageTextTemplate.getString(), hash));
-        } catch (IOException e) {
-            getLogger().error(e.getMessage(), e);
-        }
     }
 
-    public RichTextNewTabHtml richTextNewTabHtml() {
-        return new RichTextNewTabHtml(RequestCycle.get().getRequest().getFilterPath());
-    }
-
-    public PortletRichTextPanel(String id, WicketBuildContext ctx) {
+    public PortletRichTextPanel(String id, WicketBuildContext ctx, boolean readOnlyMode) {
         super(id);
         this.ctx = ctx;
-        hash = RandomStringUtils.random(10, true, false);
-
+        this.readOnlyMode = readOnlyMode;
     }
 
-    public WebMarkupContainer configureLabelButton(){
-        IModel<String> buttonMsg = new Model<>();
-        WebMarkupContainer containerLabel = new WebMarkupContainer("containerLabel");
-        Label labelMsg = new Label("buttonMsg", buttonMsg);
-        WebMarkupContainer iconeClass = new WebMarkupContainer("iconeClass");
-        if(visibleMode) {
-            buttonMsg.setObject("Editar");
-            iconeClass.add(new AttributeAppender("class", DefaultIcons.PENCIL));
-        } else {
-            buttonMsg.setObject("Visualizar");
-            iconeClass.add(new AttributeAppender("class", DefaultIcons.EYE));
-        }
-        containerLabel.add(iconeClass);
-        containerLabel.add(labelMsg);
-        return containerLabel;
+    public WebMarkupContainer configureLabelButton() {
+        return new WebMarkupContainer("containerLabel") {
+
+            IModel<String> buttonMsg = new Model<>();
+            Label labelMsg = new Label("buttonMsg", buttonMsg);
+            WebMarkupContainer iconeClass = new WebMarkupContainer("iconeClass");
+
+            @Override
+            protected void onInitialize() {
+                super.onInitialize();
+                this.add(iconeClass);
+                this.add(labelMsg);
+            }
+
+            @Override
+            protected void onConfigure() {
+                super.onConfigure();
+                if (!isReadOnlyMode()) {
+                    buttonMsg.setObject("Editar");
+                    iconeClass.add(new AttributeModifier("class", DefaultIcons.PENCIL));
+                } else {
+                    buttonMsg.setObject("Visualizar");
+                    iconeClass.add(new AttributeModifier("class", DefaultIcons.EYE));
+                }
+
+            }
+        };
     }
 
     @Override
@@ -117,27 +107,42 @@ public class PortletRichTextPanel extends Panel implements Loggable {
         add(label);
         add(htmlContent);
         add(hiddenInput);
-        Button buttonEditar = createButtonOpenEditor();
+        buttonEditar = createButtonOpenEditor();
         buttonEditar.add(configureLabelButton());
         add(buttonEditar);
+
 
         htmlContent.setEscapeModelStrings(false);
     }
 
-    private Button createButtonOpenEditor() {
-        return new Button("button") {
+
+    private WebMarkupContainer createButtonOpenEditor() {
+        return new Link<String>("button") {
+
             @Override
-            protected String getOnClickScript() {
-                return "openNewTabWithCKEditor" + hash + "();";
+            protected void onConfigure() {
+                super.onConfigure();
+                this.setVisible(PortletRichTextPanel.this.isEnabledInHierarchy());
             }
+
+            @Override
+            public void onClick() {
+                throw new RestartResponseException(new RichTextNewTabPage(label.getDefaultModelObject().toString(),
+                        isReadOnlyMode(),
+                        PortletRichTextPanel.this.ctx.getViewSupplier(SViewByRichTextNewTab.class),
+                        hiddenInput, htmlContent.getMarkupId()));
+            }
+
+            @Override
+            protected void onComponentTag(ComponentTag tag) {
+                super.onComponentTag(tag);
+                tag.put("onclick", "window.open('" + getURL() + "', '_blank" + htmlContent.getMarkupId() + "');");
+            }
+
         };
     }
 
-    public boolean isVisibleMode() {
-        return visibleMode;
-    }
-
-    public void setVisibleMode(boolean visibleMode) {
-        this.visibleMode = visibleMode;
+    public boolean isReadOnlyMode() {
+        return readOnlyMode || !this.isEnabledInHierarchy();
     }
 }

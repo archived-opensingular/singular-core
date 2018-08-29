@@ -1,19 +1,17 @@
 /*
+ * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
- *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
- *  *
- *  * Licensed under the Apache License, Version 2.0 (the "License");
- *  *  you may not use this file except in compliance with the License.
- *  * You may obtain a copy of the License at
- *  *
- *  * http://www.apache.org/licenses/LICENSE-2.0
- *  *
- *  * Unless required by applicable law or agreed to in writing, software
- *  * distributed under the License is distributed on an "AS IS" BASIS,
- *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  * See the License for the specific language governing permissions and
- *  * limitations under the License.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.opensingular.form.helpers;
@@ -108,6 +106,33 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
             return ((ICompositeInstance) getTarget()).getValue(fieldPath);
         }
         throw new AssertionError(errorMsg("O tipo da instância não aceita leitura de path '" + fieldPath + "'"));
+    }
+
+    /** Verifies if the SType of the SInstance is exactly of the informed type. */
+    @Nonnull
+    public AssertionsSInstance isExactTypeOf(@Nonnull SType<?> expectedType) {
+        if (getTarget().getType() != expectedType) {
+            throw new AssertionError(
+                    errorMsg("The SInstance type isn't of the expected type", expectedType, getTarget().getType()));
+        }
+        return this;
+    }
+
+    /** Verifies if the SType of the SInstance is of the informed type. */
+    @Nonnull
+    public AssertionsSInstance isTypeOf(@Nonnull SType<?> expectedType) {
+        if (!getTarget().isTypeOf(expectedType)) {
+            throw new AssertionError(
+                    errorMsg("The SInstance type isn't of the expected type or extension of the type", expectedType,
+                            getTarget().getType()));
+        }
+        return this;
+    }
+
+    /** Verifies if the SType of the SInstance is of the informed type. */
+    @Nonnull
+    public AssertionsSInstance isTypeOf(@Nonnull Class<? extends SType<?>> expectedType) {
+        return isTypeOf(getTarget().getDictionary().getType(expectedType));
     }
 
     /**
@@ -281,7 +306,7 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
             assertThat(copy.getAttributes().size()).isEqualTo(original.getAttributes().size());
 
             for (SInstance atrOriginal : original.getAttributes()) {
-                assertEqualsAtribute(copy, atrOriginal);
+                assertEqualsAttribute(copy, atrOriginal);
             }
         } catch (AssertionError e) {
             if (e.getMessage().startsWith("Erro comparando atributos de ")) {
@@ -291,7 +316,7 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
         }
     }
 
-    public static void assertEqualsAtribute(SAttributeEnabled copy, SInstance atrOriginal) {
+    public static void assertEqualsAttribute(SAttributeEnabled copy, SInstance atrOriginal) {
         Optional<SInstance> atrNewOpt = copy.getAttributeDirectly(atrOriginal.getAttributeInstanceInfo().getName());
         try {
             assertThat(atrNewOpt).isPresent();
@@ -357,20 +382,19 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
     }
 
     /** Verifica se a estrutura a partir do ponto autal está consistente internamente. */
-    public void assertCorrectHierachyStructure() {
+    public void assertCorrectStructure() {
         assertCorrectDocumentReference();
         assertUniqueIDs();
         assertCorrectParentRelation();
         assertCorrectTypeReferences();
-
     }
 
     /** Verifica se as instância filhas apontas para os tipos corretos de acordo com o esperado. */
-    public void assertCorrectTypeReferences() {
+    private void assertCorrectTypeReferences() {
         assertCorrectTypeReferences(getTarget());
     }
 
-    public void assertCorrectTypeReferences(SInstance target) {
+    private void assertCorrectTypeReferences(SInstance target) {
         if (target instanceof SIList) {
             assertCorrectTypeReferences((SIList<?>) target);
         } else if (target instanceof SIComposite) {
@@ -382,7 +406,7 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
         STypeComposite<?> compositeType = target.getType();
         for (SInstance child : target) {
             SType<?> expectedType = compositeType.getField(child.getName());
-            assertExpectedType(expectedType, child);
+            assertExpectedType(expectedType, child, false);
             assertCorrectTypeReferences(child);
         }
     }
@@ -391,17 +415,26 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
         STypeList listType = target.getType();
         SType expectedType = listType.getElementsType();
         for (SInstance child : target) {
-            assertExpectedType(expectedType, child);
+            assertExpectedType(expectedType, child, true);
             assertCorrectTypeReferences(child);
         }
     }
 
-    private void assertExpectedType(SType expectedType, SInstance child) {
-        if (expectedType != child.getType()) {
-            throw new AssertionError(
-                    "Incossitência Interna: A instância '" + child.getPathFull() + "' aponta para o tipo '" +
-                            child.getType() + "' mas era esperado que apontasse para o tipo '" + expectedType +
-                            "'. Não são a mesma instância de tipo, mesmo se apresentarem o mesmo nome.");
+    void assertExpectedType(@Nonnull SType expectedType, @Nonnull SInstance child, boolean acceptExtended) {
+        if (acceptExtended) {
+            if (!child.isTypeOf(expectedType)) {
+                throw new AssertionError(
+                        "Incossitência Interna: A instância '" + child.getPathFull() + "' aponta para o tipo '" +
+                                child.getType() + "' mas era esperado que fosse do tipo (ou extendesse o tipo): '" +
+                                expectedType + "'.");
+            }
+        } else {
+            if (expectedType != child.getType()) {
+                throw new AssertionError(
+                        "Incossitência Interna: A instância '" + child.getPathFull() + "' aponta para o tipo '" +
+                                child.getType() + "' mas era esperado que apontasse para o tipo '" + expectedType +
+                                "'. Não são a mesma instância de tipo, mesmo se apresentarem o mesmo nome.");
+            }
         }
     }
 }

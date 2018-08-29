@@ -37,7 +37,6 @@
                 $box.find('.fa-file-text').removeClass('fa-file-text').addClass('fa-remove').css('color', 'red');
                 $box.find('.list-item-uploading').removeClass('list-item-uploading').addClass('list-item-uploaded');
                 $box.find('.list-action-remove').removeClass('hidden').click(function (e) {
-                    console.log('blabla');
                     $box.remove();
                     window.FileUploadListPanel.setUploadItemState(panel_id, box_id, null);
                 });
@@ -98,6 +97,7 @@
             var $modal = $(popupTemplate).modal({show: false});
 
             $('#' + params.file_field_id).fileupload({
+                maxChunkSize: ${maxChunkSize},
                 url: params.upload_url,
                 paramName: params.param_name,
                 singleFileUploads: true,

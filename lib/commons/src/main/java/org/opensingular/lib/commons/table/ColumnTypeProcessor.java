@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -21,6 +21,7 @@ import org.joda.time.LocalDateTime;
 import org.joda.time.base.AbstractInstant;
 import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.ui.Alignment;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,35 +35,58 @@ import java.util.Objects;
  */
 public interface ColumnTypeProcessor {
 
-    public static final ColumnTypeProcessor BOOLEAN = new ColumnTypeProcessorTypeBoolean();
-    public static final ColumnTypeProcessor ACTION = new ColumnTypeProcessorTypeAction();
-    public static final ColumnTypeProcessor DATE = new ColumnTypeProcessorTypeDateBased("short");
-    public static final ColumnTypeProcessor DATE_HOUR = new ColumnTypeProcessorTypeDateBased("dd/MM/yy HH:mm:ss");
-    public static final ColumnTypeProcessor DATE_HOUR_SHORT = new ColumnTypeProcessorTypeDateBased("dd/MM/yy HH:mm");
-    public static final ColumnTypeProcessor DAY = new ColumnTypeProcessorTypeDateBased("dd");
-    public static final ColumnTypeProcessor RAW = new ColumnTypeProcessorTypeRaw();
-    public static final ColumnTypeProcessor STRING = new ColumnTypeProcessorTypeString();
-    public static final ColumnTypeProcessor NUMBER = new ColumnTypeProcessorTypeNumber();
-    public static final ColumnTypeProcessor INTEGER = new ColumnTypeProcessorTypeInteger();
-    public static final ColumnTypeProcessor PERCENT = new ColumnTypeProcessorTypePercent();
-    public static final ColumnTypeProcessor HOUR = new ColumnTypeProcessorTypeHour();
+
+    ColumnTypeProcessor BOOLEAN = new ColumnTypeProcessorTypeBoolean();
+
+
+    ColumnTypeProcessor ACTION = new ColumnTypeProcessorTypeAction();
+
+
+    ColumnTypeProcessor DATE = new ColumnTypeProcessorTypeDateBased("short");
+
+
+    ColumnTypeProcessor DATE_HOUR = new ColumnTypeProcessorTypeDateBased("dd/MM/yy HH:mm:ss");
+
+
+    ColumnTypeProcessor DATE_HOUR_SHORT = new ColumnTypeProcessorTypeDateBased("dd/MM/yy HH:mm");
+
+
+    ColumnTypeProcessor DAY = new ColumnTypeProcessorTypeDateBased("dd");
+
+
+    ColumnTypeProcessor RAW = new ColumnTypeProcessorTypeRaw();
+
+
+    ColumnTypeProcessor STRING = new ColumnTypeProcessorTypeString();
+
+
+    ColumnTypeProcessor NUMBER = new ColumnTypeProcessorTypeNumber();
+
+
+    ColumnTypeProcessor INTEGER = new ColumnTypeProcessorTypeInteger();
+
+
+    ColumnTypeProcessor PERCENT = new ColumnTypeProcessorTypePercent();
+
+
+    ColumnTypeProcessor HOUR = new ColumnTypeProcessorTypeHour();
 
     /**
      * Verifica se a celula em questão possui algum valor para ser exibido de acordo com as definições do procesador.
      */
-    public default boolean isNullContent(InfoCell cell) {
+    default boolean isNullContent(InfoCell cell) {
         return cell == null || cell.getValue() == null;
     }
 
-    public default boolean shouldBePrinted() {
+    default boolean shouldBePrinted() {
         return true;
     }
 
-    public default boolean shouldBeGeneretedOnStaticContent() {
+    default boolean shouldBeGeneretedOnStaticContent() {
         return true;
     }
 
-    public default PrintResult generatePrintValue(@Nonnull Column column, @Nullable Object value) {
+    default PrintResult generatePrintValue(@Nonnull Column column, @Nullable Object value) {
         PrintResult result = new PrintResult();
         generatePrintValue(result, column, value);
         return result;
@@ -70,8 +94,8 @@ public interface ColumnTypeProcessor {
 
     void generatePrintValue(@Nonnull PrintResult result, @Nonnull Column column, @Nullable Object value);
 
-    public default Column.Alignment getDefaultAlignment() {
-        return Column.Alignment.LEFT;
+    default Alignment getDefaultAlignment() {
+        return Alignment.LEFT;
     }
 
     /**
@@ -79,7 +103,7 @@ public interface ColumnTypeProcessor {
      *
      * @see java.util.Comparator#compare(Object, Object)
      */
-    public default int compare(@Nonnull Object v1, @Nonnull Object v2) {
+    default int compare(@Nonnull Object v1, @Nonnull Object v2) {
         if (v1 instanceof Comparable<?> && v1.getClass().isAssignableFrom(v2.getClass())) {
             return ((Comparable<Object>) v1).compareTo(v2);
         }
@@ -89,7 +113,7 @@ public interface ColumnTypeProcessor {
 
     }
 
-    public static class PrintResult {
+    class PrintResult {
 
         private String content;
         private boolean defined;
@@ -109,7 +133,7 @@ public interface ColumnTypeProcessor {
     }
 
 
-    static class ColumnTypeProcessorTypeAction implements ColumnTypeProcessor {
+    class ColumnTypeProcessorTypeAction implements ColumnTypeProcessor {
 
         @Override
         public boolean isNullContent(InfoCell cell) {
@@ -127,24 +151,24 @@ public interface ColumnTypeProcessor {
         }
 
         @Override
-        public void generatePrintValue(PrintResult result, Column column, Object value) {
+        public void generatePrintValue(@Nonnull PrintResult result, @Nonnull Column column, Object value) {
             throw new SingularException("This method shouldn't be called");
         }
 
     }
 
-    static class ColumnTypeProcessorTypeBoolean implements ColumnTypeProcessor {
+    class ColumnTypeProcessorTypeBoolean implements ColumnTypeProcessor {
 
         @Override
-        public void generatePrintValue(PrintResult result, Column column, Object value) {
+        public void generatePrintValue(@Nonnull PrintResult result, @Nonnull Column column, Object value) {
             if (value instanceof Boolean) {
                 result.setContent((Boolean) value ? "Sim" : "Não");
             }
         }
 
         @Override
-        public Column.Alignment getDefaultAlignment() {
-            return Column.Alignment.CENTER;
+        public Alignment getDefaultAlignment() {
+            return Alignment.CENTER;
         }
 
         public int compare(@Nonnull Object v1, @Nonnull Object v2) {
@@ -157,14 +181,16 @@ public interface ColumnTypeProcessor {
         }
     }
 
-    static class ColumnTypeProcessorTypeDateBased implements ColumnTypeProcessor {
+    class ColumnTypeProcessorTypeDateBased implements ColumnTypeProcessor {
 
         private final String dateFormat;
 
-        public ColumnTypeProcessorTypeDateBased(String dateFormat) {this.dateFormat = dateFormat;}
+        public ColumnTypeProcessorTypeDateBased(String dateFormat) {
+            this.dateFormat = dateFormat;
+        }
 
         @Override
-        public void generatePrintValue(PrintResult result, Column column, Object value) {
+        public void generatePrintValue(@Nonnull PrintResult result, @Nonnull Column column, Object value) {
             Date date = asDate(value);
             if (date != null) {
                 result.setContent(ConversorToolkit.printDate(date, dateFormat));
@@ -188,8 +214,8 @@ public interface ColumnTypeProcessor {
         }
 
         @Override
-        public Column.Alignment getDefaultAlignment() {
-            return Column.Alignment.CENTER;
+        public Alignment getDefaultAlignment() {
+            return Alignment.CENTER;
         }
 
         public int compare(@Nonnull Object v1, @Nonnull Object v2) {
@@ -197,19 +223,23 @@ public interface ColumnTypeProcessor {
             Date d2 = asDate(v2);
             if (d1 == d2) {
                 return 0;
-            } else if( d1 == null) {
+            } else if (d1 == null) {
                 return -1;
             } else if (d2 == null) {
                 return 1;
             }
             return d1.compareTo(d2);
         }
+
+        public String getDateFormat() {
+            return dateFormat;
+        }
     }
 
-    static class ColumnTypeProcessorTypeRaw implements ColumnTypeProcessor {
+    class ColumnTypeProcessorTypeRaw implements ColumnTypeProcessor {
 
         @Override
-        public void generatePrintValue(PrintResult result, Column column, Object value) {
+        public void generatePrintValue(@Nonnull PrintResult result, @Nonnull Column column, Object value) {
             result.setContent(value == null ? null : value.toString());
         }
 
@@ -219,10 +249,10 @@ public interface ColumnTypeProcessor {
         }
     }
 
-    static class ColumnTypeProcessorTypeString implements ColumnTypeProcessor {
+    class ColumnTypeProcessorTypeString implements ColumnTypeProcessor {
 
         @Override
-        public void generatePrintValue(PrintResult result, Column column, Object value) {
+        public void generatePrintValue(@Nonnull PrintResult result, @Nonnull Column column, Object value) {
             //Deixa o tratamento default, que inclui a introdução de escapes HTML
         }
 
@@ -232,11 +262,13 @@ public interface ColumnTypeProcessor {
         }
     }
 
-    static class ColumnTypeProcessorTypeNumber implements ColumnTypeProcessor {
+    class ColumnTypeProcessorTypeNumber implements ColumnTypeProcessor {
 
         private final int defaultNumberOfDigits;
 
-        ColumnTypeProcessorTypeNumber() {this(2);}
+        ColumnTypeProcessorTypeNumber() {
+            this(2);
+        }
 
         ColumnTypeProcessorTypeNumber(int defaultNumberOfDigits) {
             this.defaultNumberOfDigits = defaultNumberOfDigits;
@@ -251,16 +283,16 @@ public interface ColumnTypeProcessor {
             if (cell == null || cell.getValue() == null) {
                 return true;
             } else if (cell.getValue() instanceof Number) {
-                return !cell.getColumn().isShowZero() && AlocproToolkit.isZero((Number) cell.getValue());
+                return !cell.getColumn().isShowZero() && ConversorToolkit.isZero((Number) cell.getValue());
             }
             return false;
         }
 
         @Override
-        public final void generatePrintValue(PrintResult result, Column column, Object value) {
+        public final void generatePrintValue(@Nonnull PrintResult result, @Nonnull Column column, Object value) {
             if (value instanceof Number) {
                 Number n = (Number) value;
-                if (!column.isShowZero() && AlocproToolkit.isZero(n)) {
+                if (!column.isShowZero() && ConversorToolkit.isZero(n)) {
                     result.setContent(null);
                 } else {
                     generatePrintValue(result, column, n);
@@ -273,12 +305,12 @@ public interface ColumnTypeProcessor {
         }
 
         protected String format(Column column, Number value) {
-            return AlocproToolkit.printNumber(value, column.getFractionDigits(defaultNumberOfDigits));
+            return ConversorToolkit.printNumber(value, column.getFractionDigits(defaultNumberOfDigits));
         }
 
         @Override
-        public Column.Alignment getDefaultAlignment() {
-            return Column.Alignment.RIGHT;
+        public Alignment getDefaultAlignment() {
+            return Alignment.RIGHT;
         }
 
         @Override
@@ -294,28 +326,28 @@ public interface ColumnTypeProcessor {
         }
     }
 
-    static class ColumnTypeProcessorTypeInteger extends ColumnTypeProcessorTypeNumber {
+    class ColumnTypeProcessorTypeInteger extends ColumnTypeProcessorTypeNumber {
         public ColumnTypeProcessorTypeInteger() {
             super(0);
         }
     }
 
-    static class ColumnTypeProcessorTypePercent extends ColumnTypeProcessorTypeNumber {
+    class ColumnTypeProcessorTypePercent extends ColumnTypeProcessorTypeNumber {
         public ColumnTypeProcessorTypePercent() {
             super(1);
         }
 
         @Override
         protected void generatePrintValue(@Nonnull PrintResult result, @Nonnull Column column, @Nonnull Number value) {
-            Number n = AlocproToolkit.multiply(value, 100);
+            Number n = ConversorToolkit.multiply(value, 100);
             result.setContent(format(column, n) + "%");
         }
     }
 
-    static class ColumnTypeProcessorTypeHour extends ColumnTypeProcessorTypeNumber {
+    class ColumnTypeProcessorTypeHour extends ColumnTypeProcessorTypeNumber {
         @Override
         protected void generatePrintValue(@Nonnull PrintResult result, @Nonnull Column column, @Nonnull Number value) {
-            result.setContent(AlocproToolkit.toHour(value, null));
+            result.setContent(ConversorToolkit.toHour(value, null));
         }
     }
 }

@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-flow</artifactId>
-        <version>1.8.0-SNAPSHOT</version>
+        <version>1.8.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-flow-core</artifactId>
@@ -21,7 +21,7 @@
 
         <dependency>
             <groupId>org.opensingular</groupId>
-            <artifactId>singular-flow-schedule</artifactId>
+            <artifactId>singular-schedule</artifactId>
         </dependency>
 
         <!-- Test -->
@@ -81,7 +81,7 @@
                             <goal>process</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>target/generated-sources/apt</outputDirectory>
+                            <outputDirectory>target/generated-sources/annotations</outputDirectory>
                             <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
                         </configuration>
                     </execution>

@@ -38,14 +38,15 @@ public class STypeString extends STypeSimple<SIString, String> {
     }
 
     protected void validateMaxLength(InstanceValidatable<SIString> validatable) {
+
         SIString instance = validatable.getInstance();
         String value = instance.getValue();
         Integer maxLength = instance.getAttributeValue(SPackageBasic.ATR_MAX_LENGTH);
 
         if ((value != null) &&
-            (maxLength != null) &&
-            (maxLength >= 0) &&
-            (value.length() > maxLength)) {
+                (maxLength != null) &&
+                (maxLength >= 0) &&
+                (value.length() > maxLength)) {
 
             validatable.error("O tamanho máximo é " + maxLength);
         }
@@ -63,6 +64,14 @@ public class STypeString extends STypeSimple<SIString, String> {
         return Boolean.TRUE.equals(getAttributeValue(SPackageBasic.ATR_EMPTY_TO_NULL));
     }
 
+    /**
+     * This attribute is used for enabled or disabled trim.
+     * This attribute is used in <code>PasswordMapper</code>
+     *
+     * @param value True for enabled trim (default)
+     *              False for disabled trim
+     * @return return the STypeString with the attribute TRIM.
+     */
     public STypeString withValueAttributeTrim(boolean value) {
         return (STypeString) with(SPackageBasic.ATR_TRIM, value);
     }

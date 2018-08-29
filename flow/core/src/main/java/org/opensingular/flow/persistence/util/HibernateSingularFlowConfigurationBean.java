@@ -24,6 +24,8 @@ import org.opensingular.flow.core.service.IUserService;
 import org.opensingular.flow.persistence.entity.util.SessionLocator;
 import org.opensingular.flow.persistence.service.DefaultHibernateFlowDefinitionService;
 import org.opensingular.flow.persistence.service.DefaultHibernatePersistenceService;
+
+import org.opensingular.schedule.IScheduleService;
 import org.springframework.util.Assert;
 
 import javax.inject.Inject;
@@ -38,6 +40,9 @@ public class HibernateSingularFlowConfigurationBean extends SingularFlowConfigur
 
     @Inject
     private SessionFactory sessionFactory;
+
+    @Inject
+    private IScheduleService scheduleService;
 
     private SessionLocator sessionLocator = () -> sessionFactory.getCurrentSession();
 
@@ -98,5 +103,10 @@ public class HibernateSingularFlowConfigurationBean extends SingularFlowConfigur
     public void setSessionFactory(SessionFactory sessionFactory) {
         Assert.notNull(sessionFactory, "A session factory pode ser nula");
         this.sessionFactory = sessionFactory;
+    }
+
+    @Override
+    protected IScheduleService getScheduleService() {
+        return scheduleService;
     }
 }

@@ -16,6 +16,8 @@
 
 package org.opensingular.internal.lib.commons.xml;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -75,7 +77,8 @@ public final class ConversorDataISO8601 {
                 precision);
     }
 
-    public static java.util.Date getDate(String s) {
+    @Nonnull
+    public static java.util.Date getDate(@Nonnull String s) {
         return getCalendar(s).getTime();
     }
 
@@ -91,7 +94,8 @@ public final class ConversorDataISO8601 {
                 0, MILLI);
     }
 
-    public static GregorianCalendar getCalendar(String s) {
+    @Nonnull
+    public static GregorianCalendar getCalendar(@Nonnull String s) {
         int[] t = valueOf(s);
         GregorianCalendar gc =
                 new GregorianCalendar(t[YEAR], t[MONTH] - 1, t[DAY], t[HOUR], t[MINUTE], t[SECONDS]);
@@ -202,7 +206,8 @@ public final class ConversorDataISO8601 {
 
     }
 
-    private static int[] valueOf(String s) {
+    @Nonnull
+    private static int[] valueOf(@Nonnull String s) {
 
         if (s == null) {
             throw new java.lang.IllegalArgumentException("string null");
@@ -371,7 +376,7 @@ public final class ConversorDataISO8601 {
      * @param value a ser verificado
      * @return true se atender ao formato
      */
-    public static boolean isISO8601(String value) {
+    public static boolean isISO8601(@Nullable String value) {
         //                01234567890123456789012345678
         //                1999-05-31T13:20:00.000-05:00
         String mask = "????-??-??T??:??:??.???-??:??";

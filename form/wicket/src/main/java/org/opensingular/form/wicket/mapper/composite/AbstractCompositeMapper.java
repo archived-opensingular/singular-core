@@ -16,6 +16,12 @@
 
 package org.opensingular.form.wicket.mapper.composite;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -48,12 +54,6 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
-
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -221,6 +221,7 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
             final BSGrid grid = parentCol.newGrid();
 
             addLabelIfNeeded(ctx, grid);
+            addSubtitleIfNeeded(ctx, grid);
 
             grid.add(DisabledClassBehavior.getInstance());
             grid.setDefaultModel(model);

@@ -16,15 +16,7 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static org.opensingular.form.wicket.mapper.components.MetronicPanel.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -50,6 +42,7 @@ import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
+import org.opensingular.form.wicket.mapper.behavior.RequiredLabelClassAppender;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.mapper.components.MetronicPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
@@ -66,6 +59,16 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTDataCell;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTSection;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class TableListMapper extends AbstractListMapper implements ISInstanceActionCapable {
 
@@ -113,6 +116,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
 
         final IModel<String> label = $m.ofValue(ctx.getCurrentInstance().getType().asAtr().getLabel());
         final Label title = new Label("_title", label);
+        title.add($b.visibleIfModelObject(StringUtils::isNotBlank));
 
         ctx.configureContainer(label);
 
@@ -133,11 +137,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             false,
             internalContextListProvider);
 
-        final SType<SInstance> elementsType = list.getObject().getElementsType();
-
-        if (!elementsType.isComposite() && elementsType.asAtr().isRequired()) {
-            title.add($b.classAppender("singular-form-required"));
-        }
+        title.add(new RequiredLabelClassAppender(list));
 
     }
 

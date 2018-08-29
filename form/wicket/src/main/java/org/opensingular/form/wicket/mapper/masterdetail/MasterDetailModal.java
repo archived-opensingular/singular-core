@@ -16,8 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.masterdetail;
 
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -41,28 +39,31 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+
 class MasterDetailModal extends BFModalWindow {
 
-    protected final IModel<String>                     listLabel;
-    protected final WicketBuildContext                 ctx;
-    protected final Component                          table;
-    protected final ViewMode                           viewMode;
+    protected final IModel<String> listLabel;
+    protected final WicketBuildContext ctx;
+    protected final Component table;
+    protected final ViewMode viewMode;
     protected final ISupplier<SViewListByMasterDetail> viewSupplier;
 
-    protected IModel<SInstance>                        currentInstance;
-    protected IConsumer<AjaxRequestTarget>             closeCallback;
-    protected BSContainer<?>                           containerExterno;
-    protected FormStateUtil.FormState                  formState;
-    protected IModel<String>                           actionLabel;
-    protected ActionAjaxButton                         addButton;
-    private IConsumer<AjaxRequestTarget>               onHideCallback;
+    protected IModel<SInstance> currentInstance;
+    protected IConsumer<AjaxRequestTarget> closeCallback;
+    protected BSContainer<?> containerExterno;
+    protected FormStateUtil.FormState formState;
+    protected IModel<String> actionLabel;
+    protected ActionAjaxButton addButton;
+    private IConsumer<AjaxRequestTarget> onHideCallback;
 
     MasterDetailModal(String id,
-        IModel<SIList<SInstance>> model,
-        IModel<String> listLabel,
-        WicketBuildContext ctx,
-        ViewMode viewMode,
-        BSContainer<?> containerExterno) {
+            IModel<SIList<SInstance>> model,
+            IModel<String> listLabel,
+            WicketBuildContext ctx,
+            ViewMode viewMode,
+            BSContainer<?> containerExterno) {
         super(id, model, true, false);
 
         this.listLabel = listLabel;
@@ -94,17 +95,30 @@ class MasterDetailModal extends BFModalWindow {
             this.addLink(BSModalBorder.ButtonStyle.CANCEL, $m.ofValue("Cancelar"), new ActionAjaxLink<Void>("btn-cancelar") {
                 @Override
                 protected void onAction(AjaxRequestTarget target) {
-                    if (closeCallback != null) {
-                        closeCallback.accept(target);
-                    }
-                    rollbackState();
-                    target.add(table);
-                    MasterDetailModal.this.hide(target);
+                    rollbackTheInstance(target);
+                    WicketFormProcessing.validateErrors(this.getParent(), target, model.getObject(), false);
                 }
 
             });
         }
 
+        getModalBorder().setCloseIconCallback(this::rollbackTheInstance);
+
+    }
+
+    /**
+     * Method responsible for remove the new Instance, or rollback to the old Instance.
+     * It is used by cancel and  close button.
+     *
+     * @param target The target to close the modal.
+     */
+    private void rollbackTheInstance(AjaxRequestTarget target) {
+        if (closeCallback != null) {
+            closeCallback.accept(target);
+        }
+        rollbackState();
+        target.add(table);
+        MasterDetailModal.this.hide(target);
     }
 
     private void saveState() {
@@ -123,7 +137,7 @@ class MasterDetailModal extends BFModalWindow {
 
     void showNew(AjaxRequestTarget target) {
         SIList<SInstance> list = getModelObject();
-        closeCallback = this::revert;
+        closeCallback = target1 -> revert();
         currentInstance = new SInstanceListItemModel<>(getModel(), list.indexOf(list.addNew()));
         actionLabel.setObject(viewSupplier.get().getNewActionLabel());
         MasterDetailModal.this.configureNewContent(actionLabel.getObject(), target);
@@ -144,7 +158,7 @@ class MasterDetailModal extends BFModalWindow {
         configureNewContent(prefix, target);
     }
 
-    private void revert(AjaxRequestTarget target) {
+    private void revert() {
         SIList<SInstance> list = getModelObject();
         list.remove(list.size() - 1);
     }

@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -237,7 +237,7 @@ public class ApplicationContextMock extends AnnotationConfigWebApplicationContex
     @SuppressWarnings({"unchecked"})
     public String[] getBeanNamesForType(Class type, boolean includeNonSingletons,
                                         boolean allowEagerInit) {
-        return new String[]{type.getClass().getName()};
+        return new String[]{type.getName()};
     }
 
     @Override

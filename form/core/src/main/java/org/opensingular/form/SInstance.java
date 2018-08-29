@@ -16,21 +16,6 @@
 
 package org.opensingular.form;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.opensingular.form.aspect.AspectRef;
 import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.document.SDocument;
@@ -45,6 +30,20 @@ import org.opensingular.form.validation.ValidationError;
 import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 public abstract class SInstance implements SAttributeEnabled {
 
@@ -1016,14 +1015,15 @@ public abstract class SInstance implements SAttributeEnabled {
         return ascendants.stream().anyMatch(parent -> parent.getType().getClass().equals(candidate));
     }
 
-    /**
-     * Check if the candidate is the same as the current object by checking the reference
-     */
-    public boolean isSame(SInstance candidate){
-        return this == candidate; //NOSONAR
+    public boolean isSameOrDescendantOf(SInstance candidate) {
+        return (this == candidate) || isDescendantOf(candidate);
     }
 
-    public boolean isSameOrDescendantOf(SInstance candidate) {
-        return isSame(candidate) || isDescendantOf(candidate);
+    /**
+     * Checks if the instance is of the type informed or type derived of the informed type. See more in {@link
+     * SType#isTypeOf(SType)}.
+     */
+    public boolean isTypeOf(@Nonnull SType<?> parentTypeCandidate) {
+        return getType().isTypeOf(parentTypeCandidate);
     }
 }

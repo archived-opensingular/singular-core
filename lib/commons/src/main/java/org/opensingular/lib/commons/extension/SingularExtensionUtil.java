@@ -1,19 +1,17 @@
 /*
+ * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
- *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
- *  *
- *  * Licensed under the Apache License, Version 2.0 (the "License");
- *  *  you may not use this file except in compliance with the License.
- *  * You may obtain a copy of the License at
- *  *
- *  * http://www.apache.org/licenses/LICENSE-2.0
- *  *
- *  * Unless required by applicable law or agreed to in writing, software
- *  * distributed under the License is distributed on an "AS IS" BASIS,
- *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  * See the License for the specific language governing permissions and
- *  * limitations under the License.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.opensingular.lib.commons.extension;
@@ -26,9 +24,11 @@ import org.opensingular.lib.commons.util.Loggable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
 /**
@@ -65,7 +65,8 @@ import java.util.ServiceLoader;
  */
 public final class SingularExtensionUtil implements Loggable {
 
-    private SingularExtensionUtil() {}
+    private SingularExtensionUtil() {
+    }
 
     public static SingularExtensionUtil get() {
         return ((SingularSingletonStrategy) SingularContext.get()).singletonize(SingularExtensionUtil.class,
@@ -93,11 +94,11 @@ public final class SingularExtensionUtil implements Loggable {
      */
     @Nonnull
     public <T extends SingularExtension> List<T> findExtensions(@Nonnull Class<T> extensionTarget,
-            @Nullable String qualifier) {
+                                                                @Nullable String qualifier) {
         Objects.requireNonNull(extensionTarget);
         checkIfValidExtensionClass(extensionTarget);
         List<T> list = new ArrayList<>();
-        for (T extension : ServiceLoader.load(extensionTarget)) {
+        for (T extension : loadServices(extensionTarget)) {
             if (qualifier == null || hasQualifier(extension, qualifier)) {
                 list.add(extension);
             }
@@ -106,6 +107,15 @@ public final class SingularExtensionUtil implements Loggable {
             list.sort((t1, t2) -> t2.getExtensionPriority() - t1.getExtensionPriority());
         }
         return list;
+    }
+
+    private <T extends SingularExtension> Iterable<T> loadServices(@Nonnull Class<T> extensionTarget) {
+        try {
+            return ServiceLoader.load(extensionTarget);
+        } catch (ServiceConfigurationError e) {
+            getLogger().debug(e.getMessage(), e);
+        }
+        return Collections.emptyList();
     }
 
     private <T extends SingularExtension> boolean hasQualifier(@Nonnull T extension, @Nonnull String targetQualifier) {
@@ -131,11 +141,12 @@ public final class SingularExtensionUtil implements Loggable {
      * Lookup for the implementation of the extension point.
      * <p>If multiple implementations are found, they will sorted by {@link SingularExtension#getExtensionPriority()}
      * and the one with the highest priority will be returned.</p>
+     *
      * @param qualifier If not null, return only a extension point that matches de qualifier.
      */
     @Nonnull
     public <T extends SingularExtension> Optional<T> findExtension(@Nonnull Class<T> extensionTarget,
-            @Nullable String qualifier) {
+                                                                   @Nullable String qualifier) {
         List<T> list = findExtensions(extensionTarget, qualifier);
         return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
     }
@@ -154,11 +165,12 @@ public final class SingularExtensionUtil implements Loggable {
      * Lookup for the implementation of the extension point and throws a exception if no one is found.
      * <p>If multiple implementations are found, they will sorted by {@link SingularExtension#getExtensionPriority()}
      * and the one with the highest priority will be returned.</p>
+     *
      * @param qualifier If not null, return only a extension point that matches de qualifier.
      */
     @Nonnull
     public <T extends SingularExtension> T findExtensionOrException(@Nonnull Class<T> extensionTarget,
-            @Nullable String qualifier) {
+                                                                    @Nullable String qualifier) {
         List<T> list = findExtensions(extensionTarget, qualifier);
         if (list.isEmpty()) {
             throw new SingularException("No registered implementation for " + extensionTarget.getName() + " was found");

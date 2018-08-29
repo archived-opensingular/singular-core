@@ -55,7 +55,7 @@ public class TestValidationWithInheritedType extends TestCaseForm {
     }
 
 
-    @SInfoType(name = "A", spackage = SPackageTest.class, newable = true)
+    @SInfoType(name = "A", spackage = SPackageTest.class)
     public static class A extends STypeComposite<SIComposite> {
 
         public STypeString fieldOne;
@@ -80,7 +80,7 @@ public class TestValidationWithInheritedType extends TestCaseForm {
 
     }
 
-    @SInfoType(name = "APlus", spackage = SPackageTest.class, newable = true)
+    @SInfoType(name = "APlus", spackage = SPackageTest.class)
     public static class APlus extends A {
 
         public STypeString fieldThree;

@@ -16,14 +16,14 @@
 
 package org.opensingular.flow.core.builder;
 
+import javax.annotation.Nullable;
+
 import org.opensingular.flow.core.DisplayType;
 import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.STaskJava;
 import org.opensingular.flow.core.TaskJavaBatchCall;
 import org.opensingular.flow.core.TaskJavaCall;
-import org.opensingular.flow.schedule.IScheduleData;
-
-import javax.annotation.Nullable;
+import org.opensingular.schedule.IScheduleData;
 
 public interface BuilderJava<SELF extends BuilderJava<SELF>> extends BuilderTaskSelf<SELF, STaskJava> {
 

@@ -16,25 +16,32 @@
 
 package org.opensingular.lib.wicket.util.tab;
 
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.Component;
 import org.apache.wicket.WicketRuntimeException;
+import org.apache.wicket.ajax.AjaxEventBehavior;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.apache.wicket.markup.head.JavaScriptHeaderItem.forReference;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public class BSTabPanel extends Panel {
 
     public static final String TAB_PANEL_ID = "tab-panel";
     private Map<Pair<String, Integer>, Panel> tabMap = new LinkedHashMap<>();
+    private boolean withChangeUrl = false;
 
     public BSTabPanel(String id) {
         super(id);
@@ -48,6 +55,14 @@ public class BSTabPanel extends Panel {
         }
     }
 
+    public void addTab(String headerText, String idTab, Panel panel) {
+        if (StringUtils.isNotBlank(idTab)) {
+            panel.setMarkupId(idTab.replaceAll("[^\\da-zA-Z]", ""));
+        }
+        withChangeUrl = true;
+        this.addTab(headerText, panel);
+    }
+
     @Override
     protected void onInitialize() {
         super.onInitialize();
@@ -55,25 +70,59 @@ public class BSTabPanel extends Panel {
         add(buildTabControll());
     }
 
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
+        if (withChangeUrl) {
+            //Will include the JS just in case of change Url on Tab click.
+            response.render(forReference(new PackageResourceReference(BSTabPanel.class, "BSTabPanel.js")));
+        }
+    }
+
     private Component buildTabControll() {
-        return new ListView<Pair<String, Integer>>("tab", tabMap.keySet().stream().collect(Collectors.toList())) {
+        ListView<Pair<String, Integer>> listView = new ListView<Pair<String, Integer>>("tab", tabMap.keySet().stream().collect(Collectors.toList())) {
             @Override
             protected void populateItem(ListItem<Pair<String, Integer>> item) {
 
                 Panel currentPanel = tabMap.get(item.getModelObject());
 
-                if(item.getIndex() == 0){
+                if (item.getIndex() == 0) {
                     item.add($b.classAppender("active"));
                 }
 
                 WebMarkupContainer tabAnchor = new WebMarkupContainer("tabAnchor");
-                tabAnchor.add($b.attr("href", "#"+currentPanel.getMarkupId()));
+                tabAnchor.add($b.attr("href", "#" + currentPanel.getMarkupId()));
                 tabAnchor.add($b.attr("aria-controls", currentPanel.getMarkupId()));
 
                 tabAnchor.add(new Label("header-text", item.getModelObject().getLeft()));
+
+                configureChangeUrlOnTabClick(currentPanel, tabAnchor);
+
                 item.add(tabAnchor);
             }
         };
+
+
+        return listView;
+    }
+
+    /**
+     * When Tab is clicked the url of page will be changed to have the id of the tab.
+     * <p>
+     * Note: This behavior is used by showcase to have static url's for each component.
+     *
+     * @param currentPanel The currentPanel id.
+     * @param tabAnchor    The Tab will be clicked.
+     */
+    private void configureChangeUrlOnTabClick(Panel currentPanel, WebMarkupContainer tabAnchor) {
+        if (withChangeUrl) {
+            tabAnchor.add(new AjaxEventBehavior("click") {
+                @Override
+                protected void onEvent(AjaxRequestTarget target) {
+                    target.appendJavaScript("window.BSTAB.changeUrl('" + currentPanel.getMarkupId() + "','#" + currentPanel.getMarkupId() + "')");
+                }
+            });
+        }
     }
 
     private Component buildTabContent() {
@@ -83,7 +132,7 @@ public class BSTabPanel extends Panel {
 
                 Panel panel = tabMap.get(item.getModelObject());
 
-                if(item.getIndex() == 0){
+                if (item.getIndex() == 0) {
                     panel.add($b.classAppender("active"));
                 }
 

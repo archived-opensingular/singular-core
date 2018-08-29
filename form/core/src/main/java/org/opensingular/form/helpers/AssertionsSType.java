@@ -1,19 +1,17 @@
 /*
+ * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
- *  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
- *  *
- *  * Licensed under the Apache License, Version 2.0 (the "License");
- *  *  you may not use this file except in compliance with the License.
- *  * You may obtain a copy of the License at
- *  *
- *  * http://www.apache.org/licenses/LICENSE-2.0
- *  *
- *  * Unless required by applicable law or agreed to in writing, software
- *  * distributed under the License is distributed on an "AS IS" BASIS,
- *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  * See the License for the specific language governing permissions and
- *  * limitations under the License.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.opensingular.form.helpers;
@@ -27,6 +25,7 @@ import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -37,7 +36,7 @@ import java.util.Set;
  *
  * @author Daniel C. Bordin
  */
-public class AssertionsSType extends AssertionsSAttributeEnabled<AssertionsSType, SType> {
+public class AssertionsSType extends AssertionsSAttributeEnabled<AssertionsSType, SType<?>> {
 
     public AssertionsSType(SType<?> type) {
         super(type);
@@ -78,19 +77,22 @@ public class AssertionsSType extends AssertionsSAttributeEnabled<AssertionsSType
      * da mesma classe do tipo (não pode ser derivado) e seu super tipo {@link SType#getSuperType()} deve ser igual ao
      * tipo passado como parâmetro.
      */
-    public AssertionsSType isDirectExtensionOf(SType<?> expectedSuperType) {
-        if (getTarget() == expectedSuperType) {
-            throw new AssertionError(errorMsg(
-                    "Falha em extender (são iguais):\n Esperado  : que extendese " + expectedSuperType +
-                            "\n Encontrado: a mesma referência encontrada diretamente no dicionário"));
-        } else if (getTarget().getSuperType() != expectedSuperType) {
-            throw new AssertionError(errorMsg("Super tipo inválido:\nEsperado  : " + expectedSuperType +
-                    "\nEncontrado: " + getTarget().getSuperType()));
+    @Nonnull
+    public AssertionsSType isDirectExtensionOf(@Nonnull SType<?> expectedSuperType) {
+        isNotSameAs(expectedSuperType);
+        if (getTarget().getSuperType() != expectedSuperType) {
+            throw new AssertionError(errorMsg("Super tipo inválido", expectedSuperType, getTarget().getSuperType()));
 
-        } else if(! expectedSuperType.getClass().isAssignableFrom(getTarget().getClass())) {
-            throw new AssertionError(
-                    errorMsg("A classe do tipo " + getTarget() + " deveria igual ou extender a classe " +
-                            expectedSuperType.getClass().getName() + ", que e a classe de seu supertipo " +
+        }
+        checkCorrectJavaSuperClassDuringExtension(expectedSuperType);
+        return this;
+    }
+
+    AssertionsSType checkCorrectJavaSuperClassDuringExtension(@Nonnull SType<?> expectedSuperType) {
+        if (!expectedSuperType.getClass().isAssignableFrom(getTarget().getClass())) {
+            throw new AssertionError(errorMsg(
+                    "A classe do tipo " + getTarget() + " deveria igual ou extender a classe " +
+                            expectedSuperType.getClass().getName() + ", que e a classe de seu super tipo " +
                             expectedSuperType + ". Em vez disso, é uma classe " + getTarget().getClass().getName()));
         }
         return this;
@@ -134,11 +136,14 @@ public class AssertionsSType extends AssertionsSAttributeEnabled<AssertionsSType
      * Verifica se o tipo e seu tipos internos (se existirem) extendem corretamente o tipo informado. Faz uma analise
      * recursiva para os subtipos.
      */
-    public AssertionsSType isExtensionCorrect(SType<?> expectedSuperType) {
+    @Nonnull
+    public AssertionsSType isExtensionCorrect(@Nonnull SType<?> expectedSuperType) {
         isDirectExtensionOf(expectedSuperType);
+        Assertions.assertThat(expectedSuperType.isRecursiveReference() && !getTarget().isRecursiveReference())
+                .isFalse();
         if (getTarget().isComposite()) {
             Assertions.assertThat(expectedSuperType).isInstanceOf(STypeComposite.class);
-            if(! (getTarget().isRecursiveReference() && getTarget().getSuperType() == expectedSuperType)) {
+            if (!getTarget().isRecursiveReference()) {
                 for (SType<?> fieldSuper : ((STypeComposite<?>) expectedSuperType).getFields()) {
                     field(fieldSuper.getNameSimple()).isExtensionCorrect(fieldSuper);
                 }
@@ -332,8 +337,9 @@ public class AssertionsSType extends AssertionsSAttributeEnabled<AssertionsSType
         return this;
     }
 
+    @Nonnull
     @Override
-    protected Optional<String> generateDescriptionForCurrentTarget(@Nonnull Optional<SType> current) {
-        return current.map(type -> "No tipo '" + type.getName());
+    protected Optional<String> generateDescriptionForCurrentTarget(@Nonnull Optional<SType<?>> current) {
+        return current.map(type -> "No tipo '" + type);
     }
 }

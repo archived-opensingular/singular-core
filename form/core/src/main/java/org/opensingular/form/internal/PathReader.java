@@ -2,7 +2,7 @@
  * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -151,7 +151,7 @@ public final class PathReader {
 
     /** Monta uma mensagem de erro referente ao path atual e ao escopo informado. */
     public String getErrorMsg(SScope escopo, String msg) {
-        return getErrorMsg("No tipo '" + escopo.getName() + "'", msg);
+        return getErrorMsg("No tipo '" + escopo + "'", msg);
     }
 
     /** Monta uma mensagem de erro referente ao path atual e ao escopo informado. */

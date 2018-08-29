@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http:/www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,15 +16,7 @@
 
 package org.opensingular.lib.wicket.util.template;
 
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
 import org.apache.wicket.markup.head.filter.JavaScriptFilteredIntoFooterHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderResponseDecorator;
@@ -38,8 +30,6 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.lib.wicket.util.application.SkinnableApplication;
 import org.opensingular.lib.wicket.util.behavior.KeepSessionAliveBehavior;
 
-import com.google.common.collect.ImmutableList;
-
 public abstract class SingularTemplate extends WebPage {
 
     public static final String                   JAVASCRIPT_CONTAINER = "javascript-container";
@@ -47,91 +37,6 @@ public abstract class SingularTemplate extends WebPage {
 
     protected String skinnableResource(String uri) {
         return "/singular-static/resources/" + getCurrentSkinFolder() + uri;
-    }
-
-    public List<HeaderItem> getStyles() {
-        return Stream.of(skinnableResource("/global/plugins/font-awesome/css/font-awesome.min.css"),
-                skinnableResource("/global/plugins/simple-line-icons/simple-line-icons.min.css"),
-                skinnableResource("/global/plugins/bootstrap/css/bootstrap.css"),
-                skinnableResource("/global/plugins/uniform/css/uniform.default.css"),
-                skinnableResource("/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css"),
-                skinnableResource("/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css"),
-                skinnableResource("/global/plugins/bootstrap-select/css/bootstrap-select.min.css"),
-                skinnableResource("/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css"),
-                skinnableResource("/global/plugins/jstree/dist/themes/default/style.min.css"),
-                skinnableResource("/global/plugins/jquery-multi-select/css/multi-select.css"),
-                skinnableResource("/global/plugins/ion.rangeslider/css/normalize.css"),
-                skinnableResource("/global/plugins/ion.rangeslider/css/ion.rangeSlider.css"),
-                skinnableResource("/global/plugins/ion.rangeslider/css/ion.rangeSlider.skinHTML5.css"),
-                skinnableResource("/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css"),
-                skinnableResource("/global/plugins/morris/morris.css"),
-                skinnableResource("/global/css/components-md.css"),
-                skinnableResource("/global/css/plugins-md.css"),
-                skinnableResource("/global/css/singular.css"),
-                skinnableResource("/layout4/css/layout.css"),
-                skinnableResource("/global/plugins/jquery-file-upload/css/jquery.fileupload.css"),
-                skinnableResource("/global/plugins/bootstrap-toastr/toastr.min.css"),
-                skinnableResource("/global/plugins/typeahead/typeahead.css"),
-                skinnableResource("/plugins/photoswipe/photoswipe.css"),
-                skinnableResource("/plugins/photoswipe/default-skin/default-skin.css"),
-                skinnableResource("/layout4/css/custom.css"),
-                skinnableResource("/css/custom.css"),
-                skinnableResource("/layout4/css/themes/default.css"),
-                "resources/custom/css/custom.css")
-                .map(CssHeaderItem::forUrl).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
-    }
-
-    public List<HeaderItem> getJavaScriptsUrls() {
-
-        return Stream.concat(
-                Stream.of(
-                        "/singular-static/resources/singular/global/plugins/respond.min.js",
-                        "/singular-static/resources/singular/global/plugins/excanvas.min.js"
-                ).map(url -> JavaScriptHeaderItem.forUrl(url, null, false, StandardCharsets.UTF_8.name(), "lt IE 9")),
-                Stream.of(
-                        "/singular-static/resources/singular/global/plugins/jquery-migrate.min.js",
-                        "/singular-static/resources/singular/global/plugins/jquery-ui/jquery-ui.min.js",
-                        "/singular-static/resources/singular/global/plugins/bootstrap/js/bootstrap.min.js",
-                        "/singular-static/resources/singular/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js",
-                        "/singular-static/resources/singular/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js",
-                        "/singular-static/resources/singular/global/plugins/jquery.blockui.min.js",
-                        "/singular-static/resources/singular/global/plugins/jquery.cokie.min.js",
-                        "/singular-static/resources/singular/global/plugins/uniform/jquery.uniform.min.js",
-                        "/singular-static/resources/singular/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js",
-                        "/singular-static/resources/singular/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.pt-BR.min.js",
-                        "/singular-static/resources/singular/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js",
-                        "/singular-static/resources/singular/global/plugins/bootstrap-select/js/bootstrap-select.min.js",
-                        "/singular-static/resources/singular/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js",
-                        "/singular-static/resources/singular/global/plugins/jquery-multi-select/js/jquery.multi-select.js",
-                        "/singular-static/resources/singular/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js",
-                        "/singular-static/resources/singular/global/plugins/jquerymask/jquery.mask.min.js",
-                        "/singular-static/resources/singular/global/plugins/datatables/datatables.min.js",
-                        "/singular-static/resources/singular/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js",
-                        "/singular-static/resources/singular/global/plugins/morris/morris.min.js",
-                        "/singular-static/resources/singular/global/plugins/morris/raphael-min.js",
-                        "/singular-static/resources/singular/global/plugins/jquery.sparkline.min.js",
-                        "/singular-static/resources/singular/global/plugins/amcharts/amcharts/amcharts.js",
-                        "/singular-static/resources/singular/global/plugins/amcharts/amcharts/serial.js",
-                        "/singular-static/resources/singular/global/plugins/amcharts/amcharts/pie.js",
-                        "/singular-static/resources/singular/global/plugins/amcharts/amcharts/themes/light.js",
-                        "/singular-static/resources/singular/global/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js",
-                        "/singular-static/resources/singular/global/plugins/ion.rangeslider/js/ion.rangeSlider.min.js",
-                        "/singular-static/resources/singular/global/plugins/bootbox/bootbox.min.js",
-                        "/singular-static/resources/singular/global/plugins/jquery-file-upload/js/jquery.iframe-transport.js",
-                        "/singular-static/resources/singular/global/plugins/jquery-file-upload/js/jquery.fileupload.js",
-                        "/singular-static/resources/singular/global/scripts/app.min.js",
-                        "/singular-static/resources/singular/layout4/scripts/layout.min.js",
-                        "/singular-static/resources/singular/global/plugins/bootstrap-toastr/toastr.min.js",
-                        "/singular-static/resources/singular/global/plugins/typeahead/typeahead.bundle.min.js",
-                        "/singular-static/resources/singular/global/plugins/jstree/dist/jstree.min.js",
-                        "/singular-static/resources/singular/plugins/stringjs/string.min.js",
-                        "/singular-static/resources/singular/plugins/jquery-maskmoney/dist/jquery.maskMoney.min.js",
-                        "/singular-static/resources/singular/plugins/ckeditor/ckeditor.js",
-                        "/singular-static/resources/singular/plugins/photoswipe/photoswipe.min.js",
-                        "/singular-static/resources/singular/plugins/photoswipe/photoswipe-ui-default.min.js",
-                        "/singular-static/resources/singular/plugins/photoswipe/jquery-photoswipe.js"
-                ).map(JavaScriptHeaderItem::forUrl)
-            ).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
     }
 
     public final SkinOptions skinOptions = new SkinOptions();
@@ -151,7 +56,7 @@ public abstract class SingularTemplate extends WebPage {
         getApplication().setHeaderResponseDecorator(JAVASCRIPT_DECORATOR);
 
         /*Essa estratégia é utilizada para garantir que o jquery será sempre carregado pois está fixo no html
-        * sem esse artificio páginas sem componentes ajax do wicket apresentarão erros de javascript.*/
+         * sem esse artificio páginas sem componentes ajax do wicket apresentarão erros de javascript.*/
         getApplication()
                 .getJavaScriptLibrarySettings()
                 .setJQueryReference(new PackageResourceReference(SingularTemplate.class, "empty.js"));
@@ -160,13 +65,14 @@ public abstract class SingularTemplate extends WebPage {
         add(new KeepSessionAliveBehavior());
     }
 
+
     @Override
     public void renderHead(IHeaderResponse response) {
-        getStyles().forEach(response::render);
-        getJavaScriptsUrls().forEach(response::render);
+        RecursosStaticosSingularTemplate.getStyles(getCurrentSkinFolder()).forEach(response::render);
+        RecursosStaticosSingularTemplate.getJavaScriptsUrls().forEach(response::render);
     }
 
-    protected IModel<String> getPageTitleModel(){
+    protected IModel<String> getPageTitleModel() {
         return new StringResourceModel("label.page.title.local").setDefaultValue("");
     }
 

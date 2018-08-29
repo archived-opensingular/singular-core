@@ -16,20 +16,20 @@
 
 package org.opensingular.form.wicket;
 
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Sets;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -48,7 +48,7 @@ import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.commons.lambda.IPredicate;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
-import com.google.common.collect.Sets;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class SValidationFeedbackHandler implements Serializable {
 
@@ -231,7 +231,7 @@ public class SValidationFeedbackHandler implements Serializable {
 
     private static List<ValidationError> collectNestedErrors(FeedbackFence feedbackFence, Collection<SInstance> rootInstances, IPredicate<ValidationError> filter) {
 
-        final List<ValidationError> result = new ArrayList<>();
+        final Set<ValidationError> result = new LinkedHashSet<>();
 
         for (SInstance rootInstance : rootInstances) {
             final SDocument document = rootInstance.getDocument();
@@ -242,13 +242,14 @@ public class SValidationFeedbackHandler implements Serializable {
                     v.dontGoDeeper();
                 } else {
                     document.getValidationErrors(i.getId()).stream()
-                        .filter(it -> (filter == null) || filter.test(it))
-                        .forEach(result::add);
+                            .filter(it -> (filter == null) || filter.test(it))
+                            .distinct()
+                            .forEach(result::add);
                 }
             });
         }
 
-        return result;
+        return new ArrayList<>(result);
     }
 
     private static boolean containsNestedErrors(FeedbackFence feedbackFence, Collection<SInstance> rootInstances, IPredicate<ValidationError> filter) {

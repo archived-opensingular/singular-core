@@ -18,14 +18,18 @@
 
 package org.opensingular.form;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.type.core.SIString;
+import org.opensingular.form.type.core.STypeBoolean;
+import org.opensingular.form.type.core.STypeHTML;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.core.attachment.STypeAttachment;
 
 @RunWith(Parameterized.class)
 public class SFormUtilTest extends TestCaseForm {
@@ -172,4 +176,43 @@ public class SFormUtilTest extends TestCaseForm {
         }
     }
 
+    @Test
+    public void testFindCommonType() {
+        SDictionary dic = createTestDictionary();
+        assertCommon(dic, SType.class, SType.class, SType.class);
+        assertCommon(dic, SType.class, STypeInteger.class, SType.class);
+        assertCommon(dic, SType.class, STypeComposite.class, SType.class);
+        assertCommon(dic, SType.class, STypeAttachment.class, SType.class);
+
+        assertCommon(dic, STypeComposite.class, STypeInteger.class, SType.class);
+        assertCommon(dic, STypeComposite.class, STypeComposite.class, STypeComposite.class);
+        assertCommon(dic, STypeComposite.class, STypeAttachment.class, STypeComposite.class);
+
+        assertCommon(dic, STypeHTML.class, STypeInteger.class, STypeSimple.class);
+        assertCommon(dic, STypeString.class, STypeInteger.class, STypeSimple.class);
+    }
+
+    private void assertCommon(SDictionary dic, Class<?> type1, Class<?> type2, Class<?> expectedResult) {
+        SType<?> t1 = dic.getType((Class<SType>) type1);
+        SType<?> t2 = dic.getType((Class<SType>) type2);
+        SType<?> e = dic.getType((Class<SType>) expectedResult);
+        assertType(SFormUtil.findCommonType(t1, t2)).isSameAs(e);
+        assertType(SFormUtil.findCommonType(t2, t1)).isSameAs(e);
+    }
+
+    @Test
+    public void testVerifySameDictionary() {
+        SDictionary dic1 = createTestDictionary();
+        SDictionary dic2 = createTestDictionary();
+
+        SFormUtil.verifySameDictionary(dic1.getType(STypeString.class), dic1.getType(STypeBoolean.class));
+        SFormUtil.verifySameDictionary(dic1.getType(STypeString.class), dic1.getType(STypeInteger.class).newInstance());
+
+        Assertions.assertThatThrownBy(
+                () -> SFormUtil.verifySameDictionary(dic1.getType(STypeString.class), dic2.getType(STypeBoolean.class)))
+                .isExactlyInstanceOf(SingularFormException.class).hasMessageContaining("criado em outro dicionário");
+        Assertions.assertThatThrownBy(() -> SFormUtil
+                .verifySameDictionary(dic1.getType(STypeString.class), dic2.getType(STypeInteger.class).newInstance()))
+                .isExactlyInstanceOf(SingularFormException.class).hasMessageContaining("não é o mesmo dicionário");
+    }
 }
