@@ -14,26 +14,33 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.wicket.mapper.behavior;
+package org.opensingular.lib.wicket.util.model;
 
-import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.model.IModel;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.ISupplier;
 
-import java.util.Set;
+public class GetSetFunctionalModel<T> implements IModel<T> {
+    private final ISupplier<T> getter;
+    private final IConsumer<T> setter;
 
-public class RequiredListLabelClassAppender extends ClassAttributeModifier {
-
-    private final IModel<? extends SInstance> model;
-
-    public RequiredListLabelClassAppender(IModel<? extends SInstance> model) {
-        this.model = model;
+    public GetSetFunctionalModel(ISupplier<T> getter, IConsumer<T> setter) {
+        this.getter = getter;
+        this.setter = setter;
     }
 
     @Override
-    protected Set<String> update(Set<String> oldClasses) {
-        return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
+    public T getObject() {
+        return getter.get();
     }
 
+    @Override
+    public void setObject(T object) {
+        setter.accept(object);
+    }
+
+    @Override
+    public void detach() {
+
+    }
 }

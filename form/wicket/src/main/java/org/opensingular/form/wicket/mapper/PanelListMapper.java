@@ -60,6 +60,15 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class PanelListMapper extends AbstractListMapper implements ISInstanceActionCapable {
 

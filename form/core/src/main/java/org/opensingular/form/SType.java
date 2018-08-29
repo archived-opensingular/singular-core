@@ -252,7 +252,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
      *
      * @return true se o tipo atual for do tipo informado.
      */
-    public boolean isTypeOf(SType<?> parentTypeCandidate) {
+    public boolean isTypeOf(@Nonnull SType<?> parentTypeCandidate) {
+        SFormUtil.verifySameDictionary(this, parentTypeCandidate);
         SType<I> current = this;
         while (current != null) {
             if (current == parentTypeCandidate) {
@@ -714,19 +715,13 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     /**
      * Verifica se a instância informada é do tipo atual, senão dispara exception.
      */
-    public void checkIfIsInstanceOf(SInstance instance) {
-        if (getDictionary() != instance.getDictionary()) {
-            throw new SingularFormException("O dicionário da instância " + instance + " não é o mesmo do tipo " + this +
-                    ". Foram carregados em separado", instance);
+    void checkIfIsInstanceOf(@Nonnull SInstance instance) {
+        SFormUtil.verifySameDictionary(this, instance);
+        if (!instance.isTypeOf(this)) {
+            throw new SingularFormException(
+                    "A instância " + instance + " é do tipo " + instance.getType() + ", mas era esperada ser do tipo " +
+                            this, instance);
         }
-        for (SType<?> current = instance.getType(); current != null; current = current.getSuperType()) {
-            if (current == this) {
-                return;
-            }
-        }
-        throw new SingularFormException(
-                "A instância " + instance + " é do tipo " + instance.getType() + ", mas era esperada ser do tipo " +
-                        this, instance);
     }
 
     @Override
@@ -854,6 +849,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
                 return v;
             } else if (aggressive && isEqualsStart(name, SPackageBasic.NAME)) {
                 return name.substring(SPackageBasic.NAME.length() + 1);
+            } else if (isEqualsStart(name, getPackage().getName())) {
+                return name.substring(getPackage().getName().length() + 1);
             }
         }
         return name;

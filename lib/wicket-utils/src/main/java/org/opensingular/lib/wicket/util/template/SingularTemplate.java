@@ -56,7 +56,7 @@ public abstract class SingularTemplate extends WebPage {
         getApplication().setHeaderResponseDecorator(JAVASCRIPT_DECORATOR);
 
         /*Essa estratégia é utilizada para garantir que o jquery será sempre carregado pois está fixo no html
-        * sem esse artificio páginas sem componentes ajax do wicket apresentarão erros de javascript.*/
+         * sem esse artificio páginas sem componentes ajax do wicket apresentarão erros de javascript.*/
         getApplication()
                 .getJavaScriptLibrarySettings()
                 .setJQueryReference(new PackageResourceReference(SingularTemplate.class, "empty.js"));
@@ -65,13 +65,14 @@ public abstract class SingularTemplate extends WebPage {
         add(new KeepSessionAliveBehavior());
     }
 
+
     @Override
     public void renderHead(IHeaderResponse response) {
         RecursosStaticosSingularTemplate.getStyles(getCurrentSkinFolder()).forEach(response::render);
         RecursosStaticosSingularTemplate.getJavaScriptsUrls().forEach(response::render);
     }
 
-    protected IModel<String> getPageTitleModel(){
+    protected IModel<String> getPageTitleModel() {
         return new StringResourceModel("label.page.title.local").setDefaultValue("");
     }
 

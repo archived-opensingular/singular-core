@@ -16,6 +16,7 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -35,6 +36,8 @@ import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.feedback.FeedbackFence;
+import org.opensingular.form.wicket.mapper.behavior.RequiredLabelClassAppender;
 import org.opensingular.form.wicket.mapper.buttons.ElementsView;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
@@ -108,6 +111,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
 
         final IModel<String> label = $m.ofValue(ctx.getCurrentInstance().getType().asAtr().getLabel());
         final Label title = new Label("_title", label);
+        title.add($b.visibleIfModelObject(StringUtils::isNotBlank));
 
         ctx.configureContainer(label);
 
@@ -128,11 +132,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             false,
             internalContextListProvider);
 
-        final SType<SInstance> elementsType = list.getObject().getElementsType();
-
-        if (!elementsType.isComposite() && elementsType.asAtr().isRequired()) {
-            title.add($b.classAppender("singular-form-required"));
-        }
+        title.add(new RequiredLabelClassAppender(list));
 
     }
 
