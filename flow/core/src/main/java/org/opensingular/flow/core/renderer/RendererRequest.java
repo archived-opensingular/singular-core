@@ -17,7 +17,6 @@ import java.util.Objects;
  */
 public class RendererRequest {
 
-    @Nonnull
     private final IFlowRenderer renderer;
     @Nonnull
     private final FlowDefinition<?> definition;
@@ -89,6 +88,6 @@ public class RendererRequest {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(definition).append(instanceHistory).hashCode();
+        return new HashCodeBuilder().append(definition).append(instanceHistory).toHashCode();
     }
 }

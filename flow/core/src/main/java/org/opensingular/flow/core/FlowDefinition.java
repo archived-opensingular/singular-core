@@ -178,7 +178,7 @@ public abstract class FlowDefinition<I extends FlowInstance> extends MetaDataEna
      * Turns off the verification of consistency of the {@link FlowMap}. Should only be used in flows that are not
      * supposed to be started.
      */
-    public final void setCheckForConsistency(boolean value) {
+    public final synchronized void setCheckForConsistency(boolean value) {
         checkForConsistency = value;
     }
 
@@ -504,14 +504,14 @@ public abstract class FlowDefinition<I extends FlowInstance> extends MetaDataEna
     }
 
     final <X extends IEntityTaskVersion> Set<X> convertToEntityTaskVersion(Stream<? extends STask<?>> stream) {
-        return (Set<X>) stream.map(t -> getEntityTaskVersion(t)).collect(Collectors.toSet());
+        return (Set<X>) stream.map(this::getEntityTaskVersion).collect(Collectors.toSet());
     }
 
     /**
      * Retorna uma lista de instâncias correspondentes às entidades fornecidas.
      */
     protected final List<I> convertToFlowInstance(List<? extends IEntityFlowInstance> entities) {
-        return entities.stream().map(e -> convertToFlowInstance(e)).collect(Collectors.toList());
+        return entities.stream().map(this::convertToFlowInstance).collect(Collectors.toList());
     }
 
     /**
@@ -559,7 +559,7 @@ public abstract class FlowDefinition<I extends FlowInstance> extends MetaDataEna
     }
 
     public StartCall<I> prepareStartCall() {
-        return new StartCall<I>(this, new RefStart(getFlowMap().getStart()));
+        return new StartCall<>(this, new RefStart(getFlowMap().getStart()));
     }
 
 
@@ -609,7 +609,7 @@ public abstract class FlowDefinition<I extends FlowInstance> extends MetaDataEna
     final <V> V inject(@Nonnull V target) {
         if (injector == null) {
             Optional<SingularInjector> result = ServiceRegistryLocator.locate().lookupSingularInjectorOpt();
-            injector = result.orElseGet(() -> SingularSpringInjector.get());
+            injector = result.orElseGet(SingularSpringInjector::get);
         }
         injector.inject(Objects.requireNonNull(target));
         return target;
