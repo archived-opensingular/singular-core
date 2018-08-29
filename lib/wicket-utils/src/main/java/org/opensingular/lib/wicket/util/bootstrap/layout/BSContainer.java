@@ -16,24 +16,25 @@
 
 package org.opensingular.lib.wicket.util.bootstrap.layout;
 
-import static java.util.stream.Collectors.*;
-import static org.apache.commons.lang3.StringUtils.*;
-
-import java.util.List;
-import java.util.stream.Stream;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.bootstrap.BootstrapSize;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
+
+import java.util.List;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 @SuppressWarnings({ "unchecked", "serial" })
 public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
@@ -41,6 +42,7 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     private String                tagName;
     private String                cssClass = null, innerStyle = null;
     protected final RepeatingView items    = new RepeatingView("_");
+    private IConsumer<BSContainer<?>> detachListener = c -> {};
 
     public BSContainer(String id) {
         super(id);
@@ -48,6 +50,18 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
 
     public BSContainer(String id, IModel<?> model) {
         super(id, model);
+    }
+
+
+
+    @Override
+    protected void onDetach() {
+        super.onDetach();
+        detachListener.accept(this);
+    }
+
+    public void setDetachListener(IConsumer<BSContainer<?>> detachListener) {
+        this.detachListener = detachListener;
     }
 
     public BSContainer(String id, String tagName) {
@@ -65,18 +79,8 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
         super.onInitialize();
         setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true);
         add(items);
-        add(new AttributeAppender("class", new AbstractReadOnlyModel<String>() {
-            @Override
-            public String getObject() {
-                return getCssClass();
-            }
-        }, " "));
-        add(new AttributeAppender("style", new AbstractReadOnlyModel<String>() {
-            @Override
-            public String getObject() {
-                return getInnerStyle();
-            }
-        }, " "));
+        add(AttributeAppender.append("class", $m.get(this::getCssClass)));
+        add(AttributeAppender.append("style", $m.get(this::getInnerStyle)));
     }
 
     @Override
@@ -93,7 +97,9 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     }
 
     public BSGrid newGrid() {
-        return newComponent(BSGrid::new);
+        BSGrid grid = new BSGrid(newChildId());
+        getItems().add(grid);
+        return grid;
     }
 
     public BSControls newFormGroup() {
@@ -101,12 +107,11 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     }
 
     public BSControls newFormGroup(BootstrapSize bsSize) {
-        return newComponent(componentId -> {
-            BSControls controls = new BSControls(componentId, false)
+        BSControls controls = new BSControls(newChildId(), false)
                 .setCssClass("form-group" + bsSize.apply("form-group"));
-            controls.add(new AttributeAppender("class", "can-have-error", " "));
-            return controls;
-        });
+        controls.add(new AttributeAppender("class", "can-have-error", " "));
+        getItems().add(controls);
+        return controls;
     }
 
     public THIS appendTag(String tag, Component component) {
@@ -132,8 +137,9 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     }
 
     public <C extends Component> C newTag(String tag, boolean closeTag, String attrs, C component) {
-        TemplatePanel container = newComponent(id -> new TemplatePanel(id, () -> "<" + tag + " wicket:id='" + component.getId() + "' " + defaultString(attrs) + ">"
-            + (closeTag ? "</" + tag + ">\n" : "\n")));
+        TemplatePanel container = new TemplatePanel(newChildId(), "<" + tag + " wicket:id='" + component.getId()
+                + "' " + defaultString(attrs) + ">" + (closeTag ? "</" + tag + ">\n" : "\n"));
+        getItems().add(container);
         container
             .add(component)
             .setRenderBodyOnly(true).setOutputMarkupId(false).setOutputMarkupPlaceholderTag(false);
@@ -141,7 +147,8 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     }
 
     public TemplatePanel newTemplateTag(IFunction<TemplatePanel, String> markupFunc) {
-        TemplatePanel container = newComponent(id -> new TemplatePanel(id, markupFunc));
+        TemplatePanel container = new TemplatePanel(newChildId(), markupFunc);
+        getItems().add(container);
         container.setRenderBodyOnly(true).setOutputMarkupId(false).setOutputMarkupPlaceholderTag(false);
         return container;
     }

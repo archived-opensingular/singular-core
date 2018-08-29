@@ -344,6 +344,11 @@ body {
 .block-spinner-bar > div {
   background: #51c3b1; }
 
+.force-inline-block {
+  display: inline-block;
+  margin-bottom: 0;
+  vertical-align: middle; }
+
 .toast-success {
   background-color: #1BBC9B; }
 
