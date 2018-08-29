@@ -148,7 +148,7 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
 
     }
 
-    private final class PanelElementsView extends ElementsView {
+    private static final class PanelElementsView extends ElementsView {
 
         private final Form<?>            form;
         private final WicketBuildContext ctx;
