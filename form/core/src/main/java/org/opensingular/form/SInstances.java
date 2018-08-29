@@ -16,10 +16,13 @@
 
 package org.opensingular.form;
 
+import org.opensingular.form.type.core.SIBoolean;
+import org.opensingular.form.type.core.STypeBoolean;
+
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -28,11 +31,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import javax.annotation.Nonnull;
-
-import org.opensingular.form.type.core.SIBoolean;
-import org.opensingular.form.type.core.STypeBoolean;
 
 /**
  * Métodos utilitários para manipulação de SInstance.
@@ -190,7 +188,7 @@ public abstract class SInstances {
     @SuppressWarnings("unchecked")
     public static <A extends SInstance & ICompositeInstance> Optional<A> findAncestor(SInstance node, SType<A> ancestorType) {
         for (SInstance parent = node.getParent(); parent != null; parent = parent.getParent()) {
-            if (parent.getType().isTypeOf(ancestorType)) {
+            if (parent.isTypeOf(ancestorType)) {
                 return Optional.of((A) parent);
             }
         }
@@ -209,7 +207,7 @@ public abstract class SInstances {
     public static <CA extends SInstance & ICompositeInstance> Optional<CA> findCommonAncestor(SInstance node, SType<?> targetType) {
         for (SScope type = targetType; type != null; type = type.getParentScope()) {
             for (SInstance ancestor = node; ancestor != null; ancestor = ancestor.getParent()) {
-                if (SType.class.isAssignableFrom(type.getClass()) && ancestor.getType().isTypeOf((SType<?>) type) && ancestor instanceof ICompositeInstance) {
+                if (SType.class.isAssignableFrom(type.getClass()) && ancestor.isTypeOf((SType<?>) type) && ancestor instanceof ICompositeInstance) {
                     return Optional.of((CA) ancestor);
                 }
             }
@@ -314,7 +312,7 @@ public abstract class SInstances {
             list.add(instance);
         }
         SInstance node = instance.getParent();
-        while (node != null && !node.getType().isTypeOf(limitInclusive)) {
+        while (node != null && (limitInclusive == null || !node.isTypeOf(limitInclusive))) {
             list.add(node);
             node = node.getParent();
         }
@@ -347,7 +345,7 @@ public abstract class SInstances {
         deque.add(instance);
         while (!deque.isEmpty()) {
             final SInstance node = deque.removeFirst();
-            if (node.getType().isTypeOf(descendantType)) {
+            if (node.isTypeOf(descendantType)) {
                 return Optional.of((D) node);
             } else {
                 addAllChildren(deque, node);
@@ -381,7 +379,7 @@ public abstract class SInstances {
         deque.add(instance);
         while (!deque.isEmpty()) {
             final SInstance node = deque.removeFirst();
-            if (node.getType().isTypeOf(descendantType)) {
+            if (node.isTypeOf(descendantType)) {
                 result.add(function.apply((D) node));
             } else {
                 addAllChildren(deque, node);
@@ -400,7 +398,7 @@ public abstract class SInstances {
     @SuppressWarnings("unchecked")
     public static <D extends SInstance> Stream<D> streamDescendants(SInstance root, boolean includeRoot, SType<D> descendantType) {
         return streamDescendants(root, includeRoot)
-            .filter(it -> it.getType().isTypeOf(descendantType))
+            .filter(it -> it.isTypeOf(descendantType))
             .map(it -> (D) it);
     }
 

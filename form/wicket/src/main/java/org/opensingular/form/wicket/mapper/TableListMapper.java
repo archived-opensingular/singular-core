@@ -16,27 +16,16 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import static org.opensingular.form.wicket.mapper.components.MetronicPanel.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -45,31 +34,40 @@ import org.opensingular.form.SingularFormException;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.view.SViewListByTable;
-import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
-import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
+import org.opensingular.form.wicket.mapper.behavior.RequiredLabelClassAppender;
+import org.opensingular.form.wicket.mapper.buttons.ElementsView;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
-import org.opensingular.form.wicket.mapper.components.MetronicPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
+import org.opensingular.form.wicket.mapper.tablelist.TableElementsView;
+import org.opensingular.form.wicket.mapper.tablelist.TableListPanel;
 import org.opensingular.form.wicket.model.ReadOnlyCurrentInstanceModel;
-import org.opensingular.form.wicket.model.SInstanceFieldModel;
-import org.opensingular.lib.commons.lambda.IBiConsumer;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
-import org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol.BSGridSize;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTDataCell;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTSection;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
+
 public class TableListMapper extends AbstractListMapper implements ISInstanceActionCapable {
 
     private SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
+    public ConfirmationModal  confirmationModal;
 
     @Override
     public void addSInstanceActionsProvider(int sortPosition, ISInstanceActionsProvider provider) {
@@ -88,31 +86,32 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         }
 
         ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, Boolean.TRUE);
-        ConfirmationModal confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
-        ctx.getContainer().appendComponent((String id) -> buildPanel(ctx, confirmationModal, id));
+        confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
+        ctx.getContainer().appendComponent((String id) -> buildPanel(ctx,  id));
     }
 
-    private TableListPanel buildPanel(WicketBuildContext ctx, ConfirmationModal confirmationModal, String id) {
+    protected TableListPanel buildPanel(WicketBuildContext ctx, String id) {
 
-        final IModel<SIList<SInstance>> list = new ReadOnlyCurrentInstanceModel<>(ctx);
-        final ViewMode viewMode = ctx.getViewMode();
-        final Boolean isEdition = viewMode == null || viewMode.isEdition();
-        final SIList<SInstance> iList = list.getObject();
-        final SType<?> currentType = ctx.getCurrentInstance().getType();
+        final IModel<SIList<SInstance>> listModel        = new ReadOnlyCurrentInstanceModel<>(ctx);
+        final  ViewMode                  viewMode    = ctx.getViewMode();
+        final Boolean                   isEdition   = viewMode == null || viewMode.isEdition();
+        final SIList<SInstance>         iList       = listModel.getObject();
+        final SType<?>                  currentType = ctx.getCurrentInstance().getType();
+
 
         addInitialNumberOfLines(currentType, iList, ctx.getViewSupplier(SViewListByTable.class));
-
         return TableListPanel.TableListPanelBuilder.build(id,
-            (h, form) -> buildHeader(h, form, list, ctx, isEdition),
-            (c, form) -> builContent(c, form, list, ctx, isEdition, confirmationModal),
-            (f, form) -> buildFooter(f, form, ctx));
+                (h, form) -> buildHeader(h, listModel, ctx),
+                (c, form) -> buildContent(c, form, listModel, ctx, isEdition, confirmationModal),
+                (f, form) -> buildFooter(f, form, listModel, ctx));
     }
 
-    private void buildHeader(BSContainer<?> header, Form<?> form, IModel<SIList<SInstance>> list,
-        WicketBuildContext ctx, boolean isEdition) {
+    private void buildHeader(BSContainer<?> header, IModel<SIList<SInstance>> list,
+                             WicketBuildContext ctx) {
 
         final IModel<String> label = $m.ofValue(ctx.getCurrentInstance().getType().asAtr().getLabel());
         final Label title = new Label("_title", label);
+        title.add($b.visibleIfModelObject(StringUtils::isNotBlank));
 
         ctx.configureContainer(label);
 
@@ -133,15 +132,11 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             false,
             internalContextListProvider);
 
-        final SType<SInstance> elementsType = list.getObject().getElementsType();
-
-        if (!elementsType.isComposite() && elementsType.asAtr().isRequired()) {
-            title.add($b.classAppender("singular-form-required"));
-        }
+        title.add(new RequiredLabelClassAppender(list));
 
     }
 
-    private void builContent(BSContainer<?> content, Form<?> form, IModel<SIList<SInstance>> list,
+    private void buildContent(BSContainer<?> content, Form<?> form, IModel<SIList<SInstance>> list,
         WicketBuildContext ctx, boolean isEdition, ConfirmationModal confirmationModal) {
 
         final String markup = ""
@@ -171,13 +166,12 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         template.add(emptyContent);
 
         final WebMarkupContainer notEmptyContent = new WebMarkupContainer("not-empty-content");
-        final BSTSection tableHeader = new BSTSection("_h").setTagName("thead");
-        final WebMarkupContainer tableBody = new WebMarkupContainer("_b");
-        final ElementsView tableRows = new TableElementsView("_e", list, ctx, form, tableBody, confirmationModal);
-        final WebMarkupContainer tableFooter = new WebMarkupContainer("_ft");
-        final BSContainer<?> footerBody = new BSContainer<>("_fb");
-        final SType<SInstance> elementsType = list.getObject().getElementsType();
-        final ISupplier<SViewListByTable> viewSupplier = ctx.getViewSupplier(SViewListByTable.class);
+        final BSTSection         tableHeader       = new BSTSection("_h").setTagName("thead");
+        final WebMarkupContainer tableBody         = new WebMarkupContainer("_b");
+        final ElementsView       tableRows         = new TableElementsView("_e", list, ctx, form, tableBody, confirmationModal);
+        final WebMarkupContainer tableFooter       = new WebMarkupContainer("_ft");
+        final BSContainer<?>     footerBody        = new BSContainer<>("_fb");
+        final SType<SInstance>   elementsType      = list.getObject().getElementsType();final ISupplier<SViewListByTable> viewSupplier = ctx.getViewSupplier(SViewListByTable.class);
 
         notEmptyContent.add($b.onConfigure(c -> c.setVisible(!list.getObject().isEmpty())));
 
@@ -242,133 +236,6 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
     }
 
     private static boolean shouldRenderHeaderForSType(SType<?> type, ISupplier<SViewListByTable> viewSupplier) {
-        if (viewSupplier.get().isRenderCompositeFieldsAsColumns() && (!type.asAtr().isExists() || !type.asAtr().isVisible())) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private static final class TableElementsView extends ElementsView {
-
-        private final WicketBuildContext ctx;
-        private final Form<?>            form;
-        private final ConfirmationModal  confirmationModal;
-
-        private TableElementsView(String id, IModel<SIList<SInstance>> model, WicketBuildContext ctx, Form<?> form,
-            WebMarkupContainer parentContainer, ConfirmationModal confirmationModal) {
-            super(id, model, parentContainer);
-            this.confirmationModal = confirmationModal;
-            super.setRenderedChildFunction(c -> ((MarkupContainer) c).get("_r"));
-            this.ctx = ctx;
-            this.form = form;
-        }
-
-        @Override
-        protected void populateItem(Item<SInstance> item) {
-
-            final BSTRow row = new BSTRow("_r", BSGridSize.MD);
-            final IModel<SInstance> itemModel = item.getModel();
-            final SInstance instance = itemModel.getObject();
-
-            SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(new FeedbackFence(row))
-                .addInstanceModel(itemModel)
-                .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(row)));
-
-            row.setDefaultModel(itemModel);
-            row.add($b.classAppender("singular-form-table-row can-have-error"));
-            row.add($b.classAppender("has-errors", $m.ofValue(feedbackHandler).map(SValidationFeedbackHandler::containsNestedErrors)));
-
-            if (!(ctx.getView() instanceof SViewListByTable)) {
-                return;
-            }
-
-            final ISupplier<SViewListByTable> viewSupplier = ctx.getViewSupplier(SViewListByTable.class);
-
-            if (viewSupplier.get().isInsertEnabled() && ctx.getViewMode().isEdition()) {
-                final BSTDataCell actionColumn = row.newCol();
-                actionColumn.add($b.attrAppender("style", "width:20px", ";"));
-                appendInserirButton(this, form, ctx, item, actionColumn);
-            }
-
-            if ((instance instanceof SIComposite) && viewSupplier.get().isRenderCompositeFieldsAsColumns()) {
-                final SIComposite ci = (SIComposite) instance;
-                final STypeComposite<?> ct = ci.getType();
-
-                for (SType<?> ft : ct.getFields()) {
-                    IModel<SInstance> fm = new SInstanceFieldModel<>(item.getModel(), ft.getNameSimple());
-                    ctx.createChild(row.newCol(), ctx.getExternalContainer(), fm).setHint(HIDE_LABEL, Boolean.TRUE).build();
-                }
-            } else {
-                ctx.createChild(row.newCol(), ctx.getExternalContainer(), itemModel).setHint(HIDE_LABEL, Boolean.FALSE).build();
-            }
-
-            if (ctx.getViewMode().isEdition()) {
-                final BSTDataCell actionColumn = row.newCol();
-                actionColumn.add($b.attrAppender("style", "width:20px", ";"));
-                appendRemoverButton(this, form, ctx, item, actionColumn, confirmationModal, viewSupplier);
-            }
-
-            item.add(row);
-        }
-    }
-
-    private static abstract class TableListPanel extends MetronicPanel {
-
-        public TableListPanel(String id) {
-            super(id);
-        }
-
-        public TableListPanel(String id, boolean withForm) {
-            super(id, withForm);
-        }
-
-        @Override
-        public IFunction<TemplatePanel, String> getTemplateFunction() {
-            String wrapper = withForm ? "<form wicket:id='_fo'>%s</form>" : "%s";
-            return (tp) -> String.format(wrapper, ""
-                + "  <div class='list-table-input'>"
-                + "    <div wicket:id='_hd' class='list-table-heading'></div>"
-                + "    <div class='list-table-body' wicket:id='_co' >"
-                + "    </div>"
-                + "    <div wicket:id='_ft' class='list-table-footer'></div>"
-                + "  </div>"
-                + "");
-        }
-
-        public static final class TableListPanelBuilder {
-
-            private TableListPanelBuilder() {}
-
-            public static TableListPanel build(String id,
-                IBiConsumer<BSContainer<?>, Form<?>> buildHeading,
-                IBiConsumer<BSContainer<?>, Form<?>> buildContent,
-                IBiConsumer<BSContainer<?>, Form<?>> buildFooter) {
-                return build(id, true, buildHeading, buildContent, buildFooter);
-            }
-
-            public static TableListPanel build(String id,
-                boolean withForm,
-                IBiConsumer<BSContainer<?>, Form<?>> buildHeading,
-                IBiConsumer<BSContainer<?>, Form<?>> buildContent,
-                IBiConsumer<BSContainer<?>, Form<?>> buildFooter) {
-
-                return new TableListPanel(id, withForm) {
-                    @Override
-                    protected void buildHeading(BSContainer<?> heading, Form<?> form) {
-                        buildHeading.accept(heading, form);
-                    }
-                    @Override
-                    protected void buildContent(BSContainer<?> content, Form<?> form) {
-                        buildContent.accept(content, form);
-                    }
-                    @Override
-                    protected void buildFooter(BSContainer<?> footer, Form<?> form) {
-                        buildFooter.accept(footer, form);
-                    }
-                };
-            }
-
-        }
+        return !viewSupplier.get().isRenderCompositeFieldsAsColumns() || (type.asAtr().isExists() && type.asAtr().isVisible());
     }
 }

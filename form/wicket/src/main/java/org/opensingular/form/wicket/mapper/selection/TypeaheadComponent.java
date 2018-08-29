@@ -63,9 +63,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.google.common.collect.Maps.*;
-import static org.opensingular.form.wicket.mapper.selection.TypeaheadComponent.*;
-import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
+import static com.google.common.collect.Maps.newLinkedHashMap;
+import static org.opensingular.form.wicket.mapper.selection.TypeaheadComponent.generateResultOptions;
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 
 /**
@@ -253,9 +253,7 @@ public class TypeaheadComponent extends Panel {
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         response.render(JavaScriptReferenceHeaderItem.forReference(resourceRef("TypeaheadComponent.js")));
-        if (this.valueField.isEnabled()) {
-            response.render(OnDomReadyHeaderItem.forScript(createJSFetcher()));
-        }
+        response.render(OnDomReadyHeaderItem.forScript(createJSFetcher()));
         response.render(CSS_REFERENCE);
     }
 

@@ -308,19 +308,19 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
             if (mapColumns.isEmpty()) {
                 SType<?> type = ((SIList<?>) model.getObject()).getElementsType();
                 if (type instanceof STypeSimple) {
-                    columnTypes.add(new ColumnType(type.getName(), null));
+                    columnTypes.add(new ColumnType(type.getName(), null, null));
                 } else if (type.isComposite()) {
                     ((STypeComposite<?>) type)
                         .getFields()
                         .stream()
                         .filter(sType -> sType instanceof STypeSimple)
-                        .forEach(sType -> columnTypes.add(new ColumnType(sType.getName(), null)));
+                        .forEach(sType -> columnTypes.add(new ColumnType(sType.getName(), null, null)));
 
                 }
             } else {
                 mapColumns.forEach((col) -> {
                     SType<?> type = model.getObject().getDictionary().getType(col.getTypeName());
-                    ColumnType columnType = new ColumnType(type.getName(), col.getCustomLabel(), col.getDisplayValueFunction());
+                    ColumnType columnType = new ColumnType(type.getName(), col.getCustomLabel(), col.getColumnSortName(), col.getDisplayValueFunction());
                     columnTypes.add(columnType);
                 });
             }

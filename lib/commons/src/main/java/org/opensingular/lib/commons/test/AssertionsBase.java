@@ -78,19 +78,22 @@ public abstract class AssertionsBase<SELF extends AssertionsBase<SELF, T>, T> ex
     }
 
     protected final String errorMsg(String msg, Object expected, Object current) {
-        boolean showClass = (expected != null) && (current != null) && expected.getClass() != current.getClass();
-        showClass |= "null".equals(expected) || "null".equals(current);
         StringBuilder sb = new StringBuilder();
-        sb.append(msg).append(":\n Esperado  : ").append(expected);
-        if (showClass && expected != null) {
-            sb.append(" (").append(expected.getClass()).append(')');
-        }
-        sb.append("\n Encontrado: ").append(current);
-        if (showClass && current != null) {
-            sb.append(" (").append(current.getClass()).append(')');
+        sb.append(msg);
+        if(expected != null || current != null) {
+            boolean showClass = (expected != null) && (current != null) && expected.getClass() != current.getClass();
+            showClass |= "null".equals(expected) || "null".equals(current);
+            sb.append(":\n Esperado  : ").append(expected);
+            if (showClass && expected != null) {
+                sb.append(" (").append(expected.getClass()).append(')');
+            }
+            sb.append("\n Encontrado: ").append(current);
+            if (showClass && current != null) {
+                sb.append(" (").append(current.getClass()).append(')');
+            }
         }
         Optional<String> targetDescription = generateDescriptionForCurrentTarget(getTargetOpt());
-        return targetDescription.isPresent() ? "[" + targetDescription.get() + "]: " + sb : sb.toString();
+        return targetDescription.map(s -> "[" + s + "]: " + sb).orElseGet(sb::toString);
     }
 
     private static class DescriptionForTarget<T> extends Description {

@@ -14,26 +14,24 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.wicket.mapper.behavior;
+package org.opensingular.lib.wicket.util.model;
 
-import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.model.IModel;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.type.basic.SPackageBasic;
 
-import java.util.Set;
+public class IsNotReadOnlyModel implements IReadOnlyModel<Boolean> {
+    private final IModel<Boolean> model;
 
-public class RequiredListLabelClassAppender extends ClassAttributeModifier {
-
-    private final IModel<? extends SInstance> model;
-
-    public RequiredListLabelClassAppender(IModel<? extends SInstance> model) {
+    public IsNotReadOnlyModel(IModel<Boolean> model) {
         this.model = model;
     }
 
     @Override
-    protected Set<String> update(Set<String> oldClasses) {
-        return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, model.getObject());
+    public Boolean getObject() {
+        return !model.getObject();
     }
 
+    @Override
+    public void detach() {
+        model.detach();
+    }
 }

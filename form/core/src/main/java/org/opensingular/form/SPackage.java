@@ -19,6 +19,7 @@ package org.opensingular.form;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -114,13 +115,10 @@ public class SPackage extends SScopeBase {
     @Override
     @Nonnull
     public SDictionary getDictionary() {
-        if (dictionary == null) {
-            throw new SingularFormException("Internal error: dictionary is null");
-        }
-        return dictionary;
+        return Objects.requireNonNull(dictionary);
     }
 
-    final void setDictionary(SDictionary dictionary) {
+    final void setDictionary(@Nonnull SDictionary dictionary) {
         this.dictionary = dictionary;
     }
 

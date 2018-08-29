@@ -183,7 +183,7 @@ public class OpenModalEvent<T> implements IOpenModalEvent {
             return bodyContentPredicate;
         }
         public void close(AjaxRequestTarget target) {
-            ICloseModalEvent.of(target, getBodyContentPredicate()).bubble(getModalBorder());
+            new CloseModalEvent(target, getBodyContentPredicate()).bubble(getModalBorder());
         }
 
         private ActionCallback<T> newCloseAction() {
