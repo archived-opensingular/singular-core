@@ -133,6 +133,8 @@ public class PhotoSwipeBehavior extends Behavior {
         public JSONObject toJSON() {
             return toJSON(new JSONObject());
         }
+
+        @SuppressWarnings("squid:MethodCyclomaticComplexity")
         public JSONObject toJSON(JSONObject json) {
             //@formatter:off
             if (index                 != null) json.append("index"                , index                );
@@ -196,6 +198,8 @@ public class PhotoSwipeBehavior extends Behavior {
         public JSONObject toJSON() {
             return toJSON(new JSONObject());
         }
+
+        @SuppressWarnings("squid:MethodCyclomaticComplexity")
         public JSONObject toJSON(JSONObject json) {
             if ((barsSizeTop != null) || (barsSizeBottom != null))
                 json
@@ -269,16 +273,16 @@ public class PhotoSwipeBehavior extends Behavior {
         public static final ShareButton DOWNLOAD  = new ShareButton("download" , "Download image"   , true , "{{raw_image_url}}");
         //@formatter:on
 
-        public String                   id;
-        public String                   label;
-        public String                   url;
-        public boolean                  download;
+        public String  id;
+        public String  label;
+        public String  url;
+        public boolean enableDownload;
 
-        public ShareButton(String id, String label, boolean download, String url) {
+        public ShareButton(String id, String label, boolean enableDownload, String url) {
             this.id = id;
             this.label = label;
             this.url = url;
-            this.download = download;
+            this.enableDownload = enableDownload;
         }
         public JSONObject toJSON() {
             return toJSON(new JSONObject());
@@ -288,8 +292,8 @@ public class PhotoSwipeBehavior extends Behavior {
                 .append("id", id)
                 .append("label", label)
                 .append("url", url);
-            if (download)
-                json.append("download", download);
+            if (enableDownload)
+                json.append("download", enableDownload);
             return json;
         }
     }
