@@ -28,10 +28,8 @@ import org.opensingular.form.SInstance;
  */
 public class ButtonsConfig {
 
-    public static final String EDITAR_HINT = "Editar";
     public static final String REMOVER_HINT = "Remover";
 
-    private ButtonAction editButton;
     private ButtonAction deleteButton;
 
     /**
@@ -39,17 +37,7 @@ public class ButtonsConfig {
      * and the delete button will show.
      */
     public ButtonsConfig() {
-        editButton = new ButtonAction(f -> false, EDITAR_HINT, null);
         deleteButton = new ButtonAction(f -> true, REMOVER_HINT, null);
-    }
-
-    public ButtonAction getEditButton() {
-        return editButton;
-    }
-
-
-    protected void setEditButton(ButtonAction editButton) {
-        this.editButton = editButton;
     }
 
     public ButtonAction getDeleteButton() {
@@ -68,16 +56,6 @@ public class ButtonsConfig {
      */
     public boolean isDeleteEnabled(SInstance instance) {
         return deleteButton.isEnabled(instance);
-    }
-
-    /**
-     * Verify is edit button is enabled by the instance of the row.
-     *
-     * @param instance The instance of the row.
-     * @return True for enable, false for not.
-     */
-    public boolean isEditEnabled(SInstance instance) {
-        return editButton.isEnabled(instance);
     }
 
 }

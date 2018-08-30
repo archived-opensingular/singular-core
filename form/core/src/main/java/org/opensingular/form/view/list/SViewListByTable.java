@@ -26,7 +26,7 @@ public class SViewListByTable extends AbstractSViewListWithControls<SViewListByT
 
     private boolean renderCompositeFieldsAsColumns = true;
     private boolean editVisible = false; //This variable is used to determine if will have a column for edit.
-
+    private ButtonsConfigWithInsert buttonsConfig;
 
     public boolean isRenderCompositeFieldsAsColumns() {
         return renderCompositeFieldsAsColumns;
@@ -35,17 +35,6 @@ public class SViewListByTable extends AbstractSViewListWithControls<SViewListByT
     public SViewListByTable setRenderCompositeFieldsAsColumns(boolean renderCompositeFieldsAsColumns) {
         this.renderCompositeFieldsAsColumns = renderCompositeFieldsAsColumns;
         return this;
-    }
-
-    /**
-     * @param visibleFor  The predicate for show the button of the row.
-     *                    For use this logic, the visibleEdit have to be true.
-     * @param visibleEdit False will override the Predicate logic and will hide the button for all rows.
-     *                    True will use the predicate logic.
-     * @return <code>this</code>
-     */
-    public SViewListByTable configureEditButtonPerRow(@Nullable IPredicate<SInstance> visibleFor, boolean visibleEdit) {
-        return configureEditButtonPerRow(ButtonsConfig.EDITAR_HINT, visibleFor, null, visibleEdit);
     }
 
     /**
@@ -61,46 +50,31 @@ public class SViewListByTable extends AbstractSViewListWithControls<SViewListByT
      *                    True will use the predicate logic.
      * @return <code>this</code>
      */
-    public SViewListByTable configureEditButtonPerRow(String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon, boolean visibleEdit) {
+    public SViewListByTable enableInsert(String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon, boolean visibleEdit) {
         this.editVisible = visibleEdit;
-        getButtonsConfig().setEditButton(new ButtonAction(visibleFor, hint, icon));
+        getButtonsConfig().setInsertButton(new ButtonAction(visibleFor, hint, icon));
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SViewListByTable configureEditButtonPerRow(String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon) {
-        this.editVisible = true;
-        return super.configureEditButtonPerRow(hint, visibleFor, icon);
+    public SViewListByTable enableInsert(String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon) {
+        return enableInsert(hint, visibleFor, icon, true);
+    }
+
+    public SViewListByTable enableInsert(@Nullable IPredicate<SInstance> visibleFor) {
+        return enableInsert(ButtonsConfigWithInsert.INSERT_HINT, visibleFor, null, true);
     }
 
     /**
-     * {@inheritDoc}
+     * By default the insert line is disable.
      */
-    @Override
-    public SViewListByTable configureEditButtonPerRow(@Nullable IPredicate<SInstance> visibleFor) {
-        this.editVisible = true;
-        return super.configureEditButtonPerRow(visibleFor);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public SViewListByTable disableInsert() {
         this.editVisible = false;
-        return configureEditButtonPerRow(s -> false);
+        return enableInsert(s -> false);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public SViewListByTable enableInsert() {
         this.editVisible = true;
-        return configureEditButtonPerRow(s -> true);
+        return enableInsert(s -> true);
     }
 
     /**
@@ -111,4 +85,14 @@ public class SViewListByTable extends AbstractSViewListWithControls<SViewListByT
     public boolean isEditVisible() {
         return editVisible;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public ButtonsConfigWithInsert getButtonsConfig() {
+        if (buttonsConfig == null) {
+            buttonsConfig = new ButtonsConfigWithInsert();
+        }
+        return buttonsConfig;
+    }
+
 }

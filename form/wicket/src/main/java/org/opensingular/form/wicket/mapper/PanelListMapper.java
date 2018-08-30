@@ -45,6 +45,7 @@ import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.ReadOnlyCurrentInstanceModel;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSCol;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
@@ -55,6 +56,7 @@ import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
@@ -197,8 +199,9 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
 
             header.add($b.classAppender("list-icons"));
 
-            if (isEdition(viewSupplier) && (viewSupplier.get().getButtonsConfig().isEditEnabled(item.getModelObject()))) {
-                appendInserirButton(this, form, item, titleGrid, viewSupplier)
+            if (isEdition(viewSupplier) && (viewSupplier.get().getButtonsConfig().isInsertEnabled(item.getModelObject()))) {
+                ButtonAction editButton = viewSupplier.get().getButtonsConfig().getInsertButton();
+                appendInserirButton(this, form, item, titleGrid, editButton)
                         .add($b.classAppender("pull-left"))
                         .add($b.attrAppender("style", " margin-right:10px", ";"));
             }
@@ -227,7 +230,8 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
                 BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<? extends AbstractSViewListWithControls> viewSupplier) {
             ButtonAction deleteButton = viewSupplier.get().getButtonsConfig().getDeleteButton();
             final RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item, confirmationModal, deleteButton);
-            cell.newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + DefaultIcons.REMOVE + "' />")
+            final Icon deleteIcon = Optional.ofNullable(deleteButton.getIcon()).orElse(DefaultIcons.REMOVE);
+            cell.newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + deleteIcon + "' />")
                     .add(btn);
             return btn;
         }

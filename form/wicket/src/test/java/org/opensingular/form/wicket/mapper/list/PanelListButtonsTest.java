@@ -21,7 +21,7 @@ import org.apache.wicket.markup.html.link.AbstractLink;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.opensingular.form.view.list.ButtonsConfig;
+import org.opensingular.form.view.list.ButtonsConfigWithInsert;
 import org.opensingular.form.view.list.SViewListByForm;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 import org.opensingular.form.wicket.mapper.buttons.InserirButton;
@@ -58,7 +58,7 @@ public class PanelListButtonsTest {
     public void verifyHaveAllActionButtons() {
 
         ISupplier<SViewListByForm> viewListByForm = (ISupplier<SViewListByForm>) () -> new SViewListByForm()
-                .configureEditButtonPerRow(ButtonsConfig.EDITAR_HINT, null, DefaultIcons.PUZZLE);
+                .enableInsert(ButtonsConfigWithInsert.INSERT_HINT, null, DefaultIcons.PUZZLE);
 
         //Table List contains 3 buttons : Edit, New, Remove
         tester.getDummyPage().setTypeBuilder(m -> ListTestUtil.buildTableForButons(m, viewListByForm));

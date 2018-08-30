@@ -34,10 +34,7 @@ public class RemoverButton extends ActionAjaxButton {
         this.item = item;
         deleteIcon = Optional.ofNullable(deleteButton.getIcon()).orElse(DefaultIcons.REMOVE);
         add($b.attr("title", Optional.ofNullable(deleteButton.getHint()).orElse("Remover Linha")));
-
-        if (deleteButton != null) {
-            add($b.onConfigure(c -> c.setVisible(deleteButton.isEnabled(item.getModelObject()))));
-        }
+        add($b.onConfigure(c -> c.setVisible(deleteButton.isEnabled(item.getModelObject()))));
 
         this.confirmationModal = confirmationModal;
     }

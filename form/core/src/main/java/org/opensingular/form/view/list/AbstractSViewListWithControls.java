@@ -45,35 +45,6 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
         return buttonsConfig;
     }
 
-    /**
-     * Configure the edit button.
-     * <p>
-     * Note:This button in some view's can be a insert new line.
-     *
-     * @param visibleFor The logic for show the button of the row.
-     *                   Null for enable in all cases.
-     * @param hint       The hint of the button.
-     * @param icon       The icon of the button.
-     *                   Null for use the default.
-     * @return <code>this</code>
-     */
-    public SELF configureEditButtonPerRow(String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon) {
-        getButtonsConfig().setEditButton(new ButtonAction(visibleFor, hint, icon));
-        return (SELF) this;
-    }
-
-    public SELF configureEditButtonPerRow(@Nullable IPredicate<SInstance> visibleFor) {
-        return configureEditButtonPerRow(ButtonsConfig.EDITAR_HINT, visibleFor, null);
-    }
-
-    public SELF disableInsert() {
-        return configureEditButtonPerRow(s -> false);
-    }
-
-    public SELF enableInsert() {
-        return configureEditButtonPerRow(s -> true);
-    }
-
     public SELF disableDelete() {
         return configureDeleteButtonPerRow(s -> false);
     }

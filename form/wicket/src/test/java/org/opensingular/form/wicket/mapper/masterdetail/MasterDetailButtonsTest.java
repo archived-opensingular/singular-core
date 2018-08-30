@@ -39,7 +39,7 @@ public class MasterDetailButtonsTest {
     @Test
     public void verifyHaveJustViewAction() {
         ISupplier<SViewListByMasterDetail> viewListByMasterDetail =  (ISupplier<SViewListByMasterDetail>) () -> new SViewListByMasterDetail()
-                .disableInsert()
+                .disableEdit()
                 .disableDelete()
                 .enableView()
                 .disableNew();

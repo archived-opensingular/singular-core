@@ -28,10 +28,7 @@ public class InserirButton extends ActionAjaxButton {
         this.item = item;
         iconAdd = Optional.ofNullable(editButton.getIcon()).orElse(DefaultIcons.PLUS);
         add($b.attr("title", Optional.ofNullable(editButton.getHint()).orElse("Nova Linha")));
-
-        if (editButton != null) {
-            add($b.onConfigure(c -> c.setVisible(editButton.isEnabled(item.getModelObject()))));
-        }
+        add($b.onConfigure(c -> c.setVisible(editButton.isEnabled(item.getModelObject()))));
     }
 
     @Override

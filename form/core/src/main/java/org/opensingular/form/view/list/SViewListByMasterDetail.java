@@ -19,7 +19,6 @@ package org.opensingular.form.view.list;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
-import org.opensingular.form.enums.ButtonsMasterDetailConfig;
 import org.opensingular.form.enums.ModalSize;
 import org.opensingular.form.view.ConfigurableModal;
 import org.opensingular.lib.commons.lambda.IPredicate;
@@ -188,6 +187,34 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
     }
     public SViewListByMasterDetail disableView() {
         return configureViewButtonInEditionPerRow(s -> false);
+    }
+
+    /**
+     * Configure the new insert button per line.
+     * <p>
+     *
+     * @param visibleFor The logic for show the button of the row.
+     *                   Null for enable in all cases.
+     * @param hint       The hint of the button.
+     * @param icon       The icon of the button.
+     *                   Null for use the default.
+     * @return <code>this</code>
+     */
+    public SViewListByMasterDetail enableEdit(String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon) {
+        getButtonsConfig().setEditButton(new ButtonAction(visibleFor, hint, icon));
+        return this;
+    }
+
+    public SViewListByMasterDetail enableEdit(@Nullable IPredicate<SInstance> visibleFor) {
+        return enableEdit(ButtonsConfigWithInsert.INSERT_HINT, visibleFor, null);
+    }
+
+    public SViewListByMasterDetail disableEdit() {
+        return enableEdit(s -> false);
+    }
+
+    public SViewListByMasterDetail enableEdit() {
+        return enableEdit(s -> true);
     }
 
     /**

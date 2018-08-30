@@ -14,26 +14,28 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.enums;
+package org.opensingular.form.view.list;
 
 import org.opensingular.form.SInstance;
-import org.opensingular.form.view.list.ButtonAction;
-import org.opensingular.form.view.list.ButtonsConfig;
 
 public class ButtonsMasterDetailConfig extends ButtonsConfig {
 
     public static final String VISUALIZAR_HINT = "Visualizar";
+    public static final String EDITAR_HINT = "Editar";
     /**
      * The visible button rule visible will be used just in the edition, in the view mode will always be visible.
      */
-    private ButtonAction viewButtonInEdition = new ButtonAction(f -> false, VISUALIZAR_HINT, null);
+    private ButtonAction viewButtonInEdition;
+
+    private ButtonAction editButton;
 
     /**
      * Will overriding the edit button to be always visible.
      */
     public ButtonsMasterDetailConfig() {
         super();
-        setEditButton(new ButtonAction(f -> true, EDITAR_HINT, null));
+        viewButtonInEdition = new ButtonAction(f -> false, VISUALIZAR_HINT, null);
+        editButton = new ButtonAction(f -> true, EDITAR_HINT, null);
     }
 
     public ButtonAction getViewButtonInEdition() {
@@ -46,5 +48,24 @@ public class ButtonsMasterDetailConfig extends ButtonsConfig {
 
     public boolean isViewEnabled(SInstance instance) {
         return viewButtonInEdition.isEnabled(instance);
+    }
+
+    public ButtonAction getEditButton() {
+        return editButton;
+    }
+
+
+    public void setEditButton(ButtonAction editButton) {
+        this.editButton = editButton;
+    }
+
+    /**
+     * Verify is edit button is enabled by the instance of the row.
+     *
+     * @param instance The instance of the row.
+     * @return True for enable, false for not.
+     */
+    public boolean isEditEnabled(SInstance instance) {
+        return editButton.isEnabled(instance);
     }
 }

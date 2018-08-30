@@ -170,8 +170,7 @@ public abstract class ElementsView extends RefreshingView<SInstance> {
     }
 
     protected InserirButton appendInserirButton(ElementsView elementsView, Form<?> form, Item<SInstance> item,
-                                                BSContainer<?> cell, ISupplier<? extends AbstractSViewListWithControls> viewSupplier) {
-        ButtonAction editButton = viewSupplier.get().getButtonsConfig().getEditButton();
+                                                BSContainer<?> cell, ButtonAction editButton ) {
         return new InserirButton("_inserir_", elementsView, form, item, editButton).createInserirButton(cell);
     }
 
