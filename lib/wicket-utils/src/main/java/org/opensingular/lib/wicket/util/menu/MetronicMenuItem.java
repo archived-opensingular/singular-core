@@ -59,9 +59,11 @@ public class MetronicMenuItem extends AbstractMenuItem {
     public MetronicMenuItem(Icon icon, String title, Class<? extends IRequestablePage> responsePageClass) {
         this(icon, title, responsePageClass, null);
     }
-    public MetronicMenuItem(Icon icon, String title, ISupplier<? extends IRequestablePage> pageSupplier) {
-        this(icon, title, null, null, pageSupplier);
+
+    public MetronicMenuItem(Icon icon, String title, ISupplier<? extends IRequestablePage> pageSupplier, PageParameters parameters) {
+        this(icon, title, pageSupplier.get().getClass(), parameters, pageSupplier);
     }
+
     private MetronicMenuItem(Icon icon, String title, Class<? extends IRequestablePage> responsePageClass,
             PageParameters parameters, ISupplier<? extends IRequestablePage> pageSupplier) {
         this(icon, title);
