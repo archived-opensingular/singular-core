@@ -2853,6 +2853,12 @@ Page Loading
     display: none;
     transition: all 2s; }
 
+.box-advanced-filter {
+  border: 1px solid #D5D9E3;
+  padding: 15px;
+  background-color: #fafafb;
+  margin-bottom: 10px; }
+
 /* Cubic Bezier Transition */
 /***
 Login page
