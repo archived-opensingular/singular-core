@@ -6,8 +6,8 @@ import java.util.Map;
 
 /**
  * Defines the behaviour for the Regex input mask.
- * Uses the literal "X" as an extended definition for input mask
- * to validate the whole field with a regular expression pattern.
+ * <p>
+ * Note: Uses the literal "X" as an extended definition for input mask to validate the whole field with a regular expression pattern.
  */
 public class RegexMaskBehaviour extends InputMaskBehavior {
 
@@ -21,21 +21,21 @@ public class RegexMaskBehaviour extends InputMaskBehavior {
     }
 
     /**
-     * <p>Retorna o <i>script</i> gerado para este <i>behavior</i>.</p>
+     * Create the script for this behavior
      *
      * @param component componente o qual este <i>behavior</i> deverá ser adicionado.
-     * @return o <i>javascript</i> gerado.
+     * @return InputMask script with regex Mask.
      */
     @Override
     protected String getScript(Component component) {
-       return getInputmaskExtendDefinitions()
-               + super.getScript(component);
+        return getInputmaskExtendDefinitions()
+                + super.getScript(component);
     }
 
     /**
-     * <p>Retorna o <i>script</i> que extenda a definição do InputMask para utilizar um regex como validador da máscara.</p>
+     * Create a the script with a extended Definition for the regex validator.
      *
-     * @return o <i>javascript</i> gerado.
+     * @return script for InputMask.
      */
     private String getInputmaskExtendDefinitions() {
         return "  Inputmask.extendDefinitions({\n" +
