@@ -67,19 +67,19 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
     }
 
     public SELF disableInsert() {
-        return configureEditButtonPerRow(ButtonsConfig.EDITAR_HINT, s -> false, null);
+        return configureEditButtonPerRow(s -> false);
     }
 
     public SELF enableInsert() {
-        return configureEditButtonPerRow(ButtonsConfig.EDITAR_HINT, s -> true, null);
+        return configureEditButtonPerRow(s -> true);
     }
 
     public SELF disableDelete() {
-        return configureEditButtonPerRow(ButtonsConfig.EDITAR_HINT, s -> false, null);
+        return configureDeleteButtonPerRow(s -> false);
     }
 
     public SELF enableDelete() {
-        return configureEditButtonPerRow(ButtonsConfig.EDITAR_HINT, s -> true, null);
+        return configureDeleteButtonPerRow(s -> true);
     }
 
     /**

@@ -39,9 +39,9 @@ public class MasterDetailButtonsTest {
     @Test
     public void verifyHaveJustViewAction() {
         ISupplier<SViewListByMasterDetail> viewListByMasterDetail =  (ISupplier<SViewListByMasterDetail>) () -> new SViewListByMasterDetail()
-                .configureEditButtonPerRow(f -> false)
-                .configureDeleteButtonPerRow(f -> false)
-                .configureViewButtonInEditionPerRow(f -> true)
+                .disableInsert()
+                .disableDelete()
+                .enableView()
                 .disableNew();
 
         tester.getDummyPage().setTypeBuilder(s -> ListTestUtil.buildTableForButons(s, viewListByMasterDetail));

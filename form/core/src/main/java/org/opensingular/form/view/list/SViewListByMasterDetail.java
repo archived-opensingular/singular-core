@@ -183,6 +183,13 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
         return configureViewButtonInEditionPerRow(ButtonsMasterDetailConfig.VISUALIZAR_HINT, visibleFor, null);
     }
 
+    public SViewListByMasterDetail enableView() {
+        return configureViewButtonInEditionPerRow(s -> true);
+    }
+    public SViewListByMasterDetail disableView() {
+        return configureViewButtonInEditionPerRow(s -> false);
+    }
+
     /**
      * This method will verify if have any action button visible.
      *

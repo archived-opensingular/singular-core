@@ -43,7 +43,7 @@ public class PanelListButtonsTest {
 
 
         ISupplier<SViewListByForm> viewListByForm = (ISupplier<SViewListByForm>) () -> new SViewListByForm()
-                .configureDeleteButtonPerRow(f -> false)
+                .disableDelete()
                 .disableNew();
 
         tester.getDummyPage().setTypeBuilder(m -> ListTestUtil.buildTableForButons(m, viewListByForm));

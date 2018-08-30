@@ -91,7 +91,7 @@ public class SViewListByTable extends AbstractSViewListWithControls<SViewListByT
     @Override
     public SViewListByTable disableInsert() {
         this.editVisible = false;
-        return configureEditButtonPerRow(ButtonsConfig.EDITAR_HINT, s -> false, null);
+        return configureEditButtonPerRow(s -> false);
     }
 
     /**
@@ -100,7 +100,7 @@ public class SViewListByTable extends AbstractSViewListWithControls<SViewListByT
     @Override
     public SViewListByTable enableInsert() {
         this.editVisible = true;
-        return configureEditButtonPerRow(ButtonsConfig.EDITAR_HINT, s -> true, null);
+        return configureEditButtonPerRow(s -> true);
     }
 
     /**

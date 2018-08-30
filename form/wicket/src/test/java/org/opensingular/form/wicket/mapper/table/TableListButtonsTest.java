@@ -42,7 +42,7 @@ public class TableListButtonsTest {
     public void verifyDontHaveActionButton() {
 
         ISupplier<SViewListByTable> viewListByTable = (ISupplier<SViewListByTable>) () -> new SViewListByTable()
-                .configureDeleteButtonPerRow(f -> false)
+                .disableDelete()
                 .disableNew();
 
         tester.getDummyPage().setTypeBuilder(m -> ListTestUtil.buildTableForButons(m, viewListByTable));
