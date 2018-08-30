@@ -4,6 +4,11 @@ import org.apache.wicket.Component;
 
 import java.util.Map;
 
+/**
+ * Defines the behaviour for the Regex input mask.
+ * Uses the literal "X" as an extended definition for input mask
+ * to validate the whole field with a regular expression pattern.
+ */
 public class RegexMaskBehaviour extends InputMaskBehavior {
 
     private String pattern;

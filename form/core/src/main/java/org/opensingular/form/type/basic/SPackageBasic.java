@@ -167,7 +167,7 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_HELP);
         pb.createAttributeIntoType(SType.class, ATR_INSTRUCTION);
 
-        pb.addAttribute(STypeString.class, ATR_MAX_LENGTH, 100);
+        pb.addAttribute(STypeString.class, ATR_MAX_LENGTH, STypeString.DEFAULT_SIZE);
         //        pb.addAttribute(STypeString.class, ATR_EDIT_SIZE, 50);
         pb.addAttribute(STypeString.class, ATR_UPPER_CASE_TEXT, Boolean.FALSE);
 
@@ -194,7 +194,6 @@ public class SPackageBasic extends SPackage {
         pb.getAttribute(ATR_LABEL).asAtr().label("Label")/*.editSize(30)*/.maxLength(50);
         pb.getAttribute(ATR_SUBTITLE).asAtr().label("Subtitle")/*.editSize(30)*/.maxLength(50);
         pb.getAttribute(ATR_BASIC_MASK).asAtr().label("Basic mask")/*.editSize(30)*/.maxLength(20);
-        pb.getAttribute(ATR_REGEX_MASK).asAtr().label("Regex mask")/*.editSize(30)*/.maxLength(50);
         pb.getAttribute(ATR_MAX_LENGTH).asAtr().label("Maximum length")/*.editSize(30)*/.maxLength(4);
         pb.getAttribute(ATR_INTEGER_MAX_LENGTH).asAtr().label("Integer maximum length")/*.editSize(30)*/.maxLength(4);
         pb.getAttribute(ATR_FRACTIONAL_MAX_LENGTH).asAtr().label("Fractional maximum length")/*.editSize(30)*/.maxLength(4);

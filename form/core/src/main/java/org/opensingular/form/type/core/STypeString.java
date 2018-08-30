@@ -28,6 +28,8 @@ import org.opensingular.lib.commons.lambda.IConsumer;
 @SInfoType(name = "String", spackage = SPackageCore.class)
 public class STypeString extends STypeSimple<SIString, String> {
 
+    public static final Integer DEFAULT_SIZE = 100;
+
     public STypeString() {
         super(SIString.class, String.class);
     }

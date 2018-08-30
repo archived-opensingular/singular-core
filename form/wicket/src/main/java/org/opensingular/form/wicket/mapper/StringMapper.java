@@ -29,6 +29,7 @@ import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.CountDownBehaviour;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior;
@@ -38,8 +39,6 @@ import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
 public class StringMapper extends AbstractControlsFieldComponentMapper {
-
-    private static final Integer DEFAULT_SIZE = 100;
 
     @Override
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
@@ -74,7 +73,7 @@ public class StringMapper extends AbstractControlsFieldComponentMapper {
 
         if (regexMask.isPresent()) {
             HashMap<String, Object> options = new HashMap<>();
-            options.put(InputMaskBehavior.MAX_LENGTH_ATTR, maxSize.orElse(DEFAULT_SIZE));
+            options.put(InputMaskBehavior.MAX_LENGTH_ATTR, maxSize.orElse(STypeString.DEFAULT_SIZE));
             comp.add(new RegexMaskBehaviour(Masks.valueOf(regexMask.get()), options));
             comp.setOutputMarkupId(true);
         }
