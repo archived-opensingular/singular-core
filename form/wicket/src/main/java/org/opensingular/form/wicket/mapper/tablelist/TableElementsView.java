@@ -67,7 +67,7 @@ public class TableElementsView extends ElementsView {
 
         if (viewSupplier.get().isEditVisible() && ctx.getViewMode().isEdition()) {
             final BSTDataCell actionColumn = row.newCol();
-            if (viewSupplier.get().getButtonsConfig().isInsertEnabled(item.getModelObject()) && ctx.getViewMode().isEdition()) {
+            if (viewSupplier.get().getButtonsConfig().isInsertEnabled(item.getModelObject())) {
                 ButtonAction editButton = viewSupplier.get().getButtonsConfig().getInsertButton();
                 actionColumn.add($b.attrAppender("style", "width:20px", ";"));
                 appendInserirButton(this, form, item, actionColumn, editButton);
