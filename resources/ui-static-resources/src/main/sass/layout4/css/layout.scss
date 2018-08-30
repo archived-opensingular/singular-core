@@ -45,6 +45,14 @@ Page Loading
     transition: all 2s;
   }
 }
+
+.box-advanced-filter {
+  border: 1px solid $input-border;
+  padding: 15px;
+  background-color: lighten($input-border, 12%);
+  margin-bottom: 10px;
+}
+
 @import '../../lib/pages/login';
 
 @import "../../lib/_components";
