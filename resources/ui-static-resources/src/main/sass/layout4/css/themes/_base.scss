@@ -691,3 +691,8 @@
     background: lighten($brand-main-color, 5%);
 }
 
+.force-inline-block {
+  display: inline-block;
+  margin-bottom: 0;
+  vertical-align: middle;
+}

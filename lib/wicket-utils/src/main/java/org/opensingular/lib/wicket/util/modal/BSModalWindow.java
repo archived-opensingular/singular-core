@@ -16,6 +16,8 @@
 
 package org.opensingular.lib.wicket.util.modal;
 
+import javax.annotation.Nullable;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -111,10 +113,10 @@ public class BSModalWindow extends Panel {
         return (Form<?>) form;
     }
 
-    public void show(AjaxRequestTarget target) {
+    public void show(@Nullable AjaxRequestTarget target) {
         getModalBorder().show(target);
     }
-    public void hide(AjaxRequestTarget target) {
+    public void hide(@Nullable AjaxRequestTarget target) {
         getModalBorder().hide(target);
     }
 

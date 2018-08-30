@@ -151,7 +151,7 @@ public final class PathReader {
 
     /** Monta uma mensagem de erro referente ao path atual e ao escopo informado. */
     public String getErrorMsg(SScope escopo, String msg) {
-        return getErrorMsg("No tipo '" + escopo.getName() + "'", msg);
+        return getErrorMsg("No tipo '" + escopo + "'", msg);
     }
 
     /** Monta uma mensagem de erro referente ao path atual e ao escopo informado. */
