@@ -111,6 +111,7 @@ public enum DefaultIcons implements Icon {
     VERTICAL_ELLIPSIS("fa fa-ellipsis-v"),
     WALLET("icon-wallet"),
     WARNING("fa fa-warning"),
+    DESKTOP("icon-screen-desktop"),
     WRENCH("icon-wrench"),
     ARROW_DOWN("fa fa-arrow-down"),
     FLOPPY("fa fa-floppy-o"),
