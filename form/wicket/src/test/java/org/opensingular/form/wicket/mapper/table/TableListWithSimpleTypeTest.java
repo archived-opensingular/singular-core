@@ -29,6 +29,7 @@ import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.list.SViewListByTable;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
+import org.opensingular.form.wicket.mapper.buttons.RemoverButton;
 
 
 public class TableListWithSimpleTypeTest {
@@ -78,7 +79,7 @@ public class TableListWithSimpleTypeTest {
         tester.executeAjaxEvent(addButton, "click");
         tester.getAssertionsForm().getSubComponentWithType(nomes).assertSInstance().isList(1);
 
-        Button removeButton = tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("RemoverButton")).getTarget(Button.class);
+        Button removeButton = tester.getAssertionsForm().findSubComponent(b -> b instanceof RemoverButton).getTarget(Button.class);
         tester.executeAjaxEvent(removeButton, "click");
 
         Component modalConfirm = tester.getAssertionsForm().findSubComponent(c -> c.getId().equalsIgnoreCase("modal-confirm-btn")).getTarget();

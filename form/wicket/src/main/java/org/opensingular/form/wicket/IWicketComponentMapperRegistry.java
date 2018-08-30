@@ -42,7 +42,7 @@ import org.opensingular.form.type.country.brazil.STypeCNPJ;
 import org.opensingular.form.type.country.brazil.STypeCPF;
 import org.opensingular.form.type.country.brazil.STypeTelefoneNacional;
 import org.opensingular.form.type.util.STypeLatitudeLongitudeGMaps;
-import org.opensingular.form.type.util.STypeLatitudeLongitudeList;
+import org.opensingular.form.type.util.STypeLatitudeLongitudeMultipleMarkable;
 import org.opensingular.form.type.util.STypeYearMonth;
 import org.opensingular.form.view.SMultiSelectionByCheckboxView;
 import org.opensingular.form.view.SMultiSelectionByPicklistView;
@@ -171,7 +171,7 @@ public class IWicketComponentMapperRegistry
         add(STypeAttachment.class, SViewAttachmentImage.class,            AttachmentImageMapper::new);
         add(STypeLatitudeLongitudeGMaps.class,                                 LatitudeLongitudeMapper::new);
         add(STypeLatitudeLongitudeGMaps.class, SViewCurrentLocation.class,     LatitudeLongitudeMapper::new);
-        add(STypeLatitudeLongitudeList.class,                                 LatitudeLongitudeListMapper::new);
+        add(STypeLatitudeLongitudeMultipleMarkable.class,                                 LatitudeLongitudeListMapper::new);
         add(STypeComposite.class,                                         DefaultCompositeMapper::new);
         add(STypeComposite.class,   SViewTab.class,                       TabMapper::new);
         add(STypeComposite.class,   SViewByBlock.class,                   BlocksCompositeMapper::new);
