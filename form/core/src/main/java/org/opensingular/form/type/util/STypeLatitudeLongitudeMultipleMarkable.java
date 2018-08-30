@@ -26,7 +26,7 @@ import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.type.core.attachment.helper.FileTypes;
 import org.opensingular.form.util.SingularPredicates;
 import org.opensingular.form.view.SViewCheckBox;
-import org.opensingular.form.view.SViewListByTable;
+import org.opensingular.form.view.list.SViewListByTable;
 
 @SInfoType(name = "LatitudeLongitudeMapper", spackage = SPackageUtil.class)
 public class STypeLatitudeLongitudeMultipleMarkable extends STypeComposite<SILatitudeLongitudeMultipleMarkable> {
@@ -63,7 +63,7 @@ public class STypeLatitudeLongitudeMultipleMarkable extends STypeComposite<SILat
         points.withView(new SViewListByTable().setNewEnabled(list -> {
             SILatitudeLongitudeMultipleMarkable latLongList = (SILatitudeLongitudeMultipleMarkable) list.getParent();
             return latLongList != null && !latLongList.hasFile();
-        }).setDeleteEnabled(instance -> {
+        }).configureDeleteButtonPerRow(instance -> {
             SILatitudeLongitudeMultipleMarkable latLongList = (SILatitudeLongitudeMultipleMarkable) instance.getParent().getParent();
             return latLongList != null && !latLongList.hasFile();
         }))

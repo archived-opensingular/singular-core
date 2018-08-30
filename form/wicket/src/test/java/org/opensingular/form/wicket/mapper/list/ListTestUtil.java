@@ -24,7 +24,7 @@ import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.list.AbstractSViewListWithControls;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
-import org.opensingular.form.wicket.mapper.AbstractListMapper;
+import org.opensingular.form.wicket.mapper.buttons.AddButton;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
 
@@ -45,7 +45,7 @@ public class ListTestUtil {
     }
 
     public static AjaxLink findAddButton(SingularFormDummyPageTester tester) {
-        return tester.getAssertionsForm().findSubComponent(b -> b instanceof AbstractListMapper.AddButton).getTarget(AjaxLink.class);
+        return tester.getAssertionsForm().findSubComponent(b -> b instanceof AddButton).getTarget(AjaxLink.class);
     }
 
     public static AbstractLink findMasterDetailLink(SingularFormDummyPageTester tester) {

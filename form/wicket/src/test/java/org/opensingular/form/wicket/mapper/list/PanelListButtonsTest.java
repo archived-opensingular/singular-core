@@ -24,7 +24,8 @@ import org.junit.Test;
 import org.opensingular.form.view.list.ButtonsConfig;
 import org.opensingular.form.view.list.SViewListByForm;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
-import org.opensingular.form.wicket.mapper.AbstractListMapper;
+import org.opensingular.form.wicket.mapper.buttons.InserirButton;
+import org.opensingular.form.wicket.mapper.buttons.RemoverButton;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
@@ -47,8 +48,8 @@ public class PanelListButtonsTest {
 
         tester.getDummyPage().setTypeBuilder(m -> ListTestUtil.buildTableForButons(m, viewListByForm));
         tester.startDummyPage();
-        tester.getAssertionsForm().findSubComponent(b -> b instanceof AbstractListMapper.InserirButton).isNull();
-        tester.getAssertionsForm().findSubComponent(b -> b instanceof AbstractListMapper.RemoverButton).isNull();
+        tester.getAssertionsForm().findSubComponent(b -> b instanceof InserirButton).isNull();
+        tester.getAssertionsForm().findSubComponent(b -> b instanceof RemoverButton).isNull();
         AbstractLink linkAddNewElement = ListTestUtil.findAddButton(tester);
         Assert.assertTrue(!linkAddNewElement.isVisible() || !linkAddNewElement.isVisibleInHierarchy());
     }
@@ -62,8 +63,8 @@ public class PanelListButtonsTest {
         //Table List contains 3 buttons : Edit, New, Remove
         tester.getDummyPage().setTypeBuilder(m -> ListTestUtil.buildTableForButons(m, viewListByForm));
         tester.startDummyPage();
-        tester.getAssertionsForm().findSubComponent(b -> b instanceof AbstractListMapper.InserirButton).isNotNull();
-        tester.getAssertionsForm().findSubComponent(b -> b instanceof AbstractListMapper.RemoverButton).isNotNull();
+        tester.getAssertionsForm().findSubComponent(b -> b instanceof InserirButton).isNotNull();
+        tester.getAssertionsForm().findSubComponent(b -> b instanceof RemoverButton).isNotNull();
         AbstractLink linkAddNewElement = ListTestUtil.findAddButton(tester);
         Assert.assertTrue(linkAddNewElement.isVisible() || linkAddNewElement.isVisibleInHierarchy());
     }

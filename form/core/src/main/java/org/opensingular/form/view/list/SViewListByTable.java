@@ -86,6 +86,24 @@ public class SViewListByTable extends AbstractSViewListWithControls<SViewListByT
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SViewListByTable disableInsert() {
+        this.editVisible = false;
+        return configureEditButtonPerRow(ButtonsConfig.EDITAR_HINT, s -> false, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SViewListByTable enableInsert() {
+        this.editVisible = true;
+        return configureEditButtonPerRow(ButtonsConfig.EDITAR_HINT, s -> true, null);
+    }
+
+    /**
      * If edit button can be visible this method will return true.
      *
      * @return True if edit button could be visible. False if the edit button will never be visible.
