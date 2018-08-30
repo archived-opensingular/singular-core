@@ -84,7 +84,7 @@ public class FormService implements IFormService {
      * Retornar o manipulador de chave usado por essa implementação para ler e converte FormKey.
      */
     @Nonnull
-    private final FormKeyManager<FormKey> getFormKeyManager() {
+    private FormKeyManager<FormKey> getFormKeyManager() {
         return (FormKeyManager<FormKey>) formKeyManager;
     }
 
@@ -129,7 +129,7 @@ public class FormService implements IFormService {
     }
 
     @Override
-    public final boolean isPersistent(@Nonnull SInstance instance) {
+    public boolean isPersistent(@Nonnull SInstance instance) {
         return getFormKeyManager().isPersistent(instance);
     }
 
