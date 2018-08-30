@@ -286,7 +286,8 @@ public class XSDConverter {
      * @param name The name of the ComplexType
      */
     private static void addNotUniqueComplexType(STypeComposite<?> sType, String name) {
-        if (!sType.isTypeOf(mapOfComplexType.get(name))) {
+        STypeComposite<?> t = mapOfComplexType.get(name);
+        if (t == null || !sType.isTypeOf(t)) {
 
             MElement element = root.addElementNS(XSD_NAMESPACE_URI, XSD_COMPLEX_TYPE);
 

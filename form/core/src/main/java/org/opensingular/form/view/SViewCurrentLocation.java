@@ -16,6 +16,9 @@
 
 package org.opensingular.form.view;
 
+/**
+ * This view will include a button for check user location.
+ */
 public class SViewCurrentLocation extends SView {
 
     private boolean disableUserLocationSelection;

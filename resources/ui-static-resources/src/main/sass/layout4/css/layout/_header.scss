@@ -70,6 +70,7 @@ Page Header
   .page-top {
     height: $header-height;
     float: right;
+    text-align: right;
   }
 
   /* Search box */
@@ -474,6 +475,13 @@ Page Header
             font-size: $header-top-menu-user-font-size;
             font-weight: $header-top-menu-user-font-weight;
 
+            display: inline-block;
+            width: 600px;
+            padding-top: 12px;
+            white-space: nowrap;
+            overflow: hidden !important;
+            text-overflow: ellipsis;
+
             i {
               margin-left: 30px;
             }
@@ -619,8 +627,8 @@ Page Header
         .navbar-nav {
           > li.dropdown-user {
             .dropdown-toggle {
-              .username.username-hide-on-mobile {
-                display: none;
+              .username.username-width-config {
+                width: 450px;
               }
             }
           }
@@ -748,6 +756,16 @@ Page Header
 
       &.responsive-toggler {
         display: inline-block;
+      }
+    }
+
+    .navbar-nav {
+      > li.dropdown-user {
+        .dropdown-toggle {
+          .username.username-width-config {
+            width: 400px;
+          }
+        }
       }
     }
 
@@ -926,8 +944,8 @@ Page Header
           .dropdown-toggle {
             padding: $header-top-menu-user-item-padding-on-mobile;
 
-            .username.username-hide-on-mobile {
-              display: none;
+            .username.username-width-config {
+              width: 300px;
             }
 
             img {
@@ -964,6 +982,18 @@ Page Header
         &:before {
           right: 9px;
           left: auto;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 350px) {
+  .navbar-nav {
+    > li.dropdown-user {
+      .dropdown-toggle {
+        .username.username-width-config {
+          width: 250px !important;
         }
       }
     }

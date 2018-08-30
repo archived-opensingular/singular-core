@@ -19,8 +19,11 @@ package org.opensingular.form.wicket.mapper.masterdetail;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.model.IModel;
+import org.opensingular.form.SFormUtil;
+import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.SIComparable;
 import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
@@ -35,6 +38,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * This is the provider of the master detail table.
@@ -91,7 +95,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
             SViewListByMasterDetail view = viewSupplier.get();
             ascMode = view.isAscendingMode();
             if (view.getSortableColumn() != null) {
-                sortableList.sort(new ProviderMasterDetailCompator(view.getSortableColumn().getNameSimple(), ascMode));
+                sortableList.sort(new ProviderMasterDetailCompator(view.getSortableColumn().getName(), ascMode));
             }
         }
     }
@@ -122,9 +126,18 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
 
         @Override
         public int compare(SInstance instanceList1, SInstance instanceList2) {
-            Optional<SInstance> obj1 = getObjectBySortProperty(instanceList1);
-            Optional<SInstance> obj2 = getObjectBySortProperty(instanceList2);
-            return compareTheObject(obj1, obj2);
+            SInstance s1 = getInstanceBySortProperty(instanceList1).orElse(null);
+            SInstance s2 = getInstanceBySortProperty(instanceList2).orElse(null);
+            if (s1 != null && s2 != null) {
+                return compareInstances(s1, s2);
+            }
+            if (s1 != null) {
+                return ascMode ? 1 : -1;
+            }
+            if (s2 != null) {
+                return ascMode ? -1 : 1;
+            }
+            return 0;
         }
 
         /**
@@ -133,28 +146,28 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
          * Note: The sort will happen just if the two optional object exists, and the value is a instanceOf SIComparable.
          * Note: If some object in comparable is null, the logic will be the NULLSFIRST.
          *
-         * @param obj1 The first object to be comparable.
-         * @param obj2 The second object to be comparable.
+         * @param s1 The first instance to be compared.
+         * @param s2 The second instance to be compared.
          * @return return the result of the <code>SIComparable#compareTo</code>.
          */
-        private int compareTheObject(Optional<SInstance> obj1, Optional<SInstance> obj2) {
-            if (hasValue(obj1, obj2) && isInstanceOfSIComparable(obj1.get(), obj2.get())) {
-                Integer compareToNullResult = nullsFirstLogic(obj1.get(), obj2.get());
+        @SuppressWarnings("unchecked")
+        private int compareInstances(SInstance s1, SInstance s2) {
+            if (hasValue(s1, s2) && isInstanceOfSIComparable(s1, s2)) {
+                Integer compareToNullResult = nullsFirstLogic(s1, s2);
                 if (compareToNullResult != null) {
                     return compareToNullResult;
                 }
                 if (ascMode) {
-                    return ((SIComparable) obj1.get()).compareTo((SIComparable) obj2.get());
+                    return ((SIComparable) s1).compareTo((SIComparable) s2);
                 }
-                return ((SIComparable) obj2.get()).compareTo((SIComparable) obj1.get());
+                return ((SIComparable) s2).compareTo((SIComparable) s1);
             }
-            getLogger().info("The comparator will be the natural compare.");
+            getLogger().info("The follow instances can't be compared because they don't implements {} : {} - {} ", SIComparable.class.getName(), s1, s2);
             return ascMode ? -1 : 1;
         }
 
-        private boolean hasValue(Optional<SInstance> obj1, Optional<SInstance> obj2) {
-            return obj1.isPresent() && obj2.isPresent()
-                    && (obj1.get().getValue() != null || obj2.get().getValue() != null);
+        private boolean hasValue(SInstance obj1, SInstance obj2) {
+            return obj1.isNotEmptyOfData() || obj2.isNotEmptyOfData();
         }
 
 
@@ -183,17 +196,32 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
         /**
          * This method will try to find the object to be sortable.
          *
-         * @param instance The instance containing a list of objects, the columns of the master detail.
+         * @param rowInstance The instance containing a list of objects, the columns of the master detail.
          * @return Optional with the sortable object.
          */
-        private Optional<SInstance> getObjectBySortProperty(SInstance instance) {
-            if (instance != null && instance.getValue() instanceof ArrayList) {
-                return (Optional<SInstance>) ((ArrayList) instance.getValue())
-                        .parallelStream()
-                        .filter(i -> ((SInstance) i).getType().getNameSimple().equals(sortableProperty))
+        private Optional<? extends SInstance> getInstanceBySortProperty(SInstance rowInstance) {
+            if (rowInstance instanceof SIComposite) {
+                Optional<? extends SInstance> currentSortInstance = rowInstance.getChildren()
+                        .stream()
+                        .filter(isCurrentSortInstance())
                         .findFirst();
+                if (currentSortInstance.isPresent() && currentSortInstance.get().getType() instanceof STypeComposite) {
+                    return SFormUtil.findChildByName(currentSortInstance.get(), sortableProperty);
+                }
+                return currentSortInstance;
             }
             return Optional.empty();
+        }
+
+        /**
+         * This method create a predicate for verify if the instance have a element with the sortableProperty.
+         * <p>Note: This verify with the name of the Stype.
+         *
+         * @return Predicate verify if have a Stype with the <code>sortableProperty</code> for a SIntance.
+         */
+        private Predicate<SInstance> isCurrentSortInstance() {
+            return i -> i.getType().getName().equals(sortableProperty)
+                    || SFormUtil.findChildByName(i, sortableProperty).isPresent();
         }
 
     }
