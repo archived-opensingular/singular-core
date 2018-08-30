@@ -42,7 +42,7 @@ public class MasterDetailButtonsTest {
                 .disableEdit()
                 .disableDelete()
                 .enableView()
-                .disableNew();
+                .disableAdd();
 
         tester.getDummyPage().setTypeBuilder(s -> ListTestUtil.buildTableForButons(s, viewListByMasterDetail));
         tester.startDummyPage();

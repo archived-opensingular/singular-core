@@ -98,7 +98,7 @@ public class STypeFirstListElement extends STypeComposite<SIComposite> {
                 .fullSize()
                 .disableEdit()
                 .disableDelete()
-                .disableNew()
+                .disableAdd()
                 .col("Habilitação Técnica", "Editar anexos de habilitação técnica"));
 
         theNestedTroublesomeList.getElementsType().cascoNuComp

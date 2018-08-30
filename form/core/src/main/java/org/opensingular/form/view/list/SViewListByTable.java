@@ -44,19 +44,20 @@ public class SViewListByTable extends AbstractSViewListWithControls<SViewListByT
      * @param visibleFor  The logic for show the button of the row.
      *                    Null for enable in all cases.
      * @param hint        The hint of the button.
+     *                    Null for use the default.
      * @param icon        The icon of the button.
      *                    Null for use the default.
      * @param visibleEdit False will override the Predicate logic and will hide the button for all rows.
      *                    True will use the predicate logic.
      * @return <code>this</code>
      */
-    public SViewListByTable enableInsert(String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon, boolean visibleEdit) {
+    public SViewListByTable enableInsert(@Nullable String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon, boolean visibleEdit) {
         this.editVisible = visibleEdit;
         getButtonsConfig().setInsertButton(new ButtonAction(visibleFor, hint, icon));
         return this;
     }
 
-    public SViewListByTable enableInsert(String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon) {
+    public SViewListByTable enableInsert(@Nullable String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon) {
         return enableInsert(hint, visibleFor, icon, true);
     }
 
@@ -86,7 +87,9 @@ public class SViewListByTable extends AbstractSViewListWithControls<SViewListByT
         return editVisible;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ButtonsConfigWithInsert getButtonsConfig() {
         if (buttonsConfig == null) {

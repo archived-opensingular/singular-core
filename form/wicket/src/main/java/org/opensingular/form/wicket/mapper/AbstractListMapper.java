@@ -70,7 +70,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
     }
 
     public static boolean canAddItems(WicketBuildContext ctx) {
-        return ((AbstractSViewListWithControls<?>) ctx.getView()).isNewEnabled((SIList<?>) ctx.getModel().getObject())
+        return ((AbstractSViewListWithControls<?>) ctx.getView()).isAddEnabled((SIList<?>) ctx.getModel().getObject())
             && ctx.getViewMode().isEdition();
     }
 

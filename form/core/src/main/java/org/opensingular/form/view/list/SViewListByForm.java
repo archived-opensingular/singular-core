@@ -40,11 +40,12 @@ public class SViewListByForm extends AbstractSViewListWithControls<SViewListByFo
      * @param visibleFor The logic for show the button of the row.
      *                   Null for enable in all cases.
      * @param hint       The hint of the button.
+     *                   Null for use the default.
      * @param icon       The icon of the button.
      *                   Null for use the default.
      * @return <code>this</code>
      */
-    public SViewListByForm enableInsert(String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon) {
+    public SViewListByForm enableInsert(@Nullable String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon) {
         getButtonsConfig().setInsertButton(new ButtonAction(visibleFor, hint, icon));
         return this;
     }
@@ -61,7 +62,9 @@ public class SViewListByForm extends AbstractSViewListWithControls<SViewListByFo
         return enableInsert(s -> true);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ButtonsConfigWithInsert getButtonsConfig() {
         if (buttonsConfig == null) {

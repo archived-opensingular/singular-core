@@ -60,10 +60,10 @@ public class STypeLatitudeLongitudeMultipleMarkable extends STypeComposite<SILat
                 .help("Ao selecionar a utilização de upload todos os dados da tabela serão removidos. Os tipos suportados são: " + FileTypes.KML)
                 .label("Utilizar upload de arquivo ");
 
-        points.withView(new SViewListByTable().setNewEnabled(list -> {
+        points.withView(new SViewListByTable().setAddEnabled(list -> {
             SILatitudeLongitudeMultipleMarkable latLongList = (SILatitudeLongitudeMultipleMarkable) list.getParent();
             return latLongList != null && !latLongList.hasFile();
-        }).configureDeleteButtonPerRow(instance -> {
+        }).enableDelete(instance -> {
             SILatitudeLongitudeMultipleMarkable latLongList = (SILatitudeLongitudeMultipleMarkable) instance.getParent().getParent();
             return latLongList != null && !latLongList.hasFile();
         }))

@@ -28,7 +28,7 @@ import java.util.Optional;
 
 public class AbstractSViewListWithControls<SELF extends AbstractSViewList> extends AbstractSViewList {
 
-    private IFunction<SIList, Boolean> newEnabled = list -> Boolean.TRUE;
+    private IFunction<SIList, Boolean> addEnabled = list -> Boolean.TRUE;
     private int initialLines;
     private String label;
     private ButtonsConfig buttonsConfig;
@@ -46,30 +46,31 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
     }
 
     public SELF disableDelete() {
-        return configureDeleteButtonPerRow(s -> false);
+        return enableDelete(s -> false);
     }
 
     public SELF enableDelete() {
-        return configureDeleteButtonPerRow(s -> true);
+        return enableDelete(s -> true);
     }
 
     /**
-     * Configure the delete button.
+     * Configure the delete button per element.
      *
      * @param visibleFor The logic for show the button of the row.
      *                   Null for enable in all cases.
      * @param hint       The hint of the button.
+     *                   Null for use the default.
      * @param icon       The icon of the button.
      *                   Null for use the default.
      * @return <code>this</code>
      */
-    public SELF configureDeleteButtonPerRow(String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon) {
+    public SELF enableDelete(@Nullable String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon) {
         getButtonsConfig().setDeleteButton(new ButtonAction(visibleFor, hint, icon));
         return (SELF) this;
     }
 
-    public SELF configureDeleteButtonPerRow(@Nullable IPredicate<SInstance> visibleFor) {
-        return configureDeleteButtonPerRow(ButtonsConfig.REMOVER_HINT, visibleFor, null);
+    public SELF enableDelete(@Nullable IPredicate<SInstance> visibleFor) {
+        return enableDelete(ButtonsConfig.REMOVER_HINT, visibleFor, null);
     }
 
     /**
@@ -78,8 +79,8 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
      * @param list All element's of the table
      * @return True for visible, false for not.
      */
-    public final boolean isNewEnabled(SIList list) {
-        return newEnabled.apply(list);
+    public final boolean isAddEnabled(SIList list) {
+        return addEnabled.apply(list);
     }
 
 
@@ -92,8 +93,8 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
      *
      * @return <code>this</code>
      */
-    public final SELF enableNew() {
-        return setNewEnabled(true);
+    public final SELF enableAdd() {
+        return setAddEnabled(true);
     }
 
     /**
@@ -101,8 +102,8 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
      *
      * @return <code>this</code>
      */
-    public final SELF disableNew() {
-        return setNewEnabled(false);
+    public final SELF disableAdd() {
+        return setAddEnabled(false);
     }
 
     /**
@@ -116,13 +117,13 @@ public class AbstractSViewListWithControls<SELF extends AbstractSViewList> exten
         return (SELF) this;
     }
 
-    public final SELF setNewEnabled(boolean newEnabled) {
-        this.newEnabled = list -> newEnabled;
+    public final SELF setAddEnabled(boolean newEnabled) {
+        this.addEnabled = list -> newEnabled;
         return (SELF) this;
     }
 
-    public final SELF setNewEnabled(IFunction<SIList, Boolean> enabledFunction) {
-        this.newEnabled = enabledFunction;
+    public final SELF setAddEnabled(IFunction<SIList, Boolean> enabledFunction) {
+        this.addEnabled = enabledFunction;
         return (SELF) this;
     }
 

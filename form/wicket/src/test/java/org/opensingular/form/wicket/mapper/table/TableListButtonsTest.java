@@ -43,7 +43,7 @@ public class TableListButtonsTest {
 
         ISupplier<SViewListByTable> viewListByTable = (ISupplier<SViewListByTable>) () -> new SViewListByTable()
                 .disableDelete()
-                .disableNew();
+                .disableAdd();
 
         tester.getDummyPage().setTypeBuilder(m -> ListTestUtil.buildTableForButons(m, viewListByTable));
         tester.startDummyPage();

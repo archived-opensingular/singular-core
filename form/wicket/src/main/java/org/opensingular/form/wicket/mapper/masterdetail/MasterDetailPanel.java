@@ -242,7 +242,7 @@ public class MasterDetailPanel extends Panel {
      * @return True if can create new element.
      */
     private boolean canCreateNewElement(ISupplier<SViewListByMasterDetail> viewSupplier) {
-        return viewSupplier.get().isNewEnabled(list.getObject());
+        return viewSupplier.get().isAddEnabled(list.getObject());
     }
 
     private void configureColumns(
