@@ -14,25 +14,33 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.type.util;
+package org.opensingular.lib.wicket.util.model;
 
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
+import org.apache.wicket.model.IModel;
+import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.ISupplier;
 
-public class SILatitudeLongitudeList extends SIComposite {
+public class GetSetFunctionalModel<T> implements IModel<T> {
+    private final ISupplier<T> getter;
+    private final IConsumer<T> setter;
+
+    public GetSetFunctionalModel(ISupplier<T> getter, IConsumer<T> setter) {
+        this.getter = getter;
+        this.setter = setter;
+    }
 
     @Override
-    public STypeLatitudeLongitudeList getType() {
-        return (STypeLatitudeLongitudeList) super.getType();
+    public T getObject() {
+        return getter.get();
     }
 
-    public boolean hasFile() {
-        STypeLatitudeLongitudeList type = getType();
-        return !getField(type.file).isEmptyOfData();
+    @Override
+    public void setObject(T object) {
+        setter.accept(object);
     }
 
-    public SIList<SILatitudeLongitude> getPoints(){
-        return getField(getType().points);
-    }
+    @Override
+    public void detach() {
 
+    }
 }

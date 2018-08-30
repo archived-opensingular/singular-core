@@ -55,6 +55,8 @@ import org.opensingular.lib.wicket.util.jquery.JQuery;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 @SuppressWarnings({"serial"})
@@ -279,6 +281,10 @@ public class BSModalBorder extends Border {
     public BSModalBorder addLink(ButtonStyle style, AjaxLink<?> button) {
         return addLink(style, (String) null, button);
     }
+    
+    public String newButtonId() {
+        return buttonsContainer.newChildId();
+    }
 
     public BSModalBorder removeButtons() {
         buttonsContainer.removeAll();
@@ -371,14 +377,14 @@ public class BSModalBorder extends Border {
         return this;
     }
 
-    public void show(AjaxRequestTarget target) {
+    public void show(@Nullable AjaxRequestTarget target) {
         this.setVisible(true);
         if (target != null) {
             target.add(this);
         }
     }
 
-    public void hide(AjaxRequestTarget target) {
+    public void hide(@Nullable AjaxRequestTarget target) {
         if (this.isVisible()) {
 
             // limpo os valores, pois erros de validacao impedem o formulario de se ser recarregado

@@ -16,19 +16,19 @@
 
 package org.opensingular.lib.wicket.util.template;
 
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import com.google.common.collect.ImmutableList;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class RecursosStaticosSingularTemplate {
 
-    private RecursosStaticosSingularTemplate(){
+    private RecursosStaticosSingularTemplate() {
         /*Construtor vazio pois os métodos são apenas estaticos.*/
     }
 
@@ -60,10 +60,11 @@ public class RecursosStaticosSingularTemplate {
                 skinnableResource("/global/plugins/jquery-file-upload/css/jquery.fileupload.css", skinFolderFormatted),
                 skinnableResource("/global/plugins/bootstrap-toastr/toastr.min.css", skinFolderFormatted),
                 skinnableResource("/global/plugins/typeahead/typeahead.css", skinFolderFormatted),
+                skinnableResource("/plugins/photoswipe/photoswipe.css", skinFolderFormatted),
+                skinnableResource("/plugins/photoswipe/default-skin/default-skin.css", skinFolderFormatted),
                 skinnableResource("/layout4/css/custom.css", skinFolderFormatted),
                 skinnableResource("/css/custom.css", skinFolderFormatted),
-                skinnableResource("/layout4/css/themes/default.css", skinFolderFormatted),
-                "resources/custom/css/custom.css")
+                skinnableResource("/layout4/css/themes/default.css", skinFolderFormatted), "resources/custom/css/custom.css")
                 .map(CssHeaderItem::forUrl).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
     }
 
@@ -111,7 +112,10 @@ public class RecursosStaticosSingularTemplate {
                         "/singular-static/resources/singular/global/plugins/jstree/dist/jstree.min.js",
                         "/singular-static/resources/singular/plugins/stringjs/string.min.js",
                         "/singular-static/resources/singular/plugins/jquery-maskmoney/dist/jquery.maskMoney.min.js",
-                        "/singular-static/resources/singular/plugins/ckeditor/ckeditor.js"
+                        "/singular-static/resources/singular/plugins/ckeditor/ckeditor.js",
+                        "/singular-static/resources/singular/plugins/photoswipe/photoswipe.min.js",
+                        "/singular-static/resources/singular/plugins/photoswipe/photoswipe-ui-default.min.js",
+                        "/singular-static/resources/singular/plugins/photoswipe/jquery-photoswipe.js"
                 ).map(JavaScriptHeaderItem::forUrl)).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
     }
 }

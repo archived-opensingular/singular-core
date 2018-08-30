@@ -30,6 +30,7 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.form.wicket.helpers.AssertionsWComponent;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
+import org.opensingular.form.wicket.mapper.buttons.RemoverButton;
 
 public class TableListWithCompositeTypeTest {
 
@@ -94,7 +95,7 @@ public class TableListWithCompositeTypeTest {
                 .getSubComponentWithType(mockTypeComposite)
                 .getSubComponentWithType(simpleString).assertSInstance();
 
-        Button removeButton = tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("RemoverButton")).getTarget(Button.class);
+        Button removeButton = tester.getAssertionsForm().findSubComponent(b -> b instanceof RemoverButton).getTarget(Button.class);
 
         tester.executeAjaxEvent(removeButton, "click");
 
