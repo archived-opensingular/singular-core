@@ -16,6 +16,32 @@
 
 package org.opensingular.form.view;
 
+/**
+ * View for the Multi Select.
+ * Para maiores informações sobre o componente:
+ * <a href='https://developer.snapappointments.com/bootstrap-select/examples/#live-search' ></a>
+ */
 public class SMultiSelectionBySelectView extends AbstractSViewList {
 
+    //This will include the Live filter.
+    boolean withLiveFilter = false;
+
+    /**
+     * Method for show the filter for multi select.
+     * Default: False, don't show the filter.
+     *
+     * @param withLiveFilter True for show the live filter. False for not.
+     * @return <code>this</code>
+     */
+    public SMultiSelectionBySelectView withLiveFilter(boolean withLiveFilter) {
+        this.withLiveFilter = withLiveFilter;
+        return this;
+    }
+
+    /**
+     * @return True for show the filter, false for not.
+     */
+    public boolean isWithLiveFilter() {
+        return withLiveFilter;
+    }
 }

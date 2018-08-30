@@ -16,31 +16,47 @@
 
 package org.opensingular.form.context;
 
-import java.io.Serializable;
-
 import org.opensingular.form.SInstance;
 import org.opensingular.form.view.SView;
 import org.opensingular.lib.commons.lambda.ISupplier;
 
+import java.io.Serializable;
+
 public interface IFormBuildContext extends Serializable {
 
-    <T extends SInstance> T  getCurrentInstance();
-    
+    <T extends SInstance> T getCurrentInstance();
+
     IFormBuildContext getParent();
-    
+
     SView getView();
-    
-    @SuppressWarnings("unchecked")
+
     default <V extends SView> ISupplier<V> getViewSupplier(Class<V> viewType) {
-        return () -> {
-            SView view = this.getView();
-            if (view != null && viewType.isAssignableFrom(view.getClass()))
-                return (V) view;
-            return (V) null;
-        };
+        return new ViewSupplier<V>(this, viewType);
     }
-    
+
     default boolean isRootContext() {
         return (this.getParent() == null);
+    }
+}
+
+/*
+ * [SGL-802] Refactoring for a class, because when use lambda with 'this' was causing a serialization fails.
+ */
+class ViewSupplier<V> implements ISupplier<V> {
+    private final IFormBuildContext ctx;
+    private final Class<V> viewType;
+
+    ViewSupplier(IFormBuildContext ctx, Class<V> viewType) {
+        this.ctx = ctx;
+        this.viewType = viewType;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public V get() {
+        SView view = ctx.getView();
+        if (view != null && viewType.isAssignableFrom(view.getClass()))
+            return (V) view;
+        return null;
     }
 }
