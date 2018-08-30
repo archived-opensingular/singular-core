@@ -15,6 +15,12 @@
  */
 package org.opensingular.form.wicket.mapper.attachment;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.IResourceListener;
 import org.apache.wicket.Session;
@@ -40,12 +46,6 @@ import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.lib.commons.util.Loggable;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.apache.wicket.markup.head.JavaScriptHeaderItem.forReference;
 

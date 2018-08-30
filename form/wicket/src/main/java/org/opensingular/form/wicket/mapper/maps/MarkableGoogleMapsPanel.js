@@ -54,15 +54,16 @@
 
     function createSingularMapImpl(idMetadados) {
         var metadados = JSON.parse(document.getElementById(idMetadados).value);
+        var zoomElement = document.getElementById(metadados.idZoom);
         if (document.getElementById(metadados.idLat) !== null) {
             var latElement = document.getElementById(metadados.idLat);
             var lngElement = document.getElementById(metadados.idLng);
-            var zoomElement = document.getElementById(metadados.idZoom);
             configureMap(latElement, lngElement, zoomElement, metadados.idMap, metadados.idClearButton, JSON.parse(metadados.readOnly), metadados.idCurrentLocationButton);
         } else if (metadados.multipleMarkers) {
             var tableContainerElement = document.getElementById(metadados.tableContainerId);
-            var zoomElement = document.getElementById(metadados.idZoom);
-            configureMapMultipleMarkers(tableContainerElement, zoomElement, metadados.idMap, metadados.idClearButton, JSON.parse(metadados.readOnly), metadados.callbackUrl);
+            var urlKml = metadados.urlKml;
+            var isKmlUrlVisible = metadados.isKmlUrlVisible;
+            configureMapMultipleMarkers(metadados.idLat, metadados.idLng, tableContainerElement, zoomElement, metadados.idMap, metadados.idClearButton, JSON.parse(metadados.readOnly), metadados.callbackUrl, urlKml, isKmlUrlVisible);
         } else {
             document.getElementById(metadados.idMap).style.visibility = "hidden";
         }
@@ -80,6 +81,7 @@
             zoomElement.value = map.zoom;
         });
 
+
         var marker = configureMarker(latLong, latElement, lngElement, map, readOnly);
         configureFieldsEvents(latElement, lngElement, map, marker, idClearButton, readOnly, idCurrentLocationButton);
 
@@ -96,9 +98,10 @@
         return map;
     }
 
-    function configureMapMultipleMarkers(tableContainerElement, zoomElement, idMap, idClearButton, readOnly, callbackUrl) {
+    function configureMapMultipleMarkers(lat, lng, tableContainerElement, zoomElement, idMap, idClearButton, readOnly, callbackUrl, urlKml, isKmlUrlVisible) {
         var markers = [];
-        var latLong = buildGmapsLatLong();
+        var latLong = buildGmapsLatLong(lat, lng);
+
         var polygon = new google.maps.Polygon({
             strokeColor: '#FF0000',
             strokeOpacity: 0.8,
@@ -112,33 +115,60 @@
             center: latLong
         });
 
-        if (!readOnly) {
-            map.addListener('zoom_changed', function () {
-                zoomElement.value = map.zoom;
+        var kmlLayer = null;
+        if (urlKml !== '' && urlKml != null && isKmlUrlVisible) {
+            kmlLayer = new google.maps.KmlLayer({
+                url: urlKml,
+                map: map
             });
+
+
+            if (kmlLayer && !readOnly) {
+                google.maps.event.addListener(kmlLayer, 'status_changed', function () {
+                    if (kmlLayer.getStatus() != google.maps.KmlLayerStatus.OK) {
+                        toastr.error('Arquivo de KML inválido.');
+                        console.log(kmlLayer.getStatus());
+                        // Failure
+
+                    }
+                });
+            }
+
+        } else {
+            if (!readOnly) {
+                map.addListener('zoom_changed', function () {
+                    zoomElement.value = map.zoom;
+                });
+            }
+
+            configureMarkers(tableContainerElement, map, readOnly, markers, polygon);
+            draw(map, polygon, markers);
+            if (!readOnly) {
+                configureMultipleFieldsEvents(tableContainerElement, map, markers, polygon);
+            }
+
+            if (!readOnly) {
+                if (!isKmlUrlVisible) {
+                    map.addListener('click', function (event) {
+                        var params = {'lat': event.latLng.lat(), 'lng': event.latLng.lng(), 'zoom': zoomElement.value};
+                        Wicket.Ajax.post({u: callbackUrl, ep: params});
+                        var number = countMarkers(tableContainerElement);
+                        var marker = createMarker(map, event.latLng, polygon, readOnly, true, number + 1);
+                        markers.push(marker);
+                        draw(map, polygon, markers);
+                    });
+                }
+            }
         }
 
-        configureMarkers(tableContainerElement, map, readOnly, markers, polygon);
-        draw(map,  polygon,  markers);
-        if (!readOnly) {
-            configureMultipleFieldsEvents(tableContainerElement, map, markers, polygon);
-        }
 
-        if (!readOnly) {
-            map.addListener('click', function (event) {
-                var params = {'lat': event.latLng.lat(), 'lng': event.latLng.lng()};
-                Wicket.Ajax.post({u: callbackUrl, ep: params});
-
-                var number = countMarkers(tableContainerElement);
-                var marker = createMarker(map,  event.latLng, polygon, readOnly, true, number+1);
-                markers.push(marker);
-                draw(map,  polygon,  markers);
-            });
-        }
         return map;
     }
 
     function configureMarkers(tableContainerElement, map, readOnly, markers, polygon) {
+
+        var bounds = new google.maps.LatLngBounds();
+        var markersVisible = [];
         jQuery(tableContainerElement)
             .find('.list-table-body table tbody tr')
             .each(function (index) {
@@ -158,9 +188,20 @@
                     latLng = buildGmapsLatLong(valLat, valLng);
                 }
 
-                markers.push(createMarker(map, latLng, polygon, readOnly, false, index+1));
-            })
-        ;
+                var mark = createMarker(map, latLng, polygon, readOnly, false, index + 1);
+                if (mark.position) {
+                    bounds.extend(mark.position);
+                    markersVisible.push(mark);
+                }
+                markers.push(mark);
+            });
+        if (markersVisible != null && markersVisible.length >= 1) {
+            if(markersVisible.length == 1){
+                map.setCenter(markersVisible[0].position);
+            } else {
+                map.fitBounds(bounds);
+            }
+        }
     }
 
     function createMarker(map, latLng, polygon, readOnly, animate, number) {
@@ -204,7 +245,9 @@
     }
 
     function draw(map, polygon, markers) {
-        var visibleMarkers = markers.filter(function (m) { return m.getVisible();});
+        var visibleMarkers = markers.filter(function (m) {
+            return m.getVisible();
+        });
         if (visibleMarkers.length > 2) {
             var coords = visibleMarkers.map(function (m) {
                 return {lat: m.getPosition().lat(), lng: m.getPosition().lng()};
@@ -231,16 +274,14 @@
 
                 $(latElement).on('change', function () {
                     defineMarkerPositionManual(latElement, lngElement, map, marker, center);
-                    draw(map, polygon,  markers);
+                    draw(map, polygon, markers);
                 });
                 $(lngElement).on('change', function () {
                     defineMarkerPositionManual(latElement, lngElement, map, marker, center);
-                    draw(map, polygon,  markers);
+                    draw(map, polygon, markers);
                 });
 
-            })
-        ;
-
+            });
     }
 
     function configureMarker(latLong, latElement, lngElement, map, readOnly) {
@@ -309,7 +350,8 @@
                     marker.setVisible(true);
                 },
                 function (failure) {
-                    toastr.error(failure.message);
+                    toastr.error("É necessário que a aplicação esteja em HTTPS");
+                    console.log(failure.message);
                 }
             );
         });
