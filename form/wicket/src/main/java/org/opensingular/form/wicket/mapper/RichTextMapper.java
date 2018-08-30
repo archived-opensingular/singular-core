@@ -17,9 +17,11 @@
 package org.opensingular.form.wicket.mapper;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.view.richtext.SViewByRichText;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
@@ -34,13 +36,29 @@ public class RichTextMapper extends StringMapper {
 
     @Override
     public Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
-        return appendTextarea(formGroup, createTextArea(labelModel, ctx.getModel()), ((SViewByRichText)ctx.getView()).isDisablePageLayout());
+        return appendTextarea(formGroup, createTextArea(labelModel, ctx.getModel()), ((SViewByRichText) ctx.getView()).isDisablePageLayout());
     }
 
     private Component appendTextarea(BSControls formGroup, Component textarea, boolean disablePageLayout) {
         addLogicToReplaceWithCKEditor(textarea, disablePageLayout);
+        validateIsMultiPart(formGroup);
         formGroup.appendTextarea(textarea, 1);
         return textarea;
+    }
+
+    /**
+     * This method will verify if the Form where the RichText is included is MultiPart.
+     * <p>
+     * Note: If it's not multipart the submit will don't send the update data of RichText.
+     *
+     * @param formGroup The subComponent of the form.
+     * @see Form#setMultiPart(boolean)
+     */
+    private void validateIsMultiPart(BSControls formGroup) {
+        Form rootForm = formGroup.getPage().visitChildren(Form.class, (form, v) -> v.stop((Form) form));
+        if (rootForm == null || !rootForm.isMultiPart()) {
+            throw new SingularFormException("The Form of the richText have to be multiPart!");
+        }
     }
 
     private Component createTextArea(IModel<String> labelModel, IModel<? extends SInstance> model) {
