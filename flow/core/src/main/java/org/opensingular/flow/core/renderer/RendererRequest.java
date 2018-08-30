@@ -18,12 +18,14 @@ import java.util.Objects;
 public class RendererRequest {
 
     private final IFlowRenderer renderer;
-    @Nonnull
+
     private final FlowDefinition<?> definition;
 
     private ExecutionHistoryForRendering instanceHistory;
 
     private boolean suppressTaskIcons = false;
+
+    private HistoryRenderingType historyRenderingType = HistoryRenderingType.DEFAULT;
 
     RendererRequest(@Nonnull IFlowRenderer renderer, @Nonnull FlowDefinition<?> definition) {
         this.renderer = renderer;
@@ -76,6 +78,15 @@ public class RendererRequest {
     @Nullable
     public ExecutionHistoryForRendering getInstanceHistory() {
         return instanceHistory;
+    }
+
+    @Nonnull
+    public HistoryRenderingType getHistoryRenderingType() {
+        return historyRenderingType;
+    }
+
+    public void setHistoryRenderingType(@Nonnull HistoryRenderingType historyRenderingType) {
+        this.historyRenderingType = Objects.requireNonNull(historyRenderingType);
     }
 
     @Override

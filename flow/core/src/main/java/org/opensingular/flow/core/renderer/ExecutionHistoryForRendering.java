@@ -116,7 +116,7 @@ public class ExecutionHistoryForRendering {
     }
 
     private boolean isMultiInstanceExecution() {
-        return getType() != ExecutionHistoryType.EMPTY && getType() != ExecutionHistoryType.INSTANCE_EXECUTION;
+        return getType() == ExecutionHistoryType.MULTI_EXECUTION;
     }
 
     /** Prints the history info to the standard output for inspection. */
