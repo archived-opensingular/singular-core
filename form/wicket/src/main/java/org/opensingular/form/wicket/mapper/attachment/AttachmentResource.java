@@ -16,6 +16,10 @@
 
 package org.opensingular.form.wicket.mapper.attachment;
 
+import java.util.HashMap;
+import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.resource.AbstractResource;
@@ -23,11 +27,6 @@ import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.util.string.StringValue;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.lib.commons.util.Loggable;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Shared Resource vinculado a uma sessão.
@@ -100,20 +99,6 @@ public class AttachmentResource extends AbstractResource implements Loggable {
         attachments.put(ref.getId(), new Attachment(name, disposition, ref));
         String path = app.getServletContext().getContextPath() + "/" + app.getWicketFilter().getFilterPath() + getDownloadURL(Session.get().getId(), ref.getId());
         return path.replaceAll("\\*", "").replaceAll("//", "/");
-    }
-
-    public static class Attachment implements Serializable {
-
-        final String filename;
-        final ContentDisposition contentDisposition;
-        final IAttachmentRef attachmentRef;
-
-        public Attachment(String filename, ContentDisposition contentDisposition, IAttachmentRef attachmentRef) {
-            this.filename = filename;
-            this.contentDisposition = contentDisposition;
-            this.attachmentRef = attachmentRef;
-        }
-
     }
 
     public static String getMountPath(String id) {
