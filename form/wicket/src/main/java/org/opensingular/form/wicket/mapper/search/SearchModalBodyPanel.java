@@ -16,11 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.search;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Iterator;
-import java.util.Optional;
-
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -61,6 +56,13 @@ import org.opensingular.lib.wicket.util.datatable.IBSAction;
 import org.opensingular.lib.wicket.util.datatable.column.BSActionPanel;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+
 import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 
@@ -78,6 +80,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
     private final IConsumer<AjaxRequestTarget> selectCallback;
 
     private SingularFormPanel innerSingularFormPanel;
+    private DataTableFilter dataTableFilter;
     private MarkupContainer resultTable;
 
     SearchModalBodyPanel(String id, WicketBuildContext ctx, IConsumer<AjaxRequestTarget> selectCallback) {
@@ -103,11 +106,10 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         super.onInitialize();
 
         final AjaxButton filterButton;
-
+        dataTableFilter = new DataTableFilter();
         innerSingularFormPanel = buildInnerSingularFormPanel();
         filterButton = buildFilterButton();
         resultTable = buildResultTable(getConfig());
-
         resultTable.add(new Behavior() {
             @Override
             public void renderHead(Component component, IHeaderResponse response) {
@@ -150,6 +152,8 @@ class SearchModalBodyPanel extends Panel implements Loggable {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 super.onSubmit(target, form);
+                dataTableFilter.setFilter(true);
+                resultTable.setVisible(true);
                 target.add(resultTable);
             }
         };
@@ -160,14 +164,25 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         final BSDataTableBuilder<Object, ?, ?> builder = new BSDataTableBuilder(new BaseDataProvider() {
             @Override
             public long size() {
+                if (!dataTableFilter.isFilter) {
+                    return dataTableFilter.getSize();
+                }
                 ProviderContext providerContext = new ProviderContext();
                 providerContext.setInstance(ctx.getRootContext().getCurrentInstance());
                 providerContext.setFilterInstance(innerSingularFormPanel.getInstance());
-                return getFilteredProvider().getSize(providerContext);
+                dataTableFilter.setSize(getFilteredProvider().getSize(providerContext));
+                resultTable.setVisible(!(dataTableFilter.isCreationTable() && dataTableFilter.getSize() == 0));
+                dataTableFilter.setCreationTable(false);
+                return dataTableFilter.getSize();
+
             }
 
             @Override
             public Iterator iterator(int first, int count, Object sortProperty, boolean ascending) {
+                if (!dataTableFilter.isFilter) {
+                    return dataTableFilter.getElements().iterator();
+                }
+                dataTableFilter.setFilter(false);
                 ProviderContext providerContext = new ProviderContext();
                 providerContext.setInstance(ctx.getRootContext().getCurrentInstance());
                 providerContext.setFilterInstance(innerSingularFormPanel.getInstance());
@@ -175,7 +190,8 @@ class SearchModalBodyPanel extends Panel implements Loggable {
                 providerContext.setCount(count);
                 providerContext.setSortProperty(sortProperty);
                 providerContext.setAscending(ascending);
-                return getFilteredProvider().load(providerContext).iterator();
+                dataTableFilter.setElements(getFilteredProvider().load(providerContext));
+                return dataTableFilter.getElements().iterator();
             }
         });
 
@@ -241,6 +257,56 @@ class SearchModalBodyPanel extends Panel implements Loggable {
 
     private SInstance getInstance() {
         return ctx.getModel().getObject();
+    }
+
+    private static class DataTableFilter implements Serializable {
+
+        private boolean isFilter = true; //This represent when the action of filter is executed.
+        private boolean isCreationTable = true; //This represent's the creation of the table.
+        private long size = 0L; //The size of the elements of the table.
+        private ArrayList elements = new ArrayList(); //All the elements of the table. THIS IS A ArrayList FOR Serializable.
+
+        /**
+         * Retuns true when the button 'Filter' is clicked.
+         *
+         * @return Return true if have to filter. False otherwise.
+         */
+        public boolean isFilter() {
+            return isFilter;
+        }
+
+        public void setFilter(boolean filter) {
+            isFilter = filter;
+        }
+
+        public long getSize() {
+            return size;
+        }
+
+        public void setSize(long size) {
+            this.size = size;
+        }
+
+        public List getElements() {
+            return elements;
+        }
+
+        public void setElements(List elements) {
+            this.elements = new ArrayList(elements);
+        }
+
+        /**
+         * This method returns true just in the first time of the creation of table.
+         *
+         * @return True if it's the first time of creation table. False otherwise.
+         */
+        public boolean isCreationTable() {
+            return isCreationTable;
+        }
+
+        public void setCreationTable(boolean creationTable) {
+            isCreationTable = creationTable;
+        }
     }
 
 }
