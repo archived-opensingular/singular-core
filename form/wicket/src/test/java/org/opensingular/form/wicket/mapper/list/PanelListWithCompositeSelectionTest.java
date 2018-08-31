@@ -19,6 +19,8 @@
 package org.opensingular.form.wicket.mapper.list;
 
 
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.Button;
@@ -31,8 +33,7 @@ import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.view.SViewListByForm;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
-
-import java.util.List;
+import org.opensingular.form.wicket.mapper.buttons.RemoverButton;
 
 
 public class PanelListWithCompositeSelectionTest {
@@ -99,7 +100,7 @@ public class PanelListWithCompositeSelectionTest {
         tester.executeAjaxEvent(addButton, "click");
         tester.getAssertionsForm().getSubComponentWithType(mockList).assertSInstance().isList(1);
 
-        Button removeButton = (Button) tester.getAssertionsForm().findSubComponent(b -> b.getClass().getName().contains("RemoverButton")).getTarget();
+        Button removeButton = (Button) tester.getAssertionsForm().findSubComponent(b -> b instanceof RemoverButton).getTarget();
         tester.executeAjaxEvent(removeButton, "click");
 
         Component modalConfirm = tester.getAssertionsForm().findSubComponent(c -> c.getId().equalsIgnoreCase("modal-confirm-btn")).getTarget();
