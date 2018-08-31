@@ -16,6 +16,7 @@
 
 package org.opensingular.flow.core.entity;
 
+import org.opensingular.flow.core.CurrentInstanceStatus;
 import org.opensingular.flow.core.SUser;
 
 import java.util.Date;
@@ -62,6 +63,10 @@ public interface IEntityTaskInstance extends IEntityByCod<Integer> {
     List<? extends IEntityTaskInstanceHistory> getTaskHistory();
 
     List<? extends IEntityFlowInstance> getChildFlows();
+
+    CurrentInstanceStatus getCurrentInstanceStatus();
+
+    void setCurrentInstanceStatus(CurrentInstanceStatus currentInstanceStatus);
 
     default boolean isActive() {
         return getEndDate() == null
