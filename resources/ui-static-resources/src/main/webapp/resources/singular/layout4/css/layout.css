@@ -2430,34 +2430,43 @@ Theme Panel
   color: rgba(74, 74, 74, 0.7);
   text-align: center; }
 
-.worklist {
-  padding: 15px; }
-  .worklist thead tr th {
-    border-bottom: 1px solid #dfdfdf;
+.worklist thead tr th {
+  border-bottom: 1px solid #dfdfdf;
+  font-size: 12px;
+  vertical-align: middle;
+  background-color: #fff; }
+
+.worklist th {
+  border: 0 !important;
+  text-transform: uppercase; }
+  .worklist th a {
     font-size: 12px;
-    vertical-align: middle;
-    background-color: #fff; }
-  .worklist th {
-    border: 0 !important;
-    text-transform: uppercase; }
-    .worklist th a {
-      font-size: 12px;
-      color: rgba(74, 74, 74, 0.7);
-      font-weight: 600; }
-      .worklist th a:hover {
-        color: #4d4d4d;
-        text-decoration: none; }
-  .worklist tbody tr:hover {
-    color: #666666;
-    background-color: #f2f2f2; }
-  .worklist tr {
-    color: #acb1c2; }
-    .worklist tr:first-child td {
-      border-top: 1px solid #acb1c2 !important; }
-    .worklist tr td {
-      border: 0 !important; }
-  .worklist .label {
-    box-shadow: none; }
+    color: rgba(74, 74, 74, 0.7);
+    font-weight: 600; }
+    .worklist th a:hover {
+      color: #4d4d4d;
+      text-decoration: none; }
+  .worklist th span {
+    font-size: 12px;
+    color: rgba(74, 74, 74, 0.7);
+    font-weight: 600; }
+
+.worklist tbody tr:hover {
+  color: #666666;
+  background-color: #f2f2f2; }
+
+.worklist tr {
+  color: #acb1c2; }
+  .worklist tr:first-child td {
+    border-top: 1px solid #acb1c2 !important; }
+  .worklist tr td {
+    border: 0 !important; }
+
+.worklist .label {
+  box-shadow: none; }
+
+.worklist.table {
+  border-collapse: separate; }
 
 .worklist-action-btn {
   color: #b3b3b3;

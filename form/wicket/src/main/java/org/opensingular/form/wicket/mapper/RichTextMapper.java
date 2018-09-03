@@ -55,7 +55,8 @@ public class RichTextMapper extends StringMapper {
      * @see Form#setMultiPart(boolean)
      */
     private void validateIsMultiPart(BSControls formGroup) {
-        if (formGroup.findParent(Form.class) == null || !formGroup.findParent(Form.class).isMultiPart()) {
+        Form rootForm = formGroup.getPage().visitChildren(Form.class, (form, v) -> v.stop((Form) form));
+        if (rootForm == null || !rootForm.isMultiPart()) {
             throw new SingularFormException("The Form of the richText have to be multiPart!");
         }
     }

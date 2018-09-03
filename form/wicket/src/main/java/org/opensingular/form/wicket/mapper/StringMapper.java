@@ -18,6 +18,7 @@ package org.opensingular.form.wicket.mapper;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.*;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,11 +27,14 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.type.basic.SPackageBasic;
+import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.CountDownBehaviour;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior;
 import org.opensingular.form.wicket.behavior.InputMaskBehavior.Masks;
+import org.opensingular.form.wicket.behavior.RegexMaskBehaviour;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 
@@ -54,8 +58,23 @@ public class StringMapper extends AbstractControlsFieldComponentMapper {
 
         Optional<String> basicMask = Optional.ofNullable(
                 model.getObject().getAttributeValue(SPackageBasic.ATR_BASIC_MASK));
+
+        Optional<String> regexMask = Optional.ofNullable(
+                model.getObject().getAttributeValue(SPackageBasic.ATR_REGEX_MASK));
+
+        if(basicMask.isPresent() && regexMask.isPresent()){
+            throw new SingularFormException("It's not possible to set more than one type of mask (basic/regex) in \"" + comp.getId() + "\".");
+        }
+
         if (basicMask.isPresent()) {
             comp.add(new InputMaskBehavior(Masks.valueOf(basicMask.get())));
+            comp.setOutputMarkupId(true);
+        }
+
+        if (regexMask.isPresent()) {
+            HashMap<String, Object> options = new HashMap<>();
+            options.put(InputMaskBehavior.MAX_LENGTH_ATTR, maxSize.orElse(STypeString.DEFAULT_SIZE));
+            comp.add(new RegexMaskBehaviour(Masks.valueOf(regexMask.get()), options));
             comp.setOutputMarkupId(true);
         }
 
