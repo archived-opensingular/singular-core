@@ -37,6 +37,7 @@ import org.opensingular.form.document.SDocument;
 import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.validation.ValidationError;
 import org.opensingular.form.validation.ValidationErrorLevel;
+import org.opensingular.form.view.AbstractSViewListWithCustomColumns.Column;
 import org.opensingular.form.view.SViewListByMasterDetail;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
@@ -87,25 +88,25 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class MasterDetailPanel extends Panel {
 
-    private final WicketBuildContext ctx;
+    private final WicketBuildContext        ctx;
     private final IModel<SIList<SInstance>> list;
-    private final MasterDetailModal modal;
+    private final MasterDetailModal         modal;
     private final SInstanceActionsProviders instanceActionsProviders;
 
-    private SingularFormWicket<?> form;
-    private WebMarkupContainer head;
-    private Label headLabel;
-    private BSContainer<?> actionsContainer;
-    private WebMarkupContainer body;
-    private Component table;
-    private WebMarkupContainer footer;
-    private AjaxLink<?> addButton;
-    private Label addButtonLabel;
+    private SingularFormWicket<?>           form;
+    private WebMarkupContainer              head;
+    private Label                           headLabel;
+    private BSContainer<?>                  actionsContainer;
+    private WebMarkupContainer              body;
+    private Component                       table;
+    private WebMarkupContainer              footer;
+    private AjaxLink<?>                     addButton;
+    private Label                           addButtonLabel;
     private SValidationFeedbackCompactPanel feedback;
-    private ConfirmationModal confirmationModal;
+    private ConfirmationModal               confirmationModal;
 
     public MasterDetailPanel(String id, WicketBuildContext ctx, IModel<SIList<SInstance>> list, MasterDetailModal modal,
-                             SInstanceActionsProviders instanceActionsProviders) {
+            SInstanceActionsProviders instanceActionsProviders) {
         super(id);
         this.ctx = ctx;
         this.list = list;
@@ -125,30 +126,30 @@ public class MasterDetailPanel extends Panel {
 
     private void addComponents() {
         add(form
-                .add(head
-                        .add(headLabel)
-                        .add(actionsContainer))
-                .add(body
-                        .add(table))
-                .add(footer
-                        .add(addButton
-                                .add(addButtonLabel)))
-                .add(feedback));
+            .add(head
+                .add(headLabel)
+                .add(actionsContainer))
+            .add(body
+                .add(table))
+            .add(footer
+                .add(addButton
+                    .add(addButtonLabel)))
+            .add(feedback));
 
         IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
-                this,
-                RequestCycle.get().find(AjaxRequestTarget.class),
-                ctx.getModel(),
-                ctx.getModel().getObject(),
-                ctx,
-                ctx.getContainer());
+            this,
+            RequestCycle.get().find(AjaxRequestTarget.class),
+            ctx.getModel(),
+            ctx.getModel().getObject(),
+            ctx,
+            ctx.getContainer());
 
         SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
-                actionsContainer,
-                this.instanceActionsProviders,
-                ctx.getModel(),
-                false,
-                internalContextListProvider);
+            actionsContainer,
+            this.instanceActionsProviders,
+            ctx.getModel(),
+            false,
+            internalContextListProvider);
 
     }
 
@@ -170,7 +171,7 @@ public class MasterDetailPanel extends Panel {
     private WebMarkupContainer newHead(String id) {
         WebMarkupContainer thisHead = new WebMarkupContainer(id);
         thisHead.add($b.visibleIf(() -> !ctx.getHint(HIDE_LABEL)
-                || !this.instanceActionsProviders.actionList(this.list).isEmpty()));
+            || !this.instanceActionsProviders.actionList(this.list).isEmpty()));
         return thisHead;
     }
 
@@ -185,8 +186,8 @@ public class MasterDetailPanel extends Panel {
         dataTable.setOnNewRowItem((IConsumer<Item<SInstance>>) rowItem -> {
             rowItem.setOutputMarkupId(true);
             SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(new FeedbackFence(rowItem))
-                    .addInstanceModel(rowItem.getModel())
-                    .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(rowItem)));
+                .addInstanceModel(rowItem.getModel())
+                .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(rowItem)));
             rowItem.add($b.classAppender("singular-form-table-row can-have-error"));
             rowItem.add($b.classAppender("has-errors", $m.ofValue(feedbackHandler).map(SValidationFeedbackHandler::containsNestedErrors)));
         });
@@ -233,7 +234,7 @@ public class MasterDetailPanel extends Panel {
     }
 
     private void configureColumns(
-            List<SViewListByMasterDetail.Column> mapColumns,
+            List<SViewListByMasterDetail.Column> columns,
             BSDataTableBuilder<SInstance, String, ?> builder,
             IModel<? extends SInstance> model,
             MasterDetailModal modal,
@@ -243,23 +244,27 @@ public class MasterDetailPanel extends Panel {
 
         final List<ColumnType> columnTypes = new ArrayList<>();
 
-        if (mapColumns.isEmpty()) {
+        if (columns.isEmpty()) {
             final SType<?> type = ((SIList<?>) model.getObject()).getElementsType();
             if (type instanceof STypeSimple) {
                 columnTypes.add(new ColumnType(type.getName(), null, type.getName()));
             } else if (type.isComposite()) {
                 ((STypeComposite<?>) type)
-                        .getFields()
-                        .stream()
-                        .filter(sType -> sType instanceof STypeSimple)
-                        .forEach(sType -> columnTypes.add(new ColumnType(sType.getName(), null, sType.getName())));
+                    .getFields()
+                    .stream()
+                    .filter(sType -> sType instanceof STypeSimple)
+                    .forEach(sType -> columnTypes.add(new ColumnType(sType.getName(), null, sType.getName())));
             }
         } else {
-            mapColumns.forEach((col) -> columnTypes.add(
+            for (int i = 0; i < columns.size(); i++) {
+                Column col = columns.get(i);
+                columnTypes.add(
                     new ColumnType(
-                            Optional.ofNullable(col.getTypeName())
-                                    .orElse(null),
-                            col.getCustomLabel(), col.getColumnSortName(), col.getDisplayValueFunction())));
+                        col.getTypeName(),
+                        col.getCustomLabel(),
+                        (col.getComparator() != null) ? "#" + i : col.getColumnSortName(),
+                        col.getDisplayValueFunction()));
+            }
         }
 
         final boolean disabledSort = viewSupplier.get().isDisableSort();
@@ -278,11 +283,11 @@ public class MasterDetailPanel extends Panel {
      * Adiciona as ações a coluna de ações de mestre detalhe.
      */
     private void actionColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder,
-                                      IModel<? extends SInstance> model,
-                                      MasterDetailModal modal,
-                                      WicketBuildContext ctx,
-                                      ViewMode vm,
-                                      ISupplier<SViewListByMasterDetail> viewSupplier) {
+            IModel<? extends SInstance> model,
+            MasterDetailModal modal,
+            WicketBuildContext ctx,
+            ViewMode vm,
+            ISupplier<SViewListByMasterDetail> viewSupplier) {
         builder.appendActionColumn($m.ofValue(viewSupplier.get().getActionColumnLabel()), ac -> {
             ac.appendAction(buildViewOrEditActionConfig(vm, viewSupplier), buildViewOrEditAction(modal, ctx));
             if (vm.isEdition()) {
@@ -296,11 +301,11 @@ public class MasterDetailPanel extends Panel {
 
     private BSActionPanel.ActionConfig<SInstance> buildRemoveActionConfig(ISupplier<SViewListByMasterDetail> viewSupplier) {
         return new BSActionPanel.ActionConfig<SInstance>()
-                .styleClasses(Model.of("list-detail-remove"))
-                .iconeModel(Model.of(DefaultIcons.REMOVE))
-                .titleFunction(rowModel -> "Remover")
-                .labelModel($m.ofValue("Remover"))
-                .visibleFor(m -> viewSupplier.get().isDeleteEnabled(m.getObject()));
+            .styleClasses(Model.of("list-detail-remove"))
+            .iconeModel(Model.of(DefaultIcons.REMOVE))
+            .titleFunction(rowModel -> "Remover")
+            .labelModel($m.ofValue("Remover"))
+            .visibleFor(m -> viewSupplier.get().isDeleteEnabled(m.getObject()));
     }
 
     private IBSAction<SInstance> buildRemoveAction(IModel<? extends SInstance> model, WicketBuildContext ctx) {
@@ -318,9 +323,9 @@ public class MasterDetailPanel extends Panel {
     private BSActionPanel.ActionConfig<SInstance> buildViewOrEditActionConfig(ViewMode viewMode, ISupplier<SViewListByMasterDetail> viewSupplier) {
         final Icon openModalIcon = viewMode.isEdition() && viewSupplier.get().isEditEnabled() ? DefaultIcons.PENCIL : DefaultIcons.EYE;
         return new BSActionPanel.ActionConfig<SInstance>()
-                .iconeModel(Model.of(openModalIcon))
-                .styleClasses(Model.of("list-detail-edit"))
-                .titleFunction(rowModel -> viewMode.isEdition() && viewSupplier.get().isEditEnabled() ? "Editar" : "Visualizar");
+            .iconeModel(Model.of(openModalIcon))
+            .styleClasses(Model.of("list-detail-edit"))
+            .titleFunction(rowModel -> viewMode.isEdition() && viewSupplier.get().isEditEnabled() ? "Editar" : "Visualizar");
     }
 
     private IBSAction<SInstance> buildViewOrEditAction(MasterDetailModal modal, WicketBuildContext ctx) {
@@ -329,11 +334,11 @@ public class MasterDetailPanel extends Panel {
 
     private BSActionPanel.ActionConfig<SInstance> buildShowErrorsActionConfig(IModel<? extends SInstance> model) {
         return new BSActionPanel.ActionConfig<SInstance>()
-                .iconeModel(IReadOnlyModel.of(() -> DefaultIcons.EXCLAMATION_TRIANGLE))
-                .styleClasses(Model.of("red"))
-                .titleFunction(rowModel -> IMappingModel.of(rowModel).map(it -> (it.getNestedValidationErrors().size() + " erro(s) encontrado(s)")).getObject())
-                .visibleFor(rowModel -> !rowModel.getObject().getNestedValidationErrors().isEmpty())
-                .style($m.ofValue(MapperCommons.BUTTON_STYLE));
+            .iconeModel(IReadOnlyModel.of(() -> DefaultIcons.EXCLAMATION_TRIANGLE))
+            .styleClasses(Model.of("red"))
+            .titleFunction(rowModel -> IMappingModel.of(rowModel).map(it -> (it.getNestedValidationErrors().size() + " erro(s) encontrado(s)")).getObject())
+            .visibleFor(rowModel -> !rowModel.getObject().getNestedValidationErrors().isEmpty())
+            .style($m.ofValue(MapperCommons.BUTTON_STYLE));
     }
 
     private IBSAction<SInstance> buildShowErrorsAction() {
@@ -345,18 +350,18 @@ public class MasterDetailPanel extends Panel {
                 Collection<ValidationError> errors = baseInstance.getNestedValidationErrors();
                 if ((errors != null) && !errors.isEmpty()) {
                     String alertLevel = errors.stream()
-                            .map(ValidationError::getErrorLevel).max(Comparator.naturalOrder())
-                            .map(it -> it.le(ValidationErrorLevel.WARNING) ? "alert-warning" : "alert-danger")
-                            .orElse(null);
+                        .map(ValidationError::getErrorLevel).max(Comparator.naturalOrder())
+                        .map(it -> it.le(ValidationErrorLevel.WARNING) ? "alert-warning" : "alert-danger")
+                        .orElse(null);
 
                     final StringBuilder sb = new StringBuilder("<div><ul class='list-unstyled alert ").append(alertLevel).append("'>");
                     for (ValidationError error : errors) {
                         Optional<SInstance> inst = doc.findInstanceById(error.getInstanceId());
                         inst.ifPresent(sInstance -> sb.append("<li>")
-                                .append(SFormUtil.generateUserFriendlyPath(sInstance, baseInstance))
-                                .append(": ")
-                                .append(error.getMessage())
-                                .append("</li>"));
+                            .append(SFormUtil.generateUserFriendlyPath(sInstance, baseInstance))
+                            .append(": ")
+                            .append(error.getMessage())
+                            .append("</li>"));
                     }
                     sb.append("</ul></div>");
 
@@ -393,19 +398,19 @@ public class MasterDetailPanel extends Panel {
         //@formatter:on
 
         return new BSActionPanel.ActionConfig<SInstance>()
-                .iconFunction(rowModel -> iconFunc.apply(rowModel.getObject()))
-                .titleFunction(rowModel -> titleFunc.apply(rowModel.getObject()))
-                .style($m.ofValue("line-height:1em; font-size: 1em;"));
+            .iconFunction(rowModel -> iconFunc.apply(rowModel.getObject()))
+            .titleFunction(rowModel -> titleFunc.apply(rowModel.getObject()))
+            .style($m.ofValue("line-height:1em; font-size: 1em;"));
     }
 
     /**
      * property column isolado em outro método para isolar o escopo de
      * serialização do lambda do appendPropertyColumn
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void propertyColumnAppender(BSDataTableBuilder<SInstance, String, ?> builder,
-                                        IModel<String> labelModel, String sTypeNameModel, String columnSortName,
-                                        IFunction<SInstance, String> displayValueFunction) {
+            IModel<String> labelModel, String sTypeNameModel, String columnSortName,
+            IFunction<SInstance, String> displayValueFunction) {
         IFunction<SInstance, Object> propertyFunction = o -> displayValueFunction.apply(findChildByNameOrElseParent((SInstance) o, sTypeNameModel));
         builder.appendColumn(new BSPropertyColumn<SInstance, String>(labelModel, columnSortName, propertyFunction) {
             @Override
@@ -436,12 +441,12 @@ public class MasterDetailPanel extends Panel {
     }
 
     private SInstance findChildByNameOrElseParent(SInstance parent, String childName) {
-        if(StringUtils.isEmpty(childName)){
+        if (StringUtils.isEmpty(childName)) {
             return parent;
         }
         return SFormUtil.findChildByName(parent, childName)
-                .map(SInstance.class::cast)
-                .orElse(parent);
+            .map(SInstance.class::cast)
+            .orElse(parent);
     }
 
     private BaseDataProvider<SInstance, String> newDataProvider(ISupplier<SViewListByMasterDetail> viewSupplier) {
