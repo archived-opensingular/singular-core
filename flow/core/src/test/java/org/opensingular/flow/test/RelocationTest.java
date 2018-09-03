@@ -216,6 +216,7 @@ public class RelocationTest {
     private TaskInstanceEntity nTE(FlowInstance id) {
         TaskInstanceEntity t = id.getCurrentTaskOrException().getEntityTaskInstance();
         TaskInstanceEntity o = new TaskInstanceEntity();
+        o.setCurrentInstanceStatus(CurrentInstanceStatus.UNDEFINED);
         o.setTask((TaskVersionEntity) t.getTaskVersion());
         o.setFlowInstance(t.getFlowInstance());
         o.setBeginDate(new Date());
