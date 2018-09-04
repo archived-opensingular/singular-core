@@ -202,7 +202,6 @@
         <url>${project.scm.url}</url>
         <connection>${project.scm.connection}</connection>
         <developerConnection>${project.scm.developerConnection}</developerConnection>
-      <tag>HEAD</tag>
   </scm>
 
     <profiles>
@@ -483,9 +482,9 @@
         <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.language>java</sonar.language>
 
-        <project.scm.url>http://10.0.0.22/r/SINGULAR/singular-core.git</project.scm.url>
-        <project.scm.connection>scm:git:http://10.0.0.22/SINGULAR/singular-core.git</project.scm.connection>
-        <project.scm.developerConnection>scm:git:ssh://10.0.0.22/SINGULAR/singular-core.git</project.scm.developerConnection>
+        <project.scm.url>https://gitlab.com/opensingular/engenharia/singular-core</project.scm.url>
+        <project.scm.connection>scm:git:git@gitlab.com:opensingular/engenharia/singular-core.git</project.scm.connection>
+        <project.scm.developerConnection>scm:git:git@gitlab.com:opensingular/engenharia/singular-core.git</project.scm.developerConnection>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonar.exclusions>**/*.less, **/*.sass, **/*.html, **/*.xml, **/*.js, **/*.css, **/form/exemplos/*</sonar.exclusions>
         <jdk.version>1.8</jdk.version>
