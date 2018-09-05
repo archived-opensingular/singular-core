@@ -79,7 +79,6 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      * coluna específico e o conteudo de cada célula será cálculado
      * dinamicamente mediante a função informada.
      */
-    @SuppressWarnings("unchecked")
     public final SELF col(SType<?> type, String customLabel, IFunction<SInstance, String> displayFunction) {
         return col(type, customLabel, displayFunction, true);
     }
@@ -110,10 +109,12 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      * @see FormFreemarkerUtil
      */
     public final SELF col(String customLabel, String freeMarkerTemplateString) {
-        return col(customLabel, freeMarkerTemplateString);
+        IFunction<SInstance, String> displayFunction = instance -> FormFreemarkerUtil.get().merge(instance, freeMarkerTemplateString, false, true);
+        return col(customLabel, displayFunction, Comparator.comparing(displayFunction));
     }
     public final SELF col(String customLabel, String freeMarkerTemplateString, @Nullable Comparator<SInstance> sortComparator) {
-        return col(customLabel, instance -> FormFreemarkerUtil.get().merge(instance, freeMarkerTemplateString, false, true), sortComparator);
+        IFunction<SInstance, String> displayFunction = instance -> FormFreemarkerUtil.get().merge(instance, freeMarkerTemplateString, false, true);
+        return col(customLabel, displayFunction, sortComparator);
     }
 
     /**
@@ -126,7 +127,7 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      *                        conteúdo da celula
      */
     public final SELF col(String customLabel, IFunction<SInstance, String> displayFunction) {
-        return col(customLabel, displayFunction, null);
+        return col(customLabel, displayFunction, Comparator.comparing(displayFunction));
     }
 
     @SuppressWarnings("unchecked")

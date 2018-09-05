@@ -168,7 +168,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
          * @param s2 The second instance to be compared.
          * @return return the result of the <code>SIComparable#compareTo</code>.
          */
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         private int compareInstances(SInstance s1, SInstance s2) {
             if (hasValue(s1, s2) && isInstanceOfSIComparable(s1, s2)) {
                 Integer compareToNullResult = nullsFirstLogic(s1, s2);
