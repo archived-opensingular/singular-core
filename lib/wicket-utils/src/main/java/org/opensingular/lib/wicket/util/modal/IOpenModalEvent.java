@@ -14,30 +14,23 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.wicket.panel;
+package org.opensingular.lib.wicket.util.modal;
 
-import java.io.Serializable;
-import java.util.function.Predicate;
+import java.util.Optional;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.event.Broadcast;
 
-public interface ICloseModalEvent extends Serializable {
+public interface IOpenModalEvent {
 
-    boolean matchesBodyContent(Component bodyComponent);
+    Optional<AjaxRequestTarget> getTarget();
 
-    AjaxRequestTarget getTarget();
+    Component getBodyContent(String id);
 
-    static ICloseModalEvent of(AjaxRequestTarget target, Predicate<Component> predicate) {
-        return new ICloseModalEvent() {
-            @Override
-            public boolean matchesBodyContent(Component bodyComponent) {
-                return predicate.test(bodyComponent);
-            }
-            @Override
-            public AjaxRequestTarget getTarget() {
-                return target;
-            }
-        };
+    void configureModal(BSModalBorder modal, Component bodyContent);
+
+    default void bubble(Component component) {
+        component.send(component, Broadcast.BUBBLE, this);
     }
 }
