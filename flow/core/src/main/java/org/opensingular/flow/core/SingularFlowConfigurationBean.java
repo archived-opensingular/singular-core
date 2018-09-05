@@ -64,7 +64,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
         super();
     }
 
-    final void start() {
+    void start() {
         for (final FlowDefinition<?> flowDefinition : getDefinitions()) {
             for (STask<?> task : flowDefinition.getFlowMap().getTasks()) {
                 if (task.isJava() && !task.isImmediateExecution()) {
@@ -105,12 +105,12 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     }
 
-    public final void setModuleCod(String moduleCod) {
+    public void setModuleCod(String moduleCod) {
         this.moduleCod = moduleCod;
     }
 
     @Nonnull
-    public final String getModuleCod() {
+    public String getModuleCod() {
         if (moduleCod == null) {
             throw new SingularFlowException("Não foi definido o moduleCod");
         }
@@ -170,7 +170,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     }
 
     @Nonnull
-    protected final <X extends FlowInstance, T extends FlowDefinition<X>> X getFlowInstance(
+    protected <X extends FlowInstance, T extends FlowDefinition<X>> X getFlowInstance(
             @Nonnull Class<T> flowClass, @Nonnull IEntityFlowInstance entityFlowInstance) {
         Objects.requireNonNull(entityFlowInstance);
         return (X) getFlowInstance(getFlowDefinition(flowClass), entityFlowInstance.getCod());
@@ -183,12 +183,12 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     }
 
     @Nonnull
-    protected final <X extends FlowInstance, T extends FlowDefinition<X>> X getFlowInstance(@Nonnull Class<T> flowClass, @Nonnull Integer cod) {
+    protected <X extends FlowInstance, T extends FlowDefinition<X>> X getFlowInstance(@Nonnull Class<T> flowClass, @Nonnull Integer cod) {
         return getFlowInstanceOpt(flowClass, cod).orElseThrow(() -> new SingularFlowException(msgNotFound(cod)));
     }
 
     @Nonnull
-    protected final <X extends FlowInstance, T extends FlowDefinition<X>> X getFlowInstance(
+    protected <X extends FlowInstance, T extends FlowDefinition<X>> X getFlowInstance(
             @Nonnull Class<T> flowClass, @Nonnull String id) {
         return getFlowInstanceOpt(flowClass, id).orElseThrow(() -> new SingularFlowException(msgNotFound(id)));
     }
@@ -199,7 +199,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
     }
 
     @Nonnull
-    protected final <X extends FlowInstance, T extends FlowDefinition<X>> Optional<X> getFlowInstanceOpt(@Nonnull Class<T> flowClass, @Nonnull Integer cod) {
+    protected <X extends FlowInstance, T extends FlowDefinition<X>> Optional<X> getFlowInstanceOpt(@Nonnull Class<T> flowClass, @Nonnull Integer cod) {
         Objects.requireNonNull(flowClass);
         return getFlowInstanceOpt(getFlowDefinition(flowClass), cod);
     }
@@ -214,7 +214,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
 
     @Nonnull
-    protected final <X extends FlowInstance, T extends FlowDefinition<X>> Optional<X> getFlowInstanceOpt(@Nonnull Class<T> flowClass, @Nonnull String id) {
+    protected <X extends FlowInstance, T extends FlowDefinition<X>> Optional<X> getFlowInstanceOpt(@Nonnull Class<T> flowClass, @Nonnull String id) {
         if (StringUtils.isNumeric(id)) {
             return getFlowInstanceOpt(flowClass, Integer.valueOf(id));
         }
@@ -330,7 +330,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
 
     // ------- Consultas ----------------------------------------------
 
-    public final List<? extends FlowDefinition<?>> getUserAllowedFlowsForStart(SUser user) {
+    public List<? extends FlowDefinition<?>> getUserAllowedFlowsForStart(SUser user) {
         return getDefinitions().stream().filter(d -> d.canBeCreatedBy(user)).sorted().collect(Collectors.toList());
     }
 
@@ -344,7 +344,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
         return scheduleService;
     }
 
-    public final Object executeTask(STaskJava task) {
+    public Object executeTask(STaskJava task) {
         try {
             final IFlowDataService<?> dataService = task.getFlowMap().getFlowDefinition().getDataService();
             final Collection<? extends FlowInstance> instances = dataService.retrieveAllInstancesIn(task);
@@ -362,7 +362,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
         }
     }
 
-    public final Object executeAutomaticActions(STask<?> task, IConditionalTaskAction action) {
+    public Object executeAutomaticActions(STask<?> task, IConditionalTaskAction action) {
         try {
             final IFlowDataService<?> dataService = task.getFlowMap().getFlowDefinition().getDataService();
             final Collection<? extends FlowInstance> instances = dataService.retrieveAllInstancesIn(task);
