@@ -312,6 +312,10 @@ public final class SingularTestUtil {
         InputStream in;
         if (resourceName.endsWith(".zip")) {
             String name = resourceName.substring(0, resourceName.length() - 3) + expectedExtension;
+            int pos = name.lastIndexOf('/');
+            if (pos != -1) {
+                name = name.substring(pos + 1);
+            }
             in = SingularTestUtil.unzipFromResource(ref, resourceName, name);
         } else {
             in = ref.getResourceAsStream(resourceName);
@@ -349,8 +353,11 @@ public final class SingularTestUtil {
             }
             return in2;
         } catch (Exception e) {
-            Throwables.throwIfUnchecked(e);
-            throw new SingularTestException(e);
+            IOUtils.closeQuietly(in2);
+            Throwables.throwIfInstanceOf(e, SingularTestException.class);
+            throw new SingularTestException(
+                    "Fail to unzip file '" + entryName + "' from resource '" + resourceName + "' relative to class " +
+                            ref.getName(), e);
         }
     }
 }

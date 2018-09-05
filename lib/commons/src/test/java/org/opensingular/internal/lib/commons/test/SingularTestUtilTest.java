@@ -33,6 +33,7 @@ public class SingularTestUtilTest {
         testContent(unzipFromResourceIfNecessary(getClass(), "test.zip", "txt"));
         testContent(unzipFromResourceIfNecessary(getClass(), "test.txt", "txt"));
         testContent(unzipFromResourceIfNecessary(getClass(), "test.txt", "123"));
+        testContent(unzipFromResourceIfNecessary(getClass(), "/test.zip", "txt"));
         Assertions.assertThatThrownBy(() -> unzipFromResourceIfNecessary(getClass(), "test.zip", "test.txt"))
                 .isExactlyInstanceOf(SingularTestException.class).hasMessageContaining(
                 "Wasn't found the entry test.test.txt");
