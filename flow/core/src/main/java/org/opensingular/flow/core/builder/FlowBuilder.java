@@ -84,9 +84,17 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extend
         return flowMap;
     }
 
-    public BUILDER_START setStartTask(TASK_DEF taskDefinition) {
+    @Nonnull
+    public BUILDER_START setStartTask(@Nonnull TASK_DEF taskDefinition) {
         FLOW_MAP flowMap = getFlowMap();
         return newStartTask(flowMap.setStart(taskDefinition));
+    }
+
+    /** Sets the tasks as one possible start point of the flow. */
+    @Nonnull
+    public BUILDER_START addStartTask(@Nonnull TASK_DEF taskDefinition) {
+        FLOW_MAP flowMap = getFlowMap();
+        return newStartTask(flowMap.addStart(taskDefinition));
     }
 
     public <T extends FlowInstance> void setRoleChangeListener(IRoleChangeListener<T> roleChangeListener) {
@@ -107,7 +115,7 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extend
     }
 
     public void forEach(Consumer<BuilderTask> consumer) {
-        getFlowMap().getTasks().stream().map(t -> toBuilder(t)).forEach(consumer);
+        getFlowMap().getTasks().stream().map(this::toBuilder).forEach(consumer);
     }
 
     public BUILDER_ROLE addBusinessRole(String description,
@@ -187,10 +195,9 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extend
     /**
      * Encontra a definição da task informada ou dispara exception senão
      * encontrada.
-     *
-     * @return Sempre diferente de null
      */
-    protected STask<?> getTask(TASK_DEF taskRef) {
+    @Nonnull
+    protected STask<?> getTask(@Nonnull TASK_DEF taskRef) {
         return getFlowMap().getTask(taskRef);
     }
 
@@ -198,7 +205,8 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extend
         return getFlowMap().getTaskWithName(taskRef.getName()) != null;
     }
 
-    protected BUILDER_TRANSITION addTransition(BuilderTask origin, String actionName, TASK_DEF destination) {
+    @Nonnull
+    protected BUILDER_TRANSITION addTransition(@Nonnull BuilderTask origin, @Nonnull String actionName, @Nonnull TASK_DEF destination) {
         return newTransition(origin.getTask().addTransition(actionName, getTask(destination)));
     }
 

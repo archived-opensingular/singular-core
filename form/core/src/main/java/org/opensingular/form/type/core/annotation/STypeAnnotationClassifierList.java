@@ -16,9 +16,9 @@
 
 package org.opensingular.form.type.core.annotation;
 
+import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TypeBuilder;
-import org.opensingular.form.SInfoType;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
@@ -33,6 +33,6 @@ public class STypeAnnotationClassifierList extends STypeList<STypeString, SIStri
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        setElementsType(getDictionary().getType(STypeString.class));
+        setElementsType(STypeString.class);
     }
 }

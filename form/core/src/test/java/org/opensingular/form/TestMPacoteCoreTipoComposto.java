@@ -18,7 +18,6 @@
 
 package org.opensingular.form;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -518,12 +517,10 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
     }
 
     @Test
-    @Ignore("Por em quanto ainda não suporta uma classe de tipo extender uma classe intermediária que também não é um tipo")
     public void testCorrectExtensionWhenCompositeClassExtendsOtherCompositeClassWithAIntermediatyClass() {
         SDictionary dictionary = createTestDictionary();
         TestTipoCompositeComCargaInterna a = dictionary.getType(TestTipoCompositeComCargaInterna.class);
         TestTipoCompositeComCargaInternaB b = dictionary.getType(TestTipoCompositeComCargaInternaB.class);
-        //Descomentar o registro do tipo E no pacote para a linha abaixo funcionar
         TestTipoCompositeComCargaInternaE e = dictionary.getType(TestTipoCompositeComCargaInternaE.class);
 
         assertType(e).isExtensionCorrect(b);
@@ -542,7 +539,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
             pb.createType(TestTipoCompositeComCargaInterna.class);
             pb.createType(TestTipoCompositeComCargaInternaB.class);
             pb.createType(TestTipoCompositeComCargaInternaC.class);
-            //pb.createType(TestTipoCompositeComCargaInternaE.class);
+            pb.createType(TestTipoCompositeComCargaInternaE.class);
         }
 
         @SInfoType(name = "TestTipoCompostoComCargaInterna", spackage = TestPacoteCompostoA.class)

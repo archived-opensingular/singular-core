@@ -16,9 +16,6 @@
 
 package org.opensingular.flow.core;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -75,7 +72,7 @@ public class TesFlowMapValidations {
         assertEquals(1, result.size());
         assertTrue(result.get(0).is(StepsDI.StepWait));
 
-        assertTrue(definition.getFlowMap().getTask(StepsDI.StepWait).getMetaData().getOpt(FLAG).orElse(null));
+        assertTrue(definition.getFlowMap().getTask(StepsDI.StepWait).getMetaData().getOpt(FLAG).orElse(Boolean.FALSE));
     }
 
     @Test
@@ -148,9 +145,9 @@ public class TesFlowMapValidations {
         condicions = new ValidationConditions();
         FlowWithFlowValidation p = new FlowWithFlowValidation();
         p.getFlowMap().setMetaDataValue(TAG, Boolean.TRUE);
-        assertTrue(p.getMetaDataValueOpt(TAG).orElse(null));
         p.getFlowMap().setMetaDataValue(TAG, Boolean.FALSE);
-        assertFalse(p.getMetaDataValueOpt(TAG).orElse(null));
+        assertTrue(p.getMetaDataValueOpt(TAG).orElse(Boolean.FALSE));
+        assertFalse(p.getMetaDataValueOpt(TAG).orElse(Boolean.TRUE));
     }
 
     @Test
@@ -226,7 +223,8 @@ public class TesFlowMapValidations {
 
             if (condicions.configStart) {
                 f.setStartTask(StepsDI.StepWait);
-                assertException(() -> f.setStartTask(StepsDI.StepWait), "The start point is already setted");
+                assertException(() -> f.addStartTask(StepsDI.StepWait), "This task is already defined as a start point");
+                assertException(() -> f.setStartTask(StepsDI.StepJava), "The start point is already set");
             }
 
             f.from(StepsDI.StepWait).go(StepsDI.StepPeople).thenGo(StepsDI.StepJava);

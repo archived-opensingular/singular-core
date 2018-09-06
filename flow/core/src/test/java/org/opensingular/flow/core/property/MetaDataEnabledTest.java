@@ -20,9 +20,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 
-import javax.annotation.Nonnull;
-import java.util.Optional;
-
 /**
  * @author Daniel C. Bordin
  * @since 2017-10-27
@@ -38,7 +35,7 @@ public class MetaDataEnabledTest {
         MyClassWithMetaData c = new MyClassWithMetaData();
 
         Assert.assertFalse(c.getMetaDataOpt().isPresent());
-        Assert.assertFalse(c.getMetaDataValueOpt(KEY_WITH_DEFAULT).get());
+        Assert.assertFalse(c.getMetaDataValueOpt(KEY_WITH_DEFAULT).orElse(Boolean.TRUE));
         Assert.assertFalse(c.getMetaDataValue(KEY_WITH_DEFAULT));
 
         Assert.assertFalse(c.getMetaDataOpt().isPresent());
@@ -59,10 +56,10 @@ public class MetaDataEnabledTest {
 
         Assert.assertTrue(c.getMetaDataOpt().isPresent());
 
-        Assert.assertTrue(c.getMetaDataValueOpt(KEY_WITH_DEFAULT).get());
+        Assert.assertTrue(c.getMetaDataValueOpt(KEY_WITH_DEFAULT).orElse(Boolean.FALSE));
         Assert.assertTrue(c.getMetaDataValue(KEY_WITH_DEFAULT));
 
-        Assert.assertTrue(c.getMetaDataValueOpt(KEY_WITHOUT_DEFAULT).get());
+        Assert.assertTrue(c.getMetaDataValueOpt(KEY_WITHOUT_DEFAULT).orElse(Boolean.FALSE));
         SingularTestUtil.assertException(() -> c.getMetaDataValue(KEY_WITHOUT_DEFAULT),
                 "don't have a default value configured");
     }
@@ -76,7 +73,7 @@ public class MetaDataEnabledTest {
         c.setMetaDataValue(KEY_WITH_DEFAULT, null);
         c.setMetaDataValue(KEY_WITHOUT_DEFAULT, null);
 
-        Assert.assertFalse(c.getMetaDataValueOpt(KEY_WITH_DEFAULT).get());
+        Assert.assertFalse(c.getMetaDataValueOpt(KEY_WITH_DEFAULT).orElse(Boolean.TRUE));
         Assert.assertFalse(c.getMetaDataValue(KEY_WITH_DEFAULT));
 
         Assert.assertFalse(c.getMetaDataValueOpt(KEY_WITHOUT_DEFAULT).isPresent());
@@ -85,24 +82,8 @@ public class MetaDataEnabledTest {
     }
 
 
-    private static class MyClassWithMetaData implements MetaDataEnabled {
+    private static class MyClassWithMetaData extends MetaDataEnabledImpl {
 
-        private MetaDataMap metaDataMap;
-
-        @Nonnull
-        @Override
-        public MetaDataMap getMetaData() {
-            if (metaDataMap == null) {
-                metaDataMap = new MetaDataMap();
-            }
-            return metaDataMap;
-        }
-
-        @Nonnull
-        @Override
-        public Optional<MetaDataMap> getMetaDataOpt() {
-            return Optional.ofNullable(metaDataMap);
-        }
     }
 
 }

@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 
 /**
  * Fornece métodos de conversão de string de Data/Hora no formato
@@ -55,26 +56,11 @@ public final class ConversorDataISO8601 {
     private ConversorDataISO8601() {
     }
 
-    public static String format(java.util.Date d) {
+    @Nonnull
+    public static String format(@Nonnull java.util.Date d) {
         GregorianCalendar gc = new GregorianCalendar();
         gc.setTime(d);
-
-        int  mili      = gc.get(Calendar.MILLISECOND);
-        byte precision = SECONDS;
-        if (mili != 0) {
-            precision = MILLI;
-        }
-
-        return format(
-                gc.get(Calendar.YEAR),
-                gc.get(Calendar.MONTH) + 1,
-                gc.get(Calendar.DAY_OF_MONTH),
-                gc.get(Calendar.HOUR_OF_DAY),
-                gc.get(Calendar.MINUTE),
-                gc.get(Calendar.SECOND),
-                mili,
-                0,
-                precision);
+        return format(gc);
     }
 
     @Nonnull
@@ -82,7 +68,12 @@ public final class ConversorDataISO8601 {
         return getCalendar(s).getTime();
     }
 
-    public static String format(Calendar gc) {
+    @Nonnull
+    public static String format(@Nonnull Calendar gc) {
+        byte precision = SECONDS;
+        if (gc.get(Calendar.MILLISECOND) != 0) {
+            precision = MILLI;
+        }
         return format(
                 gc.get(Calendar.YEAR),
                 gc.get(Calendar.MONTH) + 1,
@@ -91,7 +82,7 @@ public final class ConversorDataISO8601 {
                 gc.get(Calendar.MINUTE),
                 gc.get(Calendar.SECOND),
                 gc.get(Calendar.MILLISECOND),
-                0, MILLI);
+                0, precision);
     }
 
     @Nonnull
@@ -116,7 +107,7 @@ public final class ConversorDataISO8601 {
             this.text = text;
         }
 
-        public boolean isNotEnd() {
+        boolean isNotEnd() {
             return pos != text.length();
         }
 
@@ -153,7 +144,7 @@ public final class ConversorDataISO8601 {
             }
         }
 
-        protected int letShiftMaximo(int maximumDigits, boolean maxShift, int p, int n) {
+        int letShiftMaximo(int maximumDigits, boolean maxShift, int p, int n) {
             int _p = p;
             int _n = n;
             if (maxShift) {
@@ -164,21 +155,21 @@ public final class ConversorDataISO8601 {
             return _n;
         }
 
-        public void readDateSeparator() {
+        void readDateSeparator() {
             char c = readCharacter();
             if (!((c == '-') || (c == '.') || (c == '/'))) {
                 throw errorFormat();
             }
         }
 
-        public void readDateTimeSeparator() {
+        void readDateTimeSeparator() {
             char c = readCharacter();
             if (!((c == DATE_TIME_SEPARATOR) || (c == ' '))) {
                 throw errorFormat();
             }
         }
 
-        public boolean hasChar(char c) {
+        boolean hasChar(char c) {
             if ((pos != text.length()) && (c == text.charAt(pos))) {
                 pos++;
                 return true;
@@ -186,20 +177,20 @@ public final class ConversorDataISO8601 {
             return false;
         }
 
-        public void readCharacter(char c) {
+        void readCharacter(char c) {
             if (c != readCharacter()) {
                 throw errorFormat();
             }
         }
 
-        public char readCharacter() {
+        char readCharacter() {
             if (pos == text.length()) {
                 throw errorFormat();
             }
             return text.charAt(pos++);
         }
 
-        public RuntimeException errorFormat() {
+        RuntimeException errorFormat() {
             throw new IllegalArgumentException(
                     "A string '" + text + "' deveria estar no formato yyyy-mm-dd hh:mm:ss.fffffffff");
         }
@@ -208,11 +199,7 @@ public final class ConversorDataISO8601 {
 
     @Nonnull
     private static int[] valueOf(@Nonnull String s) {
-
-        if (s == null) {
-            throw new java.lang.IllegalArgumentException("string null");
-        }
-        StringReader reader = new StringReader(s);
+        StringReader reader = new StringReader(Objects.requireNonNull(s));
 
         int[] t = new int[NANO + 1];
 
@@ -246,13 +233,14 @@ public final class ConversorDataISO8601 {
             //}
         }
 
-        if (reader.isNotEnd()) {
+        if (reader.isNotEnd() && !reader.hasChar('+') && !reader.hasChar('-')) {
             throw reader.errorFormat();
         }
 
         return t;
     }
 
+    @Nonnull
     private static String format(
             int year,
             int month,
@@ -296,7 +284,7 @@ public final class ConversorDataISO8601 {
         return false;
     }
 
-    private static void formatYearMonthDay(StringBuilder buffer, int year, int month, int day) {
+    private static void formatYearMonthDay(@Nonnull StringBuilder buffer, int year, int month, int day) {
         if (year < 0) {
             throw new IllegalArgumentException("Ano Negativo");
         } else if (year < 10) {
@@ -313,7 +301,7 @@ public final class ConversorDataISO8601 {
         format2(buffer, day);
     }
 
-    private static void formatMilliAndNanoIfNecessary(StringBuilder buffer, int nano, byte prescisao) {
+    private static void formatMilliAndNanoIfNecessary(@Nonnull StringBuilder buffer, int nano, byte precision) {
         int milli;
         if ((nano < 0) || (nano > 999999999)) {
             throw new IllegalArgumentException("Nanos <0 ou >999999999");
@@ -322,8 +310,8 @@ public final class ConversorDataISO8601 {
         // Se forem apenas milisegundos fica .999
         // Se realm
         milli = nano / 1000000;
-        formatMilliIfNecessary(buffer, milli, prescisao);
-        if (prescisao == NANO) {
+        formatMilliIfNecessary(buffer, milli, precision);
+        if (precision == NANO) {
             int onlyNano = nano % 1000000;
             if (onlyNano != 0) {
                 String nanoS = Integer.toString(onlyNano);
@@ -342,7 +330,7 @@ public final class ConversorDataISO8601 {
         }
     }
 
-    private static void format2(StringBuilder buffer, int value) {
+    private static void format2(@Nonnull StringBuilder buffer, int value) {
         if (value < 0) {
             throw new IllegalArgumentException("valor negativo");
         } else if (value < 10) {
@@ -353,7 +341,7 @@ public final class ConversorDataISO8601 {
         buffer.append(value);
     }
 
-    private static void formatMilliIfNecessary(StringBuilder buffer, int milli, byte precision) {
+    private static void formatMilliIfNecessary(@Nonnull StringBuilder buffer, int milli, byte precision) {
         if (milli < 0) {
             throw new IllegalArgumentException("Milisegundos <0");
         } else if (milli > 999) {
@@ -379,18 +367,19 @@ public final class ConversorDataISO8601 {
     public static boolean isISO8601(@Nullable String value) {
         //                01234567890123456789012345678
         //                1999-05-31T13:20:00.000-05:00
-        String mask = "????-??-??T??:??:??.???-??:??";
-        if ((value == null) || value.length() < 10 || value.length() > mask.length()) {
+        String mask1 = "????-??-??T??:??:??.???-??:??";
+        String mask2 = "????-??-?? ??:??:??.???+??:??";
+        if ((value == null) || value.length() < 10 || value.length() > mask1.length()) {
             return false;
         }
         int tam = value.length();
         for (int i = 0; i < tam; i++) {
-            char m = mask.charAt(i);
+            char m = mask1.charAt(i);
             if (m == '?') {
                 if (!Character.isDigit(value.charAt(i))) {
                     return false;
                 }
-            } else if (m != value.charAt(i) && (i != 10 || value.charAt(i) != ' ')) {
+            } else if (m != value.charAt(i) && mask2.charAt(i) != value.charAt(i)) {
                 return false;
             }
         }

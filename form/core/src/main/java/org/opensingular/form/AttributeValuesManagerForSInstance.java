@@ -40,25 +40,15 @@ final class AttributeValuesManagerForSInstance extends AttributeValuesManager<SI
     }
 
     @Nullable
-    public static <V> V getAttributeValueFromType(@Nonnull SInstance instance, @Nonnull AttrInternalRef ref,
+    static <V> V getAttributeValueFromType(@Nonnull SInstance instance, @Nonnull AttrInternalRef ref,
             @Nullable Class<V> resultClass) {
         return AttributeValuesManagerForSType.getAttributeValueInTheContextOf(instance.getType(), instance, ref,
                 resultClass);
     }
 
-    @Nonnull
-    public SInstance getCreating(@Nonnull AttrInternalRef ref) {
-        SInstance entry = get(ref);
-        if (entry == null) {
-            if (ref.isResolved()) {
-                entry = createNewAttribute(ref);
-            } else {
-                entry = createTemporaryAttribute();
-                entry.setAsAttribute(ref, getOwner());
-            }
-            set(ref, entry);
-        }
-        return entry;
+    @Override
+    void setEntryAsAttribute(@Nonnull SInstance entry, @Nonnull AttrInternalRef ref) {
+        entry.setAsAttribute(ref, getOwner());
     }
 
     @Override
@@ -69,5 +59,4 @@ final class AttributeValuesManagerForSInstance extends AttributeValuesManager<SI
         instanceAtr.setAsAttribute(ref, getOwner());
         return instanceAtr;
     }
-
 }

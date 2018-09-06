@@ -48,9 +48,9 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
     private ITaskPredicate predicate;
     private DisplayInfoTransition displayInfo;
 
-    protected STransition(STask<?> origin, String name, @Nonnull STask<?> destination) {
-        this.origin = origin;
-        this.name = name;
+    protected STransition(@Nonnull STask<?> origin, @Nonnull String name, @Nonnull STask<?> destination) {
+        this.origin = Objects.requireNonNull(origin);
+        this.name = Objects.requireNonNull(name);
         this.destination = Objects.requireNonNull(destination);
         this.abbreviation = SingularUtil.convertToJavaIdentity(name, true);
     }
