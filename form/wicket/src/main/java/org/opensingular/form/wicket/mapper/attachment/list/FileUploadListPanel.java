@@ -53,7 +53,7 @@ import org.opensingular.form.wicket.mapper.attachment.upload.UploadResponseWrite
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet;
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.AttachmentKeyStrategy;
-import org.opensingular.form.wicket.mapper.behavior.RequiredListLabelClassAppender;
+import org.opensingular.form.wicket.mapper.behavior.RequiredLabelClassAppender;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.form.wicket.util.WicketFormUtils;
@@ -132,7 +132,7 @@ public class FileUploadListPanel extends Panel implements Loggable {
         ViewMode viewMode = ctx.getViewMode();
 
         if (isEdition(viewMode)) {
-            label.add(new RequiredListLabelClassAppender(model));
+            label.add(new RequiredLabelClassAppender(model));
         }
 
         add(label);

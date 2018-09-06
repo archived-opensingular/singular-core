@@ -77,7 +77,8 @@ public class BSFormGroup extends BSContainer<BSFormGroup> {
     }
 
     public BSFormGroup appendLabel(int colspan, Component labelFor, Serializable valueOrModel) {
-        BSLabel label = newComponent(this::newLabel);
+        BSLabel label = newLabel(newChildId());
+        getItems().add(label);
         getDefaultGridSize().col(label, colspan)
             .setTargetComponent(labelFor)
             .setDefaultModel($m.wrapValue(valueOrModel));

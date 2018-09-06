@@ -16,13 +16,15 @@
 
 package org.opensingular.form.wicket.model;
 
-import org.opensingular.form.InstanceSerializableRef;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.event.SInstanceEvent;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
+import org.opensingular.form.InstanceSerializableRef;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.document.RefType;
+import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.event.SInstanceEvent;
 
 /**
  * <p>
@@ -38,6 +40,11 @@ public class SInstanceRootModel<I extends SInstance> extends AbstractSInstanceMo
 
     private InstanceSerializableRef<I> instanceRef;
 
+    @SuppressWarnings({ "unchecked", "unchecked" })
+    public SInstanceRootModel(SDocumentFactory documentFactory, RefType refType) {
+        this.instanceRef = (InstanceSerializableRef<I>) documentFactory.createInstance(refType).getSerializableRef();
+    }
+
     public SInstanceRootModel() {
     }
 
@@ -52,7 +59,7 @@ public class SInstanceRootModel<I extends SInstance> extends AbstractSInstanceMo
             return null;
         }
         I instance = instanceRef.get();
-        if(instance != null) {
+        if (instance != null) {
             instance.attachEventCollector();
         }
         return instance;

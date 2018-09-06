@@ -60,16 +60,16 @@ public abstract class BSPanelGrid extends Panel implements Loggable {
     public static final MetaDataKey<BSTab> TAB_KEY = new MetaDataKey<BSPanelGrid.BSTab>() {
     };
 
-    private static final String ID_TAB = "tab";
-    private SingularFormWicket<?> form = new SingularFormWicket<>("panel-form");
-    private BSTabCol navigation = new BSTabCol("tab-navigation");
-    private BSTabCol content = new BSTabCol("tab-content");
-    private BSGrid container = new BSGrid("grid");
-    private Map<String, BSTab> tabMap = new LinkedHashMap<>();
-    private BSTab activeTab = null;
-    private WebMarkupContainer tabMenu = new WebMarkupContainer("tab-menu");
-    private RefreshingView<String> tabRepeater;
-    private String keyActive;
+    private static final String                 ID_TAB     = "tab";
+    private              SingularFormWicket<?>  form       = new SingularFormWicket<>("panel-form");
+    private              BSTabCol               navigation = new BSTabCol("tab-navigation");
+    private              BSTabCol               content    = new BSTabCol("tab-content");
+    private              BSGrid                 container  = new BSGrid("grid");
+    private              Map<String, BSTab>     tabMap     = new LinkedHashMap<>();
+    private              BSTab                  activeTab  = null;
+    private              WebMarkupContainer     tabMenu    = new WebMarkupContainer("tab-menu");
+    private              RefreshingView<String> tabRepeater;
+    private              String                 keyActive;
 
     public BSPanelGrid(String id) {
         super(id);
@@ -143,7 +143,7 @@ public abstract class BSPanelGrid extends Panel implements Loggable {
             }
 
             private boolean isAnyChildrenVisible(String tabId) {
-                BSTab bsTab = tabMap.get(tabId);
+                BSTab     bsTab    = tabMap.get(tabId);
                 SInstance instance = bsTab.getModelObject();
                 if ((instance instanceof SIComposite) && instance.asAtr().exists() && instance.asAtr().isVisible()) {
                     for (String typeName : bsTab.getSubtree()) {
@@ -158,7 +158,7 @@ public abstract class BSPanelGrid extends Panel implements Loggable {
 
             @Override
             protected void populateItem(Item<String> item) {
-                String id = item.getModelObject();
+                String      id  = item.getModelObject();
                 final BSTab tab = tabMap.get(id);
                 item.setMetaData(TAB_KEY, tab);
 
@@ -214,10 +214,8 @@ public abstract class BSPanelGrid extends Panel implements Loggable {
     }
 
     public void buildTabContent() {
-        content.remove(container);
         container = new BSGrid("grid");
-        content.add(container);
-
+        content.addOrReplace(container);
     }
 
     public BSGrid getContainer() {
@@ -237,11 +235,11 @@ public abstract class BSPanelGrid extends Panel implements Loggable {
     }
 
     public static final class BSTab implements Serializable {
-        private String headerText;
-        private List<String> subtree;
-        private String iconClass;
-        protected IModel<SInstance> model;
-        private IBiFunction<BSTab, IModel<SInstance>, String> iconProcessor;
+        private   String                                        headerText;
+        private   List<String>                                  subtree;
+        private   String                                        iconClass;
+        protected IModel<SInstance>                             model;
+        private   IBiFunction<BSTab, IModel<SInstance>, String> iconProcessor;
 
         public BSTab(String headerText, List<String> subtree, IModel<SInstance> model) {
             this.headerText = headerText;
