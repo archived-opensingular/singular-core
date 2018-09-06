@@ -5,8 +5,21 @@ import java.io.OutputStream;
 
 import org.opensingular.flow.core.FlowDefinition;
 
+import javax.annotation.Nonnull;
+
 public enum NullFlowRenderer implements IFlowRenderer {
-        INSTANCE;
+        INSTANCE {
+            @Nonnull
+            @Override
+            public byte[] generatePng(@Nonnull RendererRequest request) {
+                return NULL_IMAGE_BYTES;
+            }
+
+            @Override
+            public void generatePng(@Nonnull RendererRequest request, @Nonnull OutputStream out) throws IOException {
+                out.write(NULL_IMAGE_BYTES);
+            }
+        };
 
     private static final byte[] NULL_IMAGE_BYTES = {
         -119, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, //
@@ -17,14 +30,4 @@ public enum NullFlowRenderer implements IFlowRenderer {
         -107, 43, 14, 27, 0, 0, 0, 10, 73, 68, 65, 84, 120, -100, 99, 96, 0, //
         0, 0, 2, 0, 1, 72, -81, -92, 113, 0, 0, 0, 0, 73, 69, 78, 68
     };
-
-    @Override
-    public byte[] generatePng(FlowDefinition<?> definition, ExecutionHistoryForRendering history) {
-        return NULL_IMAGE_BYTES;
-    }
-
-    @Override
-    public void generatePng(FlowDefinition<?> definition, ExecutionHistoryForRendering history, OutputStream out) throws IOException {
-        out.write(NULL_IMAGE_BYTES);
-    }
 }

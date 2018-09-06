@@ -89,7 +89,7 @@ public final class RendererUtil {
     public static void showDiagramOnDesktopForUser(@Nonnull FlowDefinition<?> definition,
             int waitTimeMilliAfterCall) {
         SingularTestUtil.showFileOnDesktopForUserAndWaitOpening(RendererUtil.class, "png",
-                out -> RendererUtil.findRenderer().generatePng(definition, out), waitTimeMilliAfterCall);
+                out -> RendererUtil.findRenderer().createRequest(definition).generatePng(out), waitTimeMilliAfterCall);
     }
 
     /**
@@ -108,12 +108,12 @@ public final class RendererUtil {
      * during developing.</p>
      */
     public static void showDiagramOnSwingFrame(@Nonnull FlowDefinition<?> definition) {
-        new ImageViewer(definition.getName(), findRenderer().generatePng(definition));
+        new ImageViewer(definition.getName(), findRenderer().createRequest(definition).generatePng());
     }
 
     private static class ImageViewer extends JFrame {
 
-        public ImageViewer(String title, byte[] image) {
+        ImageViewer(String title, byte[] image) {
             super(title);
             getRootPane().setContentPane(getImageComponent(image));
             pack();

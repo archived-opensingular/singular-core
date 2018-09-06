@@ -25,6 +25,7 @@ import org.opensingular.flow.core.property.MetaDataKey;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
+import java.util.Objects;
 
 public interface BuilderTask {
 
@@ -33,22 +34,20 @@ public interface BuilderTask {
     /**
      * Cria uma nova transição da task atual para a task destino informada
      */
-    default BuilderTransition<?> go(ITaskDefinition taskRefDestiny) {
+    @Nonnull
+    default BuilderTransition<?> go(@Nonnull ITaskDefinition taskRefDestiny) {
+        Objects.requireNonNull(taskRefDestiny);
         return go(taskRefDestiny.getName(), taskRefDestiny);
     }
 
-    BuilderTransition<?> go(String actionName, ITaskDefinition taskRefDestiny);
+    @Nonnull
+    BuilderTransition<?> go(@Nonnull String actionName, @Nonnull ITaskDefinition taskRefDestiny);
 
     /**
      * Adds an automatic transition to the given {@param taskRefDestiny} using the {@param condition} predicate to
      * decide when the transition should be made
-     *
-     * @param taskRefDestiny
-     * @param condition
-     * @return
      */
     BuilderTransitionPredicate<?> go(ITaskDefinition taskRefDestiny, ITaskPredicate condition);
-
 
     BuilderTask uiAccess(TaskAccessStrategy<?> accessStrategy);
 

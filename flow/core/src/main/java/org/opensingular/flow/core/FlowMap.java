@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -55,7 +56,7 @@ public class FlowMap {
 
     private final Map<String, SBusinessRole> rolesByAbbreviation = new HashMap<>();
 
-    private SStart start;
+    private final List<SStart> starts = new ArrayList<>();
 
     private IRoleChangeListener roleChangeListener;
 
@@ -66,8 +67,8 @@ public class FlowMap {
     /**
      * Instancia um novo mapa para a definição de fluxo especificado.
      */
-    public FlowMap(FlowDefinition<?> flowDefinition) {
-        this.flowDefinition = flowDefinition;
+    public FlowMap(@Nonnull FlowDefinition<?> flowDefinition) {
+        this.flowDefinition = Objects.requireNonNull(flowDefinition);
     }
 
     /**
@@ -76,7 +77,8 @@ public class FlowMap {
      *
      * @param name o nome da transição.
      */
-    protected STransition newTransition(STask<?> origin, String name, STask<?> destination) {
+    @Nonnull
+    protected STransition newTransition(@Nonnull STask<?> origin, @Nonnull String name, @Nonnull STask<?> destination) {
         return new STransition(origin, name, destination);
     }
 
@@ -281,42 +283,59 @@ public class FlowMap {
     }
 
     /**
-     * <p>Seleciona a tarefa inicial deste mapa.</p>
-     *
-     * @param initialTask a definição da tarefa que corresponde à inicial.
-     * @return a tarefa inicial.
+     * Define a tarefa inicial do fluxo.
+     * @deprecated addStart() should be used instead
      */
-    public SStart setStart(ITaskDefinition initialTask) {
-        return setStart(getTask(initialTask));
+    @Deprecated
+    @Nonnull
+    public SStart setStart(@Nonnull ITaskDefinition initialTask) {
+        if (!starts.isEmpty()) {
+            throw new SingularFlowException("The start point is already set", this);
+        }
+        return addStart(getTask(initialTask));
     }
 
-    /**
-     * <p>Seleciona a tarefa inicial deste mapa.</p>
-     *
-     * @param task a tarefa inicial.
-     * @return a tarefa inicial.
-     */
-    public SStart setStart(STask<?> task) {
+    /** Sets the tasks as one possible start point of the flow. */
+    @Nonnull
+    public SStart addStart(@Nonnull ITaskDefinition initialTask) {
+        return addStart(getTask(initialTask));
+    }
+
+    /** Sets the tasks as one possible start point of the flow. */
+    @Nonnull
+    public SStart addStart(@Nonnull STask<?> task) {
         Objects.requireNonNull(task);
         if (task.getFlowMap() != this) {
-            throw new SingularFlowException("The task does not belong to this flow", this);
-        } else if (start != null) {
-            throw new SingularFlowException("The start point is already setted", this);
+            throw new SingularFlowException("The task does not belong to this flow", this).add(task);
+        } else if (task.isEnd()) {
+            throw new SingularFlowException("Task of type end, can't be a start point", this).add(task);
+        } else if (task.getStartPointInfo().isPresent()) {
+            throw new SingularFlowException("This task is already defined as a start point", this).add(task);
         }
-        start = new SStart(task);
-        return start;
+        SStart s = new SStart(task);
+        task.setStartPoint(s);
+        starts.add(s);
+        return s;
     }
 
-    /**
-     * <p>Retorna a tarefa inicial deste mapa.</p>
-     *
-     * @return a tarefa inicial.
+    /** Retorna a tarefa inicial deste mapa.
+     * @deprecated {@link #getStarts()} should be used.
      */
+    @Nonnull
+    @Deprecated
     public SStart getStart() {
-        if (start == null) {
+        if (starts.isEmpty()) {
             throw new SingularFlowException("Task inicial não definida no fluxo", this);
+        } else if (starts.size() > 1) {
+            throw new SingularFlowException("There is more than on start point. getStarts() must be used.", this);
         }
-        return start;
+        return starts.get(0);
+    }
+
+    /** List all starts points of the flow. */
+    @Nonnull
+    public List<SStart> getStarts() {
+        return starts.isEmpty() ? Collections.emptyList() : ImmutableList.copyOf(starts);
     }
 
     /**
@@ -441,7 +460,7 @@ public class FlowMap {
      */
     public void verifyConsistency() {
         verifyTasksConsistency();
-        if(start == null){
+        if (starts.isEmpty()) {
             throw new SingularFlowException("There is no initial task set", this);
         }
         checkRouteToTheEnd();
