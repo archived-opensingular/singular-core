@@ -17,7 +17,7 @@
 package org.opensingular.lib.support.persistence.util;
 
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.type.AbstractSingleColumnStandardBasicType;
 import org.hibernate.type.AbstractStandardBasicType;
 import org.hibernate.type.TypeResolver;
@@ -146,9 +146,8 @@ public class GenericEnumUserType implements UserType, ParameterizedType {
 
     @Override
     public Object nullSafeGet(ResultSet rs, String[] names,
-                              SessionImplementor sImpl, Object owner) throws HibernateException,
-            SQLException {
-        Object identifier = type.get(rs, names[0], sImpl);
+                              SharedSessionContractImplementor sharedSessionContractImplementor, Object owner) throws HibernateException, SQLException {
+        Object identifier = type.get(rs, names[0], sharedSessionContractImplementor);
         if (rs.wasNull()) {
             return null;
         }
@@ -166,16 +165,16 @@ public class GenericEnumUserType implements UserType, ParameterizedType {
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index,
-                            SessionImplementor sImpl) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement preparedStatement, Object value, int index,
+                            SharedSessionContractImplementor sharedSessionContractImplementor) throws HibernateException, SQLException {
         try {
             if (value == null) {
-                st.setNull(index,
+                preparedStatement.setNull(index,
                         ((AbstractSingleColumnStandardBasicType<?>) type)
                                 .sqlType());
             } else {
                 Object identifier = identifierMethod.invoke(value);
-                type.nullSafeSet(st, identifier, index, sImpl);
+                type.nullSafeSet(preparedStatement, identifier, index, sharedSessionContractImplementor);
             }
         } catch (Exception e) {
             throw new HibernateException(

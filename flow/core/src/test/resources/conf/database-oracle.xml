@@ -26,7 +26,7 @@
     </bean>
 
     <!-- HIBERNATE CONFIGURATION -->
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <!-- Incluir o pacote quando tiver um -->
         <property name="packagesToScan" value="org.opensingular.flow.persistence.entity"/>
@@ -50,7 +50,7 @@
     <!-- HIBERNATE TRANSACTION CONFIGURATION -->
     <tx:annotation-driven proxy-target-class="true" transaction-manager="transactionManager"/>
 
-    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="dataSource" ref="dataSource"/>
     </bean>

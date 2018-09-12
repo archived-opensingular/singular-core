@@ -36,7 +36,7 @@ import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.lib.commons.context.RefService;
-import org.springframework.orm.hibernate4.SessionHolder;
+import org.springframework.orm.hibernate5.SessionHolder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
