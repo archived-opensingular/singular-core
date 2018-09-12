@@ -50,8 +50,8 @@ import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.flow.core.variable.VarInstance;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.flow.core.variable.VarType;
-import org.opensingular.flow.persistence.entity.util.SessionLocator;
 import org.opensingular.flow.persistence.entity.util.SessionWrapper;
+import org.opensingular.lib.support.persistence.SessionLocator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
