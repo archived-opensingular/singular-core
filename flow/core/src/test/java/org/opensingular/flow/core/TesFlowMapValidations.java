@@ -34,9 +34,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Daniel C. Bordin on 18/03/2017.
@@ -145,8 +143,8 @@ public class TesFlowMapValidations {
         condicions = new ValidationConditions();
         FlowWithFlowValidation p = new FlowWithFlowValidation();
         p.getFlowMap().setMetaDataValue(TAG, Boolean.TRUE);
-        p.getFlowMap().setMetaDataValue(TAG, Boolean.FALSE);
         assertTrue(p.getMetaDataValueOpt(TAG).orElse(Boolean.FALSE));
+        p.getFlowMap().setMetaDataValue(TAG, Boolean.FALSE);
         assertFalse(p.getMetaDataValueOpt(TAG).orElse(Boolean.TRUE));
     }
 
