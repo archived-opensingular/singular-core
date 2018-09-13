@@ -16,10 +16,6 @@
 
 package org.opensingular.lib.wicket.util.datatable;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.extensions.markup.html.repeater.tree.ISortableTreeProvider;
@@ -30,6 +26,10 @@ import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
 import org.opensingular.lib.wicket.util.datatable.column.BSPropertyActionColumn;
 import org.opensingular.lib.wicket.util.datatable.column.BSPropertyColumn;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @param <T>       Tipo de objeto que sera renderizado pelas celulas da coluna
@@ -120,6 +120,11 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> implements 
         callback.accept(column);
         return appendColumn(column);
     }
+
+    public BSDataTableBuilder<T, S, BSActionColumn<T, S>> appendStaticActionColumn(BSActionColumn column){
+        return appendColumn(column);
+    }
+
     public BSDataTableBuilder<T, S, BSActionColumn<T, S>> appendActionColumn(String headerTitle, BSActionColumnCallback<T, S> callback) {
         return appendActionColumn(Model.of(headerTitle), callback);
     }
