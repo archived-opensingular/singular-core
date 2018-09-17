@@ -21,4 +21,9 @@
     <bean id="formAnnotationDAO" class="org.opensingular.form.persistence.dao.FormAnnotationDAO" />
     <bean id="formAnnotationVersionDAO" class="org.opensingular.form.persistence.dao.FormAnnotationVersionDAO" />
     <bean id="formTypeDAO" class="org.opensingular.form.persistence.dao.FormTypeDAO" />
+    <bean id="sessionProvider" class="org.opensingular.form.service.SessionLocatorTest">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+
 </beans>
