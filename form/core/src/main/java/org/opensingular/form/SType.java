@@ -69,7 +69,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     /**
      * contabiliza a quantidade de instancias desse tipo.
      */
-    protected long instanceCount;
+    long instanceCount;
 
     private SimpleName nameSimple;
     private String nameFull;
@@ -146,12 +146,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     final <S extends SType<?>> S extend(@Nullable SimpleName simpleName, @Nullable SType<?> complementarySuperType) {
         SimpleName nameResolved = SFormUtil.resolveName(simpleName, this);
 
-        S newType;
-        try {
-            newType = (S) getClass().newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new SingularFormException("Erro instanciando " + getClass().getName(), e);
-        }
+        S newType = (S) SFormUtil.newInstance(getClass());
         ((SType<I>) newType).nameSimple = nameResolved;
         ((SType<I>) newType).superType = this;
         ((SType<?>) newType).complementarySuperType = complementarySuperType;
@@ -482,7 +477,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     }
 
     @Nullable
-    private final <V> V getAttributeValue(@Nonnull AttrInternalRef ref, @Nullable Class<V> resultClass) {
+    private <V> V getAttributeValue(@Nonnull AttrInternalRef ref, @Nullable Class<V> resultClass) {
         return AttributeValuesManagerForSType.getAttributeValueInTheContextOf(this, null, ref, resultClass);
     }
 
@@ -566,7 +561,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return this;
     }
 
-    private final <T extends SView> T setView(Supplier<T> factory) {
+    private <T extends SView> T setView(Supplier<T> factory) {
         T v = factory.get();
         setView(v);
         return v;
@@ -698,26 +693,20 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     }
 
     private I newInstance(SType<?> original, SDocument owner) {
-        Class<? extends I> c = instanceClass;
-        if (c == null && superType != null) {
-            return superType.newInstance(original, owner);
-        }
         if (instanceClass == null) {
+            if (superType != null) {
+                return superType.newInstance(original, owner);
+            }
             throw new SingularFormException(
                     "O tipo '" + original.getName() + (original == this ? "" : "' que é do tipo '" + getName()) +
                             "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)", this);
         }
-        try {
-            I newInstance = instanceClass.newInstance();
-            newInstance.setDocument(owner);
-            newInstance.setType(this);
-            SFormUtil.inject(newInstance);
-            instanceCount++;
-            return newInstance;
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new SingularFormException(
-                    "Erro instanciando o tipo '" + getName() + "' para o tipo '" + original.getName() + '\'', e);
-        }
+        I newInstance = SFormUtil.newInstance(instanceClass);
+        newInstance.setDocument(owner);
+        newInstance.setType(this);
+        SFormUtil.inject(newInstance);
+        instanceCount++;
+        return newInstance;
     }
 
     /**
@@ -942,9 +931,6 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
      * Lambda para inicialização da {@link SInstance} desse {@link SType}
      * Esse listener é executa somente no momento em que o tipo é instanciado a primeira vez.
      * Quando a {@link SInstance} persistence é carregada o listener não é executado novamente.
-     *
-     * @param initListener
-     * @return
      */
     public SType<I> withInitListener(IConsumer<I> initListener) {
         this.asAtr().setAttributeValue(SPackageBasic.ATR_INIT_LISTENER, initListener);
