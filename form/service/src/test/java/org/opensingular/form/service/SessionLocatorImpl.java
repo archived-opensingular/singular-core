@@ -4,7 +4,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.opensingular.lib.support.persistence.SessionLocator;
 
-public class SessionLocatorTest implements SessionLocator {
+public class SessionLocatorImpl implements SessionLocator {
 
     private SessionFactory sessionFactory;
 
