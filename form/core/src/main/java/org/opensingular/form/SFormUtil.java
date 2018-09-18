@@ -492,4 +492,22 @@ public final class SFormUtil {
         }
     }
 
+    /**
+     * Tries to load a {@link SType} class using the name of the class.
+     *
+     * @return Empty if the class doesn't exists or a error  occurs while loading the class.
+     */
+    @Nonnull
+    public static Optional<Class<? extends SType<?>>> tryFindTypeByClassName(@Nonnull String typeClassName) {
+        Objects.requireNonNull(typeClassName);
+        try {
+            Class<?> c = Class.forName(typeClassName);
+            if (SType.class.isAssignableFrom(c)) {
+                return Optional.of((Class<? extends SType<?>>) c);
+            }
+            return Optional.empty();
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
 }
