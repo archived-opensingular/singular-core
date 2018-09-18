@@ -54,8 +54,8 @@ import java.util.Set;
  */
 public final class SFormXMLUtil {
 
-    public static final String ID_ATTRIBUTE      = "id";
-    public static final String LAST_ID_ATTRIBUTE = "lastId";
+    private static final String ID_ATTRIBUTE      = "id";
+    private static final String LAST_ID_ATTRIBUTE = "lastId";
 
     private SFormXMLUtil() {
     }
@@ -66,7 +66,7 @@ public final class SFormXMLUtil {
      */
     @Nonnull
     public static <T extends SInstance> T fromXML(@Nonnull SType<T> type, @Nullable String xmlString) {
-        return fromXMLInterno(type.newInstance(), parseXml(xmlString));
+        return fromXML(type.newInstance(), parseXml(xmlString));
     }
 
     /**
@@ -75,7 +75,7 @@ public final class SFormXMLUtil {
      */
     @Nonnull
     public static <T extends SInstance> T fromXML(@Nonnull SType<T> type, @Nullable MElement xml) {
-        return fromXMLInterno(type.newInstance(), xml);
+        return fromXML(type.newInstance(), xml);
     }
 
     /**
@@ -96,10 +96,9 @@ public final class SFormXMLUtil {
     public static <T extends SInstance> T fromXML(@Nonnull RefType refType, @Nullable MElement xml,
                                                   @Nonnull SDocumentFactory documentFactory) {
         SInstance instance = documentFactory.createInstance(refType, false);
-        return (T) fromXMLInterno(instance, xml);
+        return (T) fromXML(instance, xml);
     }
 
-    @Nonnull
     public static <T extends SInstance> void fromXML(@Nonnull T instance, @Nullable String xml) {
         fromXML(instance, xml, false);
     }
@@ -113,15 +112,14 @@ public final class SFormXMLUtil {
      * @param generateFormIds
      *  if true new ids will be generated for the entire form, used to read an instance from an raw xml not managed
      *  by Singular Form
-     * @param <T>
      */
-    @Nonnull
     public static <T extends SInstance> void fromXML(@Nonnull T instance, @Nullable String xml, boolean generateFormIds) {
         boolean restoreMode = !generateFormIds;
         fromXMLInterno(instance, parseXml(xml), restoreMode);
     }
 
-    private static <T extends SInstance> T fromXMLInterno(@Nonnull T newInstance, @Nullable MElement xml) {
+    @Nonnull
+    public static <T extends SInstance> T fromXML(@Nonnull T newInstance, @Nullable MElement xml) {
         return fromXMLInterno(newInstance, xml, true);
     }
 
@@ -129,7 +127,7 @@ public final class SFormXMLUtil {
      * Preenche a instância criada com o xml fornecido.
      */
     @Nonnull
-    private static <T extends SInstance> T fromXMLInterno(@Nonnull T newInstance, @Nullable MElement xml, @Nonnull boolean restoreMode) {
+    private static <T extends SInstance> T fromXMLInterno(@Nonnull T newInstance, @Nullable MElement xml, boolean restoreMode) {
         Integer lastId = 0;
         if (xml != null) {
             lastId = xml.getInteger("@" + LAST_ID_ATTRIBUTE);
@@ -139,7 +137,7 @@ public final class SFormXMLUtil {
         if (restoreMode) {
             newInstance.getDocument().initRestoreMode();
         }
-        fromXML(newInstance, xml);
+        fromXMLIntermediary(newInstance, xml);
 
         int maxId = verifyIds(newInstance, new HashSet<>());
         if (lastId == null) {
@@ -168,7 +166,7 @@ public final class SFormXMLUtil {
         return id;
     }
 
-    private static void fromXML(@Nonnull SInstance instance, @Nullable MElement xml) {
+    private static void fromXMLIntermediary(@Nonnull SInstance instance, @Nullable MElement xml) {
         if (xml == null)
             return; // Não precisa fazer nada
         instance.clearInstance();
@@ -197,7 +195,7 @@ public final class SFormXMLUtil {
             String childrenName = list.getType().getElementsType().getNameSimple();
             for (MElement xmlChild = xml.getPrimeiroFilho(); xmlChild != null; xmlChild = xmlChild.getProximoIrmao()) {
                 if (childrenName.equals(xmlChild.getTagName())) {
-                    fromXML(list.addNew(), xmlChild);
+                    fromXMLIntermediary(list.addNew(), xmlChild);
                 } else {
                     InternalAccess.INTERNAL.addUnreadInfo(list, xmlChild);
                 }
@@ -212,7 +210,7 @@ public final class SFormXMLUtil {
         for (MElement xmlChild = xml.getPrimeiroFilho(); xmlChild != null; xmlChild = xmlChild.getProximoIrmao()) {
             Optional<SInstance> instcField = instc.getFieldOpt(xmlChild.getTagName());
             if (instcField.isPresent()) {
-                fromXML(instcField.get(), xmlChild);
+                fromXMLIntermediary(instcField.get(), xmlChild);
             } else {
                 InternalAccess.INTERNAL.addUnreadInfo(instc, xmlChild);
             }
@@ -402,7 +400,7 @@ public final class SFormXMLUtil {
             return;
         }
         SIList<SIAnnotation> iAnnotations = DocumentAnnotations.newAnnotationList(document, false);
-        fromXMLInterno(iAnnotations, xmlAnnotations);
+        fromXML(iAnnotations, xmlAnnotations);
         document.getDocumentAnnotations().loadAnnotations(iAnnotations);
     }
 
