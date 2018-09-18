@@ -38,13 +38,9 @@ public abstract class TempFileUtils {
     public static final String PREFIX = "stream2file";
 
     /** Constante SUFFIX. */
-    public static final String SUFFIX = ".tmp";
+    private static final String SUFFIX = ".tmp";
 
     private TempFileUtils() {
-    }
-
-    private static boolean exists(File f) {
-        return (f != null) && f.exists();
     }
 
     /**
@@ -54,7 +50,7 @@ public abstract class TempFileUtils {
      * @param file      Arquivo a ser apagado
      * @param requester Classe junta a qual será gravado o log de erro do delete
      */
-    public static void deleteAndFailQuietily(@Nonnull File file, @Nonnull Object requester) {
+    public static void deleteAndFailQuietly(@Nonnull File file, @Nonnull Object requester) {
         delete(file, requester, true);
     }
 
@@ -78,7 +74,8 @@ public abstract class TempFileUtils {
      *                     chamar {@link File#delete()}. Se true, engole a exception de erro. Se false, dispara
      *                     exception senão conseguir apagar ou se ocorrer exception na execução.
      */
-    private static void delete(@Nonnull File file, @Nonnull Object requester, boolean failQuietly) {
+    public static void delete(@Nonnull File file, @Nonnull Object requester, boolean failQuietly) {
+        Objects.requireNonNull(file);
         Objects.requireNonNull(requester);
         if (file.exists()) {
             try {
@@ -106,6 +103,48 @@ public abstract class TempFileUtils {
         } else {
             throw SingularException.rethrow(msg, e);
         }
+    }
+
+    /**
+     * Deletes a directory and all of its content recursively. If not possible to delete a file (or directory), will
+     * throw ay exception.
+     *
+     * @param dir       Directory to be delete
+     * @param requester Client class or object that request the deletion. Used if necessary to throw a exception
+     */
+    public static void deleteDirectoryRecursivelyOrException(@Nonnull File dir, @Nonnull Object requester) {
+        deleteDirectoryRecursively(dir, requester, false);
+    }
+
+    /**
+     * Deletes a directory and all of its content recursively. If not possible to delete a file (or directory), will not
+     * throw any exception.
+     *
+     * @param dir       Directory to be delete
+     * @param requester Client class or object that request the deletion. Used if necessary to throw a exception
+     */
+    public static void deleteDirectoryRecursivelyAndFailQuietly(@Nonnull File dir, @Nonnull Object requester) {
+        deleteDirectoryRecursively(dir, requester, true);
+    }
+
+    /**
+     * Deletes a directory and all of its content recursively.
+     *
+     * @param dir         Directory to be delete
+     * @param requester   Client class or object that request the deletion. Used if necessary to throw a exception
+     * @param failQuietly If true and exception occurs (or is not possible to delete any file), doesn't throw any
+     *                    exception. If false, throws a exception if not possible to delete all.
+     */
+    public static void deleteDirectoryRecursively(@Nonnull File dir, @Nonnull Object requester, boolean failQuietly) {
+        Objects.requireNonNull(dir);
+        Objects.requireNonNull(requester);
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File each : files) {
+                deleteDirectoryRecursively(each, requester, failQuietly);
+            }
+        }
+        delete(dir, requester, failQuietly);
     }
 
     /**

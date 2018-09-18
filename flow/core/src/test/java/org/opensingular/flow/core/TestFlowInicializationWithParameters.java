@@ -24,6 +24,7 @@ import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 
+import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -57,19 +58,17 @@ public class TestFlowInicializationWithParameters extends TestFlowExecutionSuppo
 
         assertTrue(startInitializerCalled);
 
-        assertReloadAssert(pi, p-> {
-            assertions(p).isAtTask(Steps.Second)
-                    .isVariableValue(PARAM_FLAG, 7.5d)
-                    .isVariableValue(PARAM_BIG, VALUE_BIG)
-                    .isVariablesSize(3, 2);
-        });
+        assertReloadAssert(pi, p-> assertions(p).isAtTask(Steps.Second)
+                .isVariableValue(PARAM_FLAG, 7.5d)
+                .isVariableValue(PARAM_BIG, VALUE_BIG)
+                .isVariablesSize(3, 2));
     }
 
     @Test
     public void callWithoutRequeridParameter() {
         StartCall<FlowInstance> startCall = new FlowWithInitializationAndParameters().prepareStartCall();
 
-        SingularTestUtil.assertException(() -> startCall.createAndStart(), SingularFlowInvalidParametersException.class,
+        SingularTestUtil.assertException(startCall::createAndStart, SingularFlowInvalidParametersException.class,
                 "paramFlag");
     }
 
@@ -79,7 +78,7 @@ public class TestFlowInicializationWithParameters extends TestFlowExecutionSuppo
                 .setValue(PARAM_FLAG, 0.0)
                 .setValue(PARAM_BIG, VALUE_BIG.pow(2));
 
-        SingularTestUtil.assertException(() -> startCall.createAndStart(), SingularFlowInvalidParametersException.class,
+        SingularTestUtil.assertException(startCall::createAndStart, SingularFlowInvalidParametersException.class,
                 PARAM_BIG);
     }
 
@@ -103,7 +102,9 @@ public class TestFlowInicializationWithParameters extends TestFlowExecutionSuppo
                 .setValue(PARAM_BIG, VALUE_BIG)
                 .setValue(PARAM_DT, VALUE_DT);
 
+        assertTrue(SParametersEnabled.isAutoBindedToFlowVariable(startCall.getVariable(PARAM_FLAG)));
         startCall = SingularIOUtils.serializeAndDeserialize(startCall, true);
+        assertTrue(SParametersEnabled.isAutoBindedToFlowVariable(startCall.getVariable(PARAM_FLAG)));
 
         FlowInstance pi = startCall.createAndStart();
 
@@ -121,6 +122,7 @@ public class TestFlowInicializationWithParameters extends TestFlowExecutionSuppo
             First, Second, End;
 
             @Override
+            @Nonnull
             public String getName() {
                 return toString();
             }
@@ -134,6 +136,7 @@ public class TestFlowInicializationWithParameters extends TestFlowExecutionSuppo
         }
 
         @Override
+        @Nonnull
         protected FlowMap createFlowMap() {
             FlowBuilderImpl f = new FlowBuilderImpl(this);
 
@@ -169,6 +172,7 @@ public class TestFlowInicializationWithParameters extends TestFlowExecutionSuppo
             assertEquals((Double) 1.5d, v);
 
             //Verifica se for feita a copia automática do auto bind
+            assertTrue(SParametersEnabled.isAutoBindedToFlowVariable(startCall.getVariable(PARAM_FLAG)));
             assertEquals(v, instance.getVariableValue(PARAM_FLAG));
             assertEquals(VALUE_BIG, instance.getVariableValue(PARAM_BIG));
 
@@ -177,7 +181,7 @@ public class TestFlowInicializationWithParameters extends TestFlowExecutionSuppo
             instance.start();
         }
 
-        public void doFirst(ExecutionContext<FlowInstance> flowInstanceExecutionContext) {
+        void doFirst(ExecutionContext<FlowInstance> flowInstanceExecutionContext) {
             Double v = flowInstanceExecutionContext.getFlowInstance().getVariables().getValueDouble(PARAM_FLAG, 0.0);
             Assert.assertEquals((Double) 3.0, v);
             Assert.assertEquals(VALUE_BIG, flowInstanceExecutionContext.getFlowInstance().getVariables().getValueBigDecimal(PARAM_BIG));

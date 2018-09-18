@@ -32,6 +32,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -51,6 +52,13 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         // contornar um erro de compilação do JDK 8.0.60. Talvez no futuro
         // possa ser retirada
         super((Class<? extends SIList<I>>) (Class<? extends SInstance>) SIList.class);
+    }
+
+    /** Return the super type (parent type) of the current type. */
+    @Override
+    @Nonnull
+    public final SType<SIList<I>> getSuperType() {
+        return Objects.requireNonNull(super.getSuperType());
     }
 
     @Override
@@ -96,36 +104,55 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         return list;
     }
 
-    protected final E setElementsType(Class<E> elementsTypeClass) {
-        return setElementsType(null, resolveType(elementsTypeClass));
+    @Nonnull
+    protected final E setElementsType(@Nonnull Class<E> elementsTypeClass) {
+        return setElementsTypeInternal(null, resolveType(elementsTypeClass), null);
     }
 
     @Nonnull
     protected final E setElementsType(@Nonnull E elementsType) {
-        return setElementsType(null, elementsType);
+        return setElementsTypeInternal(null, elementsType, null);
     }
 
-    protected final E setElementsType(String simpleNameNewType, Class<E> elementsTypeClass) {
-        return setElementsType(simpleNameNewType, resolveType(elementsTypeClass));
+    @Nonnull
+    protected final E setElementsType(@Nullable String simpleNameNewType, @Nonnull Class<E> elementsTypeClass) {
+        return setElementsTypeInternal(simpleNameNewType, resolveType(elementsTypeClass), null);
     }
 
     @Nonnull
     protected final E setElementsType(@Nullable String simpleNameNewType, @Nonnull E elementsType) {
+        return setElementsTypeInternal(simpleNameNewType, elementsType, null);
+    }
+
+    @Nonnull
+    private E setElementsTypeInternal(@Nullable String simpleNameNewType, @Nonnull E elementsType,
+            @Nullable SType<?> complementarySuperType) {
         if (this.elementsType != null) {
             throw new SingularFormException("O tipo da lista já está definido", this);
         }
-        this.elementsType = extendType(SimpleName.ofNullable(simpleNameNewType), elementsType);
+        if (complementarySuperType == null) {
+            this.elementsType = extendType(simpleNameNewType, elementsType);
+        } else {
+            this.elementsType = extendMultipleTypes(simpleNameNewType, elementsType, complementarySuperType);
+        }
         return this.elementsType;
     }
 
     @Override
     protected void extendSubReference() {
         if (getSuperType().isList()) {
-            E type = (E) ((STypeList) getSuperType()).elementsType;
+            @SuppressWarnings("unchecked")
+            E type = (E) extractListType(getSuperType());
             if (type != null) {
-                setElementsType(type);
+                SType<?> complementarySuper = getComplementarySuperType().map(STypeList::extractListType).orElse(null);
+                setElementsTypeInternal(null, type, complementarySuper);
             }
         }
+    }
+
+    @Nullable
+    private static SType<?> extractListType(@Nonnull SType<?> listCandidate) {
+        return ((STypeList) listCandidate).elementsType;
     }
 
     /**

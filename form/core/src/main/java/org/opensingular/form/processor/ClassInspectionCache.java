@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * Caches information about a Class that otherwise would be expsive do often be recalculated. It's intend to <b>INTERNAL
- * USE ONLY</b>.
+ * Caches information about a Class that otherwise would be expensive do often be recalculated. It's intend to
+ * <b>INTERNAL USE ONLY</b>.
  *
  * @author Daniel C. Bordin on 19/08/2017.
  */
@@ -58,6 +58,7 @@ public class ClassInspectionCache {
         });
     }
 
-    public enum CacheKey {HAS_ON_LOAD_TYPE_METHOD, PUBLIC_INFO, SIMPLE_NAME, FULL_NAME, FILE_DEFINITIONS}
+    public enum CacheKey {HAS_ON_LOAD_TYPE_METHOD, PUBLIC_INFO, SIMPLE_NAME, FULL_NAME, FILE_DEFINITIONS,
+        PACKAGE_NAME, PACKAGE_CLASS}
 
 }

@@ -143,7 +143,7 @@ public abstract class AbstractTestTempFileSupport {
         try (FileOutputStream out = new FileOutputStream(file)) {
             fileGenerator.accept(out);
         } catch (Exception e) {
-            TempFileUtils.deleteAndFailQuietily(file, this);
+            TempFileUtils.deleteAndFailQuietly(file, this);
             Throwables.throwIfUnchecked(e);
             throw SingularException.rethrow(e);
         }

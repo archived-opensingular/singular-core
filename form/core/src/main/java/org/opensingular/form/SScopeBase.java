@@ -113,20 +113,15 @@ public abstract class SScopeBase implements SScope {
             }
             return type.getLocalType(pathReader.next());
         }
-        throw new SingularFormException(pathReader.getErrorMsg(this,
-                "Não foi encontrado o tipo '" + pathReader.getToken() + "' em '" + getName() + "'"), this);
+        throw new SingularFormException(pathReader
+                .getErrorMsg(this, "Não foi encontrado o tipo '" + pathReader.getToken() + "' em '" + this + "'"));
     }
 
     /** Registro o tipo informado neste escopo. */
     @Nonnull
     final <T extends SType<?>> T registerType(@Nonnull Class<T> typeClass) {
         Objects.requireNonNull(typeClass);
-        T t;
-        try {
-            t = typeClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new SingularFormException("Erro instanciando " + typeClass.getName(), e);
-        }
+        T t = SFormUtil.newInstance(typeClass);
         t = registerTypeInternal(t, typeClass);
         TypeProcessorAttributeReadFromFile.INSTANCE.onRegisterTypeByClass(t, typeClass);
         return t;
@@ -224,6 +219,9 @@ public abstract class SScopeBase implements SScope {
      * contêm o campo não será marcado como referência circular, somente o campo em si.
      */
     private boolean isRecursiveReference(@Nonnull SType<?> type) {
+        if (type.getSuperType() != null && type.getSuperType().isRecursiveReference()) {
+            return true;
+        }
         for(SScope parent = type.getParentScope(); parent instanceof SType; parent = parent.getParentScope()) {
             if(parent == type || parent == type.getSuperType()) {
                 return true;
@@ -232,20 +230,131 @@ public abstract class SScopeBase implements SScope {
         return false;
     }
 
+    /**
+     * Creates new type in the current scope extending the informed {@link SType}.
+     *
+     * @param simpleNameNewType If the name isn't informed, uses the same name of the parent type.
+     */
     @Nonnull
     final <T extends SType<?>> T extendType(@Nullable SimpleName simpleNameNewType, @Nonnull T parentType) {
-        if (getDictionary() != parentType.getDictionary()) {
-            throw new SingularFormException(
-                    "O tipo " + parentType.getName() + " foi criado dentro de outro dicionário, que não o atual de " + getName());
-        }
-        T newType = parentType.extend(simpleNameNewType);
+        SFormUtil.verifySameDictionary(this, parentType);
+        T newType = parentType.extend(simpleNameNewType, null);
         return registerTypeInternal(newType, null);
     }
 
+    /**
+     * Creates new type in the current scope extending the informed {@link SType}.
+     *
+     * @param simpleNameNewType If the name isn't informed, uses the same name of the parent type.
+     */
     @Nonnull
-    final <T extends SType<?>> T extendType(@Nullable String simpleNameNewType, @Nonnull Class<T> parenteTypeClass) {
-        T parentType = resolveType(parenteTypeClass);
+    final <T extends SType<?>> T extendType(@Nullable String simpleNameNewType, @Nonnull T parentType) {
         return extendType(SimpleName.ofNullable(simpleNameNewType), parentType);
+    }
+
+    /**
+     * Creates new type in the current scope extending the informed {@link SType}.
+     *
+     * @param simpleNameNewType If the name isn't informed, uses the same name of the parent type.
+     */
+    @Nonnull
+    final <T extends SType<?>> T extendType(@Nullable String simpleNameNewType, @Nonnull Class<T> parentTypeClass) {
+        T parentType = resolveType(parentTypeClass);
+        return extendType(SimpleName.ofNullable(simpleNameNewType), parentType);
+    }
+
+    /**
+     * Creates new type in the current scope extending directly the informed {@link SType} and also extending
+     * the second informed type as complementary (secondary) super type.
+     *
+     * @param simpleNameNewType      If the name isn't informed, uses the same name of the parent type.
+     * @param complementarySuperType The Java class of complementary type, must be the same Java class of the parentType
+     *                               or a super class of the parent type's Java class.
+     */
+    @Nonnull
+    final <T extends SType<?>> T extendMultipleTypes(@Nullable String simpleNameNewType, @Nonnull T parentType,
+            @Nonnull SType<?> complementarySuperType) {
+        return extendMultipleTypes(SimpleName.ofNullable(simpleNameNewType), parentType, complementarySuperType);
+    }
+
+    /**
+     * Creates new type in the current scope extending directly the informed {@link SType} and also extending
+     * the second informed type as complementary (secondary) super type.
+     *
+     * @param simpleNameNewType      If the name isn't informed, uses the same name of the parent type.
+     * @param complementarySuperType The Java class of complementary type, must be the same Java class of the parentType
+     *                               or a super class of the parent type's Java class.
+     */
+    @Nonnull
+    final <T extends SType<?>> T extendMultipleTypes(@Nullable String simpleNameNewType, @Nonnull Class<T> parentType,
+            @Nonnull SType<?> complementarySuperType) {
+        return extendMultipleTypes(SimpleName.ofNullable(simpleNameNewType), resolveType(parentType),
+                complementarySuperType);
+    }
+
+    /**
+     * Creates new type in the current scope extending directly the informed {@link SType} and also extending
+     * the second informed type as complementary (secondary) super type.
+     *
+     * @param simpleNameNewType      If the name isn't informed, uses the same name of the parent type.
+     * @param complementarySuperType The Java class of complementary type, must be the same Java class of the parentType
+     *                               or a super class of the parent type's Java class.
+     */
+    @Nonnull
+    final <T extends SType<?>> T extendMultipleTypes(@Nullable SimpleName simpleNameNewType, @Nonnull T parentType,
+            @Nonnull SType<?> complementarySuperType) {
+        SFormUtil.verifySameDictionary(this, parentType);
+        SFormUtil.verifySameDictionary(this, complementarySuperType);
+        if (parentType.isTypeOf(complementarySuperType)) {
+            throw new SingularFormException("Unnecessary multiple inheritance: " + parentType.getName() +
+                    " is already a direct super type of " + complementarySuperType.getName());
+        }
+        if (complementarySuperType.isTypeOf(parentType)) {
+            throw new SingularFormException("Unnecessary multiple inheritance: " + complementarySuperType.getName() +
+                    " is already a direct super type of " + parentType.getName());
+        }
+        if (!complementarySuperType.getClass().isAssignableFrom(parentType.getClass())) {
+            throw new SingularFormException("Can't do multiple inheritance because " + parentType.getName() + " (" +
+                    parentType.getClass().getName() + ") java class isn't a derived class of the type " +
+                    complementarySuperType.getName() + " (" + complementarySuperType.getClass().getName() + ")");
+        }
+        if (complementarySuperType.isComposite() && !complementarySuperType.isRecursiveReference()) {
+            verifyComplementarySuperTypeHasCreateNewField(parentType, complementarySuperType);
+        }
+        T newType = parentType.extend(simpleNameNewType, complementarySuperType);
+        return registerTypeInternal(newType, null);
+    }
+
+    /** Verifies if the complementary super type has created a new field. Throws exception in this case. */
+    private <T extends SType<?>> void verifyComplementarySuperTypeHasCreateNewField(@Nonnull T parentType,
+            @Nonnull SType<?> complementarySuperType) {
+        SType<?> common = SFormUtil.findCommonType(parentType, complementarySuperType);
+        for (SType<?> current = complementarySuperType; current != common; current = current.getSuperType()) {
+            for (SType<?> field : ((STypeComposite<?>) current).getFieldsLocal()) {
+                if (Objects.requireNonNull(field.getSuperType()).getParentScope() != current.getSuperType()) {
+                    throw new SingularFormException(
+                            current + " can't be a complementary super type because it has created a new field: " +
+                                    field);
+                }
+            }
+        }
+    }
+
+    /**
+     * Extending the two types, as super type and complementary type, for the new type, also ensuring the type will be
+     * reused if it already exists in the current scope.
+     */
+    @Nonnull
+    final <T extends SType<?>> T findOrCreateExtendedType(@Nonnull Class<T> parentTypeClass,
+            @Nonnull SType<?> complementarySuperType) {
+        T parentType = resolveType(parentTypeClass);
+        for (SType<?> type : getLocalTypes()) {
+            if (type.getSuperType() == parentType && type.getComplementarySuperType().orElse(null) ==
+                    complementarySuperType) {
+                return parentTypeClass.cast(type);
+            }
+        }
+        return extendMultipleTypes((SimpleName) null, parentType, complementarySuperType);
     }
 
     @SuppressWarnings("unchecked")
@@ -350,5 +459,10 @@ public abstract class SScopeBase implements SScope {
 
     final void setRecursiveReference(boolean recursiveReference) {
         this.recursiveReference = recursiveReference;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

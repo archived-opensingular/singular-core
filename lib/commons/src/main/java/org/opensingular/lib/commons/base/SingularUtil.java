@@ -20,9 +20,11 @@ import com.google.common.base.Throwables;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import javax.annotation.Nonnull;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.text.Normalizer;
+import java.util.Objects;
 import java.util.function.Function;
 
 public final class SingularUtil {
@@ -34,22 +36,28 @@ public final class SingularUtil {
         throw SingularException.rethrow(throwable);
     }
 
-    public static String toSHA1(Object object) {
+    @Nonnull
+    public static String toSHA1(@Nonnull Object object) {
         return toSHA1(object.toString().getBytes(StandardCharsets.UTF_8));
     }
 
-    public static String toSHA1(byte[] bytes) {
+    @Nonnull
+    public static String toSHA1(@Nonnull byte[] bytes) {
+        Objects.requireNonNull(bytes);
         MessageDigest sha1Digest = DigestUtils.getSha1Digest();
         sha1Digest.update(bytes);
 
         return Hex.encodeHexString(sha1Digest.digest());
     }
 
-    public static String convertToJavaIdentity(String original, boolean normalize) {
+    @Nonnull
+    public static String convertToJavaIdentity(@Nonnull String original, boolean normalize) {
         return convertToJavaIdentity(original, false, normalize);
     }
 
-    public static String convertToJavaIdentity(String original, boolean firstCharacterUpperCase, boolean normalize) {
+    @Nonnull
+    public static String convertToJavaIdentity(@Nonnull String original, boolean firstCharacterUpperCase, boolean normalize) {
+        Objects.requireNonNull(original);
         String normalized = normalize ? normalize(original) : original;
         StringBuilder sb = new StringBuilder(normalized.length());
         boolean nextUpper = false;
@@ -62,10 +70,13 @@ public final class SingularUtil {
                 nextUpper = true;
             }
         }
+        if (sb.length() == 0) {
+            throw new SingularException("'" + original + "' it's no possible to convert to valid identifier");
+        }
         return sb.toString();
     }
 
-    protected static boolean appendJavaIdentifierPart(StringBuilder sb, boolean nextUpper, char c) {
+    private static boolean appendJavaIdentifierPart(StringBuilder sb, boolean nextUpper, char c) {
         char _c = c;
         if (nextUpper) {
             _c = Character.toUpperCase(_c);
@@ -74,7 +85,7 @@ public final class SingularUtil {
         return false;
     }
 
-    protected static void appendLengthZero(boolean firstCharacterUpperCase, StringBuilder sb, char c) {
+    private static void appendLengthZero(boolean firstCharacterUpperCase, StringBuilder sb, char c) {
         char _c = c;
         if (Character.isJavaIdentifierStart(_c)) {
             _c = firstCharacterUpperCase ? Character.toUpperCase(_c) : Character.toLowerCase(_c);
@@ -82,7 +93,8 @@ public final class SingularUtil {
         }
     }
 
-    public static String normalize(String original) {
+    @Nonnull
+    public static String normalize(@Nonnull String original) {
         return Normalizer.normalize(original, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
 

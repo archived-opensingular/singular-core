@@ -16,13 +16,16 @@
 
 package org.opensingular.lib.commons.report;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opensingular.lib.commons.base.SingularUtil;
 import org.opensingular.lib.commons.views.ViewGenerator;
 import org.opensingular.lib.commons.views.ViewOutputFormat;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Singular Report
@@ -60,8 +63,11 @@ public interface SingularReport<F> extends Serializable {
         return Arrays.asList(ViewOutputFormat.HTML, ViewOutputFormat.EXCEL, ViewOutputFormat.HTML);
     }
 
+    @Nonnull
     default String getIdentity() {
-        return SingularUtil.convertToJavaIdentity(getReportName(), true);
+        String name = StringUtils.trimToNull(getReportName());
+        Objects.requireNonNull(name, "getReportName()");
+        return SingularUtil.convertToJavaIdentity(name, true);
     }
 
 

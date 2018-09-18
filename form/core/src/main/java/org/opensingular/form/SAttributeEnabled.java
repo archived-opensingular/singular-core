@@ -54,21 +54,19 @@ public interface SAttributeEnabled {
         setAttributeValue(attributeName, null, value);
     }
 
-    void setAttributeValue(String attributeFullName, String subPath, Object value);
+    void setAttributeValue(@Nonnull String attributeFullName, @Nullable String subPath, @Nullable Object value);
 
 
-    /**
-     * Lista todos os atributos com valor associado diretamente ao objeto atual.
-     */
+    /** Lists all attributes with value that are associeated directly to the current object. */
     @Nonnull
-    public Collection<SInstance> getAttributes();
+    Collection<SInstance> getAttributes();
 
     /**
      * Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. Não procura o atributo na
      * hierarquia.
      */
     @Nonnull
-    public Optional<SInstance> getAttributeDirectly(@Nonnull String fullName);
+    Optional<SInstance> getAttributeDirectly(@Nonnull String fullName);
 
     @Nullable
     <V> V getAttributeValue(@Nonnull String attributeFullName, @Nullable Class<V> resultClass);
@@ -123,10 +121,10 @@ public interface SAttributeEnabled {
      * Transforma o tipo ou instância atual de acordo com a função de
      * mapeamento.
      */
-    public <TR> TR as(Function<SAttributeEnabled, TR> wrapper);
+    <TR> TR as(Function<SAttributeEnabled, TR> wrapper);
 
     /** Retorna o leitor de atributos básicos para o tipo ou instância atual. */
-    public default AtrBasic asAtr() {
+    default AtrBasic asAtr() {
         return as(AtrBasic::new);
     }
 
@@ -134,27 +132,26 @@ public interface SAttributeEnabled {
      * Retorna o leitor de atributos de Bootstrap para o tipo ou instância
      * atual.
      */
-    public default AtrBootstrap asAtrBootstrap() {
+    default AtrBootstrap asAtrBootstrap() {
         return as(AtrBootstrap::new);
     }
 
     /**
      * Retorna o leitor de atributos relacionados a persistencia dos dados.
-     * @return
      */
-    public default AtrIndex asAtrIndex() {
+    default AtrIndex asAtrIndex() {
         return as(AtrIndex::new);
     }
 
     /**
      * Retorna o leitor de atributos de anotação para o tipo ou instância atual.
      */
-    public default AtrAnnotation asAtrAnnotation() {
+    default AtrAnnotation asAtrAnnotation() {
         return as(AtrAnnotation::new);
     }
 
     /** Returns specific reader for defining persistence attributes of the current SType or SInstance. */
-    public default AtrSQL asSQL() {
+    default AtrSQL asSQL() {
         return as(AtrSQL::new);
     }
 

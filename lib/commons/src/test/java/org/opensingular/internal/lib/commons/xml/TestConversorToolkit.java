@@ -348,12 +348,6 @@ public class TestConversorToolkit {
         Assert.assertFalse(stringConvertida.contains("\n"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetDateFromDataError(){
-        String iso8601 = "1999-05-31T13:20:00.000-05:00";
-        ConversorToolkit.getDateFromDate(iso8601);
-    }
-
     @Test
     public void testCheckNull() {
         Assert.assertNull(ConversorToolkit.getDateFromDate(null));

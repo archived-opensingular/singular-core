@@ -14,27 +14,12 @@
  * limitations under the License.
  */
 
-package org.opensingular.flow.persistence.util;
+package org.opensingular.lib.support.persistence;
 
-import org.opensingular.flow.persistence.entity.util.SessionLocator;
 import org.hibernate.Session;
 
-import javax.persistence.EntityManager;
+@FunctionalInterface
+public interface SessionLocator {
 
-public class EntityManagerSessionLocator implements SessionLocator {
-
-    private EntityManager entityManager;
-
-    @Override
-    public Session getCurrentSession() {
-        return (Session) entityManager.getDelegate();
-    }
-
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
-
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+    Session getCurrentSession();
 }
