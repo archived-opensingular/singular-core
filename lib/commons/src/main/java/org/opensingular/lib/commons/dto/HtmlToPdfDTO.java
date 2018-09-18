@@ -16,6 +16,8 @@
 
 package org.opensingular.lib.commons.dto;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +82,10 @@ public class HtmlToPdfDTO implements Serializable {
 
     public void setAdditionalParams(List<String> additionalParams) {
         this.additionalParams = additionalParams;
+    }
+
+    public String getAll(){
+        return StringUtils.defaultString(getHeader()) + StringUtils.defaultString(getBody()) + StringUtils.defaultString(getFooter());
     }
 
     public void addParam(String param) {
