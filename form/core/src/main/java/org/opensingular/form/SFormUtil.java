@@ -94,8 +94,9 @@ public final class SFormUtil {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';  //NOSONAR
     }
 
+    /** Verifies if the name is a valid for a simple name otherwise throws a exception. */
     @Nonnull
-    static String validateSimpleName(@Nonnull String name) {
+    public static String validateSimpleName(@Nonnull String name) {
         if (isNotValidSimpleName(name)) {
             throw new SingularFormException('\'' + name + "' não é um nome válido para pacote, tipo ou atributo");
         }
