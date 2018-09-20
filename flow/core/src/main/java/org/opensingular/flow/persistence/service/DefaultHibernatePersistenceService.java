@@ -37,7 +37,7 @@ import org.opensingular.flow.persistence.entity.TaskInstanceHistoryEntity;
 import org.opensingular.flow.persistence.entity.TaskVersionEntity;
 import org.opensingular.flow.persistence.entity.VariableInstanceEntity;
 import org.opensingular.flow.persistence.entity.VariableTypeInstance;
-import org.opensingular.flow.persistence.entity.util.SessionLocator;
+import org.opensingular.lib.support.persistence.SessionLocator;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

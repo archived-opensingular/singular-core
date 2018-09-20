@@ -16,9 +16,9 @@
 
 package org.opensingular.flow.persistence.service;
 
-import org.opensingular.flow.persistence.entity.util.SessionLocator;
 import org.opensingular.flow.persistence.entity.util.SessionWrapper;
 import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.support.persistence.SessionLocator;
 
 import java.util.Objects;
 

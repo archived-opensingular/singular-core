@@ -121,12 +121,7 @@ public abstract class SScopeBase implements SScope {
     @Nonnull
     final <T extends SType<?>> T registerType(@Nonnull Class<T> typeClass) {
         Objects.requireNonNull(typeClass);
-        T t;
-        try {
-            t = typeClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new SingularFormException("Erro instanciando " + typeClass.getName(), e);
-        }
+        T t = SFormUtil.newInstance(typeClass);
         t = registerTypeInternal(t, typeClass);
         TypeProcessorAttributeReadFromFile.INSTANCE.onRegisterTypeByClass(t, typeClass);
         return t;

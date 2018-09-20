@@ -26,12 +26,13 @@ import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewAutoComplete;
 import org.opensingular.form.view.SViewSelectionByRadio;
 import org.opensingular.form.view.SViewSelectionBySelect;
-import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.lambda.IConsumer;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Objects;
 
 @SuppressWarnings("rawtypes")
 @SInfoType(name = "STypeSimple", spackage = SPackageCore.class)
@@ -45,9 +46,9 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE extends Serializable> 
         this.valueClass = null;
     }
 
-    protected STypeSimple(Class<? extends I> instanceClass, Class<VALUE> valueClass) {
-        super(instanceClass);
-        this.valueClass = valueClass;
+    protected STypeSimple(@Nonnull Class<? extends I> instanceClass, @Nonnull Class<VALUE> valueClass) {
+        super(Objects.requireNonNull(instanceClass));
+        this.valueClass = Objects.requireNonNull(valueClass);
     }
 
     /**
@@ -142,6 +143,7 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE extends Serializable> 
         return valueClass.cast(converter.convert(valueClass, value));
     }
 
+    @Nonnull
     public final Class<VALUE> getValueClass() {
         return valueClass;
     }
@@ -164,9 +166,9 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE extends Serializable> 
             msg += complement;
         }
         if (e != null) {
-            return SingularException.rethrow(msg, e);
+            return new SingularFormException(msg, e);
         }
-        return new SingularException(msg);
+        return new SingularFormException(msg);
     }
 
     @SafeVarargs
@@ -189,9 +191,7 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE extends Serializable> 
     /**
      * Configura o valor inicial da {@link SISimple} desse {@link STypeSimple}
      * Quando a {@link SISimple} persistence é carregada o listener não é executado novamente.
-     * @param value
-     *  valor de inicialização.
-     * @return
+     * @param value valor de inicialização.
      */
     public SType<I> setInitialValue(Object value) {
         return with(SPackageBasic.ATR_INIT_LISTENER, (IConsumer<I>) i -> i.setValue(value));

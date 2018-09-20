@@ -52,7 +52,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
         this.origin = Objects.requireNonNull(origin);
         this.name = Objects.requireNonNull(name);
         this.destination = Objects.requireNonNull(destination);
-        this.abbreviation = SingularUtil.convertToJavaIdentity(name, true);
+        this.abbreviation = SingularUtil.convertToJavaIdentifier(name);
     }
 
     @SuppressWarnings("unchecked")

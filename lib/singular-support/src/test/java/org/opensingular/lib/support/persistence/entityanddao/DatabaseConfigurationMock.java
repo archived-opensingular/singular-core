@@ -19,6 +19,7 @@
 package org.opensingular.lib.support.persistence.entityanddao;
 
 import org.hibernate.SessionFactory;
+import org.opensingular.lib.support.persistence.SessionLocator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -65,5 +66,10 @@ public class DatabaseConfigurationMock {
         factory.setPackagesToScan("org.opensingular.lib.support.persistence");
 
         return factory;
+    }
+
+    @Bean
+    public SessionLocator sessionProvider(SessionFactory sessionFactory){
+        return () -> sessionFactory.getCurrentSession();
     }
 }

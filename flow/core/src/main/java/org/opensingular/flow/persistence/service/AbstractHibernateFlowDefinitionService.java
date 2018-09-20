@@ -40,8 +40,8 @@ import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.entity.TransitionType;
 import org.opensingular.flow.core.service.IFlowDefinitionEntityService;
 import org.opensingular.flow.persistence.entity.ModuleEntity;
-import org.opensingular.flow.persistence.entity.util.SessionLocator;
 import org.opensingular.flow.persistence.entity.util.SessionWrapper;
+import org.opensingular.lib.support.persistence.SessionLocator;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

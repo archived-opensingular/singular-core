@@ -66,6 +66,7 @@ public abstract class TypeLoader<TYPE_KEY extends Serializable> {
      * @param typeId
      *            Identificador do tipo a ser carregado.
      */
+    @Nonnull
     protected abstract Optional<SType<?>> loadTypeImpl(@Nonnull TYPE_KEY typeId);
 
     /**
