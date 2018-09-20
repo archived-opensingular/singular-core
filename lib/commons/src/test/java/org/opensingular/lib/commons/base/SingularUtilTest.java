@@ -58,6 +58,12 @@ public class SingularUtilTest {
         assertEquals("ab", SingularUtil.convertToJavaIdentifier("a\uFB03b"));
         assertEquals("aA", SingularUtil.convertToJavaIdentifier("\u00C1\u00C1"));
         assertEquals("a", SingularUtil.convertToJavaIdentifier("ã"));
+
+        Assertions.assertThat(SingularUtil.tryConvertToJavaIdentifier("A A")).hasValue("aA");
+        Assertions.assertThat(SingularUtil.tryConvertToJavaIdentifier("a a", true)).hasValue("AA");
+        Assertions.assertThat(SingularUtil.tryConvertToJavaIdentifier("  ")).isNotPresent();
+        Assertions.assertThat(SingularUtil.tryConvertToJavaIdentifier("99")).isNotPresent();
+        Assertions.assertThat(SingularUtil.tryConvertToJavaIdentifier("X (y) {y} %y")).hasValue("xYYY");
     }
 
     @Test
