@@ -121,7 +121,7 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extend
     public BUILDER_ROLE addBusinessRole(String description,
                                         BusinessRoleStrategy<? extends FlowInstance> businessRoleStrategy,
                                         boolean automaticUserAllocation) {
-        return addBusinessRole(description, SingularUtil.convertToJavaIdentity(description, true), businessRoleStrategy, automaticUserAllocation);
+        return addBusinessRole(description, SingularUtil.convertToJavaIdentifier(description), businessRoleStrategy, automaticUserAllocation);
     }
 
     public BUILDER_ROLE addBusinessRole(String description, String abbreviation,
@@ -136,7 +136,7 @@ public abstract class FlowBuilder<DEF extends FlowDefinition<?>, FLOW_MAP extend
     }
 
     public BUILDER_ROLE addBusinessRole(String description, boolean automaticUserAllocation) {
-        return newBusinessRole(getFlowMap().addRoleDefinition(description, SingularUtil.convertToJavaIdentity(description, true),
+        return newBusinessRole(getFlowMap().addRoleDefinition(description, SingularUtil.convertToJavaIdentifier(description),
                 SFlowUtil.dummyBusinessRoleStrategy(), automaticUserAllocation));
     }
 

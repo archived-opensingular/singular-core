@@ -50,15 +50,23 @@ public final class SingularUtil {
         return Hex.encodeHexString(sha1Digest.digest());
     }
 
+    /**
+     * Converts a arbitrary string to a valid java identifier (valid characters ans without spaces). If it's not
+     * possible to convert, a exception is thrown.
+     */
     @Nonnull
-    public static String convertToJavaIdentity(@Nonnull String original, boolean normalize) {
-        return convertToJavaIdentity(original, false, normalize);
+    public static String convertToJavaIdentifier(@Nonnull String original) {
+        return convertToJavaIdentifier(original, false);
     }
 
+    /**
+     * Converts a arbitrary string to a valid java identifier (valid characters ans without spaces). If it's not
+     * possible to convert, a exception is thrown.
+     */
     @Nonnull
-    public static String convertToJavaIdentity(@Nonnull String original, boolean firstCharacterUpperCase, boolean normalize) {
+    public static String convertToJavaIdentifier(@Nonnull String original, boolean firstCharacterUpperCase) {
         Objects.requireNonNull(original);
-        String normalized = normalize ? normalize(original) : original;
+        String normalized = normalize(original);
         StringBuilder sb = new StringBuilder(normalized.length());
         boolean nextUpper = false;
         for (char c : normalized.toCharArray()) {
@@ -93,6 +101,12 @@ public final class SingularUtil {
         }
     }
 
+    /**
+     * Transforms unicode characters in a simpler common version., because some different unicode characters have the
+     * same semantic meaning. Also removes some special characters.
+     *
+     * @see Normalizer
+     */
     @Nonnull
     public static String normalize(@Nonnull String original) {
         return Normalizer.normalize(original, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");

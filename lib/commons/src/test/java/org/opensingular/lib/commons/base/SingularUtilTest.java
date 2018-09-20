@@ -26,6 +26,7 @@ import org.opensingular.lib.commons.dto.HtmlToPdfDTO;
 import java.io.IOException;
 import java.util.Date;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -40,18 +41,23 @@ public class SingularUtilTest {
     public void convertToJavaIdentityTest() {
         String test = " um teste para verificar o que ele converte.";
 
-        String convertedValue = SingularUtil.convertToJavaIdentity(test, true);
-        Assert.assertEquals("umTesteParaVerificarOQueEleConverte", convertedValue);
+        String convertedValue = SingularUtil.convertToJavaIdentifier(test);
+        assertEquals("umTesteParaVerificarOQueEleConverte", convertedValue);
 
-        convertedValue = SingularUtil.convertToJavaIdentity(test, true, false);
-        Assert.assertEquals("UmTesteParaVerificarOQueEleConverte", convertedValue);
+        convertedValue = SingularUtil.convertToJavaIdentifier(test, true);
+        assertEquals("UmTesteParaVerificarOQueEleConverte", convertedValue);
 
-        Assertions.assertThatThrownBy(() -> SingularUtil.convertToJavaIdentity("99", false)).isExactlyInstanceOf(
+        Assertions.assertThatThrownBy(() -> SingularUtil.convertToJavaIdentifier("99")).isExactlyInstanceOf(
                 SingularException.class).hasMessageContaining("it's no possible to convert");
-        Assertions.assertThatThrownBy(() -> SingularUtil.convertToJavaIdentity("", false)).isExactlyInstanceOf(
+        Assertions.assertThatThrownBy(() -> SingularUtil.convertToJavaIdentifier("")).isExactlyInstanceOf(
                 SingularException.class).hasMessageContaining("it's no possible to convert");
-        Assertions.assertThatThrownBy(() -> SingularUtil.convertToJavaIdentity("  ", false)).isExactlyInstanceOf(
+        Assertions.assertThatThrownBy(() -> SingularUtil.convertToJavaIdentifier("  ")).isExactlyInstanceOf(
                 SingularException.class).hasMessageContaining("it's no possible to convert");
+
+        //Normalization of special characters
+        assertEquals("ab", SingularUtil.convertToJavaIdentifier("a\uFB03b"));
+        assertEquals("aA", SingularUtil.convertToJavaIdentifier("\u00C1\u00C1"));
+        assertEquals("a", SingularUtil.convertToJavaIdentifier("ã"));
     }
 
     @Test
