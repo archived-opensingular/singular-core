@@ -507,7 +507,7 @@ public final class SFormUtil {
                 return Optional.of((Class<? extends SType<?>>) c);
             }
             return Optional.empty();
-        } catch (Exception e) {
+        } catch (Exception e) { //NOSONAR
             return Optional.empty();
         }
     }
