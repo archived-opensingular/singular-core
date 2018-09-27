@@ -59,6 +59,9 @@ public interface SingularProperties {
 
     String REST_ALLOWED_COMMON_NAME = "singular.rest.allowed.common.name";
 
+
+    String EMAIL_COD_MODULE = "singular.mail.module.cod";
+
 //    ParmDef<String> ADDRESS = new ParmDef<>("Asasd.ad.asda " , String.class, "dadad")
 
     static SingularProperties get() {
