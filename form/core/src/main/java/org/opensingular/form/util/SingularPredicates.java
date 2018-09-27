@@ -122,4 +122,11 @@ public class SingularPredicates {
         };
     }
 
+    public static Predicate<SInstance> empty(SType<?> type) {
+        return i -> i.findNearest(type).map(SInstance::isEmptyOfData).orElse(false);
+    }
+
+    public static Predicate<SInstance> notEmpty(SType<?> type) {
+        return empty(type).negate();
+    }
 }
