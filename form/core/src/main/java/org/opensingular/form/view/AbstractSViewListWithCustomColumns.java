@@ -24,6 +24,7 @@ import org.opensingular.lib.commons.lambda.IFunction;
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -78,7 +79,6 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      * coluna específico e o conteudo de cada célula será cálculado
      * dinamicamente mediante a função informada.
      */
-    @SuppressWarnings("unchecked")
     public final SELF col(SType<?> type, String customLabel, IFunction<SInstance, String> displayFunction) {
         return col(type, customLabel, displayFunction, true);
     }
@@ -97,7 +97,7 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
     @SuppressWarnings("unchecked")
     public final SELF col(SType<?> type, @Nullable String customLabel, @Nullable IFunction<SInstance, String> displayFunction, boolean order) {
         String nameSortableProperty = order ? type.getName() : null;
-        columns.add(new Column(type.getName(), customLabel, nameSortableProperty, displayFunction));
+        columns.add(new Column(type.getName(), customLabel, nameSortableProperty, displayFunction, null));
         return (SELF) this;
     }
 
@@ -109,7 +109,12 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      * @see FormFreemarkerUtil
      */
     public final SELF col(String customLabel, String freeMarkerTemplateString) {
-        return col(customLabel, instance -> FormFreemarkerUtil.get().merge(instance, freeMarkerTemplateString, false, true));
+        IFunction<SInstance, String> displayFunction = instance -> FormFreemarkerUtil.get().merge(instance, freeMarkerTemplateString, false, true);
+        return col(customLabel, displayFunction, Comparator.comparing(displayFunction));
+    }
+    public final SELF col(String customLabel, String freeMarkerTemplateString, @Nullable Comparator<SInstance> sortComparator) {
+        IFunction<SInstance, String> displayFunction = instance -> FormFreemarkerUtil.get().merge(instance, freeMarkerTemplateString, false, true);
+        return col(customLabel, displayFunction, sortComparator);
     }
 
     /**
@@ -121,9 +126,13 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
      * @param displayFunction Conversor da instância da linha (um composite) na string de
      *                        conteúdo da celula
      */
-    @SuppressWarnings("unchecked")
     public final SELF col(String customLabel, IFunction<SInstance, String> displayFunction) {
-        columns.add(new Column(null, customLabel, null, displayFunction));
+        return col(customLabel, displayFunction, Comparator.comparing(displayFunction));
+    }
+
+    @SuppressWarnings("unchecked")
+    public final SELF col(String customLabel, IFunction<SInstance, String> displayFunction, @Nullable Comparator<SInstance> sortComparator) {
+        columns.add(new Column(null, customLabel, null, displayFunction, sortComparator));
         return (SELF) this;
     }
 
@@ -140,15 +149,17 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
         private String customLabel;
         private String columnSortName;
         private IFunction<SInstance, String> displayValueFunction;
+        private Comparator<SInstance> comparator;
 
         public Column() {
         }
 
-        public Column(String typeName, String customLabel, String columnSortName, IFunction<SInstance, String> displayValueFunction) {
+        public Column(String typeName, String customLabel, String columnSortName, IFunction<SInstance, String> displayValueFunction, Comparator<SInstance> comparator) {
             this.typeName = typeName;
             this.customLabel = customLabel;
             this.columnSortName = columnSortName;
             this.displayValueFunction = displayValueFunction;
+            this.comparator = comparator;
         }
 
         public String getTypeName() {
@@ -165,6 +176,10 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
 
         public IFunction<SInstance, String> getDisplayValueFunction() {
             return displayValueFunction;
+        }
+
+        public Comparator<SInstance> getComparator() {
+            return comparator;
         }
     }
 }
