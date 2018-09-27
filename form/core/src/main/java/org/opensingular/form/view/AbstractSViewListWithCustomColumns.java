@@ -112,7 +112,7 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
         IFunction<SInstance, String> displayFunction = instance -> FormFreemarkerUtil.get().merge(instance, freeMarkerTemplateString, false, true);
         return col(customLabel, displayFunction, Comparator.comparing(displayFunction));
     }
-    public final SELF col(String customLabel, String freeMarkerTemplateString, @Nullable Comparator<SInstance> sortComparator) {
+    public final <T extends Comparator<SInstance> & Serializable> SELF  col(String customLabel, String freeMarkerTemplateString, @Nullable T sortComparator) {
         IFunction<SInstance, String> displayFunction = instance -> FormFreemarkerUtil.get().merge(instance, freeMarkerTemplateString, false, true);
         return col(customLabel, displayFunction, sortComparator);
     }
@@ -143,18 +143,18 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
     /**
      * PARA USO INTERNO
      */
-    public static class Column implements Serializable {
+    public static class Column<C extends Comparator<SInstance> & Serializable> implements Serializable {
 
         private String typeName;
         private String customLabel;
         private String columnSortName;
         private IFunction<SInstance, String> displayValueFunction;
-        private Comparator<SInstance> comparator;
+        private C comparator;
 
         public Column() {
         }
 
-        public Column(String typeName, String customLabel, String columnSortName, IFunction<SInstance, String> displayValueFunction, Comparator<SInstance> comparator) {
+        public  Column(String typeName, String customLabel, String columnSortName, IFunction<SInstance, String> displayValueFunction, C comparator) {
             this.typeName = typeName;
             this.customLabel = customLabel;
             this.columnSortName = columnSortName;

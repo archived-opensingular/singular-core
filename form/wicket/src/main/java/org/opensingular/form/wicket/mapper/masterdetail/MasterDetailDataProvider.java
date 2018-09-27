@@ -81,6 +81,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
      *                     If user don't chosen one, it will try to get the view ascMode.
      * @return sortable List.
      */
+    @SuppressWarnings("squid:S134")
     private List<SInstance> populateSortList(SIList<SInstance> siList, @Nullable String sortProperty, boolean ascending) {
         List<SInstance> sortableList = new ArrayList<>(siList.getValues());
         if (CollectionUtils.isNotEmpty(sortableList)) {
