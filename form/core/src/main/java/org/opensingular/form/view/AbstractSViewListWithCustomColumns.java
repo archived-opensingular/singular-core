@@ -149,6 +149,7 @@ public abstract class AbstractSViewListWithCustomColumns<SELF extends AbstractSV
         private String customLabel;
         private String columnSortName;
         private IFunction<SInstance, String> displayValueFunction;
+        @SuppressWarnings("squid:S1948")
         private C comparator;
 
         public Column() {
