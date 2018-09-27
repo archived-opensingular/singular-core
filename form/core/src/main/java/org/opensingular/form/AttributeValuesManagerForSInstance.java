@@ -42,8 +42,7 @@ final class AttributeValuesManagerForSInstance extends AttributeValuesManager<SI
     @Nullable
     static <V> V getAttributeValueFromType(@Nonnull SInstance instance, @Nonnull AttrInternalRef ref,
             @Nullable Class<V> resultClass) {
-        return AttributeValuesManagerForSType.getAttributeValueInTheContextOf(instance.getType(), instance, ref,
-                resultClass);
+        return SAttributeUtil.getAttributeValueInTheContextOf(instance.getType(), instance, ref, resultClass);
     }
 
     @Override
@@ -54,7 +53,7 @@ final class AttributeValuesManagerForSInstance extends AttributeValuesManager<SI
     @Override
     @Nonnull
     protected SInstance createNewAttribute(@Nonnull AttrInternalRef ref) {
-        SType<?> attributeType = AttributeValuesManagerForSType.getAttributeDefinedHierarchy(getOwner().getType(), ref);
+        SType<?> attributeType = SAttributeUtil.getAttributeDefinitionInHierarchy(getOwner().getType(), ref);
         SInstance instanceAtr = attributeType.newInstance(getOwner().getDocument());
         instanceAtr.setAsAttribute(ref, getOwner());
         return instanceAtr;

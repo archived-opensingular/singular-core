@@ -211,7 +211,8 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     @Override
-    final SInstance getFieldLocal(PathReader pathReader) {
+    @Nullable
+    final SInstance getFieldLocal(@Nonnull PathReader pathReader) {
         SInstance instance = getChecking(pathReader);
         if (instance == null) {
             SFormUtil.resolveFieldType(getType(), pathReader);
@@ -220,7 +221,8 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     @Override
-    Optional<SInstance> getFieldLocalOpt(PathReader pathReader) {
+    @Nonnull
+    Optional<SInstance> getFieldLocalOpt(@Nonnull PathReader pathReader) {
         int index = resolveIndex(pathReader);
         if (values != null && index < values.size()) {
             return Optional.ofNullable(values.get(index));

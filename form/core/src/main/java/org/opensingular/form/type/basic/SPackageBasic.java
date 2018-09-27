@@ -16,12 +16,6 @@
 
 package org.opensingular.form.type.basic;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-
 import org.opensingular.form.AtrRef;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SDictionary;
@@ -57,6 +51,13 @@ import org.opensingular.form.type.core.annotation.STypeAnnotationClassifierList;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.lib.commons.lambda.IConsumer;
 
+import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @SInfoPackage(name = SPackageBasic.NAME)
 public class SPackageBasic extends SPackage {
@@ -76,7 +77,6 @@ public class SPackageBasic extends SPackage {
     public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_MAX_LENGTH            = new AtrRef<>(SPackageBasic.class, "maxLength"             , STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_INTEGER_MAX_LENGTH    = new AtrRef<>(SPackageBasic.class, "integerMaxLength"      , STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_FRACTIONAL_MAX_LENGTH = new AtrRef<>(SPackageBasic.class, "fractionalMaxLength"   , STypeInteger.class, SIInteger.class, Integer.class);
-//  public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_EDIT_SIZE             = new AtrRef<>(SPackageBasic.class, "editSize"              , STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeString, SIString, String>                     ATR_DISPLAY_STRING        = new AtrRef<>(SPackageBasic.class, "displayString"         , STypeString.class, SIString.class, String.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer>                  ATR_DISPLAY_ORDER         = new AtrRef<>(SPackageBasic.class, "displayOrder"          , STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeString, SIString, String>                     ATR_HELP                  = new AtrRef<>(SPackageBasic.class, "help"                  , STypeString.class, SIString.class, String.class);
@@ -112,7 +112,7 @@ public class SPackageBasic extends SPackage {
     //@formatter:on
 
     @Override
-    protected void onLoadPackage(PackageBuilder pb) {
+    protected void onLoadPackage(@Nonnull PackageBuilder pb) {
 
         pb.createType(STypeBehavior.class);
         pb.createType(STypeSupplier.class);
@@ -140,7 +140,6 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeType(ATR_MAX_LENGTH);
         pb.createAttributeType(ATR_INTEGER_MAX_LENGTH);
         pb.createAttributeType(ATR_FRACTIONAL_MAX_LENGTH);
-        //        pb.createAttributeType(ATR_EDIT_SIZE);
         pb.createAttributeType(ATR_MAX_FILE_SIZE);
         pb.createAttributeType(ATR_ALLOWED_FILE_TYPES);
         pb.createAttributeType(ATR_UPPER_CASE_TEXT);
@@ -155,7 +154,6 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_VISIBLE_FUNCTION);
         pb.createAttributeIntoType(SType.class, ATR_ENABLED_FUNCTION);
         pb.createAttributeIntoType(SType.class, ATR_DEPENDS_ON_FUNCTION);
-        //        pb.createTipoAtributo(MTipo.class, ATR_ONCHANGE_BEHAVIOR);
         pb.createAttributeIntoType(SType.class, ATR_DISPLAY_ORDER);
         pb.createAttributeIntoType(SType.class, ATR_ANNOTATED);
         pb.createAttributeIntoType(SType.class, ATR_ANNOTATION_LABEL);
@@ -168,15 +166,11 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_INSTRUCTION);
 
         pb.addAttribute(STypeString.class, ATR_MAX_LENGTH, STypeString.DEFAULT_SIZE);
-        //        pb.addAttribute(STypeString.class, ATR_EDIT_SIZE, 50);
         pb.addAttribute(STypeString.class, ATR_UPPER_CASE_TEXT, Boolean.FALSE);
 
         pb.addAttribute(STypeInteger.class, ATR_MAX_LENGTH);
-        //        pb.addAttribute(STypeInteger.class, ATR_EDIT_SIZE);
 
         pb.addAttribute(STypeLong.class, ATR_MAX_LENGTH);
-
-        //        pb.addAttribute(STypeDate.class, ATR_EDIT_SIZE, 10);
 
         pb.addAttribute(STypeDecimal.class, ATR_INTEGER_MAX_LENGTH, 9);
         pb.addAttribute(STypeDecimal.class, ATR_FRACTIONAL_MAX_LENGTH, 2);
@@ -197,7 +191,6 @@ public class SPackageBasic extends SPackage {
         pb.getAttribute(ATR_MAX_LENGTH).asAtr().label("Maximum length")/*.editSize(30)*/.maxLength(4);
         pb.getAttribute(ATR_INTEGER_MAX_LENGTH).asAtr().label("Integer maximum length")/*.editSize(30)*/.maxLength(4);
         pb.getAttribute(ATR_FRACTIONAL_MAX_LENGTH).asAtr().label("Fractional maximum length")/*.editSize(30)*/.maxLength(4);
-//        pb.getAttribute(ATR_EDIT_SIZE).asAtr().label("Edit size")/*.editSize(30)*/.maxLength(3);
         pb.getAttribute(ATR_VISIBLE).asAtr().label("Visible");
         pb.getAttribute(ATR_VISIBLE_FUNCTION).asAtr().label("Visible (function)");
         pb.getAttribute(ATR_ENABLED).asAtr().label("Enabled");

@@ -40,6 +40,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -109,6 +110,9 @@ public abstract class SInstance implements SAttributeEnabled {
     public Integer getId() {
         if (id == null) {
             id = document.nextId();
+            if (id == null) {
+                throw new SingularFormException("Id can't be read at this time");
+            }
         }
         return id;
     }
@@ -572,19 +576,12 @@ public abstract class SInstance implements SAttributeEnabled {
         return attributes;
     }
 
-    @Nonnull
-    @Override
-    public final SAttributeEnabled getParentAttributeContext() {
-        return getType();
-    }
-
     /**
      * Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. Não procura o atributo na
      * hierarquia.
      */
     @Nonnull
-    @Override
-    public Optional<SInstance> getAttributeDirectly(@Nonnull String fullName) {
+    final Optional<SInstance> getAttributeDirectly(@Nonnull String fullName) {
         return AttributeValuesManager.staticGetAttributeDirectly(this, attributes, fullName);
     }
 
@@ -605,15 +602,9 @@ public abstract class SInstance implements SAttributeEnabled {
         return getAttributeValue(getDictionary().getAttributeReferenceOrException(atr), atr.getValueClass());
     }
 
-    @Override
-    public final boolean hasAttributeValueDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
+    final boolean hasAttributeValueDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
         AttrInternalRef ref = getDictionary().getAttributeReferenceOrException(atr);
         return AttributeValuesManager.staticGetAttributeDirectly(attributes, ref) != null;
-    }
-
-    @Override
-    public boolean hasAttributeDefinedDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
-        return false;
     }
 
     @Nullable
@@ -671,7 +662,6 @@ public abstract class SInstance implements SAttributeEnabled {
      * The search is performed like described in {@link SInstances#findNearest(SInstance, SType)}
      *
      * @param targetType the SType to look for
-     * @param <A>
      * @return An optional instance of the given type
      */
     public <A extends SInstance> Optional<A> findNearest(@Nonnull SType<A> targetType) {
@@ -681,10 +671,6 @@ public abstract class SInstance implements SAttributeEnabled {
     /**
      * Returns the nearest instance for the given type or throws an Exception if it is not found.
      * This method works exactly as the {@link this#findNearest(SType)}
-     *
-     * @param targetType
-     * @param <A>
-     * @return
      */
     @Nonnull
     public <A extends SInstance> A findNearestOrException(@Nonnull SType<A> targetType) {
@@ -699,9 +685,6 @@ public abstract class SInstance implements SAttributeEnabled {
     /**
      * Returns the nearest instance value for the given type or throws an Exception if it is not found.
      * This method works exactly as the {@link this#findNearestValue(SType)}
-     * @param targetType
-     * @param <V>
-     * @return
      */
     @SuppressWarnings("unchecked")
     public <V> V findNearestValueOrException(SType<?> targetType){
@@ -710,9 +693,6 @@ public abstract class SInstance implements SAttributeEnabled {
 
     /**
      * Do the same search as in {@link this#findNearest(SType)} but return {@link SInstance#getValue} instead of the SInstance
-     * @param targetType
-     * @param <V>
-     * @return
      */
     @SuppressWarnings("unchecked")
     public <V> Optional<V> findNearestValue(SType<?> targetType) {
@@ -809,7 +789,7 @@ public abstract class SInstance implements SAttributeEnabled {
      * </pre>
      */
     public final String getPathFull() {
-        return SFormUtil.generatePath(this, i -> i == null);
+        return SFormUtil.generatePath(this, Objects::isNull);
     }
 
     public void debug() {
@@ -821,7 +801,8 @@ public abstract class SInstance implements SAttributeEnabled {
         }
     }
 
-    final String erroMsgMethodUnsupported() {
+    @Nonnull
+    private final String erroMsgMethodUnsupported() {
         return errorMsg("Método não suportado por " + getClass().getName());
     }
 
@@ -853,7 +834,7 @@ public abstract class SInstance implements SAttributeEnabled {
      */
     public void removeChildren() {
         if (this instanceof ICompositeInstance) {
-            ((ICompositeInstance) this).getChildren().forEach(child -> child.internalOnRemove());
+            ((ICompositeInstance) this).getChildren().forEach(SInstance::internalOnRemove);
         }
     }
 

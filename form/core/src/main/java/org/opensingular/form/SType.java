@@ -378,7 +378,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     @Nullable
     final SInstance findAttributeInstance(@Nonnull String fullName) {
         AttrInternalRef ref = getDictionary().getAttributeReferenceOrException(fullName);
-        return AttributeValuesManagerForSType.findAttributeInstance(this, ref);
+        return SAttributeUtil.findAttributeInstance(this, ref);
     }
 
     @Override
@@ -434,9 +434,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
      * Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. Não procura o atributo na
      * hierarquia.
      */
-    @Override
     @Nonnull
-    public Optional<SInstance> getAttributeDirectly(@Nonnull String fullName) {
+    final Optional<SInstance> getAttributeDirectly(@Nonnull String fullName) {
         return AttributeValuesManager.staticGetAttributeDirectly(this, attributes, fullName);
     }
 
@@ -458,16 +457,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return getAttributeValue(getDictionary().getAttributeReferenceOrException(atr), atr.getValueClass());
     }
 
-    @Override
-    public final boolean hasAttributeValueDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
+    final boolean hasAttributeValueDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
         AttrInternalRef ref = getDictionary().getAttributeReferenceOrException(atr);
         return AttributeValuesManager.staticGetAttributeDirectly(attributes, ref) != null;
-    }
-
-    @Override
-    public boolean hasAttributeDefinedDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
-        AttrInternalRef ref = getDictionary().getAttributeReferenceOrException(atr);
-        return getAttributeDefinedLocally(ref) != null;
     }
 
     @Override
@@ -478,12 +470,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     @Nullable
     private <V> V getAttributeValue(@Nonnull AttrInternalRef ref, @Nullable Class<V> resultClass) {
-        return AttributeValuesManagerForSType.getAttributeValueInTheContextOf(this, null, ref, resultClass);
-    }
-
-    @Nonnull
-    private AttrInternalRef mapAttributeName(@Nonnull String originalName) {
-        return getDictionary().getAttributeReferenceOrException(originalName);
+        return SAttributeUtil.getAttributeValueInTheContextOf(this, null, ref, resultClass);
     }
 
     public SType<I> with(AtrRef<?, ?, ?> attribute, Object value) {

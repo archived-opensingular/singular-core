@@ -21,7 +21,6 @@ import org.opensingular.form.calculation.SimpleValueCalculation;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.function.Function;
 
 public abstract class STranslatorForAttribute implements SAttributeEnabled {
@@ -74,12 +73,6 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
     @Nonnull
     public Collection<SInstance> getAttributes() {
         return getTarget().getAttributes();
-    }
-
-    /** Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. */
-    @Nonnull
-    public Optional<SInstance> getAttributeDirectly(@Nonnull String fullName) {
-        return getTarget().getAttributeDirectly(fullName);
     }
 
     //-----------------------------------------------------------
@@ -141,16 +134,6 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
     }
 
     @Override
-    public boolean hasAttributeValueDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
-        return getTarget().hasAttributeValueDirectly(atr);
-    }
-
-    @Override
-    public boolean hasAttributeDefinedDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
-        return getTarget().hasAttributeDefinedDirectly(atr);
-    }
-
-    @Override
     public Object getAttributeValue(String attributeFullName) {
         return getTarget().getAttributeValue(attributeFullName);
     }
@@ -160,8 +143,4 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
         return getTarget().getDictionary();
     }
 
-    @Nullable
-    public SAttributeEnabled getParentAttributeContext() {
-        return getTarget().getParentAttributeContext();
-    }
 }
