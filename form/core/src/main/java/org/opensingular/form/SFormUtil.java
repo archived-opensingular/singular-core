@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -210,7 +211,8 @@ public final class SFormUtil {
      * Retorna o nome do filho atual indo em direção ao raiz mas parando segundo
      * a condicão de parada informada.
      */
-    public static String generatePath(SInstance instance, Predicate<SInstance> stopCondition) {
+    @Nullable
+    public static String generatePath(@Nonnull SInstance instance, @Nonnull Predicate<SInstance> stopCondition) {
         SInstance current = instance;
         List<SInstance> sequencia = null;
         while (!stopCondition.test(current)) {
@@ -238,6 +240,50 @@ public final class SFormUtil {
                 }
                 sb.append(current.getName());
             }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Retorna o nome do filho atual indo em direção ao raiz mas parando segundo
+     * a condicão de parada informada.
+     */
+    @Nullable
+    public static String generatePath(@Nonnull SType<?> type, @Nonnull Predicate<SType<?>> stopCondition) {
+        return generatePath(type, stopCondition, ' ', '.', SType::getNameSimple);
+    }
+
+    /**
+     * Retorna o nome do filho atual indo em direção ao raiz mas parando segundo
+     * a condicão de parada informada.
+     */
+    @Nullable
+    public static String generatePath(@Nonnull SType<?> type, @Nonnull Predicate<SType<?>> stopCondition,
+            char rootPrefix, char separator, Function<SType<?>, String> nameFunc) {
+        SType<?> current = type;
+        List<SType<?>> sequencia = null;
+        while (!stopCondition.test(current)) {
+            if (sequencia == null) {
+                sequencia = new ArrayList<>();
+            }
+            sequencia.add(current);
+            current = current.getParent().orElse(null);
+        }
+        if (sequencia == null) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = sequencia.size() - 1; i != -1; i--) {
+            current = sequencia.get(i);
+            if (sb.length() == 0) {
+                if (rootPrefix != ' ' && !current.getParent().isPresent()) {
+                    sb.append(rootPrefix);
+                }
+            } else if (sb.length() != 0) {
+                sb.append(separator);
+            }
+            String n = nameFunc.apply(current);
+            sb.append(n);
         }
         return sb.toString();
     }

@@ -39,8 +39,7 @@ public interface SAttributeEnabled {
 
     <V> void setAttributeCalculation(@Nonnull AtrRef<?, ?, V> atr, @Nullable SimpleValueCalculation<V> value);
 
-    <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
-            @Nullable SimpleValueCalculation<V> value);
+    //<V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath, @Nullable SimpleValueCalculation<V> value);
 
     <V> void setAttributeValue(@Nonnull AtrRef<?, ?, V> atr, @Nullable V value);
 

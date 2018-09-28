@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.opensingular.form.calculation;
 
 import org.opensingular.form.view.SView;
@@ -26,28 +10,45 @@ import java.util.function.Predicate;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 /**
- * Represents a calculation of value that works in context of {@link CalculationContext}, which always have a reference
- * to a {@link org.opensingular.form.SInstance} for which the calcualtion will be executed.
+ * Represents a calculation of value that works in context of {@link CalculationContextInstanceOptional}, which may
+ * only have a reference to the {@link org.opensingular.form.SType} and some times may have a reference to a {@link
+ * org.opensingular.form.SInstance}.
+ *
+ * @author Daniel C. Bordin
+ * @since 2018-09-27
  */
 @FunctionalInterface
-public interface SimpleValueCalculation<RESULT> {
+public interface SimpleValueCalculationInstanceOptional<RESULT> {
+
+    /** Calculates the value for the given context. */
+    @Nullable
+    RESULT calculate(@Nonnull CalculationContextInstanceOptional context);
+
+    /**
+     * Transformns the original calculation into a calculation that will only be executed if there is a {@link
+     * org.opensingular.form.SInstance} in context available to be used in the calculation.
+     */
+    @Nullable
+    static <T> SimpleValueCalculationInstanceOptional<T> of(@Nullable SimpleValueCalculation<T> original) {
+        if (original == null) {
+            return null;
+        }
+        return context -> context.hasInstanceContext() ? original.calculate(context.asCalculationContext()) : null;
+    }
 
     @Deprecated
-    SimpleValueCalculation<?> NULL_RESULT = c -> null;
-
-    @Nullable
-    RESULT calculate(@Nonnull CalculationContext context);
+    SimpleValueCalculationInstanceOptional<?> NULL_RESULT = c -> null;
 
     /** Creates a calculation that always returns null. */
     @Nonnull
-    static <RESULT> SimpleValueCalculation<RESULT> nil(@Nonnull Class<RESULT> type) {
-        return (SimpleValueCalculation<RESULT>) NULL_RESULT;
+    static <RESULT> SimpleValueCalculationInstanceOptional<RESULT> nil(@Nonnull Class<RESULT> type) {
+        return (SimpleValueCalculationInstanceOptional<RESULT>) NULL_RESULT;
     }
 
     /** Creates a calculation that return the informed value if the condition is true, otherwise returns null. */
     @Nonnull
-    static <RESULT> SimpleValueCalculation<RESULT> ifThen(@Nonnull Predicate<CalculationContext> condition,
-            @Nullable RESULT val) {
+    static <RESULT> SimpleValueCalculationInstanceOptional<RESULT> ifThen(
+            @Nonnull Predicate<CalculationContextInstanceOptional> condition, @Nullable RESULT val) {
         Objects.requireNonNull(condition);
         return c -> condition.test(c) ? val : null;
     }
@@ -57,7 +58,8 @@ public interface SimpleValueCalculation<RESULT> {
      * predicate is true then returns the value informed.
      */
     @Nonnull
-    default SimpleValueCalculation<RESULT> appendOn(Predicate<CalculationContext> condition, @Nullable RESULT val) {
+    default SimpleValueCalculationInstanceOptional<RESULT> appendOn(
+            Predicate<CalculationContextInstanceOptional> condition, @Nullable RESULT val) {
         Objects.requireNonNull(condition);
         if (this == NULL_RESULT) {
             return ifThen(condition, val);
@@ -76,8 +78,8 @@ public interface SimpleValueCalculation<RESULT> {
      * the predicate is true, returns the value. If false, executes the current calculation.
      */
     @Nonnull
-    default SimpleValueCalculation<RESULT> prependOn(@Nonnull Predicate<CalculationContext> condition,
-            @Nullable RESULT val) {
+    default SimpleValueCalculationInstanceOptional<RESULT> prependOn(
+            @Nonnull Predicate<CalculationContextInstanceOptional> condition, @Nullable RESULT val) {
         Objects.requireNonNull(condition);
         if (this == NULL_RESULT) {
             return ifThen(condition, val);
@@ -85,13 +87,14 @@ public interface SimpleValueCalculation<RESULT> {
         return c -> condition.test(c) ? val : this.calculate(c);
     }
 
-    /**
+   /**
      * Adds a new verification to the end of the current calculation. If the the current calculation results in null,
      * then verifies if the informed context type uses the indicated {@link SView}. If true, return the informed value.
      * Otherwise, returns null.
      */
     @Nonnull
-    default SimpleValueCalculation<RESULT> appendOnView(Class<? extends SView> viewClass, @Nullable RESULT val) {
+    default SimpleValueCalculationInstanceOptional<RESULT> appendOnView(Class<? extends SView> viewClass,
+            @Nullable RESULT val) {
         Objects.requireNonNull(viewClass);
         return appendOn(c -> (c.typeContext().getView() != null) &&
                 (viewClass.isAssignableFrom(c.typeContext().getView().getClass())), val);
@@ -102,7 +105,8 @@ public interface SimpleValueCalculation<RESULT> {
      * indicated {@link SView} then return the the informed value. If not, runs the current calculation.
      */
     @Nonnull
-    default SimpleValueCalculation<RESULT> prependOnView(Class<? extends SView> viewClass, @Nullable RESULT val) {
+    default SimpleValueCalculationInstanceOptional<RESULT> prependOnView(Class<? extends SView> viewClass,
+            @Nullable RESULT val) {
         Objects.requireNonNull(viewClass);
         return prependOn(c -> (c.typeContext().getView() != null) &&
                 (viewClass.isAssignableFrom(c.typeContext().getView().getClass())), val);
@@ -113,10 +117,11 @@ public interface SimpleValueCalculation<RESULT> {
      * value.
      */
     @Nonnull
-    default SimpleValueCalculation<RESULT> orElse(@Nullable RESULT val) {
+    default SimpleValueCalculationInstanceOptional<RESULT> orElse(@Nullable RESULT val) {
         if (this == NULL_RESULT) {
             return c -> val;
         }
         return c -> defaultIfNull(this.calculate(c), val);
     }
+
 }

@@ -89,11 +89,11 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
         getTarget().setAttributeCalculation(atr, value);
     }
 
-    @Override
-    public <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
-            @Nullable SimpleValueCalculation<V> value) {
-        getTarget().setAttributeCalculation(attributeFullName, subPath, value);
-    }
+//    @Override
+//    public <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
+//            @Nullable SimpleValueCalculation<V> value) {
+//        getTarget().setAttributeCalculation(attributeFullName, subPath, value);
+//    }
 
     @Override
     public <V> void setAttributeValue(@Nonnull AtrRef<?, ?, V> atr, @Nullable V value) {

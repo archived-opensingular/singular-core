@@ -178,7 +178,7 @@ public class SPackageBasic extends SPackage {
         pb.addAttribute(STypeAttachment.class, ATR_MAX_FILE_SIZE, 100L * 1024 * 1024); // 100MB
         pb.addAttribute(STypeAttachment.class, ATR_ALLOWED_FILE_TYPES);
 
-        pb.getType(SType.class).asAtr().displayString(ctx -> ctx.instance().toStringDisplayDefault());
+        pb.getType(SType.class).asAtr().displayString(ctx -> ctx.instanceContext().toStringDisplayDefault());
 
         //TODO vinicius: modificar essa funcionalidade para ser ativada por SType ou por package
         //        pb.getType(SType.class).setAttributeCalculation(ATR_LABEL, ctx -> SFormUtil.generateUserFriendlyName(ctx.instance().getName()));

@@ -16,6 +16,8 @@
 
 package org.opensingular.form;
 
+import org.opensingular.form.calculation.CalculationContextInstanceOptional;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -34,7 +36,7 @@ final class AttributeValuesManagerForSInstance extends AttributeValuesManager<SI
     public <V> V getAttributeValue(@Nonnull AttrInternalRef ref, @Nullable Class<V> resultClass) {
         SInstance attribute = get(ref);
         if (attribute != null) {
-            return attribute.getValueInTheContextOf(getOwner(), resultClass);
+            return attribute.getValueInTheContextOf(new CalculationContextInstanceOptional(getOwner()), resultClass);
         }
         return getAttributeValueFromType(getOwner(), ref, resultClass);
     }

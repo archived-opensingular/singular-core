@@ -470,11 +470,11 @@ public class XSDConverter {
         if (minOccurs == null || minOccurs == 1) {
             newType.asAtr().required();
             if (newType.isList()) {
-                ((STypeList<?, ?>) newType).withMiniumSizeOf(1);
+                ((STypeList<?, ?>) newType).withMinimumSizeOf(1);
             }
         } else if (minOccurs.intValue() > 1) {
             if (newType.isList()) {
-                ((STypeList<?, ?>) newType).withMiniumSizeOf(minOccurs);
+                ((STypeList<?, ?>) newType).withMinimumSizeOf(minOccurs);
             } else {
                 throw new SingularFormException(element.errorMsgInvalidAttribute("minOccurs"), newType);
             }

@@ -142,7 +142,7 @@ public class STypeAnotherComposite extends STypeComposite<SIComposite> {
         rios = dadosGerais.addFieldListOf("rios", STypeString.class);
         rios.withView(SViewListByTable::new);
         rios.withInitListener(list -> list.addNew());//USED by TestSDocumentRestoreMode
-        rios.withMiniumSizeOf(STypeFormTest.QUANTIDADE_MINIMA);
+        rios.withMinimumSizeOf(STypeFormTest.QUANTIDADE_MINIMA);
         rios.asAtrBootstrap().colPreference(12);
         rios.asAtr().label("Rios");
 

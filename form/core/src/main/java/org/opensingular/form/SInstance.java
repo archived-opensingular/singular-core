@@ -17,6 +17,7 @@
 package org.opensingular.form;
 
 import org.opensingular.form.aspect.AspectRef;
+import org.opensingular.form.calculation.CalculationContextInstanceOptional;
 import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.event.ISInstanceListener;
@@ -148,12 +149,12 @@ public abstract class SInstance implements SAttributeEnabled {
         return attributeInstanceInfo != null;
     }
 
-    final void setAsAttribute(AttrInternalRef ref, SType<?> attributeOwner) {
+    final void setAsAttribute(@Nonnull AttrInternalRef ref, @Nonnull SType<?> attributeOwner) {
         attributeInstanceInfo = new AttributeInstanceInfo(ref, attributeOwner);
 
     }
 
-    final void setAsAttribute(AttrInternalRef ref, SInstance attributeOwner) {
+    final void setAsAttribute(@Nonnull AttrInternalRef ref, @Nonnull SInstance attributeOwner) {
         attributeInstanceInfo = new AttributeInstanceInfo(ref, attributeOwner);
     }
 
@@ -365,7 +366,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
 
-    <V> V getValueInTheContextOf(SInstance contextInstance, Class<V> resultClass) {
+    <V> V getValueInTheContextOf(@Nonnull CalculationContextInstanceOptional context, Class<V> resultClass) {
         return convert(getValue(), resultClass);
     }
 
@@ -557,11 +558,11 @@ public abstract class SInstance implements SAttributeEnabled {
         getAttributesMap().setAttributeCalculation(atr, value);
     }
 
-    @Override
-    public <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
-                                            @Nullable SimpleValueCalculation<V> valueCalculation) {
-        getAttributesMap().setAttributeCalculation(attributeFullName, subPath, valueCalculation);
-    }
+//    @Override
+//    public <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
+//                                            @Nullable SimpleValueCalculation<V> valueCalculation) {
+//        getAttributesMap().setAttributeCalculation(attributeFullName, subPath, valueCalculation);
+//    }
 
     final void setAttributeValueSavingForLatter(@Nonnull String attributeName, @Nullable String value) {
         AttrInternalRef ref = getDictionary().getAttribureRefereceOrCreateLazy(attributeName);
@@ -802,7 +803,7 @@ public abstract class SInstance implements SAttributeEnabled {
     }
 
     @Nonnull
-    private final String erroMsgMethodUnsupported() {
+    private String erroMsgMethodUnsupported() {
         return errorMsg("Método não suportado por " + getClass().getName());
     }
 

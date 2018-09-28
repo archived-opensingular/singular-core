@@ -36,6 +36,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @RunWith(Parameterized.class)
 public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
@@ -51,6 +53,8 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         PackageBuilder pb = createTestPackage();
 
         STypeList<STypeString, SIString> nomes = pb.createListTypeOf("nomes", STypeString.class);
+        assertType(nomes).isParent(null);
+        assertType(nomes.getElementsType()).isParent(nomes);
 
         SIList<SIString> lista = (SIList<SIString>) nomes.newInstance();
         lista.addValue("Paulo");
@@ -94,7 +98,15 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         STypeList<STypeComposite<SIComposite>, SIComposite> tipoPedidos = pb.createListOfNewCompositeType("pedidos",
                 "pedido");
         tipoPedidos.getElementsType().addFieldString("descricao");
-        tipoPedidos.getElementsType().addFieldInteger("qtd");
+        STypeInteger qtd = tipoPedidos.getElementsType().addFieldInteger("qtd");
+
+        assertThat(tipoPedidos.getPathFromRoot()).isNull();
+        assertThat(tipoPedidos.getPathFull()).isEqualTo("pedidos");
+        assertThat(qtd.getPathFromRoot()).isEqualTo("pedido.qtd");
+        assertThat(qtd.getPathFull()).isEqualTo("pedidos.pedido.qtd");
+        assertType(tipoPedidos).field(qtd.getPathFromRoot()).isSameAs(qtd);
+        assertType(tipoPedidos).field("pedido.qtd").isSameAs(qtd);
+
 
         SIList<SIComposite> pedidos = (SIList<SIComposite>) tipoPedidos.newInstance();
         SIComposite pedido;

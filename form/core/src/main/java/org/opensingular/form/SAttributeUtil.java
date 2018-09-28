@@ -1,5 +1,7 @@
 package org.opensingular.form;
 
+import org.opensingular.form.calculation.CalculationContextInstanceOptional;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -138,12 +140,13 @@ public final class SAttributeUtil {
         Objects.requireNonNull(ref);
         SInstance instance = findAttributeInstance(target, ref);
         if (instance != null) {
+            CalculationContextInstanceOptional ctx;
             if (contextInstance != null) {
-                return instance.getValueInTheContextOf(contextInstance, resultClass);
-            } else if (resultClass == null) {
-                return (V) instance.getValue();
+                ctx = new CalculationContextInstanceOptional(contextInstance);
+            } else {
+                ctx = new CalculationContextInstanceOptional(target);
             }
-            return instance.getValueWithDefault(resultClass);
+            return instance.getValueInTheContextOf(ctx, resultClass);
         }
         SType<?> atr = SAttributeUtil.getAttributeDefinitionInHierarchy(target, ref);
         if (resultClass == null) {

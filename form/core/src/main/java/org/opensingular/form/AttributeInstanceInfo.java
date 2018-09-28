@@ -16,6 +16,10 @@
 
 package org.opensingular.form;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Objects;
+
 /**
  * Contém informações referente a instância de um atributo.
  *
@@ -30,34 +34,38 @@ public final class AttributeInstanceInfo {
     private final AttrInternalRef ref;
 
     /** Cira um instância de atributo que está associado a um SInstance. */
-    AttributeInstanceInfo(AttrInternalRef ref, SInstance instanceOwner) {
-        this.instanceOwner = instanceOwner;
+    AttributeInstanceInfo(@Nonnull AttrInternalRef ref, @Nonnull SInstance instanceOwner) {
+        this.instanceOwner = Objects.requireNonNull(instanceOwner);
         this.typeOwner = null;
-        this.ref = ref;
+        this.ref = Objects.requireNonNull(ref);
     }
 
     /** Cira um instância de atributo que está associado a um SType. */
-    AttributeInstanceInfo(AttrInternalRef ref, SType<?> typeOwner) {
+    AttributeInstanceInfo(@Nonnull AttrInternalRef ref, @Nonnull SType<?> typeOwner) {
         this.instanceOwner = null;
-        this.typeOwner = typeOwner;
-        this.ref = ref;
+        this.typeOwner = Objects.requireNonNull(typeOwner);
+        this.ref = Objects.requireNonNull(ref);
     }
 
     /** Nome completo do atributo. */
+    @Nonnull
     public String getName() {
         return ref.getName();
     }
 
     /** Retorna a instância a qual o atributo associa um valor (pode ser null, se o atributo for de um tipo). */
+    @Nullable
     public SInstance getInstanceOwner() {
         return instanceOwner;
     }
 
     /** Retorna o tipo ao qual o atributo associa um valor (pode ser null, se o atributo for de instância). */
+    @Nullable
     public SType<?> getTypeOwner() {
         return typeOwner;
     }
 
+    @Nonnull
     AttrInternalRef getRef() {
         return ref;
     }
