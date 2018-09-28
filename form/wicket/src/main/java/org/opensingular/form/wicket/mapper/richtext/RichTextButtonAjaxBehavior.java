@@ -16,8 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.richtext;
 
-import java.util.Optional;
-
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -33,11 +31,13 @@ import org.opensingular.form.view.richtext.RichTextContext;
 import org.opensingular.form.view.richtext.RichTextInsertContext;
 import org.opensingular.form.view.richtext.RichTextSelectionContext;
 import org.opensingular.form.view.richtext.SViewByRichTextNewTab;
+import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.component.BFModalWindow;
 import org.opensingular.form.wicket.component.SingularButton;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
-import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
+
+import java.util.Optional;
 
 public class RichTextButtonAjaxBehavior extends AbstractDefaultAjaxBehavior {
 
@@ -47,12 +47,12 @@ public class RichTextButtonAjaxBehavior extends AbstractDefaultAjaxBehavior {
 
     private BFModalWindow bfModalWindow;
     private WebPage webPage;
-    private ISupplier<SViewByRichTextNewTab> viewSupplier;
+    private WicketBuildContext wicketBuildContext;
 
-    RichTextButtonAjaxBehavior(BFModalWindow bfModalWindow, WebPage webPage, ISupplier<SViewByRichTextNewTab> viewSupplier) {
+    RichTextButtonAjaxBehavior(BFModalWindow bfModalWindow, WebPage webPage, WicketBuildContext wicketBuildContext) {
         this.bfModalWindow = bfModalWindow;
         this.webPage = webPage;
-        this.viewSupplier = viewSupplier;
+        this.wicketBuildContext = wicketBuildContext;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class RichTextButtonAjaxBehavior extends AbstractDefaultAjaxBehavior {
         Integer index = requestParameters.getParameterValue(INDEX).toInt();
         String selected = requestParameters.getParameterValue(SELECTED).toString();
 
-        RichTextAction richTextAction = viewSupplier.get().getTextActionList().get(index);
+        RichTextAction richTextAction = wicketBuildContext.getViewSupplier(SViewByRichTextNewTab.class).get().getTextActionList().get(index);
         if (richTextAction != null) {
             if (richTextAction.getForm().isPresent()) {
                 configureModal(target, text, index, selected, richTextAction);
@@ -88,6 +88,8 @@ public class RichTextButtonAjaxBehavior extends AbstractDefaultAjaxBehavior {
         Class<? extends SType<?>> stypeActionButton = (Class<? extends SType<?>>) richTextAction.getForm().orElse(null);
         SingularFormPanel singularFormPanel = new SingularFormPanel("modalBody", stypeActionButton);
         singularFormPanel.setOutputMarkupId(true);
+        singularFormPanel.setNested(true);
+        richTextAction.prepare(wicketBuildContext.getCurrentInstance(), singularFormPanel.getInstance());
         bfModalWindow.setBody(singularFormPanel);
         bfModalWindow.addButton(BSModalBorder.ButtonStyle.CANCEL, Model.of("Cancelar"), createCancelButton());
         bfModalWindow.addButton(BSModalBorder.ButtonStyle.CONFIRM, Model.of("Confirmar"), createConfirmButton(singularFormPanel, index, selected, text));
@@ -109,7 +111,7 @@ public class RichTextButtonAjaxBehavior extends AbstractDefaultAjaxBehavior {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                RichTextAction richTextAction = viewSupplier.get().getTextActionList().get(actionIndex);
+                RichTextAction richTextAction = wicketBuildContext.getViewSupplier(SViewByRichTextNewTab.class).get().getTextActionList().get(actionIndex);
                 RichTextContext richTextContext = returnRichTextContextInitialized(richTextAction, selected, text);
                 richTextAction.onAction(richTextContext, Optional.of(singularFormPanel.getInstance()));
 
