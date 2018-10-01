@@ -149,8 +149,8 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_SUBTITLE);
         pb.createAttributeIntoType(SType.class, ATR_BASIC_MASK);
         pb.createAttributeIntoType(SType.class, ATR_REGEX_MASK);
-        pb.createAttributeIntoType(SType.class, ATR_VISIBLE);
-        pb.createAttributeIntoType(SType.class, ATR_ENABLED);
+        pb.createAttributeIntoType(SType.class, ATR_VISIBLE).withDefaultValueIfNull(Boolean.TRUE);
+        pb.createAttributeIntoType(SType.class, ATR_ENABLED).withDefaultValueIfNull(Boolean.TRUE);
         pb.createAttributeIntoType(SType.class, ATR_VISIBLE_FUNCTION);
         pb.createAttributeIntoType(SType.class, ATR_ENABLED_FUNCTION);
         pb.createAttributeIntoType(SType.class, ATR_DEPENDS_ON_FUNCTION);
@@ -185,20 +185,23 @@ public class SPackageBasic extends SPackage {
 
         // defina o meta dado do meta dado
         //@formatter:off
-        pb.getAttribute(ATR_LABEL).asAtr().label("Label")/*.editSize(30)*/.maxLength(50);
-        pb.getAttribute(ATR_SUBTITLE).asAtr().label("Subtitle")/*.editSize(30)*/.maxLength(50);
-        pb.getAttribute(ATR_BASIC_MASK).asAtr().label("Basic mask")/*.editSize(30)*/.maxLength(20);
-        pb.getAttribute(ATR_MAX_LENGTH).asAtr().label("Maximum length")/*.editSize(30)*/.maxLength(4);
-        pb.getAttribute(ATR_INTEGER_MAX_LENGTH).asAtr().label("Integer maximum length")/*.editSize(30)*/.maxLength(4);
-        pb.getAttribute(ATR_FRACTIONAL_MAX_LENGTH).asAtr().label("Fractional maximum length")/*.editSize(30)*/.maxLength(4);
-        pb.getAttribute(ATR_VISIBLE).asAtr().label("Visible");
+        pb.getAttribute(ATR_LABEL).asAtr().label("Label").maxLength(50);
+        pb.getAttribute(ATR_SUBTITLE).asAtr().label("Sub Título").maxLength(50);
+        pb.getAttribute(ATR_BASIC_MASK).asAtr().label("Basic mask").maxLength(20);
+        pb.getAttribute(ATR_MAX_LENGTH).asAtr().label("Tamanho Máximo").maxLength(4);
+        pb.getAttribute(ATR_INTEGER_MAX_LENGTH).asAtr().label("Tamanho Máximo").maxLength(4);
+        pb.getAttribute(ATR_FRACTIONAL_MAX_LENGTH).asAtr().label("Qtd. de Decimais").maxLength(4);
+        pb.getAttribute(ATR_REQUIRED).asAtr().label("Obrigatório");
+        pb.getAttribute(ATR_VISIBLE).asAtr().label("Visível");
         pb.getAttribute(ATR_VISIBLE_FUNCTION).asAtr().label("Visible (function)");
-        pb.getAttribute(ATR_ENABLED).asAtr().label("Enabled");
+        pb.getAttribute(ATR_ENABLED).asAtr().label("Habilitado");
         pb.getAttribute(ATR_ENABLED_FUNCTION).asAtr().label("Enabled (function)");
         pb.getAttribute(ATR_DEPENDS_ON_FUNCTION).asAtr().label("Depends on (function)");
-        //pb.getAttribute(ATR_ONCHANGE_BEHAVIOR        ).asAtr().label("On change (behavior)"      );
         pb.getAttribute(ATR_DISPLAY_ORDER).asAtr().label("Display order");
-        pb.getAttribute(ATR_ITEM_LABEL).asAtr().label("Item label")/*.editSize(30)*/.maxLength(50);
+        pb.getAttribute(ATR_ITEM_LABEL).asAtr().label("Item label").maxLength(50);
+        pb.getAttribute(ATR_HELP).asAtr().label("Texto Ajuda");
+        pb.getAttribute(ATR_MINIMUM_SIZE).asAtr().label("Tamanho Mínimo Lista");
+        pb.getAttribute(ATR_MAXIMUM_SIZE).asAtr().label("Tamanho Máximo Lista");
         //@formatter:on
 
     }
