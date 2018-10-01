@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * Representa um Element com diversos métodos utilitários para
@@ -268,17 +269,6 @@ public abstract class MElement implements Element, Serializable {
             throw new SingularException("no " + XPathToolkit.getFullPath(no) + " não é Element");
         }
         return new MElementWrapper((Element) no);
-    }
-
-    /**
-     * Cria um novo MElement com tag raiz com o nome da classe informada. O
-     * MElement contém internamente um Element embutido.
-     *
-     * @param toCall Classe cujo nome sera o nome da tag
-     * @return MElement wrapper.
-     */
-    public static MElement newInstance(Class<?> toCall) {
-        return newInstance(toCall.getName().replace('.', '-'));
     }
 
     /**
@@ -1305,7 +1295,13 @@ public abstract class MElement implements Element, Serializable {
     @Nonnull
     public final Iterator<MElement> iterator(@Nullable String xPath) {
         MElementResult rs = new MElementResult(this, xPath);
-        return rs.iterator();
+        return selectElements(xPath).iterator();
+    }
+
+    /** Follows the same logic of {@link #selectElements(String)} but returns the result as a stream. */
+    @Nonnull
+    public final Stream<MElement> streamElements(@Nullable String xPath) {
+        return selectElements(xPath).stream();
     }
 
     /**

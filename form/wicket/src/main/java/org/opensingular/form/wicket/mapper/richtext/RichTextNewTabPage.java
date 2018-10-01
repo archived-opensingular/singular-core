@@ -35,6 +35,7 @@ import org.apache.wicket.protocol.http.PageExpiredException;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.opensingular.form.view.richtext.RichTextAction;
 import org.opensingular.form.view.richtext.SViewByRichTextNewTab;
+import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.component.BFModalWindow;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.util.Loggable;
@@ -52,7 +53,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     private static final IHeaderResponseDecorator JAVASCRIPT_DECORATOR = response -> new JavaScriptFilteredIntoFooterHeaderResponse(response, SingularTemplate.JAVASCRIPT_CONTAINER);
     private static final String JAVASCRIPT_CONTAINER = "javascript-container";
 
-    private ISupplier<SViewByRichTextNewTab> viewSupplier;
+    private WicketBuildContext wicketBuildContext;
     private IModel<String> modelTextArea;
 
     private boolean                     readOnly;
@@ -74,14 +75,14 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
      *
      * @param title        The title of page.
      * @param readOnly  True if is just readOnly model; False if is editable.
-     * @param viewSupplier The suplier of new Tab View.
+     * @param wicketBuildContext The WicketBuildContext
      * @param hiddenInput  The hidden input of the Page who calls.
      * @param markupId     The markupId of the Label of the Page who calls.
      */
-    public RichTextNewTabPage(String title, boolean readOnly, ISupplier<SViewByRichTextNewTab> viewSupplier,
+    public RichTextNewTabPage(String title, boolean readOnly, WicketBuildContext wicketBuildContext,
                               HiddenField<String> hiddenInput, String markupId) {
         this.readOnly = readOnly;
-        this.viewSupplier = viewSupplier;
+        this.wicketBuildContext = wicketBuildContext;
         this.hiddenInput = hiddenInput;
         this.markupId = markupId;
         add(new Label("title", Model.of(title)));
@@ -110,6 +111,8 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "RichTextNewTabPage.js")) {
             final Map<String, String> params = new HashMap<>();
 
+            ISupplier<SViewByRichTextNewTab> viewSupplier = wicketBuildContext.getViewSupplier(SViewByRichTextNewTab.class);
+
             /*If don't contains the View, i add a view with empty buttons, for default use.*/
             if (!viewSupplier.optional().isPresent()) {
                 viewSupplier = (ISupplier<SViewByRichTextNewTab>) SViewByRichTextNewTab::new;
@@ -123,7 +126,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
                     .stream()
                     .reduce(new StringBuilder(), (s, b) -> s.append(b).append(", "), StringBuilder::append).toString());
             params.put("hiddenInput", this.hiddenInput.getMarkupId());
-            params.put("showSaveButton", String.valueOf(this.viewSupplier.get().isShowSaveButton()));
+            params.put("showSaveButton", String.valueOf(viewSupplier.get().isShowSaveButton()));
             params.put("htmlContainer", this.markupId);
             params.put("callbackUrl", eventSaveCallbackBehavior.getCallbackUrl().toString());
             params.put("isEnabled", String.valueOf(!readOnly));
@@ -148,6 +151,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
      */
     private String renderButtonsList() {
         StringBuilder sb = new StringBuilder();
+        ISupplier<SViewByRichTextNewTab> viewSupplier = wicketBuildContext.getViewSupplier(SViewByRichTextNewTab.class);
         for (int i = 0; i < viewSupplier.get().getTextActionList().size(); i++) {
             RichTextAction richTextAction = viewSupplier.get().getTextActionList().get(i);
             String actionButtonFormatted = i + "#$" + richTextAction.getLabel()
@@ -166,7 +170,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
      * Method that create a CallBackBehavior when the button is clicked.
      */
     private void createCallBackBehavior() {
-        eventSaveCallbackBehavior = new RichTextButtonAjaxBehavior(bfModalWindow, this, viewSupplier);
+        eventSaveCallbackBehavior = new RichTextButtonAjaxBehavior(bfModalWindow, this, wicketBuildContext);
         add(eventSaveCallbackBehavior);
     }
 

@@ -17,7 +17,7 @@
  */
  
 package org.opensingular.form.io;
- 
+
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -46,7 +46,7 @@ import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeLong;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.STypeTime;
- 
+
 import javax.annotation.Nonnull;
  
 /**
@@ -167,7 +167,7 @@ public class TestFormXSDUtil extends TestCaseForm {
         xml = xml.getOnlyChild("xs:element").hasAttributes(3).isAttribute("name", "name").isAttribute("type",
                 "xs:string").isAttribute("xsf:maxLength", "100").hasNoChildren();
  
-        items.withMiniumSizeOf(2).withMaximumSizeOf(4);
+        items.withMinimumSizeOf(2).withMaximumSizeOf(4);
         xml = toXsd(items);
         xml = xml.getOnlyChild("xs:element");
         xml = xml.getOnlyChild("xs:complexType").hasAttributes(0);
@@ -324,7 +324,7 @@ public class TestFormXSDUtil extends TestCaseForm {
             documentos = this.addFieldListOfAttachment("documentos", "documento");
             documentos.asAtr().label("Documentos");
             documentos.withMaximumSizeOf(10);
-            documentos.withMiniumSizeOf(0);
+            documentos.withMinimumSizeOf(0);
             documentos.asAtr().required(false);
  
  

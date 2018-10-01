@@ -17,22 +17,42 @@
 package org.opensingular.form.calculation;
 
 import org.opensingular.form.SInstance;
-import org.opensingular.form.SingularFormException;
+import org.opensingular.form.SType;
 
-import java.util.Objects;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-public class CalculationContext {
+/**
+ * Represents a context call for a {@link SInstance}.
+ */
+public class CalculationContext extends CalculationContextInstanceOptional {
 
-    private final SInstance instanceContext;
-
-    public CalculationContext(SInstance instanceContext) {
-        this.instanceContext = Objects.requireNonNull(instanceContext);
+    public CalculationContext(@Nonnull SInstance instanceContext, @Nonnull SInstance instanceBeingCalculated) {
+        this(instanceContext.getType(), instanceContext, instanceBeingCalculated);
     }
 
-    public SInstance instance() {
-        if (instanceContext == null) {
-            throw new SingularFormException("Esse contexto não é baseado em instância");
-        }
-        return instanceContext;
+    CalculationContext(@Nonnull SType<?> typeContext, @Nullable SInstance instanceContext,
+            @Nullable SInstance instanceBeingCalculated) {
+        super(typeContext, instanceContext, instanceBeingCalculated);
+    }
+
+    /** Return the {@link SInstance} for which the calculation will be executed. */
+    @Nonnull
+    public SInstance instanceContext() {
+        return instanceContextInternal();
+    }
+
+    /** Return the same context. */
+    @Override
+    @Nonnull
+    public CalculationContext asCalculationContext() {
+        return this;
+    }
+
+    /** Creates a new context but indicating the instance that will receive the result of the calculation. */
+    @Override
+    @Nonnull
+    public CalculationContext asCalculatingFor(@Nonnull SInstance instanceBeingCalculated) {
+        return new CalculationContext(typeContext(), instanceContextInternal(), instanceBeingCalculated);
     }
 }

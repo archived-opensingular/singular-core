@@ -72,4 +72,14 @@ public interface RichTextAction<T extends RichTextContext> {
      * @param sInstance An optional contained the SIntance of the form of modal.
      */
     void onAction(T richTextActionContext, Optional<SInstance> sInstance);
+
+
+    /**
+     * Hook that allow users to prepare the instance after its initialization
+     * @param formSInstance the SIHtml sinstance
+     * @param actionSInstance the {@link RichTextAction#getForm()}  sinstance
+     */
+    default void prepare(SInstance formSInstance, SInstance actionSInstance){
+        //NOOP
+    }
 }

@@ -162,12 +162,12 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         return elementsType;
     }
 
-    public STypeList<E, I> withMiniumSizeOf(Integer size) {
+    public STypeList<E, I> withMinimumSizeOf(Integer size) {
         this.asAtr().setAttributeValue(SPackageBasic.ATR_MINIMUM_SIZE, size);
         return this;
     }
 
-    public STypeList<E, I> withMiniumSizeOf(SimpleValueCalculation<Integer> valueCalculation) {
+    public STypeList<E, I> withMinimumSizeOf(SimpleValueCalculation<Integer> valueCalculation) {
         setAttributeCalculation(SPackageBasic.ATR_MINIMUM_SIZE, valueCalculation);
         return this;
     }

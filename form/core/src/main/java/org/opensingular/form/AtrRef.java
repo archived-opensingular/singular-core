@@ -36,12 +36,13 @@ public class AtrRef<T extends SType, I extends SInstance, V> {
 
     private final String                   nameScope;
 
-    private final String                         nameFull;
+    private final String nameFull;
 
     private final boolean                  selfReference;
 
     private boolean binded;
 
+    @Nonnull
     public static AtrRef<?, ?, Object> ofSelfReference(@Nonnull Class<? extends SPackage> packageClass,
             @Nonnull String nameSimple) {
         return new AtrRef(packageClass, nameSimple, null, null, null);
@@ -83,15 +84,11 @@ public class AtrRef<T extends SType, I extends SInstance, V> {
         return selfReference;
     }
 
-    final boolean isNotBindDone() {
-        return ! binded;
-    }
-
     final void bind(String scopeName) {
         if (! Objects.equals(this.nameScope, scopeName)) {
             throw new SingularFormException("O Atributo '" + nameSimple + "' já está associado ao pacote '" + this.nameScope
                     + "' não podendo ser reassoaciado ao pacote '" + scopeName + "'");
-        } else if (isNotBindDone()) {
+        } else if (!binded) {
             Preconditions.checkNotNull(scopeName);
             binded = true;
         }
@@ -103,5 +100,10 @@ public class AtrRef<T extends SType, I extends SInstance, V> {
 
     public Class<V> getValueClass() {
         return valueClass;
+    }
+
+    @Override
+    public String toString() {
+        return "AtrRef{" + nameFull + '}';
     }
 }

@@ -16,7 +16,9 @@
 
 package org.opensingular.internal.lib.commons.xml;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.io.IOUtils;
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -30,6 +32,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
+import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,6 +44,7 @@ import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -155,7 +159,7 @@ public class TestMElement {
      *
      * @param c        Classe a ser verificada
      * @param original instância 1
-     * @param newNode     instância 2
+     * @param newNode  instância 2
      * @return true Se ambos forem instância de c
      */
     private static boolean isSameClass(Class<?> c, Node original, Node newNode) {
@@ -202,6 +206,23 @@ public class TestMElement {
         } else {
             return "'" + o + "'";
         }
+    }
+
+    @Test
+    public void readingListOfSubElements() {
+        verifyResultSize(null, 3);
+        verifyResultSize("cd", 3);
+        verifyResultSize("cd[@cod='1']", 1);
+        verifyResultSize("cd/nome", 3);
+        verifyResultSize("cd/presente", 1);
+        verifyResultSize("none", 0);
+    }
+
+    private void verifyResultSize(@Nullable String xPath, int expectedSize) {
+        Assertions.assertThat(Lists.newArrayList(root_.iterator(xPath))).hasSize(expectedSize);
+        Assertions.assertThat(Lists.newArrayList(root_.getElements(xPath))).hasSize(expectedSize);
+        Assertions.assertThat(root_.streamElements(xPath).collect(Collectors.toList())).hasSize(expectedSize);
+
     }
 
     /**
@@ -1030,13 +1051,6 @@ public class TestMElement {
         byte[] inputStreams = mElement.getByteBASE64("inputStream");
         String result       = new String(inputStreams, Charset.defaultCharset());
         Assert.assertEquals(stringToTest, result);
-    }
-
-    @Test
-    public void testNewInstanceByClass() {
-        MElement element = MElement.newInstance(String.class);
-
-        Assert.assertEquals("java-lang-String", element.getNodeName());
     }
 
     @Test(expected = SingularException.class)

@@ -16,6 +16,7 @@
 
 package org.opensingular.internal.lib.commons.xml;
 
+import com.google.common.collect.Streams;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 
 /**
  * Percorredor de uma lista especifica de elementos da um XML (aceita filtro
@@ -377,6 +379,12 @@ public final class MElementResult extends MElement implements EWrapper, Iterable
         }
 
         return currentState == VALID;
+    }
+
+    /** Returns de current result as a Stream. */
+    @Nonnull
+    public Stream<MElement> stream() {
+        return Streams.stream(iterator());
     }
 
     /**

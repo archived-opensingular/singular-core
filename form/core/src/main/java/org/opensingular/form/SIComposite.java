@@ -16,6 +16,11 @@
 
 package org.opensingular.form;
 
+import org.opensingular.form.internal.PathReader;
+import org.opensingular.form.util.transformer.Value;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,11 +31,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
-
-import org.opensingular.form.internal.PathReader;
-import org.opensingular.form.util.transformer.Value;
 
 public class SIComposite extends SInstance implements ICompositeInstance, Iterable<SInstance> {
 
@@ -113,12 +113,14 @@ public class SIComposite extends SInstance implements ICompositeInstance, Iterab
     }
 
     @Override
-    final SInstance getFieldLocal(PathReader pathReader) {
+    @Nullable
+    final SInstance getFieldLocal(@Nonnull PathReader pathReader) {
         return getField(findFieldIndex(pathReader));
     }
 
     @Override
-    Optional<SInstance> getFieldLocalOpt(PathReader pathReader) {
+    @Nonnull
+    Optional<SInstance> getFieldLocalOpt(@Nonnull PathReader pathReader) {
         int fieldIndex = findFieldIndexOpt(pathReader);
         if (fieldIndex != -1) {
             return Optional.of(getField(fieldIndex));

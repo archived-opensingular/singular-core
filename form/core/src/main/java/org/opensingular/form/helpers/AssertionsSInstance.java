@@ -21,6 +21,7 @@ import org.assertj.core.api.AbstractDateAssert;
 import org.assertj.core.api.IterableAssert;
 import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.SAttributeEnabled;
+import org.opensingular.form.SAttributeUtil;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
@@ -54,6 +55,7 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
     }
 
     @Override
+    @Nonnull
     protected Optional<String> generateDescriptionForCurrentTarget(@Nonnull Optional<SInstance> current) {
         return current.map(i -> "Na instância '" + i.getName());
     }
@@ -317,7 +319,7 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
     }
 
     public static void assertEqualsAttribute(SAttributeEnabled copy, SInstance atrOriginal) {
-        Optional<SInstance> atrNewOpt = copy.getAttributeDirectly(atrOriginal.getAttributeInstanceInfo().getName());
+        Optional<SInstance> atrNewOpt = SAttributeUtil.getAttributeDirectly(copy, atrOriginal.getAttributeInstanceInfo().getName());
         try {
             assertThat(atrNewOpt).isPresent();
             if (atrNewOpt.isPresent()) {
@@ -348,7 +350,7 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
 
     /** Verifica se não possui nenhuma repetição de IDs entre instancia filhas e depois em todo o documento. */
     public void assertUniqueIDs() {
-        assertUniqueIDs(getTarget(), new HashMap<Integer, SInstance>());
+        assertUniqueIDs(getTarget(), new HashMap<>());
     }
 
     private void assertUniqueIDs(SInstance target, HashMap<Integer, SInstance> usedIds) {
