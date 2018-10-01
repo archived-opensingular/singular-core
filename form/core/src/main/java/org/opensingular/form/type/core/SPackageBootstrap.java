@@ -65,7 +65,7 @@ public class SPackageBootstrap extends SPackage {
         addAtrColumnPreference(pb, ATR_COL_MD_PREFERENCE, "Largura preferencial MD");
         addAtrColumnPreference(pb, ATR_COL_LG_PREFERENCE, "Largura preferencial LG");
 
-        pb.createAttributeIntoType(SType.class, ATR_COL_ON_NEW_ROW);
+        pb.createAttributeIntoType(SType.class, ATR_COL_ON_NEW_ROW).asAtr().label("Exibir em Nova Linha");
 
         final SimpleValueCalculationInstanceOptional<Integer> calcsForSingle = SimpleValueCalculationInstanceOptional.nil(Integer.class)
             .appendOnView(SViewSelectionByRadio.class, SPackageBootstrap.MAX_COL_PREFERENCE)
@@ -73,8 +73,10 @@ public class SPackageBootstrap extends SPackage {
             .appendOnView(SViewAutoComplete.class, 6)
             .appendOnView(SViewSearchModal.class, 6);
 
+        SimpleValueCalculationInstanceOptional<Integer> calcForSingleDefault2 = calcsForSingle.orElse(2);
         SimpleValueCalculationInstanceOptional<Integer> calcForSingleDefault3 = calcsForSingle.orElse(3);
         SimpleValueCalculationInstanceOptional<Integer> calcForSingleDefault4 = calcsForSingle.orElse(4);
+        SimpleValueCalculationInstanceOptional<Integer> calcForSingleDefault6 = calcsForSingle.orElse(6);
 
         SimpleValueCalculationInstanceOptional<Integer> calcsForMultiple = SimpleValueCalculationInstanceOptional.nil(Integer.class)
             .appendOnView(SMultiSelectionByPicklistView.class, SPackageBootstrap.MAX_COL_PREFERENCE)
@@ -90,11 +92,14 @@ public class SPackageBootstrap extends SPackage {
 
         pb.getType(STypeSimple.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault4);
 
-        pb.getType(STypeString.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcsForSingle
-            .prependOnView(SViewTextArea.class, SPackageBootstrap.MAX_COL_PREFERENCE)
-            .orElse(6));
+        pb.getType(STypeString.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault6
+            .prependOnView(SViewTextArea.class, SPackageBootstrap.MAX_COL_PREFERENCE));
 
+        pb.getType(STypeInteger.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault3);
+        pb.getType(STypeLong.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault3);
         pb.getType(STypeDate.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault3);
+        pb.getType(STypeTime.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault2);
+        pb.getType(STypeDateTime.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault3);
         pb.getType(STypeYearMonth.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault3);
     }
 
