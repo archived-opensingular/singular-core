@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Objeto transitório para guardar uma versão serializável de MInstance ou
@@ -37,21 +38,22 @@ import java.util.Map;
  */
 public final class FormSerialized implements Serializable {
 
-    private final RefSDocumentFactory         sDocumentFactoryRef;
-    private final RefType  refRootType;
-    private final String   rootTypeName;
-    private final MElement xml, annotations;
-    private String                            focusFieldPath;
-    private Map<String, ServiceRegistry.ServiceEntry> services;
-    private List<ValidationError>                    validationErrors;
+    private final RefSDocumentFactory                       sDocumentFactoryRef;
+    private final RefType                                   refRootType;
+    private final String                                    rootTypeName;
+    private final String                                    xml;
+    private final String                                    annotations;
+    private       String                                    focusFieldPath;
+    private       Map<String, ServiceRegistry.ServiceEntry> services;
+    private       List<ValidationError>                     validationErrors;
 
     public FormSerialized(RefType refRootType, String rootTypeName, MElement xml, MElement annotations,
                           RefSDocumentFactory sDocumentFactoryRef) {
         this.refRootType = refRootType;
         this.rootTypeName = rootTypeName;
         this.sDocumentFactoryRef = sDocumentFactoryRef;
-        this.xml = xml;
-        this.annotations = annotations;
+        this.xml = Optional.ofNullable(xml).map(MElement::toStringExato).orElse(null);
+        this.annotations = Optional.ofNullable(annotations).map(MElement::toStringExato).orElse(null);
     }
 
     public String getRootTypeName() {
@@ -67,11 +69,11 @@ public final class FormSerialized implements Serializable {
     }
 
     public MElement getAnnotations() {
-        return annotations;
+        return SFormXMLUtil.parseXml(annotations);
     }
 
     public MElement getXml() {
-        return xml;
+        return SFormXMLUtil.parseXml(xml);
     }
 
     public void setFocusFieldPath(String focusFieldPath) {
