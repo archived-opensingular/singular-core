@@ -18,10 +18,13 @@ package org.opensingular.internal.lib.commons.xml;
 
 import java.io.PrintWriter;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+
 public abstract class AbstractToolkitWriter implements MElementWriter {
 
     private final static Object[][] REPLACEMENTS = {
-            new Boolean[]{true, true, true, false, false}, // REQUIRED FOR NODE CONTENT (TRUE/FALSE)
+            new Boolean[]{TRUE, TRUE, TRUE, FALSE, FALSE}, // REQUIRED FOR NODE CONTENT (TRUE/FALSE)
             new Character[]{'&', '<', '>', '"', '\''}, // ESPECIAL CHAR
             new String[]{"&amp;", "&lt;", "&gt;", "&quot;", "&apos;"} // REPLACEMENT
     };
@@ -36,6 +39,7 @@ public abstract class AbstractToolkitWriter implements MElementWriter {
     }
 
 
+    @SuppressWarnings({"squid:S134","fb-contrib:CLI_CONSTANT_LIST_INDEX"})
     private void printConvertingSpecialCharacters(PrintWriter out, char[] text, boolean attributeEscape) {
         Boolean[]   REQUIRED_FOR_NODE_CONTENT = (Boolean[]) REPLACEMENTS[0];
         Character[] ESPECIAL                  = (Character[]) REPLACEMENTS[1];
