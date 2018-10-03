@@ -15,9 +15,10 @@
  */
  
 package org.opensingular.form.io;
- 
+
 import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SAttributeUtil;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
@@ -27,7 +28,7 @@ import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.internal.lib.commons.xml.MParser;
 import org.w3c.dom.Node;
- 
+
 import javax.annotation.Nonnull;
 import java.io.InputStream;
 import java.util.Collection;
@@ -43,10 +44,10 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
  
 public class FormXSDUtil {
- 
-    public static final  String XSD_SINGULAR_NAMESPACE_URI = "http://opensingular.org/FormSchema";
-    public static final  String XSD_NAMESPACE_URI          = "http://www.w3.org/2001/XMLSchema";
-    public static final  String XSD_NAMESPACE_PREFIX       = "xs";
+
+    private static final String XSD_SINGULAR_NAMESPACE_URI = "http://opensingular.org/FormSchema";
+    static final String XSD_NAMESPACE_URI = "http://www.w3.org/2001/XMLSchema";
+    static final String XSD_NAMESPACE_PREFIX = "xs";
     private static final String XSD_SCHEMA                 = XSD_NAMESPACE_PREFIX + ":schema";
     private static final String XSD_ELEMENT                = XSD_NAMESPACE_PREFIX + ":element";
     private static final String XSD_COMPLEX_TYPE           = XSD_NAMESPACE_PREFIX + ":complexType";
@@ -131,7 +132,7 @@ public class FormXSDUtil {
             simple.setAttribute("minOccurs", "0");
         }
         if (config.isGenerateCustomAttribute()) {
-            if (type.hasAttributeDefinedInHierarchy(SPackageBasic.ATR_MAX_LENGTH)) {
+            if (SAttributeUtil.hasAttributeDefinitionInHierarchy(type, SPackageBasic.ATR_MAX_LENGTH)) {
                 Integer maxLength = type.getAttributeValue(SPackageBasic.ATR_MAX_LENGTH);
                 if (maxLength != null) {
                     simple.setAttributeNS(XSD_SINGULAR_NAMESPACE_URI, "xsf:maxLength", maxLength.toString());
@@ -280,11 +281,11 @@ public class FormXSDUtil {
         if (minOccurs == null || minOccurs == 1) {
             newType.asAtr().required();
             if (newType.isList()) {
-                ((STypeList) newType).withMiniumSizeOf(1);
+                ((STypeList) newType).withMinimumSizeOf(1);
             }
-        } else if (minOccurs.intValue() > 1) {
+        } else if (minOccurs > 1) {
             if (newType.isList()) {
-                ((STypeList) newType).withMiniumSizeOf(minOccurs);
+                ((STypeList) newType).withMinimumSizeOf(minOccurs);
             } else {
                 throw new SingularFormException(element.errorMsgInvalidAttribute("minOccurs"), newType);
             }
@@ -345,9 +346,6 @@ public class FormXSDUtil {
      * &lt;/xs:element&gt;
      * <p>
      * the xsd above represent a list of attachment called 'documentos' whose each element is called 'documento'
-     *
-     * @param complexTypeElement
-     * @return
      */
     private static boolean isList(ElementReader complexTypeElement) {
         if (!complexTypeElement.isTagComplexType()) {
@@ -402,7 +400,7 @@ public class FormXSDUtil {
             return XSD_NAMESPACE_URI.equals(node.getNamespaceURI());
         }
  
-        public boolean isNodeXsd(Node node, String expectedName) {
+        boolean isNodeXsd(Node node, String expectedName) {
             return isXsdNamespace(node) && isNodeNameEqualsWithoutNamespace(node.getNodeName(), expectedName);
         }
  
@@ -417,7 +415,7 @@ public class FormXSDUtil {
             return (nodeName.length() - pos - 1 == expectedName.length()) && nodeName.startsWith(expectedName, pos + 1);
         }
  
-        public boolean isXsdType(String xsdTypeName) {
+        boolean isXsdType(String xsdTypeName) {
             return xsdTypeName.startsWith("xs:");
         }
  
@@ -440,23 +438,23 @@ public class FormXSDUtil {
             this.element = element;
         }
  
-        public boolean isTagXsdSchema() {
+        boolean isTagXsdSchema() {
             return xsdContext.isNodeXsd(element, "schema");
         }
  
-        public boolean isTagXsdElement() {
+        boolean isTagXsdElement() {
             return xsdContext.isNodeXsd(element, "element");
         }
  
-        public boolean isTagComplexType() {
+        boolean isTagComplexType() {
             return xsdContext.isNodeXsd(element, "complexType");
         }
  
-        public boolean isTagSequence() {
+        boolean isTagSequence() {
             return xsdContext.isNodeXsd(element, "sequence");
         }
  
-        public boolean isTagAttribute() {
+        boolean isTagAttribute() {
             return xsdContext.isNodeXsd(element, "attribute");
         }
  
@@ -465,6 +463,7 @@ public class FormXSDUtil {
         }
  
         @Override
+        @Nonnull
         public Iterator<ElementReader> iterator() {
             return new Iterator<ElementReader>() {
                 private MElement current = element.getPrimeiroFilho();
@@ -486,21 +485,21 @@ public class FormXSDUtil {
             };
         }
  
-        public String getFullPath() {
+        String getFullPath() {
             return element.getFullPath();
         }
  
-        public void checkUnknownNodeTreatment() {
+        void checkUnknownNodeTreatment() {
             throw new SingularFormException(
                     "Node '" + getFullPath() + "' não esperado ou tratamento de leitura não implementado");
         }
  
-        public void checkUnexpectedNodeFor(SType<?> typeContext) {
+        void checkUnexpectedNodeFor(SType<?> typeContext) {
             throw new SingularFormException(
                     "Não era esperada o nó " + element.getFullPath() + " para o tipo " + typeContext.getName());
         }
  
-        public String getAttrRequired(String attributeName) {
+        String getAttrRequired(String attributeName) {
             String attr = getAttr(attributeName);
             if (attr == null) {
                 throw new SingularFormException(
@@ -513,12 +512,12 @@ public class FormXSDUtil {
             return StringUtils.trimToNull(element.getAttribute(attributeName));
         }
  
-        public Integer getAttrInteger(String attributeName) {
+        Integer getAttrInteger(String attributeName) {
             String value = getAttr(attributeName);
             return value == null ? null : Integer.valueOf(value);
         }
  
-        public int getAttrMaxOccurs() {
+        int getAttrMaxOccurs() {
             String value = getAttr("maxOccurs");
             if (value == null) {
                 return 1;
@@ -528,7 +527,7 @@ public class FormXSDUtil {
             return Integer.parseInt(value);
         }
  
-        public XsdContext getXsdContext() {
+        XsdContext getXsdContext() {
             return xsdContext;
         }
  
@@ -536,7 +535,7 @@ public class FormXSDUtil {
             return "Erro processando nó XML '" + getFullPath() + "': " + msg;
         }
  
-        public String errorMsgInvalidAttribute(String attrName) {
+        String errorMsgInvalidAttribute(String attrName) {
             return errorMsg("Valor inválido para o atributo " + attrName + "='" + getAttr(attrName) + "'");
         }
  
@@ -544,7 +543,7 @@ public class FormXSDUtil {
             return getXsdContext().getPkg();
         }
  
-        public Stream<ElementReader> streamChildren() {
+        Stream<ElementReader> streamChildren() {
             return StreamSupport
                     .stream(Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED & Spliterator.NONNULL),
                             false);

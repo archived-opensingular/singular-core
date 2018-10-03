@@ -46,7 +46,7 @@ public class AssertionsSType extends AssertionsSAttributeEnabled<AssertionsSType
      * Retorna um novo objeto de assertiva para o tipo indicado pelo caminho informado.
      */
     public AssertionsSType field(String fieldPath) {
-        isInstanceOf(STypeComposite.class);
+        //isInstanceOf(STypeComposite.class);
         return new AssertionsSType(getTarget().getLocalType(fieldPath));
     }
 
@@ -95,6 +95,13 @@ public class AssertionsSType extends AssertionsSAttributeEnabled<AssertionsSType
                             expectedSuperType.getClass().getName() + ", que e a classe de seu super tipo " +
                             expectedSuperType + ". Em vez disso, é uma classe " + getTarget().getClass().getName()));
         }
+    }
+
+    /** Verifies if the current type has the indicated type as its parent type. Otherwise, throws a exception. */
+    @Nonnull
+    public AssertionsSType isParent(@Nullable SType<?> expectedParent) {
+        Assertions.assertThat(getTarget().getParent().orElse(null)).isSameAs(expectedParent);
+        return this;
     }
 
     /**

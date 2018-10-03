@@ -34,6 +34,8 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @RunWith(Parameterized.class)
 public class TestMPacoteCoreTipoComposto extends TestCaseForm {
@@ -47,10 +49,19 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         PackageBuilder pb = createTestPackage();
 
         STypeComposite<?> tipoEndereco = pb.createCompositeType("endereco");
-        tipoEndereco.addField("rua", STypeString.class);
+        STypeString tipoRua = tipoEndereco.addField("rua", STypeString.class);
         tipoEndereco.addFieldString("bairro", true);
         tipoEndereco.addFieldInteger("cep", true);
-        assertType(tipoEndereco).isExtensionCorrect(STypeComposite.class);
+        assertType(tipoEndereco).isExtensionCorrect(STypeComposite.class).isParent(null);
+        assertType(tipoRua).isParent(tipoEndereco);
+        assertThat(tipoEndereco.getPathFromRoot()).isNull();
+        assertThat(tipoEndereco.getPathFull()).isEqualTo("endereco");
+        assertThat(tipoRua.getPathFromRoot()).isEqualTo("rua");
+        assertThat(tipoRua.getPathFull()).isEqualTo("endereco.rua");
+
+        assertType(tipoEndereco).field(tipoRua.getPathFromRoot()).isSameAs(tipoRua);
+        assertType(tipoEndereco).field("rua").isSameAs(tipoRua);
+
 
         STypeComposite<?> tipoClassificacao = tipoEndereco.addFieldComposite("classificacao");
         tipoClassificacao.addFieldInteger("prioridade");

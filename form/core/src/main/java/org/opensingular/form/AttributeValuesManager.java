@@ -17,6 +17,7 @@
 package org.opensingular.form;
 
 import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.calculation.SimpleValueCalculationInstanceOptional;
 import org.opensingular.form.internal.PathReader;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.internal.form.util.ArrUtil;
@@ -137,17 +138,22 @@ abstract class AttributeValuesManager<OWNER extends SAttributeEnabled> {
     abstract void setEntryAsAttribute(@Nonnull SInstance entry, @Nonnull AttrInternalRef ref);
 
     final <V> void setAttributeCalculation(@Nonnull AtrRef<?, ?, V> atr, @Nullable SimpleValueCalculation<V> value) {
+        setAttributeCalculation(atr, SimpleValueCalculationInstanceOptional.of(value));
+    }
+
+    final <V> void setAttributeCalculation(@Nonnull AtrRef<?, ?, V> atr,
+            @Nullable SimpleValueCalculationInstanceOptional<V> value) {
         setAttributeCalculation(getAttributeReferenceOrException(atr), null, value);
     }
 
-    final <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
-            @Nullable SimpleValueCalculation<V> valueCalculation) {
-        setAttributeCalculation(getAttributeReferenceOrException(attributeFullName), subPath, valueCalculation);
-    }
+    //    final <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
+    //            @Nullable SimpleValueCalculation<V> valueCalculation) {
+    //        setAttributeCalculation(getAttributeReferenceOrException(attributeFullName), subPath, valueCalculation);
+    //    }
 
     @SuppressWarnings("unchecked")
     private <V> void setAttributeCalculation(@Nonnull AttrInternalRef ref, @Nullable String subPath,
-            @Nullable SimpleValueCalculation<V> valueCalculation) {
+            @Nullable SimpleValueCalculationInstanceOptional<V> valueCalculation) {
         SInstance instanceAtr = getCreating(ref);
         if (subPath != null) {
             instanceAtr = instanceAtr.getField(new PathReader(subPath));
@@ -157,7 +163,7 @@ abstract class AttributeValuesManager<OWNER extends SAttributeEnabled> {
                     "O atributo " + instanceAtr.getPathFull() + " não é do tipo " + SISimple.class.getName(),
                     instanceAtr);
         }
-        ((SISimple) instanceAtr).setValueCalculation(valueCalculation);
+        ((SISimple) instanceAtr).setValueCalculationInstanceOptional(valueCalculation);
     }
 
     @Nonnull

@@ -129,7 +129,7 @@ public class PortletRichTextPanel extends Panel implements Loggable {
             public void onClick() {
                 throw new RestartResponseException(new RichTextNewTabPage(label.getDefaultModelObject().toString(),
                         isReadOnlyMode(),
-                        PortletRichTextPanel.this.ctx.getViewSupplier(SViewByRichTextNewTab.class),
+                        PortletRichTextPanel.this.ctx,
                         hiddenInput, htmlContent.getMarkupId()));
             }
 

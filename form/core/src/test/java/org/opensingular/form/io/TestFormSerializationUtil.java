@@ -18,7 +18,6 @@
 
 package org.opensingular.form.io;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +25,7 @@ import org.junit.runners.Parameterized;
 import org.opensingular.form.AtrRef;
 import org.opensingular.form.InstanceSerializableRef;
 import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SAttributeUtil;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInfoPackage;
@@ -100,7 +100,7 @@ public class TestFormSerializationUtil extends TestCaseForm {
 
     public static SInstance serializeAndDeserialize(SInstance original) {
         return serializeAndDeserialize(original, FormSerializationUtil::toSerializedObject,
-                fs -> FormSerializationUtil.toInstance(fs));
+                FormSerializationUtil::toInstance);
     }
 
     private static SInstance serializeAndDeserialize(SInstance original, Function<SInstance, FormSerialized> toSerial,
@@ -237,10 +237,10 @@ public class TestFormSerializationUtil extends TestCaseForm {
         instance.setValue("rua", "rua dos bobos");
         instance.asAtrAnnotation().text("numero zero ?");
 
-        Assertions.assertThat(instance.asAtrAnnotation().text()).isEqualTo("numero zero ?");
+        assertThat(instance.asAtrAnnotation().text()).isEqualTo("numero zero ?");
         SIComposite r = (SIComposite) testSerialization(instance);
         assertThat(r.getField("rua").getValue()).isEqualTo("rua dos bobos");
-        Assertions.assertThat(r.asAtrAnnotation().text()).isEqualTo("numero zero ?");
+        assertThat(r.asAtrAnnotation().text()).isEqualTo("numero zero ?");
     }
 
     @Test
@@ -385,7 +385,7 @@ public class TestFormSerializationUtil extends TestCaseForm {
 
         //Depois das linhas a cima, então têm que ter convertido os valores
         instance.isAttribute(atr2.getNameFull(), 20);
-        assertEquals(SIInteger.class, instance.getTarget().getAttributeDirectly(atr2.getNameFull()).orElse(null).getClass());
+        assertThat(SAttributeUtil.getAttributeDirectly(instance.getTarget(), atr2.getNameFull()).orElse(null)).isExactlyInstanceOf(SIInteger.class);
 
         assertTrue(instance.getTarget().getDictionary().getTypeOptional(atr1.getNameFull()).isPresent());
         assertTrue(instance.getTarget().getDictionary().getTypeOptional(atr2.getNameFull()).isPresent());
@@ -479,11 +479,11 @@ public class TestFormSerializationUtil extends TestCaseForm {
     @SInfoPackage(name = "dinamic")
     public static class PackageDinamicAttr extends SPackage {
 
-        public static final AtrRef<STypeString, SIString, String> ATR_TEXT1 = new AtrRef<>(
+        static final AtrRef<STypeString, SIString, String> ATR_TEXT1 = new AtrRef<>(
                 PackageDinamicAttr.class, "text1", STypeString.class,
                 SIString.class, String.class);
 
-        public static final AtrRef<STypeInteger, SIInteger, Integer> ATR_INT1 = new AtrRef<>(
+        static final AtrRef<STypeInteger, SIInteger, Integer> ATR_INT1 = new AtrRef<>(
                 PackageDinamicAttr.class, "int1", STypeInteger.class,
                 SIInteger.class, Integer.class);
 
