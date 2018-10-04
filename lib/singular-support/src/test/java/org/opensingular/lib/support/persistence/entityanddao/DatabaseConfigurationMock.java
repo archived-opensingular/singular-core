@@ -19,6 +19,7 @@
 package org.opensingular.lib.support.persistence.entityanddao;
 
 import org.hibernate.SessionFactory;
+import org.opensingular.lib.support.persistence.SessionLocator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -32,12 +33,17 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan(basePackages = {"org.opensingular.lib.support.persistence.entityanddao"})
+@ComponentScan(basePackages = {"org.opensingular.lib.support.persistence"})
 @EnableTransactionManagement(proxyTargetClass = true)
 public class DatabaseConfigurationMock {
 
     @Bean
-    public PlatformTransactionManager platformTransactionManager(SessionFactory factory){
+    public SessionLocator sessionLocator(SessionFactory sessionFactory) {
+        return () -> sessionFactory.getCurrentSession();
+    }
+
+    @Bean
+    public PlatformTransactionManager platformTransactionManager(SessionFactory factory) {
         return new HibernateTransactionManager(factory);
     }
 
