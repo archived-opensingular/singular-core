@@ -44,10 +44,13 @@ public class LZ4DataStore implements IDataStore {
 
     @Override
     public byte[] getData(String sessionId, int id) {
-        byte[] data    = dataStore.getData(sessionId, id);
-        int    length  = ByteBuffer.wrap(ArrayUtils.subarray(data, 0, 4)).getInt();
-        byte[] content = ArrayUtils.subarray(data, 4, data.length);
-        return decompressor.decompress(content, length);
+        byte[] data = dataStore.getData(sessionId, id);
+        if (data != null) {
+            int    length  = ByteBuffer.wrap(ArrayUtils.subarray(data, 0, 4)).getInt();
+            byte[] content = ArrayUtils.subarray(data, 4, data.length);
+            return decompressor.decompress(content, length);
+        }
+        return null;
     }
 
     @Override
