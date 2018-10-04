@@ -51,13 +51,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class STypeAttributesTest {
 
-    private static STypeAddress endereco;
+    private static STypeString cep;
 
     private SingularFormDummyPageTester tester;
 
     private static void buildBaseType(STypeComposite<?> baseCompositeField) {
-        endereco = baseCompositeField.addField("endereco", STypeAddress.class);
-        endereco.cep.asAtr().exists(false);
+        cep = baseCompositeField.addFieldString("cep");
+        cep.asAtr().exists(false);
     }
 
     @Before
@@ -71,7 +71,7 @@ public class STypeAttributesTest {
     public void testExists() {
         tester.startDummyPage();
 
-        Assert.assertFalse(tester.getAssertionsPage().getSubComponentWithType(endereco.cep).getTarget().isVisibleInHierarchy());
+        Assert.assertFalse(tester.getAssertionsPage().getSubComponentWithType(cep).getTarget().isVisibleInHierarchy());
 
 
     }
