@@ -22,7 +22,7 @@ import org.opensingular.lib.support.persistence.SessionLocator;
 
 import javax.inject.Inject;
 
-public class SessionLocatorImplTest implements SessionLocator {
+public class SessionLocatorImpl implements SessionLocator {
 
     @Inject
     private SessionFactory sessionFactory;
