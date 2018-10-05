@@ -97,7 +97,7 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
             out.print("=\"");
             String text = a.getValue();
             if (htmlEncodeReserverdCharacters) {
-                printConvertingSpecialCharacters(out, text.toCharArray());
+                printConvertingSpecialCharactersAttribute(out, text.toCharArray());
             } else {
                 out.print(text);
             }
@@ -273,7 +273,7 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
             case Node.TEXT_NODE:
                 String text = node.getNodeValue();
                 if (convertSpecialsCharacters) {
-                    printConvertingSpecialCharacters(out, text.toCharArray());
+                    printConvertingSpecialCharactersTextNode(out, text.toCharArray());
                 } else {
                     out.print(node.getNodeValue());
                 }
