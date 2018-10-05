@@ -22,6 +22,7 @@ public class IndexedDataQueryBuilder {
     private StringBuilder select;
     private StringBuilder from;
     private StringBuilder join;
+    private StringBuilder where;
     private int colCount = 0;
 
     public IndexedDataQueryBuilder(String schema) {
@@ -34,6 +35,7 @@ public class IndexedDataQueryBuilder {
         join = new StringBuilder("inner join ")
                 .append(this.schema)
                 .append(".tb_formulario formulario on tipoformulario.co_tipo_formulario = formulario.co_tipo_formulario \n");
+        where = new StringBuilder(" WHERE 1 = 1 ");
     }
 
 
@@ -44,6 +46,11 @@ public class IndexedDataQueryBuilder {
 
     public void appendToJoin(String joinClause) {
         join.append(joinClause);
+    }
+
+
+    public void appendToWhere(String joinClause) {
+        where.append(joinClause);
     }
 
     public void appendToFrom(String fromClause) {
@@ -66,7 +73,7 @@ public class IndexedDataQueryBuilder {
      * @return
      */
     public String createQueryForIndexedData() {
-        return select.toString() + from.toString() + join.toString();
+        return select.toString() + from.toString() + join.toString() + where.toString();
     }
 
     private void addColumnToSelect(String column) {
