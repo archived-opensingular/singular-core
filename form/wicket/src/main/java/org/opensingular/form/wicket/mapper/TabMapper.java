@@ -78,11 +78,15 @@ public class TabMapper implements IWicketComponentMapper {
         final SViewTab.STab tabDefault = tabViewSupplier.get().getDefaultTab();
 
         for (SViewTab.STab tab : tabViewSupplier.get().getTabs()) {
+
             if (tab.isVisible(instance)) {
                 defineTabIconCss(ctx, instance, tab.getTypesNames());
                 IModel<SInstance> baseInstanceModel = (IModel<SInstance>) ctx.getModel();
                 BSPanelGrid.BSTab t = panel.addTab(tab.getId(), tab.getTitle(), tab.getTypesNames(), baseInstanceModel, tab.isDefault());
                 t.iconClass((t1, m) -> defineTabIconCss(ctx, (SIComposite) m.getObject(), t1.getSubtree()));
+            } else {
+                tab.getTypesNames()
+                        .forEach(tp -> ctx.getModel().getObject().getField(tp).asAtr().visible(false));
             }
         }
 
@@ -112,8 +116,8 @@ public class TabMapper implements IWicketComponentMapper {
                 } else if (payload instanceof SingularFormProcessingPayload) {
                     SingularFormProcessingPayload singularPayload = (SingularFormProcessingPayload) payload;
                     Set<String> typeNames = tabViewSupplier.get().getTabs().stream()
-                        .flatMap(it -> it.getTypesNames().stream())
-                        .collect(Collectors.toSet());
+                            .flatMap(it -> it.getTypesNames().stream())
+                            .collect(Collectors.toSet());
 
                     if (singularPayload.hasUpdatedType(typeNames)) {
                         target.add(panel);

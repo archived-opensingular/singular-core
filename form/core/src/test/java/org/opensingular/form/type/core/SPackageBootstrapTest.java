@@ -37,7 +37,7 @@ public class SPackageBootstrapTest extends TestCaseForm {
         verifyColPreference(SType.class, null);
         verifyColPreference(STypeComposite.class, 12);
         verifyColPreference(STypeSimple.class, 4);
-        verifyColPreference(STypeInteger.class, 4);
+        verifyColPreference(STypeInteger.class, 3);
         verifyColPreference(STypeDate.class, 3);
 
         Supplier<SView> sup = SViewAutoComplete::new;

@@ -149,8 +149,8 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_SUBTITLE);
         pb.createAttributeIntoType(SType.class, ATR_BASIC_MASK);
         pb.createAttributeIntoType(SType.class, ATR_REGEX_MASK);
-        pb.createAttributeIntoType(SType.class, ATR_VISIBLE).withDefaultValueIfNull(Boolean.TRUE);
-        pb.createAttributeIntoType(SType.class, ATR_ENABLED).withDefaultValueIfNull(Boolean.TRUE);
+        pb.createAttributeIntoType(SType.class, ATR_VISIBLE);
+        pb.createAttributeIntoType(SType.class, ATR_ENABLED);
         pb.createAttributeIntoType(SType.class, ATR_VISIBLE_FUNCTION);
         pb.createAttributeIntoType(SType.class, ATR_ENABLED_FUNCTION);
         pb.createAttributeIntoType(SType.class, ATR_DEPENDS_ON_FUNCTION);

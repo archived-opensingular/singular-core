@@ -16,24 +16,11 @@
 
 package org.opensingular.form.persistence.entity;
 
-import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import org.hibernate.annotations.ForeignKey;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
+
+import javax.persistence.*;
+import java.util.Date;
 
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
@@ -52,8 +39,7 @@ public class FormAnnotationVersionEntity extends BaseEntity<Long> {
     @JoinColumns(value = {
             @JoinColumn(name = "CO_VERSAO_FORMULARIO", referencedColumnName = "CO_VERSAO_FORMULARIO", nullable = false),
             @JoinColumn(name = "CO_CHAVE_ANOTACAO", referencedColumnName = "CO_CHAVE_ANOTACAO", nullable = false)
-    })
-    @ForeignKey(name = "FK_VER_ANOT_FORM_CHV_ANOT")
+    }, foreignKey = @ForeignKey(name = "FK_VER_ANOT_FORM_CHV_ANOT"))
     private FormAnnotationEntity formAnnotationEntity;
 
     @Temporal(TemporalType.TIMESTAMP)

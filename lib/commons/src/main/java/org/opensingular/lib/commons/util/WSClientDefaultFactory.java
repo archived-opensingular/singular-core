@@ -60,7 +60,7 @@ public class WSClientDefaultFactory<T> implements WSClientSafeWrapper.WSClientFa
     private void changeTargetEndpointAddress(T servicePortType) {
         Optional<String> propertyValue = urlSupplier.get();
         if (!propertyValue.isPresent()) {
-            throw new WSConnectionException(String.format("WebService endpoint not found!"));
+            throw new WSConnectionException("WebService endpoint not found!");
         }
         String value = propertyValue.get();
         if (value.endsWith("?wsdl")) {

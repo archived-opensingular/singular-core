@@ -151,7 +151,7 @@ public class SISimple<NATIVE_TYPE extends Serializable> extends SInstance {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
+        result = prime * result + getType().hashCode();
         result = prime * result + ((getValue() == null) ? 0 : getValue().hashCode());
         return result;
     }

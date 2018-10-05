@@ -1294,7 +1294,7 @@ public abstract class MElement implements Element, Serializable {
      */
     @Nonnull
     public final Iterator<MElement> iterator(@Nullable String xPath) {
-        MElementResult rs = new MElementResult(this, xPath);
+        new MElementResult(this, xPath);
         return selectElements(xPath).iterator();
     }
 
