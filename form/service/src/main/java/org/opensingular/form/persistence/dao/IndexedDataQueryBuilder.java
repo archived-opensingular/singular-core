@@ -96,7 +96,7 @@ public class IndexedDataQueryBuilder {
     private void addJoinClause(String columnAlias, String fieldsNames) {
         String joinAlias = "tb_cache_campo_" + ++colCount;
 
-        joinCache.append("  left join ")
+        joinCache.append("  inner join ")
                 .append(schema)
                 .append(".tb_cache_campo ")
                 .append(joinAlias)
@@ -104,7 +104,7 @@ public class IndexedDataQueryBuilder {
                 .append(joinAlias)
                 .append(".co_tipo_formulario = tipoformulario.co_tipo_formulario \n");
 
-        joinCache.append("  left join ")
+        joinCache.append("  inner join ")
                 .append(schema)
                 .append(".tb_cache_valor ")
                 .append(columnAlias)
