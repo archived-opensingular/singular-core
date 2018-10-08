@@ -90,7 +90,13 @@ public class IndexedDataQueryBuilder {
         if (colCount == 0) {
             select.append("  , ").append(column).append(".co_versao_formulario as co_versao_formulario \n");
         }
-        select.append("  , ").append(column).append(".ds_valor as ").append(column).append('\n');
+        select.append("  , CONCAT( ")
+                .append(column)
+                .append(".DS_VALOR, ")
+                .append(column)
+                .append(" .NU_VALOR) as ")
+                .append(column)
+                .append('\n');
     }
 
     private void addJoinClause(String columnAlias, String fieldsNames) {
