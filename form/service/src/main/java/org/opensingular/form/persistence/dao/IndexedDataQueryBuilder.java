@@ -20,19 +20,23 @@ public class IndexedDataQueryBuilder {
 
     private final String schema;
     private StringBuilder select;
-    private StringBuilder from;
-    private StringBuilder join;
+    private StringBuilder from = new StringBuilder(" FROM ");
+    private StringBuilder join = new StringBuilder();
     private StringBuilder where;
     private int colCount = 0;
+
+
+    private StringBuilder fromCache;
+    private StringBuilder joinCache;
 
     public IndexedDataQueryBuilder(String schema) {
         this.schema = schema;
 
         select = new StringBuilder("select distinct tipoformulario.co_tipo_formulario as co_tipo_formulario \n");
-        from = new StringBuilder("from ")
+        fromCache = new StringBuilder()
                 .append(this.schema)
                 .append(".tb_tipo_formulario tipoformulario\n");
-        join = new StringBuilder("inner join ")
+        joinCache = new StringBuilder(" left join ")
                 .append(this.schema)
                 .append(".tb_formulario formulario on tipoformulario.co_tipo_formulario = formulario.co_tipo_formulario \n");
         where = new StringBuilder(" WHERE 1 = 1 ");
@@ -54,8 +58,7 @@ public class IndexedDataQueryBuilder {
     }
 
     public void appendToFrom(String fromClause) {
-        from.append(',')
-                .append(fromClause);
+        from.append(fromClause);
     }
 
     public IndexedDataQueryBuilder addColumn(String columnAlias, String[] fieldName) {
@@ -73,7 +76,11 @@ public class IndexedDataQueryBuilder {
      * @return
      */
     public String createQueryForIndexedData() {
-        return select.toString() + from.toString() + join.toString() + where.toString();
+        return new StringBuilder().append(select).append(from)
+                .append(',')
+                .append(fromCache)
+                .append(join)
+                .append(joinCache).append(where).toString();
     }
 
     private void addColumnToSelect(String column) {
@@ -86,7 +93,7 @@ public class IndexedDataQueryBuilder {
     private void addJoinClause(String columnAlias, String fieldsNames) {
         String joinAlias = "tb_cache_campo_" + ++colCount;
 
-        join.append("  inner join ")
+        joinCache.append("  left join ")
                 .append(schema)
                 .append(".tb_cache_campo ")
                 .append(joinAlias)
@@ -94,7 +101,7 @@ public class IndexedDataQueryBuilder {
                 .append(joinAlias)
                 .append(".co_tipo_formulario = tipoformulario.co_tipo_formulario \n");
 
-        join.append("  inner join ")
+        joinCache.append("  left join ")
                 .append(schema)
                 .append(".tb_cache_valor ")
                 .append(columnAlias)
@@ -104,11 +111,11 @@ public class IndexedDataQueryBuilder {
                 .append(joinAlias)
                 .append(".co_cache_campo \n");
 
-        join.append("          and ")
+        joinCache.append("          and ")
                 .append(columnAlias)
                 .append(".co_versao_formulario = formulario.co_versao_atual \n");
 
-        join.append("          and ")
+        joinCache.append("          and ")
                 .append(joinAlias)
                 .append(".ds_caminho_campo in (")
                 .append(fieldsNames).append(") \n");
