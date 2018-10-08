@@ -95,12 +95,13 @@ public class SPackageBootstrap extends SPackage {
         pb.getType(STypeString.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault6
             .prependOnView(SViewTextArea.class, SPackageBootstrap.MAX_COL_PREFERENCE));
 
+        pb.getType(STypeDecimal.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault3);
         pb.getType(STypeInteger.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault3);
         pb.getType(STypeLong.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault3);
         pb.getType(STypeDate.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault3);
         pb.getType(STypeTime.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault2);
         pb.getType(STypeDateTime.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault3);
-        pb.getType(STypeYearMonth.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault3);
+        pb.getType(STypeYearMonth.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault2);
     }
 
     private <T extends SType<I>, I extends SInstance, V> AtrBasic addAtrColumnPreference(PackageBuilder pb, AtrRef<T, I, V> atrRef, String label) {
