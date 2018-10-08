@@ -31,6 +31,7 @@ import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.lib.commons.context.ServiceRegistry;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -459,7 +460,7 @@ public final class SFormUtil {
         }
     }
 
-    private synchronized static Map<String, Class<? extends SPackage>> getSingularPackages() {
+    private static synchronized Map<String, Class<? extends SPackage>> getSingularPackages() {
         if (singularPackages == null) {
             singularPackages = SupplierUtil.cached(() -> {
                 Builder<String, Class<? extends SPackage>> builder = ImmutableMap.builder();
@@ -553,7 +554,8 @@ public final class SFormUtil {
                 return Optional.of((Class<? extends SType<?>>) c);
             }
             return Optional.empty();
-        } catch (Exception e) { //NOSONAR
+        } catch (Exception e) {
+            LoggerFactory.getLogger(SFormUtil.class).error(e.getMessage(), e);
             return Optional.empty();
         }
     }

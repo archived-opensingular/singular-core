@@ -29,6 +29,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Predicate;
 
+import static java.lang.Boolean.FALSE;
+
 public class SingularPredicates {
 
     private SingularPredicates() {}
@@ -99,11 +101,11 @@ public class SingularPredicates {
     }
 
     public static Predicate<SInstance> typeValueIsFalse(STypeSimple<? extends SISimple<Boolean>, Boolean> type) {
-        return i -> Boolean.FALSE.equals(Value.of(i, type));
+        return i -> FALSE.equals(Value.of(i, type));
     }
 
     public static Predicate<SInstance> typeValueIsFalseOrNull(STypeSimple<? extends SISimple<Boolean>, Boolean> type) {
-        return i -> Value.of(i, type) == null || Boolean.FALSE.equals(Value.of(i, type));
+        return i -> Value.of(i, type) == null || FALSE.equals(Value.of(i, type));
     }
 
     public static Predicate<SInstance> typeValueIsTrueAndNotNull(STypeSimple<? extends SISimple<Boolean>, Boolean> type) {
@@ -123,7 +125,7 @@ public class SingularPredicates {
     }
 
     public static Predicate<SInstance> empty(SType<?> type) {
-        return i -> i.findNearest(type).map(SInstance::isEmptyOfData).orElse(false);
+        return i -> i.findNearest(type).map(SInstance::isEmptyOfData).orElse(FALSE);
     }
 
     public static Predicate<SInstance> notEmpty(SType<?> type) {

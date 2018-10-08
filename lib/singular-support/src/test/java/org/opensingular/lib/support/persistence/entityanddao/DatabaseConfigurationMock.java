@@ -24,8 +24,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.hibernate4.HibernateTransactionManager;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -33,12 +33,17 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan(basePackages = {"org.opensingular.lib.support.persistence.entityanddao"})
+@ComponentScan(basePackages = {"org.opensingular.lib.support.persistence"})
 @EnableTransactionManagement(proxyTargetClass = true)
 public class DatabaseConfigurationMock {
 
     @Bean
-    public PlatformTransactionManager platformTransactionManager(SessionFactory factory){
+    public SessionLocator sessionLocator(SessionFactory sessionFactory) {
+        return () -> sessionFactory.getCurrentSession();
+    }
+
+    @Bean
+    public PlatformTransactionManager platformTransactionManager(SessionFactory factory) {
         return new HibernateTransactionManager(factory);
     }
 

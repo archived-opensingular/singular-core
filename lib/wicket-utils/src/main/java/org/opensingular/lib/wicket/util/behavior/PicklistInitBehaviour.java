@@ -29,10 +29,6 @@ import java.util.UUID;
 
 /**
  * Documantion of PickList: https://github.com/lou/multi-select/
- * <p>
- * Note: This PickList trigger the <code>picklist:selected</code> javascript event when something is selected ou deslected.
- * <p>
- * The event have a delay of 1400ms to happen, this behavior have to be done for grant that all click have a correct action.
  */
 public class PicklistInitBehaviour extends InitScriptBehaviour implements Loggable {
 

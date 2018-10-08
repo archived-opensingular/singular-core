@@ -39,13 +39,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.function.Function;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.opensingular.internal.lib.commons.test.SingularTestUtil.assertException;
 
 /**
@@ -165,7 +159,7 @@ public class SingularInjectorBySpringTest {
     @Test
     public void optionalMismatchedValue() {
         Basic5 basic5 = new Basic5();
-        assertException(() -> inject(basic5), BeanNotOfRequiredTypeException.class, "must be of type");
+        assertException(() -> inject(basic5), BeanNotOfRequiredTypeException.class, "is expected to be of type");
         assertNull(basic5.b);
     }
 

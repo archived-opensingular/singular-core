@@ -18,21 +18,42 @@ package org.opensingular.internal.lib.commons.xml;
 
 import java.io.PrintWriter;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+
 public abstract class AbstractToolkitWriter implements MElementWriter {
 
-    private final char[] ESPECIAL = {'&', '<', '>'};
-    private final String[] SUBSTITUTE = {"&amp;", "&lt;", "&gt;"};
+    private final static Object[][] REPLACEMENTS = {
+            new Boolean[]{TRUE, TRUE, TRUE, FALSE, FALSE}, // REQUIRED FOR NODE CONTENT (TRUE/FALSE)
+            new Character[]{'&', '<', '>', '"', '\''}, // ESPECIAL CHAR
+            new String[]{"&amp;", "&lt;", "&gt;", "&quot;", "&apos;"} // REPLACEMENT
+    };
 
 
-    protected void printConvertingSpecialCharacters(PrintWriter out, char[] text) {
-        int len           = text.length;
-        int lastWritten = 0;
+    protected void printConvertingSpecialCharactersTextNode(PrintWriter out, char[] text) {
+        printConvertingSpecialCharacters(out, text, false);
+    }
+
+    protected void printConvertingSpecialCharactersAttribute(PrintWriter out, char[] text) {
+        printConvertingSpecialCharacters(out, text, true);
+    }
+
+
+    @SuppressWarnings({"squid:S134","fb-contrib:CLI_CONSTANT_LIST_INDEX"})
+    private void printConvertingSpecialCharacters(PrintWriter out, char[] text, boolean attributeEscape) {
+        Boolean[]   REQUIRED_FOR_NODE_CONTENT = (Boolean[]) REPLACEMENTS[0];
+        Character[] ESPECIAL                  = (Character[]) REPLACEMENTS[1];
+        String[]    SUBSTITUTE                = (String[]) REPLACEMENTS[2];
+        int         len                       = text.length;
+        int         lastWritten               = 0;
         for (int i = 0; i < len; i++) {
-            for (int j = 0; j < 3; j++) {
+            for (int j = 0; j < ESPECIAL.length; j++) {
                 if (text[i] == ESPECIAL[j]) {
-                    out.write(text, lastWritten, i - lastWritten);
-                    out.print(SUBSTITUTE[j]);
-                    lastWritten = i + 1;
+                    if (REQUIRED_FOR_NODE_CONTENT[j] || attributeEscape) {
+                        out.write(text, lastWritten, i - lastWritten);
+                        out.print(SUBSTITUTE[j]);
+                        lastWritten = i + 1;
+                    }
                 }
             }
         }

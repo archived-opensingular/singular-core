@@ -79,8 +79,63 @@ public class DebugOutputTest {
         assertContent(debug, "null", "   XX", "   YY", "null","   ZZ","", "last");
     }
 
+    @Test
+    public void debugByColumn() {
+        DebugOutput debug = new DebugOutput(new CharArrayWriter());
+        DebugOutputTable table = debug.table();
+        table.addColumn(1);
+        table.addColumn(3);
+        table.addColumn(4);
+
+        table.println("A", "B", "C");
+        table.println();
+        table.println(null, null, "DD");
+        table.println("AA", "B");
+        table.println("A", "B");
+
+        assertContent(debug, "A B   C", "", "      DD", "AA B", "A  B");
+    }
+
+    @Test
+    public void debugByColumnFromList() {
+        List<String> values = Lists.newArrayList("First", "Second", "Last");
+
+        DebugOutput debug = new DebugOutput(new CharArrayWriter());
+        debug.table(values, (t, v) -> {
+            t.setValue(0, v);
+            t.setValue(1, v.length());
+        });
+        assertContent(debug, "First  5", "Second 6", "Last   4");
+    }
+
+    @Test
+    public void debugByColumnFromListWithTitle() {
+        List<String> values = Lists.newArrayList("First", "Second", "Last");
+
+        DebugOutput debug = new DebugOutput(new CharArrayWriter());
+        debug.table(values, (t, v) -> {
+            t.setValue(0, v);
+            t.setValue(1, v.length());
+        }, t -> t.addLine("Name Client", "Size"));
+        assertContent(debug, "Name Client Size", "First       5", "Second      6", "Last        4");
+    }
+
+    @Test
+    public void debugByColumnFromListWithTitle2() {
+        List<String> values = Lists.newArrayList("First", "Second", "Last");
+
+        DebugOutput debug = new DebugOutput(new CharArrayWriter());
+        debug.table(values, (t, v) -> {
+            t.setValue(0, v);
+            t.setValue(1, v.length());
+            t.setValue(2, v.substring(0, 1));
+        }, t -> values.forEach(t::addValue));
+        assertContent(debug, "First  Second Last", "First  5      F", "Second 6      S", "Last   4      L");
+    }
+
+
     private void assertContent(@Nonnull DebugOutput debug, String... expectedLines) {
-        String content = ((CharArrayWriter) debug.getAppendable()).toString();
+        String content = debug.getAppendable().toString();
         List<String> lines;
         try {
             lines = IOUtils.readLines(new CharArrayReader(content.toCharArray()));

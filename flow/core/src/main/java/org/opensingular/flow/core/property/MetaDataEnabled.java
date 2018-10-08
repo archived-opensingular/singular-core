@@ -16,12 +16,12 @@
 
 package org.opensingular.flow.core.property;
 
-import java.io.Serializable;
-import java.util.Optional;
+import org.opensingular.lib.commons.base.SingularException;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import org.opensingular.lib.commons.base.SingularException;
+import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * Indicates the capability of a class to have meta data information through a dynamic map of key and value.
@@ -33,10 +33,10 @@ import org.opensingular.lib.commons.base.SingularException;
 public interface MetaDataEnabled {
 
     @Nonnull
-    public MetaDataMap getMetaData();
+    MetaDataMap getMetaData();
 
     @Nonnull
-    public Optional<MetaDataMap> getMetaDataOpt();
+    Optional<MetaDataMap> getMetaDataOpt();
 
     /**
      * Set a value associeted to the key. If the value is null, then reverted the value to default value of the key

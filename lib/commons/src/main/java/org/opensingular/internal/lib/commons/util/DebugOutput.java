@@ -5,11 +5,14 @@ import org.opensingular.lib.commons.base.SingularException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * Helps to generate a text representation, i.e., a dump info of a object, for debug purposes. Besides helping format
- * the printed info, also helps to create indentation between  sub levels of information.
+ * the printed info, also helps to create indentation between sub levels of information.
  *
  * @author Daniel C. Bordin
  * @since 2018-09-10
@@ -166,5 +169,31 @@ public class DebugOutput implements Appendable {
         } catch (IOException e) {
             throw SingularException.rethrow(e);
         }
+    }
+
+    /** Creates a table generator base in the current output and indentation. */
+    @Nonnull
+    public DebugOutputTable table() {
+        return new DebugOutputTable(this);
+    }
+
+    /**
+     * Creates a table with a line for each element of the collection and the values for each cell of the line provided
+     * by the informed line mapper.
+     * <p><The collection will read twice.</p>
+     */
+    public <T> void table(@Nonnull Collection<T> value, @Nonnull BiConsumer<DebugOutputTable, T> lineMapper) {
+        table().map(value, lineMapper);
+    }
+
+    /**
+     * Creates a table with a line for each element of the collection and the values for each cell of the line provided
+     * by the informed line mapper.
+     * <p><The collection will read twice.</p>
+     * @param preMapper Called before generating the values. It'll probably create the header.
+     */
+    public <T> void table(@Nonnull Collection<T> value, @Nonnull BiConsumer<DebugOutputTable, T> lineMapper,
+            @Nullable Consumer<DebugOutputTable> preMapper) {
+        table().map(value, lineMapper, preMapper);
     }
 }
