@@ -58,7 +58,8 @@ public class IndexedDataQueryBuilder {
     }
 
     public void appendToFrom(String fromClause) {
-        from.append(fromClause);
+        from.append(fromClause)
+                .append(',');
     }
 
     public IndexedDataQueryBuilder addColumn(String columnAlias, String[] fieldName) {
@@ -76,11 +77,13 @@ public class IndexedDataQueryBuilder {
      * @return
      */
     public String createQueryForIndexedData() {
-        return new StringBuilder().append(select).append(from)
-                .append(',')
+        return new StringBuilder()
+                .append(select)
+                .append(from)
                 .append(fromCache)
                 .append(join)
-                .append(joinCache).append(where).toString();
+                .append(joinCache)
+                .append(where).toString();
     }
 
     private void addColumnToSelect(String column) {
