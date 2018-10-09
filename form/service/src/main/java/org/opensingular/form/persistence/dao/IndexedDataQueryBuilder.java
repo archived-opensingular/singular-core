@@ -94,7 +94,9 @@ public class IndexedDataQueryBuilder {
                 .append(column)
                 .append(".DS_VALOR, ")
                 .append(column)
-                .append(" .NU_VALOR) as ")
+                .append(" .NU_VALOR, ")
+                .append(column)
+                .append(" .DT_VALOR) as ")
                 .append(column)
                 .append('\n');
     }
