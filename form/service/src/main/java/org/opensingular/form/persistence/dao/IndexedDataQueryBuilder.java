@@ -23,27 +23,19 @@ public class IndexedDataQueryBuilder {
     private StringBuilder from = new StringBuilder(" FROM ");
     private StringBuilder join = new StringBuilder();
     private StringBuilder where;
-
-    private StringBuilder fromCache;
     private StringBuilder joinCache;
 
     public IndexedDataQueryBuilder(String schema) {
         this.schema = schema;
 
-        select = new StringBuilder("select distinct tipoformulario.co_tipo_formulario as co_tipo_formulario \n");
-        fromCache = new StringBuilder()
-                .append(this.schema)
-                .append(".tb_tipo_formulario tipoformulario\n");
-        joinCache = new StringBuilder(" left join ")
-                .append(this.schema)
-                .append(".tb_formulario formulario on tipoformulario.co_tipo_formulario = formulario.co_tipo_formulario \n");
+        select = new StringBuilder("SELECT DISTINCT 'EMPTY' \n");
+        joinCache = new StringBuilder();
         where = new StringBuilder(" WHERE 1 = 1 ");
     }
 
 
     public void appendToSelect(String columnName) {
-        select.append(',')
-                .append(columnName);
+        select.append("  , ").append(columnName);
     }
 
     public void appendToJoin(String joinClause) {
@@ -56,8 +48,7 @@ public class IndexedDataQueryBuilder {
     }
 
     public void appendToFrom(String fromClause) {
-        from.append(fromClause)
-                .append(',');
+        from.append(fromClause);
     }
 
     public IndexedDataQueryBuilder addColumn(String columnAlias, String[] fieldName) {
@@ -78,7 +69,6 @@ public class IndexedDataQueryBuilder {
         return new StringBuilder()
                 .append(select)
                 .append(from)
-                .append(fromCache)
                 .append(join)
                 .append(joinCache)
                 .append(where).toString();
@@ -102,8 +92,8 @@ public class IndexedDataQueryBuilder {
                 " INNER JOIN DBSINGULAR.tb_cache_valor CACHE_VALOR " +
                 "                 on CACHE_VALOR.co_cache_campo = CACHE_CAMPO.co_cache_campo " +
                 "                    and CACHE_CAMPO.ds_caminho_campo in (" + fieldsNames + ") " +
-                " ) " + columnAlias + " on " + columnAlias + ".co_versao_formulario = formulario.CO_VERSAO_ATUAL " +
-                " and "+ columnAlias+".co_tipo_formulario = tipoformulario.CO_TIPO_FORMULARIO ";
+                " ) " + columnAlias + " on " + columnAlias + ".co_versao_formulario = currentV.CO_VERSAO_FORMULARIO " +
+                " and "+ columnAlias+".co_tipo_formulario = tpForm.CO_TIPO_FORMULARIO ";
 
         joinCache.append(leftSubQuery);
 
