@@ -74,9 +74,8 @@ public final class SFormUtil {
         return SingularFormProcessing.evaluateUpdateListeners(i);
     }
 
-    private static boolean isNotValidSimpleName(@Nonnull String name) {
-        Objects.requireNonNull(name);
-        if (name.length() == 0 || !isLetter(name.charAt(0))) {
+    private static boolean isNotValidSimpleName(@Nullable String name) {
+        if (name == null || name.length() == 0 || !isLetter(name.charAt(0))) {
             return true;
         }
         for (int i = name.length() - 1; i != 0; i--) {
