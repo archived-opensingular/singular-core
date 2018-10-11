@@ -37,7 +37,6 @@ import org.opensingular.form.view.richtext.RichTextAction;
 import org.opensingular.form.view.richtext.SViewByRichTextNewTab;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.component.BFModalWindow;
-import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.template.RecursosStaticosSingularTemplate;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
@@ -111,27 +110,27 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "RichTextNewTabPage.js")) {
             final Map<String, String> params = new HashMap<>();
 
-            ISupplier<SViewByRichTextNewTab> viewSupplier = wicketBuildContext.getViewSupplier(SViewByRichTextNewTab.class);
+            SViewByRichTextNewTab view = wicketBuildContext.getViewSupplier(SViewByRichTextNewTab.class).get();
 
             /*If don't contains the View, i add a view with empty buttons, for default use.*/
-            if (!viewSupplier.optional().isPresent()) {
-                viewSupplier = (ISupplier<SViewByRichTextNewTab>) SViewByRichTextNewTab::new;
+            if (view == null) {
+                view = new SViewByRichTextNewTab();
                 getLogger().info("SViewByRichTextNewTab was insert in the RichTextNewTabPage.");
             }
 
             params.put("submitButtonId", submitButton.getMarkupId());
-            params.put("classDisableDoubleClick", viewSupplier.get()
+            params.put("classDisableDoubleClick", view
                     .getConfiguration()
                     .getDoubleClickDisabledClasses()
                     .stream()
                     .reduce(new StringBuilder(), (s, b) -> s.append(b).append(", "), StringBuilder::append).toString());
             params.put("hiddenInput", this.hiddenInput.getMarkupId());
-            params.put("showSaveButton", String.valueOf(viewSupplier.get().isShowSaveButton()));
+            params.put("showSaveButton", String.valueOf(view.isShowSaveButton()));
             params.put("htmlContainer", this.markupId);
             params.put("callbackUrl", eventSaveCallbackBehavior.getCallbackUrl().toString());
             params.put("isEnabled", String.valueOf(!readOnly));
 
-            params.put("buttonsList", this.renderButtonsList());
+            params.put("buttonsList", this.renderButtonsList(view));
             packageTextTemplate.interpolate(params);
             response.render(JavaScriptHeaderItem.forScript(packageTextTemplate.getString(), this.getId()));
 
@@ -148,12 +147,12 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
      * It use "#$" to separate any element of RichTextAction class, and ",," for any button.
      *
      * @return A text formmated contain list of buttons to JS.
+     * @param view
      */
-    private String renderButtonsList() {
+    private String renderButtonsList(SViewByRichTextNewTab view) {
         StringBuilder sb = new StringBuilder();
-        ISupplier<SViewByRichTextNewTab> viewSupplier = wicketBuildContext.getViewSupplier(SViewByRichTextNewTab.class);
-        for (int i = 0; i < viewSupplier.get().getTextActionList().size(); i++) {
-            RichTextAction richTextAction = viewSupplier.get().getTextActionList().get(i);
+        for (int i = 0; i < view.getTextActionList().size(); i++) {
+            RichTextAction richTextAction = view.getTextActionList().get(i);
             String actionButtonFormatted = i + "#$" + richTextAction.getLabel()
                     + "#$" + richTextAction.getIcon().getCssClass()
                     + "#$" + richTextAction.getLabelInline()
