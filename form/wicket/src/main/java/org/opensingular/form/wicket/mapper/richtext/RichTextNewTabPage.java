@@ -111,22 +111,23 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "RichTextNewTabPage.js")) {
             final Map<String, String> params = new HashMap<>();
 
-            ISupplier<SViewByRichTextNewTab> viewSupplier = wicketBuildContext.getViewSupplier(SViewByRichTextNewTab.class);
+            SViewByRichTextNewTab view = wicketBuildContext.getViewSupplier(SViewByRichTextNewTab.class).get();
 
             /*If don't contains the View, i add a view with empty buttons, for default use.*/
-            if (!viewSupplier.optional().isPresent()) {
-                viewSupplier = (ISupplier<SViewByRichTextNewTab>) SViewByRichTextNewTab::new;
+            if (view == null) {
+                view = new SViewByRichTextNewTab();
+                wicketBuildContext.setView(view);
                 getLogger().info("SViewByRichTextNewTab was insert in the RichTextNewTabPage.");
             }
 
             params.put("submitButtonId", submitButton.getMarkupId());
-            params.put("classDisableDoubleClick", viewSupplier.get()
+            params.put("classDisableDoubleClick", view
                     .getConfiguration()
                     .getDoubleClickDisabledClasses()
                     .stream()
                     .reduce(new StringBuilder(), (s, b) -> s.append(b).append(", "), StringBuilder::append).toString());
             params.put("hiddenInput", this.hiddenInput.getMarkupId());
-            params.put("showSaveButton", String.valueOf(viewSupplier.get().isShowSaveButton()));
+            params.put("showSaveButton", String.valueOf(view.isShowSaveButton()));
             params.put("htmlContainer", this.markupId);
             params.put("callbackUrl", eventSaveCallbackBehavior.getCallbackUrl().toString());
             params.put("isEnabled", String.valueOf(!readOnly));
