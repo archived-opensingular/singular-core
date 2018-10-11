@@ -37,7 +37,6 @@ import org.opensingular.form.view.richtext.RichTextAction;
 import org.opensingular.form.view.richtext.SViewByRichTextNewTab;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.component.BFModalWindow;
-import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.template.RecursosStaticosSingularTemplate;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
@@ -116,7 +115,6 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
             /*If don't contains the View, i add a view with empty buttons, for default use.*/
             if (view == null) {
                 view = new SViewByRichTextNewTab();
-                wicketBuildContext.setView(view);
                 getLogger().info("SViewByRichTextNewTab was insert in the RichTextNewTabPage.");
             }
 
@@ -132,7 +130,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
             params.put("callbackUrl", eventSaveCallbackBehavior.getCallbackUrl().toString());
             params.put("isEnabled", String.valueOf(!readOnly));
 
-            params.put("buttonsList", this.renderButtonsList());
+            params.put("buttonsList", this.renderButtonsList(view));
             packageTextTemplate.interpolate(params);
             response.render(JavaScriptHeaderItem.forScript(packageTextTemplate.getString(), this.getId()));
 
@@ -149,12 +147,12 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
      * It use "#$" to separate any element of RichTextAction class, and ",," for any button.
      *
      * @return A text formmated contain list of buttons to JS.
+     * @param view
      */
-    private String renderButtonsList() {
+    private String renderButtonsList(SViewByRichTextNewTab view) {
         StringBuilder sb = new StringBuilder();
-        ISupplier<SViewByRichTextNewTab> viewSupplier = wicketBuildContext.getViewSupplier(SViewByRichTextNewTab.class);
-        for (int i = 0; i < viewSupplier.get().getTextActionList().size(); i++) {
-            RichTextAction richTextAction = viewSupplier.get().getTextActionList().get(i);
+        for (int i = 0; i < view.getTextActionList().size(); i++) {
+            RichTextAction richTextAction = view.getTextActionList().get(i);
             String actionButtonFormatted = i + "#$" + richTextAction.getLabel()
                     + "#$" + richTextAction.getIcon().getCssClass()
                     + "#$" + richTextAction.getLabelInline()
