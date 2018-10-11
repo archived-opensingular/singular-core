@@ -33,6 +33,9 @@ public class IndexedDataQueryBuilder {
         where = new StringBuilder(" WHERE 1 = 1 ");
     }
 
+    public void createSelect(String selectClause) {
+        select = new StringBuilder(selectClause);
+    }
 
     public void appendToSelect(String columnName) {
         select.append("  , ").append(columnName);
