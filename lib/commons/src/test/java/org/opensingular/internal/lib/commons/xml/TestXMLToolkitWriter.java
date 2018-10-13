@@ -19,20 +19,82 @@
 package org.opensingular.internal.lib.commons.xml;
 
 import net.vidageek.mirror.dsl.Mirror;
-import org.junit.Assert;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
+import org.opensingular.lib.commons.test.AssertionsXML;
+import org.xml.sax.SAXException;
 
+import javax.annotation.Nonnull;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
+import static org.junit.Assert.assertEquals;
+
 public class TestXMLToolkitWriter {
+    @Test
+    public void testEscapesInContentAndAttributes1() {
+        String expected =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root att=\"ç&quot;&apos;&gt;&lt;\">ç\"'&gt;&lt;</root>";
+
+        assertEquals(expected, createXMLWithSpecialCharacters().toStringExato());
+
+        String fix = StringUtils.remove(StringUtils.remove(createXMLWithSpecialCharacters().toString(), '\r'), '\n');
+        assertEquals(expected, fix);
+    }
+
+    @Test
+    public void testEscapesInContentAndAttributes() throws Exception {
+        MElement xml = createXMLWithSpecialCharacters();
+        verifyConsistencyWriteAndRead(xml);
+    }
+
+    @Test
+    public void withValueBreakLine() throws Exception {
+        MElement xml = MElement.newInstance("root");
+        xml.setTextContent("A\nB");
+        System.out.println(xml.toStringExato());
+        verifyConsistencyWriteAndRead(xml);
+    }
+
+    private void verifyConsistencyWriteAndRead(@Nonnull MElement xml) throws SAXException, IOException {
+        MElement xml2;
+
+        xml2 = MParser.parse(xml.toStringExato());
+        new AssertionsXML(xml2).isContentEquals(xml).isEquivalentTo(xml);
+
+        xml2 = MParser.parse(xml.toString());
+        new AssertionsXML(xml2).isContentEquals(xml).isEquivalentTo(xml);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        xml.printTabulado(out);
+        xml2 = MParser.parse(out.toByteArray());
+        new AssertionsXML(xml2).isContentEquals(xml).isEquivalentTo(xml);
+
+        out = new ByteArrayOutputStream();
+        xml.print(out);
+        xml2 = MParser.parse(out.toByteArray());
+        new AssertionsXML(xml2).isContentEquals(xml).isEquivalentTo(xml);
+
+    }
+
+    @Nonnull
+    private MElement createXMLWithSpecialCharacters() {
+        String special = "ç\"\'><";
+        MElement xml = MElement.newInstance("root");
+        xml.setAttribute("att", special);
+        xml.setTextContent(special);
+        return xml;
+    }
+
 
     @Test
     public void testPrintNodeMethods() throws FileNotFoundException {
@@ -50,7 +112,6 @@ public class TestXMLToolkitWriter {
 
             document.createComment("comentario pra dar erro");
 
-            elementWriter.printDocument(writer, root, false, false);
             elementWriter.printDocument(writer, root, false);
             elementWriter.printDocumentIndentado(writer, root, false);
             writer.close();
@@ -69,7 +130,7 @@ public class TestXMLToolkitWriter {
         ObjectInputStream oi      = new ObjectInputStream(new FileInputStream(f));
         XMLMElementWriter another = (XMLMElementWriter) oi.readObject();
 
-        Assert.assertEquals(new Mirror().on(e).get().field("charset"), new Mirror().on(another).get().field("charset"));
+        assertEquals(new Mirror().on(e).get().field("charset"), new Mirror().on(another).get().field("charset"));
 
         f.delete();
 

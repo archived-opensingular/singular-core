@@ -23,32 +23,40 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.opensingular.internal.lib.commons.util.RandomUtil;
+import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
 import org.opensingular.lib.commons.base.SingularException;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
+import org.opensingular.lib.commons.io.StringPrintWriter;
+import org.opensingular.lib.commons.test.AssertionsXML;
 import org.w3c.dom.Node;
-import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.stream.Collectors;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
@@ -63,149 +71,8 @@ public class TestMElement {
      */
     private MElement root_;
 
-    /**
-     * Verifica se ambos os nos são iguais fazendo uma comparação em
-     * profundidade.
-     *
-     * @param n1 -
-     * @param n2 -
-     * @throws Exception Se nbão forem iguais
-     */
-    public static void isIgual(Node n1, Node n2) throws Exception {
-        if (n1 == n2) {
-            return;
-        }
-
-        isIgual(n1, n2, "NodeName", n1.getNodeName(), n2.getNodeName());
-        isIgual(n1, n2, "NodeValue", n1.getNodeValue(), n2.getNodeValue());
-        isIgual(n1, n2, "Namespace", n1.getNamespaceURI(), n2.getNamespaceURI());
-        isIgual(n1, n2, "Prefix", n1.getPrefix(), n2.getPrefix());
-        isIgual(n1, n2, "LocalName", n1.getLocalName(), n2.getLocalName());
-
-        if (isSameClass(Element.class, n1, n2)) {
-            Element e1 = (Element) n1;
-            Element e2 = (Element) n2;
-            //Verifica se possuem os mesmos atributos
-            NamedNodeMap nn1 = e1.getAttributes();
-            NamedNodeMap nn2 = e2.getAttributes();
-            if (nn1.getLength() != nn2.getLength()) {
-                fail("O número atributos em " + XPathToolkit.getFullPath(n1) + " (qtd=" + nn1.getLength() +
-                        " é diferente de n2 (qtd=" + nn2.getLength() + ")");
-            }
-            for (int i = 0; i < nn1.getLength(); i++) {
-                isIgual((Attr) nn1.item(i), (Attr) nn2.item(i));
-            }
-
-            //Verifica se possuem os mesmos filhos
-            Node child1 = e1.getFirstChild();
-            Node child2 = e2.getFirstChild();
-            int count = 0;
-            while ((child1 != null) && (child2 != null)) {
-                isIgual(child1, child2);
-                child1 = child1.getNextSibling();
-                child2 = child2.getNextSibling();
-                count++;
-            }
-            if (child1 != null) {
-                fail("Há mais node [" + count + "] " + XPathToolkit.getNodeTypeName(child1) + " (" +
-                        XPathToolkit.getFullPath(child1) + ") em n1:" + XPathToolkit.getFullPath(n1));
-            }
-            if (child2 != null) {
-                fail("Há mais node [" + count + "] " + XPathToolkit.getNodeTypeName(child2) + " (" +
-                        XPathToolkit.getFullPath(child2) + ") em n2:" + XPathToolkit.getFullPath(n2));
-            }
-
-        } else if (isSameClass(Attr.class, n1, n2)) {
-            //Ok
-
-        } else if (isSameClass(Text.class, n1, n2)) {
-            //Ok
-
-        } else {
-            fail("Tipo de nó " + n1.getClass() + " não tratado");
-        }
-
-    }
-
-    /**
-     * Verifica se os atributos são iguais. Existe pois a comparação de
-     * atributos possui particularidades.
-     *
-     * @param n1 -
-     * @param n2 -
-     * @throws Exception Se não forem iguais
-     */
-    public static void isIgual(Attr n1, Attr n2) throws Exception {
-        if (n1 == n2) {
-            return;
-        }
-        isIgual(n1, n2, "NodeName", n1.getNodeName(), n2.getNodeName());
-        isIgual(n1, n2, "NodeValue", n1.getNodeValue(), n2.getNodeValue());
-
-        //Por algum motivo depois do parse Prefix passa de null para não null
-        //isIgual(n1, n2, "Prefix", n1.getPrefix(), n2.getPrefix());
-        //Por algum motivo depois do parse Localname passe de não null para
-        // null
-        //isIgual(n1, n2, "LocalName", n1.getLocalName(), n2.getLocalName());
-
-        if (!(n1.getNodeName().startsWith("xmlns") && n2.getNodeName().startsWith("xmlns"))) {
-            isIgual(n1, n2, "Namespace", n1.getNamespaceURI(), n2.getNamespaceURI());
-        }
-    }
-
-    /**
-     * Verifica se ambos o nós são da classe informada. Se apenas um for, um
-     * erro é disparado devido a incompatibilidade.
-     *
-     * @param c        Classe a ser verificada
-     * @param original instância 1
-     * @param newNode  instância 2
-     * @return true Se ambos forem instância de c
-     */
-    private static boolean isSameClass(Class<?> c, Node original, Node newNode) {
-        if (c.isInstance(original)) {
-            if (c.isInstance(newNode)) {
-                return true;
-            } else {
-                fail(XPathToolkit.getFullPath(original) + " não é da mesma classe que " +
-                        XPathToolkit.getFullPath(newNode));
-            }
-        } else if (c.isInstance(newNode)) {
-            fail(XPathToolkit.getFullPath(original) + " não é da mesma classe que " + XPathToolkit.getFullPath(newNode));
-        }
-        return false;
-    }
-
-    /**
-     * Verifica a igualdade de um determiando para de objetos já considerando a
-     * situação de um deles ser null.
-     *
-     * @param n1        -
-     * @param n2        -
-     * @param nomeParte -
-     * @param v1        -
-     * @param v2        -
-     */
-    private static void isIgual(Node n1, Node n2, String nomeParte, Object v1, Object v2) {
-        if (((v1 == null) && (v2 != null)) || ((v1 != null) && !v1.equals(v2))) {
-
-            fail("O(a) " + nomeParte + " em  " + XPathToolkit.getFullPath(n2) + " (" + escreverValor(v2) +
-                    ") está diferente do original em " + XPathToolkit.getFullPath(n1) + " (" + escreverValor(v1) + ")");
-        }
-    }
-
-    /**
-     * Apenas para formar de forma visivel o caso null
-     *
-     * @param o -
-     * @return Uma string entre '' se diferente null ou a string null.
-     */
-    private static String escreverValor(Object o) {
-        if (o == null) {
-            return "null";
-        } else {
-            return "'" + o + "'";
-        }
+    private static void isEquivalent(Node n1, Node n2) {
+        AssertionsXML.isEquivalent(n1, n2);
     }
 
     @Test
@@ -311,21 +178,21 @@ public class TestMElement {
      * Testa o funcionamento dos métodos copy
      */
     @Test
-    public void testCopy() throws Exception {
+    public void testCopy() {
         //Testa a copia sem namespace
         MElement root2 = MElement.newInstance("http://acme.com", "lista");
         MElement new2 = root2.copy(root_.getElement("cd"), null);
 
         root_.print(System.err);
         new2.print(System.err);
-        isIgual(root_.getElement("cd"), new2);
+        isEquivalent(root_.getElement("cd"), new2);
 
         //Testa a copia com namespace
         MElement root3 = MElement.newInstance("Pai-simples");
         MElement new3 = root3.copy(root2, null);
         //raiz2.print(System.err);
         //novo3.print(System.err);
-        isIgual(root2, new3);
+        isEquivalent(root2, new3);
 
     }
 
@@ -352,15 +219,15 @@ public class TestMElement {
         assertEquals(root_.getInt("cd/@cod"), 1);
         assertEquals(root_.getValue("cd/@cod"), "1");
         assertEquals(root_.getValue("/pedido/cd[2]/nome"), "9 Luas");
-        assertEquals(root_.getValue("/cd/ano"), null);
+        assertNull(root_.getValue("/cd/ano"));
 
         MElement cd = root_.getElement("cd");
         assertEquals(cd.getValue("/pedido/cd/ano"), "2002");
         assertEquals(cd.getLong("/pedido/cd/ano"), 2002);
-        assertEquals(cd.getValue("/ano"), null);
+        assertNull(cd.getValue("/ano"));
         assertEquals(cd.getValue("ano"), "2002");
         assertEquals(cd.getValue("@cod"), "1");
-        assertEquals(cd.getValue("@xpto"), null);
+        assertNull(cd.getValue("@xpto"));
 
     }
 
@@ -555,22 +422,22 @@ public class TestMElement {
      */
     @Test
     public void testPossuiNodeElement() {
-        assertEquals(true, root_.possuiElement("cd"));
-        assertEquals(true, root_.possuiElement("cd/faixa"));
-        assertEquals(false, root_.possuiElement("cd/xpto"));
-        assertEquals(false, root_.possuiElement("xpto"));
+        assertTrue(root_.possuiElement("cd"));
+        assertTrue(root_.possuiElement("cd/faixa"));
+        assertFalse(root_.possuiElement("cd/xpto"));
+        assertFalse(root_.possuiElement("xpto"));
         try {
-            assertEquals(false, root_.possuiElement("@cliente"));
+            assertFalse(root_.possuiElement("@cliente"));
             fail("Deveria ter ocorrido um erro, pois @cliente é um atributo");
         } catch (RuntimeException e) {
             //ok
         }
-        assertEquals(true, root_.possuiNode("cd"));
-        assertEquals(true, root_.possuiNode("cd/faixa"));
-        assertEquals(false, root_.possuiNode("cd/xpto"));
-        assertEquals(false, root_.possuiNode("xpto"));
-        assertEquals(true, root_.possuiNode("@cliente"));
-        assertEquals(true, root_.possuiNode("cd/@cod"));
+        assertTrue(root_.possuiNode("cd"));
+        assertTrue(root_.possuiNode("cd/faixa"));
+        assertFalse(root_.possuiNode("cd/xpto"));
+        assertFalse(root_.possuiNode("xpto"));
+        assertTrue(root_.possuiNode("@cliente"));
+        assertTrue(root_.possuiNode("cd/@cod"));
     }
 
     /**
@@ -664,7 +531,7 @@ public class TestMElement {
         } catch (FileNotFoundException e) {
             //ok - chegou o erro esperado
         } catch (SAXException e) {
-            if (e.getMessage().indexOf("can not be resolved") == -1) {
+            if (!e.getMessage().contains("can not be resolved")) {
                 throw e;
             }
             //ok - chegou o erro esperado
@@ -687,8 +554,8 @@ public class TestMElement {
             p.parseComResolver(new ByteArrayInputStream(sXML.getBytes()));
             fail("Deveria ter ocorrido um erro no parse");
         } catch (SAXException e) {
-            if (e.getMessage().indexOf("does not allow \"filho3\"") == -1 && e.getMessage().indexOf(
-                    "\"filho3\" must be declared") == -1) {
+            if (!e.getMessage().contains("does not allow \"filho3\"") && !e.getMessage().contains(
+                    "\"filho3\" must be declared")) {
                 throw e;
             }
             //ok - chegou o erro esperado
@@ -749,18 +616,18 @@ public class TestMElement {
      *
      * @param root Elemento a ser copiado
      */
-    private void testCopy(MElement root) throws Exception {
+    private void testCopy(MElement root) {
         MElement newParent = MElement.newInstance("pai-a");
         MElement newElement    = newParent.copy(root, null);
-        isIgual(root, newElement);
+        isEquivalent(root, newElement);
 
         MElement newParent2 = MElement.newInstance("http://www.opensingular.com", "pai-b");
         MElement newElement2 = newParent2.copy(root, null);
-        isIgual(root, newElement2);
+        isEquivalent(root, newElement2);
 
         MElement newParent3 = MElement.newInstance("http://www.opensingular.com", "p:pai-c");
         MElement newElement3 = newParent3.copy(root, null);
-        isIgual(root, newElement3);
+        isEquivalent(root, newElement3);
     }
 
     /**
@@ -789,12 +656,12 @@ public class TestMElement {
         }
 
         //Verifica igualdade
-        isIgual(root, lido);
+        isEquivalent(root, lido);
 
         testCopy(lido);
 
         MElement lido2 = MParser.parse(new ByteArrayInputStream(root.toByteArray()), true, false);
-        isIgual(root, lido2);
+        isEquivalent(root, lido2);
 
         return lido;
     }
@@ -803,7 +670,7 @@ public class TestMElement {
      * Verifica o método updateElement
      */
     @Test
-    public void testUpdateElement() throws Exception {
+    public void testUpdateElement() {
         MElement original = MElement.newInstance("teste");
         original.addElement("nome", "Paulo");
         original.addElement("idade", "30");
@@ -835,14 +702,14 @@ public class TestMElement {
         tels.addElement("residencial", "6666");
         esperado.addElement("endereco", "Lago Norte");
 
-        isIgual(esperado, original);
+        isEquivalent(esperado, original);
     }
 
     /**
      * Testa a conversão do toStringExato de caracteres especias.
      */
     @Test
-    public void testCaracterEspecial() throws Exception {
+    public void testCaracterEspecial() {
         MElement e = MElement.newInstance("teste");
         e.addElement("Ecomercial", "jão & maria");
         e.addElement("MaiorMenor", "a<b>c");
@@ -862,7 +729,7 @@ public class TestMElement {
 
         MElement parsed = MParser.parse(original.toStringExato());
 
-        isIgual(parsed, original);
+        isEquivalent(parsed, original);
     }
 
     @Test
@@ -921,12 +788,11 @@ public class TestMElement {
         Calendar calendar = ConversorToolkit.getCalendar("01/01/2017");
         MElement root     = MElement.newInstance("raiz");
 
-        Object longObj = new Long(123456);
+        Object longObj = 123456L;
         root.addElement("longObj", longObj);
         Assert.assertEquals(root.getLong("longObj"), 123456);
 
-        Object calendarObj = calendar;
-        root.addElement("calendarObj", calendarObj);
+        root.addElement("calendarObj", (Object) calendar);
         Assert.assertEquals(0, root.getCalendar("calendarObj").compareTo(calendar));
 
         Object dateObj = calendar.getTime();
@@ -959,10 +825,10 @@ public class TestMElement {
         root.addBoolean("booleanTrue", true);
         root.addBoolean("booleanFalse", false);
 
-        Assert.assertTrue(root.getBoolean("booleanTrue"));
+        assertTrue(root.getBoolean("booleanTrue"));
         Assert.assertFalse(root.getBoolean("booleanFalse"));
 
-        Assert.assertTrue(root.getBoolean("booleanTrue", true));
+        assertTrue(root.getBoolean("booleanTrue", true));
         Assert.assertFalse(root.getBoolean("booleanFalse", false));
         Assert.assertFalse(root.getBoolean("bool", false));
     }
@@ -1062,9 +928,9 @@ public class TestMElement {
 
         Assert.assertNull(MElement.toMElement(node));
 
-        Assert.assertTrue(MElement.toMElement(element.getNode("node1")) instanceof MElement);
+        assertTrue(MElement.toMElement(element.getNode("node1")) instanceof MElement);
 
-        Assert.assertTrue(MElement.toMElement((Node) nodeMElement) instanceof MElement);
+        assertTrue(MElement.toMElement((Node) nodeMElement) instanceof MElement);
 
         MDocument document = MDocument.newInstance();
 
@@ -1129,7 +995,7 @@ public class TestMElement {
         root.addElement("elemento", "valor");
 
         Assert.assertFalse(root.isNull("elemento"));
-        Assert.assertTrue(root.isNull("elem"));
+        assertTrue(root.isNull("elem"));
     }
 
     @Test(expected = NullPointerException.class)
@@ -1162,7 +1028,7 @@ public class TestMElement {
         root.addInt("inteiro", "100");
         root.addBoolean("bool", true);
 
-        Assert.assertTrue(root.is("inteiro"));
+        assertTrue(root.is("inteiro"));
 
         root.is("inteiro");
     }
@@ -1173,13 +1039,13 @@ public class TestMElement {
         root.addInt("inteiro", "100");
         root.addBoolean("bool", true);
 
-        Assert.assertTrue(root.is("inteiro", false));
+        assertTrue(root.is("inteiro", false));
 
         root.is("inteiro", false);
     }
 
     @Test
-    public void testFromBase64OutPutStream() throws IOException {
+    public void testFromBase64OutPutStream() {
         TempFileProvider.create(this, tmpProvider -> {
             MElement root = MElement.newInstance("raiz");
             root.addElement("string", Base64.getEncoder().encodeToString("stringVal".getBytes()));
@@ -1238,4 +1104,146 @@ public class TestMElement {
         root.addElement("elemento", (Object) null);
     }
     // TODO terminar testes MElement
+
+    @Test
+    public void testBigMElementSerialization() {
+        testSerialization(new RandomElementCreator(20, 3, 6, 3, -1));
+        testSerialization(new RandomElementCreator(200, 3, 6, 3, 30));
+        testSerialization(new RandomElementCreator(200, 15, 40, 40, 30));
+        testSerialization(new RandomElementCreator(2000, 6, 100, 50, 50));
+        testSerialization(new RandomElementCreator(2000, 10, 100, 50, 50));
+        testSerialization(new RandomElementCreator(2000, 30, 200, 60, 100));
+        testSerialization(new RandomElementCreator(2000, 30, 200, 60, 200));
+//        testSerialization(new RandomElementCreator(20000, 3, 6, 3, 50));
+//        testSerialization(new RandomElementCreator(20000, 3, 6, 3, 400));
+//        testSerialization(new RandomElementCreator(20000, 50, 200, 60, 600));
+//        testSerialization(new RandomElementCreator(20000, 50, 200, 60, 600));
+//        testSerialization(new RandomElementCreator(60000, 50, 200, 60, 40));
+    }
+
+    private void testSerialization(@Nonnull RandomElementCreator creator) {
+        int repetition = 20;
+        MElement xml =creator.create();
+
+        SingularIOUtils.serializeAndDeserialize(xml); //warmup
+
+        long t1 = System.currentTimeMillis();
+        for(int i = 0; i < repetition; i++ ) {
+            SingularIOUtils.serializeAndDeserialize(xml);
+        }
+        t1 = System.currentTimeMillis()-t1;
+
+        long t2 = System.currentTimeMillis();
+        String s = null;
+        for(int i = 0; i < repetition; i++ ) {
+            StringPrintWriter out = new StringPrintWriter(StandardCharsets.UTF_8);
+            xml.print(out);
+            s = out.toString();
+            String s2 = SingularIOUtils.serializeAndDeserialize(s);
+            try {
+                MParser.parse(s2);
+            } catch (SAXException | IOException e) {
+                e.printStackTrace();
+            }
+        }
+        t2 = System.currentTimeMillis()-t2;
+
+        long t3 = System.currentTimeMillis();
+        byte[] binary = null;
+        for(int i = 0; i < repetition; i++ ) {
+            binary = BinaryElementIO.write(xml);
+            SingularIOUtils.serializeAndDeserialize(binary);
+        }
+        t3 = System.currentTimeMillis()-t3;
+
+        System.out.print("" + t1 + "    " + t2 + "    " + t3);
+        System.out.println( "                 size " + size(xml) + "     " + size(s) + "     " + size(binary));
+    }
+
+    @Nonnull
+    public static String size(@Nonnull Serializable obj) {
+        try {
+            ByteArrayOutputStream out1 = new ByteArrayOutputStream();
+            ObjectOutputStream out2 = new ObjectOutputStream(out1);
+            out2.writeObject(obj);
+            out2.close();
+            return SingularIOUtils.humanReadableByteCount(out1.size());
+        } catch (IOException e) {
+            throw new IllegalStateException("Falha no contexto da aplicação para serializar e deserializar o objeto", e);
+        }
+
+    }
+
+
+    private static class RandomElementCreator {
+        private int nodeCount;
+        private final int attributesPerElement;
+        private final int maxDeep;
+        private final List<String> elements = new ArrayList<>();
+        private final List<String> attributes = new ArrayList<>();
+
+        RandomElementCreator(int nodeCount, int attributesPerElement, int elementsCount, int attributesCount,
+                int maxDeep) {
+            this.nodeCount = nodeCount;
+            this.attributesPerElement = attributesPerElement;
+            this.maxDeep = maxDeep;
+            fill(elements, 'e', elementsCount);
+            fill(attributes, 'a', attributesCount);
+        }
+
+        private void fill(@Nonnull List<String> list, char prefix, int count) {
+            while (list.size() < count) {
+                list.add(prefix + randomString(15, 25));
+            }
+        }
+
+        public MElement create() {
+            MElement element = MElement.newInstance("root");
+            int perChildren = nodeCount / 10;
+            while (nodeCount > 0) {
+                fill(element, 1, perChildren, 0);
+            }
+            return element;
+        }
+
+        private void fill(MElement element, int childrenSize, int count, int deep) {
+            fillAttributes(element);
+            if (maxDeep != -1 && deep > maxDeep) {
+                return;
+            }
+            int added = 0;
+            for (int i = 0; i < childrenSize && nodeCount > 0; i++) {
+                nodeCount--;
+                if (RandomUtil.getRandom().nextBoolean()) {
+                    MElement child = element.addElement(RandomUtil.selectRandom(elements), randomString(10, 50));
+                    fillAttributes(child);
+                    added++;
+                } else {
+                    MElement child = element.addElement(RandomUtil.selectRandom(elements));
+                    added += 1 + nodeCount;
+                    int qtd = Math.max(0, count - added) / (childrenSize - i);
+                    fill(child, 1 + nextInt(10), nextInt(1 + qtd * 2), deep + 1);
+                    added -= nodeCount;
+                }
+            }
+        }
+
+        private int nextInt(int maxNotIncluded) {
+            return RandomUtil.getRandom().nextInt(maxNotIncluded);
+        }
+
+        @Nonnull
+        private String randomString(int min, int max) {
+            int size = RandomUtil.nextInt(min, max);
+            return RandomUtil.generateRandomPassword(size);
+        }
+
+        private void fillAttributes(MElement element) {
+            int qtd = nextInt(attributesPerElement + 1);
+            for (int i = 0; i < qtd; i++) {
+                element.setAttribute(RandomUtil.selectRandom(attributes), randomString(10, 12));
+            }
+        }
+    }
+
 }

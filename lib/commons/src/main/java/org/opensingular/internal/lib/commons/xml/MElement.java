@@ -246,9 +246,12 @@ public abstract class MElement implements Element, Serializable {
 
     @Nullable
     public static MElement toMElement(@Nullable Element no) {
-        if (no == null) {
-            return null;
-        } else if (no instanceof MElement) {
+        return no ==  null ? null : toMElementNotNull(no);
+    }
+
+    @Nonnull
+    static MElement toMElementNotNull(@Nonnull Element no) {
+        if (no instanceof MElement) {
             return (MElement) no;
         }
         return new MElementWrapper(no);
@@ -1294,7 +1297,6 @@ public abstract class MElement implements Element, Serializable {
      */
     @Nonnull
     public final Iterator<MElement> iterator(@Nullable String xPath) {
-        new MElementResult(this, xPath);
         return selectElements(xPath).iterator();
     }
 
@@ -1390,7 +1392,7 @@ public abstract class MElement implements Element, Serializable {
      */
     public final void printTabulado(OutputStream out) {
         PrintWriter pw = getWriterFactory().newPrintWriter(out);
-        xmlWriter.printDocumentIndentado(pw, this, true);
+        printTabulado(pw);
         pw.flush();
     }
 
@@ -1421,7 +1423,7 @@ public abstract class MElement implements Element, Serializable {
      */
     public final void print(OutputStream out) {
         PrintWriter pw = getWriterFactory().newPrintWriter(out);
-        xmlWriter.printDocument(pw, this, true);
+        print(pw);
         pw.flush();
     }
 
@@ -1446,21 +1448,6 @@ public abstract class MElement implements Element, Serializable {
      */
     public final void print(PrintWriter out, boolean printHeader) {
         xmlWriter.printDocument(out, this, printHeader);
-    }
-
-    /**
-     * Escreve o XML de forma que um eventual parse gere o mesmo XML. Para
-     * impressões mais legíveis utilize printTabulado().
-     *
-     * @param out               saída destino
-     * @param printHeader       Se true, adiciona string de indentificação de arquivo
-     *                          XML. Se false, depois não será possível fazer parse do resultado
-     *                          sem informaçoes complementares (header).
-     * @param converteEspeciais se verdadeiro converte os caracteres '<' '>' e '&' para
-     *                          seus respectivos escapes.
-     */
-    public final void print(PrintWriter out, boolean printHeader, boolean converteEspeciais) {
-        xmlWriter.printDocument(out, this, printHeader, converteEspeciais);
     }
 
     /**
@@ -1585,10 +1572,7 @@ public abstract class MElement implements Element, Serializable {
      * @return a String que feito parse, retorna o mesmo conteudo
      */
     public final String toStringExato() {
-        StringPrintWriter spw = getWriterFactory().newStringPrinWriter();
-        print(spw, true, true);
-        spw.flush();
-        return spw.toString();
+        return toStringExato(true);
     }
 
     /**
@@ -1603,7 +1587,7 @@ public abstract class MElement implements Element, Serializable {
      */
     public final String toStringExato(boolean printHeader) {
         StringPrintWriter spw = getWriterFactory().newStringPrinWriter();
-        print(spw, printHeader, true);
+        print(spw, printHeader);
         spw.flush();
         return spw.toString();
     }

@@ -29,7 +29,5 @@ public interface MElementWriter extends Serializable {
 
     void printDocument(PrintWriter out, Element e, boolean printHeader);
 
-    void printDocument(PrintWriter out, Element e, boolean printHeader, boolean converteEspeciais);
-
     void printDocumentIndentado(PrintWriter out, Element e, boolean printHeader);
 }

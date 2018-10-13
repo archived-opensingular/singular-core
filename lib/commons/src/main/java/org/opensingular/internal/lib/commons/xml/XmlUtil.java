@@ -19,6 +19,8 @@ package org.opensingular.internal.lib.commons.xml;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import javax.annotation.Nonnull;
+
 /**
  * Método de apoio interno na manipulação de XML.
  *
@@ -53,7 +55,8 @@ final class XmlUtil {
      *
      * @return O próprio nó se o mesmo já for o raiz.
      */
-    public static Node getRootParent(Node node) {
+    @Nonnull
+    public static Node getRootParent(@Nonnull Node node) {
         Node root = node;
         while (root.getParentNode() != null) {
             root = root.getParentNode();

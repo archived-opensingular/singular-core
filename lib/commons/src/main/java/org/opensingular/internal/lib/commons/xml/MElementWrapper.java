@@ -30,6 +30,7 @@ import org.w3c.dom.Text;
 import org.w3c.dom.TypeInfo;
 import org.w3c.dom.UserDataHandler;
 
+import javax.annotation.Nonnull;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.BufferedReader;
@@ -70,10 +71,9 @@ public class MElementWrapper extends MElement implements EWrapper {
      *
      * @param original -
      */
-    MElementWrapper(Element original) {
-        if (original == null) {
-            throw new IllegalArgumentException("Elemento original não pode ser " + "null");
-        } else if (original instanceof MElementWrapper) {
+    MElementWrapper(@Nonnull Element original) {
+        Objects.requireNonNull(original);
+        if (original instanceof MElementWrapper) {
             this.original = ((MElementWrapper) original).original;
         } else {
             this.original = SupplierUtil.serializable(original);
@@ -522,9 +522,8 @@ public class MElementWrapper extends MElement implements EWrapper {
             }
         }
 
-        Node n = XmlUtil.nextSiblingOfTypeElement(resolvedParent.getFirstChild(), resolvedQualifiedName);
+        Element e = XmlUtil.nextSiblingOfTypeElement(resolvedParent.getFirstChild(), resolvedQualifiedName);
 
-        Element e = (Element) n;
         if (e == null) {
             String resolvedNamespaceURI = namespaceURI;
             if (isVazio(resolvedNamespaceURI)) {

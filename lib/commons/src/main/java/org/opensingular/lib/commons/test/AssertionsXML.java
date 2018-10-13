@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.helpers;
+package org.opensingular.lib.commons.test;
 
 import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.internal.lib.commons.xml.MParser;
-import org.opensingular.lib.commons.test.AssertionsBase;
+import org.opensingular.internal.lib.commons.xml.XPathToolkit;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 import javax.annotation.Nonnull;
@@ -132,22 +136,151 @@ public class AssertionsXML extends AssertionsBase<AssertionsXML, MElement> imple
     }
 
     /** Verica se o Element é equivalent ao texto XML informado. */
-    public AssertionsXML isContentEquals(String expectedXMLContent) {
+    @Nonnull
+    public AssertionsXML isContentEquals(@Nonnull String expectedXMLContent) {
         isNotNull();
-        MElement expectedXML;
         try {
-            expectedXML = MParser.parse(expectedXMLContent);
+            return isContentEquals(MParser.parse(expectedXMLContent));
         } catch (SAXException | IOException e) {
             throw new AssertionError("Não foi possível fazer o parse do XML.", e);
         }
-        String currentContent = getTarget().toStringExato();
-        String expectedAjustedXML = expectedXML.toStringExato();
-        if (! Objects.equals(expectedAjustedXML, currentContent)) {
-            throw new AssertionError(
-                    errorMsg("O conteúdo XML não é o esperado", expectedXML.toString(), getTarget().toString()));
+    }
+
+    /** Verica se o Element é equivalent ao texto XML informado. */
+    @Nonnull
+    public AssertionsXML isContentEquals(@Nonnull MElement expectedXML) {
+        String currentXMLString = getTarget().toStringExato();
+        String expectedXMLString = expectedXML.toStringExato();
+        if (!Objects.equals(expectedXMLString, currentXMLString)) {
+            throw new AssertionError(errorMsg("O conteúdo XML não é o esperado", expectedXMLString, currentXMLString));
         }
         return this;
     }
+
+    @Nonnull
+    public AssertionsXML isEquivalentTo(@Nonnull Element expectedXML) {
+        isEquivalent(expectedXML, getTarget());
+        return this;
+    }
+
+    /**
+     * Verifica se ambos os nos são iguais fazendo uma comparação em profundidade.
+     */
+    public static void isEquivalent(@Nonnull Node n1, @Nonnull Node n2) {
+        if (n1 == n2) {
+            return;
+        }
+
+        isEquivalent(n1, n2, "NodeName", n1.getNodeName(), n2.getNodeName());
+        isEquivalent(n1, n2, "NodeValue", n1.getNodeValue(), n2.getNodeValue());
+        isEquivalent(n1, n2, "Namespace", n1.getNamespaceURI(), n2.getNamespaceURI());
+        isEquivalent(n1, n2, "Prefix", n1.getPrefix(), n2.getPrefix());
+        isEquivalent(n1, n2, "LocalName", n1.getLocalName(), n2.getLocalName());
+
+        if (isSameClass(Element.class, n1, n2)) {
+            Element e1 = (Element) n1;
+            Element e2 = (Element) n2;
+            //Verifica se possuem os mesmos atributos
+            NamedNodeMap nn1 = e1.getAttributes();
+            NamedNodeMap nn2 = e2.getAttributes();
+            if (nn1.getLength() != nn2.getLength()) {
+                throw new AssertionError(
+                        "O número atributos em " + XPathToolkit.getFullPath(n1) + " (qtd=" + nn1.getLength() +
+                                " é diferente de n2 (qtd=" + nn2.getLength() + ")");
+            }
+            for (int i = 0; i < nn1.getLength(); i++) {
+                isEquivalent((Attr) nn1.item(i), (Attr) nn2.item(i));
+            }
+
+            //Verifica se possuem os mesmos filhos
+            Node child1 = e1.getFirstChild();
+            Node child2 = e2.getFirstChild();
+            int count = 0;
+            while ((child1 != null) && (child2 != null)) {
+                isEquivalent(child1, child2);
+                child1 = child1.getNextSibling();
+                child2 = child2.getNextSibling();
+                count++;
+            }
+            if (child1 != null) {
+                throw new AssertionError("Há mais node [" + count + "] " + XPathToolkit.getNodeTypeName(child1) + " (" +
+                        XPathToolkit.getFullPath(child1) + ") em n1:" + XPathToolkit.getFullPath(n1));
+            }
+            if (child2 != null) {
+                throw new AssertionError("Há mais node [" + count + "] " + XPathToolkit.getNodeTypeName(child2) + " (" +
+                        XPathToolkit.getFullPath(child2) + ") em n2:" + XPathToolkit.getFullPath(n2));
+            }
+
+        } else if (isSameClass(Attr.class, n1, n2)) {
+            //Ok
+
+        } else if (isSameClass(Text.class, n1, n2)) {
+            //Ok
+
+        } else {
+            throw new AssertionError("Tipo de nó " + n1.getClass() + " não tratado");
+        }
+
+    }
+
+    /**
+     * Verifica se os atributos são iguais. Existe pois a comparação de atributos possui particularidades.
+     */
+    private static void isEquivalent(@Nonnull Attr n1, @Nonnull Attr n2) {
+        if (n1 == n2) {
+            return;
+        }
+        isEquivalent(n1, n2, "NodeName", n1.getNodeName(), n2.getNodeName());
+        isEquivalent(n1, n2, "NodeValue", n1.getNodeValue(), n2.getNodeValue());
+
+        //Por algum motivo depois do parse Prefix passa de null para não null
+        //isIgual(n1, n2, "Prefix", n1.getPrefix(), n2.getPrefix());
+        //Por algum motivo depois do parse Localname passe de não null para
+        // null
+        //isIgual(n1, n2, "LocalName", n1.getLocalName(), n2.getLocalName());
+
+        if (!(n1.getNodeName().startsWith("xmlns") && n2.getNodeName().startsWith("xmlns"))) {
+            isEquivalent(n1, n2, "Namespace", n1.getNamespaceURI(), n2.getNamespaceURI());
+        }
+    }
+
+    /**
+     * Verifica se ambos o nós são da classe informada. Se apenas um for, um
+     * erro é disparado devido a incompatibilidade.
+     */
+    private static boolean isSameClass(Class<?> c, Node original, Node newNode) {
+        if (c.isInstance(original)) {
+            if (c.isInstance(newNode)) {
+                return true;
+            } else {
+                throw new AssertionError(XPathToolkit.getFullPath(original) + " não é da mesma classe que " +
+                        XPathToolkit.getFullPath(newNode));
+            }
+        } else if (c.isInstance(newNode)) {
+            throw new AssertionError(XPathToolkit.getFullPath(original) + " não é da mesma classe que " +
+                    XPathToolkit.getFullPath(newNode));
+        }
+        return false;
+    }
+
+    /**
+     * Verifica a igualdade de um determiando para de objetos já considerando a
+     * situação de um deles ser null.
+     */
+    private static void isEquivalent(Node n1, Node n2, String partName, Object v1, Object v2) {
+        if (((v1 == null) && (v2 != null)) || ((v1 != null) && !v1.equals(v2))) {
+            throw new AssertionError(
+                    "O(a) " + partName + " em  " + XPathToolkit.getFullPath(n2) + " (" + formatValue(v2) +
+                            ") está diferente do original em " + XPathToolkit.getFullPath(n1) + " (" + formatValue(v1) +
+                            ")");
+        }
+    }
+
+    @Nonnull
+    private static String formatValue(@Nullable Object o) {
+        return o == null ? "null" : "'" + o + "'";
+    }
+
 
     /** Creates a assertion for each sub Element node. */
     @Override
