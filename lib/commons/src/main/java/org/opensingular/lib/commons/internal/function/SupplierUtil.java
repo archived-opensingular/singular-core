@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.lang.ref.SoftReference;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import static org.apache.commons.lang3.ObjectUtils.NULL;
@@ -35,7 +36,24 @@ import static org.apache.commons.lang3.ObjectUtils.NULL;
  */
 public final class SupplierUtil {
 
-    private SupplierUtil() {
+    private SupplierUtil() {}
+
+    /**
+     * Creates a serializable supplier that generates its content by calling contentClass.newInstance() and caching the
+     * result.
+     */
+    @Nonnull
+    public static <T> ISupplier<T> loadByClass(@Nonnull Class<T> contentClass) {
+        return new SupplierByClass<>(contentClass);
+    }
+
+    /**
+     * Creates a serializable supplier that caches the content and reload it after serialization by calling
+     * contentClass.newInstance().
+     */
+    @Nonnull
+    public static <T> ISupplier<T> loadByClass(@Nonnull T content) {
+        return new SupplierByClass<>(content);
     }
 
     /**
@@ -54,7 +72,7 @@ public final class SupplierUtil {
      */
     @Nonnull
     public static <T> ISupplier<T> serializable(@Nullable T value) {
-        return new SerializableHolder<T>(value);
+        return new SerializableHolder<>(value);
     }
 
     private static final class SoftReferenceCacheSupplier<T> implements Supplier<T> {
@@ -63,8 +81,8 @@ public final class SupplierUtil {
 
         private SoftReference<T> reference;
 
-        public SoftReferenceCacheSupplier(Supplier<T> delegate) {
-            this.delegate = delegate;
+        SoftReferenceCacheSupplier(@Nonnull Supplier<T> delegate) {
+            this.delegate = Objects.requireNonNull(delegate);
         }
 
         @Override
@@ -95,13 +113,13 @@ public final class SupplierUtil {
      *
      * @author Daniel C. Bordin on 12/01/2017.
      */
-    public static final class SerializableHolder<E> implements ISupplier<E> {
+    static final class SerializableHolder<E> implements ISupplier<E> {
 
-        private final Serializable content;
+        private final E content;
 
         SerializableHolder(@Nullable E content) {
             if (content == null || content instanceof Serializable) {
-                this.content = (Serializable) content;
+                this.content = content;
             } else {
                 throw SingularException.rethrow(
                         "Objeto recebido não é serializável. Classe=" + content.getClass().getName() + ". Value=" +
@@ -112,7 +130,35 @@ public final class SupplierUtil {
         @Override
         @Nullable
         public E get() {
-            return (E) content;
+            return content;
+        }
+    }
+
+    private static final class SupplierByClass<T> implements ISupplier<T> {
+
+        private final Class<T> contentClass;
+        private transient T content;
+
+        @SuppressWarnings("unchecked")
+        SupplierByClass(@Nonnull T content) {
+            this.content = Objects.requireNonNull(content);
+            this.contentClass = (Class<T>) content.getClass();
+        }
+
+        SupplierByClass(@Nonnull Class<T> contentClass) {
+            this.contentClass = Objects.requireNonNull(contentClass);
+        }
+
+        @Override
+        public T get() {
+            if (content == null) {
+                try {
+                    content = contentClass.newInstance();
+                } catch (Exception e) {
+                    throw SingularException.rethrow("Fail to instantiate " + contentClass.getName(), e);
+                }
+            }
+            return content;
         }
     }
 }

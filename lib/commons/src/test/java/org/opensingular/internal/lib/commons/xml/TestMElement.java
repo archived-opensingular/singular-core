@@ -1106,6 +1106,7 @@ public class TestMElement {
     // TODO terminar testes MElement
 
     @Test
+    @Ignore
     public void testBigMElementSerialization() {
         testSerialization(new RandomElementCreator(20, 3, 6, 3, -1));
         testSerialization(new RandomElementCreator(200, 3, 6, 3, 30));
@@ -1233,8 +1234,8 @@ public class TestMElement {
         }
 
         @Nonnull
-        private String randomString(int min, int max) {
-            int size = RandomUtil.nextInt(min, max);
+        private String randomString(int minIncluded, int maxNotIncluded) {
+            int size = minIncluded + RandomUtil.getRandom().nextInt(maxNotIncluded-minIncluded);
             return RandomUtil.generateRandomPassword(size);
         }
 

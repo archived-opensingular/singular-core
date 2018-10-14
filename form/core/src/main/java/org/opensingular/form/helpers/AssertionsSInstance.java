@@ -72,7 +72,7 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
      */
     public AssertionsSInstance isValueEquals(Object expectedValue) {
         if (expectedValue instanceof SInstance) {
-            assertEquivalentInstance(getTarget(), (SInstance) expectedValue, false, true);
+            isEquivalentInstance(getTarget(), (SInstance) expectedValue, false, true);
             return this;
         } else {
             return isValueEquals((String) null, expectedValue);
@@ -245,15 +245,17 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
     }
 
 
-    public static void assertEquivalentInstance(SInstance original, SInstance copy) {
-        assertEquivalentInstance(original, copy, true);
+    public AssertionsSInstance isEquivalentInstance(@Nonnull SInstance original) {
+        isEquivalentInstance(original, getTarget(), true);
+        return this;
     }
 
-    public static void assertEquivalentInstance(SInstance original, SInstance copy, boolean mustHaveSameId) {
-        assertEquivalentInstance(original, copy, mustHaveSameId, false);
+    private static void isEquivalentInstance(SInstance original, SInstance copy, boolean mustHaveSameId) {
+        isEquivalentInstance(original, copy, mustHaveSameId, false);
     }
 
-    public static void assertEquivalentInstance(SInstance original, SInstance copy, boolean mustHaveSameId, boolean ignoreNullValues) {
+    private static void isEquivalentInstance(SInstance original, SInstance copy, boolean mustHaveSameId,
+            boolean ignoreNullValues) {
         try {
             assertThat(copy).isNotSameAs(original);
             assertThat(copy.getClass()).isEqualTo(original.getClass());
@@ -281,7 +283,7 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
 
                 assertThat(copyChildren.size()).isEqualTo(originalChildren.size());
                 for (int i = 0; i < originalChildren.size(); i++) {
-                    assertEquivalentInstance(originalChildren.get(0), copyChildren.get(0), mustHaveSameId);
+                    isEquivalentInstance(originalChildren.get(0), copyChildren.get(0), mustHaveSameId);
                 }
             } else {
                 assertThat(copy.getValue()).isEqualTo(original.getValue());
@@ -299,7 +301,7 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
         }
     }
 
-    public static void removeNullChildren(List<SInstance> children) {
+    private static void removeNullChildren(List<SInstance> children) {
         children.removeIf(child -> child.getValue() == null);
     }
 
@@ -318,13 +320,11 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
         }
     }
 
-    public static void assertEqualsAttribute(SAttributeEnabled copy, SInstance atrOriginal) {
+    private static void assertEqualsAttribute(SAttributeEnabled copy, SInstance atrOriginal) {
         Optional<SInstance> atrNewOpt = SAttributeUtil.getAttributeDirectly(copy, atrOriginal.getAttributeInstanceInfo().getName());
         try {
             assertThat(atrNewOpt).isPresent();
-            if (atrNewOpt.isPresent()) {
-                assertEquivalentInstance(atrOriginal, atrNewOpt.get(), false);
-            }
+            atrNewOpt.ifPresent(sInstance -> isEquivalentInstance(atrOriginal, sInstance, false));
         } catch (AssertionError e) {
             throw new AssertionError(
                     "Erro comparando atributo '" + atrOriginal.getAttributeInstanceInfo().getName() + "'", e);
@@ -408,6 +408,9 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
         STypeComposite<?> compositeType = target.getType();
         for (SInstance child : target) {
             SType<?> expectedType = compositeType.getField(child.getName());
+            if (expectedType == null) {
+                throw new AssertionError("Field " + child.getName() + " not found in " + compositeType.getPathFull());
+            }
             assertExpectedType(expectedType, child, false);
             assertCorrectTypeReferences(child);
         }

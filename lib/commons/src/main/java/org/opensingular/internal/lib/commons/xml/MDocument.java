@@ -23,6 +23,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public abstract class MDocument implements Document {
 
     public static void toMDocument(MDocument no) {
@@ -53,11 +56,13 @@ public abstract class MDocument implements Document {
         return toMDocument(MElementWrapper.newDocument());
     }
 
-    public MElement createMElement(String qualifiedName) {
+    @Nonnull
+    public MElement createMElement(@Nonnull String qualifiedName) {
         return createMElementNS(null, qualifiedName);
     }
 
-    public MElement createMElementNS(String namespaceURI2, String qualifiedName) {
+    @Nonnull
+    public MElement createMElementNS(@Nullable String namespaceURI2, @Nonnull String qualifiedName) {
         String resolvedNamespaceURI = StringUtils.trimToNull(namespaceURI2);
         String resolvedQualifiedName = qualifiedName;
 
@@ -80,13 +85,15 @@ public abstract class MDocument implements Document {
                 newElement.setAttribute("xmlns:" + prefixo, resolvedNamespaceURI);
             }
         }
+        MElement result = MElement.toMElementNotNull(newElement);
         if (resto != null) {
-            MElement.toMElement(newElement).addElement(resto);
+            result.addElement(resto);
         }
-        return MElement.toMElement(newElement);
+        return result;
     }
 
-    public MElement createMElementWithValue(String qualifiedName, String value) {
+    @Nonnull
+    public MElement createMElementWithValue(@Nonnull String qualifiedName, String value) {
         MElement e = createMElement(qualifiedName);
         Text txt = createTextNode(value);
         e.appendChild(txt);

@@ -215,7 +215,7 @@ public final class MParser {
      * Faz um parse (leitura de um XML) a partir de uma string. Já faz a leitura do xml com namespaceAware ativo.
      */
     @Nonnull
-    public static MElement parse(String xml) throws SAXException, IOException {
+    public static MElement parse(@Nonnull String xml) throws SAXException, IOException {
         return parse(new StringReader(xml));
     }
 

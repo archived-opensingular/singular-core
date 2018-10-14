@@ -23,14 +23,12 @@ import org.junit.Test;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
-import org.w3c.dom.TypeInfo;
 
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 public class TestMElementWrapper {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testConstructNullException(){
         new MElementWrapper((Element) null);
     }
@@ -57,8 +55,8 @@ public class TestMElementWrapper {
 
     @Test(expected = IllegalArgumentException.class)
     public void testToBase64(){
-        Assert.assertNull(MElementWrapper.toBASE64((byte[])null));
-        MElementWrapper.toBASE64((InputStream) null, StandardCharsets.UTF_8);
+        Assert.assertNull(MElementWrapper.toBASE64(null));
+        MElementWrapper.toBASE64(null, StandardCharsets.UTF_8);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -178,7 +176,7 @@ public class TestMElementWrapper {
 
         Assert.assertFalse(wrapper.isDefaultNamespace("namespace"));
 
-        Assert.assertTrue(wrapper.getSchemaTypeInfo() instanceof TypeInfo);
+        Assert.assertNotNull(wrapper.getSchemaTypeInfo());
 
         wrapper.setPrefix("");
         Assert.assertNull(wrapper.getPrefix());

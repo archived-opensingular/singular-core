@@ -119,4 +119,10 @@ public final class RandomUtil {
         }
         return null;
     }
+
+    /** Returns the current random object being used. */
+    @Nonnull
+    public static Random getRandom() {
+        return RANDOM;
+    }
 }
