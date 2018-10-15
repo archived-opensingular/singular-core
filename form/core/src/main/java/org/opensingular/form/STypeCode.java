@@ -18,6 +18,9 @@ package org.opensingular.form;
 
 import org.opensingular.form.type.core.SPackageCore;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 @SInfoType(name = "STypeCode", spackage = SPackageCore.class)
 public class STypeCode<I extends SICode<V>, V> extends SType<I> {
 
@@ -35,7 +38,8 @@ public class STypeCode<I extends SICode<V>, V> extends SType<I> {
     }
     @SuppressWarnings("unchecked")
     @Override
-    public <C> C convert(Object value, Class<C> resultClass) {
+    @Nullable
+    public <C> C convert(@Nullable Object value, @Nonnull Class<C> resultClass) {
         return (C) value;
     }
 }

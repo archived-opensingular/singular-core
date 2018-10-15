@@ -55,6 +55,7 @@ public class AssertionsXML extends AssertionsBase<AssertionsXML, MElement> imple
     }
 
     @Override
+    @Nonnull
     protected  Optional<String> generateDescriptionForCurrentTarget(@Nonnull Optional<MElement> current) {
         return current.map(element -> "No elemento " + element.getFullPath());
     }
@@ -112,7 +113,8 @@ public class AssertionsXML extends AssertionsBase<AssertionsXML, MElement> imple
     }
 
     /** Verifica se o valor texto do elemento é o esperado. */
-    public AssertionsXML isValue(String expectedValue) {
+    @Nonnull
+    public AssertionsXML isValue(@Nullable String expectedValue) {
         String currentValue = getTarget().getValue();
         if (!Objects.equals(expectedValue, currentValue)) {
             throw new AssertionError(
@@ -367,5 +369,11 @@ public class AssertionsXML extends AssertionsBase<AssertionsXML, MElement> imple
             throw new AssertionError(errorMsg("There is no element at index " + index));
         }
         return new AssertionsXML(elements[index]);
+    }
+
+    /** Finds the elements for the xPath. */
+    @Nonnull
+    public AssertionsXML getElement(String xPath) {
+        return new AssertionsXML(getTarget().getElement(xPath));
     }
 }

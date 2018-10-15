@@ -93,7 +93,8 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE extends Serializable> 
         return originalValue.toString();
     }
 
-    public VALUE fromStringPersistence(String originalValue) {
+    @Nullable
+    public VALUE fromStringPersistence(@Nullable String originalValue) {
         return convert(originalValue, valueClass);
     }
 
@@ -108,7 +109,8 @@ public class STypeSimple<I extends SISimple<VALUE>, VALUE extends Serializable> 
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T convert(Object value, Class<T> resultClass) {
+    @Nullable
+    public <T> T convert(@Nullable Object value, @Nonnull Class<T> resultClass) {
         if (value == null) {
             return null;
         } else if (resultClass.isAssignableFrom(valueClass)) {

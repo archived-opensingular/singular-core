@@ -144,11 +144,12 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     /** Extends the current type creating a new one with the current type as super type (parent type). */
     @Nonnull
+    @SuppressWarnings("unchecked")
     final <S extends SType<?>> S extend(@Nullable SimpleName simpleName, @Nullable SType<?> complementarySuperType) {
         SimpleName nameResolved = SFormUtil.resolveName(simpleName, this);
 
         S newType = (S) SFormUtil.newInstance(getClass());
-        ((SType<I>) newType).nameSimple = nameResolved;
+        ((SType<?>) newType).nameSimple = nameResolved;
         ((SType<I>) newType).superType = this;
         ((SType<?>) newType).complementarySuperType = complementarySuperType;
         return newType;
@@ -209,10 +210,12 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return Optional.ofNullable(complementarySuperType);
     }
 
+    @SuppressWarnings("unchecked")
     public Class<I> getInstanceClass() {
         return (Class<I>) instanceClass;
     }
 
+    @SuppressWarnings("unchecked")
     private Class<I> getInstanceClassResolved() {
         if (instanceClass == null && superType != null) {
             return superType.getInstanceClassResolved();
@@ -681,7 +684,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         if (validators == null) {
             validators = new ArrayList<>(2);
         }
-        validators.add(new ValidationEntry(validator, level));
+        validators.add(new ValidationEntry<>(validator, level));
         return this;
     }
 
@@ -918,7 +921,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return name;
     }
 
-    public <T> T convert(Object value, Class<T> resultClass) {
+    @Nullable
+    public <T> T convert(@Nullable Object value, @Nonnull Class<T> resultClass) {
         throw new SingularFormException("Método não suportado", this);
     }
 

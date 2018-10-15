@@ -18,10 +18,12 @@ package org.opensingular.internal.lib.commons.test;
 
 import com.google.common.base.Throwables;
 import org.apache.commons.io.IOUtils;
+import org.assertj.core.api.Assertions;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
 import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
 import org.opensingular.lib.commons.lambda.IConsumerEx;
+import org.opensingular.lib.commons.lambda.ITriConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +35,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -117,11 +123,10 @@ public final class SingularTestUtil {
             }
             throw new AssertionError(msg);
         } catch (Throwable e) { //NOSONAR
-            if (findExpectedException(e, expectedException, expectedExceptionMsgPart)) {
-                return;
-            } else if (e instanceof Error) { //NOSONAR
-                throw (Error) e;
-            } else {
+            if (!findExpectedException(e, expectedException, expectedExceptionMsgPart)) {
+                if (e instanceof Error) { //NOSONAR
+                    throw (Error) e;
+                }
                 String msg = "Era esperado '" + expectedException.getSimpleName() + "'";
                 if (expectedExceptionMsgPart != null) {
                     msg += " com a mensagem contendo o texto [" + expectedExceptionMsgPart + "]";
@@ -272,7 +277,8 @@ public final class SingularTestUtil {
      * just created by a test.
      */
     public static void showHtmlContentOnDesktopForUserAndWaitOpening(@Nonnull String content) {
-        showFileOnDesktopForUserAndWaitOpening(SingularTestUtil.class, "html", out -> IOUtils.write(content, out));
+        showFileOnDesktopForUserAndWaitOpening(SingularTestUtil.class, "html",
+                out -> IOUtils.write(content, out, StandardCharsets.UTF_8));
     }
 
     static class SingularTestException extends RuntimeException {
@@ -360,4 +366,54 @@ public final class SingularTestUtil {
                             ref.getName(), e);
         }
     }
+
+    /**
+     * Compare the two map checking if they have the same entry (by key) and for each matching entry, verifies if they
+     * are equals.
+     *
+     * @throws AssertionError If the maps have mismatched keys or two matching key doesn't equals values.
+     */
+    public static <K, V> void matchAndCompare(@Nonnull Map<K, V> expected, @Nonnull Map<K, V> current) {
+        matchAndCompare(expected, current, (k, e, c) -> Assertions.assertThat(c).describedAs("for key={%s}", k)
+                .isEqualTo(e));
+    }
+
+    /**
+     * Compare the two map checking if they have the same entry (by key) and for each matching entry, calls the supplied
+     * consumer.
+     *
+     * @throws AssertionError If the maps have mismatched keys.
+     */
+    public static <K, V> void matchAndCompare(@Nonnull Map<K, V> expected, @Nonnull Map<K, V> current,
+            @Nonnull ITriConsumer<K, V, V> consumer) {
+        Set<K> currentKeys = new HashSet<>(current.keySet());
+        Set<K> missingKey = new HashSet<>();
+        for (Map.Entry<K, V> expectedEntry : expected.entrySet()) {
+            V currentValue = current.get(expectedEntry.getKey());
+            if (currentValue == null) {
+                if (expectedEntry.getValue() != null) {
+                    missingKey.add(expectedEntry.getKey());
+                }
+            } else {
+                if (expectedEntry.getValue() == null) {
+                    continue;
+                } else {
+                    consumer.accept(expectedEntry.getKey(), expectedEntry.getValue(), currentValue);
+                }
+            }
+            currentKeys.remove(expectedEntry.getKey());
+        }
+        if (!currentKeys.isEmpty() || !missingKey.isEmpty()) {
+            String msg = null;
+            if (!currentKeys.isEmpty()) {
+                msg = "the following keys in current map weren't expected: " + currentKeys;
+            }
+            if (!missingKey.isEmpty()) {
+                msg = ((msg == null) ? "" : msg + "\n and ") + "the following expected key weren't found in current: " +
+                        missingKey;
+            }
+            throw new AssertionError(msg);
+        }
+    }
+
 }
