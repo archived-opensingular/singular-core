@@ -32,6 +32,7 @@ import org.opensingular.form.io.FormSerializationUtil;
 import org.opensingular.form.validation.ValidationError;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -348,9 +349,20 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
         target.forEachChild(child -> assertCorrectDocumentReference(reference, child));
     }
 
+    /** Verifies if the current {@link SInstance} has the expected ID. */
+    @Nonnull
+    public AssertionsSInstance hasID(@Nullable Integer expectedId) {
+        if (!Objects.equals(expectedId, getTarget().getId())) {
+            throw new AssertionError(errorMsg("Invalid ID", expectedId, getTarget().getId()));
+        }
+        return this;
+    }
+
     /** Verifica se não possui nenhuma repetição de IDs entre instancia filhas e depois em todo o documento. */
-    public void assertUniqueIDs() {
+    @Nonnull
+    public AssertionsSInstance assertUniqueIDs() {
         assertUniqueIDs(getTarget(), new HashMap<>());
+        return this;
     }
 
     private void assertUniqueIDs(SInstance target, HashMap<Integer, SInstance> usedIds) {

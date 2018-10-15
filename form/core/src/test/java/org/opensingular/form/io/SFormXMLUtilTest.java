@@ -1,5 +1,6 @@
 package org.opensingular.form.io;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -10,6 +11,7 @@ import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
@@ -176,6 +178,51 @@ public class SFormXMLUtilTest extends TestCaseForm {
         assertEquals("2", newElement.getValue("b[1]"));
         assertEquals("3", newElement.getValue("b[2]"));
         assertEquals("4", newElement.getValue("c/d"));
+    }
+
+    @Test
+    public void testDuplicatedId() {
+        STypeComposite<SIComposite> itemType = createTestPackage().createCompositeType("item");
+        itemType.addFieldString("a");
+        itemType.addFieldString("b");
+        itemType.addFieldString("c");
+
+        MElement itemXml = MElement.newInstance("item");
+        itemXml.setAttribute("id", "1");
+        itemXml.addElement("a", "A").setAttribute("id", "2");
+        itemXml.addElement("b", "B").setAttribute("id", "3");
+        itemXml.addElement("c", "C").setAttribute("id", "2");
+
+        Assertions.assertThatThrownBy(() -> SFormXMLUtil.fromXML(itemType, itemXml)).isExactlyInstanceOf(
+                SingularFormException.class).hasMessageContaining("A instance has a duplicated ID")
+                .hasMessageContaining("id=2").hasMessageContaining("item.c");
+    }
+
+    @Test
+    public void testMissingIdCorrection() {
+        STypeComposite<SIComposite> itemType = createTestPackage().createCompositeType("item");
+        itemType.addFieldString("a");
+        itemType.addFieldString("b");
+        itemType.addFieldString("c");
+
+        MElement itemXml = MElement.newInstance("item");
+        itemXml.setAttribute("id", "1");
+        itemXml.addElement("a", "A");
+        itemXml.addElement("b", "B");
+        itemXml.addElement("c", "C").setAttribute("id", "4");
+
+        SIComposite item = itemType.newInstance();
+        assertInstance(item).assertUniqueIDs().hasID(1);
+        assertInstance(item).field("a").hasID(2);
+        assertInstance(item).field("b").hasID(3);
+        assertInstance(item).field("c").hasID(4);
+
+        SFormXMLUtil.fromXML(item, itemXml);
+
+        assertInstance(item).assertUniqueIDs().hasID(1);
+        assertInstance(item).field("a").hasID(5);
+        assertInstance(item).field("b").hasID(6);
+        assertInstance(item).field("c").hasID(4);
     }
 
     @Test

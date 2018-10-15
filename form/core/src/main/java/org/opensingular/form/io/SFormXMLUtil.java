@@ -133,7 +133,7 @@ public final class SFormXMLUtil {
     private static void verifyIds(@Nonnull SInstance instance, @Nonnull Set<Integer> ids) {
         Integer id = instance.getId();
         if (!ids.add(id)) {
-            throw new SingularFormException("A instance tem ID repetido (igual a outra instância) id=" + id, instance);
+            throw new SingularFormException("A instance has a duplicated ID (equals to other instance) id=" + id, instance);
         }
         if (instance instanceof ICompositeInstance) {
             for (SInstance child : ((ICompositeInstance) instance).getChildren()) {
@@ -224,6 +224,9 @@ public final class SFormXMLUtil {
                     InternalAccess.INTERNAL.setAttributeValueSavingForLatter(instance, at.getName(), at.getValue());
                 }
             }
+        }
+        if (id == null && instance.getDocument().isRestoreMode()) {
+            instance.setId(null);
         }
         return id;
     }
