@@ -353,7 +353,7 @@ public final class SFormXMLUtil {
     @Nullable
     public static MElement parseXml(@Nullable String xmlString) {
         try {
-            if (StringUtils.isBlank(xmlString)) {
+            if (xmlString == null || StringUtils.isBlank(xmlString)) {
                 return null;
             }
             return MParser.parse(xmlString);

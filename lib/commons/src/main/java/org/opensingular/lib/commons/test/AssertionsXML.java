@@ -182,47 +182,45 @@ public class AssertionsXML extends AssertionsBase<AssertionsXML, MElement> imple
         if (isSameClass(Element.class, n1, n2)) {
             Element e1 = (Element) n1;
             Element e2 = (Element) n2;
-            //Verifica se possuem os mesmos atributos
-            NamedNodeMap nn1 = e1.getAttributes();
-            NamedNodeMap nn2 = e2.getAttributes();
-            if (nn1.getLength() != nn2.getLength()) {
-                throw new AssertionError(
-                        "O número atributos em " + XPathToolkit.getFullPath(n1) + " (qtd=" + nn1.getLength() +
-                                " é diferente de n2 (qtd=" + nn2.getLength() + ")");
-            }
-            for (int i = 0; i < nn1.getLength(); i++) {
-                isEquivalent((Attr) nn1.item(i), (Attr) nn2.item(i));
-            }
+            verifyIfSameAttributes(e1, e2);
+            verifyIfSameChildren(e1, e2);
 
-            //Verifica se possuem os mesmos filhos
-            Node child1 = e1.getFirstChild();
-            Node child2 = e2.getFirstChild();
-            int count = 0;
-            while ((child1 != null) && (child2 != null)) {
-                isEquivalent(child1, child2);
-                child1 = child1.getNextSibling();
-                child2 = child2.getNextSibling();
-                count++;
-            }
-            if (child1 != null) {
-                throw new AssertionError("Há mais node [" + count + "] " + XPathToolkit.getNodeTypeName(child1) + " (" +
-                        XPathToolkit.getFullPath(child1) + ") em n1:" + XPathToolkit.getFullPath(n1));
-            }
-            if (child2 != null) {
-                throw new AssertionError("Há mais node [" + count + "] " + XPathToolkit.getNodeTypeName(child2) + " (" +
-                        XPathToolkit.getFullPath(child2) + ") em n2:" + XPathToolkit.getFullPath(n2));
-            }
-
-        } else if (isSameClass(Attr.class, n1, n2)) {
-            //Ok
-
-        } else if (isSameClass(Text.class, n1, n2)) {
-            //Ok
-
-        } else {
+        } else if (!isSameClass(Attr.class, n1, n2) && !isSameClass(Text.class, n1, n2)) {
             throw new AssertionError("Tipo de nó " + n1.getClass() + " não tratado");
         }
+    }
 
+    private static void verifyIfSameAttributes(@Nonnull Element e1, @Nonnull Element e2) {
+        NamedNodeMap nn1 = e1.getAttributes();
+        NamedNodeMap nn2 = e2.getAttributes();
+        if (nn1.getLength() != nn2.getLength()) {
+            throw new AssertionError(
+                    "O número atributos em " + XPathToolkit.getFullPath(e1) + " (qtd=" + nn1.getLength() +
+                            " é diferente de n2 (qtd=" + nn2.getLength() + ")");
+        }
+        for (int i = 0; i < nn1.getLength(); i++) {
+            isEquivalent((Attr) nn1.item(i), (Attr) nn2.item(i));
+        }
+    }
+
+    private static void verifyIfSameChildren(@Nonnull Element e1, @Nonnull Element e2) {
+        Node child1 = e1.getFirstChild();
+        Node child2 = e2.getFirstChild();
+        int count = 0;
+        while ((child1 != null) && (child2 != null)) {
+            isEquivalent(child1, child2);
+            child1 = child1.getNextSibling();
+            child2 = child2.getNextSibling();
+            count++;
+        }
+        if (child1 != null) {
+            throw new AssertionError("Há mais node [" + count + "] " + XPathToolkit.getNodeTypeName(child1) + " (" +
+                    XPathToolkit.getFullPath(child1) + ") em n1:" + XPathToolkit.getFullPath(e1));
+        }
+        if (child2 != null) {
+            throw new AssertionError("Há mais node [" + count + "] " + XPathToolkit.getNodeTypeName(child2) + " (" +
+                    XPathToolkit.getFullPath(child2) + ") em n2:" + XPathToolkit.getFullPath(e2));
+        }
     }
 
     /**

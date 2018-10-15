@@ -115,11 +115,11 @@ public final class SupplierUtil {
      */
     static final class SerializableHolder<E> implements ISupplier<E> {
 
-        private final E content;
+        private final Serializable content;
 
         SerializableHolder(@Nullable E content) {
             if (content == null || content instanceof Serializable) {
-                this.content = content;
+                this.content = (Serializable) content;
             } else {
                 throw SingularException.rethrow(
                         "Objeto recebido não é serializável. Classe=" + content.getClass().getName() + ". Value=" +
@@ -129,8 +129,9 @@ public final class SupplierUtil {
 
         @Override
         @Nullable
+        @SuppressWarnings("unchecked")
         public E get() {
-            return content;
+            return (E) content;
         }
     }
 

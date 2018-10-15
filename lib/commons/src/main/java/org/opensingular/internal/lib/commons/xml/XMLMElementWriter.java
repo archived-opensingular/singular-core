@@ -61,7 +61,7 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
         out.writeUTF(charset.name());
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException {
         this.charset = Charset.forName(in.readUTF());
     }
 
