@@ -25,11 +25,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
+import java.util.Objects;
 
 /**
  * Creation date: (24/04/2000 10:34:52)
@@ -39,30 +37,23 @@ import java.nio.charset.Charset;
 
 public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable {
 
-    /**
-     * Define o tamanho da tabulação
-     */
-    private static final String SPACE = "    ";
-    /**
-     * Tabulações predefinidas p/ evitar montagem constante de string (cache)
-     */
+    private static final String SPACE = "    "; //Defines the tab size
 
-    private Charset charset;
+    private String charsetName; //In case of serialization, the name allows to retrieve the charset
 
+    private transient Charset charset;
 
-    /**
-     * Esconde o construtor por ser uma classe utilitária
-     */
-    XMLMElementWriter(Charset charset) {
-        this.charset = charset;
+    XMLMElementWriter(@Nonnull Charset charset) {
+        this.charset = Objects.requireNonNull(charset);
+        this.charsetName = Objects.requireNonNull(charset.name());
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeUTF(charset.name());
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException {
-        this.charset = Charset.forName(in.readUTF());
+    @Nonnull
+    private Charset getCharset() {
+        if (charset == null) {
+            charset = Charset.forName(charsetName);
+        }
+        return charset;
     }
 
     private void printAttributes(PrintWriter out, Element e) {
@@ -117,7 +108,7 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
 
     private void printHeader(@Nonnull PrintWriter out) {
         out.print("<?xml version=\"1.0\" encoding=\"");
-        out.print(charset);
+        out.print(getCharset());
         out.print("\"?>");
     }
 
