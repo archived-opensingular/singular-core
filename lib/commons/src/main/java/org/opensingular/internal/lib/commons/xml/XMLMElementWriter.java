@@ -49,7 +49,7 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
     }
 
     @Nonnull
-    private Charset getCharset() {
+    final Charset getCharset() {
         if (charset == null) {
             charset = Charset.forName(charsetName);
         }

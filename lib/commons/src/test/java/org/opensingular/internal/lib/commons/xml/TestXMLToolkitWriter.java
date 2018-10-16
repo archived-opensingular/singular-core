@@ -18,9 +18,10 @@
 
 package org.opensingular.internal.lib.commons.xml;
 
-import net.vidageek.mirror.dsl.Mirror;
 import org.apache.commons.lang3.StringUtils;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
+import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
 import org.opensingular.lib.commons.test.AssertionsXML;
 import org.xml.sax.SAXException;
@@ -28,12 +29,8 @@ import org.xml.sax.SAXException;
 import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
@@ -61,7 +58,6 @@ public class TestXMLToolkitWriter {
     public void withValueBreakLine() throws Exception {
         MElement xml = MElement.newInstance("root");
         xml.setTextContent("A\nB");
-        System.out.println(xml.toStringExato());
         verifyConsistencyWriteAndRead(xml);
     }
 
@@ -100,8 +96,8 @@ public class TestXMLToolkitWriter {
     public void testPrintNodeMethods() throws FileNotFoundException {
         XMLMElementWriter elementWriter = new XMLMElementWriter(StandardCharsets.UTF_8);
         try (TempFileProvider tmpProvider = TempFileProvider.createForUseInTryClause(this)) {
-            File arquivoTemp = tmpProvider.createTempFile(".txt");
-            PrintWriter writer = new PrintWriter(arquivoTemp);
+            File arqTemp = tmpProvider.createTempFile(".txt");
+            PrintWriter writer = new PrintWriter(arqTemp);
 
             MDocument document = MDocument.newInstance();
             MElement root = document.createRoot("raiz");
@@ -119,20 +115,10 @@ public class TestXMLToolkitWriter {
     }
 
     @Test
-    public void testSerialization() throws Exception {
+    public void testSerialization() {
         XMLMElementWriter e = new XMLMElementWriter(StandardCharsets.UTF_8);
-        File              f = File.createTempFile("nada", "123123");
-        f.deleteOnExit();
-        ObjectOutputStream o = new ObjectOutputStream(new FileOutputStream(f));
-        o.writeObject(e);
-        o.close();
+        XMLMElementWriter another = SingularIOUtils.serializeAndDeserialize(e);
 
-        ObjectInputStream oi      = new ObjectInputStream(new FileInputStream(f));
-        XMLMElementWriter another = (XMLMElementWriter) oi.readObject();
-
-        assertEquals(new Mirror().on(e).get().field("charset"), new Mirror().on(another).get().field("charset"));
-
-        f.delete();
-
+        Assertions.assertThat(another.getCharset()).isEqualTo(e.getCharset());
     }
 }
