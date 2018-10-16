@@ -17,6 +17,7 @@
 package org.opensingular.form;
 
 import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.lib.commons.util.ObjectUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,7 +33,7 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
             throw new SingularFormException("Classe '" + aspectClass + "' não funciona como aspecto. Deve extender " +
                     STranslatorForAttribute.class.getName());
         }
-        T instance = SFormUtil.newInstance(aspectClass);
+        T instance = ObjectUtils.newInstance(aspectClass);
         return of(original, instance);
     }
 

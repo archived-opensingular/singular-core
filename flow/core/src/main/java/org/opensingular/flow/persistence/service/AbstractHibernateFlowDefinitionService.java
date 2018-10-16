@@ -41,6 +41,7 @@ import org.opensingular.flow.core.entity.TransitionType;
 import org.opensingular.flow.core.service.IFlowDefinitionEntityService;
 import org.opensingular.flow.persistence.entity.ModuleEntity;
 import org.opensingular.flow.persistence.entity.util.SessionWrapper;
+import org.opensingular.lib.commons.util.ObjectUtils;
 import org.opensingular.lib.support.persistence.SessionLocator;
 
 import javax.annotation.Nonnull;
@@ -128,7 +129,7 @@ public abstract class AbstractHibernateFlowDefinitionService<CATEGORY extends IE
         String        name         = definition.getName();
         String        category     = definition.getCategory();
         if (def == null) {
-            def = newInstanceOf(getClassFlowDefinition());
+            def = ObjectUtils.newInstance(getClassFlowDefinition());
             def.setCategory(retrieveOrCreateCategoryWith(category));
             def.setModule(module);
             def.setName(name);
@@ -204,7 +205,7 @@ public abstract class AbstractHibernateFlowDefinitionService<CATEGORY extends IE
 
         for (SBusinessRole bRole : flowDefinition.getFlowMap().getRoles()) {
             if (!abbreviations.contains(bRole.getAbbreviation())) {
-                ROLE_DEFINITION role = newInstanceOf(getClassRoleDefinition());
+                ROLE_DEFINITION role = ObjectUtils.newInstance(getClassRoleDefinition());
                 role.setFlowDefinition(entityFlowDefinition);
                 role.setName(bRole.getName());
                 role.setAbbreviation(bRole.getAbbreviation());
@@ -228,7 +229,7 @@ public abstract class AbstractHibernateFlowDefinitionService<CATEGORY extends IE
         SessionWrapper sw = getSession();
         CATEGORY category = sw.retrieveFirstFromCachedRetrieveAll(getClassCategory(), cat -> cat.getName().equals(name));
         if (category == null) {
-            category = newInstanceOf(getClassCategory());
+            category = ObjectUtils.newInstance(getClassCategory());
             category.setName(name);
             sw.save(category);
         }

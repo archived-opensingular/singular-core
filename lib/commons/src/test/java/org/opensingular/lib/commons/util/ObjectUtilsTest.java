@@ -20,6 +20,14 @@ package org.opensingular.lib.commons.util;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.opensingular.lib.commons.base.SingularException;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class ObjectUtilsTest {
 
@@ -30,5 +38,37 @@ public class ObjectUtilsTest {
 
         test = "not null anymore";
         Assert.assertFalse(ObjectUtils.isAllNull(null, null, null, test));
+    }
+
+    @Test
+    public void newInstanceTest() {
+        assertThatThrownBy(() -> ObjectUtils.newInstance("xpto", Collection.class)).isExactlyInstanceOf(
+                SingularException.class).hasMessageContaining("Error loading class 'xpto'").hasCauseInstanceOf(
+                ClassNotFoundException.class);
+
+        assertThatThrownBy(() -> ObjectUtils.newInstance(String.class.getName(), Collection.class)).isExactlyInstanceOf(
+                SingularException.class).hasMessageContaining(
+                "The asked class 'java.lang.String' doesn't extends class 'java.util.Collection'");
+
+        assertThatThrownBy(() -> ObjectUtils.newInstance(List.class.getName(), Collection.class)).isExactlyInstanceOf(
+                SingularException.class).hasMessageContaining("Fail to instantiate class 'java.util.List'")
+                .hasCauseInstanceOf(InstantiationException.class);
+
+        assertThat(ObjectUtils.newInstance(ArrayList.class.getName(), Collection.class)).isNotNull();
+    }
+
+    @Test
+    public void loadClassTest() {
+        assertThatThrownBy(() -> ObjectUtils.loadClass("xpto", Collection.class)).isExactlyInstanceOf(
+                SingularException.class).hasMessageContaining("Error loading class 'xpto'").hasCauseInstanceOf(
+                ClassNotFoundException.class);
+
+        assertThatThrownBy(() -> ObjectUtils.loadClass(String.class.getName(), Collection.class)).isExactlyInstanceOf(
+                SingularException.class).hasMessageContaining(
+                "The asked class 'java.lang.String' doesn't extends class 'java.util.Collection'");
+
+        assertThat(ObjectUtils.loadClass(List.class.getName(), Collection.class)).isAssignableFrom(List.class);
+        assertThat(ObjectUtils.loadClass(ArrayList.class.getName(), Collection.class)).isAssignableFrom(
+                ArrayList.class);
     }
 }

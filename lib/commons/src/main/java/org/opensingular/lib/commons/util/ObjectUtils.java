@@ -16,8 +16,52 @@
 
 package org.opensingular.lib.commons.util;
 
+import org.opensingular.lib.commons.base.SingularException;
+
+import javax.annotation.Nonnull;
+
 public final class ObjectUtils {
+
     private ObjectUtils() {}
+
+    /** Instantiates the informed class and throws a {@link SingularException} if the instantiation fails. */
+    @Nonnull
+    public static <T> T newInstance(@Nonnull Class<T> clazz) {
+        try {
+            return clazz.newInstance();
+        } catch (Exception e) {
+            throw SingularException.rethrow("Fail to instantiate class '" + clazz.getName() + '\'', e);
+        }
+    }
+
+    /**
+     * Instantiates class with the informed named and checks if it's of the expected class. Any failing in the process,
+     * throws a {@link SingularException}.
+     */
+    @Nonnull
+    public static <T> T newInstance(@Nonnull String className, @Nonnull Class<T> baseClass) {
+        Class<?> c = loadClass(className, baseClass);
+        return baseClass.cast(newInstance(c));
+    }
+
+    /**
+     * Loads the class by the informed name and checks if it's of the expected class. Any failing in the process,
+     * throws a {@link SingularException}.
+     */
+    @Nonnull
+    public static <T> Class<? extends T> loadClass(@Nonnull String className, @Nonnull Class<T> baseClass) {
+        Class<?> c;
+        try {
+            c = Class.forName(className);
+        } catch (Exception e) {
+            throw SingularException.rethrow("Error loading class '" + className + "'", e);
+        }
+        if (!baseClass.isAssignableFrom(c)) {
+            throw new SingularException(
+                    "The asked class '" + className + "' doesn't extends class '" + baseClass.getName() + '\'');
+        }
+        return (Class<T>) c;
+    }
 
     public static boolean isAllNull(Object... objects) {
         for (Object object : objects) {
@@ -25,7 +69,6 @@ public final class ObjectUtils {
                 return false;
             }
         }
-
         return true;
     }
 }

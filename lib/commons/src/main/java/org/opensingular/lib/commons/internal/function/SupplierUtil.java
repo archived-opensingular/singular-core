@@ -18,6 +18,7 @@ package org.opensingular.lib.commons.internal.function;
 
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.commons.util.ObjectUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -153,11 +154,7 @@ public final class SupplierUtil {
         @Override
         public T get() {
             if (content == null) {
-                try {
-                    content = contentClass.newInstance();
-                } catch (Exception e) {
-                    throw SingularException.rethrow("Fail to instantiate " + contentClass.getName(), e);
-                }
+                content = ObjectUtils.newInstance(contentClass);
             }
             return content;
         }

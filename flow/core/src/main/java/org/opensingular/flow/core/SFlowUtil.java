@@ -26,6 +26,7 @@ import org.opensingular.lib.commons.context.ServiceRegistry;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.net.Lnk;
 import org.opensingular.lib.commons.net.WebRef;
+import org.opensingular.lib.commons.util.ObjectUtils;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayDeque;
@@ -301,11 +302,7 @@ public class SFlowUtil {
                     RefService.ofToBeDescartedIfSerialized((SingularInjector) obj -> {
                     }));
         }
-        try {
-            return definitionClass.cast(definitionClass.newInstance());
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new SingularFlowException(e);
-        }
+        return ObjectUtils.newInstance(definitionClass);
     }
 
     /**

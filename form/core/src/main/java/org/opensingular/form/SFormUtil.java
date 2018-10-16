@@ -532,6 +532,7 @@ public final class SFormUtil {
 
     @Nonnull
     static <T> T newInstance(@Nonnull Class<T> targetClass) {
+        //It doesn't uses ObjectUtil.newInstance() because SType has a protected constructor
         try {
             return targetClass.newInstance();
         } catch (Exception e) {

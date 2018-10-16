@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SISimple;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeSimple;
+import org.opensingular.lib.commons.util.ObjectUtils;
 
 import java.lang.reflect.Constructor;
 
@@ -56,18 +57,14 @@ public class STypeFormKey extends STypeSimple<SISimple<FormKey>, FormKey> {
         String className = originalValue.substring(0, pos);
         String keyValue = originalValue.substring(pos + 1);
 
-        Class<?> c;
+
+        Class<? extends FormKey> c;
         try {
-            c = Class.forName(className);
+            c = ObjectUtils.loadClass(className, FormKey.class);
         } catch (Exception e) {
             throw new SingularFormPersistenceException(
                     "Erro convertando string em FormKey: erro carregando classe " + className, e).add("value",
                     originalValue);
-        }
-        if (!FormKey.class.isAssignableFrom(c)) {
-            throw new SingularFormPersistenceException(
-                    "Erro convertando string em FormKey: " + className + " não extende " +
-                            FormKey.class.getSimpleName()).add("value", originalValue);
         }
         Constructor<?> constructor;
         try {
