@@ -116,6 +116,9 @@ public final class SFormXMLUtil {
         // Colocar em modo de não geraçao de IDs
         if (restoreMode) {
             newInstance.getDocument().initRestoreMode();
+            if (newInstance.getDocument().getRoot() == newInstance) {
+                newInstance.getDocument().setLastId(0);
+            }
         }
         Integer idMax = fromXMLIntermediary(newInstance, xml);
         lastId = max(lastId, idMax);
