@@ -16,14 +16,17 @@
 
 package org.opensingular.form.wicket.mapper.richtext;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
 import org.apache.wicket.markup.head.filter.JavaScriptFilteredIntoFooterHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderResponseDecorator;
+import org.apache.wicket.markup.html.TransparentWebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -55,28 +58,28 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     private WicketBuildContext wicketBuildContext;
     private IModel<String> modelTextArea;
 
-    private boolean                     readOnly;
+    private boolean readOnly;
     private AbstractDefaultAjaxBehavior eventSaveCallbackBehavior;
-    private BFModalWindow               bfModalWindow;
-    private AjaxButton                  submitButton;
-    private HiddenField<String>         hiddenInput;
-    private String                      markupId;
+    private BFModalWindow bfModalWindow;
+    private AjaxButton submitButton;
+    private HiddenField<String> hiddenInput;
+    private String markupId;
 
     /**
      * Default constructor
      */
-    public RichTextNewTabPage(){
+    public RichTextNewTabPage() {
         throw new PageExpiredException("Construtor without arguments was called!");
     }
 
     /**
      * The new Rich Text Page constructor.
      *
-     * @param title        The title of page.
-     * @param readOnly  True if is just readOnly model; False if is editable.
+     * @param title              The title of page.
+     * @param readOnly           True if is just readOnly model; False if is editable.
      * @param wicketBuildContext The WicketBuildContext
-     * @param hiddenInput  The hidden input of the Page who calls.
-     * @param markupId     The markupId of the Label of the Page who calls.
+     * @param hiddenInput        The hidden input of the Page who calls.
+     * @param markupId           The markupId of the Label of the Page who calls.
      */
     public RichTextNewTabPage(String title, boolean readOnly, WicketBuildContext wicketBuildContext,
                               HiddenField<String> hiddenInput, String markupId) {
@@ -100,23 +103,24 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         add(form);
         getApplication().setHeaderResponseDecorator(JAVASCRIPT_DECORATOR);
         add(new HeaderResponseContainer(JAVASCRIPT_CONTAINER, JAVASCRIPT_CONTAINER));
+        add(createPageContainer());
     }
 
+    private Component createPageContainer() {
+        Component container = new TransparentWebMarkupContainer("pageContainer");
+        if (retrieveView().isA4LayoutEnabled()) {
+            container.add(AttributeAppender.replace("style", "width: 215mm; margin-right: auto; margin-left: auto"));
+        }
+        return container;
+    }
 
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
 
         try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "RichTextNewTabPage.js")) {
-            final Map<String, String> params = new HashMap<>();
-
-            SViewByRichTextNewTab view = wicketBuildContext.getViewSupplier(SViewByRichTextNewTab.class).get();
-
-            /*If don't contains the View, i add a view with empty buttons, for default use.*/
-            if (view == null) {
-                view = new SViewByRichTextNewTab();
-                getLogger().info("SViewByRichTextNewTab was insert in the RichTextNewTabPage.");
-            }
+            final Map<String, Object> params = new HashMap<>();
+            SViewByRichTextNewTab view = retrieveView();
 
             params.put("submitButtonId", submitButton.getMarkupId());
             params.put("classDisableDoubleClick", view
@@ -129,6 +133,8 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
             params.put("htmlContainer", this.markupId);
             params.put("callbackUrl", eventSaveCallbackBehavior.getCallbackUrl().toString());
             params.put("isEnabled", String.valueOf(!readOnly));
+            params.put("a4LayoutEnabled", view.isA4LayoutEnabled());
+            params.put("sourceViewEnabled", view.isSourceViewEnabled());
 
             params.put("buttonsList", this.renderButtonsList(view));
             packageTextTemplate.interpolate(params);
@@ -142,12 +148,22 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
 
     }
 
+    private SViewByRichTextNewTab retrieveView() {
+        SViewByRichTextNewTab view = wicketBuildContext.getViewSupplier(SViewByRichTextNewTab.class).get();
+        /*If don't contains the View, i add a view with empty buttons, for default use.*/
+        if (view == null) {
+            view = new SViewByRichTextNewTab();
+            getLogger().info("SViewByRichTextNewTab was insert in the RichTextNewTabPage.");
+        }
+        return view;
+    }
+
     /**
      * Method to create a text containing all the configuration of the buttons to pass to JS.
      * It use "#$" to separate any element of RichTextAction class, and ",," for any button.
      *
-     * @return A text formmated contain list of buttons to JS.
      * @param view
+     * @return A text formmated contain list of buttons to JS.
      */
     private String renderButtonsList(SViewByRichTextNewTab view) {
         StringBuilder sb = new StringBuilder();
