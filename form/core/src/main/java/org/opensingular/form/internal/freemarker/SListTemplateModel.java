@@ -50,4 +50,9 @@ public class SListTemplateModel extends SInstanceTemplateModel<SIList<?>> implem
     public String getAsString() throws TemplateModelException {
         return StringUtils.defaultString(getInstance().toStringDisplay());
     }
+
+    @Override
+    public SIList<?> getInstance() {
+        return super.getInstance();
+    }
 }
