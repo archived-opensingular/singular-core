@@ -23,27 +23,27 @@ jQuery(document).ready(function () {
      */
     function configureDynamicAnnotations() {
         $('.singular-form-action-preview').each(function () {
-                var preview = $(this),
-                    parent = preview.parent()[0];
-                if (typeof parent === 'undefined') {
-                    return;
-                }
-                var parentOffsetLeft = $(parent).offset().left;
-                if (parentOffsetLeft < ($(window).width() - parentOffsetLeft)) {
-                    preview.css('right', 'auto');
-                    preview.css('left', '0');
-                } else {
-                    preview.css('right', '0');
-                    preview.css('left', 'auto');
-                }
+            var $preview = $(this),
+                parent = $preview.parent()[0];
+            if (typeof parent === 'undefined') {
+                return;
             }
-        );
+            var parentOffsetLeft = $(parent).offset().left;
+            if (parentOffsetLeft < ($(window).width() - parentOffsetLeft)) {
+                $preview.css('right', 'auto');
+                $preview.css('left', '0');
+            } else {
+                $preview.css('right', '0');
+                $preview.css('left', 'auto');
+            }
+        });
     }
-
+    
     $(window).resize(configureDynamicAnnotations);
     $(window).ready(configureDynamicAnnotations);
     // This execution has some delay to let some javascript that changes the HTML run, e.g. open a modal
     Wicket.Event.subscribe("/ajax/call/complete", function() {setTimeout(configureDynamicAnnotations, 500);});
+
 
     function align(selector) {
         var fieldsByTopPosition = {};
@@ -61,6 +61,13 @@ jQuery(document).ready(function () {
                 fieldsList.push($this);
             }
         });
+        
+        function heightAsFloat($el) {
+        	if (!$el[0])
+        		return undefined;
+        	var rect = $el[0].getBoundingClientRect();
+        	return (rect.height) ? rect.height : (rect.bottom - rect.top);
+        }
 
         for (var topPosition in fieldsByTopPosition) {
             if (fieldsByTopPosition.hasOwnProperty(topPosition)) {
@@ -76,33 +83,36 @@ jQuery(document).ready(function () {
 
                 //redimensionar div
                 for (i = 0; i < fieldsList.length; i++) {
-                    var field = fieldsList[i];
-                    var fieldHeight = field.height();
+                    var $field = fieldsList[i];
+                    var fieldHeight = heightAsFloat($field);
                     if (maxFieldHeight < fieldHeight) {
                         maxFieldHeight = fieldHeight;
                     }
                     
                     //redimensionar labels
-                    field.children().each(function(){  
-                    	var label = $(this).closest( $("label"));
-                    	if(label.height() !== null && label.height() !== 0){
-                    		removeStyle(label);
+                    $field.children().each(function(){  
+                    	var $label = $(this).closest("label");
+                    	var labelHeight = heightAsFloat($label);
+                    	if(labelHeight !== null && labelHeight !== 0){
+                    		removeStyle($label);
                     	}
                     });
 
-                    field.children().each(function(){  
-                    	var label = $(this).closest( $("label"));
-                    	if(label.height() !== null && label.height() !== 0){
-                            if (maxLabelHeight < label.height()) {
-                            	maxLabelHeight = label.height();
+                    $field.children().each(function(){  
+                    	var $label = $(this).closest("label");
+                    	var labelHeight = heightAsFloat($label);
+                    	if(labelHeight !== null && labelHeight !== 0){
+                            if (maxLabelHeight < labelHeight) {
+                            	maxLabelHeight = labelHeight;
                             }
                         }
                     });
                    
-                    field.children().each(function(){  
-                    	var label = $(this).closest( $("label"));
-                    	if(label.height() !== null && label.height() !== 0){
-                    		applyStyle(label, maxLabelHeight ); 
+                    $field.children().each(function(){  
+                    	var $label = $(this).closest("label");
+                    	var labelHeight = heightAsFloat($label);
+                    	if(labelHeight !== null && labelHeight !== 0){
+                    		applyStyle($label, maxLabelHeight ); 
                     	}
                     	if(i === (fieldsList.length-1)){
                     		maxLabelHeight = 0;                    		
@@ -118,13 +128,13 @@ jQuery(document).ready(function () {
         }
     }
 
-    function applyStyle(field, maxFieldHeight){
-        field.css("min-height", maxFieldHeight);
+    function applyStyle($field, maxFieldHeight){
+        $field.css("min-height", maxFieldHeight);
         //field.css("max-height", maxFieldHeight);// max height gera efeito colateral negativo no STypeHTML do showcase
     }
 
-    function removeStyle(field){
-        field.css("min-height", "");
+    function removeStyle($field){
+        $field.css("min-height", "");
         //field.css("max-height", ""); // max height gera efeito colateral negativo no STypeHTML do showcase
     }
 
@@ -147,14 +157,28 @@ jQuery(document).ready(function () {
     } 
 
     var delay = (function(){
-    	  var timer = 0;
-    	  return function(callback, ms){
-    	    clearTimeout (timer);
-    	    timer = setTimeout(callback, ms);
-    	  };
-      })();
+        var timer = 0;
+        return function(callback, ms){
+            clearTimeout (timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
+
+    function configureLabelBarWidths() {
+    	$('.labelBar').each(function () {
+    		var $labelBar = $(this);
+    		var $controlLabel = $labelBar.find('label.control-label')
+    		var $actionBars = $labelBar.children('.decorator-actions').children();
+    		var widths = $.map($actionBars, function(it) { return it.clientWidth; });
+    		var actionBarsWidth = widths.reduce(function(a,b) { return a+b; }, 16);
+    		
+    		$controlLabel.css('max-width', (actionBarsWidth) ? ('calc(100% - ' + actionBarsWidth + 'px)') : '100%');
+    	});
+    }
     
-    function alignHelpBlockAndErros() {
+    function alignRowComponents() {
+    	configureLabelBarWidths();
+    	align("div > div.labelBar");
         align("div > div.can-have-error");
         align("div > span.subtitle_comp");
     }
@@ -162,27 +186,22 @@ jQuery(document).ready(function () {
     //Registrando função em vários momentos 
     
     //Não remover
-    alignHelpBlockAndErros();
+    alignRowComponents();
 
     //Não remover
     $(document).ready(function(){
-    	alignHelpBlockAndErros(); 
+    	alignRowComponents(); 
     });
 
     //registra na abertura da modal
     $('body').on('shown.bs.modal', '.modal', function() {
-    	alignHelpBlockAndErros();
+    	alignRowComponents();
     });
 
     //registra a cada chamda ajax
-    Wicket.Event.subscribe("/ajax/call/complete", alignHelpBlockAndErros);
+    Wicket.Event.subscribe("/ajax/call/complete", alignRowComponents);
   
     //registra no resize do browser
-    $(window).resize(function() {
-    	delay(function(){
-	   	  	align('div > div.can-have-error');
-	   	  	align('div > span.help-block');
-    	}, 10);
-    });
+    $(window).resize(function() { delay(alignRowComponents, 10); });
     
 });

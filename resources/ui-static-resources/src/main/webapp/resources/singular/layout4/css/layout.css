@@ -1746,14 +1746,13 @@ Theme Panel
     display: none; }
   .singular-form-required::after {
     content: "";
-    position: absolute;
-    bottom: 6px;
     width: 4px;
     height: 4px;
     display: inline-block;
     background-color: #ed6b75;
     border-radius: 50%;
-    margin-left: 6px; }
+    margin-left: 6px;
+    margin-bottom: .5em; }
 
 .singular-remove-btn {
   cursor: pointer; }
@@ -3059,7 +3058,8 @@ Login page
   display: inline-block; }
 
 .decorator-actions {
-  padding: 0 0 2px; }
+  padding: 0 0 2px;
+  vertical-align: baseline; }
   .decorator-actions > .btn-group > .btn {
     padding: 1px 2px 1px 2px;
     margin: 1px 1px 1px 1px !important; }
@@ -3067,24 +3067,34 @@ Login page
     color: #40BAA7;
     background-color: #FDFDFD; }
 
+h4 + .decorator-actions.align-left,
+h4 + .decorator-actions.align-right {
+  position: relative; }
+
 .decorator-actions.align-left {
-  display: inline;
+  display: inline-block;
+  position: absolute;
+  height: 100%;
   margin-left: 1em; }
 
 .decorator-actions.align-right {
   float: right; }
 
 .annotation-icon {
-  display: table-cell;
+  display: inline;
   vertical-align: middle;
   float: right; }
 
 .labelBar {
-  display: table;
+  display: block;
   width: 100%; }
   .labelBar > .control-label {
-    display: table-cell;
+    display: inline-block;
     vertical-align: middle; }
+    .labelBar > .control-label.ellipsis {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden; }
 
 div.checker.disabled span {
   cursor: not-allowed; }
