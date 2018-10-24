@@ -16,6 +16,8 @@
 
 package org.opensingular.form.persistence.dao;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class IndexedDataQueryBuilder {
 
     private final String schema;
@@ -24,6 +26,7 @@ public class IndexedDataQueryBuilder {
     private StringBuilder join = new StringBuilder();
     private StringBuilder where;
     private StringBuilder joinCache;
+    private StringBuilder order;
 
     public IndexedDataQueryBuilder(String schema) {
         this.schema = schema;
@@ -31,6 +34,7 @@ public class IndexedDataQueryBuilder {
         select = new StringBuilder("SELECT DISTINCT 'EMPTY' \n");
         joinCache = new StringBuilder();
         where = new StringBuilder(" WHERE 1 = 1 ");
+        order = new StringBuilder();
     }
 
     public void createSelect(String selectClause) {
@@ -48,6 +52,13 @@ public class IndexedDataQueryBuilder {
 
     public void appendToWhere(String joinClause) {
         where.append(joinClause);
+    }
+
+    public void appendToOrder(String joinClause) {
+        if(StringUtils.isEmpty(order)){
+            order.append(" ORDER BY ");
+        }
+        order.append(joinClause);
     }
 
     public void appendToFrom(String fromClause) {
@@ -74,7 +85,8 @@ public class IndexedDataQueryBuilder {
                 .append(from)
                 .append(join)
                 .append(joinCache)
-                .append(where).toString();
+                .append(where)
+                .append(order).toString();
     }
 
     private void addColumnToSelect(String column) {
@@ -96,7 +108,7 @@ public class IndexedDataQueryBuilder {
                 "                 on CACHE_VALOR.co_cache_campo = CACHE_CAMPO.co_cache_campo " +
                 "                    and CACHE_CAMPO.ds_caminho_campo in (" + fieldsNames + ") " +
                 " ) " + columnAlias + " on " + columnAlias + ".co_versao_formulario = currentV.CO_VERSAO_FORMULARIO " +
-                " and "+ columnAlias+".co_tipo_formulario = tpForm.CO_TIPO_FORMULARIO ";
+                " and " + columnAlias + ".co_tipo_formulario = tpForm.CO_TIPO_FORMULARIO ";
 
         joinCache.append(leftSubQuery);
 
