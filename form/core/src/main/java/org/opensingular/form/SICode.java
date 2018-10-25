@@ -16,6 +16,8 @@
 
 package org.opensingular.form;
 
+import javax.annotation.Nonnull;
+
 public class SICode<T> extends SInstance {
 
     private T code;
@@ -32,6 +34,7 @@ public class SICode<T> extends SInstance {
        setValue(null);
     }
 
+    @Nonnull
     @Override
     @SuppressWarnings("unchecked")
     public STypeCode<SICode<T>, T> getType() {

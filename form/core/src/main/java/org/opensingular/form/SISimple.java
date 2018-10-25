@@ -140,11 +140,13 @@ public class SISimple<NATIVE_TYPE extends Serializable> extends SInstance {
         return getType().toStringDisplayDefault(getValue());
     }
 
+    @Nullable
     public String toStringPersistence() {
-        if (getValue() == null) {
+        NATIVE_TYPE v = getValue();
+        if (v == null) {
             return null;
         }
-        return getType().toStringPersistence(getValue());
+        return getType().toStringPersistence(v);
     }
 
     @Override

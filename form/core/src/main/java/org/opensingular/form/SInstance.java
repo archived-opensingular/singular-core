@@ -564,7 +564,7 @@ public abstract class SInstance implements SAttributeEnabled {
 //        getAttributesMap().setAttributeCalculation(attributeFullName, subPath, valueCalculation);
 //    }
 
-    final void setAttributeValueSavingForLatter(@Nonnull String attributeName, @Nullable String value) {
+    final void setAttributeValueSavingForLatter(@Nonnull String attributeName, @Nullable Object value) {
         AttrInternalRef ref = getDictionary().getAttribureRefereceOrCreateLazy(attributeName);
         getAttributesMap().setAttributeValue(ref, null, value);
     }

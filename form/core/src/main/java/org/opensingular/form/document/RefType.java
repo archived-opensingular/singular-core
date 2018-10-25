@@ -16,10 +16,10 @@
 
 package org.opensingular.form.document;
 
-import org.opensingular.form.SDictionary;
 import org.opensingular.form.SType;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.internal.util.SerializableReference;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.ISupplier;
 
 import javax.annotation.Nonnull;
@@ -49,6 +49,9 @@ public abstract class RefType extends SerializableReference<SType<?>> {
      */
     @Nonnull
     public <T extends SType<?>> RefType createSubReference(Class<T> typeClass) {
+        if (this instanceof RefTypeFromRefDictionary) {
+            return ((RefTypeFromRefDictionary) this).getRefDictionary().refType(typeClass);
+        }
         return new RefType() {
             @Override
             @Nonnull
@@ -71,11 +74,17 @@ public abstract class RefType extends SerializableReference<SType<?>> {
             protected SType<?> retrieve() {
                 SType<?> type = supplier.get();
                 if (type == null) {
-                    throw new SingularFormException(supplier.getClass().getName() + ".get() retornou null");
+                    throw new SingularFormException(supplier.getClass().getName() + ".get() returned null");
                 }
                 return type;
             }
         };
+    }
+
+    @Nonnull
+    public static RefType of(@Nonnull IFunction<RefDictionary, SType<?>> creator) {
+        Objects.requireNonNull(creator);
+        return RefDictionary.newBlank().refType(creator);
     }
 
     /**
@@ -85,12 +94,6 @@ public abstract class RefType extends SerializableReference<SType<?>> {
     @Nonnull
     public static RefType of(@Nonnull Class<? extends SType> typeClass) {
         Objects.requireNonNull(typeClass);
-        return new RefType() {
-            @Override
-            @Nonnull
-            protected SType<?> retrieve() {
-                return SDictionary.create().getType(typeClass);
-            }
-        };
+        return RefDictionary.newBlank().refType(typeClass);
     }
 }

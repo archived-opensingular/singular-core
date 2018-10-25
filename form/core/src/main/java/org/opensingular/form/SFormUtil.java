@@ -337,7 +337,7 @@ public final class SFormUtil {
      * mediante a leitura das anotações {@link SInfoType} e {@link SInfoPackage}.
      */
     @Nonnull
-    public static String getTypeName(@Nonnull Class<? extends SType<?>> typeClass) {
+    public static String getTypeName(@Nonnull Class<? extends SType> typeClass) {
         return ClassInspectionCache.getInfo(typeClass, CacheKey.FULL_NAME, SFormUtil::getTypeNameInternal);
     }
 

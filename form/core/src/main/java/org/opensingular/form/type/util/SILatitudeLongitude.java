@@ -20,11 +20,14 @@ import java.math.BigDecimal;
 
 import org.opensingular.form.SIComposite;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by danilo.mesquita on 04/01/2016.
  */
 public class SILatitudeLongitude extends SIComposite {
 
+    @Nonnull
     @Override
     public STypeLatitudeLongitude getType() {
         return (STypeLatitudeLongitude) super.getType();

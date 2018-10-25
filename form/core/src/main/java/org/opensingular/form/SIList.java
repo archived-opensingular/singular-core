@@ -50,6 +50,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         return list;
     }
 
+    @Nonnull
     @Override
     public STypeList<?, ?> getType() {
         return (STypeList<?, ?>) super.getType();

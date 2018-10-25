@@ -36,6 +36,7 @@ public class SIComposite extends SInstance implements ICompositeInstance, Iterab
 
     private FieldMapOfRecordInstance fields;
 
+    @Nonnull
     @Override
     public STypeComposite<?> getType() {
         return (STypeComposite<?>) super.getType();
