@@ -23,13 +23,16 @@ jQuery(document).ready(function () {
      */
     function configureDynamicAnnotations() {
         $('.singular-form-action-preview').each(function () {
-            var $preview = $(this),
-                parent = $preview.parent()[0];
+            var $preview = $(this);
+            var parent = $preview.parent()[0];
             if (typeof parent === 'undefined') {
                 return;
             }
             var parentOffsetLeft = $(parent).offset().left;
-            if (parentOffsetLeft < ($(window).width() - parentOffsetLeft)) {
+            var previewWidth = $preview.width();
+            var windowWidth = $(window).width();
+            
+            if (previewWidth < (windowWidth - parentOffsetLeft)) {
                 $preview.css('right', 'auto');
                 $preview.css('left', '0');
             } else {
@@ -62,10 +65,10 @@ jQuery(document).ready(function () {
             }
         });
         
-        function heightAsFloat($el) {
-        	if (!$el[0])
+        function heightAsFloat(el) {
+        	if (!el)
         		return undefined;
-        	var rect = $el[0].getBoundingClientRect();
+        	var rect = el.getBoundingClientRect();
         	return (rect.height) ? rect.height : (rect.bottom - rect.top);
         }
 
@@ -84,7 +87,7 @@ jQuery(document).ready(function () {
                 //redimensionar div
                 for (i = 0; i < fieldsList.length; i++) {
                     var $field = fieldsList[i];
-                    var fieldHeight = heightAsFloat($field);
+                    var fieldHeight = heightAsFloat($field[0]);
                     if (maxFieldHeight < fieldHeight) {
                         maxFieldHeight = fieldHeight;
                     }
@@ -92,7 +95,7 @@ jQuery(document).ready(function () {
                     //redimensionar labels
                     $field.children().each(function(){  
                     	var $label = $(this).closest("label");
-                    	var labelHeight = heightAsFloat($label);
+                    	var labelHeight = heightAsFloat($label[0]);
                     	if(labelHeight !== null && labelHeight !== 0){
                     		removeStyle($label);
                     	}
@@ -100,7 +103,7 @@ jQuery(document).ready(function () {
 
                     $field.children().each(function(){  
                     	var $label = $(this).closest("label");
-                    	var labelHeight = heightAsFloat($label);
+                    	var labelHeight = heightAsFloat($label[0]);
                     	if(labelHeight !== null && labelHeight !== 0){
                             if (maxLabelHeight < labelHeight) {
                             	maxLabelHeight = labelHeight;
@@ -110,7 +113,7 @@ jQuery(document).ready(function () {
                    
                     $field.children().each(function(){  
                     	var $label = $(this).closest("label");
-                    	var labelHeight = heightAsFloat($label);
+                    	var labelHeight = heightAsFloat($label[0]);
                     	if(labelHeight !== null && labelHeight !== 0){
                     		applyStyle($label, maxLabelHeight ); 
                     	}
@@ -165,12 +168,18 @@ jQuery(document).ready(function () {
     })();
 
     function configureLabelBarWidths() {
+        function widthAsFloat(el) {
+        	if (!el)
+        		return undefined;
+        	var rect = el.getBoundingClientRect();
+        	return (rect.width) ? rect.width : (rect.right - rect.left);
+        }
     	$('.labelBar').each(function () {
     		var $labelBar = $(this);
     		var $controlLabel = $labelBar.find('label.control-label')
     		var $actionBars = $labelBar.children('.decorator-actions').children();
-    		var widths = $.map($actionBars, function(it) { return it.clientWidth; });
-    		var actionBarsWidth = widths.reduce(function(a,b) { return a+b; }, 16);
+    		var widths = $.map($actionBars, widthAsFloat);
+    		var actionBarsWidth = widths.reduce(function(a,b) { return a+b; }, 10);
     		
     		$controlLabel.css('max-width', (actionBarsWidth) ? ('calc(100% - ' + actionBarsWidth + 'px)') : '100%');
     	});
