@@ -68,7 +68,7 @@ public class FormCacheValueEntity extends BaseEntity<Long> {
     @JoinColumn(name = "CO_VERSAO_FORMULARIO", foreignKey = @ForeignKey(name = "FK_CACHE_VAL_VERSAO_FORMULARIO"))
     private FormVersionEntity formVersion;
 
-    @Column(name = "DS_VALOR", length = 1024)
+    @Column(name = "DS_VALOR", length = 8192)
     private String stringValue;
 
     @Temporal(TemporalType.TIMESTAMP)
