@@ -50,8 +50,8 @@ public class AssertionsXML extends AssertionsBase<AssertionsXML, MElement> imple
         super(e);
     }
 
-    public AssertionsXML(Optional<? extends MElement> e) {
-        super(e);
+    public AssertionsXML(@Nonnull Optional<? extends Element> e) {
+        this(e.orElse(null));
     }
 
     @Override

@@ -52,8 +52,9 @@ public abstract class MDocument implements Document {
         return new MDocumentWrapper((Document) no);
     }
 
+    @Nonnull
     public static MDocument newInstance() {
-        return toMDocument(MElementWrapper.newDocument());
+        return new MDocumentWrapper(XmlUtil.newDocument());
     }
 
     @Nonnull

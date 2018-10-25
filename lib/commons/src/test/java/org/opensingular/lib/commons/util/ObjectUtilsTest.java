@@ -71,4 +71,16 @@ public class ObjectUtilsTest {
         assertThat(ObjectUtils.loadClass(ArrayList.class.getName(), Collection.class)).isAssignableFrom(
                 ArrayList.class);
     }
+
+    @Test
+    public void notNull() {
+        String s1 = "1";
+        String s2 = "2";
+        Assert.assertEquals(s1, ObjectUtils.notNull(s1, s2));
+        Assert.assertEquals(s2, ObjectUtils.notNull(null, s2));
+        assertThatThrownBy(() -> ObjectUtils.notNull(s1, null)).isExactlyInstanceOf(SingularException.class)
+                .hasMessageContaining("DefaultValue can't be null");
+        assertThatThrownBy(() -> ObjectUtils.notNull(null, null)).isExactlyInstanceOf(SingularException.class)
+                .hasMessageContaining("DefaultValue can't be null");
+    }
 }

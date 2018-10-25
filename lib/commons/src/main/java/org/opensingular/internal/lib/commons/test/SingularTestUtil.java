@@ -19,6 +19,7 @@ package org.opensingular.internal.lib.commons.test;
 import com.google.common.base.Throwables;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
+import org.opensingular.internal.lib.commons.util.DebugOutputTable;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 import org.opensingular.internal.lib.commons.util.TempFileProvider;
 import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
@@ -37,6 +38,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -176,13 +178,42 @@ public final class SingularTestUtil {
         return count;
     }
 
+    public static void performance(@Nullable DebugOutputTable table, String testName, int durationInSeconds,
+            @Nonnull List<Runnable> tasks) {
+        if (table != null) {
+            table.addValue(testName);
+        }
+        for (Runnable task : tasks) {
+            long count = 0;
+            long time = System.currentTimeMillis();
+            long timeEnd = time + durationInSeconds * 1000;
+            while (System.currentTimeMillis() < timeEnd) {
+                for (int i = 0; i < 100; i++) {
+                    task.run();
+                    count++;
+                }
+            }
+            time = System.currentTimeMillis() - time;
+            double resultPerSecond = 1000.0 * count / time;
+            if (table != null) {
+                table.addValue(ConversorToolkit.printNumber(resultPerSecond, 0));
+            }
+        }
+        if (table != null) {
+            table.println();
+        }
+    }
+
+
     /**
      * Create a temp file, call the file generator provided to fill the temp file and then opens the file on the
-     * developers desktop (calls {@link #showFileOnDesktopForUserAndWaitOpening(File)}). This method guaranties that the
+     * developers desktop (calls {@link #showFileOnDesktopForUserAndWaitOpening(File)}). This method guaranties
+     * that the
      * file will be deleted.
      * <p>This method may be used to inspect visually a generated file.</p>
      *
-     * @param requester     Class or object client of the temp file generation. The name of the class will be used as
+     * @param requester     Class or object client of the temp file generation. The name of the class will be
+     *                      used as
      *                      prefix of the temp file names.
      * @param fileExtension It doesn't have a dot, it will be added (for example, "png" becomes ".png")
      * @param fileGenerator The code that will called to fill the temp file before the file be show
@@ -196,14 +227,17 @@ public final class SingularTestUtil {
 
     /**
      * Create a temp file, call the file generator provided to fill the temp file and then opens the file on the
-     * developers desktop (calls {@link #showFileOnDesktopForUserAndWaitOpening(File)}). This method guaranties that the
+     * developers desktop (calls {@link #showFileOnDesktopForUserAndWaitOpening(File)}). This method guaranties
+     * that the
      * file will be deleted.
      * <p>This method may be used to inspect visually a generated file.</p>
      *
-     * @param requester     Class or object client of the temp file generation. The name of the class will be used as
-     *                      prefix of the temp file names.
-     * @param fileExtension It doesn't have a dot, it will be added (for example, "png" becomes ".png")
-     * @param fileGenerator The code that will called to fill the temp file before the file be show
+     * @param requester              Class or object client of the temp file generation. The name of the class
+     *                               will be
+     *                               used as
+     *                               prefix of the temp file names.
+     * @param fileExtension          It doesn't have a dot, it will be added (for example, "png" becomes ".png")
+     * @param fileGenerator          The code that will called to fill the temp file before the file be show
      * @param waitTimeMilliAfterCall Indica o tempo de espera em milisegundo. Se for negativo, não espera.
      * @see TempFileProvider#create(Object, IConsumerEx)
      */
@@ -297,8 +331,7 @@ public final class SingularTestUtil {
             super(cause);
         }
 
-        SingularTestException(String message, Throwable cause, boolean enableSuppression,
-                boolean writableStackTrace) {
+        SingularTestException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
             super(message, cause, enableSuppression, writableStackTrace);
         }
     }
@@ -306,7 +339,8 @@ public final class SingularTestUtil {
 
     /**
      * Unzips the resource (relative to the informed class) from the class path if it's name ends with '.zip' extension
-     * then look for a entry with same file name of zip but with the indicated file extension. With the resource isn't a
+     * then look for a entry with same file name of zip but with the indicated file extension. With the resource
+     * isn't a
      * zip, returns it as the InputStream.
      */
     @Nonnull
@@ -327,7 +361,8 @@ public final class SingularTestUtil {
             in = ref.getResourceAsStream(resourceName);
         }
         if (in == null) {
-            throw new SingularTestException("Resource '" + resourceName + "' not found in reference to " + ref.getName());
+            throw new SingularTestException(
+                    "Resource '" + resourceName + "' not found in reference to " + ref.getName());
         }
         return in;
     }
@@ -343,7 +378,8 @@ public final class SingularTestUtil {
         Objects.requireNonNull(entryName);
         InputStream in = ref.getResourceAsStream(Objects.requireNonNull(resourceName));
         if (in == null) {
-            throw new SingularTestException("Resource '" + resourceName + "' not found in reference to " + ref.getName());
+            throw new SingularTestException(
+                    "Resource '" + resourceName + "' not found in reference to " + ref.getName());
         }
         ZipInputStream in2 = new ZipInputStream(in);
         try {
@@ -362,8 +398,8 @@ public final class SingularTestUtil {
             IOUtils.closeQuietly(in2);
             Throwables.throwIfInstanceOf(e, SingularTestException.class);
             throw new SingularTestException(
-                    "Fail to unzip file '" + entryName + "' from resource '" + resourceName + "' relative to class " +
-                            ref.getName(), e);
+                    "Fail to unzip file '" + entryName + "' from resource '" + resourceName + "' relative to " +
+                            "class " + ref.getName(), e);
         }
     }
 
@@ -379,7 +415,8 @@ public final class SingularTestUtil {
     }
 
     /**
-     * Compare the two map checking if they have the same entry (by key) and for each matching entry, calls the supplied
+     * Compare the two map checking if they have the same entry (by key) and for each matching entry, calls the
+     * supplied
      * consumer.
      *
      * @throws AssertionError If the maps have mismatched keys.

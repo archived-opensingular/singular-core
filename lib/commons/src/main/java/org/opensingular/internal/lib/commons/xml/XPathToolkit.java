@@ -336,8 +336,8 @@ public final class XPathToolkit {
      *
      * @param contextNode The node to start searching from.
      * @param xPath A valid XPath string.
-     * @return Node The first node found that matches the XPath, or null.
      */
+    @Nonnull
     public static MElementResult selectElements(Node contextNode, String xPath) {
         if (contextNode instanceof Element) {
             if (xPath == null) {
@@ -367,7 +367,7 @@ public final class XPathToolkit {
             NodeList nodesList = selectNodeList(contextNode, xPath);
             int tam = nodesList.getLength();
             for (int i = 0; i < tam; i++) {
-                resultList = addToList(resultList, MElement.getValueText(nodesList.item(i)));
+                resultList = addToList(resultList, XmlUtil.getValueText(nodesList.item(i)));
             }
         }
         return resultList == null ? Collections.emptyList() : resultList;

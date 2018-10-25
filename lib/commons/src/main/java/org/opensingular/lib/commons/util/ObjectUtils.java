@@ -19,6 +19,7 @@ package org.opensingular.lib.commons.util;
 import org.opensingular.lib.commons.base.SingularException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public final class ObjectUtils {
 
@@ -49,6 +50,7 @@ public final class ObjectUtils {
      * throws a {@link SingularException}.
      */
     @Nonnull
+    @SuppressWarnings("unchecked")
     public static <T> Class<? extends T> loadClass(@Nonnull String className, @Nonnull Class<T> baseClass) {
         Class<?> c;
         try {
@@ -70,5 +72,16 @@ public final class ObjectUtils {
             }
         }
         return true;
+    }
+
+    /** Guaranties to return a not null value. If not possible, throws a exception. */
+    @Nonnull
+    public static <T> T notNull(@Nullable T value, @Nonnull T defaultValue) {
+        if (defaultValue == null) {
+            throw new SingularException("DefaultValue can't be null");
+        } else if (value != null) {
+            return value;
+        }
+        return defaultValue;
     }
 }

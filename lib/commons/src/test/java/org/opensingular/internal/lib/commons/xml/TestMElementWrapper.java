@@ -53,7 +53,7 @@ public class TestMElementWrapper {
         Assert.assertEquals("novoNome", newName.getNodeName());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testToBase64(){
         Assert.assertNull(MElementWrapper.toBASE64(null));
         MElementWrapper.toBASE64(null, StandardCharsets.UTF_8);

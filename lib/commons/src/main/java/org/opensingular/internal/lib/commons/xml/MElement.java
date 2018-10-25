@@ -31,7 +31,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -220,17 +219,15 @@ public abstract class MElement implements Element, Serializable {
 
     private final PrintWriterFactory writerFactory;
     private final MElementWriter xmlWriter;
-    private final MElementWriter jsonWriter;
 
 
     protected MElement() {
-        this(new UTF8PrintWriterFactory());
+        this(UTF8PrintWriterFactory.INSTANCE);
     }
 
     protected MElement(PrintWriterFactory writerFactory) {
         this.writerFactory = writerFactory;
-        this.xmlWriter = new XMLMElementWriter(StandardCharsets.UTF_8);
-        this.jsonWriter = new JSONToolkit();
+        this.xmlWriter = XMLMElementWriter.INSTANCE;
     }
 
     /**
@@ -263,7 +260,8 @@ public abstract class MElement implements Element, Serializable {
      * @param no Element original.
      * @return Null se no for null. O próprio se esse já for MElement.
      */
-    public static MElement toMElement(Node no) {
+    @Nullable
+    public static MElement toMElement(@Nullable Node no) {
         if (no == null) {
             return null;
         } else if (no instanceof MElement) {
@@ -297,39 +295,6 @@ public abstract class MElement implements Element, Serializable {
      */
     public static MElement newInstance(String nameSpaceURI, String rootName) {
         return new MElementWrapper(nameSpaceURI, rootName);
-    }
-
-    /**
-     * Retorna o valor do no passado como parâmetro. Se for um Element retorna o
-     * texto imediatamente abaixo.
-     *
-     * @param node do qual será extraido o texto
-     * @return pdoe ser null
-     */
-    static String getValueText(Node node) {
-        //Não é private, pois a classe XMLToolkit também utiliza
-        if (node == null) {
-            return null;
-        }
-        switch (node.getNodeType()) {
-            case Node.ELEMENT_NODE:
-                Node n = node.getFirstChild();
-                if (XmlUtil.isNodeTypeText(n)) {
-                    return n.getNodeValue();
-                }
-                break;
-            case Node.ATTRIBUTE_NODE:
-            case Node.TEXT_NODE:
-                String value = node.getNodeValue();
-                if (!StringUtils.isEmpty(value)) {
-                    return value;
-                }
-                break;
-            default:
-                throw new SingularException("getValueText(Node) não trata nó "
-                        + XPathToolkit.getNodeTypeName(node));
-        }
-        return null;
     }
 
     private PrintWriterFactory getWriterFactory() {
@@ -841,8 +806,9 @@ public abstract class MElement implements Element, Serializable {
      *
      * @return null se for um tag vazia (ex: <nome/>).
      */
+    @Nullable
     public final String getValue() {
-        return getValueText(this);
+        return XmlUtil.getValueText(this);
     }
 
     /**
@@ -893,7 +859,7 @@ public abstract class MElement implements Element, Serializable {
      * esse é retornado. Caso contrário devolve null.
      */
     public final String getValue(String xPath) {
-        return getValueText(getNode(xPath));
+        return XmlUtil.getValueText(getNode(xPath));
     }
 
     /**
@@ -905,7 +871,7 @@ public abstract class MElement implements Element, Serializable {
      * @return -
      */
     public final String getValue(String xPath, String defaultV) {
-        String s = getValueText(getNode(xPath));
+        String s = XmlUtil.getValueText(getNode(xPath));
         if (s == null) {
             return defaultV;
         }
@@ -929,7 +895,7 @@ public abstract class MElement implements Element, Serializable {
                     + getFullPath()
                     + "'");
         }
-        String value = getValueText(node);
+        String value = XmlUtil.getValueText(node);
         if (value == null) {
             throw new NullPointerException("No '"
                     + xPath
@@ -1558,7 +1524,7 @@ public abstract class MElement implements Element, Serializable {
      */
     @Override
     public String toString() {
-        StringPrintWriter spw = getWriterFactory().newStringPrinWriter();
+        StringPrintWriter spw = getWriterFactory().newStringPrintWriter();
         printTabulado(spw);
         spw.flush();
         return spw.toString();
@@ -1586,7 +1552,7 @@ public abstract class MElement implements Element, Serializable {
      * @return a String que feito parse, retorna o mesmo conteudo
      */
     public final String toStringExato(boolean printHeader) {
-        StringPrintWriter spw = getWriterFactory().newStringPrinWriter();
+        StringPrintWriter spw = getWriterFactory().newStringPrintWriter();
         print(spw, printHeader);
         spw.flush();
         return spw.toString();
@@ -1598,14 +1564,15 @@ public abstract class MElement implements Element, Serializable {
      * @return a byte array que feito parse, retorna o mesmo conteudo
      */
     public final byte[] toByteArray() {
-        StringPrintWriter spw = getWriterFactory().newStringPrinWriter();
+        StringPrintWriter spw = getWriterFactory().newStringPrintWriter();
         print(spw);
         spw.flush();
         return spw.toByteArray();
     }
 
     public String toJSONString() {
-        StringPrintWriter spw = getWriterFactory().newStringPrinWriter();
+        StringPrintWriter spw = getWriterFactory().newStringPrintWriter();
+        JSONToolkit jsonWriter = new JSONToolkit();
         jsonWriter.printDocument(spw, this, true);
         spw.flush();
         return spw.toString();

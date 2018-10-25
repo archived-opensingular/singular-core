@@ -94,7 +94,7 @@ public final class MParser {
      * @see org.xml.sax.EntityResolver
      * @see javax.xml.parsers.DocumentBuilder#setEntityResolver
      */
-    public void addInputSource(String systemId, InputSource source) {
+    void addInputSource(String systemId, InputSource source) {
         if (sourcesLocais_ == null) {
             sourcesLocais_ = new MEntityResolver();
         }
@@ -109,7 +109,7 @@ public final class MParser {
      * interceptado.
      * @param value a ser utilizado toda vez que pedir o recurso.
      */
-    public void addInputSource(String systemId, String value) {
+    void addInputSource(String systemId, String value) {
         InputSource is = new InputSource(systemId);
         is.setCharacterStream(new StringReader(value));
         addInputSource(systemId, is);
@@ -123,7 +123,7 @@ public final class MParser {
      * interceptado.
      * @param value a ser utilizado toda vez que pedir o recurso.
      */
-    public void addInputSource(String systemId, InputStream value) {
+    void addInputSource(String systemId, InputStream value) {
         InputSource is = new InputSource(systemId);
         is.setByteStream(value);
         addInputSource(systemId, is);
@@ -143,7 +143,7 @@ public final class MParser {
      * Inciando com '/' indica para começa do raiz dos pacotes.
      * @see java.lang.Class#getResourceAsStream
      */
-    public void addInputSource(String systemId, Class<?> ref, String resourceName) {
+    void addInputSource(String systemId, Class<?> ref, String resourceName) {
         InputStream in = ref.getResourceAsStream(resourceName);
         if (in == null) {
             throw new SingularException("Nao foi encontrado o recurso '"
@@ -266,8 +266,7 @@ public final class MParser {
     private static MElement parseToElement(@Nonnull InputSource in, boolean namespaceAware, boolean validating,
             @Nullable EntityResolver entityResolver) throws SAXException, IOException {
 
-        DocumentBuilderFactory factory = MElementWrapper.getDocumentBuilderFactory(namespaceAware,
-                validating);
+        DocumentBuilderFactory factory = XmlUtil.getDocumentBuilderFactory(namespaceAware, validating);
         try {
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         } catch (Exception e){

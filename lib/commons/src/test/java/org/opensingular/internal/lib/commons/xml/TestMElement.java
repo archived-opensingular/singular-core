@@ -55,6 +55,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -816,7 +817,7 @@ public class TestMElement {
     @Test(expected = SingularException.class)
     public void testGetValorTextException() {
         MDocument document = MDocument.newInstance();
-        MElement.getValueText(document);
+        XmlUtil.getValueText(document);
     }
 
     @Test
@@ -896,7 +897,7 @@ public class TestMElement {
         Assert.assertEquals((long) 456, root.getLong("longValueNotExist", 456));
 
         root.addElement("doubleVal", new Double(123.45));
-        Assert.assertEquals(new Double(123.45), root.getDouble("doubleVal"), 0);
+        Assert.assertEquals(123.45d, root.getDouble("doubleVal"), 0);
         Assert.assertNull(root.getDoubleObject("pathNotExistent"));
     }
 
@@ -928,9 +929,9 @@ public class TestMElement {
 
         Assert.assertNull(MElement.toMElement(node));
 
-        assertTrue(MElement.toMElement(element.getNode("node1")) instanceof MElement);
+        assertNotNull(MElement.toMElement(element.getNode("node1")));
 
-        assertTrue(MElement.toMElement((Node) nodeMElement) instanceof MElement);
+        assertNotNull(MElement.toMElement((Node) nodeMElement));
 
         MDocument document = MDocument.newInstance();
 

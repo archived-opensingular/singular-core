@@ -27,7 +27,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 import org.w3c.dom.traversal.NodeIterator;
 
-import javax.xml.transform.TransformerException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
@@ -190,7 +189,7 @@ public class TestXPath {
     }
 
 
-    /**
+    /*
      * Verifica o tempo para busca via xPath. Quando especificado
      * comparação com o XMLToolkit, a diferença de tempo deverá de 100
      * vezes mais rápido para o XMLToolkit puro.
@@ -239,8 +238,7 @@ public class TestXPath {
     }
     //@formatter:off
 **/
-    private void checkPath(boolean otimizado, Node no, String xPath, String valor)
-            throws Exception {
+    private void checkPath(boolean otimizado, Node no, String xPath, String valor) {
         if (no instanceof EWrapper) {
             no = ((EWrapper) no).getOriginal();
         }
@@ -256,7 +254,6 @@ public class TestXPath {
      * @param no Ponto de base da pesquisa
      * @param xPath Query XPAth válida
      * @param valor Valor a ser encontrado no Element
-     * @throws TransformerException -
      */
     private void checkFind(Node no, String xPath, String valor) {
 //        Node resultAPI = XPathAPI.selectSingleNode(no, xPath);
@@ -275,7 +272,7 @@ public class TestXPath {
 //        }
 
         Node result = XPathToolkit.selectNode(no, xPath);
-        String vResult = MElementWrapper.getValueText(result);
+        String vResult = XmlUtil.getValueText(result);
         if (!isIgual(valor, vResult)) {
             fail(
                     "XPathToolkit.selectNode errado: resultado da pesquisa "
@@ -304,7 +301,7 @@ public class TestXPath {
             String vResult2 = null;
             if (resultado2 != null) {
                 fullPath2 = XPathToolkit.getFullPath(resultado2);
-                vResult2 = MElementWrapper.getValueText(resultado2);
+                vResult2 = XmlUtil.getValueText(resultado2);
             }
             fail(
                     "Ao aplicar fullPath do Elemento em uma pesquisa XPath, "
@@ -325,7 +322,7 @@ public class TestXPath {
             String vResult3 = null;
             if (resultado3 != null) {
                 fullPath3 = XPathToolkit.getFullPath(resultado3);
-                vResult3 = MElementWrapper.getValueText(resultado3);
+                vResult3 = XmlUtil.getValueText(resultado3);
             }
             fail(
                     "Ao aplicar relativePath do Elemento em uma pesquisa XPath, "

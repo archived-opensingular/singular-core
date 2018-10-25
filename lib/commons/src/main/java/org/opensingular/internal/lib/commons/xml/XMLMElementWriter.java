@@ -27,6 +27,7 @@ import org.w3c.dom.NodeList;
 import javax.annotation.Nonnull;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /**
@@ -36,6 +37,8 @@ import java.util.Objects;
  */
 
 public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable {
+
+    public static final XMLMElementWriter INSTANCE = new XMLMElementWriter(StandardCharsets.UTF_8);
 
     private static final String SPACE = "    "; //Defines the tab size
 
