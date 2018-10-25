@@ -161,6 +161,7 @@ public abstract class BSPanelGrid extends Panel implements Loggable {
                 String      id  = item.getModelObject();
                 final BSTab tab = tabMap.get(id);
                 item.setMetaData(TAB_KEY, tab);
+                item.setOutputMarkupId(true);
 
                 if (activeTab == null && item.getIndex() == 0 || activeTab != null && activeTab.equals(tab)) {
                     item.add($b.classAppender("active"));
