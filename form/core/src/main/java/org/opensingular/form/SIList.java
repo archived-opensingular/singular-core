@@ -363,6 +363,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     @Override
+    @Nonnull
     public List<E> getChildren() {
         return getValues();
     }
@@ -373,6 +374,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     @Override
+    @Nonnull
     public Iterator<E> iterator() {
         return (values == null) ? Collections.emptyIterator() : new Iterator<E>() {
 
@@ -399,6 +401,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     @Override
+    @Nonnull
     public Stream<E> stream() {
         return getValues().stream();
     }

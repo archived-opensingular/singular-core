@@ -252,6 +252,31 @@ public class SFormXMLUtilTest extends TestCaseForm {
     }
 
     @Test
+    public void testMissingIdCorrection3() {
+        STypeComposite<SIComposite> itemType = createTestPackage().createCompositeType("item");
+        itemType.addFieldString("a");
+        itemType.addFieldString("b");
+        itemType.addFieldString("c");
+
+        MElement itemXml = MElement.newInstance("item");
+        itemXml.addElement("a", "A");
+        itemXml.addElement("c", "C");
+
+        SIComposite item = itemType.newInstance();
+        assertInstance(item).assertUniqueIDs().hasID(1);
+        assertInstance(item).field("a").hasID(2);
+        assertInstance(item).field("b").hasID(3);
+        assertInstance(item).field("c").hasID(4);
+
+        SFormXMLUtil.fromXML(item, itemXml);
+
+        assertInstance(item).assertUniqueIDs().hasID(1);
+        assertInstance(item).field("a").hasID(2);
+        assertInstance(item).field("b").hasID(3);
+        assertInstance(item).field("c").hasID(4);
+    }
+
+    @Test
     public void testResultForEmptySimpleType() {
         SIString simple = createTestDictionary().getType(STypeString.class).newInstance();
 

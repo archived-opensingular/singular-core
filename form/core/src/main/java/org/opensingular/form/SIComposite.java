@@ -63,6 +63,7 @@ public class SIComposite extends SInstance implements ICompositeInstance, Iterab
      *
      * @return field instances
      */
+    @Nonnull
     public List<SInstance> getFields() {
         return (fields == null) ? Collections.emptyList() : fields.getFields();
     }
@@ -80,21 +81,25 @@ public class SIComposite extends SInstance implements ICompositeInstance, Iterab
     }
 
     @Override
+    @Nonnull
     public List<SInstance> getChildren() {
         return getFields();
     }
 
     @Override
+    @Nonnull
     public List<SInstance> getAllChildren() {
         return getAllFields();
     }
 
     @Override
+    @Nonnull
     public Stream<? extends SInstance> stream() {
         return fields == null ? Stream.empty() : fields.stream();
     }
 
     @Override
+    @Nonnull
     public Iterator<SInstance> iterator() {
         return fields == null ? Collections.emptyIterator() : fields.iterator();
     }

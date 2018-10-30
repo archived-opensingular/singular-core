@@ -462,6 +462,7 @@ public abstract class SInstance implements SAttributeEnabled {
         return getField(new PathReader(path));
     }
 
+    @Nonnull
     public Optional<SInstance> getFieldOpt(String path) {
         return getFieldOpt(new PathReader(path));
     }
@@ -518,14 +519,17 @@ public abstract class SInstance implements SAttributeEnabled {
         throw new SingularFormException(pathReader.getErrorMsg(this, "Não suporta leitura de subCampos"), this);
     }
 
+    @Nonnull
     public List<? extends SInstance> getChildren() {
         return Collections.emptyList();
     }
 
+    @Nonnull
     public Stream<? extends SInstance> stream() {
         return Stream.empty();
     }
 
+    @Nonnull
     public Iterator<? extends SInstance> iterator() {
         return getChildren().iterator();
     }

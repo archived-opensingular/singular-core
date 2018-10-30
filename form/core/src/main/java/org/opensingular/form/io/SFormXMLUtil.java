@@ -119,6 +119,7 @@ public final class SFormXMLUtil {
             if (newInstance.getDocument().getRoot() == newInstance) {
                 newInstance.getDocument().setLastId(0);
             }
+            removeIDs(newInstance);
         }
         Integer idMax = fromXMLIntermediary(newInstance, xml);
         lastId = max(lastId, idMax);
@@ -133,16 +134,17 @@ public final class SFormXMLUtil {
         return newInstance;
     }
 
+    private static void removeIDs(@Nonnull SInstance instance) {
+        instance.setId(null);
+        instance.forEachChild(SFormXMLUtil::removeIDs);
+    }
+
     private static void verifyIds(@Nonnull SInstance instance, @Nonnull Set<Integer> ids) {
         Integer id = instance.getId();
         if (!ids.add(id)) {
             throw new SingularFormException("A instance has a duplicated ID (equals to other instance) id=" + id, instance);
         }
-        if (instance instanceof ICompositeInstance) {
-            for (SInstance child : ((ICompositeInstance) instance).getChildren()) {
-                verifyIds(child, ids);
-            }
-        }
+        instance.forEachChild(child -> verifyIds(child, ids));
     }
 
     @Nullable
@@ -227,9 +229,6 @@ public final class SFormXMLUtil {
                     InternalAccess.INTERNAL.setAttributeValueSavingForLatter(instance, at.getName(), at.getValue());
                 }
             }
-        }
-        if (id == null && instance.getDocument().isRestoreMode()) {
-            instance.setId(null);
         }
         return id;
     }
@@ -354,7 +353,7 @@ public final class SFormXMLUtil {
     }
 
     @Nullable
-    public static MElement parseXml(@Nullable String xmlString) {
+    static MElement parseXml(@Nullable String xmlString) {
         try {
             if (xmlString == null || StringUtils.isBlank(xmlString)) {
                 return null;
