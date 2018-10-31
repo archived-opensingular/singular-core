@@ -52,6 +52,7 @@
         function updateClassActive(nameTab, idContent, idTabMenu) {
             updateContentTabActive(idContent, idTabMenu);
             updateTabActive(nameTab, idTabMenu, idContent);
+            updateScroll();
         }
 
 
@@ -65,10 +66,16 @@
             var NAV_PADDING_SCROLL = 15;
             var differenceTopNavWhenScroll;
             var componentToFixPosition;
-            configureInitialize();
+
+            initialize();
+
+            function initialize(){
+                configureInitialize();
+                reconfigureNavAttributes();
+                togglePosition();
+            }
 
             $(window).scroll(togglePosition);
-            Wicket.Event.subscribe("/ajax/call/complete", togglePosition);
 
             $(window).resize(function () {
                 configureInitialize();
