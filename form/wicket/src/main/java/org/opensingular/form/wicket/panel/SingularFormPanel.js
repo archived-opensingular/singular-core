@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+(function($){
+console.log('3');
 
-jQuery(document).ready(function () {
+$(function () {
     "use strict";
 
     /**
@@ -45,105 +47,142 @@ jQuery(document).ready(function () {
     $(window).resize(configureDynamicAnnotations);
     $(window).ready(configureDynamicAnnotations);
     // This execution has some delay to let some javascript that changes the HTML run, e.g. open a modal
-    Wicket.Event.subscribe("/ajax/call/complete", function() {setTimeout(configureDynamicAnnotations, 500);});
+    Wicket.Event.subscribe("/ajax/call/complete", function() { setTimeout(configureDynamicAnnotations, 500); });
 
+    function topAsFloat(el) {
+        if (!el) return undefined;
+        var rect = el.getBoundingClientRect();
+        //return rect.top;
+        
+        // subtracting children's margin-top to correct for checkbox 
+        var marginTop = parseFloat($(el).css('marginTop'));
+        var tops = [rect.top].concat($.map($(el).children().filter(':visible'), function(it) { return $(it).offset().top - parseInt($(it).css('marginTop')); }));
+        var minTop = Math.min.apply(null, tops);
+        return minTop;
+    }
+    function heightAsFloat(el) {
+        if (!el) return undefined;
+        var rect = el.getBoundingClientRect();
+        return (rect.height) ? rect.height : (rect.bottom - rect.top);
+    }
+    function widthAsFloat(el) {
+        if (!el) return undefined;
+        var rect = el.getBoundingClientRect();
+        return (rect.width) ? rect.width : (rect.right - rect.left);
+    }
+    
+    function max($elements, func) {
+        return ($elements.length == 0) ? 0: Math.max.apply(null, $.map($elements, func));
+    }
+    function min($elements, func) {
+        return ($elements.length == 0) ? 0: Math.min.apply(null, $.map($elements, func));
+    }
+    
+    function normalizeHeight($elements) {
+        var h = max($elements, heightAsFloat);
+        $elements.css('min-height', h);
+    }
+    
+    function normalizeLabelSubtitleHeight($elements) {
+        function selectLabels    ($el) { return $el.children('.labelBar');}//.find('label.control-label'); };
+        function selectSubtitles ($el) { return $el.children('.subtitle_comp'); };
+        function selectCheckboxes($el) { return $el.children('.checkbox'); };
+        
+        var $labels    = selectLabels($elements);
+        var $subtitles = selectSubtitles($elements);
+        
+        $elements .css("min-height", "");
+        $labels   .css("min-height", "");
+        $subtitles.css("min-height", "");
 
-    function align(selector) {
-        var fieldsByTopPosition = {};
-
-        jQuery(selector).each(function () {
-            var $this = $(this);
-            if (!$this.hasClass("upload-panel-body")) {//deve ignorar o painel de anexo e o ckeditor
-                var topPosition = $this.offset().top;
-                var fieldsList = fieldsByTopPosition[topPosition];
-
-                if (fieldsList === undefined) {
-                    fieldsList = [];
-                    fieldsByTopPosition[topPosition] = fieldsList;
-                }
-                fieldsList.push($this);
-            }
+        var totalPreFieldHeight = max($elements, function(it) {
+            var $it = $(it);
+            var $label = selectLabels($it);
+            var $subtitle = selectSubtitles($it);
+            var labelHeight    = heightAsFloat($label   [0]) || 0;
+            var subtitleHeight = heightAsFloat($subtitle[0]) || 0;
+            return labelHeight + subtitleHeight;
         });
         
-        function heightAsFloat(el) {
-        	if (!el)
-        		return undefined;
-        	var rect = el.getBoundingClientRect();
-        	return (rect.height) ? rect.height : (rect.bottom - rect.top);
+        // adjusting common fields
+        if ($subtitles.is(':visible')) {
+            $subtitles.css("min-height", "").css("display", "block");
+            
+            for (var i=0; i<$elements.length; i++) {
+                var $label    = selectLabels   ($($elements[i]));
+                var $subtitle = selectSubtitles($($elements[i]));
+                
+                $subtitle.css("min-height", totalPreFieldHeight - heightAsFloat($label[0]));
+            }
+
+        } else {
+            normalizeHeight($labels);
         }
-
-        for (var topPosition in fieldsByTopPosition) {
-            if (fieldsByTopPosition.hasOwnProperty(topPosition)) {
-                var maxFieldHeight = 0;
-                var maxLabelHeight = 0;
-                var fieldsList = fieldsByTopPosition[topPosition];
-                var i;
-
-                //cleanup
-                for (i = 0; i < fieldsList.length; i++) {
-                    removeStyle($(fieldsList[i]));
-                }
-
-                //redimensionar div
-                for (i = 0; i < fieldsList.length; i++) {
-                    var $field = fieldsList[i];
-                    var fieldHeight = heightAsFloat($field[0]);
-                    if (maxFieldHeight < fieldHeight) {
-                        maxFieldHeight = fieldHeight;
-                    }
-                    
-                    //redimensionar labels
-                    $field.children().each(function(){  
-                    	var $label = $(this).closest("label");
-                    	var labelHeight = heightAsFloat($label[0]);
-                    	if(labelHeight !== null && labelHeight !== 0){
-                    		removeStyle($label);
-                    	}
-                    });
-
-                    $field.children().each(function(){  
-                    	var $label = $(this).closest("label");
-                    	var labelHeight = heightAsFloat($label[0]);
-                    	if(labelHeight !== null && labelHeight !== 0){
-                            if (maxLabelHeight < labelHeight) {
-                            	maxLabelHeight = labelHeight;
-                            }
-                        }
-                    });
-                   
-                    $field.children().each(function(){  
-                    	var $label = $(this).closest("label");
-                    	var labelHeight = heightAsFloat($label[0]);
-                    	if(labelHeight !== null && labelHeight !== 0){
-                    		applyStyle($label, maxLabelHeight ); 
-                    	}
-                    	if(i === (fieldsList.length-1)){
-                    		maxLabelHeight = 0;                    		
-                    	}
-                    });
-                    //redimensionar labels - fim
-                }
-
-                for (i = 0; i < fieldsList.length && maxFieldHeight > 0; i++) {
-                    applyStyle($(fieldsList[i]), maxFieldHeight );
-                }
+        
+        if ($labels.is(':visible')) {
+            
+            // adjusting checkboxes
+            var $checkboxes = selectCheckboxes($elements);
+            if ($checkboxes.is(':visible')) {
+                $checkboxes.children('label')
+                .css('marginTop', totalPreFieldHeight + 'px');
+                $checkboxes.children('.decorator-actions.align-left')
+                .removeClass('align-left')
+                .css('margin-top', '-' + $checkboxes.css('margin-top'))
+                .css('position', 'absolute')
+                .css('top', 0)
+                .css('right', 0);
             }
         }
     }
 
-    function applyStyle($field, maxFieldHeight){
-        $field.css("min-height", maxFieldHeight);
-        //field.css("max-height", maxFieldHeight);// max height gera efeito colateral negativo no STypeHTML do showcase
+    var delay = (function(){
+        var timer = 0;
+        return function(callback, ms){
+            clearTimeout(timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
+
+    function configureLabelBarWidths() {
+        $('.labelBar').each(function () {
+            var $labelBar       = $(this);
+            var $controlLabel   = $labelBar.find('label.control-label');
+            var $actionBars     = $labelBar.children('.decorator-actions').children();
+            var widths          = $.map($actionBars, widthAsFloat);
+            var actionBarsWidth = widths.reduce(function(a,b) { return a + b; }, 10);
+            
+            $controlLabel.css('max-width', (actionBarsWidth) ? ('calc(100% - ' + actionBarsWidth + 'px)') : '100%');
+        });
     }
 
-    function removeStyle($field){
-        $field.css("min-height", "");
-        //field.css("max-height", ""); // max height gera efeito colateral negativo no STypeHTML do showcase
+    function alignFields() {
+        var fields     = $.makeArray($('.singular-form-panel-generated,.singular-form-panel-body-container').find('.can-have-error.form-group'));
+        var ttl = 10;
+        
+        function iterate() {
+            if (ttl-- <= 0) return;
+            
+            var minTop     = min(fields, topAsFloat);
+            var topFields  = fields.filter(function(it){ return Math.abs(topAsFloat(it) - minTop) <= 2; });
+            var $topFields = $(topFields);
+    
+            normalizeLabelSubtitleHeight($topFields);
+    
+            normalizeHeight($topFields);
+            
+            for (var i=fields.length-1; i>=0; i--) {
+                if (topFields.includes(fields[i]))
+                    fields.splice(i, 1);
+            }
+            if (fields.length > 0)
+                iterate();
+        }
+        iterate();
     }
 
     if (window.SingularFormPanel === undefined) {
-        window.SingularFormPanel = function () {
-        };
+        window.SingularFormPanel = function () {};
 
         window.SingularFormPanel.initFocus = function (containerId) {
             if (document.activeElement === window.document.body) {
@@ -152,59 +191,29 @@ jQuery(document).ready(function () {
                     .find("input:not([type=hidden]),select,textarea,button,object,a")
                     .filter(":visible")
                     .first()
-                    .each(function () {
-                        this.focus();
-                    });
+                    .each(function() { this.focus(); });
             }
         };
     } 
-
-    var delay = (function(){
-        var timer = 0;
-        return function(callback, ms){
-            clearTimeout (timer);
-            timer = setTimeout(callback, ms);
-        };
-    })();
-
-    function configureLabelBarWidths() {
-        function widthAsFloat(el) {
-        	if (!el)
-        		return undefined;
-        	var rect = el.getBoundingClientRect();
-        	return (rect.width) ? rect.width : (rect.right - rect.left);
-        }
-    	$('.labelBar').each(function () {
-    		var $labelBar = $(this);
-    		var $controlLabel = $labelBar.find('label.control-label')
-    		var $actionBars = $labelBar.children('.decorator-actions').children();
-    		var widths = $.map($actionBars, widthAsFloat);
-    		var actionBarsWidth = widths.reduce(function(a,b) { return a+b; }, 10);
-    		
-    		$controlLabel.css('max-width', (actionBarsWidth) ? ('calc(100% - ' + actionBarsWidth + 'px)') : '100%');
-    	});
-    }
     
     function alignRowComponents() {
-    	configureLabelBarWidths();
-    	align("div > div.labelBar");
-        align("div > div.can-have-error");
-        align("div > span.subtitle_comp");
+        configureLabelBarWidths();
+        alignFields();
     }
 
     //Registrando função em vários momentos 
     
     //Não remover
     alignRowComponents();
-
+    
     //Não remover
     $(document).ready(function(){
-    	alignRowComponents(); 
+        alignRowComponents(); 
     });
 
     //registra na abertura da modal
     $('body').on('shown.bs.modal', '.modal', function() {
-    	alignRowComponents();
+        alignRowComponents();
     });
 
     //registra a cada chamda ajax
@@ -214,3 +223,5 @@ jQuery(document).ready(function () {
     $(window).resize(function() { delay(alignRowComponents, 10); });
     
 });
+
+})(jQuery);
