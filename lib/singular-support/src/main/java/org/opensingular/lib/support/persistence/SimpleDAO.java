@@ -18,7 +18,6 @@ package org.opensingular.lib.support.persistence;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.support.persistence.util.QueryUtil;
 
@@ -31,10 +30,10 @@ import java.util.Map;
 public class SimpleDAO implements Loggable, Serializable {
 
     @Inject
-    protected SessionFactory sessionFactory;
+    protected SessionLocator sessionLocator;
 
     protected Session getSession() {
-        return sessionFactory.getCurrentSession();
+        return sessionLocator.getCurrentSession();
     }
 
     protected Query setParametersQuery(Query query, Map<String, Object> params) {

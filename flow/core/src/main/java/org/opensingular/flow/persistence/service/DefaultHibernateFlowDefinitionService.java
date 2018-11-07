@@ -27,7 +27,7 @@ import org.opensingular.flow.persistence.entity.RoleTaskEntity;
 import org.opensingular.flow.persistence.entity.TaskDefinitionEntity;
 import org.opensingular.flow.persistence.entity.TaskTransitionVersionEntity;
 import org.opensingular.flow.persistence.entity.TaskVersionEntity;
-import org.opensingular.flow.persistence.entity.util.SessionLocator;
+import org.opensingular.lib.support.persistence.SessionLocator;
 
 import java.util.ArrayList;
 

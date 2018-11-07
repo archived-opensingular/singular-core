@@ -20,44 +20,38 @@ import org.opensingular.flow.core.FlowDefinition;
 import org.opensingular.flow.core.FlowInstance;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.OutputStream;
 
 /** Converters a flow definition to a image representing the flow. */
 public interface IFlowRenderer {
 
+    /** Creates a request of flow rendering for configuration before the call. */
+    @Nonnull
+    default RendererRequest createRequest(@Nonnull FlowDefinition<?> definition) {
+        return new RendererRequest(this, definition);
+    }
+
+    /** Clones the flow rendering request. */
+    @Nonnull
+    default RendererRequest createRequest(@Nonnull RendererRequest requestToBeCopied) {
+        RendererRequest req = createRequest(requestToBeCopied.getDefinition());
+        req.setInstanceHistory(requestToBeCopied.getInstanceHistory());
+        return req;
+    }
+
     /** Generates a byte array with PNG image representing the flow. */
     @Nonnull
-    default byte[] generatePng(@Nonnull FlowDefinition<?> definition) {
-        return generatePng(definition, (ExecutionHistoryForRendering) null);
-    }
+    byte[] generatePng(@Nonnull RendererRequest request);
 
-    /**
-     * Generates a byte array with PNG image representing the flow and also highlights the transactions and task
-     * executed if this information is available in the history parameter.
-     */
-    @Nonnull
-    byte[] generatePng(@Nonnull FlowDefinition<?> definition, @Nullable ExecutionHistoryForRendering history);
-
-    /**
-     * Generates a PNG image to the output stream provided representing the flow.
-     */
-    default void generatePng(@Nonnull FlowDefinition<?> definition, @Nonnull OutputStream out) throws IOException {
-        generatePng(definition, null, out);
-    }
-
-    /**
-     * Generates a PNG image to the output stream provided representing the flow and also highlights the transactions
-     * and task executed if this information is available in the history parameter.
-     */
-    void generatePng(@Nonnull FlowDefinition<?> definition, @Nullable ExecutionHistoryForRendering history,
-            @Nonnull OutputStream out) throws IOException;
-
+    /** Generates a PNG image representing the flow to the output stream provided. */
+    void generatePng(@Nonnull RendererRequest request, @Nonnull OutputStream out) throws IOException;
 
     /** Generates a diagram of the flow instance showing de process highlighting the executed tasks and transitions. */
     @Nonnull
-    public default byte[] generateHistoryPng(@Nonnull FlowInstance flowInstance) {
-        return generatePng(flowInstance.getFlowDefinition(), ExecutionHistoryForRendering.from(flowInstance));
+    default byte[] generateHistoryPng(@Nonnull FlowInstance flowInstance) {
+        RendererRequest req = createRequest(flowInstance.getFlowDefinition());
+        req.setInstanceHistory(ExecutionHistoryForRendering.from(flowInstance));
+        return generatePng(req);
     }
 }

@@ -161,4 +161,7 @@ public class MetronicMenuItem extends AbstractMenuItem {
         return helper;
     }
 
+    public String getMenuItemUrl() {
+        return menuItemUrl;
+    }
 }

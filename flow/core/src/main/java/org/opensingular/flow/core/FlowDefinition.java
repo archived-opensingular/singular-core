@@ -28,8 +28,7 @@ import org.opensingular.flow.core.entity.IEntityTaskDefinition;
 import org.opensingular.flow.core.entity.IEntityTaskInstance;
 import org.opensingular.flow.core.entity.IEntityTaskVersion;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
-import org.opensingular.flow.core.property.MetaDataEnabled;
-import org.opensingular.flow.core.property.MetaDataMap;
+import org.opensingular.flow.core.property.MetaDataEnabledImpl;
 import org.opensingular.flow.core.service.IFlowDataService;
 import org.opensingular.flow.core.service.IFlowDefinitionEntityService;
 import org.opensingular.flow.core.service.IPersistenceService;
@@ -64,10 +63,10 @@ import java.util.stream.Stream;
  * @author Daniel Bordin
  */
 @SuppressWarnings({"serial", "unchecked"})
-public abstract class FlowDefinition<I extends FlowInstance>
-        implements Comparable<FlowDefinition<?>>, MetaDataEnabled {
+public abstract class FlowDefinition<I extends FlowInstance> extends MetaDataEnabledImpl
+        implements Comparable<FlowDefinition<?>> {
 
-    static final Logger logger = LoggerFactory.getLogger(FlowDefinition.class);
+    private static final Logger logger = LoggerFactory.getLogger(FlowDefinition.class);
 
     private final Class<I> flowInstanceClass;
 
@@ -89,13 +88,13 @@ public abstract class FlowDefinition<I extends FlowInstance>
 
     private IFlowDataService<I> flowDataService;
 
-    private MetaDataMap metaDataMap;
-
     private final Map<String, FlowScheduledJob> scheduledJobsByName = new HashMap<>();
 
     private transient RefFlowDefinition serializableReference;
+
     private transient SingularInjector     injector;
 
+    private boolean checkForConsistency = true;
 
     /**
      * Instancia uma nova definição de fluxo do tipo informado.
@@ -104,6 +103,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
      *            a chave do fluxo.
      * @param instanceClass
      *            o tipo da instância da definição a ser instanciada.
+     * @param instanceClass o tipo da instância da definição a ser instanciada.
      */
     protected FlowDefinition(Class<I> instanceClass) {
         this(instanceClass, VarService.basic(), null);
@@ -169,11 +169,21 @@ public abstract class FlowDefinition<I extends FlowInstance>
             if (newFlow.getFlowDefinition() != this) {
                 throw new SingularFlowException("Mapa com definiçao trocada", this);
             }
-            newFlow.verifyConsistency();
+            if (checkForConsistency) {
+                newFlow.verifyConsistency();
+            }
             SFlowUtil.calculateTaskOrder(newFlow);
             flowMap = newFlow;
         }
         return flowMap;
+    }
+
+    /**
+     * Turns off the verification of consistency of the {@link FlowMap}. Should only be used in flows that are not
+     * supposed to be started.
+     */
+    public final synchronized void setCheckForConsistency(boolean value) {
+        checkForConsistency = value;
     }
 
     /**
@@ -428,6 +438,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
     /**
      * Retorna a categoria deste fluxo.
      */
+    @Nonnull
     public final String getCategory() {
         if (category == null) {
             logger.warn("!!! flow definition category not set, using  class simple name !!!");
@@ -437,10 +448,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
     }
 
     /**
-     * Retorna o <i>link resolver</i> deste fluxo para o usuário
-     * especificado.
-     *
-     * @param user usuário especificado.
+     * Retorna o <i>link resolver</i> deste fluxo para o usuário especificado.
      */
     public final Lnk getCreatePageFor(SUser user) {
         return getCreationPageStrategy().getCreatePageFor(this, user);
@@ -499,29 +507,15 @@ public abstract class FlowDefinition<I extends FlowInstance>
         this.name = name;
     }
 
-    @Override
-    @Nonnull
-    public Optional<MetaDataMap> getMetaDataOpt() {
-        return Optional.ofNullable(metaDataMap);
-    }
-
-    @Override
-    public MetaDataMap getMetaData() {
-        if (metaDataMap == null) {
-            metaDataMap = new MetaDataMap();
-        }
-        return metaDataMap;
-    }
-
     final <X extends IEntityTaskVersion> Set<X> convertToEntityTaskVersion(Stream<? extends STask<?>> stream) {
-        return (Set<X>) stream.map(t -> getEntityTaskVersion(t)).collect(Collectors.toSet());
+        return (Set<X>) stream.map(this::getEntityTaskVersion).collect(Collectors.toSet());
     }
 
     /**
      * Retorna uma lista de instâncias correspondentes às entidades fornecidas.
      */
     protected final List<I> convertToFlowInstance(List<? extends IEntityFlowInstance> entities) {
-        return entities.stream().map(e -> convertToFlowInstance(e)).collect(Collectors.toList());
+        return entities.stream().map(this::convertToFlowInstance).collect(Collectors.toList());
     }
 
     /**
@@ -569,7 +563,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
     }
 
     public StartCall<I> prepareStartCall() {
-        return new StartCall<I>(this, new RefStart(getFlowMap().getStart()));
+        return new StartCall<>(this, new RefStart(getFlowMap().getStart()));
     }
 
 
@@ -619,7 +613,7 @@ public abstract class FlowDefinition<I extends FlowInstance>
     final <V> V inject(@Nonnull V target) {
         if (injector == null) {
             Optional<SingularInjector> result = ServiceRegistryLocator.locate().lookupSingularInjectorOpt();
-            injector = result.orElseGet(() -> SingularSpringInjector.get());
+            injector = result.orElseGet(SingularSpringInjector::get);
         }
         injector.inject(Objects.requireNonNull(target));
         return target;

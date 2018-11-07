@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.opensingular.flow.persistence.entity.util;
+package org.opensingular.lib.support.persistence;
 
 import org.hibernate.Session;
 

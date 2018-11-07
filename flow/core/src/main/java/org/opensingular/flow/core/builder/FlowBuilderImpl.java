@@ -29,9 +29,9 @@ import org.opensingular.flow.core.STaskHuman;
 import org.opensingular.flow.core.STaskJava;
 import org.opensingular.flow.core.STaskWait;
 import org.opensingular.flow.core.STransition;
-
 import org.opensingular.schedule.IScheduleData;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 public class FlowBuilderImpl extends
@@ -116,7 +116,8 @@ public class FlowBuilderImpl extends
          * com o nome informado.
          */
         @Override
-        public BuilderTransition<?> go(String actionName, ITaskDefinition taskRefDestiny) {
+        @Nonnull
+        public BuilderTransition<?> go(@Nonnull String actionName, @Nonnull ITaskDefinition taskRefDestiny) {
             return getFlowBuilder().addTransition(this, actionName, taskRefDestiny);
         }
 

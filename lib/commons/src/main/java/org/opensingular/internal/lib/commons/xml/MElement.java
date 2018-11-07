@@ -36,6 +36,9 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * Representa um Element com diversos métodos utilitários para
@@ -240,7 +243,8 @@ public abstract class MElement implements Element, Serializable {
         throw SingularException.rethrow("Não deveria ser chamadado esse metodo com um parâmetro MElement");
     }
 
-    public static MElement toMElement(Element no) {
+    @Nullable
+    public static MElement toMElement(@Nullable Element no) {
         if (no == null) {
             return null;
         } else if (no instanceof MElement) {
@@ -1314,6 +1318,20 @@ public abstract class MElement implements Element, Serializable {
      */
     public final MElement getElement(String xPath) {
         return toMElement(XPathToolkit.selectElement(this, xPath));
+    }
+
+    /** Find the child element that match de informed condition. */
+    @Nonnull
+    public final Optional<MElement> getElement(@Nonnull Predicate<MElement> filter) {
+        Objects.requireNonNull(filter);
+        MElementResult result = new MElementResult(this);
+        while (result.next()) {
+            MElement e = result.getCurrent();
+            if (filter.test(e)) {
+                return Optional.of(e);
+            }
+        }
+        return Optional.empty();
     }
 
     /**

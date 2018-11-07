@@ -28,7 +28,6 @@ import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -94,7 +93,7 @@ public class AttachmentRef implements IAttachmentRef {
             return CompressionUtil.inflateToInputStream(new FileInputStream(file));
         } catch (Exception e) {
             if (file != null) {
-                TempFileUtils.deleteAndFailQuietily(file, getClass());
+                TempFileUtils.deleteAndFailQuietly(file, getClass());
                 file = null;
             }
             throw SingularUtil.propagate(e);

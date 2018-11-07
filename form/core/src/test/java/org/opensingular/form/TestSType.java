@@ -16,7 +16,6 @@
 
 package org.opensingular.form;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +23,10 @@ import org.junit.runners.Parameterized;
 import org.opensingular.form.TestSType.MyPackageA.MyTypeA;
 import org.opensingular.form.TestSType.MyPackageA.MyTypeB;
 import org.opensingular.form.TestSType.MyPackageA.MyTypeBB;
+import org.opensingular.form.testPackage.ConflictPackageType;
+import org.opensingular.form.testPackage.MyPackageYYYY;
+import org.opensingular.form.testPackage.MyTypeWithInfoWithoutPackage;
+import org.opensingular.form.testPackage.MyTypeWithoutInfo;
 import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeDecimal;
@@ -31,6 +34,9 @@ import org.opensingular.form.type.core.STypeString;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * @author Daniel C. Bordin on 24/03/2017.
@@ -51,7 +57,7 @@ public class TestSType extends TestCaseForm {
         //noinspection unchecked
         assertFalse(dic1.getType(STypeSimple.class).isTypeOf(dic1.getType(STypeString.class)));
 
-        Assertions.assertThatThrownBy(() -> dic1.getType(STypeString.class).isTypeOf(dic2.getType(STypeString.class)))
+        assertThatThrownBy(() -> dic1.getType(STypeString.class).isTypeOf(dic2.getType(STypeString.class)))
                 .isExactlyInstanceOf(SingularFormException.class).hasMessageContaining(
                 "foi criado em outro dicionário");
     }
@@ -136,9 +142,40 @@ public class TestSType extends TestCaseForm {
                 "não funciona como aspecto");
 
         SingularTestUtil.assertException(() -> type.as(WrongClass.class), SingularFormException.class,
-                "Erro criando classe de aspecto");
+                "Erro instanciando");
     }
 
     public abstract class WrongClass extends STranslatorForAttribute {
     }
+
+    @Test
+    public void testPackageDefinitionIsOptional() {
+        MyTypeWithInfoWithoutPackage t1 = createTestDictionary().getType(MyTypeWithInfoWithoutPackage.class);
+        assertThat(t1.getPackage()).isNotNull();
+        assertThat(t1.getPackage().getName()).isEqualTo(t1.getClass().getPackage().getName());
+
+        MyTypeWithoutInfo t2 = t1.getDictionary().getType(MyTypeWithoutInfo.class);
+        assertThat(t2.getPackage()).isSameAs(t1.getPackage());
+
+
+        t2 = createTestDictionary().getType(MyTypeWithoutInfo.class);
+        assertThat(t2.getPackage()).isNotNull();
+        assertThat(t2.getPackage().getName()).isEqualTo(t2.getClass().getPackage().getName());
+        t1 = t2.getDictionary().getType(MyTypeWithInfoWithoutPackage.class);
+        assertThat(t2.getPackage()).isSameAs(t1.getPackage());
+    }
+
+    @Test
+    public void testConflictPackage() {
+        ConflictPackageType t1 = createTestDictionary().getType(ConflictPackageType.class);
+        assertThat(t1.getPackage().getName()).isEqualTo(t1.getClass().getPackage().getName());
+
+        assertThatThrownBy(() -> t1.getDictionary().loadPackage(MyPackageYYYY.class)).isExactlyInstanceOf(
+                SingularFormException.class).hasMessageContaining("como sendo do pacote 'yyyy'");
+
+        assertThatThrownBy(() -> createTestDictionary().loadPackage(MyPackageYYYY.class)).isExactlyInstanceOf(
+                SingularFormException.class).hasMessageContaining("como sendo do pacote 'yyyy'");
+
+    }
+
 }

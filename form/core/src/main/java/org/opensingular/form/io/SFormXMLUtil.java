@@ -348,7 +348,7 @@ public final class SFormXMLUtil {
         return xmlResult;
     }
 
-    static MElement parseXml(String xmlString) {
+    public static MElement parseXml(String xmlString) {
         try {
             if (StringUtils.isBlank(xmlString)) {
                 return null;
