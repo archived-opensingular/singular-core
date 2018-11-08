@@ -16,7 +16,6 @@
 
 package org.opensingular.flow.persistence.service;
 
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
@@ -51,6 +50,7 @@ import org.opensingular.flow.core.variable.VarInstance;
 import org.opensingular.flow.core.variable.VarInstanceMap;
 import org.opensingular.flow.core.variable.VarType;
 import org.opensingular.flow.persistence.entity.util.SessionWrapper;
+import org.opensingular.lib.commons.util.ObjectUtils;
 import org.opensingular.lib.support.persistence.SessionLocator;
 
 import javax.annotation.Nonnull;
@@ -239,11 +239,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
                 vt -> vt.getDescription().equals(typeDescription));
 
         if (variableType == null) {
-            try {
-                variableType = entityClass.newInstance();
-            } catch (Exception e) {
-                throw Throwables.propagate(e);
-            }
+            variableType = ObjectUtils.newInstance(entityClass);
             variableType.setDescription(typeDescription);
             sw.save(variableType);
         }
@@ -383,11 +379,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         IEntityVariableType variableType = sw.retrieveFirstFromCachedRetrieveAll(entityClass, vt -> vt.getTypeClassName().equals(typeClassName));
 
         if (variableType == null) {
-            try {
-                variableType = entityClass.newInstance();
-            } catch (Exception e) {
-                throw Throwables.propagate(e);
-            }
+            variableType = ObjectUtils.newInstance(entityClass);
             variableType.setDescription(varType.getName());
             variableType.setTypeClassName(typeClassName);
             sw.save(variableType);

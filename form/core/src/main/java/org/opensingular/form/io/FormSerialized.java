@@ -20,19 +20,19 @@ package org.opensingular.form.io;
 import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.validation.ValidationError;
-import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.lib.commons.context.ServiceRegistry;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 
 /**
- * Objeto transitório para guardar uma versão serializável de MInstance ou
- * MDocument.
+ * Transitory object for saving a serializable version of a {@link org.opensingular.form.SInstance}.
  *
  * @author Daniel C. Bordin
  */
@@ -41,42 +41,43 @@ public final class FormSerialized implements Serializable {
     private final RefSDocumentFactory                       sDocumentFactoryRef;
     private final RefType                                   refRootType;
     private final String                                    rootTypeName;
-    private final String                                    xml;
-    private final String                                    annotations;
+    private final byte[] contentInstance;
+    private final byte[] contentAnnotations;
     private       String                                    focusFieldPath;
     private       Map<String, ServiceRegistry.ServiceEntry> services;
     private       List<ValidationError>                     validationErrors;
 
-    public FormSerialized(RefType refRootType, String rootTypeName, MElement xml, MElement annotations,
-                          RefSDocumentFactory sDocumentFactoryRef) {
-        this.refRootType = refRootType;
-        this.rootTypeName = rootTypeName;
-        this.sDocumentFactoryRef = sDocumentFactoryRef;
-        this.xml = Optional.ofNullable(xml).map(MElement::toStringExato).orElse(null);
-        this.annotations = Optional.ofNullable(annotations).map(MElement::toStringExato).orElse(null);
+    FormSerialized(@Nonnull RefType refRootType, @Nonnull String rootTypeName, @Nonnull byte[] contentInstance,
+            @Nullable byte[] contentAnnotations, RefSDocumentFactory sDocumentFactoryRef) {
+        this.refRootType = Objects.requireNonNull(refRootType);
+        this.rootTypeName = Objects.requireNonNull(rootTypeName);
+        this.sDocumentFactoryRef = Objects.requireNonNull(sDocumentFactoryRef);
+        this.contentInstance = Objects.requireNonNull(contentInstance);
+        this.contentAnnotations = contentAnnotations;
     }
 
-    public String getRootTypeName() {
+    String getRootTypeName() {
         return rootTypeName;
     }
 
-    public RefType getRefRootType() {
+    RefType getRefRootType() {
         return refRootType;
     }
 
-    public String getFocusFieldPath() {
+    String getFocusFieldPath() {
         return focusFieldPath;
     }
 
-    public MElement getAnnotations() {
-        return SFormXMLUtil.parseXml(annotations);
+    @Nullable
+    byte[] getContentAnnotations() {
+        return contentAnnotations;
     }
 
-    public MElement getXml() {
-        return SFormXMLUtil.parseXml(xml);
+    byte[] getContentInstance() {
+        return contentInstance;
     }
 
-    public void setFocusFieldPath(String focusFieldPath) {
+    void setFocusFieldPath(String focusFieldPath) {
         this.focusFieldPath = focusFieldPath;
     }
 
@@ -84,11 +85,11 @@ public final class FormSerialized implements Serializable {
         return services;
     }
 
-    public void setServices(Map<String, ServiceRegistry.ServiceEntry> services) {
+    void setServices(Map<String, ServiceRegistry.ServiceEntry> services) {
         this.services = services;
     }
 
-    public RefSDocumentFactory getSDocumentFactoryRef() {
+    RefSDocumentFactory getSDocumentFactoryRef() {
         return sDocumentFactoryRef;
     }
 
@@ -96,7 +97,7 @@ public final class FormSerialized implements Serializable {
         return validationErrors;
     }
 
-    public void setValidationErrors(Collection<ValidationError> validationErrors) {
+    void setValidationErrors(Collection<ValidationError> validationErrors) {
         this.validationErrors = (validationErrors == null) ? null : new ArrayList<>(validationErrors);
     }
 }

@@ -236,7 +236,8 @@ public class SingularFormPanel extends Panel {
             if (instanceCreator != null) {
                 SInstance instance = instanceCreator.get();
                 if (instance == null) {
-                    throw new SingularFormException("O instanceCreator retornou null");
+                    throw new SingularFormException(
+                            "O instanceCreator (" + instanceCreator.getClass().getName() + ") retornou null");
                 }
                 instanceModel.setObject(instance);
             } else {

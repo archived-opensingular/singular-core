@@ -29,5 +29,6 @@ public class STypeCPF extends STypeString {
     protected void onLoadType(TypeBuilder tb) {
         addInstanceValidator(ValidationErrorLevel.ERROR, InstanceValidators.cpf());
         asAtr().label("CPF").basicMask("CPF").maxLength(null);
+        asAtrBootstrap().colPreference(3);
     }
 }

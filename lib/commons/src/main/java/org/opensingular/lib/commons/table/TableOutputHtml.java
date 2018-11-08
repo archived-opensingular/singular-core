@@ -17,6 +17,7 @@
 package org.opensingular.lib.commons.table;
 
 import com.google.common.base.Predicates;
+import org.opensingular.internal.lib.commons.util.RandomUtil;
 import org.opensingular.internal.lib.commons.xml.ConversorToolkit;
 import org.opensingular.lib.commons.net.WebRef;
 import org.opensingular.lib.commons.views.format.ViewOutputHtml;
@@ -25,7 +26,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.PrintWriter;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 public class TableOutputHtml extends TableOutput {
 
     private final ViewOutputHtml vOut;
-    private final String tableid = UUID.randomUUID().toString();
+    private final String tableid = RandomUtil.generateID();
 
     public TableOutputHtml(ViewOutputHtml vOut) {
         this.vOut = vOut;

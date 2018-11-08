@@ -40,7 +40,7 @@ public interface ITaskDefinition {
 
     @Nonnull
     static String taskNameToTaskKey(@Nonnull String name) {
-        return SingularUtil.convertToJavaIdentity(name, true).toUpperCase();
+        return SingularUtil.convertToJavaIdentifier(name).toUpperCase();
     }
 
     /** Creates a {@link ITaskDefinition} with the name and key informed. */

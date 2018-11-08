@@ -19,30 +19,26 @@
 package org.opensingular.lib.commons.internal.function;
 
 
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
+import org.opensingular.internal.lib.commons.util.SingularIOUtils;
 import org.opensingular.lib.commons.base.SingularException;
-import org.opensingular.lib.commons.internal.function.SupplierUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
 
-import java.io.Serializable;
 import java.util.function.Supplier;
 
 public class SupplierUtilTest {
 
     @Test
     public void nullSupplierTest() {
-        Supplier<Integer> supp = SupplierUtil.cached(() -> {
-            return (Integer) null;
-        });
-        Assert.assertEquals(supp.get(), null);
+        Supplier<Integer> supp = SupplierUtil.cached(() -> null);
+        Assert.assertNull(supp.get());
     }
 
     @Test
     public void IntegerSupplierTest() {
-        Supplier<Integer> supp = SupplierUtil.cached(() -> {
-            return (Integer) 12;
-        });
+        Supplier<Integer> supp = SupplierUtil.cached(() -> 12);
         Assert.assertEquals(supp.get(), new Integer(12));
     }
 
@@ -62,8 +58,27 @@ public class SupplierUtilTest {
         SupplierUtil.serializable(new NotSerializable());
     }
 
-    private class NotSerializable {
+    public static class NotSerializable {
         public String value;
     }
 
+    @Test
+    public void byClass1() {
+        ISupplier<NotSerializable> v1 = SupplierUtil.loadByClass(NotSerializable.class);
+        Assertions.assertThat(v1.get()).isExactlyInstanceOf(NotSerializable.class);
+
+        ISupplier<NotSerializable> v2 = SingularIOUtils.serializeAndDeserialize(v1);
+        Assertions.assertThat(v2.get()).isExactlyInstanceOf(NotSerializable.class).isNotSameAs(v1.get());
+    }
+
+    @Test
+    public void byClass2() {
+        NotSerializable v0 = new NotSerializable();
+        ISupplier<NotSerializable> v1 = SupplierUtil.loadByClass(v0);
+        Assertions.assertThat(v1.get()).isSameAs(v0);
+
+        ISupplier<NotSerializable> v2 = SingularIOUtils.serializeAndDeserialize(v1);
+        Assertions.assertThat(v2.get()).isExactlyInstanceOf(NotSerializable.class).isNotSameAs(v0);
+
+    }
 }

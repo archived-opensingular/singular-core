@@ -16,44 +16,37 @@
 
 package org.opensingular.internal.lib.commons.xml;
 
+import javax.annotation.Nonnull;
 import java.io.PrintWriter;
 
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
+abstract class AbstractToolkitWriter implements MElementWriter {
 
-public abstract class AbstractToolkitWriter implements MElementWriter {
-
-    private final static Object[][] REPLACEMENTS = {
-            new Boolean[]{TRUE, TRUE, TRUE, FALSE, FALSE}, // REQUIRED FOR NODE CONTENT (TRUE/FALSE)
-            new Character[]{'&', '<', '>', '"', '\''}, // ESPECIAL CHAR
-            new String[]{"&amp;", "&lt;", "&gt;", "&quot;", "&apos;"} // REPLACEMENT
-    };
+    private final static char[] ESPECIAL_TXT = new char[]{'&', '<', '>',};
+    private final static String[] SUBSTITUTE_TXT = new String[]{"&amp;", "&lt;", "&gt;"};
+    private final static char[] ESPECIAL_ATR = new char[]{'&', '<', '>', '"', '\''};
+    private final static String[] SUBSTITUTE_ATR = new String[]{"&amp;", "&lt;", "&gt;", "&quot;", "&apos;"};
 
 
-    protected void printConvertingSpecialCharactersTextNode(PrintWriter out, char[] text) {
-        printConvertingSpecialCharacters(out, text, false);
+    void printConvertingSpecialCharactersTextNode(@Nonnull PrintWriter out, @Nonnull String text) {
+        printConverting(out, text, ESPECIAL_TXT, SUBSTITUTE_TXT);
     }
 
-    protected void printConvertingSpecialCharactersAttribute(PrintWriter out, char[] text) {
-        printConvertingSpecialCharacters(out, text, true);
+    void printConvertingSpecialCharactersAttribute(@Nonnull PrintWriter out, @Nonnull String text) {
+        printConverting(out, text, ESPECIAL_ATR, SUBSTITUTE_ATR);
     }
 
-
-    @SuppressWarnings({"squid:S134","fb-contrib:CLI_CONSTANT_LIST_INDEX"})
-    private void printConvertingSpecialCharacters(PrintWriter out, char[] text, boolean attributeEscape) {
-        Boolean[]   REQUIRED_FOR_NODE_CONTENT = (Boolean[]) REPLACEMENTS[0];
-        Character[] ESPECIAL                  = (Character[]) REPLACEMENTS[1];
-        String[]    SUBSTITUTE                = (String[]) REPLACEMENTS[2];
-        int         len                       = text.length;
-        int         lastWritten               = 0;
+    private static void printConverting(@Nonnull PrintWriter out, @Nonnull String text, char[] especial,
+            String[] substitute) {
+        int len = text.length();
+        int lastWritten = 0;
         for (int i = 0; i < len; i++) {
-            for (int j = 0; j < ESPECIAL.length; j++) {
-                if (text[i] == ESPECIAL[j]) {
-                    if (REQUIRED_FOR_NODE_CONTENT[j] || attributeEscape) {
-                        out.write(text, lastWritten, i - lastWritten);
-                        out.print(SUBSTITUTE[j]);
-                        lastWritten = i + 1;
-                    }
+            char c = text.charAt(i);
+            for (int j = 0; j < especial.length; j++) {
+                if (c == especial[j]) {
+                    out.write(text, lastWritten, i - lastWritten);
+                    out.print(substitute[j]);
+                    lastWritten = i + 1;
+                    break;
                 }
             }
         }

@@ -31,6 +31,7 @@ import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.lib.commons.context.ServiceRegistry;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -72,9 +74,8 @@ public final class SFormUtil {
         return SingularFormProcessing.evaluateUpdateListeners(i);
     }
 
-    private static boolean isNotValidSimpleName(@Nonnull String name) {
-        Objects.requireNonNull(name);
-        if (name.length() == 0 || !isLetter(name.charAt(0))) {
+    private static boolean isNotValidSimpleName(@Nullable String name) {
+        if (name == null || name.length() == 0 || !isLetter(name.charAt(0))) {
             return true;
         }
         for (int i = name.length() - 1; i != 0; i--) {
@@ -94,8 +95,9 @@ public final class SFormUtil {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';  //NOSONAR
     }
 
+    /** Verifies if the name is a valid for a simple name otherwise throws a exception. */
     @Nonnull
-    static String validateSimpleName(@Nonnull String name) {
+    public static String validateSimpleName(@Nonnull String name) {
         if (isNotValidSimpleName(name)) {
             throw new SingularFormException('\'' + name + "' não é um nome válido para pacote, tipo ou atributo");
         }
@@ -209,7 +211,8 @@ public final class SFormUtil {
      * Retorna o nome do filho atual indo em direção ao raiz mas parando segundo
      * a condicão de parada informada.
      */
-    public static String generatePath(SInstance instance, Predicate<SInstance> stopCondition) {
+    @Nullable
+    public static String generatePath(@Nonnull SInstance instance, @Nonnull Predicate<SInstance> stopCondition) {
         SInstance current = instance;
         List<SInstance> sequencia = null;
         while (!stopCondition.test(current)) {
@@ -237,6 +240,50 @@ public final class SFormUtil {
                 }
                 sb.append(current.getName());
             }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Retorna o nome do filho atual indo em direção ao raiz mas parando segundo
+     * a condicão de parada informada.
+     */
+    @Nullable
+    public static String generatePath(@Nonnull SType<?> type, @Nonnull Predicate<SType<?>> stopCondition) {
+        return generatePath(type, stopCondition, ' ', '.', SType::getNameSimple);
+    }
+
+    /**
+     * Retorna o nome do filho atual indo em direção ao raiz mas parando segundo
+     * a condicão de parada informada.
+     */
+    @Nullable
+    public static String generatePath(@Nonnull SType<?> type, @Nonnull Predicate<SType<?>> stopCondition,
+            char rootPrefix, char separator, Function<SType<?>, String> nameFunc) {
+        SType<?> current = type;
+        List<SType<?>> sequencia = null;
+        while (!stopCondition.test(current)) {
+            if (sequencia == null) {
+                sequencia = new ArrayList<>();
+            }
+            sequencia.add(current);
+            current = current.getParent().orElse(null);
+        }
+        if (sequencia == null) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = sequencia.size() - 1; i != -1; i--) {
+            current = sequencia.get(i);
+            if (sb.length() == 0) {
+                if (rootPrefix != ' ' && !current.getParent().isPresent()) {
+                    sb.append(rootPrefix);
+                }
+            } else if (sb.length() != 0) {
+                sb.append(separator);
+            }
+            String n = nameFunc.apply(current);
+            sb.append(n);
         }
         return sb.toString();
     }
@@ -290,7 +337,7 @@ public final class SFormUtil {
      * mediante a leitura das anotações {@link SInfoType} e {@link SInfoPackage}.
      */
     @Nonnull
-    public static String getTypeName(@Nonnull Class<? extends SType<?>> typeClass) {
+    public static String getTypeName(@Nonnull Class<? extends SType> typeClass) {
         return ClassInspectionCache.getInfo(typeClass, CacheKey.FULL_NAME, SFormUtil::getTypeNameInternal);
     }
 
@@ -412,7 +459,7 @@ public final class SFormUtil {
         }
     }
 
-    private synchronized static Map<String, Class<? extends SPackage>> getSingularPackages() {
+    private static synchronized Map<String, Class<? extends SPackage>> getSingularPackages() {
         if (singularPackages == null) {
             singularPackages = SupplierUtil.cached(() -> {
                 Builder<String, Class<? extends SPackage>> builder = ImmutableMap.builder();
@@ -485,6 +532,7 @@ public final class SFormUtil {
 
     @Nonnull
     static <T> T newInstance(@Nonnull Class<T> targetClass) {
+        //It doesn't uses ObjectUtil.newInstance() because SType has a protected constructor
         try {
             return targetClass.newInstance();
         } catch (Exception e) {
@@ -492,4 +540,23 @@ public final class SFormUtil {
         }
     }
 
+    /**
+     * Tries to load a {@link SType} class using the name of the class.
+     *
+     * @return Empty if the class doesn't exists or a error  occurs while loading the class.
+     */
+    @Nonnull
+    public static Optional<Class<? extends SType<?>>> tryFindTypeByClassName(@Nonnull String typeClassName) {
+        Objects.requireNonNull(typeClassName);
+        try {
+            Class<?> c = Class.forName(typeClassName);
+            if (SType.class.isAssignableFrom(c)) {
+                return Optional.of((Class<? extends SType<?>>) c);
+            }
+            return Optional.empty();
+        } catch (Exception e) {
+            LoggerFactory.getLogger(SFormUtil.class).error(e.getMessage(), e);
+            return Optional.empty();
+        }
+    }
 }

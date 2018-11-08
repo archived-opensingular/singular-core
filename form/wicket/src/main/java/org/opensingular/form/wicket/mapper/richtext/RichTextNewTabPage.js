@@ -61,12 +61,17 @@
                 });
                 ids = ids.slice(0, -1);
             }
-            var editor = CKEDITOR.replace("ck-text-area", {
+
+            var editItens = ['Find', 'Replace', '-', 'Scayt'];
+            if(${sourceViewEnabled}){
+                editItens.push('Source');
+            }
+
+            var config = {
                 extraPlugins: plugin,
                 allowedContent: true,
                 skin: 'office2013',
                 language: 'pt-br',
-                width: '215mm',
                 buttonPlugin: {
                     onEvent: function (data) {
 
@@ -117,7 +122,7 @@
                         name: 'clipboard',
                         items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']
                     },
-                    {name: 'editing', items: ['Find', 'Replace', '-', 'Scayt']},
+                    {name: 'editing', items: editItens},
                     {
                         name: 'basicstyles',
                         items: ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat']
@@ -129,7 +134,7 @@
                     {name: 'links', items: ['Link', 'Unlink']},
                     {name: 'insert', items: ['Table', 'HorizontalRule', 'SpecialChar', 'PageBreak']},
                     '/',
-                    {name: 'styles', items: ['Styles', 'Format', 'FontSize']},
+                    {name: 'styles', items: ['Styles', 'Format', 'FontSize', 'Font']},
                     {name: 'colors', items: ['TextColor', 'BGColor']},
                     {name: 'tools', items: ['ShowBlocks']},
                     {name: 'others', items: ids.split(",")}
@@ -140,7 +145,13 @@
                         configureIconButtons();
                     }
                 }
-            });
+            };
+
+            if (${a4LayoutEnabled}) {
+                config.width = '215mm';
+            }
+
+            var editor = CKEDITOR.replace("ck-text-area", config);
 
             CKEDITOR.config.disableNativeSpellChecker = false;
             configureDisabledDoubleClick(editor);

@@ -36,6 +36,7 @@ public class STypeCEP extends STypeString implements Loggable {
     protected void onLoadType(TypeBuilder tb) {
         addInstanceValidator(ValidationErrorLevel.ERROR, InstanceValidators.cep());
         asAtr().label("CEP").basicMask("CEP").maxLength(10);
+        asAtrBootstrap().colPreference(2);
     }
 
     @Override

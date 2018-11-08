@@ -55,8 +55,7 @@ public class SDictionary {
     /** List of aspect registry associated to this {@link SDictionary}. */
     private MasterAspectRegistry masterAspectRegistry;
 
-    private SDictionary() {
-    }
+    private SDictionary() {}
 
     /**
      * Apenas para uso interno do dicionario de modo que os atributos dos tipos
@@ -82,6 +81,7 @@ public class SDictionary {
         return viewResolver;
     }
 
+    @Nonnull
     public static SDictionary create() {
         SDictionary dictionary = new SDictionary();
         dictionary.loadPackage(SPackageCore.class);
@@ -92,8 +92,6 @@ public class SDictionary {
      * Carrega no dicionário o pacote informado e todas as definições do mesmo,
      * se ainda não tiver sido carregado. É seguro chamar é método mais de uma
      * vez para o mesmo pacote.
-     *
-     * @return O pacote carregado
      */
     @Nonnull
     public <T extends SPackage> T loadPackage(@Nonnull Class<T> packageClass) {

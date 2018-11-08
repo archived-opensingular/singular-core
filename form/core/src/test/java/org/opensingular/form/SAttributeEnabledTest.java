@@ -56,8 +56,8 @@ public class SAttributeEnabledTest extends TestCaseForm {
         assertHasAttribute(simple, SPackageBasic.ATR_LABEL, false, true, false);
         assertHasAttribute(string, SPackageBasic.ATR_LABEL, false, true, false);
         assertHasAttribute(email, SPackageBasic.ATR_LABEL, false, true, true);
-        assertHasAttribute(iString, SPackageBasic.ATR_LABEL, false, true, false);
-        assertHasAttribute(iEmail, SPackageBasic.ATR_LABEL, false, true, false);
+        assertHasAttribute(iString, SPackageBasic.ATR_LABEL, true, false);
+        assertHasAttribute(iEmail, SPackageBasic.ATR_LABEL, true, false);
 
         string.setAttributeValue(SPackageBasic.ATR_LABEL, "X");
         assertHasAttribute(string, SPackageBasic.ATR_LABEL, false, true, true);
@@ -70,19 +70,28 @@ public class SAttributeEnabledTest extends TestCaseForm {
         assertHasAttribute(simple, SPackageBasic.ATR_MAX_LENGTH, false, false, false);
         assertHasAttribute(string, SPackageBasic.ATR_MAX_LENGTH, true, true, true);
         assertHasAttribute(email, SPackageBasic.ATR_MAX_LENGTH, false, true, false);
-        assertHasAttribute(iString, SPackageBasic.ATR_MAX_LENGTH, false, true, false);
-        assertHasAttribute(iEmail, SPackageBasic.ATR_MAX_LENGTH, false, true, false);
+        assertHasAttribute(iString, SPackageBasic.ATR_MAX_LENGTH, true, false);
+        assertHasAttribute(iEmail, SPackageBasic.ATR_MAX_LENGTH, true, false);
 
         iEmail.setAttributeValue(SPackageBasic.ATR_MAX_LENGTH, 10);
-        assertHasAttribute(iEmail, SPackageBasic.ATR_MAX_LENGTH, false, true, true);
+        assertHasAttribute(iEmail, SPackageBasic.ATR_MAX_LENGTH, true, true);
 
     }
 
-    private void assertHasAttribute(SAttributeEnabled target, @Nonnull AtrRef<?, ?, ?> atr,
+    private void assertHasAttribute(SType<?> target, @Nonnull AtrRef<?, ?, ?> atr,
             boolean expectedHasAttributeDefinedDirectly, boolean expectedHasAttributeDefinedInHierarchy,
             boolean expectedHashAttributeValueDirectly) {
-        Assert.assertEquals(expectedHasAttributeDefinedDirectly, target.hasAttributeDefinedDirectly(atr));
-        Assert.assertEquals(expectedHasAttributeDefinedInHierarchy, target.hasAttributeDefinedInHierarchy(atr));
-        Assert.assertEquals(expectedHashAttributeValueDirectly, target.hasAttributeValueDirectly(atr));
+        Assert.assertEquals(expectedHasAttributeDefinedDirectly,
+                SAttributeUtil.hasAttributeDefinedDirectly(target, atr));
+        Assert.assertEquals(expectedHasAttributeDefinedInHierarchy,
+                SAttributeUtil.hasAttributeDefinitionInHierarchy(target, atr));
+        Assert.assertEquals(expectedHashAttributeValueDirectly, SAttributeUtil.hasAttributeValueDirectly(target, atr));
+    }
+
+    private void assertHasAttribute(SInstance target, @Nonnull AtrRef<?, ?, ?> atr,
+            boolean expectedHasAttributeDefinedInHierarchy, boolean expectedHashAttributeValueDirectly) {
+        Assert.assertEquals(expectedHasAttributeDefinedInHierarchy,
+                SAttributeUtil.hasAttributeDefinitionInHierarchy(target, atr));
+        Assert.assertEquals(expectedHashAttributeValueDirectly, SAttributeUtil.hasAttributeValueDirectly(target, atr));
     }
 }

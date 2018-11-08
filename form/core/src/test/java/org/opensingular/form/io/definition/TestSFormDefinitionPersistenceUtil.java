@@ -229,12 +229,12 @@ public class TestSFormDefinitionPersistenceUtil extends TestCaseForm {
         }
     }
 
-    public void testRecover() throws Exception {
+    public void testRecover() {
 
     }
 
     @Test
-    public void printArchiveTest() throws Exception {
+    public void printArchiveTest() {
         SDictionary dictionary = SDictionary.create();
         dictionary.loadPackage(FormTestPackage.class);
 

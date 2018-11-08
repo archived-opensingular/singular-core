@@ -51,7 +51,7 @@ public class TypeProcessorAttributeReadFromFile {
      */
     public final static TypeProcessorAttributeReadFromFile INSTANCE = new TypeProcessorAttributeReadFromFile();
 
-    TypeProcessorAttributeReadFromFile() {
+    private TypeProcessorAttributeReadFromFile() {
     }
 
     /**
@@ -86,10 +86,8 @@ public class TypeProcessorAttributeReadFromFile {
         URL url = lookForFile(typeClass);
         if (url != null) {
             try {
-                MElement xml = MParser.parse(url.openStream(), false, false);
-                if (xml != null) {
-                    return new FileDefinitions(url, readDefinitionsFor(xml));
-                }
+                MElement xml = MParser.parse(url.openStream());
+                return new FileDefinitions(url, readDefinitionsFor(xml));
             } catch (Exception e) {
                 throw new SingularFormException("Erro lendo propriedades para " + typeClass.getName() + " em " + url,
                         e);
@@ -99,8 +97,8 @@ public class TypeProcessorAttributeReadFromFile {
     }
 
     @Nonnull
-    public static List<AttributeEntry> readDefinitionsFor(@Nonnull MElement xml) {
-        List<AttributeEntry> vals  = new ArrayList<AttributeEntry>();
+    static List<AttributeEntry> readDefinitionsFor(@Nonnull MElement xml) {
+        List<AttributeEntry> vals  = new ArrayList<>();
         NodeList            attrs = xml.getElementsByTagName("attr");
 
         if (attrs.getLength() == 0) {

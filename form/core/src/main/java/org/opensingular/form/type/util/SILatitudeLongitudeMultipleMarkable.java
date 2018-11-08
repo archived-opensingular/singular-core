@@ -20,8 +20,11 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.type.core.attachment.SIAttachment;
 
+import javax.annotation.Nonnull;
+
 public class SILatitudeLongitudeMultipleMarkable extends SIComposite {
 
+    @Nonnull
     @Override
     public STypeLatitudeLongitudeMultipleMarkable getType() {
         return (STypeLatitudeLongitudeMultipleMarkable) super.getType();

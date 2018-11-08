@@ -29,6 +29,7 @@ import org.opensingular.internal.lib.commons.test.SingularTestUtil;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.util.Loggable;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,15 +45,15 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
     public static Collection<TestFormConfig> data() {
         ServiceRegistryLocator.setup(new ServiceRegistryLocator());
         List<TestFormConfig> executionParams = new ArrayList<>();
-        addScenario(executionParams, "default option", () -> SDictionary.create());
+        addScenario(executionParams, "default option", SDictionary::create);
         return executionParams;
     }
 
-    private static void addScenario(List<TestFormConfig> executionParams, String name, SerializableSupplier factory) {
+    private static void addScenario(List<TestFormConfig> executionParams, String name, SerializableSupplier<SDictionary> factory) {
         executionParams.add(new TestFormConfig(name, factory));
     }
 
-    private static interface SerializableSupplier<T> extends Supplier<T>, Serializable {
+    private interface SerializableSupplier<T> extends Supplier<T>, Serializable {
     }
 
     protected static class TestFormConfig {
@@ -96,11 +97,13 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
     }
 
     /** Cria assertivas para um {@link SType}. */
+    @Nonnull
     public static AssertionsSType assertType(SType<?> type) {
         return new AssertionsSType(type);
     }
 
     /** Cria assertivas para um {@link SInstance}. */
+    @Nonnull
     public static AssertionsSInstance assertInstance(SInstance instance) {
         return new AssertionsSInstance(instance);
     }
@@ -210,11 +213,12 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
         SingularTestUtil.assertException(acao, exceptionEsperada, trechoMsgEsperada, msgFailException);
     }
 
-    public SInstance createSerializableTestInstance(Class<? extends SType<?>> typeClass) {
+    protected SInstance createSerializableTestInstance(Class<? extends SType<?>> typeClass) {
         return createSerializableTestInstance(getDictionaryFactory(), typeClass);
     }
 
-    public static SInstance createSerializableTestInstance(Supplier<SDictionary> dictionaryFactory,
+    @Nonnull
+    protected static SInstance createSerializableTestInstance(Supplier<SDictionary> dictionaryFactory,
             Class<? extends SType<?>> typeClass) {
         RefType refType = RefType.of(() -> dictionaryFactory.get().getType(typeClass));
         return SDocumentFactory.empty().createInstance(refType);
@@ -224,6 +228,7 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
         return createSerializableTestInstance(getDictionaryFactory(), typeName, setupCode);
     }
 
+    @Nonnull
     public static SInstance createSerializableTestInstance(Supplier<SDictionary> dictionaryFactory, String typeName,
             ConfiguratorTestPackage setupCode) {
         RefType refType = RefType.of(() -> {
@@ -235,6 +240,6 @@ public abstract class TestCaseForm extends TestCase implements Loggable {
     }
 
     public interface ConfiguratorTestPackage extends Serializable {
-        public void setup(PackageBuilder pkg);
+        void setup(PackageBuilder pkg);
     }
 }

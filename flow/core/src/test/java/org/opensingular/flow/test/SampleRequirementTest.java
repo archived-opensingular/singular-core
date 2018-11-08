@@ -19,11 +19,7 @@
 package org.opensingular.flow.test;
 
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.runners.MethodSorters;
 import org.opensingular.flow.core.ExecuteWaitingTasksJob;

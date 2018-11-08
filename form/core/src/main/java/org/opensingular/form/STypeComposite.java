@@ -294,6 +294,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
         return addField(fieldName, STypeFieldRef.class);
     }
 
+    @Nullable
     public SType<?> getField(String fieldSimpleName) {
         return getFieldsConsolidated().get(fieldSimpleName);
     }
@@ -516,10 +517,12 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
             return (fields == null) || fields.isEmpty();
         }
 
+        @Nonnull
         public List<SType<?>> getFields() {
             return (fields == null) ? Collections.emptyList() : ensureList();
         }
 
+        @Nullable
         public SType<?> get(String fieldName) {
             if (fields != null) {
                 FieldRef fr = fields.get(fieldName);
@@ -565,6 +568,7 @@ public class STypeComposite<INSTANCE_TYPE extends SIComposite> extends SType<INS
             throw new SingularFormException("Indice do campo incorreto: " + fieldIndex, this);
         }
 
+        @Nonnull
         private List<SType<?>> ensureList() {
             if (fieldsList == null) {
                 int index = 0;

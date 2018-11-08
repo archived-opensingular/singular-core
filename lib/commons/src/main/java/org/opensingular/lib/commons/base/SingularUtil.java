@@ -21,10 +21,12 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.text.Normalizer;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 
 public final class SingularUtil {
@@ -50,15 +52,53 @@ public final class SingularUtil {
         return Hex.encodeHexString(sha1Digest.digest());
     }
 
+    /**
+     * Tries to converts a arbitrary string to a valid java identifier (valid characters ans without spaces). If it's
+     * not possible to convert, return a empty result.
+     */
     @Nonnull
-    public static String convertToJavaIdentity(@Nonnull String original, boolean normalize) {
-        return convertToJavaIdentity(original, false, normalize);
+    public static Optional<String> tryConvertToJavaIdentifier(@Nonnull String original) {
+        return tryConvertToJavaIdentifier(original, false);
+
     }
 
+    /**
+     * Tries to converts a arbitrary string to a valid java identifier (valid characters ans without spaces). If it's
+     * not possible to convert, return a empty result.
+     */
     @Nonnull
-    public static String convertToJavaIdentity(@Nonnull String original, boolean firstCharacterUpperCase, boolean normalize) {
+    public static Optional<String> tryConvertToJavaIdentifier(@Nonnull String original,
+            boolean firstCharacterUpperCase) {
+        return Optional.ofNullable(convertToJavaIdentifierInternal(original, firstCharacterUpperCase));
+
+    }
+
+    /**
+     * Converts a arbitrary string to a valid java identifier (valid characters ans without spaces). If it's not
+     * possible to convert, a exception is thrown.
+     */
+    @Nonnull
+    public static String convertToJavaIdentifier(@Nonnull String original) {
+        return convertToJavaIdentifier(original, false);
+    }
+
+    /**
+     * Converts a arbitrary string to a valid java identifier (valid characters ans without spaces). If it's not
+     * possible to convert, a exception is thrown.
+     */
+    @Nonnull
+    public static String convertToJavaIdentifier(@Nonnull String original, boolean firstCharacterUpperCase) {
+        String result = convertToJavaIdentifierInternal(original, firstCharacterUpperCase);
+        if (result == null) {
+            throw new SingularException("'" + original + "' it's no possible to convert to valid identifier");
+        }
+        return result;
+    }
+
+    @Nullable
+    private static String convertToJavaIdentifierInternal(@Nonnull String original, boolean firstCharacterUpperCase) {
         Objects.requireNonNull(original);
-        String normalized = normalize ? normalize(original) : original;
+        String normalized = normalize(original);
         StringBuilder sb = new StringBuilder(normalized.length());
         boolean nextUpper = false;
         for (char c : normalized.toCharArray()) {
@@ -71,7 +111,7 @@ public final class SingularUtil {
             }
         }
         if (sb.length() == 0) {
-            throw new SingularException("'" + original + "' it's no possible to convert to valid identifier");
+            return null;
         }
         return sb.toString();
     }
@@ -93,6 +133,12 @@ public final class SingularUtil {
         }
     }
 
+    /**
+     * Transforms unicode characters in a simpler common version., because some different unicode characters have the
+     * same semantic meaning. Also removes some special characters.
+     *
+     * @see Normalizer
+     */
     @Nonnull
     public static String normalize(@Nonnull String original) {
         return Normalizer.normalize(original, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");

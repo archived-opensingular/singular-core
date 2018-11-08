@@ -16,6 +16,8 @@
 
 package org.opensingular.form;
 
+import org.opensingular.lib.commons.util.ObjectUtils;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -75,7 +77,7 @@ class MapByName<K> implements Iterable<K> {
     final <T extends K> T getOrNewInstance(@Nonnull Class<T> targetClass) {
         T value = get(targetClass);
         if (value == null) {
-            return SFormUtil.newInstance(targetClass);
+            return ObjectUtils.newInstance(targetClass);
         }
         return value;
     }
