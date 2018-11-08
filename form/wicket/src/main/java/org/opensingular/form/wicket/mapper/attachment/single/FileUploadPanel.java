@@ -182,6 +182,7 @@ public class FileUploadPanel extends Panel implements Loggable {
 
     private void addPreview() {
         preview = new WebMarkupContainer("preview");
+        preview.setOutputMarkupPlaceholderTag(true);
         Image imagePreview = new Image("imagePreview", new ResourceStreamResource(new SIAttachmentIResourceStream(self.getModel())));
         add(preview.add(imagePreview));
         preview.add(new Behavior() {

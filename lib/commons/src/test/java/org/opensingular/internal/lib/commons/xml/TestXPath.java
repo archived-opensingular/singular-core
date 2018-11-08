@@ -27,11 +27,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 import org.w3c.dom.traversal.NodeIterator;
 
-import javax.xml.transform.TransformerException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opensingular.internal.lib.commons.xml.XmlUtil.isNodeTypeElement;
 
@@ -86,7 +88,7 @@ public class TestXPath {
                         + "";
         //@formatter:on
         InputStream in = new ByteArrayInputStream(xml.getBytes());
-        root_ = MParser.parse(in, false, false);
+        root_ = MParser.parse(in);
     }
 
     /**
@@ -146,7 +148,7 @@ public class TestXPath {
      * Elements.
      */
     @Test
-    public void testResult() throws Exception {
+    public void testResult() {
         checkResult(true, "cd", 3);
         checkResult(true, null, 4);
         checkResult(false, "cd/grupo", 3);
@@ -160,21 +162,21 @@ public class TestXPath {
         long inicio = System.currentTimeMillis();
         for (int rep = 0; rep < 1000; rep++) {
             MElementResult rs = root_.selectElements(xPath);
-            assertEquals(rs.isBeforeFirst(), true);
-            assertEquals(rs.isCurrentValid(), false);
-            assertEquals(rs.isAfterLast(), false);
+            assertTrue(rs.isBeforeFirst());
+            assertFalse(rs.isCurrentValid());
+            assertFalse(rs.isAfterLast());
 
             int qtd = 0;
             while (rs.next()) {
-                assertEquals(rs.isBeforeFirst(), false);
-                assertEquals(rs.isCurrentValid(), true);
-                assertEquals(rs.isAfterLast(), false);
+                assertFalse(rs.isBeforeFirst());
+                assertTrue(rs.isCurrentValid());
+                assertFalse(rs.isAfterLast());
                 qtd++;
                 rs.getTagName();
             }
-            assertEquals(rs.isBeforeFirst(), false);
-            assertEquals(rs.isCurrentValid(), false);
-            assertEquals(rs.isAfterLast(), true);
+            assertFalse(rs.isBeforeFirst());
+            assertFalse(rs.isCurrentValid());
+            assertTrue(rs.isAfterLast());
 
             assertEquals("Qtd de itens encontrados diferentes do lidos", qtdEsperado, qtd);
         }
@@ -187,7 +189,7 @@ public class TestXPath {
     }
 
 
-    /**
+    /*
      * Verifica o tempo para busca via xPath. Quando especificado
      * comparação com o XMLToolkit, a diferença de tempo deverá de 100
      * vezes mais rápido para o XMLToolkit puro.
@@ -236,8 +238,7 @@ public class TestXPath {
     }
     //@formatter:off
 **/
-    private void checkPath(boolean otimizado, Node no, String xPath, String valor)
-            throws Exception {
+    private void checkPath(boolean otimizado, Node no, String xPath, String valor) {
         if (no instanceof EWrapper) {
             no = ((EWrapper) no).getOriginal();
         }
@@ -253,9 +254,8 @@ public class TestXPath {
      * @param no Ponto de base da pesquisa
      * @param xPath Query XPAth válida
      * @param valor Valor a ser encontrado no Element
-     * @throws TransformerException -
      */
-    private void checkFind(Node no, String xPath, String valor) throws TransformerException {
+    private void checkFind(Node no, String xPath, String valor) {
 //        Node resultAPI = XPathAPI.selectSingleNode(no, xPath);
 //        String vResultAPI = MElementWrapper.getValueText(resultAPI);
 //        if (!isIgual(valor, vResultAPI)) {
@@ -272,7 +272,7 @@ public class TestXPath {
 //        }
 
         Node result = XPathToolkit.selectNode(no, xPath);
-        String vResult = MElementWrapper.getValueText(result);
+        String vResult = XmlUtil.getValueText(result);
         if (!isIgual(valor, vResult)) {
             fail(
                     "XPathToolkit.selectNode errado: resultado da pesquisa "
@@ -301,7 +301,7 @@ public class TestXPath {
             String vResult2 = null;
             if (resultado2 != null) {
                 fullPath2 = XPathToolkit.getFullPath(resultado2);
-                vResult2 = MElementWrapper.getValueText(resultado2);
+                vResult2 = XmlUtil.getValueText(resultado2);
             }
             fail(
                     "Ao aplicar fullPath do Elemento em uma pesquisa XPath, "
@@ -322,7 +322,7 @@ public class TestXPath {
             String vResult3 = null;
             if (resultado3 != null) {
                 fullPath3 = XPathToolkit.getFullPath(resultado3);
-                vResult3 = MElementWrapper.getValueText(resultado3);
+                vResult3 = XmlUtil.getValueText(resultado3);
             }
             fail(
                     "Ao aplicar relativePath do Elemento em uma pesquisa XPath, "
@@ -403,10 +403,10 @@ public class TestXPath {
 
         Comment comment = document.createComment("comentario aqui");
 
-        Assert.assertTrue(XPathToolkit.selectElements(wrapper, "test") instanceof MElementResult);
-        Assert.assertTrue(XPathToolkit.selectElements(element.getNode("filho"), "comentario aqui") instanceof MElementResult);
-        Assert.assertTrue(XPathToolkit.selectElements(element.getNode("filho"), null) instanceof MElementResult);
-        Assert.assertTrue(XPathToolkit.selectElements(comment, "vazio") instanceof MElementResult);
+        assertNotNull(XPathToolkit.selectElements(wrapper, "test"));
+        assertNotNull(XPathToolkit.selectElements(element.getNode("filho"), "comentario aqui"));
+        assertNotNull(XPathToolkit.selectElements(element.getNode("filho"), null));
+        assertNotNull(XPathToolkit.selectElements(comment, "vazio"));
     }
 
     @Test(expected = SingularException.class)
@@ -425,7 +425,7 @@ public class TestXPath {
 
         NodeIterator iterator = XPathToolkit.selectNodeIterator(wrapper, "filho");
 
-        Assert.assertNotNull(iterator);
+        assertNotNull(iterator);
         Assert.assertEquals("filhoVal", iterator.nextNode().getFirstChild().getNodeValue());
     }
 

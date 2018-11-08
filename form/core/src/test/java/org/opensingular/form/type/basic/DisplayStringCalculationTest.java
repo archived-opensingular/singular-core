@@ -115,7 +115,7 @@ public class DisplayStringCalculationTest extends TestCaseForm {
         SIComposite pedido = createPedido();
 
         pedido.getType().asAtr().displayString(ctx -> {
-            SIComposite p = (SIComposite) ctx.instance();
+            SIComposite p = (SIComposite) ctx.instanceContext();
             return p.getField("cod").toStringDisplay() + "-" + p.getField("nome").toStringDisplay();
         });
 

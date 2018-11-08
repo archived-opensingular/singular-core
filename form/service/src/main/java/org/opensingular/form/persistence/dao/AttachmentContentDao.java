@@ -20,6 +20,7 @@ import org.apache.commons.io.IOUtils;
 import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.io.TempFileInputStream;
+import org.opensingular.lib.commons.util.ObjectUtils;
 import org.opensingular.lib.support.persistence.BaseDAO;
 
 import javax.annotation.Nonnull;
@@ -90,11 +91,8 @@ public class AttachmentContentDao<T extends AttachmentContentEntity> extends Bas
         }
     }
 
+    @Nonnull
     protected T createInstance() {
-        try {
-            return entityClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw SingularException.rethrow(e);
-        }
+        return ObjectUtils.newInstance(entityClass);
     }
 }

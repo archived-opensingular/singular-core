@@ -67,7 +67,7 @@ public interface SingularReport<F> extends Serializable {
     default String getIdentity() {
         String name = StringUtils.trimToNull(getReportName());
         Objects.requireNonNull(name, "getReportName()");
-        return SingularUtil.convertToJavaIdentity(name, true);
+        return SingularUtil.convertToJavaIdentifier(name);
     }
 
 

@@ -32,7 +32,7 @@ public interface PrintWriterFactory extends Serializable {
 
     PrintWriter newPrintWriter(OutputStream outputStream);
 
-    default StringPrintWriter newStringPrinWriter() {
+    default StringPrintWriter newStringPrintWriter() {
         return new StringPrintWriter(getCharset());
     }
 }

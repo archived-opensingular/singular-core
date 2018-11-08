@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opensingular.form.AtrRef;
 import org.opensingular.form.PackageBuilder;
+import org.opensingular.form.SAttributeUtil;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.SInfoPackage;
 import org.opensingular.form.SInfoType;
@@ -250,7 +251,7 @@ public class CoreXMLAttributesImporterTest extends TestCaseForm {
 
         //Depois das linhas a cima, então têm que ter convertido os valores
         type.isAttribute(atr2.getNameFull(), 20);
-        assertEquals(SIInteger.class, type.getTarget().getAttributeDirectly(atr2.getNameFull()).get().getClass());
+        assertEquals(SIInteger.class, SAttributeUtil.getAttributeDirectly(type.getTarget(), atr2.getNameFull()).orElse(null).getClass());
 
         assertTrue(type.getTarget().getDictionary().getTypeOptional(atr1.getNameFull()).isPresent());
         assertTrue(type.getTarget().getDictionary().getTypeOptional(atr2.getNameFull()).isPresent());
@@ -278,7 +279,7 @@ public class CoreXMLAttributesImporterTest extends TestCaseForm {
 
         //Depois das linhas a cima, então têm que ter convertido os valores
         instance.isAttribute(atr2.getNameFull(), 20);
-        assertEquals(SIInteger.class, instance.getTarget().getType().getAttributeDirectly(atr2.getNameFull()).get().getClass());
+        assertEquals(SIInteger.class, SAttributeUtil.getAttributeDirectly(instance.getTarget().getType(), atr2.getNameFull()).orElse(null).getClass());
 
         assertTrue(instance.getTarget().getDictionary().getTypeOptional(atr1.getNameFull()).isPresent());
         assertTrue(instance.getTarget().getDictionary().getTypeOptional(atr2.getNameFull()).isPresent());
@@ -291,10 +292,10 @@ public class CoreXMLAttributesImporterTest extends TestCaseForm {
     @SInfoPackage(name = "dinamic")
     public static class PackageDinamicAttr extends SPackage {
 
-        public static final AtrRef<STypeString, SIString, String> ATR_TEXT1 = new AtrRef<>(PackageDinamicAttr.class,
+        static final AtrRef<STypeString, SIString, String> ATR_TEXT1 = new AtrRef<>(PackageDinamicAttr.class,
                 "text1", STypeString.class, SIString.class, String.class);
 
-        public static final AtrRef<STypeInteger, SIInteger, Integer> ATR_INT1 = new AtrRef<>(PackageDinamicAttr.class,
+        static final AtrRef<STypeInteger, SIInteger, Integer> ATR_INT1 = new AtrRef<>(PackageDinamicAttr.class,
                 "int1", STypeInteger.class, SIInteger.class, Integer.class);
 
         protected void onLoadPackage(PackageBuilder pb) {

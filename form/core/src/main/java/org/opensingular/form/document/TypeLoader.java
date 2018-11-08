@@ -42,6 +42,7 @@ public abstract class TypeLoader<TYPE_KEY extends Serializable> {
      * @param typeId
      *            Identificador do tipo a ser carregado.
      */
+    @Nonnull
     public Optional<RefType> loadRefType(@Nonnull TYPE_KEY typeId) {
         return loadRefTypeImpl(Objects.requireNonNull(typeId));
     }
@@ -52,19 +53,17 @@ public abstract class TypeLoader<TYPE_KEY extends Serializable> {
      * @param typeId
      *            Identificador do tipo a ser carregado.
      */
+    @Nonnull
     protected abstract Optional<RefType> loadRefTypeImpl(@Nonnull TYPE_KEY typeId);
 
     /** Recupera o tipo solicitado se possível. */
+    @Nonnull
     public Optional<SType<?>> loadType(@Nonnull TYPE_KEY typeId) {
-        Optional<SType<?>> result = loadTypeImpl(typeId);
-        return result;
+        return loadTypeImpl(typeId);
     }
 
     /**
      * Implementa a efetiva recuperação do tipo.
-     *
-     * @param typeId
-     *            Identificador do tipo a ser carregado.
      */
     @Nonnull
     protected abstract Optional<SType<?>> loadTypeImpl(@Nonnull TYPE_KEY typeId);

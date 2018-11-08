@@ -37,21 +37,21 @@ public final class InternalAccess {
     private InternalAccess() {}
 
     /**
-     * @see {@link SInstance#addUnreadInfo(MElement)}
+     * @see SInstance#addUnreadInfo(MElement)
      */
     public void addUnreadInfo(SInstance instance, MElement xmlInfo) {
         instance.addUnreadInfo(xmlInfo);
     }
 
     /**
-     * @see {@link SInstance#getUnreadInfo()}
+     * @see SInstance#getUnreadInfo()
      */
     public List<MElement> getUnreadInfo(SInstance instance) {
         return instance.getUnreadInfo();
     }
 
     /**
-     * @see {@link SType#setAttributeValueSavingForLatter(String, String)}
+     * @see SType#setAttributeValueSavingForLatter(String, String)
      */
     public void setAttributeValueSavingForLatter(@Nonnull SType<?> target, @Nonnull String attributeName,
             @Nullable String value) {
@@ -59,19 +59,19 @@ public final class InternalAccess {
     }
 
     /**
-     * @see {@link SInstance#setAttributeValueSavingForLatter(String, String)}
+     * @see SInstance#setAttributeValueSavingForLatter(String, Object)
      */
     public void setAttributeValueSavingForLatter(@Nonnull SInstance target, @Nonnull String attributeName,
-            @Nullable String value) {
+            @Nullable Object value) {
         target.setAttributeValueSavingForLatter(attributeName, value);
     }
 
-    /** @see {@link SType#newInstance(boolean, SDocument)}  */
+    /** @see SType#newInstance(boolean, SDocument)  */
     public SInstance newInstance(@Nonnull SType target, boolean executeInstanceInitListeners,@Nonnull SDocument owner) {
         return target.newInstance(executeInstanceInitListeners, owner);
     }
 
-    /** @see {@link SType#getAspectDirect(int)} */
+    /** @see SType#getAspectDirect(int) */
     @Nullable
     public final AspectEntry<?,?> getAspectDirect(@Nonnull SType target, int index) {
         return target.getAspectDirect(index);

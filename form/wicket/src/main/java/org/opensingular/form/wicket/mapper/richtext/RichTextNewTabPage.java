@@ -16,14 +16,17 @@
 
 package org.opensingular.form.wicket.mapper.richtext;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
 import org.apache.wicket.markup.head.filter.JavaScriptFilteredIntoFooterHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderResponseDecorator;
+import org.apache.wicket.markup.html.TransparentWebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -35,8 +38,8 @@ import org.apache.wicket.protocol.http.PageExpiredException;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.opensingular.form.view.richtext.RichTextAction;
 import org.opensingular.form.view.richtext.SViewByRichTextNewTab;
+import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.component.BFModalWindow;
-import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.template.RecursosStaticosSingularTemplate;
 import org.opensingular.lib.wicket.util.template.SingularTemplate;
@@ -52,36 +55,36 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     private static final IHeaderResponseDecorator JAVASCRIPT_DECORATOR = response -> new JavaScriptFilteredIntoFooterHeaderResponse(response, SingularTemplate.JAVASCRIPT_CONTAINER);
     private static final String JAVASCRIPT_CONTAINER = "javascript-container";
 
-    private ISupplier<SViewByRichTextNewTab> viewSupplier;
+    private WicketBuildContext wicketBuildContext;
     private IModel<String> modelTextArea;
 
-    private boolean                     readOnly;
+    private boolean readOnly;
     private AbstractDefaultAjaxBehavior eventSaveCallbackBehavior;
-    private BFModalWindow               bfModalWindow;
-    private AjaxButton                  submitButton;
-    private HiddenField<String>         hiddenInput;
-    private String                      markupId;
+    private BFModalWindow bfModalWindow;
+    private AjaxButton submitButton;
+    private HiddenField<String> hiddenInput;
+    private String markupId;
 
     /**
      * Default constructor
      */
-    public RichTextNewTabPage(){
+    public RichTextNewTabPage() {
         throw new PageExpiredException("Construtor without arguments was called!");
     }
 
     /**
      * The new Rich Text Page constructor.
      *
-     * @param title        The title of page.
-     * @param readOnly  True if is just readOnly model; False if is editable.
-     * @param viewSupplier The suplier of new Tab View.
-     * @param hiddenInput  The hidden input of the Page who calls.
-     * @param markupId     The markupId of the Label of the Page who calls.
+     * @param title              The title of page.
+     * @param readOnly           True if is just readOnly model; False if is editable.
+     * @param wicketBuildContext The WicketBuildContext
+     * @param hiddenInput        The hidden input of the Page who calls.
+     * @param markupId           The markupId of the Label of the Page who calls.
      */
-    public RichTextNewTabPage(String title, boolean readOnly, ISupplier<SViewByRichTextNewTab> viewSupplier,
+    public RichTextNewTabPage(String title, boolean readOnly, WicketBuildContext wicketBuildContext,
                               HiddenField<String> hiddenInput, String markupId) {
         this.readOnly = readOnly;
-        this.viewSupplier = viewSupplier;
+        this.wicketBuildContext = wicketBuildContext;
         this.hiddenInput = hiddenInput;
         this.markupId = markupId;
         add(new Label("title", Model.of(title)));
@@ -100,35 +103,40 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         add(form);
         getApplication().setHeaderResponseDecorator(JAVASCRIPT_DECORATOR);
         add(new HeaderResponseContainer(JAVASCRIPT_CONTAINER, JAVASCRIPT_CONTAINER));
+        add(createPageContainer());
     }
 
+    private Component createPageContainer() {
+        Component container = new TransparentWebMarkupContainer("pageContainer");
+        if (retrieveView().isA4LayoutEnabled()) {
+            container.add(AttributeAppender.replace("style", "width: 215mm; margin-right: auto; margin-left: auto"));
+        }
+        return container;
+    }
 
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
 
         try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "RichTextNewTabPage.js")) {
-            final Map<String, String> params = new HashMap<>();
-
-            /*If don't contains the View, i add a view with empty buttons, for default use.*/
-            if (!viewSupplier.optional().isPresent()) {
-                viewSupplier = (ISupplier<SViewByRichTextNewTab>) SViewByRichTextNewTab::new;
-                getLogger().info("SViewByRichTextNewTab was insert in the RichTextNewTabPage.");
-            }
+            final Map<String, Object> params = new HashMap<>();
+            SViewByRichTextNewTab view = retrieveView();
 
             params.put("submitButtonId", submitButton.getMarkupId());
-            params.put("classDisableDoubleClick", viewSupplier.get()
+            params.put("classDisableDoubleClick", view
                     .getConfiguration()
                     .getDoubleClickDisabledClasses()
                     .stream()
                     .reduce(new StringBuilder(), (s, b) -> s.append(b).append(", "), StringBuilder::append).toString());
             params.put("hiddenInput", this.hiddenInput.getMarkupId());
-            params.put("showSaveButton", String.valueOf(this.viewSupplier.get().isShowSaveButton()));
+            params.put("showSaveButton", String.valueOf(view.isShowSaveButton()));
             params.put("htmlContainer", this.markupId);
             params.put("callbackUrl", eventSaveCallbackBehavior.getCallbackUrl().toString());
             params.put("isEnabled", String.valueOf(!readOnly));
+            params.put("a4LayoutEnabled", view.isA4LayoutEnabled());
+            params.put("sourceViewEnabled", view.isSourceViewEnabled());
 
-            params.put("buttonsList", this.renderButtonsList());
+            params.put("buttonsList", this.renderButtonsList(view));
             packageTextTemplate.interpolate(params);
             response.render(JavaScriptHeaderItem.forScript(packageTextTemplate.getString(), this.getId()));
 
@@ -140,16 +148,27 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
 
     }
 
+    private SViewByRichTextNewTab retrieveView() {
+        SViewByRichTextNewTab view = wicketBuildContext.getViewSupplier(SViewByRichTextNewTab.class).get();
+        /*If don't contains the View, i add a view with empty buttons, for default use.*/
+        if (view == null) {
+            view = new SViewByRichTextNewTab();
+            getLogger().info("SViewByRichTextNewTab was insert in the RichTextNewTabPage.");
+        }
+        return view;
+    }
+
     /**
      * Method to create a text containing all the configuration of the buttons to pass to JS.
      * It use "#$" to separate any element of RichTextAction class, and ",," for any button.
      *
+     * @param view
      * @return A text formmated contain list of buttons to JS.
      */
-    private String renderButtonsList() {
+    private String renderButtonsList(SViewByRichTextNewTab view) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < viewSupplier.get().getTextActionList().size(); i++) {
-            RichTextAction richTextAction = viewSupplier.get().getTextActionList().get(i);
+        for (int i = 0; i < view.getTextActionList().size(); i++) {
+            RichTextAction richTextAction = view.getTextActionList().get(i);
             String actionButtonFormatted = i + "#$" + richTextAction.getLabel()
                     + "#$" + richTextAction.getIcon().getCssClass()
                     + "#$" + richTextAction.getLabelInline()
@@ -166,7 +185,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
      * Method that create a CallBackBehavior when the button is clicked.
      */
     private void createCallBackBehavior() {
-        eventSaveCallbackBehavior = new RichTextButtonAjaxBehavior(bfModalWindow, this, viewSupplier);
+        eventSaveCallbackBehavior = new RichTextButtonAjaxBehavior(bfModalWindow, this, wicketBuildContext);
         add(eventSaveCallbackBehavior);
     }
 

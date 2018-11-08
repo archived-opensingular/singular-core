@@ -22,6 +22,8 @@ import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.internal.lib.support.spring.SpringUtils;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 
+import javax.annotation.Nonnull;
+
 /**
  * Referência serializável a uma fábrica de documentos que utiliza referência
  * estática ao ApplicationContext do Spring e o nome do bean no Spring da
@@ -38,6 +40,7 @@ public class SpringRefSDocumentFactory extends RefSDocumentFactory {
         this.springBeanName = SpringUtils.checkBeanName(springSDocumentFactory);
     }
 
+    @Nonnull
     @Override
     protected SDocumentFactory retrieve() {
         SDocumentFactory f = null;

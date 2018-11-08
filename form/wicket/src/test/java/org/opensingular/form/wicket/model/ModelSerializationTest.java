@@ -23,7 +23,6 @@ import net.vidageek.mirror.dsl.Mirror;
 import org.apache.wicket.model.IModel;
 import org.junit.Assert;
 import org.junit.Test;
-import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SInstanceViewState;
@@ -44,10 +43,9 @@ public class ModelSerializationTest {
 
 
     private static SIComposite newInstance() {
-        RefType ref = RefType.of(() -> {
-            SDictionary dictionary = SDictionary.create();
-            dictionary.loadPackage(SPackageCurriculo.class);
-            return dictionary.getType(SPackageCurriculo.TIPO_CURRICULO);
+        RefType ref = RefType.of(dic -> {
+            dic.get().loadPackage(SPackageCurriculo.class);
+            return dic.get().getType(SPackageCurriculo.TIPO_CURRICULO);
         });
         return (SIComposite) SDocumentFactory.empty().createInstance(ref);
     }
@@ -61,7 +59,6 @@ public class ModelSerializationTest {
     /**
      * Verifica se as referencias apontadas pelos models se mantém as mesmas
      * após a serialização e deserialização.
-     * @throws Exception
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -96,7 +93,6 @@ public class ModelSerializationTest {
 
     /**
      * Verifica se o estado de exibição da view de lista (atributo exists) se mantém calculado após serialização e deserialização.
-     * @throws Exception
      */
     @SuppressWarnings("unchecked")
     @Test

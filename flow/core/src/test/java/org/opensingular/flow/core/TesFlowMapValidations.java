@@ -16,6 +16,7 @@
 
 package org.opensingular.flow.core;
 
+import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -34,9 +35,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Daniel C. Bordin on 18/03/2017.
@@ -144,9 +143,10 @@ public class TesFlowMapValidations {
     public void flowMetaData() {
         condicions = new ValidationConditions();
         FlowWithFlowValidation p = new FlowWithFlowValidation();
+        Assertions.assertThat(p.getMetaDataValueOpt(TAG)).isNotPresent();
         p.getFlowMap().setMetaDataValue(TAG, Boolean.TRUE);
-        p.getFlowMap().setMetaDataValue(TAG, Boolean.FALSE);
         assertTrue(p.getMetaDataValueOpt(TAG).orElse(Boolean.FALSE));
+        p.getFlowMap().setMetaDataValue(TAG, Boolean.FALSE);
         assertFalse(p.getMetaDataValueOpt(TAG).orElse(Boolean.TRUE));
     }
 

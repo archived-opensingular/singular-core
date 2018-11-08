@@ -163,13 +163,15 @@ public class DummyPage extends WebPage {
             dictionary = SDictionary.create();
         }
 
+        @Nonnull
         @Override
-        protected Optional<RefType> loadRefTypeImpl(String typeId) {
+        protected Optional<RefType> loadRefTypeImpl(@Nonnull String typeId) {
             return Optional.of(RefType.of(() -> loadTypeImpl2(typeId)));
         }
 
+        @Nonnull
         @Override
-        protected Optional<SType<?>> loadTypeImpl(String typeId) {
+        protected Optional<SType<?>> loadTypeImpl(@Nonnull String typeId) {
             return Optional.of(loadTypeImpl2(typeId));
         }
 

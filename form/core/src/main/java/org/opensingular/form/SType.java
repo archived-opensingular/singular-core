@@ -20,6 +20,7 @@ import org.opensingular.form.aspect.AspectEntry;
 import org.opensingular.form.aspect.AspectRef;
 import org.opensingular.form.builder.selection.SelectionBuilder;
 import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.calculation.SimpleValueCalculationInstanceOptional;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.provider.SimpleProvider;
 import org.opensingular.form.type.basic.SPackageBasic;
@@ -143,11 +144,12 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     /** Extends the current type creating a new one with the current type as super type (parent type). */
     @Nonnull
+    @SuppressWarnings("unchecked")
     final <S extends SType<?>> S extend(@Nullable SimpleName simpleName, @Nullable SType<?> complementarySuperType) {
         SimpleName nameResolved = SFormUtil.resolveName(simpleName, this);
 
         S newType = (S) SFormUtil.newInstance(getClass());
-        ((SType<I>) newType).nameSimple = nameResolved;
+        ((SType<?>) newType).nameSimple = nameResolved;
         ((SType<I>) newType).superType = this;
         ((SType<?>) newType).complementarySuperType = complementarySuperType;
         return newType;
@@ -208,10 +210,12 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return Optional.ofNullable(complementarySuperType);
     }
 
+    @SuppressWarnings("unchecked")
     public Class<I> getInstanceClass() {
         return (Class<I>) instanceClass;
     }
 
+    @SuppressWarnings("unchecked")
     private Class<I> getInstanceClassResolved() {
         if (instanceClass == null && superType != null) {
             return superType.getInstanceClassResolved();
@@ -304,7 +308,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         this.attrInternalRef = attrInternalRef;
     }
 
-    final SInstance newAttributeInstanceFor(SType<?> typeToBeAppliedAttribute) {
+    @Nonnull
+    final SInstance newAttributeInstanceFor(@Nonnull SType<?> typeToBeAppliedAttribute) {
         checkIfIsAttribute();
         SInstance attrInstance;
         if (attrInternalRef.isSelfReference()) {
@@ -335,7 +340,62 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         getAttributesDefinitions().add(this, attributeDef);
     }
 
+    /**
+     * Returns the enclosing type of the current type. For example, if the current type is a field in a {@link
+     * STypeComposite}, the composite will the parent of field.
+     */
+    @Nonnull
+    public final Optional<SType> getParent() {
+        if (scope instanceof SType) {
+            return Optional.of((SType<?>) scope);
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * <p>
+     * Retorna o path da instancia atual relativa ao elemento raiz, ou seja, não
+     * inclui o nome da instância raiz no path gerado.
+     * </p>
+     * Exemplos, supundo que enderecos e experiencias estao dentro de um
+     * elemento raiz chamado cadastro:
+     * </p>
+     * <p>
+     * <pre>
+     *     "enderecos/rua"
+     *     "experiencias/empresa/nome"
+     *     "experiencias/empresa/ramo"
+     * </pre>
+     *
+     * @return Null se chamado em uma instância raiz.
+     */
     @Nullable
+    public final String getPathFromRoot() {
+        return SFormUtil.generatePath(this, i -> !i.getParent().isPresent());
+    }
+
+    /**
+     * <p>
+     * Retorna o path da instancia atual desde o raiz, incluindo o nome da
+     * instancia raiz.
+     * </p>
+     * Exemplos, supundo que enderecos e experiencias estao dentro de um
+     * elemento raiz chamado cadastro:
+     * </p>
+     * <p>
+     * <pre>
+     *     "/cadastro/enderecos/rua"
+     *     "/cadastro/experiencias/experiencia/empresa/nome"
+     *     "/cadastro/experiencias/experiencia/empresa/ramo"
+     * </pre>
+     */
+    @Nonnull
+    public final String getPathFull() {
+        return SFormUtil.generatePath(this, Objects::isNull);
+    }
+
+    @Nullable
+    @Deprecated
     public final SAttributeEnabled getParentAttributeContext() {
         return getSuperType();
     }
@@ -378,7 +438,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     @Nullable
     final SInstance findAttributeInstance(@Nonnull String fullName) {
         AttrInternalRef ref = getDictionary().getAttributeReferenceOrException(fullName);
-        return AttributeValuesManagerForSType.findAttributeInstance(this, ref);
+        return SAttributeUtil.findAttributeInstance(this, ref);
     }
 
     @Override
@@ -406,11 +466,16 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         getAttributesMap().setAttributeCalculation(atr, value);
     }
 
-    @Override
-    public <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
-                                            @Nullable SimpleValueCalculation<V> valueCalculation) {
-        getAttributesMap().setAttributeCalculation(attributeFullName, subPath, valueCalculation);
+    public final <V> void setAttributeCalculationInstanceOptional(@Nonnull AtrRef<?, ?, V> atr,
+            @Nullable SimpleValueCalculationInstanceOptional<V> value) {
+        getAttributesMap().setAttributeCalculation(atr, value);
     }
+
+    //    @Override
+    //    public <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
+    //                                            @Nullable SimpleValueCalculation<V> valueCalculation) {
+    //        getAttributesMap().setAttributeCalculation(attributeFullName, subPath, valueCalculation);
+    //    }
 
     @Nonnull
     private AttributeValuesManagerForSType getAttributesMap() {
@@ -434,9 +499,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
      * Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. Não procura o atributo na
      * hierarquia.
      */
-    @Override
     @Nonnull
-    public Optional<SInstance> getAttributeDirectly(@Nonnull String fullName) {
+    final Optional<SInstance> getAttributeDirectly(@Nonnull String fullName) {
         return AttributeValuesManager.staticGetAttributeDirectly(this, attributes, fullName);
     }
 
@@ -458,16 +522,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return getAttributeValue(getDictionary().getAttributeReferenceOrException(atr), atr.getValueClass());
     }
 
-    @Override
-    public final boolean hasAttributeValueDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
+    final boolean hasAttributeValueDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
         AttrInternalRef ref = getDictionary().getAttributeReferenceOrException(atr);
         return AttributeValuesManager.staticGetAttributeDirectly(attributes, ref) != null;
-    }
-
-    @Override
-    public boolean hasAttributeDefinedDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
-        AttrInternalRef ref = getDictionary().getAttributeReferenceOrException(atr);
-        return getAttributeDefinedLocally(ref) != null;
     }
 
     @Override
@@ -478,12 +535,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
 
     @Nullable
     private <V> V getAttributeValue(@Nonnull AttrInternalRef ref, @Nullable Class<V> resultClass) {
-        return AttributeValuesManagerForSType.getAttributeValueInTheContextOf(this, null, ref, resultClass);
-    }
-
-    @Nonnull
-    private AttrInternalRef mapAttributeName(@Nonnull String originalName) {
-        return getDictionary().getAttributeReferenceOrException(originalName);
+        return SAttributeUtil.getAttributeValueInTheContextOf(this, null, ref, resultClass);
     }
 
     public SType<I> with(AtrRef<?, ?, ?> attribute, Object value) {
@@ -632,7 +684,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         if (validators == null) {
             validators = new ArrayList<>(2);
         }
-        validators.add(new ValidationEntry(validator, level));
+        validators.add(new ValidationEntry<>(validator, level));
         return this;
     }
 
@@ -869,7 +921,8 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return name;
     }
 
-    public <T> T convert(Object value, Class<T> resultClass) {
+    @Nullable
+    public <T> T convert(@Nullable Object value, @Nonnull Class<T> resultClass) {
         throw new SingularFormException("Método não suportado", this);
     }
 

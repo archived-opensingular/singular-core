@@ -31,32 +31,36 @@ import java.util.function.Supplier;
  */
 public class WSClientDefaultFactory<T> implements WSClientSafeWrapper.WSClientFactory<T> {
 
-    private String property;
+    private Supplier<Optional<String>> urlSupplier;
 
-    private Supplier<T> supplier;
+    private Supplier<T> portTypeSupplier;
 
     public WSClientDefaultFactory(String property, Supplier<T> portTypeSupplier) {
-        this.property = property;
-        this.supplier = portTypeSupplier;
+        this(() -> SingularProperties.getOpt(property), portTypeSupplier);
+    }
+
+    public WSClientDefaultFactory(Supplier<Optional<String>> urlSupplier, Supplier<T> portTypeSupplier) {
+        this.urlSupplier = urlSupplier;
+        this.portTypeSupplier = portTypeSupplier;
     }
 
     public WSClientDefaultFactory(Supplier<T> portTypeSupplier) {
-        this(null, portTypeSupplier);
+        this((Supplier<Optional<String>>) null, portTypeSupplier);
     }
 
     @Override
     public T getReference() {
-        T servicePortType = supplier.get();
-        if (property != null) {
+        T servicePortType = portTypeSupplier.get();
+        if (urlSupplier != null) {
             changeTargetEndpointAddress(servicePortType);
         }
         return servicePortType;
     }
 
     private void changeTargetEndpointAddress(T servicePortType) {
-        Optional<String> propertyValue = SingularProperties.getOpt(property);
-        if (! propertyValue.isPresent()) {
-            throw new WSConnectionException(String.format("WebService endpoint property not found in SingularProperties. Missing property %s", property));
+        Optional<String> propertyValue = urlSupplier.get();
+        if (!propertyValue.isPresent()) {
+            throw new WSConnectionException("WebService endpoint not found!");
         }
         String value = propertyValue.get();
         if (value.endsWith("?wsdl")) {

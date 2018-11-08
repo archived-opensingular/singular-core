@@ -124,8 +124,6 @@ public abstract class TableOutput {
      * @param totalLine       linha a ser gerada a totalização
      * @param tempDecorator   configuração de decoração da celula, a qual o método pode alterar se quiser. Será
      *                        descartado depois da chamada desse método.
-     * @param lineAlternation Se -1, indica que as linhas não devem ter cores alternada. Caso contrário, esse valor
-     *                        alternará entre 0 e 1
      * @param level           Indica o nível da linha dentro da tabela. O indicado começa em zero. Se -1, indica que a
      *                        linha não têm relação com nível.
      */

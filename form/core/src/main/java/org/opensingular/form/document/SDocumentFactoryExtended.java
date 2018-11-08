@@ -120,6 +120,7 @@ final class SDocumentFactoryExtended extends SDocumentFactory {
             this.setupSteps = documentFactory.setupSteps;
         }
 
+        @Nonnull
         @Override
         protected SDocumentFactory retrieve() {
             if (refOriginalFactory == null) {

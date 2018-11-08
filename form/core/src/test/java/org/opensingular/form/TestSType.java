@@ -32,6 +32,7 @@ import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeDecimal;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.internal.lib.commons.test.SingularTestUtil;
+import org.opensingular.lib.commons.base.SingularException;
 
 import java.util.List;
 
@@ -141,8 +142,8 @@ public class TestSType extends TestCaseForm {
         SingularTestUtil.assertException(() -> type.as(List.class), SingularFormException.class,
                 "não funciona como aspecto");
 
-        SingularTestUtil.assertException(() -> type.as(WrongClass.class), SingularFormException.class,
-                "Erro instanciando");
+        SingularTestUtil.assertException(() -> type.as(WrongClass.class), SingularException.class,
+                "Fail to instantiate class");
     }
 
     public abstract class WrongClass extends STranslatorForAttribute {

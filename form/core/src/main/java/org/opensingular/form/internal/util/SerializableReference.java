@@ -19,6 +19,7 @@ package org.opensingular.form.internal.util;
 import org.opensingular.form.SingularFormException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.function.Supplier;
 
@@ -44,7 +45,7 @@ public abstract class SerializableReference<K> implements Serializable, Supplier
     public SerializableReference() {
     }
 
-    public SerializableReference(K reference) {
+    public SerializableReference(@Nullable K reference) {
         this.reference = reference;
     }
 
@@ -53,6 +54,10 @@ public abstract class SerializableReference<K> implements Serializable, Supplier
     public final K get() {
         if (reference == null) {
             reference = retrieve();
+            if (reference == null) {
+                throw new SingularFormException(
+                        "Call to method '" + getClass().getName() + ".retrieve()' returned null");
+            }
         }
         return reference;
     }
@@ -71,8 +76,6 @@ public abstract class SerializableReference<K> implements Serializable, Supplier
     /**
      * Método chamado para recupera a instância depois de uma deserialização ou
      * caso a referência tenha sido inicializada vazia.
-     *
-     * @return Não pode retornar null.
      */
     @Nonnull
     protected abstract K retrieve();

@@ -92,7 +92,7 @@ public class STypeFirstListElement extends STypeComposite<SIComposite> {
         theNestedTroublesomeList = this.addFieldListOf("theNestedTroublesomeList", STypeTroublesomeListElement.class);
         theNestedTroublesomeList.asAtr().label("Habilitação técnica da embarcação");
         theNestedTroublesomeList.withInitListener(list -> list.addNew());
-        theNestedTroublesomeList.withMiniumSizeOf(1);
+        theNestedTroublesomeList.withMinimumSizeOf(1);
         theNestedTroublesomeList.withMaximumSizeOf(1);
         theNestedTroublesomeList.withView(() -> new SViewListByMasterDetail()
                 .fullSize()

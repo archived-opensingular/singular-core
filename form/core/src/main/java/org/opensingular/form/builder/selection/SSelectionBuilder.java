@@ -23,21 +23,28 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.util.transformer.Value;
 import org.opensingular.lib.commons.lambda.IFunction;
 
+import javax.annotation.Nonnull;
+import java.util.Objects;
+
 public class SSelectionBuilder extends AbstractBuilder {
 
-    public SSelectionBuilder(SType type) {
+    public SSelectionBuilder(@Nonnull SType type) {
         super(type);
     }
 
+    @Nonnull
     public SSelectionDisplayBuilder selfId() {
         return id(type);
     }
 
+    @Nonnull
     public SProviderBuilder selfIdAndDisplay() {
         return selfId().selfDisplay();
     }
 
-    public SSelectionDisplayBuilder id(SType id) {
+    @Nonnull
+    public SSelectionDisplayBuilder id(@Nonnull SType id) {
+        Objects.requireNonNull(id);
         type.asAtrProvider().asAtrProvider().idFunction((IFunction<Value.Content, String>) (content) -> {
                 SType elementsType;
                 if (type.isList()) {

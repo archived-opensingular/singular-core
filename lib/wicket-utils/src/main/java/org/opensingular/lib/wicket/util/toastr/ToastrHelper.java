@@ -16,9 +16,11 @@
 
 package org.opensingular.lib.wicket.util.toastr;
 
-import java.io.Serializable;
-import java.text.MessageFormat;
-
+import de.alpharogroup.wicket.js.addon.toastr.Position;
+import de.alpharogroup.wicket.js.addon.toastr.ShowMethod;
+import de.alpharogroup.wicket.js.addon.toastr.ToastJsGenerator;
+import de.alpharogroup.wicket.js.addon.toastr.ToastrSettings;
+import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.core.util.string.JavaScriptUtils;
@@ -26,11 +28,9 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
 import org.opensingular.lib.commons.lambda.ISupplier;
 
-import de.alpharogroup.wicket.js.addon.toastr.Position;
-import de.alpharogroup.wicket.js.addon.toastr.ShowMethod;
-import de.alpharogroup.wicket.js.addon.toastr.ToastJsGenerator;
-import de.alpharogroup.wicket.js.addon.toastr.ToastrSettings;
-import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
+import javax.annotation.Nullable;
+import java.io.Serializable;
+import java.text.MessageFormat;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
@@ -49,7 +49,7 @@ public class ToastrHelper implements Serializable {
     public void addToastrMessage(ToastrType toastrType, String message) {
         ToastrSettings settings = getDefaultSettings();
         settings.getToastrType().setValue(toastrType);
-        settings.getNotificationTitle().setValue(message);
+        settings.getNotificationTitle().setValue(escapeMessage(message));
 
         if (!((WebRequest) RequestCycle.get().getRequest()).isAjax()) {
             component.add($b.onReadyScript((ISupplier<CharSequence>) () -> generateJs(settings, false)));
@@ -58,7 +58,15 @@ public class ToastrHelper implements Serializable {
             target.appendJavaScript(generateJs(settings, true));
         }
     }
-    
+
+    @Nullable
+    private String escapeMessage(@Nullable String message) {
+        if (message != null) {
+            return JavaScriptUtils.escapeQuotes(message.replaceAll("\n", "<br>")).toString();
+        }
+        return null;
+    }
+
     protected String getString(String messageKey, String[] args) {
         String message = component.getString(messageKey, null, messageKey);
         return MessageFormat.format(message, (Object[]) args);

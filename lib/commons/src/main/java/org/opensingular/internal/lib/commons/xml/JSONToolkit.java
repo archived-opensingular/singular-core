@@ -25,9 +25,6 @@ import java.io.PrintWriter;
 
 public class JSONToolkit implements MElementWriter {
 
-    public JSONToolkit() {
-    }
-
     private static boolean isObject(Node node) {
         return node.getFirstChild() != null && node.getFirstChild().getNodeType() == Node.ELEMENT_NODE;
     }
@@ -60,11 +57,6 @@ public class JSONToolkit implements MElementWriter {
 
     @Override
     public void printDocument(PrintWriter out, Element e, boolean printHeader) {
-        printJSON(out, e);
-    }
-
-    @Override
-    public void printDocument(PrintWriter out, Element e, boolean printHeader, boolean converteEspeciais) {
         printJSON(out, e);
     }
 

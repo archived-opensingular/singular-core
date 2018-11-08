@@ -30,7 +30,7 @@ public class PackageBuilder {
     private final SPackage sPackage;
     private final SDictionary dictionary;
 
-    PackageBuilder(SPackage sPackage) {
+    PackageBuilder(@Nonnull SPackage sPackage) {
         this.sPackage = sPackage;
         dictionary = sPackage.getDictionary();
     }

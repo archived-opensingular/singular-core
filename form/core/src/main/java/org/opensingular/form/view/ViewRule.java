@@ -16,10 +16,11 @@
 
 package org.opensingular.form.view;
 
-import java.util.function.Function;
-
 import org.opensingular.form.SInstance;
-import org.opensingular.lib.commons.base.SingularUtil;
+import org.opensingular.lib.commons.util.ObjectUtils;
+
+import javax.annotation.Nonnull;
+import java.util.function.Function;
 
 /**
  * Representa uma regra de mapeamento de uma instância em uma view. Se a regra
@@ -36,11 +37,8 @@ public abstract class ViewRule implements Function<SInstance, SView> {
     public abstract SView apply(SInstance instance);
 
     /** Método de apoio. Cria uma instância a partir da classe. */
-    protected static SView newInstance(Class<? extends SView> view) {
-        try {
-            return view.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw SingularUtil.propagate(e);
-        }
+    @Nonnull
+    protected static SView newInstance(@Nonnull Class<? extends SView> view) {
+        return ObjectUtils.newInstance(view);
     }
 }

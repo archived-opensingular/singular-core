@@ -107,11 +107,13 @@ public class TestTypeLoaderInjectionBroken {
 
         private Map<Class<? extends SType>, SType<?>> map = new HashMap<>();
 
+        @Nonnull
         @Override
         protected Optional<RefType> loadRefTypeImpl(@Nonnull Class<? extends SType> typeId) {
             return Optional.of(RefType.of(typeId));
         }
 
+        @Nonnull
         @Override
         protected Optional<SType<?>> loadTypeImpl(@Nonnull Class<? extends SType> typeId) {
             return Optional.ofNullable(map.get(typeId));

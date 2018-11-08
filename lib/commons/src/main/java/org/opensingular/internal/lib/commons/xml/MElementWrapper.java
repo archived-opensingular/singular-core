@@ -30,8 +30,7 @@ import org.w3c.dom.Text;
 import org.w3c.dom.TypeInfo;
 import org.w3c.dom.UserDataHandler;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,16 +50,6 @@ public class MElementWrapper extends MElement implements EWrapper {
     static final char ELEMENT_PATH_SEPARATOR = '/';
 
     /**
-     * Cache do builderFactory de acordo com a configuração desejada.
-     */
-    private final static DocumentBuilderFactory[] buiderFactory__ = new DocumentBuilderFactory[4];
-
-    /**
-     * Representa o factory de Document.
-     */
-    private static DocumentBuilder documentBuilder__;
-
-    /**
      * Elemento que contem realmente os dados.
      */
     private final ISupplier<Element> original;
@@ -70,10 +59,9 @@ public class MElementWrapper extends MElement implements EWrapper {
      *
      * @param original -
      */
-    MElementWrapper(Element original) {
-        if (original == null) {
-            throw new IllegalArgumentException("Elemento original não pode ser " + "null");
-        } else if (original instanceof MElementWrapper) {
+    MElementWrapper(@Nonnull Element original) {
+        Objects.requireNonNull(original);
+        if (original instanceof MElementWrapper) {
             this.original = ((MElementWrapper) original).original;
         } else {
             this.original = SupplierUtil.serializable(original);
@@ -83,8 +71,8 @@ public class MElementWrapper extends MElement implements EWrapper {
     /**
      * Constroi um MElement raiz com o nome informado.
      */
-    MElementWrapper(String rootName) {
-        original = SupplierUtil.serializable(newRootElement(rootName));
+    MElementWrapper(@Nonnull String rootName) {
+        original = SupplierUtil.serializable(XmlUtil.newRootElement(rootName));
     }
 
     /**
@@ -101,44 +89,10 @@ public class MElementWrapper extends MElement implements EWrapper {
 
     /**
      * Obtem o element original.
-     *
-     * @return -
      */
     @Override
     public final Element getOriginal() {
         return original.get();
-    }
-
-    /**
-     * Instanciado de Document precarregado.
-     *
-     * @return sempre != null
-     */
-    static synchronized Document newDocument() {
-
-        if (documentBuilder__ == null) {
-            DocumentBuilderFactory f = getDocumentBuilderFactory(true, false);
-            try {
-                documentBuilder__ = f.newDocumentBuilder();
-            } catch (Exception e) {
-                //} catch(javax.xml.parsers.ParserConfigurationException e) {
-                throw SingularException.rethrow("Não instancia o parser XML: ", e);
-            }
-        }
-        return documentBuilder__.newDocument();
-    }
-
-    /**
-     * Cria um elemento XML em um novo documento.
-     *
-     * @param elementName o nome do elemento que será criado
-     * @return o elemento que foi criado
-     */
-    static Element newRootElement(String elementName) {
-        Document d = newDocument();
-        Element newElement = d.createElementNS(null, elementName);
-        d.appendChild(newElement);
-        return newElement;
     }
 
     /**
@@ -150,9 +104,9 @@ public class MElementWrapper extends MElement implements EWrapper {
      * prefixo (ex.: "fin:ContaPagamento").
      * @return o elemento que foi criado
      */
-    public static Element newRootElement(String namespaceURI, String qualifiedName) {
+    static Element newRootElement(String namespaceURI, String qualifiedName) {
 
-        Document d = newDocument();
+        Document d = XmlUtil.newDocument();
         Element newElement = d.createElementNS(namespaceURI, qualifiedName);
 
         //Verifica se precisa colocar um atributo por conta do Namespace
@@ -168,34 +122,6 @@ public class MElementWrapper extends MElement implements EWrapper {
         }
         d.appendChild(newElement);
         return newElement;
-    }
-
-    /**
-     * Retora o document builder de acordo com a configuração desejada. Faz um
-     * cache do DocumentBuilder para evitar rodar o algorítmo de pesquisa toda
-     * vez.
-     *
-     * @param namespaceAware Se o builder irá tratar namespace
-     * @param validating Se o builder irá valdiar o XML em função de um DTD.
-     * Aplicavel apenas quando for fazer parse.
-     * @return sempre diferente de null.
-     */
-    static DocumentBuilderFactory getDocumentBuilderFactory(boolean namespaceAware,
-            boolean validating) {
-        // Utiliza cache de DocumentBuilderFactory para evitar que o algorítmo
-        // de localização do factory execute toda vez. O problema é que quando
-        // em applet, o new Instance fica frequentemente indo ao servidor para
-        // tentar lozalizar um implementação de factory.
-        // Daniel (08/05/2003)
-
-        int index = (namespaceAware ? 1 : 0) + (validating ? 2 : 0);
-        if (buiderFactory__[index] == null) {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(namespaceAware);
-            factory.setValidating(validating);
-            buiderFactory__[index] = factory;
-        }
-        return buiderFactory__[index];
     }
 
     /**
@@ -331,14 +257,12 @@ public class MElementWrapper extends MElement implements EWrapper {
      * @return -
      *
      */
-    public static String toBASE64(InputStream in, Charset charset) {
-        if (in == null) {
-            throw new IllegalArgumentException("inputstream está null");
-        }
+    static String toBASE64(@Nonnull InputStream in, @Nonnull Charset charset) {
         return encodeFromInputStream(in, charset);
     }
 
-    private static String encodeFromInputStream(InputStream in, Charset charset){
+    private static String encodeFromInputStream(@Nonnull InputStream in, @Nonnull Charset charset){
+        Objects.requireNonNull(in);
         BufferedReader buff = new BufferedReader(new InputStreamReader(in, charset));
 
         StringBuilder builder = new StringBuilder();
@@ -522,9 +446,8 @@ public class MElementWrapper extends MElement implements EWrapper {
             }
         }
 
-        Node n = XmlUtil.nextSiblingOfTypeElement(resolvedParent.getFirstChild(), resolvedQualifiedName);
+        Element e = XmlUtil.nextSiblingOfTypeElement(resolvedParent.getFirstChild(), resolvedQualifiedName);
 
-        Element e = (Element) n;
         if (e == null) {
             String resolvedNamespaceURI = namespaceURI;
             if (isVazio(resolvedNamespaceURI)) {
