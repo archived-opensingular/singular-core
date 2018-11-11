@@ -260,6 +260,7 @@ public class MElementWrapper extends MElement implements EWrapper {
         return encodeFromInputStream(in, charset);
     }
 
+    @SuppressWarnings("squid:S2095")
     private static String encodeFromInputStream(@Nonnull InputStream in, @Nonnull Charset charset) {
         try (BufferedReader buff = new BufferedReader(new InputStreamReader(Objects.requireNonNull(in), charset))) {
 
