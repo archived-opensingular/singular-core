@@ -261,8 +261,7 @@ public class MElementWrapper extends MElement implements EWrapper {
     }
 
     private static String encodeFromInputStream(@Nonnull InputStream in, @Nonnull Charset charset) {
-        Objects.requireNonNull(in);
-        try (BufferedReader buff = new BufferedReader(new InputStreamReader(in, charset))) {
+        try (BufferedReader buff = new BufferedReader(new InputStreamReader(Objects.requireNonNull(in), charset))) {
 
             StringBuilder builder = new StringBuilder();
             String        line;
