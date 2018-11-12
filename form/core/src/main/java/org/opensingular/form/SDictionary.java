@@ -314,7 +314,7 @@ public class SDictionary {
             attributesArrayInicialSize = Math.max(attributes.size(), currentAvarageAttributes);
             return ref;
         } else if (previusValue.isResolved()) {
-            throw new SingularFormException("Internal Error: attribute '" + attributeName + " already definied");
+            throw new SingularFormException("Internal Error: attribute '" + attributeName + " already defined");
         }
         return previusValue;
     }
