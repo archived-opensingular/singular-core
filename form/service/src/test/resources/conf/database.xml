@@ -13,7 +13,7 @@
     <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
         <property name="poolName" value="springHikariCP"/>
         <property name="driverClassName" value="org.h2.Driver"/>
-        <property name="jdbcUrl" value="jdbc:h2:file:./singulardb;AUTO_SERVER=TRUE;mode=ORACLE;CACHE_SIZE=2048;MVCC=TRUE;LOCK_TIMEOUT=15000;INIT=CREATE SCHEMA if not exists DBSINGULAR" />
+        <property name="jdbcUrl" value="jdbc:h2:mem:singulardbformservice;mode=ORACLE;CACHE_SIZE=2048;MVCC=TRUE;LOCK_TIMEOUT=15000;INIT=CREATE SCHEMA if not exists DBSINGULAR" />
         <property name="username" value="sa"/>
         <property name="password" value="sa"/>
     </bean>
@@ -24,7 +24,7 @@
 
 
     <!-- HIBERNATE CONFIGURATION -->
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <!-- Incluir o pacote quando tiver um -->
         <property name="packagesToScan"
@@ -44,7 +44,7 @@
 
     <!-- HIBERNATE TRANSACTION CONFIGURATION -->
     <tx:annotation-driven proxy-target-class="true" transaction-manager="transactionManager"/>
-    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="dataSource" ref="dataSource"/>
     </bean>

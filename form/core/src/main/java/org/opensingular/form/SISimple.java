@@ -16,10 +16,14 @@
 
 package org.opensingular.form;
 
+import com.sun.istack.internal.Nullable;
 import org.opensingular.form.calculation.CalculationContext;
+import org.opensingular.form.calculation.CalculationContextInstanceOptional;
 import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.form.calculation.SimpleValueCalculationInstanceOptional;
 import org.opensingular.form.internal.PathReader;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -27,32 +31,48 @@ public class SISimple<NATIVE_TYPE extends Serializable> extends SInstance {
 
     private NATIVE_TYPE value;
 
-    private SimpleValueCalculation<? extends NATIVE_TYPE> valueCalculation;
+    private SimpleValueCalculationInstanceOptional<? extends NATIVE_TYPE> valueCalculation;
 
     protected SISimple() {
     }
 
     @Override
     public NATIVE_TYPE getValue() {
-        if (valueCalculation != null && value != null) {
-            return valueCalculation.calculate(new CalculationContext(this));
+        if (value == null && valueCalculation != null) {
+            CalculationContextInstanceOptional ctx;
+            if (isAttribute()) {
+                if (getAttributeInstanceInfo().getInstanceOwner() != null) {
+                    ctx = new CalculationContext(getAttributeInstanceInfo().getInstanceOwner(), this);
+                } else {
+                    ctx = new CalculationContextInstanceOptional(getAttributeInstanceInfo().getTypeOwner(), null, this);
+                }
+            } else {
+                ctx = new CalculationContext(this, this);
+            }
+            return valueCalculation.calculate(ctx);
         }
         return value;
     }
 
     @Override
-    <V> V getValueInTheContextOf(SInstance contextInstance, Class<V> resultClass) {
-        if (valueCalculation != null) {
-            return convert(valueCalculation.calculate(new CalculationContext(contextInstance)), resultClass);
+    <V> V getValueInTheContextOf(@Nonnull CalculationContextInstanceOptional context, @Nullable Class<V> resultClass) {
+        NATIVE_TYPE v = value;
+        if (v == null && valueCalculation != null) {
+            v = valueCalculation.calculate(context.asCalculatingFor(this));
         }
-        return convert(value, resultClass);
+        return convert(v, resultClass);
     }
 
-    public SimpleValueCalculation<? extends NATIVE_TYPE> getValueCalculation() {
+    public SimpleValueCalculationInstanceOptional<? extends NATIVE_TYPE> getValueCalculation() {
         return valueCalculation;
     }
 
     public void setValueCalculation(SimpleValueCalculation<? extends NATIVE_TYPE> valueCalculation) {
+        this.valueCalculation = SimpleValueCalculationInstanceOptional.of(valueCalculation);
+    }
+
+    public void setValueCalculationInstanceOptional(
+            SimpleValueCalculationInstanceOptional<? extends NATIVE_TYPE> valueCalculation) {
         this.valueCalculation = valueCalculation;
     }
 
@@ -109,6 +129,7 @@ public class SISimple<NATIVE_TYPE extends Serializable> extends SInstance {
     }
 
     @Override
+    @Nonnull
     @SuppressWarnings("unchecked")
     public STypeSimple<?, NATIVE_TYPE> getType() {
         return (STypeSimple<?, NATIVE_TYPE>) super.getType();
@@ -119,18 +140,20 @@ public class SISimple<NATIVE_TYPE extends Serializable> extends SInstance {
         return getType().toStringDisplayDefault(getValue());
     }
 
+    @Nullable
     public String toStringPersistence() {
-        if (getValue() == null) {
+        NATIVE_TYPE v = getValue();
+        if (v == null) {
             return null;
         }
-        return getType().toStringPersistence(getValue());
+        return getType().toStringPersistence(v);
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
+        result = prime * result + getType().hashCode();
         result = prime * result + ((getValue() == null) ? 0 : getValue().hashCode());
         return result;
     }

@@ -18,7 +18,6 @@
 
 package org.opensingular.form;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -35,6 +34,8 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @RunWith(Parameterized.class)
 public class TestMPacoteCoreTipoComposto extends TestCaseForm {
@@ -48,10 +49,19 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         PackageBuilder pb = createTestPackage();
 
         STypeComposite<?> tipoEndereco = pb.createCompositeType("endereco");
-        tipoEndereco.addField("rua", STypeString.class);
+        STypeString tipoRua = tipoEndereco.addField("rua", STypeString.class);
         tipoEndereco.addFieldString("bairro", true);
         tipoEndereco.addFieldInteger("cep", true);
-        assertType(tipoEndereco).isExtensionCorrect(STypeComposite.class);
+        assertType(tipoEndereco).isExtensionCorrect(STypeComposite.class).isParent(null);
+        assertType(tipoRua).isParent(tipoEndereco);
+        assertThat(tipoEndereco.getPathFromRoot()).isNull();
+        assertThat(tipoEndereco.getPathFull()).isEqualTo("endereco");
+        assertThat(tipoRua.getPathFromRoot()).isEqualTo("rua");
+        assertThat(tipoRua.getPathFull()).isEqualTo("endereco.rua");
+
+        assertType(tipoEndereco).field(tipoRua.getPathFromRoot()).isSameAs(tipoRua);
+        assertType(tipoEndereco).field("rua").isSameAs(tipoRua);
+
 
         STypeComposite<?> tipoClassificacao = tipoEndereco.addFieldComposite("classificacao");
         tipoClassificacao.addFieldInteger("prioridade");
@@ -518,12 +528,10 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
     }
 
     @Test
-    @Ignore("Por em quanto ainda não suporta uma classe de tipo extender uma classe intermediária que também não é um tipo")
     public void testCorrectExtensionWhenCompositeClassExtendsOtherCompositeClassWithAIntermediatyClass() {
         SDictionary dictionary = createTestDictionary();
         TestTipoCompositeComCargaInterna a = dictionary.getType(TestTipoCompositeComCargaInterna.class);
         TestTipoCompositeComCargaInternaB b = dictionary.getType(TestTipoCompositeComCargaInternaB.class);
-        //Descomentar o registro do tipo E no pacote para a linha abaixo funcionar
         TestTipoCompositeComCargaInternaE e = dictionary.getType(TestTipoCompositeComCargaInternaE.class);
 
         assertType(e).isExtensionCorrect(b);
@@ -542,7 +550,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
             pb.createType(TestTipoCompositeComCargaInterna.class);
             pb.createType(TestTipoCompositeComCargaInternaB.class);
             pb.createType(TestTipoCompositeComCargaInternaC.class);
-            //pb.createType(TestTipoCompositeComCargaInternaE.class);
+            pb.createType(TestTipoCompositeComCargaInternaE.class);
         }
 
         @SInfoType(name = "TestTipoCompostoComCargaInterna", spackage = TestPacoteCompostoA.class)

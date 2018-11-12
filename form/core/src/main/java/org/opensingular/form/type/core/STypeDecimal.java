@@ -21,6 +21,7 @@ import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeSimple;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 @SInfoType(name = "Decimal", spackage = SPackageCore.class)
 public class STypeDecimal extends STypeSimple<SIBigDecimal, BigDecimal> {
@@ -53,6 +54,18 @@ public class STypeDecimal extends STypeSimple<SIBigDecimal, BigDecimal> {
         } catch (Exception e) {
             throw createConversionError(value, BigDecimal.class, null, e);
         }
+    }
+
+    @Override
+    public String toStringDisplayDefault(BigDecimal bigDecimal) {
+        int size = bigDecimal.toString().length();
+        DecimalFormat decimalFormat;
+        if(size <= 6){
+            decimalFormat = new DecimalFormat("0.00");
+        } else {
+            decimalFormat = new DecimalFormat("0,000.00");
+        }
+        return decimalFormat.format(bigDecimal);
     }
 
     @Override

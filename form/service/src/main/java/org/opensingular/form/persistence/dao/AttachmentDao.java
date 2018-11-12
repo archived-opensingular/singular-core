@@ -16,13 +16,6 @@
 
 package org.opensingular.form.persistence.dao;
 
-import java.io.InputStream;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -30,8 +23,16 @@ import org.joda.time.DateTime;
 import org.opensingular.form.persistence.entity.AbstractFormAttachmentEntity;
 import org.opensingular.form.persistence.entity.AttachmentContentEntity;
 import org.opensingular.form.persistence.entity.AttachmentEntity;
-import org.opensingular.lib.commons.base.SingularException;
+import org.opensingular.lib.commons.util.ObjectUtils;
 import org.opensingular.lib.support.persistence.BaseDAO;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @SuppressWarnings("serial")
 @Transactional(Transactional.TxType.MANDATORY)
@@ -103,12 +104,9 @@ public class AttachmentDao<T extends AttachmentEntity, C extends AttachmentConte
         return s;
     }
 
+    @Nonnull
     protected T createInstance() {
-        try {
-            return entityClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw SingularException.rethrow(e);
-        }
+        return ObjectUtils.newInstance(entityClass);
     }
 
     @SuppressWarnings("unchecked")

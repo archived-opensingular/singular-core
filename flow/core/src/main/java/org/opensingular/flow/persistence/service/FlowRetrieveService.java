@@ -18,7 +18,7 @@ package org.opensingular.flow.persistence.service;
 
 import org.hibernate.Hibernate;
 import org.opensingular.flow.persistence.entity.FlowInstanceEntity;
-import org.opensingular.flow.persistence.entity.util.SessionLocator;
+import org.opensingular.lib.support.persistence.SessionLocator;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nonnull;

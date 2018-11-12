@@ -219,7 +219,7 @@ public class InitListenerTest extends TestCaseForm {
         item.setValue("nome", "k");
         item.setValue("qtd", 2);
 
-        SInstance instance2 = TestFormSerializationUtil.testSerialization(instance);
+        SInstance instance2 = TestFormSerializationUtil.serializeAndDeserialize(instance);
         assertEquals(4, counterInitCalls);
 
         assertInstance(instance2)

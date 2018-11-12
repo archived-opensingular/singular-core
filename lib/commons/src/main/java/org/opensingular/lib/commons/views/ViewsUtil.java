@@ -126,7 +126,7 @@ public class ViewsUtil {
                 ok = true;
             } finally {
                 if (!ok) {
-                    TempFileUtils.deleteAndFailQuietily(arq, ViewsUtil.class);
+                    TempFileUtils.deleteAndFailQuietly(arq, ViewsUtil.class);
                 }
             }
             return arq;

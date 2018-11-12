@@ -16,7 +16,11 @@
 
 package org.opensingular.form;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Adiciona informações do tipo quando o mesmo é criado mediante um classe
@@ -40,7 +44,7 @@ public @interface SInfoType {
      * Definie a classe que monta o pacote ao qual o tipo sendo definido está
      * associado.
      */
-    Class<? extends SPackage> spackage();
+    Class<? extends SPackage> spackage() default SPackage.class;
 
     /**
      * Label para exibição em listagens

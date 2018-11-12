@@ -16,9 +16,22 @@
 
 package org.opensingular.flow.persistence.entity;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OrderBy;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.opensingular.flow.core.CurrentInstanceStatus;
+import org.opensingular.flow.core.SUser;
+import org.opensingular.flow.core.entity.IEntityExecutionVariable;
+import org.opensingular.flow.core.entity.IEntityFlowInstance;
+import org.opensingular.flow.core.entity.IEntityTaskInstance;
+import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
+import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
+import org.opensingular.flow.core.entity.IEntityTaskVersion;
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.util.GenericEnumUserType;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
@@ -35,17 +48,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.OrderBy;
-import org.opensingular.flow.core.SUser;
-import org.opensingular.flow.core.entity.IEntityExecutionVariable;
-import org.opensingular.flow.core.entity.IEntityFlowInstance;
-import org.opensingular.flow.core.entity.IEntityTaskInstance;
-import org.opensingular.flow.core.entity.IEntityTaskInstanceHistory;
-import org.opensingular.flow.core.entity.IEntityTaskTransitionVersion;
-import org.opensingular.flow.core.entity.IEntityTaskVersion;
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * The base persistent class for the TB_INSTANCIA_TAREFA database table.
@@ -125,6 +130,14 @@ public abstract class AbstractTaskInstanceEntity<USER extends SUser, FLOW_INSTAN
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentTask", cascade = CascadeType.REMOVE)
     private List<FLOW_INSTANCE> childFlows = new ArrayList<>();
+
+    @Type(type = GenericEnumUserType.CLASS_NAME, parameters = {
+            @Parameter(name = "enumClass", value = CurrentInstanceStatus.CLASS_NAME),
+            @Parameter(name = "identifierMethod", value = "getAbbreviation"),
+            @Parameter(name = "valueOfMethod", value = "valueOfEnum")})
+    @Column(name = "TP_CURRENT_INSTANCE", nullable = false, length = 1)
+    @ColumnDefault(value = "'X'")
+    private CurrentInstanceStatus currentInstanceStatus;
 
     @Override
     public Integer getCod() {
@@ -259,4 +272,13 @@ public abstract class AbstractTaskInstanceEntity<USER extends SUser, FLOW_INSTAN
         return versionStamp;
     }
 
+    @Override
+    public CurrentInstanceStatus getCurrentInstanceStatus() {
+        return currentInstanceStatus;
+    }
+
+    @Override
+    public void setCurrentInstanceStatus(CurrentInstanceStatus currentInstanceStatus) {
+        this.currentInstanceStatus = currentInstanceStatus;
+    }
 }

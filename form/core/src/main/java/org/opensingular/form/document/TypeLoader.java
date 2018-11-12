@@ -42,7 +42,8 @@ public abstract class TypeLoader<TYPE_KEY extends Serializable> {
      * @param typeId
      *            Identificador do tipo a ser carregado.
      */
-    public final Optional<RefType> loadRefType(@Nonnull TYPE_KEY typeId) {
+    @Nonnull
+    public Optional<RefType> loadRefType(@Nonnull TYPE_KEY typeId) {
         return loadRefTypeImpl(Objects.requireNonNull(typeId));
     }
 
@@ -52,20 +53,19 @@ public abstract class TypeLoader<TYPE_KEY extends Serializable> {
      * @param typeId
      *            Identificador do tipo a ser carregado.
      */
+    @Nonnull
     protected abstract Optional<RefType> loadRefTypeImpl(@Nonnull TYPE_KEY typeId);
 
     /** Recupera o tipo solicitado se possível. */
-    public final Optional<SType<?>> loadType(@Nonnull TYPE_KEY typeId) {
-        Optional<SType<?>> result = loadTypeImpl(typeId);
-        return result;
+    @Nonnull
+    public Optional<SType<?>> loadType(@Nonnull TYPE_KEY typeId) {
+        return loadTypeImpl(typeId);
     }
 
     /**
      * Implementa a efetiva recuperação do tipo.
-     *
-     * @param typeId
-     *            Identificador do tipo a ser carregado.
      */
+    @Nonnull
     protected abstract Optional<SType<?>> loadTypeImpl(@Nonnull TYPE_KEY typeId);
 
     /**
@@ -76,7 +76,7 @@ public abstract class TypeLoader<TYPE_KEY extends Serializable> {
      *                Senão encontrar o tipo.
      */
     @Nonnull
-    public final RefType loadRefTypeOrException(@Nonnull TYPE_KEY typeId) throws SingularFormException {
+    public RefType loadRefTypeOrException(@Nonnull TYPE_KEY typeId) throws SingularFormException {
         return loadRefType(typeId).orElseThrow(() -> new SingularFormException("Não foi encontrado o tipo para o id=" + typeId));
     }
 
@@ -88,7 +88,7 @@ public abstract class TypeLoader<TYPE_KEY extends Serializable> {
      *                Senão encontrar o tipo.
      */
     @Nonnull
-    public final SType<?> loadTypeOrException(@Nonnull TYPE_KEY typeId) throws SingularFormException {
+    public SType<?> loadTypeOrException(@Nonnull TYPE_KEY typeId) throws SingularFormException {
         return loadType(typeId).orElseThrow(() -> new SingularFormException("Não foi encontrado o tipo para o id=" + typeId));
     }
 }

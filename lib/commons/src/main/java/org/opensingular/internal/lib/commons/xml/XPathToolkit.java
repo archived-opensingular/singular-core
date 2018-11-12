@@ -24,6 +24,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.traversal.NodeIterator;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.transform.TransformerException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -118,10 +120,9 @@ public final class XPathToolkit {
      *
      * @see #getFullPath(Node, Node)
      */
-    public static String getFullPath(Node no) {
-        StringBuilder buffer = new StringBuilder();
-        getFullPath(buffer, no, null);
-        return buffer.toString();
+    @Nonnull
+    public static String getFullPath(@Nonnull Node no) {
+        return getFullPath(no, null);
     }
 
     /**
@@ -134,7 +135,8 @@ public final class XPathToolkit {
      * Pode ser null para indicar até o topo.
      * @return path completo
      */
-    public static String getFullPath(Node no, Node topo) {
+    @Nonnull
+    public static String getFullPath(@Nonnull Node no, @Nullable Node topo) {
         StringBuilder buffer = new StringBuilder();
         getFullPath(buffer, no, topo);
         return buffer.toString();
@@ -151,7 +153,7 @@ public final class XPathToolkit {
      * @param topo Nó até onde será montado o path. O path incluirá esse nó.
      * Pode ser null para indicar até o topo.
      */
-    private static void getFullPath(StringBuilder buffer, Node no, Node topo) {
+    private static void getFullPath(@Nonnull StringBuilder buffer, @Nonnull Node no, @Nullable Node topo) {
 
         Node parent = no.getParentNode();
         if (parent == null) {
@@ -256,13 +258,7 @@ public final class XPathToolkit {
 
         Pattern pattern = Pattern.compile("[*\\[\\].]|::");
 
-        if (xPath.startsWith("//")
-                || xPath.startsWith(":")
-                || pattern.matcher(xPath).find()) {
-            return false;
-        }
-
-        return true;
+        return !xPath.startsWith("//") && !xPath.startsWith(":") && !pattern.matcher(xPath).find();
     }
 
     /**
@@ -340,8 +336,8 @@ public final class XPathToolkit {
      *
      * @param contextNode The node to start searching from.
      * @param xPath A valid XPath string.
-     * @return Node The first node found that matches the XPath, or null.
      */
+    @Nonnull
     public static MElementResult selectElements(Node contextNode, String xPath) {
         if (contextNode instanceof Element) {
             if (xPath == null) {
@@ -371,7 +367,7 @@ public final class XPathToolkit {
             NodeList nodesList = selectNodeList(contextNode, xPath);
             int tam = nodesList.getLength();
             for (int i = 0; i < tam; i++) {
-                resultList = addToList(resultList, MElement.getValueText(nodesList.item(i)));
+                resultList = addToList(resultList, XmlUtil.getValueText(nodesList.item(i)));
             }
         }
         return resultList == null ? Collections.emptyList() : resultList;
@@ -426,7 +422,7 @@ public final class XPathToolkit {
      * biblioteca XPath. A diferença de tempo pode ser da ordem de 1000 vezes.
      *
      * @param parent Elemento onde será pesquisado
-     * @param path Caminho a ser pesquisa deve conter apenas nomes e /
+     * @param nodePath Caminho a ser pesquisa deve conter apenas nomes e /
      * @return O elemento se for encontrado.
      */
     private static Node findSimples(final Node parent, final String nodePath) {

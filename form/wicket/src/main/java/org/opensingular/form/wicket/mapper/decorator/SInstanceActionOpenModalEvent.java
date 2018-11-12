@@ -16,14 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.decorator;
 
-import static java.util.stream.Collectors.*;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
-
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -42,6 +34,15 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder.ButtonStyle;
 import org.opensingular.lib.wicket.util.model.IMappingModel;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
+import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 /**
  * ESTA CLASSE DE EVENTO NÃO É SERIALIZÁVEL!!!
@@ -88,7 +89,7 @@ public final class SInstanceActionOpenModalEvent implements IOpenSingularFormMod
             ? new SingularFormPanel("modalFormPanel", true)
                 .setInstanceCreator(new ModelGetterSupplier<SInstance>(modalFormInstanceModel))
                 .add($b.visibleIf($m.isNotNullOrEmpty(this.modalFormInstanceModel)))
-            : new WebMarkupContainer("formPanel");
+            : new WebMarkupContainer("modalFormPanel");
 
         return new TemplatePanel(id, ""
             + "<div wicket:id='textPanel'></div>"

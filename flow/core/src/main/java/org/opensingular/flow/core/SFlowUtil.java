@@ -26,6 +26,7 @@ import org.opensingular.lib.commons.context.ServiceRegistry;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.net.Lnk;
 import org.opensingular.lib.commons.net.WebRef;
+import org.opensingular.lib.commons.util.ObjectUtils;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayDeque;
@@ -85,7 +86,8 @@ public class SFlowUtil {
         return list;
     }
 
-    public static List<STask<?>> getSortedTasksByDistanceFromBeginning(FlowDefinition<?> definition) {
+    @Nonnull
+    public static List<STask<?>> getSortedTasksByDistanceFromBeginning(@Nonnull FlowDefinition<?> definition) {
         FlowMap flowMap = definition.getFlowMap();
         calculateTaskOrder(flowMap);
         List<STask<?>> list = new ArrayList<>(flowMap.getTasks());
@@ -100,27 +102,32 @@ public class SFlowUtil {
         return list;
     }
 
-    static void calculateTaskOrder(FlowMap flowMap) {
+    static void calculateTaskOrder(@Nonnull FlowMap flowMap) {
         for (STask<?> task : flowMap.getTasks()) {
             task.setOrder(0);
         }
         Deque<STask<?>> deque = new ArrayDeque<>();
-        orderedVisit(0, flowMap.getStart().getTask(), deque);
+        int initialValue = 0;
+        for(SStart start :  flowMap.getStarts()) {
+            deque.clear();
+            orderedVisit(initialValue, start.getTask(), deque);
+            initialValue = start.getTask().getOrder() + 2 * WEIGHT_PESO_TASK_JAVA + 1;
+        }
         flowMap.getTasks().stream().filter(task -> task.getOrder() == 0)
                 .forEach(task -> task.setOrder(calculateWeight(task) + 1000000));
     }
 
     private static void orderedVisit(int previousValue, STask<?> task, Deque<STask<?>> deque) {
-        int value = previousValue + calculateWeight(task);
-        int order = task.getOrder();
-        if (order == 0 || (order < value && !deque.contains(task))) {
-            task.setOrder(value);
+        int newValue = previousValue + calculateWeight(task);
+        int currentOrder = task.getOrder();
+        if (currentOrder == 0 || (currentOrder < newValue && !deque.contains(task))) {
+            task.setOrder(newValue);
             deque.add(task);
             for (STransition transition : task.getTransitions()) {
                 if (task.getDefaultTransition() == transition) {
-                    orderedVisit(value, transition.getDestination(), deque);
+                    orderedVisit(newValue, transition.getDestination(), deque);
                 } else {
-                    orderedVisit(value + 1, transition.getDestination(), deque);
+                    orderedVisit(newValue + 1, transition.getDestination(), deque);
                 }
             }
             deque.removeLast();
@@ -295,11 +302,7 @@ public class SFlowUtil {
                     RefService.ofToBeDescartedIfSerialized((SingularInjector) obj -> {
                     }));
         }
-        try {
-            return definitionClass.cast(definitionClass.newInstance());
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new SingularFlowException(e);
-        }
+        return ObjectUtils.newInstance(definitionClass);
     }
 
     /**
@@ -314,7 +317,7 @@ public class SFlowUtil {
 
     private static final class BaseFlowTestDefinition extends FlowDefinition<FlowInstance> {
 
-        private final Consumer<FlowBuilderImpl> flowCreator;
+        private Consumer<FlowBuilderImpl> flowCreator;
 
         public BaseFlowTestDefinition(@Nonnull Consumer<FlowBuilderImpl> flowCreator) {
             this("dummyFlow", flowCreator);
@@ -330,6 +333,7 @@ public class SFlowUtil {
         protected FlowMap createFlowMap() {
             FlowBuilderImpl f = new FlowBuilderImpl(this);
             flowCreator.accept(f);
+            flowCreator = null;
             return f.build();
         }
     }

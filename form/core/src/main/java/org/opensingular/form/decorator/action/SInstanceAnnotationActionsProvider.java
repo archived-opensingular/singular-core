@@ -39,6 +39,7 @@ import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.ref.Out;
 import org.opensingular.lib.commons.util.HTMLUtil;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
@@ -150,6 +151,7 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
         static final String JUSTIFICATION = "justificativa";
         static final String APPROVED = "aprovado";
 
+        @Nonnull
         @Override
         protected SType<?> retrieve() {
             final SDictionary dict = SDictionary.create();

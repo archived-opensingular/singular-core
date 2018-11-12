@@ -33,7 +33,7 @@ import java.util.Optional;
 
 public class SDictionary {
 
-    private final MapByName<SPackage> packages = new MapByName<>(p -> p.getName());
+    private final MapByName<SPackage> packages = new MapByName<>(SPackage::getName);
 
     private final Map<Class<? extends SType<?>>, SType<?>> typeByClass = new HashMap<>();
     private final Map<String, SType<?>> typeCacheByFullName = new HashMap<>();
@@ -50,13 +50,12 @@ public class SDictionary {
     private int idCount;
 
     /** Lista de processadores pendentes para execução para novos SType. */
-    Multimap<SType<?>, Runnable> pendingTypeProcessorExecution;
+    private Multimap<SType<?>, Runnable> pendingTypeProcessorExecution;
 
     /** List of aspect registry associated to this {@link SDictionary}. */
     private MasterAspectRegistry masterAspectRegistry;
 
-    private SDictionary() {
-    }
+    private SDictionary() {}
 
     /**
      * Apenas para uso interno do dicionario de modo que os atributos dos tipos
@@ -82,6 +81,7 @@ public class SDictionary {
         return viewResolver;
     }
 
+    @Nonnull
     public static SDictionary create() {
         SDictionary dictionary = new SDictionary();
         dictionary.loadPackage(SPackageCore.class);
@@ -92,18 +92,12 @@ public class SDictionary {
      * Carrega no dicionário o pacote informado e todas as definições do mesmo,
      * se ainda não tiver sido carregado. É seguro chamar é método mais de uma
      * vez para o mesmo pacote.
-     *
-     * @return O pacote carregado
      */
     @Nonnull
     public <T extends SPackage> T loadPackage(@Nonnull Class<T> packageClass) {
         T newPackage = packages.get(packageClass);
         if (newPackage == null) {
-            try {
-                newPackage = packageClass.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
-                throw new SingularFormException("Erro instanciando " + packageClass.getName(), e);
-            }
+            newPackage = SFormUtil.newInstance(packageClass);
             packages.verifyMustNotBePresent(newPackage, this);
             loadInternal(newPackage);
         }
@@ -113,19 +107,16 @@ public class SDictionary {
     /**
      * Carrega no dicionário o pacote do atributo informado, se ainda não tiver sido carregado. É seguro chamar é
      * método mais de uma vez para o mesmo pacote.
-     *
-     * @return O pacote carregado
      */
-    @Nonnull
-    final SPackage loadPackageFor(@Nonnull AtrRef<?, ?, ?> atr) {
-        return loadPackage(atr.getPackageClass());
+    private void loadPackageFor(@Nonnull AtrRef<?, ?, ?> atr) {
+        loadPackage(atr.getPackageClass());
     }
 
     public PackageBuilder createNewPackage(String name) {
         packages.verifyMustNotBePresent(name, this);
         SPackage newPackage = new SPackage(name);
         newPackage.setDictionary(this);
-        packages.add(newPackage);
+        packages.add(newPackage, null);
         return new PackageBuilder(newPackage);
     }
 
@@ -140,8 +131,7 @@ public class SDictionary {
         Objects.requireNonNull(typeClass);
         SType<?> typeRef = typeByClass.get(typeClass);
         if (typeRef == null) {
-            Class<? extends SPackage> packageClass = SFormUtil.getTypePackage(typeClass);
-            SPackage typePackage = loadPackage(packageClass);
+            SPackage typePackage = getPackageFor(typeClass);
             typeRef = typeByClass.get(typeClass);
             if (typeRef == null) {
                 //O tipo é de carga lazy e não se auto registrou no pacote, então regista agora
@@ -149,6 +139,20 @@ public class SDictionary {
             }
         }
         return typeClass.cast(typeRef);
+    }
+
+    @Nonnull
+    private <T extends SType<?>> SPackage getPackageFor(@Nonnull Class<T> typeClass) {
+        String packageName = SFormUtil.getTypePackageName(typeClass);
+        SPackage p = packages.get(packageName);
+        if (p != null) {
+            return p;
+        }
+        Optional<Class<? extends SPackage>> cPackage = SFormUtil.getTypePackageClass(typeClass);
+        if (cPackage.isPresent()) {
+            return loadPackage(cPackage.get());
+        }
+        return createNewPackage(packageName).getPackage();
     }
 
     /** Adiciona o tipo informado no pacote. */
@@ -160,6 +164,7 @@ public class SDictionary {
         return typePackage.registerType(typeClass);
     }
 
+    @Nonnull
     public SType<?> getType(String fullNamePath) {
         return getTypeOptional(fullNamePath).orElseThrow(
                 () -> new SingularFormException("Tipo '" + fullNamePath + "' não encontrado"));
@@ -209,13 +214,12 @@ public class SDictionary {
     final <T extends SType<?>> void registerType(@Nonnull SScope scope, @Nonnull T newType,
             @Nullable Class<T> classForRegister) {
         if (classForRegister != null) {
-            Class<? extends SPackage> packageClass = SFormUtil.getTypePackage(classForRegister);
-            SPackage packageAnnotation = packages.getOrNewInstance(packageClass);
+            String packageName = SFormUtil.getTypePackageName(classForRegister);
             SPackage packageDestiny = scope.getPackage();
-            if (!packageDestiny.getName().equals(packageAnnotation.getName())) {
+            if (!packageDestiny.getName().equals(packageName)) {
                 throw new SingularFormException(
                         "Tentativa de carregar o tipo '" + newType.getNameSimple() + "' anotado para o pacote '" +
-                                packageAnnotation.getName() + "' como sendo do pacote '" + packageDestiny.getName() + "'",
+                                packageName + "' como sendo do pacote '" + packageDestiny.getName() + "'",
                         newType);
             }
         }
@@ -226,7 +230,7 @@ public class SDictionary {
         typeByClass.put(classForRegister, newType);
     }
 
-    private void loadInternal(SPackage newPackage) {
+    private void loadInternal(@Nonnull SPackage newPackage) {
         newPackage.setDictionary(this);
         packages.add(newPackage);
         PackageBuilder pb = new PackageBuilder(newPackage);
@@ -235,7 +239,7 @@ public class SDictionary {
 
     public void debug() {
         System.out.println("=======================================================");
-        packages.forEach(p -> p.debug());
+        packages.forEach(SScopeBase::debug);
         System.out.println("=======================================================");
     }
 
@@ -306,11 +310,11 @@ public class SDictionary {
         AttrInternalRef ref = new AttrInternalRef(this, attributeName, attributes.size());
         AttrInternalRef previusValue = attributes.putIfAbsent(ref.getName(), ref);
         if (previusValue == null) {
-            incAttribute(ref.getIndex().intValue() == 0);
+            incAttribute(ref.getIndex() == 0);
             attributesArrayInicialSize = Math.max(attributes.size(), currentAvarageAttributes);
             return ref;
         } else if (previusValue.isResolved()) {
-            throw new SingularFormException("Internal Error: attribute '" + attributeName + " already definied");
+            throw new SingularFormException("Internal Error: attribute '" + attributeName + " already defined");
         }
         return previusValue;
     }

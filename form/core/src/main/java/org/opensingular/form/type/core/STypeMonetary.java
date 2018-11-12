@@ -18,8 +18,23 @@ package org.opensingular.form.type.core;
 
 import org.opensingular.form.SInfoType;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+
 @SInfoType(name = "Monetary", spackage = SPackageCore.class)
 public class STypeMonetary extends STypeDecimal {
 
+
+    @Override
+    public String toStringDisplayDefault(BigDecimal bigDecimal) {
+        int size = bigDecimal.toString().length();
+        DecimalFormat decimalFormat;
+        if(size <= 6){
+            decimalFormat = new DecimalFormat("R$ 0.00");
+        } else {
+            decimalFormat = new DecimalFormat("R$ 0,000.00");
+        }
+        return decimalFormat.format(bigDecimal);
+    }
 
 }

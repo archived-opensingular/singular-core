@@ -27,6 +27,7 @@ import org.opensingular.form.view.SView;
 public class SViewByRichTextNewTab extends SView {
 
     private boolean showSaveButton;
+
     /**
      * Class that represent some configuration of the RichText.
      */
@@ -36,6 +37,16 @@ public class SViewByRichTextNewTab extends SView {
      * The list of Action buttons.
      */
     private List<RichTextAction> richTextActionList = new ArrayList<>(0);
+
+    /**
+     * Indicates if the "Source View" button should be displayed
+     */
+    private boolean sourceViewEnabled = false;
+
+    /**
+     * Indicates if the A4 layout should be applied
+     */
+    private boolean a4LayoutEnabled = true;
 
     /**
      * Method to configure the visible of Save Button.
@@ -64,5 +75,21 @@ public class SViewByRichTextNewTab extends SView {
 
     public boolean isShowSaveButton() {
         return showSaveButton;
+    }
+
+    public boolean isSourceViewEnabled() {
+        return sourceViewEnabled;
+    }
+
+    public boolean isA4LayoutEnabled() {
+        return a4LayoutEnabled;
+    }
+
+    public void setSourceViewEnabled(boolean sourceViewEnabled) {
+        this.sourceViewEnabled = sourceViewEnabled;
+    }
+
+    public void setA4LayoutEnabled(boolean a4LayoutEnabled) {
+        this.a4LayoutEnabled = a4LayoutEnabled;
     }
 }

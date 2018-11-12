@@ -18,12 +18,15 @@ package org.opensingular.form;
 
 import org.opensingular.lib.commons.lambda.IFunction;
 
+import javax.annotation.Nonnull;
+
 
 public class SIFunction<T, R> extends SICode<IFunction<T, R>> {
 
     public SIFunction() {
     }
 
+    @Nonnull
     @Override
     public STypeCode<SICode<IFunction<T, R>>, IFunction<T, R>> getType() {
         return super.getType();

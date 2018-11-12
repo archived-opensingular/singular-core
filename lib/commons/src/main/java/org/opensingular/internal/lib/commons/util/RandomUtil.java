@@ -32,13 +32,13 @@ import java.util.Random;
 public final class RandomUtil {
     private RandomUtil() {}
 
-    private static final char[] ALL_CHARS = new char[62];
+    private static final char[] VALID_PASSWORD_CHAR = new char[62];
     private static final Random RANDOM = new SecureRandom();
 
     static {
         for (int i = 48, j = 0; i < 123; i++) {
             if (Character.isLetterOrDigit(i)) {
-                ALL_CHARS[j] = (char) i;
+                VALID_PASSWORD_CHAR[j] = (char) i;
                 j++;
             }
         }
@@ -47,9 +47,49 @@ public final class RandomUtil {
     /** Generates a random password with a specific length. */
     @Nonnull
     public static String generateRandomPassword(int length) {
-        char[] result = new char[length];
-        for (int i = 0; i < length; i++) {
-            result[i] = ALL_CHARS[RANDOM.nextInt(ALL_CHARS.length)];
+        return generateString(length, VALID_PASSWORD_CHAR);
+    }
+
+    //@formatter:off
+    private static final char[] VALID_URL_CHAR = {
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+            'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+    };
+    //@formatter:on
+
+    /**
+     * Generates a ID with random selected char and letters (a-z,A-Z,0-9) representation at least 128 bits. It is a
+     * little bit more random than {@link java.util.UUID}, but generates a smaller String (22 chars instead of 36
+     * chars).
+     */
+    @Nonnull
+    public static String generateID() {
+        return generateID(128);
+    }
+
+    /**
+     * Generates a ID with random selected char and letters (a-z,A-Z,0-9) representation at least the amount of random
+     * bits specified.
+     */
+    @Nonnull
+    public static String generateID(int bytesSize) {
+        double bitsRepresentation = log2(VALID_URL_CHAR.length);
+        int charSize = (int) Math.ceil(bytesSize / bitsRepresentation);
+        return generateString(charSize, VALID_URL_CHAR);
+    }
+
+    private static double log2(int x) {
+        return Math.ceil(Math.log(x) / Math.log(2));
+    }
+
+    @Nonnull
+    private static String generateString(int size, @Nonnull char[] validValues) {
+        char[] result = new char[size];
+        for (int i = 0; i < size; i++) {
+            result[i] = validValues[RANDOM.nextInt(validValues.length)];
         }
         return String.valueOf(result);
     }
@@ -57,7 +97,7 @@ public final class RandomUtil {
     /** Selects a random element of the provided collection. */
     @SuppressWarnings({"unchecked"})
     @Nullable
-    public static <T> T selectRandom(Collection<T> list) {
+    public static <T> T selectRandom(@Nonnull Collection<T> list) {
         if (list.isEmpty()) {
             return null;
         }
@@ -78,5 +118,11 @@ public final class RandomUtil {
             i++;
         }
         return null;
+    }
+
+    /** Returns the current random object being used. */
+    @Nonnull
+    public static Random getRandom() {
+        return RANDOM;
     }
 }

@@ -173,11 +173,11 @@ public class CoreAttributesTest extends TestCaseForm {
         assertEquals("none", tipo.newInstance().getValue());
 
         tipo.setInitialValue(null);
-        assertEquals(null, tipo.newInstance().getValue());
+        assertNull(tipo.newInstance().getValue());
 
         tipoString.setInitialValue("X");
         assertEquals("X", tipoString.newInstance().getValue());
-        assertEquals(null, tipo.newInstance().getValue());
+        assertNull(tipo.newInstance().getValue());
 
         tipo.setInitialValue("Y");
         assertEquals("X", tipoString.newInstance().getValue());
@@ -405,7 +405,7 @@ public class CoreAttributesTest extends TestCaseForm {
         assertAttribute(((ICompositeInstance) tipo.findAttributeInstance(at2.getName())).getField("linha"), null);
 
         SIString instance = (SIString) tipo.newInstance();
-        assertEquals(false, instance.isAttribute());
+        assertFalse(instance.isAttribute());
         assertEquals(0, instance.getAttributes().size());
 
         instance.setAttributeValue(at1.getName(), "a2");
@@ -413,16 +413,16 @@ public class CoreAttributesTest extends TestCaseForm {
         instance.setAttributeValue(at2.getName(), "linha", 2);
 
         assertEquals(2, instance.getAttributes().size());
-        assertAttribute(instance.getAttributeDirectly(at1.getName()).get(), instance);
-        assertAttribute(instance.getAttributeDirectly(at2.getName()).get(), instance);
-        assertAttribute(((ICompositeInstance) instance.getAttributeDirectly(at2.getName()).get()).getField("cor"), instance);
-        assertAttribute(((ICompositeInstance) instance.getAttributeDirectly(at2.getName()).get()).getField("linha"), instance);
-        instance.getAttributes().stream().forEach(a -> assertAttribute(a, instance));
+        assertAttribute(SAttributeUtil.getAttributeDirectly(instance, at1.getName()).get(), instance);
+        assertAttribute(SAttributeUtil.getAttributeDirectly(instance, at2.getName()).get(), instance);
+        assertAttribute(((ICompositeInstance) SAttributeUtil.getAttributeDirectly(instance, at2.getName()).get()).getField("cor"), instance);
+        assertAttribute(((ICompositeInstance) SAttributeUtil.getAttributeDirectly(instance, at2.getName()).get()).getField("linha"), instance);
+        instance.getAttributes().forEach(a -> assertAttribute(a, instance));
     }
 
     private static void assertAttribute(SInstance instance, SInstance expectedOwner) {
         assertTrue(instance.isAttribute());
-        assertTrue(expectedOwner == instance.getAttributeOwner());
+        assertSame(expectedOwner, instance.getAttributeOwner());
         if (instance instanceof ICompositeInstance) {
             ((ICompositeInstance) instance).stream().forEach(i -> assertAttribute(i, expectedOwner));
         }

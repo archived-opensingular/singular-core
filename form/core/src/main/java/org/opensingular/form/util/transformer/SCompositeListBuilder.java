@@ -22,8 +22,10 @@ import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -31,28 +33,35 @@ import java.util.Optional;
  */
 public class SCompositeListBuilder {
 
-    private final List<SIComposite>           list;
+    private final List<SIComposite>           list = new ArrayList<>();
     private final STypeComposite<SIComposite> type;
     private final SInstance                   currentInstance;
 
     /**
      * Instancia do tipo dos elementos da lista
      */
-    public SCompositeListBuilder(STypeComposite<SIComposite> type, SInstance currentInstance) {
-        this.type = type;
-        this.list = new ArrayList<>();
+    public SCompositeListBuilder(@Nonnull STypeComposite<SIComposite> type, SInstance currentInstance) {
+        this.type = Objects.requireNonNull(type);
         this.currentInstance = currentInstance;
+    }
+
+    /** Returns the type os elements in the list. */
+    @Nonnull
+    public STypeComposite<SIComposite> getItemType() {
+        return type;
     }
 
     /**
      * Cria uma nova instancia do MTipo T na lista
      */
+    @Nonnull
     public SCompositeValueSetter add() {
         SIComposite newInstance = type.newInstance();
         list.add(newInstance);
         return new SCompositeValueSetter(newInstance, this);
     }
 
+    @Nonnull
     public List<SIComposite> getList() {
         return list;
     }
@@ -61,6 +70,7 @@ public class SCompositeListBuilder {
         return currentInstance;
     }
 
+    @Nonnull
     public SInstance getRoot() {
         return currentInstance.getRoot();
     }
@@ -78,12 +88,13 @@ public class SCompositeListBuilder {
         private final SCompositeListBuilder _lb;
         private final SIComposite instance;
 
-        SCompositeValueSetter(SIComposite instance, SCompositeListBuilder lb) {
+        SCompositeValueSetter(@Nonnull SIComposite instance, @Nonnull SCompositeListBuilder lb) {
             this._lb = lb;
             this.instance = instance;
         }
 
-        public SCompositeValueSetter set(SType<?> type, Object value) {
+        @Nonnull
+        public SCompositeValueSetter set(@Nonnull SType<?> type, @Nullable Object value) {
             if (value != null) {
                 instance.setValue(type, value);
             } else {
@@ -92,7 +103,8 @@ public class SCompositeListBuilder {
             return this;
         }
 
-        public SCompositeValueSetter set(String path, Object value) {
+        @Nonnull
+        public SCompositeValueSetter set(@Nonnull String path, @Nullable Object value) {
             if (value != null) {
                 instance.setValue(path, value);
             } else {
@@ -101,14 +113,17 @@ public class SCompositeListBuilder {
             return this;
         }
 
+        @Nonnull
         public SCompositeValueSetter add() {
             return _lb.add();
         }
 
+        @Nonnull
         public SIComposite get() {
             return instance;
         }
 
+        @Nonnull
         public List<SIComposite> getList() {
             return _lb.getList();
         }

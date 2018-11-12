@@ -16,6 +16,7 @@
 
 package org.opensingular.form.type.core.attachment;
 
+import org.opensingular.form.SAttributeUtil;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
@@ -54,10 +55,10 @@ public class SIAttachment extends SIComposite {
         setValue(STypeAttachment.FIELD_HASH_SHA1, null);
         setValue(STypeAttachment.FIELD_FILE_SIZE, null);
         setValue(STypeAttachment.FIELD_NAME, null);
-        if (hasAttributeValueDirectly(STypeAttachment.ATR_ORIGINAL_ID)) {
+        if (SAttributeUtil.hasAttributeValueDirectly(this, STypeAttachment.ATR_ORIGINAL_ID)) {
             setAttributeValue(STypeAttachment.ATR_ORIGINAL_ID, null);
         }
-        if (hasAttributeValueDirectly(STypeAttachment.ATR_IS_TEMPORARY)) {
+        if (SAttributeUtil.hasAttributeValueDirectly(this, STypeAttachment.ATR_IS_TEMPORARY)) {
             setAttributeValue(STypeAttachment.ATR_IS_TEMPORARY, null);
         }
     }

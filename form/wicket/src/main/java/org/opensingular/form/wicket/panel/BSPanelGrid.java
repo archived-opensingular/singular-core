@@ -22,6 +22,7 @@ import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -42,13 +43,7 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSGridCol;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.wicket.markup.head.JavaScriptHeaderItem.forReference;
@@ -60,16 +55,16 @@ public abstract class BSPanelGrid extends Panel implements Loggable {
     public static final MetaDataKey<BSTab> TAB_KEY = new MetaDataKey<BSPanelGrid.BSTab>() {
     };
 
-    private static final String                 ID_TAB     = "tab";
-    private              SingularFormWicket<?>  form       = new SingularFormWicket<>("panel-form");
-    private              BSTabCol               navigation = new BSTabCol("tab-navigation");
-    private              BSTabCol               content    = new BSTabCol("tab-content");
-    private              BSGrid                 container  = new BSGrid("grid");
-    private              Map<String, BSTab>     tabMap     = new LinkedHashMap<>();
-    private              BSTab                  activeTab  = null;
-    private              WebMarkupContainer     tabMenu    = new WebMarkupContainer("tab-menu");
-    private              RefreshingView<String> tabRepeater;
-    private              String                 keyActive;
+    private static final String ID_TAB = "tab";
+    private SingularFormWicket<?> form = new SingularFormWicket<>("panel-form");
+    private BSTabCol navigation = new BSTabCol("tab-navigation");
+    private BSTabCol content = new BSTabCol("tab-content");
+    private BSGrid container = new BSGrid("grid");
+    private Map<String, BSTab> tabMap = new LinkedHashMap<>();
+    private BSTab activeTab = null;
+    private WebMarkupContainer tabMenu = new WebMarkupContainer("tab-menu");
+    private RefreshingView<String> tabRepeater;
+    private String keyActive;
 
     public BSPanelGrid(String id) {
         super(id);
@@ -101,8 +96,13 @@ public abstract class BSPanelGrid extends Panel implements Loggable {
             @Override
             public void renderHead(Component component, IHeaderResponse response) {
                 super.renderHead(component, response);
-                response.render(OnDomReadyHeaderItem.forScript("window.BSPANEL.updateClassActive('" + keyActive + "','#" + content.getMarkupId() + "','#" + tabMenu.getMarkupId() + "' );"));
-                response.render(OnDomReadyHeaderItem.forScript("window.BSPANEL.updateScroll();"));
+                String updateClassActive = "window.BSPANEL.updateClassActive('" + keyActive + "','#" + content.getMarkupId() + "','#" + tabMenu.getMarkupId() + "' );";
+                IPartialPageRequestHandler target = getRequestCycle().find(IPartialPageRequestHandler.class);
+                if (target != null) {
+                    target.appendJavaScript(updateClassActive);
+                } else {
+                    response.render(OnDomReadyHeaderItem.forScript(updateClassActive));
+                }
             }
         });
         add(new QuickNavPanel("help", buildTabControl()));
@@ -143,7 +143,7 @@ public abstract class BSPanelGrid extends Panel implements Loggable {
             }
 
             private boolean isAnyChildrenVisible(String tabId) {
-                BSTab     bsTab    = tabMap.get(tabId);
+                BSTab bsTab = tabMap.get(tabId);
                 SInstance instance = bsTab.getModelObject();
                 if ((instance instanceof SIComposite) && instance.asAtr().exists() && instance.asAtr().isVisible()) {
                     for (String typeName : bsTab.getSubtree()) {
@@ -158,9 +158,10 @@ public abstract class BSPanelGrid extends Panel implements Loggable {
 
             @Override
             protected void populateItem(Item<String> item) {
-                String      id  = item.getModelObject();
+                String id = item.getModelObject();
                 final BSTab tab = tabMap.get(id);
                 item.setMetaData(TAB_KEY, tab);
+                item.setOutputMarkupId(true);
 
                 if (activeTab == null && item.getIndex() == 0 || activeTab != null && activeTab.equals(tab)) {
                     item.add($b.classAppender("active"));
@@ -235,11 +236,11 @@ public abstract class BSPanelGrid extends Panel implements Loggable {
     }
 
     public static final class BSTab implements Serializable {
-        private   String                                        headerText;
-        private   List<String>                                  subtree;
-        private   String                                        iconClass;
-        protected IModel<SInstance>                             model;
-        private   IBiFunction<BSTab, IModel<SInstance>, String> iconProcessor;
+        private String headerText;
+        private List<String> subtree;
+        private String iconClass;
+        protected IModel<SInstance> model;
+        private IBiFunction<BSTab, IModel<SInstance>, String> iconProcessor;
 
         public BSTab(String headerText, List<String> subtree, IModel<SInstance> model) {
             this.headerText = headerText;

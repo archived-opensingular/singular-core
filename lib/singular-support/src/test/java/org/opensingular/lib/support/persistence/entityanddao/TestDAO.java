@@ -18,8 +18,8 @@
 
 package org.opensingular.lib.support.persistence.entityanddao;
 
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.opensingular.lib.support.persistence.BaseDAO;
 
 import javax.inject.Named;

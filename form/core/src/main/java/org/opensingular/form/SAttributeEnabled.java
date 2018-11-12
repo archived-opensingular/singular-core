@@ -27,7 +27,6 @@ import org.opensingular.form.type.core.annotation.AtrAnnotation;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -40,8 +39,7 @@ public interface SAttributeEnabled {
 
     <V> void setAttributeCalculation(@Nonnull AtrRef<?, ?, V> atr, @Nullable SimpleValueCalculation<V> value);
 
-    <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
-            @Nullable SimpleValueCalculation<V> value);
+    //<V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath, @Nullable SimpleValueCalculation<V> value);
 
     <V> void setAttributeValue(@Nonnull AtrRef<?, ?, V> atr, @Nullable V value);
 
@@ -54,21 +52,12 @@ public interface SAttributeEnabled {
         setAttributeValue(attributeName, null, value);
     }
 
-    void setAttributeValue(String attributeFullName, String subPath, Object value);
+    void setAttributeValue(@Nonnull String attributeFullName, @Nullable String subPath, @Nullable Object value);
 
 
-    /**
-     * Lista todos os atributos com valor associado diretamente ao objeto atual.
-     */
+    /** Lists all attributes with value that are associeated directly to the current object. */
     @Nonnull
-    public Collection<SInstance> getAttributes();
-
-    /**
-     * Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. Não procura o atributo na
-     * hierarquia.
-     */
-    @Nonnull
-    public Optional<SInstance> getAttributeDirectly(@Nonnull String fullName);
+    Collection<SInstance> getAttributes();
 
     @Nullable
     <V> V getAttributeValue(@Nonnull String attributeFullName, @Nullable Class<V> resultClass);
@@ -78,40 +67,6 @@ public interface SAttributeEnabled {
 
     @Nullable
     <V> V getAttributeValue(@Nonnull AtrRef<?, ?, V> atr);
-
-    /**
-     * Verifies if there is a value for the attribute directly associated to the current target. It will return
-     * false if even if the parent of target (the {@link SType} in case of a {@link SInstance} and the super type in
-     * case of a {@link SType}) has a associated value for the attribute but the current target don't have.
-     * <p>Notice that the target may have a current value assigned as null. In this case, this method return true.</p>
-     */
-    boolean hasAttributeValueDirectly(@Nonnull AtrRef<?, ?, ?> atr);
-
-    /**
-     * Verifies if the current target has associated the definition of attribute (create the attribute in the type).
-     */
-    boolean hasAttributeDefinedDirectly(@Nonnull AtrRef<?, ?, ?> atr);
-
-    /**
-     * Verifies if attribute is definite in the current target or in the parent context. In other words, is this a valid
-     * attribute for the current target.
-     */
-    default boolean hasAttributeDefinedInHierarchy(@Nonnull AtrRef<?, ?, ?> atr) {
-        for (SAttributeEnabled current = this; current != null; current = current.getParentAttributeContext()) {
-            if (current.hasAttributeDefinedDirectly(atr)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Return the target context where a attribute must searched in case the current target don't have the attribute
-     * . For a {@link SInstance} this will be its {@link SType}. For a {@link SType}, the parent context will its super
-     * type.
-     */
-    @Nullable
-    SAttributeEnabled getParentAttributeContext();
 
     default Object getAttributeValue(String attributeFullName) {
         return getAttributeValue(attributeFullName, null);
@@ -123,10 +78,10 @@ public interface SAttributeEnabled {
      * Transforma o tipo ou instância atual de acordo com a função de
      * mapeamento.
      */
-    public <TR> TR as(Function<SAttributeEnabled, TR> wrapper);
+    <TR> TR as(Function<SAttributeEnabled, TR> wrapper);
 
     /** Retorna o leitor de atributos básicos para o tipo ou instância atual. */
-    public default AtrBasic asAtr() {
+    default AtrBasic asAtr() {
         return as(AtrBasic::new);
     }
 
@@ -134,27 +89,26 @@ public interface SAttributeEnabled {
      * Retorna o leitor de atributos de Bootstrap para o tipo ou instância
      * atual.
      */
-    public default AtrBootstrap asAtrBootstrap() {
+    default AtrBootstrap asAtrBootstrap() {
         return as(AtrBootstrap::new);
     }
 
     /**
      * Retorna o leitor de atributos relacionados a persistencia dos dados.
-     * @return
      */
-    public default AtrIndex asAtrIndex() {
+    default AtrIndex asAtrIndex() {
         return as(AtrIndex::new);
     }
 
     /**
      * Retorna o leitor de atributos de anotação para o tipo ou instância atual.
      */
-    public default AtrAnnotation asAtrAnnotation() {
+    default AtrAnnotation asAtrAnnotation() {
         return as(AtrAnnotation::new);
     }
 
     /** Returns specific reader for defining persistence attributes of the current SType or SInstance. */
-    public default AtrSQL asSQL() {
+    default AtrSQL asSQL() {
         return as(AtrSQL::new);
     }
 

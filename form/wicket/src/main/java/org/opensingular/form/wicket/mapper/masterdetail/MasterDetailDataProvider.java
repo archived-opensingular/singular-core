@@ -39,13 +39,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This is the provider of the master detail table.
  */
 public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String> {
 
-    private final IModel<SIList<SInstance>> list;
+    private static Pattern                           COMPARATOR_SORT_PROPERTY_REGEX = Pattern.compile("#(\\d+)");
+
+    private final IModel<SIList<SInstance>>          list;
     private final ISupplier<SViewListByMasterDetail> viewSupplier;
 
     MasterDetailDataProvider(IModel<SIList<SInstance>> list, ISupplier<SViewListByMasterDetail> viewSupplier) {
@@ -77,12 +81,27 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
      *                     If user don't chosen one, it will try to get the view ascMode.
      * @return sortable List.
      */
+    @SuppressWarnings("squid:S134")
     private List<SInstance> populateSortList(SIList<SInstance> siList, @Nullable String sortProperty, boolean ascending) {
         List<SInstance> sortableList = new ArrayList<>(siList.getValues());
         if (CollectionUtils.isNotEmpty(sortableList)) {
             if (StringUtils.isEmpty(sortProperty)) {
                 sortListByConfigView(sortableList);
+
             } else {
+                final Matcher matcher = COMPARATOR_SORT_PROPERTY_REGEX.matcher(sortProperty);
+                if (matcher.matches()) {
+                    final int index = Integer.parseInt(matcher.group(1));
+                    final Comparator<SInstance> comparator = Optional.ofNullable(viewSupplier.get())
+                        .map(it -> it.getColumns())
+                        .map(it -> it.get(index))
+                        .map(it -> it.getComparator())
+                        .orElse(null);
+                    if (comparator != null) {
+                        sortableList.sort(ascending ? comparator : comparator.reversed());
+                        return sortableList;
+                    }
+                }
                 sortableList.sort(new ProviderMasterDetailCompator(sortProperty, ascending));
             }
         }
@@ -116,7 +135,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
      */
     public static class ProviderMasterDetailCompator implements Comparator<SInstance>, Loggable, Serializable {
 
-        private String sortableProperty;
+        private String  sortableProperty;
         private boolean ascMode;
 
         ProviderMasterDetailCompator(String sortableProperty, boolean ascMode) {
@@ -150,7 +169,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
          * @param s2 The second instance to be compared.
          * @return return the result of the <code>SIComparable#compareTo</code>.
          */
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         private int compareInstances(SInstance s1, SInstance s2) {
             if (hasValue(s1, s2) && isInstanceOfSIComparable(s1, s2)) {
                 Integer compareToNullResult = nullsFirstLogic(s1, s2);
@@ -169,7 +188,6 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
         private boolean hasValue(SInstance obj1, SInstance obj2) {
             return obj1.isNotEmptyOfData() || obj2.isNotEmptyOfData();
         }
-
 
         private boolean isInstanceOfSIComparable(SInstance obj1, SInstance obj2) {
             return obj1 instanceof SIComparable && obj2 instanceof SIComparable;
@@ -202,9 +220,9 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
         private Optional<? extends SInstance> getInstanceBySortProperty(SInstance rowInstance) {
             if (rowInstance instanceof SIComposite) {
                 Optional<? extends SInstance> currentSortInstance = rowInstance.getChildren()
-                        .stream()
-                        .filter(isCurrentSortInstance())
-                        .findFirst();
+                    .stream()
+                    .filter(isCurrentSortInstance())
+                    .findFirst();
                 if (currentSortInstance.isPresent() && currentSortInstance.get().getType() instanceof STypeComposite) {
                     return SFormUtil.findChildByName(currentSortInstance.get(), sortableProperty);
                 }
@@ -221,7 +239,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
          */
         private Predicate<SInstance> isCurrentSortInstance() {
             return i -> i.getType().getName().equals(sortableProperty)
-                    || SFormUtil.findChildByName(i, sortableProperty).isPresent();
+                || SFormUtil.findChildByName(i, sortableProperty).isPresent();
         }
 
     }

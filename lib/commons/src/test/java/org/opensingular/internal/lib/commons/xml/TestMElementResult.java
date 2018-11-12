@@ -18,12 +18,19 @@
 
 package org.opensingular.internal.lib.commons.xml;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestMElementResult {
 
@@ -37,8 +44,7 @@ public class TestMElementResult {
 
     @Test(expected = IllegalArgumentException.class)
     public void createWithElementNull(){
-        MElement element = null;
-        new MElementResult(element);
+        new MElementResult((MElement) null);
     }
 
     @Test
@@ -49,17 +55,17 @@ public class TestMElementResult {
 
         MElementResult result = new MElementResult(parent.getChildNodes());
 
-        Assert.assertEquals(2, result.count());
+        assertEquals(2, result.count());
 
-        Assert.assertTrue(result.hasNext());
-        Assert.assertTrue(result.next());
-        Assert.assertTrue(result.next());
+        assertTrue(result.hasNext());
+        assertTrue(result.next());
+        assertTrue(result.next());
         Assert.assertFalse(result.next());
         Assert.assertFalse(result.hasNext());
     }
 
     @Test
-    public void testAtributesMethods(){
+    public void testAttributesMethods() {
         MElement parent = MElement.newInstance("raiz");
         parent.addElement("nome", "joaquim");
         parent.addElement("idade", "10");
@@ -68,26 +74,26 @@ public class TestMElementResult {
         result.next();
 
         result.setAttribute("atr", "val");
-        Assert.assertEquals("val", result.getAttribute("atr"));
-        Assert.assertTrue(result.hasAttributes());
-        Assert.assertTrue(result.hasAttribute("atr"));
+        assertEquals("val", result.getAttribute("atr"));
+        assertTrue(result.hasAttributes());
+        assertTrue(result.hasAttribute("atr"));
 
         result.removeAttribute("atr");
-        Assert.assertEquals("", result.getAttribute("atr"));
+        assertEquals("", result.getAttribute("atr"));
 
 
         result.setAttribute("attr", "valor");
         Attr attr = result.getAttributeNode("attr");
 
-        Assert.assertEquals("valor", attr.getValue());
+        assertEquals("valor", attr.getValue());
 
         result.setAttributeNode(attr);
         result.removeAttributeNode(attr);
 
-        Assert.assertEquals("", result.getAttribute("attr"));
-        Assert.assertEquals(0, result.getElementsByTagName("arg1").getLength());
+        assertEquals("", result.getAttribute("attr"));
+        assertEquals(0, result.getElementsByTagName("arg1").getLength());
 
-        Assert.assertEquals(0, result.getAttributes().getLength());
+        assertEquals(0, result.getAttributes().getLength());
     }
 
     @Test
@@ -99,22 +105,22 @@ public class TestMElementResult {
         result.next();
 
         result.setAttributeNS("arg1", "arg2", "arg3");
-        Assert.assertEquals("arg3", result.getAttributeNS("arg1", "arg2"));
-        Assert.assertTrue(result.hasAttributeNS("arg1", "arg2"));
+        assertEquals("arg3", result.getAttributeNS("arg1", "arg2"));
+        assertTrue(result.hasAttributeNS("arg1", "arg2"));
 
         Attr attributeNodeNS = result.getAttributeNodeNS("arg1", "arg2");
-        Assert.assertEquals("arg3", attributeNodeNS.getValue());
+        assertEquals("arg3", attributeNodeNS.getValue());
 
         result.removeAttributeNS("arg1", "arg2");
-        Assert.assertEquals("", result.getAttributeNS("arg1", "arg2"));
+        assertEquals("", result.getAttributeNS("arg1", "arg2"));
 
-        Assert.assertEquals(0, result.getElementsByTagNameNS("arg0", "arg2").getLength());
+        assertEquals(0, result.getElementsByTagNameNS("arg0", "arg2").getLength());
     }
 
     @Test
     public void testNodeMethods(){
         MElement parent = MElement.newInstance("raiz");
-        MElement name = parent.addElement("nome", "joaquim");
+        parent.addElement("nome", "joaquim");
         parent.addElement("nome", "joao");
         parent.addElement("idade", "10");
 
@@ -122,23 +128,23 @@ public class TestMElementResult {
         result.next();
 
         result.setNodeValue("valor");
-        Assert.assertEquals("nome", result.getNodeName());
+        assertEquals("nome", result.getNodeName());
         Assert.assertNull(result.getNodeValue());
 
-        Assert.assertEquals("raiz", result.getParentNode().getLocalName());
+        assertEquals("raiz", result.getParentNode().getLocalName());
 
-        Assert.assertEquals("joaquim", result.getFirstChild().getNodeValue());
-        Assert.assertTrue(result.hasChildNodes());
+        assertEquals("joaquim", result.getFirstChild().getNodeValue());
+        assertTrue(result.hasChildNodes());
 
-        Assert.assertEquals(1, result.getChildNodes().getLength());
+        assertEquals(1, result.getChildNodes().getLength());
 
-        Assert.assertEquals("joao", result.getNextSibling().getLastChild().getNodeValue());
+        assertEquals("joao", result.getNextSibling().getLastChild().getNodeValue());
 
-        Assert.assertEquals("joaquim", result.getLastChild().getNodeValue());
+        assertEquals("joaquim", result.getLastChild().getNodeValue());
 
-        Assert.assertEquals("nome", result.cloneNode(true).getNodeName());
+        assertEquals("nome", result.cloneNode(true).getNodeName());
 
-        Assert.assertEquals("#document", result.getOwnerDocument().getNodeName());
+        assertEquals("#document", result.getOwnerDocument().getNodeName());
 
         Assert.assertNull(result.getPreviousSibling());
 
@@ -164,7 +170,7 @@ public class TestMElementResult {
         MElementResult result = new MElementResult(parent.getChildNodes());
         result.next();
         result.setTextContent("novo valor");
-        Assert.assertEquals("novo valor", result.getCurrent().getTextContent());
+        assertEquals("novo valor", result.getCurrent().getTextContent());
 
         result.setAttributeNS("arg0", "arg1", "arg2");
         Attr attributeNodeNS = result.getAttributeNodeNS("arg0", "arg1");
@@ -200,8 +206,8 @@ public class TestMElementResult {
         Assert.assertNull(result.getUserData("key"));
 
         Assert.assertFalse(result.isSupported("feature", "1.0"));
-        Assert.assertEquals("nome", result.getLocalName());
-        Assert.assertEquals("joaquim", result.getTextContent());
+        assertEquals("nome", result.getLocalName());
+        assertEquals("joaquim", result.getTextContent());
 
         Assert.assertFalse(result.isSameNode(idade));
         Assert.assertFalse(result.isEqualNode(idade));
@@ -211,22 +217,52 @@ public class TestMElementResult {
 
     @Test
     public void testIterator(){
-        MElement parent = MElement.newInstance("raiz");
-        parent.addElement("nome", "joaquim");
-        parent.addElement("nome", "joao");
-        parent.addElement("idade", "10");
-
+        MElement parent = createIteratorTestXml();
         MElementResult result = new MElementResult(parent.getChildNodes());
         Iterator<MElement> iterator = result.iterator();
 
-        Assert.assertTrue(iterator.hasNext());
+        assertTrue(iterator.hasNext());
 
-        Assert.assertEquals("nome", iterator.next().getNodeName());
+        assertEquals("nome", iterator.next().getNodeName());
 
         iterator.remove();
 
         iterator.next();
-        Assert.assertTrue(iterator.hasNext());
-        Assert.assertEquals("idade", iterator.next().getNodeName());
+        assertTrue(iterator.hasNext());
+        assertEquals("idade", iterator.next().getNodeName());
+    }
+
+    @Nonnull
+    private MElement createIteratorTestXml() {
+        MElement parent = MElement.newInstance("raiz");
+        parent.addElement("nome", "joaquim");
+        parent.addElement("nome", "joao");
+        parent.addElement("idade", "10");
+        return parent;
+    }
+
+    @Test
+    public void testHasNextAfterFinish() {
+        MElement parent = createIteratorTestXml();
+        MElementResult result = new MElementResult(parent.getChildNodes());
+        int count = 0;
+        for (MElement e : result) {
+            assertNotNull(e);
+            count++;
+        }
+        assertEquals(3, count);
+        assertFalse(result.iterator().hasNext());
+        Assertions.assertThatThrownBy(() -> result.iterator().next()).isExactlyInstanceOf(IllegalStateException.class);
+
+        parent = createIteratorTestXml();
+        Iterator<MElement> it = new MElementResult(parent.getChildNodes()).iterator();
+        assertTrue(it.hasNext());
+        assertNotNull(it.next());
+        assertTrue(it.hasNext());
+        assertNotNull(it.next());
+        assertTrue(it.hasNext());
+        assertNotNull(it.next());
+        assertFalse(it.hasNext());
+        Assertions.assertThatThrownBy(it::next).isExactlyInstanceOf(IllegalStateException.class);
     }
 }

@@ -47,6 +47,8 @@ import org.opensingular.form.provider.InMemoryFilteredPagedProviderDecorator;
 import org.opensingular.form.provider.ProviderContext;
 import org.opensingular.form.view.SViewSearchModal;
 import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.model.ISInstanceAwareModel;
+import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.ISupplier;
@@ -56,6 +58,11 @@ import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 import org.opensingular.lib.wicket.util.datatable.IBSAction;
 import org.opensingular.lib.wicket.util.datatable.column.BSActionPanel;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
+
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.Optional;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -80,7 +87,9 @@ class SearchModalBodyPanel extends Panel implements Loggable {
     private final IConsumer<AjaxRequestTarget> selectCallback;
 
     private SingularFormPanel innerSingularFormPanel;
+    private DataTableFilter dataTableFilter;
     private MarkupContainer resultTable;
+    private ISInstanceAwareModel<SInstance> instanceFilterModel = new SInstanceRootModel<>();
 
     SearchModalBodyPanel(String id, WicketBuildContext ctx, IConsumer<AjaxRequestTarget> selectCallback) {
         super(id);
@@ -105,11 +114,10 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         super.onInitialize();
 
         final AjaxButton filterButton;
-
+        dataTableFilter = new DataTableFilter();
         innerSingularFormPanel = buildInnerSingularFormPanel();
         filterButton = buildFilterButton();
         resultTable = buildResultTable(getConfig());
-
         resultTable.add(new Behavior() {
             @Override
             public void renderHead(Component component, IHeaderResponse response) {
@@ -152,6 +160,10 @@ class SearchModalBodyPanel extends Panel implements Loggable {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 super.onSubmit(target, form);
+                //TODO Verificar um forma de salvar apenas o objeto atual da SIntance.
+                instanceFilterModel.setObject(innerSingularFormPanel.getInstance());
+                dataTableFilter.setFilterTriggered(true);
+                resultTable.setVisible(true);
                 target.add(resultTable);
             }
         };
@@ -160,22 +172,28 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         return ajaxButton;
     }
 
+
     private WebMarkupContainer buildResultTable(Config config) {
 
         final BSDataTableBuilder<Object, ?, ?> builder = new BSDataTableBuilder(new BaseDataProvider() {
+
             @Override
             public long size() {
                 ProviderContext providerContext = new ProviderContext();
                 providerContext.setInstance(ctx.getRootContext().getCurrentInstance());
-                providerContext.setFilterInstance(innerSingularFormPanel.getInstance());
-                return getFilteredProvider().getSize(providerContext);
+                providerContext.setFilterInstance(instanceFilterModel.getObject());
+                dataTableFilter.setSize(getFilteredProvider().getSize(providerContext));
+                resultTable.setVisible(!(dataTableFilter.isFirstFilter() && dataTableFilter.getSize() == 0));
+                dataTableFilter.setFirstFilter(false);
+                return dataTableFilter.getSize();
+
             }
 
             @Override
             public Iterator iterator(int first, int count, Object sortProperty, boolean ascending) {
                 ProviderContext providerContext = new ProviderContext();
                 providerContext.setInstance(ctx.getRootContext().getCurrentInstance());
-                providerContext.setFilterInstance(innerSingularFormPanel.getInstance());
+                providerContext.setFilterInstance(instanceFilterModel.getObject());
                 providerContext.setFirst(first);
                 providerContext.setCount(count);
                 providerContext.setSortProperty(sortProperty);
@@ -246,6 +264,47 @@ class SearchModalBodyPanel extends Panel implements Loggable {
 
     private SInstance getInstance() {
         return ctx.getModel().getObject();
+    }
+
+    private static class DataTableFilter implements Serializable {
+
+        private boolean filterTriggered = true; //This represent when the action of filter is executed.
+        private boolean firstFilter = true; //This represent's the creation of the table.
+        private long size = 0L; //The size of the elements of the table.
+
+        /**
+         * Retuns true when the button 'Filter' is clicked.
+         *
+         * @return Return true if have to filter. False otherwise.
+         */
+        public boolean isFilterTriggered() {
+            return filterTriggered;
+        }
+
+        public void setFilterTriggered(boolean filterTriggered) {
+            this.filterTriggered = filterTriggered;
+        }
+
+        public long getSize() {
+            return size;
+        }
+
+        public void setSize(long size) {
+            this.size = size;
+        }
+
+        /**
+         * This method returns true just in the first time of the creation of table.
+         *
+         * @return True if it's the first time of creation table. False otherwise.
+         */
+        public boolean isFirstFilter() {
+            return firstFilter;
+        }
+
+        public void setFirstFilter(boolean firstFilter) {
+            this.firstFilter = firstFilter;
+        }
     }
 
 }

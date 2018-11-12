@@ -16,23 +16,37 @@
 
 package org.opensingular.internal.lib.commons.xml;
 
+import javax.annotation.Nonnull;
 import java.io.PrintWriter;
 
-public abstract class AbstractToolkitWriter implements MElementWriter {
+abstract class AbstractToolkitWriter implements MElementWriter {
 
-    private final char[] ESPECIAL = {'&', '<', '>'};
-    private final String[] SUBSTITUTE = {"&amp;", "&lt;", "&gt;"};
+    private final static char[] ESPECIAL_TXT = new char[]{'&', '<', '>',};
+    private final static String[] SUBSTITUTE_TXT = new String[]{"&amp;", "&lt;", "&gt;"};
+    private final static char[] ESPECIAL_ATR = new char[]{'&', '<', '>', '"', '\''};
+    private final static String[] SUBSTITUTE_ATR = new String[]{"&amp;", "&lt;", "&gt;", "&quot;", "&apos;"};
 
 
-    protected void printConvertingSpecialCharacters(PrintWriter out, char[] text) {
-        int len           = text.length;
+    void printConvertingSpecialCharactersTextNode(@Nonnull PrintWriter out, @Nonnull String text) {
+        printConverting(out, text, ESPECIAL_TXT, SUBSTITUTE_TXT);
+    }
+
+    void printConvertingSpecialCharactersAttribute(@Nonnull PrintWriter out, @Nonnull String text) {
+        printConverting(out, text, ESPECIAL_ATR, SUBSTITUTE_ATR);
+    }
+
+    private static void printConverting(@Nonnull PrintWriter out, @Nonnull String text, char[] especial,
+            String[] substitute) {
+        int len = text.length();
         int lastWritten = 0;
         for (int i = 0; i < len; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (text[i] == ESPECIAL[j]) {
+            char c = text.charAt(i);
+            for (int j = 0; j < especial.length; j++) {
+                if (c == especial[j]) {
                     out.write(text, lastWritten, i - lastWritten);
-                    out.print(SUBSTITUTE[j]);
+                    out.print(substitute[j]);
                     lastWritten = i + 1;
+                    break;
                 }
             }
         }

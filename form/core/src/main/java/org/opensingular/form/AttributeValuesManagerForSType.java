@@ -34,80 +34,17 @@ final class AttributeValuesManagerForSType extends AttributeValuesManager<SType<
     @Override
     @Nullable
     public <V> V getAttributeValue(@Nonnull AttrInternalRef ref, @Nullable Class<V> resultClass) {
-        return getAttributeValueInTheContextOf(getOwner(), null, ref, resultClass);
+        return SAttributeUtil.getAttributeValueInTheContextOf(getOwner(), null, ref, resultClass);
     }
 
-    @Nonnull
-    public SInstance getCreating(@Nonnull AttrInternalRef ref) {
-        SInstance entry = get(ref);
-        if (entry == null) {
-            if (ref.isResolved()) {
-                entry = createNewAttribute(ref);
-            } else {
-                entry = createTemporaryAttribute();
-                entry.setAsAttribute(ref, getOwner());
-            }
-            set(ref, entry);
-        }
-        return entry;
+    @Override
+    void setEntryAsAttribute(@Nonnull SInstance entry, @Nonnull AttrInternalRef ref) {
+        entry.setAsAttribute(ref, getOwner());
     }
 
     @Nonnull
     protected SInstance createNewAttribute(@Nonnull AttrInternalRef ref) {
-        for (SType<?> current = getOwner(); current != null; current = current.getSuperType()) {
-            SType<?> attrType = current.getAttributeDefinedLocally(ref);
-            if (attrType != null) {
-                return set(ref, attrType.newAttributeInstanceFor(getOwner()));
-            }
-        }
-        throw new SingularFormException(
-                "Não existe o atributo '" + ref.getName() + "' definido em '" + getOwner().getName() +
-                        "' ou nos tipos pai do mesmo", getOwner());
+        SType<?> attrType =  SAttributeUtil.getAttributeDefinitionInHierarchy(getOwner(), ref);
+        return Objects.requireNonNull(set(ref, attrType.newAttributeInstanceFor(getOwner())));
     }
-
-    @Nullable
-    final static <V> V getAttributeValueInTheContextOf(@Nonnull final SType<?> target, @Nullable SInstance contextInstance,
-            @Nonnull AttrInternalRef ref, @Nullable Class<V> resultClass) {
-        Objects.requireNonNull(target);
-        Objects.requireNonNull(ref);
-        SInstance instance = findAttributeInstance(target, ref);
-        if (instance != null) {
-            if (contextInstance != null) {
-                return instance.getValueInTheContextOf(contextInstance, resultClass);
-            } else if (resultClass == null) {
-                return (V) instance.getValue();
-            }
-            return instance.getValueWithDefault(resultClass);
-        }
-        SType<?> atr = getAttributeDefinedHierarchy(target, ref);
-        if (resultClass == null) {
-            return (V) atr.getAttributeValueOrDefaultValueIfNull();
-        }
-        return atr.getAttributeValueOrDefaultValueIfNull(resultClass);
-    }
-
-    @Nonnull
-    final static SType<?> getAttributeDefinedHierarchy(@Nonnull SType<?> type, @Nonnull AttrInternalRef ref) {
-        Objects.requireNonNull(type);
-        Objects.requireNonNull(ref);
-        for (SType<?> current = type; current != null; current = current.getSuperType()) {
-            SType<?> att = current.getAttributeDefinedLocally(ref);
-            if (att != null) {
-                return att;
-            }
-        }
-        throw new SingularFormException("Não existe atributo '" + ref.getName() + "' em " + type.getName(), type);
-    }
-
-    @Nullable
-    final static SInstance findAttributeInstance(@Nonnull SType<?> target, @Nonnull AttrInternalRef ref) {
-        for (SType<?> current = target; current != null; current = current.getSuperType()) {
-            SInstance instance = current.getAttributeDirectly(ref);
-            if (instance != null) {
-                return instance;
-            }
-        }
-        return null;
-    }
-
 }

@@ -68,14 +68,14 @@ import java.util.Objects;
  */
 public class TempFileProvider implements Closeable {
 
-    static final String DEFAULT_FILE_SUFFIX = ".tmp";
-    static final String DEFAULT_FILE_PREFIX = "Singular_";
+    private static final String DEFAULT_FILE_SUFFIX = ".tmp";
+    private static final String DEFAULT_FILE_PREFIX = "Singular_";
 
     private final Class<?> owner;
 
     private final List<TempEntry> tempFiles = new ArrayList<>();
 
-    TempFileProvider(Class<?> owner) {
+    private TempFileProvider(Class<?> owner) {
         this.owner = Objects.requireNonNull(owner);
     }
 
@@ -141,19 +141,30 @@ public class TempFileProvider implements Closeable {
     }
 
     /**
-     * Cria uma diretório temporário (incluindo na lista para deleção automática). O diretório e seus arquivos de
-     * conteúdo serão apagados juntos.
+     * Creates a temporary directory (including it in the list of automatic deletions). The directory and its content
+     * will be deleted recursively.
      */
     public File createTempDir() {
-        File f = createTempDir(DEFAULT_FILE_PREFIX);
+        return createTempDir(null);
+    }
+
+    /**
+     * Creates a temporary directory (including it in the list of automatic deletions). The directory and its content
+     * will be deleted recursively.
+     *
+     * @param secondPrefix A prefix to be added to directory besides the default prefix
+     */
+    public File createTempDir(@Nullable String secondPrefix) {
+        File f = createTempDirInternal(
+                secondPrefix == null ? DEFAULT_FILE_PREFIX : DEFAULT_FILE_PREFIX + secondPrefix + '_');
         tempFiles.add(new TempEntry(f, true));
         return f;
     }
 
     /** Cria uma diretório temporário com o prefixo informado. */
-    private static File createTempDir(@Nonnull String prefix) {
+    private static File createTempDirInternal(@Nonnull String prefix) {
         File baseDir = new File(System.getProperty("java.io.tmpdir"));
-        String baseName = prefix + System.currentTimeMillis() + "-";
+        String baseName = prefix + System.currentTimeMillis() + '-';
 
         for (int counter = 0; counter < 10000; ++counter) {
             File tempDir = new File(baseDir, baseName + counter);
@@ -170,7 +181,7 @@ public class TempFileProvider implements Closeable {
     /** Cria um arquivo temporário (incluindo na lista para deleção automática). */
     @Nonnull
     public File createTempFile() {
-        return createTempFile((String) null, (String) null);
+        return createTempFile((String) null, null);
     }
 
     /** Cria um arquivo temporário já com o conteúdo informado (incluindo na lista para deleção automática). */
@@ -239,7 +250,7 @@ public class TempFileProvider implements Closeable {
     }
 
     @Nonnull
-    private final File createTempFileInternal(@Nullable String prefix, @Nullable String suffix) {
+    private File createTempFileInternal(@Nullable String prefix, @Nullable String suffix) {
         String p = prefix == null ? owner.getSimpleName() + '_' : prefix;
         String s = suffix == null ? DEFAULT_FILE_SUFFIX : suffix;
         try {
@@ -272,7 +283,7 @@ public class TempFileProvider implements Closeable {
      * Tenta apagar os arquivos temporários associados. Não conseguindo apagar ou ocorrendo uma exception ao
      * chamar {@link File#delete()}, faz log do erro e dispara exception.
      *
-     * @see TempFileUtils#deleteOrException(File, Class)
+     * @see TempFileUtils#deleteOrException(File, Object)
      */
     public void deleteOrException() {
         delete(false);
@@ -282,7 +293,7 @@ public class TempFileProvider implements Closeable {
      * Tenta apagar os arquivos temporários associados. . Não conseguindo apagar ou ocorrendo uma exception ao
      * chamar {@link File#delete()}, faz log do erro mas não dispara exception.
      *
-     * @see TempFileUtils#deleteAndFailQuietily(File, Class)
+     * @see TempFileUtils#deleteAndFailQuietly(File, Object)
      */
     public void deleteQuietly() {
         delete(true);
@@ -292,10 +303,10 @@ public class TempFileProvider implements Closeable {
         Exception error = null;
         for (TempEntry entry : tempFiles) {
             try {
-                if (entry.diretory) {
-                    recursiveDelete(entry.file, quietly);
+                if (entry.directory) {
+                    TempFileUtils.deleteDirectoryRecursively(entry.file, owner, quietly);
                 } else {
-                    deleteSingleFile(entry.file, quietly);
+                    TempFileUtils.delete(entry.file, owner, quietly);
                 }
             } catch (Exception e) {
                 error = e;
@@ -307,31 +318,13 @@ public class TempFileProvider implements Closeable {
         }
     }
 
-    private void recursiveDelete(File file, boolean quietly) {
-        File[] files = file.listFiles();
-        if (files != null) {
-            for (File each : files) {
-                recursiveDelete(each, quietly);
-            }
-        }
-        deleteSingleFile(file, quietly);
-    }
-
-    private void deleteSingleFile(File file, boolean quietly) {
-        if (quietly) {
-            TempFileUtils.deleteAndFailQuietily(file, owner);
-        } else {
-            TempFileUtils.deleteOrException(file, owner);
-        }
-    }
-
     private static class TempEntry {
-        public final boolean diretory;
+        public final boolean directory;
         public final File file;
 
-        private TempEntry(File file, boolean diretory) {
+        private TempEntry(File file, boolean directory) {
             this.file = file;
-            this.diretory = diretory;
+            this.directory = directory;
         }
     }
 }

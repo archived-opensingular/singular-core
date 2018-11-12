@@ -44,6 +44,7 @@ public class SpringSDocumentFactoryEmpty extends SDocumentFactory {
             super(factory);
         }
 
+        @Nonnull
         @Override
         protected SDocumentFactory retrieve() {
             return new SpringSDocumentFactoryEmpty();

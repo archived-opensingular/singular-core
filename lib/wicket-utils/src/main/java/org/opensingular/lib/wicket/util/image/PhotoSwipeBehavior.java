@@ -19,18 +19,36 @@ import org.opensingular.lib.wicket.util.jquery.JQuery;
 
 public class PhotoSwipeBehavior extends Behavior {
 
-    private final ISupplier<String> imageDataJsFunction;
-    private CoreOptions             coreOptions;
-    private DefaultUIOptions        defaultUIOptions;
-    private Component               component;
+    private ISupplier<String> imageDataJsFunction;
+    private CoreOptions       coreOptions;
+    private DefaultUIOptions  defaultUIOptions;
+    private Component         component;
 
     public PhotoSwipeBehavior(ISupplier<String> imageDataJsFunction) {
         this.imageDataJsFunction = imageDataJsFunction;
     }
+    private PhotoSwipeBehavior() {
+    }
 
-    public static PhotoSwipeBehavior forURLs(IModel<String[]> ulrs) {
-        return new PhotoSwipeBehavior(() -> {
-            String[] array = ulrs.getObject();
+    public static PhotoSwipeBehavior forURLs(IModel<String[]> urls) {
+        return new PhotoSwipeBehavior().setImageDataFromURLs(urls);
+    }
+
+    public static PhotoSwipeBehavior forImages(IModel<Image[]> images) {
+        return new PhotoSwipeBehavior().setImageDataFromImages(images);
+    }
+
+    public PhotoSwipeBehavior setImageDataFromImages(IModel<Image[]> images) {
+        return setImageDataJsFunction(() -> {
+            Image[] array = images.getObject();
+            if ((array == null) || (array.length == 0))
+                return "function() { return []; }";
+            return "function() { return $.map(" + JQuery.$(array) + ", function(img){ return ({ src:img.src, w:img.naturalWidth||0, h:img.naturalHeight||0 }); }); }";
+        });
+    }
+    public PhotoSwipeBehavior setImageDataFromURLs(IModel<String[]> urls) {
+        return setImageDataJsFunction(() -> {
+            String[] array = urls.getObject();
             if ((array == null) || (array.length == 0))
                 return "function() { return []; }";
             return Stream.of(array)
@@ -38,14 +56,9 @@ public class PhotoSwipeBehavior extends Behavior {
                 .collect(joining(", ", "function() { return [", "]; }"));
         });
     }
-
-    public static PhotoSwipeBehavior forImages(IModel<Image[]> images) {
-        return new PhotoSwipeBehavior(() -> {
-            Image[] array = images.getObject();
-            if ((array == null) || (array.length == 0))
-                return "function() { return []; }";
-            return "function() { return $.map(" + JQuery.$(array) + ", function(img){ return ({ src:img.src, w:img.naturalWidth||0, h:img.naturalHeight||0 }); }); }";
-        });
+    public PhotoSwipeBehavior setImageDataJsFunction(ISupplier<String> imageDataJsFunction) {
+        this.imageDataJsFunction = imageDataJsFunction;
+        return this;
     }
 
     public CoreOptions getCoreOptions() {
@@ -273,10 +286,10 @@ public class PhotoSwipeBehavior extends Behavior {
         public static final ShareButton DOWNLOAD  = new ShareButton("download" , "Download image"   , true , "{{raw_image_url}}");
         //@formatter:on
 
-        public String  id;
-        public String  label;
-        public String  url;
-        public boolean enableDownload;
+        public String                   id;
+        public String                   label;
+        public String                   url;
+        public boolean                  enableDownload;
 
         public ShareButton(String id, String label, boolean enableDownload, String url) {
             this.id = id;

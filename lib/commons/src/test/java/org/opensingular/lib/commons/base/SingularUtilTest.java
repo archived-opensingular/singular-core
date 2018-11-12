@@ -18,12 +18,15 @@
 
 package org.opensingular.lib.commons.base;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opensingular.lib.commons.dto.HtmlToPdfDTO;
 
+import java.io.IOException;
 import java.util.Date;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -38,16 +41,38 @@ public class SingularUtilTest {
     public void convertToJavaIdentityTest() {
         String test = " um teste para verificar o que ele converte.";
 
-        String convertedValue = SingularUtil.convertToJavaIdentity(test, true);
-        Assert.assertEquals("umTesteParaVerificarOQueEleConverte", convertedValue);
+        String convertedValue = SingularUtil.convertToJavaIdentifier(test);
+        assertEquals("umTesteParaVerificarOQueEleConverte", convertedValue);
 
-        convertedValue = SingularUtil.convertToJavaIdentity(test, true, false);
-        Assert.assertEquals("UmTesteParaVerificarOQueEleConverte", convertedValue);
+        convertedValue = SingularUtil.convertToJavaIdentifier(test, true);
+        assertEquals("UmTesteParaVerificarOQueEleConverte", convertedValue);
+
+        Assertions.assertThatThrownBy(() -> SingularUtil.convertToJavaIdentifier("99")).isExactlyInstanceOf(
+                SingularException.class).hasMessageContaining("it's no possible to convert");
+        Assertions.assertThatThrownBy(() -> SingularUtil.convertToJavaIdentifier("")).isExactlyInstanceOf(
+                SingularException.class).hasMessageContaining("it's no possible to convert");
+        Assertions.assertThatThrownBy(() -> SingularUtil.convertToJavaIdentifier("  ")).isExactlyInstanceOf(
+                SingularException.class).hasMessageContaining("it's no possible to convert");
+
+        //Normalization of special characters
+        assertEquals("ab", SingularUtil.convertToJavaIdentifier("a\uFB03b"));
+        assertEquals("aA", SingularUtil.convertToJavaIdentifier("\u00C1\u00C1"));
+        assertEquals("a", SingularUtil.convertToJavaIdentifier("ã"));
+
+        Assertions.assertThat(SingularUtil.tryConvertToJavaIdentifier("A A")).hasValue("aA");
+        Assertions.assertThat(SingularUtil.tryConvertToJavaIdentifier("a a", true)).hasValue("AA");
+        Assertions.assertThat(SingularUtil.tryConvertToJavaIdentifier("  ")).isNotPresent();
+        Assertions.assertThat(SingularUtil.tryConvertToJavaIdentifier("99")).isNotPresent();
+        Assertions.assertThat(SingularUtil.tryConvertToJavaIdentifier("X (y) {y} %y")).hasValue("xYYY");
     }
 
-    @Test(expected = NullPointerException.class)
-    public void propragateExceptionTest() {
-        SingularUtil.propagate(new NullPointerException());
+    @Test
+    public void propagateExceptionTest() {
+        NullPointerException e = new NullPointerException();
+        Assertions.assertThatThrownBy(() -> SingularUtil.propagate(e)).isSameAs(e);
+
+        Assertions.assertThatThrownBy(() -> SingularUtil.propagate(new IOException("Test"))).isExactlyInstanceOf(
+                SingularException.class).hasCauseExactlyInstanceOf(IOException.class);
     }
 
     @Test
@@ -55,9 +80,9 @@ public class SingularUtilTest {
         assertTrue(SingularUtil.areEqual(1, 1, it -> it));
 
         class A {
-            int    i;
-            String s;
-            Date   d;
+            private int i;
+            private String s;
+            private Date d;
             public A(int i, String s, Date d) {
                 this.i = i;
                 this.s = s;

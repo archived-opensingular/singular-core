@@ -47,7 +47,7 @@ public class PropertyMapTest {
         assertKey(map, "any", "x");
 
         assertThatThrownBy(() -> map.add("any", null)).isInstanceOf(SingularPropertyException.class)
-                .hasMessageContaining("is already definied");
+                .hasMessageContaining("is already defined");
 
         assertKey(map, "any", "x");
     }
@@ -154,7 +154,7 @@ public class PropertyMapTest {
         assertEquals(3, map.getSize());
 
         assertThatThrownBy(() -> map.add("mock.true", "2")).isInstanceOf(SingularPropertyException.class)
-                .hasMessageContaining("is already definied").hasMessageContaining("singular.properties");
+                .hasMessageContaining("is already defined").hasMessageContaining("singular.properties");
     }
 
     @Test

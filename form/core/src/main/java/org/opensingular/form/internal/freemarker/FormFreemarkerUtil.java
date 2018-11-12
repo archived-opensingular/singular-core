@@ -67,11 +67,11 @@ public final class FormFreemarkerUtil {
     }
 
     public SimpleValueCalculation<String> createInstanceCalculation(String stringTemplate) {
-        return context -> merge(context.instance(), stringTemplate);
+        return context -> merge(context.instanceContext(), stringTemplate);
     }
 
     public SimpleValueCalculation<String> createInstanceCalculation(String stringTemplate, boolean escapeContentHtml, boolean ignoreError) {
-        return context -> merge(context.instance(), stringTemplate, escapeContentHtml, ignoreError);
+        return context -> merge(context.instanceContext(), stringTemplate, escapeContentHtml, ignoreError);
     }
 
     /**

@@ -22,12 +22,15 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -91,7 +94,7 @@ public final class MParser {
      * @see org.xml.sax.EntityResolver
      * @see javax.xml.parsers.DocumentBuilder#setEntityResolver
      */
-    public void addInputSource(String systemId, InputSource source) {
+    void addInputSource(String systemId, InputSource source) {
         if (sourcesLocais_ == null) {
             sourcesLocais_ = new MEntityResolver();
         }
@@ -106,7 +109,7 @@ public final class MParser {
      * interceptado.
      * @param value a ser utilizado toda vez que pedir o recurso.
      */
-    public void addInputSource(String systemId, String value) {
+    void addInputSource(String systemId, String value) {
         InputSource is = new InputSource(systemId);
         is.setCharacterStream(new StringReader(value));
         addInputSource(systemId, is);
@@ -120,7 +123,7 @@ public final class MParser {
      * interceptado.
      * @param value a ser utilizado toda vez que pedir o recurso.
      */
-    public void addInputSource(String systemId, InputStream value) {
+    void addInputSource(String systemId, InputStream value) {
         InputSource is = new InputSource(systemId);
         is.setByteStream(value);
         addInputSource(systemId, is);
@@ -140,7 +143,7 @@ public final class MParser {
      * Inciando com '/' indica para começa do raiz dos pacotes.
      * @see java.lang.Class#getResourceAsStream
      */
-    public void addInputSource(String systemId, Class<?> ref, String resourceName) {
+    void addInputSource(String systemId, Class<?> ref, String resourceName) {
         InputStream in = ref.getResourceAsStream(resourceName);
         if (in == null) {
             throw new SingularException("Nao foi encontrado o recurso '"
@@ -161,60 +164,45 @@ public final class MParser {
     /**
      * Para o parse do xml com validação e verificação de namespace e utilizando
      * os mapeamento de InputSource efetuados.
-     *
-     * @param xml -
-     * @return DOM resultante do parse.
-     *
-     * @throws SAXException -
-     * @throws IOException -
      */
-    public MElement parseComResolver(String xml) throws SAXException, IOException {
+    @Nonnull
+    public MElement parseComResolver(@Nonnull String xml) throws SAXException, IOException {
         InputSource is = new InputSource(new StringReader(xml));
-        return MElement.toMElement(parseToElement(is, true, true, getResolver()));
+        return parseToElement(is, true, true, getResolver());
     }
 
     /**
      * Para o parse do xml com validação e verificação de namespace e utilizando
      * os mapeamento de InputSource efetuados.
-     *
-     * @param xml -
-     * @return DOM resultante do parse.
-     *
-     * @throws SAXException -
-     * @throws IOException -
      */
-    public MElement parseComResolver(byte[] xml) throws SAXException, IOException {
+    @Nonnull
+    public MElement parseComResolver(@Nonnull byte[] xml) throws SAXException, IOException {
         InputSource is = new InputSource(new ByteArrayInputStream(xml));
-        return MElement.toMElement(parseToElement(is, true, true, getResolver()));
+        return parseToElement(is, true, true, getResolver());
     }
 
     /**
      * Para o parse do xml com validação e verificação de namespace e utilizando
      * os mapeamento de InputSource efetuados.
-     *
-     * @param in -
-     * @return DOM resultante do parse.
-     *
-     * @throws SAXException -
-     * @throws IOException -
      */
-    public MElement parseComResolver(InputStream in) throws SAXException, IOException {
-        return MElement.toMElement(parseToElement(new InputSource(in), true, true, getResolver()));
+    @Nonnull
+    public MElement parseComResolver(@Nonnull InputStream in) throws SAXException, IOException {
+        return parseToElement(new InputSource(in), true, true, getResolver());
     }
 
     private final class MEntityResolver implements EntityResolver {
 
         private final Map<String, InputSource> mapeamentoSourceLocal_ = new HashMap<>();
 
-        public void addSource(String systemId, InputSource source) {
+        void addSource(String systemId, InputSource source) {
             mapeamentoSourceLocal_.put(systemId, source);
         }
 
         public InputSource resolveEntity(String publicId, String systemId) throws SAXException,
                 IOException {
-            Object o = mapeamentoSourceLocal_.get(systemId);
+            InputSource o = mapeamentoSourceLocal_.get(systemId);
             if (o != null) {
-                return (InputSource) o;
+                return o;
             }
             if (entityResolver_ != null) {
                 return entityResolver_.resolveEntity(publicId, systemId);
@@ -224,22 +212,35 @@ public final class MParser {
     }
 
     /**
-     * Faz um parse (leitura de um XML) a partir de uma string. Já faz a leitura
-     * do xml com namespaceAware ativo.
-     *
-     * @param xml -
-     * @return O MElement representado na stream
-     *
-     * @throws SAXException Se ocorrer um erro de parse. Se houver mais de um
-     * erro no parse, então todos são retornado no texto da mensagem.
-     * @throws IOException Se ocorrer um erro na leitura da stream
+     * Faz um parse (leitura de um XML) a partir de uma string. Já faz a leitura do xml com namespaceAware ativo.
      */
-    public static MElement parse(String xml) throws SAXException, IOException {
-        //Apesar deprecated a linha abaixo é mais efeciente do que a linha
-        //comentada a seguir e apresenta as mesmas limitações.
-        StringReader in = new StringReader(xml);
-        //ByteArrayInputStream in = new ByteArrayInputStream(xml.getBytes());
-        return MElement.toMElement(parseToElement(new InputSource(in), true, false, null));
+    @Nonnull
+    public static MElement parse(@Nonnull String xml) throws SAXException, IOException {
+        return parse(new StringReader(xml));
+    }
+
+    /**
+     * Faz um parse (leitura de um XML) a partir de uma stream.
+     */
+    @Nonnull
+    public static MElement parse(@Nonnull Reader in) throws SAXException, IOException {
+        return parseToElement(new InputSource(in), true, false, null);
+    }
+
+    /**
+     * Faz um parse (leitura de um XML) a partir de uma stream.
+     */
+    @Nonnull
+    public static MElement parse(@Nonnull byte[] content) throws SAXException, IOException {
+        return parse(new ByteArrayInputStream(content));
+    }
+
+    /**
+     * Faz um parse (leitura de um XML) a partir de uma stream.
+     */
+    @Nonnull
+    public static MElement parse(@Nonnull InputStream in) throws SAXException, IOException {
+        return parse(in, true, false);
     }
 
     /**
@@ -251,26 +252,21 @@ public final class MParser {
      * @param validating Indica se o parse procurará e utilizará a definição da
      * estrutura do XML (tipicamente um DTD ou Schema).
      * @return O MElement representado na stream
-     *
-     * @throws SAXException Se ocorrer um erro de parse. Se houver mais de um
-     * erro no parse, então todos são retornado no texto da mensagem.
-     * @throws IOException Se ocorrer um erro na leitura da stream
      */
-    public static MElement parse(InputStream in, boolean namespaceAware, boolean validating)
+    @Nonnull
+    public static MElement parse(@Nonnull InputStream in, boolean namespaceAware, boolean validating)
             throws SAXException, IOException {
-        return MElement.toMElement(parseToElement(new InputSource(in), namespaceAware, validating,
-                null));
+        return parseToElement(new InputSource(in), namespaceAware, validating, null);
     }
 
     /**
      * Faz parse de uma InputStream.
      */
-    static Element parseToElement(InputSource in, boolean namespaceAware, boolean validating,
-            EntityResolver entityResolver) throws SAXException,
-            IOException {
+    @Nonnull
+    private static MElement parseToElement(@Nonnull InputSource in, boolean namespaceAware, boolean validating,
+            @Nullable EntityResolver entityResolver) throws SAXException, IOException {
 
-        DocumentBuilderFactory factory = MElementWrapper.getDocumentBuilderFactory(namespaceAware,
-                validating);
+        DocumentBuilderFactory factory = XmlUtil.getDocumentBuilderFactory(namespaceAware, validating);
         try {
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         } catch (Exception e){
@@ -294,6 +290,6 @@ public final class MParser {
         if (eHandler.hasErros()) {
             throw new SAXException(eHandler.getErros());
         }
-        return result;
+        return MElement.toMElementNotNull(result);
     }
 }

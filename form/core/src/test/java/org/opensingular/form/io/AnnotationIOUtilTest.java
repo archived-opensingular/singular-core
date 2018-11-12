@@ -33,9 +33,9 @@ import org.opensingular.internal.lib.commons.xml.MElement;
  */
 
 @RunWith(Parameterized.class)
-public class TestFormAnnotationPersistence extends TestCaseForm {
+public class AnnotationIOUtilTest extends TestCaseForm {
 
-    public TestFormAnnotationPersistence(TestFormConfig testFormConfig) {
+    public AnnotationIOUtilTest(TestFormConfig testFormConfig) {
         super(testFormConfig);
     }
 
@@ -63,7 +63,7 @@ public class TestFormAnnotationPersistence extends TestCaseForm {
         instance.getField("address").asAtrAnnotation().text("fill the address");
         instance.getField("address.street").asAtrAnnotation().text("fill the street");
 
-        SIList<SIComposite> itens = (SIList<SIComposite>) instance.getFieldList("itens");
+        SIList<SIComposite> itens = instance.getFieldList("itens", SIComposite.class);
         SIComposite item = itens.addNew();
         item.getField("qtd").asAtrAnnotation().text("qtd[0] is blank");
         item = itens.addNew();
@@ -71,8 +71,8 @@ public class TestFormAnnotationPersistence extends TestCaseForm {
         item.getField("name").asAtrAnnotation().text("ok");
         item.getField("qtd").asAtrAnnotation().text("qtd[1] is blank");
 
-        MElement xmlInstance = SFormXMLUtil.toXML(instance).get();
-        MElement xmlAnnotation = SFormXMLUtil.annotationToXml(instance).get();
+        MElement xmlInstance = SFormXMLUtil.toXML(instance).orElseThrow(NullPointerException::new);
+        MElement xmlAnnotation = AnnotationIOUtil.toXML(instance).orElseThrow(NullPointerException::new);
 
         //It's expected to be only persisted the field with value
         assertEquals(2,xmlInstance.countFilhos());
@@ -91,7 +91,7 @@ public class TestFormAnnotationPersistence extends TestCaseForm {
         assertEquals(7,xmlAnnotation.countFilhos());
 
         SIComposite instance2 = SFormXMLUtil.fromXML(instance.getType(), xmlInstance);
-        SFormXMLUtil.annotationLoadFromXml(instance2, xmlAnnotation);
+        AnnotationIOUtil.loadFromXmlIfAvailable(instance2.getDocument(), xmlAnnotation);
 
         assertInstance(instance2).isAnnotationTextEquals("description","ok");
         assertInstance(instance2).isAnnotationTextEquals("complement","fill the complement");

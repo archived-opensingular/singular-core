@@ -24,7 +24,6 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.internal.lib.commons.util.SingularIOUtils;
-import org.opensingular.internal.lib.commons.xml.MElement;
 import org.opensingular.lib.commons.context.ServiceRegistry;
 
 import javax.annotation.Nonnull;
@@ -60,13 +59,14 @@ public class FormSerializationUtil {
      * tipo.
      * </p>
      */
-    public static FormSerialized toSerializedObject(SInstance instance) {
+    @Nonnull
+    public static FormSerialized toSerializedObject(@Nonnull SInstance instance) {
         FormSerialized fs = toSerialized(instance.getDocument());
         defineFocusField(instance, fs);
         return fs;
     }
 
-    private static void defineFocusField(SInstance instance, FormSerialized fs) {
+    private static void defineFocusField(@Nonnull SInstance instance, @Nonnull FormSerialized fs) {
         if (instance.getRoot() != instance) {
             fs.setFocusFieldPath(instance.getPathFromRoot());
         }
@@ -81,18 +81,16 @@ public class FormSerializationUtil {
      * tipo.
      * </p>
      */
-    private static FormSerialized toSerialized(SDocument document) {
+    @Nonnull
+    private static FormSerialized toSerialized(@Nonnull SDocument document) {
         SInstance root = document.getRoot();
-        MElement xml = SFormXMLUtil.toXMLPreservingRuntimeEdition(root);
-        MElement annotations = null;
-        if (document.getDocumentAnnotations().hasAnnotations()) {
-            annotations = SFormXMLUtil.toXMLPreservingRuntimeEdition(document.getDocumentAnnotations().getAnnotations());
-        }
+        byte[] contentInstance = SFormBinaryUtil.writePreservingRuntimeEdition(root);
+        byte[] contentAnnotations = AnnotationIOUtil.toBinaryPreservingRuntimeEdition(document);
 
         checkIfSerializable(root);
         RefType refType = document.getRootRefType().orElseThrow(
                 () -> new SingularFormException("RefTYpe null", document));
-        FormSerialized fs = new FormSerialized(refType, root.getType().getName(), xml, annotations,
+        FormSerialized fs = new FormSerialized(refType, root.getType().getName(), contentInstance, contentAnnotations,
                 document.getDocumentFactoryRef());
         serializeServices(document, fs);
         fs.setValidationErrors(document.getValidationErrors());
@@ -107,7 +105,7 @@ public class FormSerializationUtil {
      * @throws SingularFormException
      *             Se não atender os critérios
      */
-    public static void checkIfSerializable(SInstance instance) {
+    public static void checkIfSerializable(@Nonnull SInstance instance) {
         SDocument document = instance.getDocument();
         if (!document.getRootRefType().isPresent()) {
             throw new SingularFormException("Não foi configurado o rootRefType no Document da instância, o que impedirá a "
@@ -131,7 +129,7 @@ public class FormSerializationUtil {
         }
     }
 
-    private static void serializeServices(SDocument document, FormSerialized fs) {
+    private static void serializeServices(@Nonnull SDocument document, @Nonnull FormSerialized fs) {
         Map<String, ServiceRegistry.ServiceEntry> services = document.getLocalRegistry().services();
         if (!services.isEmpty()) {
             if (!(services instanceof Serializable)) {
@@ -147,17 +145,16 @@ public class FormSerializationUtil {
      * documento. Se foi serialziado um sub parte do documento, retorna a
      * instancia da sub parte, mas na prática deserializa todo o documento.
      *
-     * @param fs
-     *            Dado a ser deserializado
-     * @return Sempre diferente de Null
-     * @exception SingularFormException
-     *                Senão encontrar o dicionário ou tipo necessário.
+     * @param fs Dado a ser deserializado
+     * @exception SingularFormException Senão encontrar o dicionário ou tipo necessário.
      */
-    public static SInstance toInstance(FormSerialized fs) {
+    @Nonnull
+    public static SInstance toInstance(@Nonnull FormSerialized fs) {
         try {
-            SInstance root = SFormXMLUtil.fromXML(fs.getRefRootType(), fs.getXml(), fs.getSDocumentFactoryRef().get());
+            SInstance root = SFormBinaryUtil.read(fs.getRefRootType(), fs.getContentInstance(),
+                    fs.getSDocumentFactoryRef().get());
             deserializeServices(fs.getServices(), root.getDocument());
-            SFormXMLUtil.annotationLoadFromXml(root.getDocument(), fs.getAnnotations());
+            AnnotationIOUtil.loadFromBytesIfAvailable(root.getDocument(), fs.getContentAnnotations());
             root.getDocument().setValidationErrors(fs.getValidationErrors());
             return defineRoot(fs, root);
         } catch (Exception e) {
@@ -171,19 +168,23 @@ public class FormSerializationUtil {
         }
     }
 
-    private static void bindService(SDocument document, Map.Entry<String, ServiceRegistry.ServiceEntry> entry) {
+    @SuppressWarnings("unchecked")
+    private static void bindService(@Nonnull SDocument document,
+            @Nonnull Map.Entry<String, ServiceRegistry.ServiceEntry> entry) {
         ServiceRegistry.ServiceEntry p = entry.getValue();
         document.bindLocalService(entry.getKey(), (Class<Object>) p.type, p.provider);
     }
 
-    private static SInstance defineRoot(FormSerialized fs, SInstance root) {
+    @Nonnull
+    private static SInstance defineRoot(@Nonnull FormSerialized fs, @Nonnull SInstance root) {
         if (StringUtils.isBlank(fs.getFocusFieldPath())) {
             return root;
         }
         return ((ICompositeInstance) root).getField(fs.getFocusFieldPath());
     }
 
-    private static SingularFormException deserializingError(FormSerialized fs, Exception e) {
+    @Nonnull
+    private static SingularFormException deserializingError(@Nonnull FormSerialized fs, Exception e) {
         String msg = "Error when deserializing " + fs.getRootTypeName();
         if (!StringUtils.isBlank(fs.getFocusFieldPath())) {
             msg += " with subPath '" + fs.getFocusFieldPath() + '\'';

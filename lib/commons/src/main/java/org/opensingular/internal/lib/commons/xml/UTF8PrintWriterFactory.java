@@ -24,6 +24,8 @@ import java.nio.charset.StandardCharsets;
 
 public class UTF8PrintWriterFactory implements PrintWriterFactory {
 
+    public static final UTF8PrintWriterFactory INSTANCE = new UTF8PrintWriterFactory();
+
     @Override
     public Charset getCharset() {
         return StandardCharsets.UTF_8;

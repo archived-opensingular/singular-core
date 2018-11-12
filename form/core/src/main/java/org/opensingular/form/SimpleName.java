@@ -30,7 +30,7 @@ public final class SimpleName {
 
     private final String simpleName;
 
-    public SimpleName(@Nonnull String simpleName) {this.simpleName = SFormUtil.validateSimpleName(simpleName);}
+    SimpleName(@Nonnull String simpleName) {this.simpleName = SFormUtil.validateSimpleName(simpleName);}
 
     /** Return the actual name. */
     @Nonnull
@@ -60,7 +60,7 @@ public final class SimpleName {
     }
 
     @Nullable
-    public static SimpleName ofNullable(@Nullable String name) {
+    static SimpleName ofNullable(@Nullable String name) {
         return name == null ? null : new SimpleName(name);
     }
 }

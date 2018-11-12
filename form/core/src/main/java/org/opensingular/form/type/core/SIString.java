@@ -18,11 +18,14 @@ package org.opensingular.form.type.core;
 
 import org.opensingular.form.SISimple;
 
+import javax.annotation.Nonnull;
+
 public class SIString extends SISimple<String> implements SIComparable<String> {
 
     public SIString() {
     }
 
+    @Nonnull
     @Override
     public STypeString getType() {
         return (STypeString) super.getType();

@@ -16,6 +16,11 @@
 
 package org.opensingular.form;
 
+import org.opensingular.form.internal.PathReader;
+import org.opensingular.form.util.transformer.Value;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,11 +31,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
-
-import org.opensingular.form.internal.PathReader;
-import org.opensingular.form.util.transformer.Value;
 
 public class SIList<E extends SInstance> extends SInstance implements Iterable<E>, ICompositeInstance {
 
@@ -50,6 +50,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         return list;
     }
 
+    @Nonnull
     @Override
     public STypeList<?, ?> getType() {
         return (STypeList<?, ?>) super.getType();
@@ -95,19 +96,43 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         return isEmpty() || values.stream().allMatch(SInstance::isEmptyOfData);
     }
 
+    /**
+     * Add a new element instance to the list of type definided in {@link STypeList#getElementsType()}.
+     */
     @Nonnull
     public E addNew() {
-        return addNewInternal(true, -1);
+        return addNewInternal(null, true, -1);
+    }
+
+    /**
+     * Add a new element instance to the list of the specific {@link SType}. The type informed must be compatible with
+     * the list's element type, i.e., it must be the same or derived of {@link STypeList#getElementsType()}.
+     */
+    @Nonnull
+    public <T extends SType<I>, I extends E> I addNew(@Nonnull Class<T> derivedElementTypeClass) {
+        T derivedElementType = null;
+        if (getElementsType().getClass() != derivedElementTypeClass) {
+
+            derivedElementType = getType().findOrCreateExtendedType(derivedElementTypeClass, getElementsType());
+        }
+        return (I) addNewInternal(derivedElementType, true, -1);
     }
 
     @Nonnull
     public E addNewAt(int index) {
-        return addNewInternal(false, index);
+        return addNewInternal(null, false, index);
     }
 
     @Nonnull
-    private E addNewInternal(boolean atEnd, int index) {
-        E instance = getElementsType().newInstance(getDocument());
+    private <T extends SType<I>, I extends E> E addNewInternal(@Nullable T derivedElementType, boolean atEnd,
+            int index) {
+        E instance;
+        if (derivedElementType == null) {
+            instance = getElementsType().newInstance(getDocument());
+        } else {
+            instance = derivedElementType.newInstance(getDocument());
+        }
+
         addInternal(instance, atEnd, index);
         instance.init();
         return instance;
@@ -167,7 +192,8 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
         return this;
     }
 
-    private E addInternal(E instance, boolean atEnd, int index) {
+    @Nonnull
+    private E addInternal(@Nonnull E instance, boolean atEnd, int index) {
         if (values == null) {
             values = new ArrayList<>();
         }
@@ -186,7 +212,8 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     @Override
-    final SInstance getFieldLocal(PathReader pathReader) {
+    @Nullable
+    final SInstance getFieldLocal(@Nonnull PathReader pathReader) {
         SInstance instance = getChecking(pathReader);
         if (instance == null) {
             SFormUtil.resolveFieldType(getType(), pathReader);
@@ -195,7 +222,8 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     @Override
-    Optional<SInstance> getFieldLocalOpt(PathReader pathReader) {
+    @Nonnull
+    Optional<SInstance> getFieldLocalOpt(@Nonnull PathReader pathReader) {
         int index = resolveIndex(pathReader);
         if (values != null && index < values.size()) {
             return Optional.ofNullable(values.get(index));
@@ -335,6 +363,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     @Override
+    @Nonnull
     public List<E> getChildren() {
         return getValues();
     }
@@ -345,6 +374,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     @Override
+    @Nonnull
     public Iterator<E> iterator() {
         return (values == null) ? Collections.emptyIterator() : new Iterator<E>() {
 
@@ -371,6 +401,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     @Override
+    @Nonnull
     public Stream<E> stream() {
         return getValues().stream();
     }

@@ -16,6 +16,7 @@
 
 package org.opensingular.internal.lib.commons.xml;
 
+import com.google.common.collect.Streams;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
 import org.opensingular.lib.commons.lambda.ISupplier;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 
 /**
  * Percorredor de uma lista especifica de elementos da um XML (aceita filtro
@@ -113,12 +115,12 @@ import java.util.NoSuchElementException;
  * @author Daniel C. Bordin
  * @see XPathToolkit
  */
-public final class MElementResult extends MElement implements EWrapper {
+public final class MElementResult extends MElement implements EWrapper, Iterable<MElement> {
 
     /**
      * Estado em que o elemento atual é válido.
      */
-    public static final byte VALID = 0;
+    private static final byte VALID = 0;
     /**
      * Estado em que o elemento atual não percorreu nenhum elemento ainda.
      */
@@ -232,7 +234,7 @@ public final class MElementResult extends MElement implements EWrapper {
         while (next()) {
             list.add(getCurrent());
         }
-        return list.toArray(new MElement[list.size()]);
+        return list.toArray(new MElement[0]);
     }
 
     /**
@@ -379,12 +381,17 @@ public final class MElementResult extends MElement implements EWrapper {
         return currentState == VALID;
     }
 
+    /** Returns de current result as a Stream. */
+    @Nonnull
+    public Stream<MElement> stream() {
+        return Streams.stream(iterator());
+    }
+
     /**
      * Transformar o result em um iterator (todas as modificações no iterator
      * se refletem no result).
-     *
-     * @return Sempre diferente de null
      */
+    @Nonnull
     public Iterator<MElement> iterator() {
         return new Iterator<MElement>() {
 
@@ -399,9 +406,8 @@ public final class MElementResult extends MElement implements EWrapper {
             public boolean hasNext() {
                 if (isBeforeFirst()) {
                     return MElementResult.this.next();
-                } else {
-                    return getCurrent() != null;
                 }
+                return !isAfterLast();
             }
 
             public MElement next() {

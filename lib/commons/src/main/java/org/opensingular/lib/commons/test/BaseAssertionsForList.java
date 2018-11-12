@@ -28,8 +28,7 @@ import java.util.List;
  * @author Daniel C. Bordin
  * @since 2017-10-30
  */
-public class BaseAssertionsForList<SELF extends BaseAssertionsForList<SELF, ELEMENT,
-        ELEMENT_ASSERT>, ELEMENT , ELEMENT_ASSERT extends AssertionsBase<ELEMENT_ASSERT, ELEMENT>>
+public class BaseAssertionsForList<SELF extends BaseAssertionsForList<SELF, ELEMENT,ELEMENT_ASSERT>, ELEMENT , ELEMENT_ASSERT extends AssertionsBase<ELEMENT_ASSERT, ELEMENT>>
         extends AssertionsBase<SELF, List<ELEMENT>> {
 
     private final AssertFactory<ELEMENT, ELEMENT_ASSERT> assertFactory;

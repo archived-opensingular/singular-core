@@ -18,21 +18,13 @@
 
 package org.opensingular.form.wicket.model;
 
-import static org.junit.Assert.*;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.util.Date;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.opensingular.form.PackageBuilder;
-import org.opensingular.form.SDictionary;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
+import org.opensingular.form.document.RefDictionary;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.type.core.SIDate;
@@ -40,6 +32,17 @@ import org.opensingular.form.type.core.SITime;
 import org.opensingular.form.wicket.model.SIDateTimeModel.DateModel;
 import org.opensingular.form.wicket.model.SIDateTimeModel.TimeModel;
 import org.opensingular.lib.commons.lambda.IConsumer;
+
+import javax.annotation.Nonnull;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.Date;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class SIDateTimeModelTest {
 
@@ -71,10 +74,10 @@ public class SIDateTimeModelTest {
         mTimeValue = new SInstanceValueModel<>(mTimeField);
     }
 
+    @Nonnull
     private static SIComposite newInstance(IConsumer<STypeComposite<SIComposite>> typeBuilder) {
-        RefType ref = RefType.of(() -> {
-            SDictionary dic = SDictionary.create();
-            PackageBuilder pkg = dic.createNewPackage("dummy");
+        RefType ref = RefDictionary.newBlank().refType((dic) -> {
+            PackageBuilder pkg = dic.get().createNewPackage("dummy");
             STypeComposite<SIComposite> form = pkg.createCompositeType("form");
             typeBuilder.accept(form);
             return form;
@@ -83,7 +86,7 @@ public class SIDateTimeModelTest {
     }
 
     @Test
-    public void testDate() throws ParseException {
+    public void testDate() {
         DateModel mDate = new SIDateTimeModel.DateModel(mDateValue);
         assertEquals("dummy.form.date", mDate.getSInstance().getType().getName());
         assertNull(mDate.getObject());
@@ -108,7 +111,7 @@ public class SIDateTimeModelTest {
 
 
     @Test
-    public void testDateTwice() throws ParseException {
+    public void testDateTwice() {
         DateModel mDate = new SIDateTimeModel.DateModel(mDateValue);
         mDate.setObject(dateString);
         assertNotNull(mDate.getObject());
@@ -117,7 +120,7 @@ public class SIDateTimeModelTest {
     }
 
     @Test
-    public void testDateNull() throws ParseException {
+    public void testDateNull() {
         DateModel mDate = new SIDateTimeModel.DateModel(mDateValue);
         mDate.setObject(dateString);
         assertNotNull(mDate.getObject());
@@ -126,7 +129,7 @@ public class SIDateTimeModelTest {
     }
 
     @Test
-    public void testDateInvalid() throws ParseException {
+    public void testDateInvalid() {
         DateModel mDate = new SIDateTimeModel.DateModel(mDateValue);
         mDate.setObject(dateString);
         assertNotNull(mDate.getObject());
@@ -135,7 +138,7 @@ public class SIDateTimeModelTest {
     }
 
     @Test
-    public void testTime() throws ParseException {
+    public void testTime() {
         TimeModel mTime = new SIDateTimeModel.TimeModel(mTimeValue);
         assertEquals("dummy.form.time", mTime.getSInstance().getType().getName());
         assertNull(mTime.getObject());
@@ -148,7 +151,7 @@ public class SIDateTimeModelTest {
     }
 
     @Test
-    public void testTimeTwice() throws ParseException {
+    public void testTimeTwice() {
         TimeModel mTime = new SIDateTimeModel.TimeModel(mTimeValue);
         mTime.setObject(timeString);
         assertEquals(timeString, mTime.getObject());
@@ -157,7 +160,7 @@ public class SIDateTimeModelTest {
     }
 
     @Test
-    public void testTimeNull() throws ParseException {
+    public void testTimeNull() {
         TimeModel mTime = new SIDateTimeModel.TimeModel(mTimeValue);
         mTime.setObject(timeString);
         assertEquals(timeString, mTime.getObject());
@@ -166,7 +169,7 @@ public class SIDateTimeModelTest {
     }
 
     @Test
-    public void testTimeInvalid() throws ParseException {
+    public void testTimeInvalid() {
         TimeModel mTime = new SIDateTimeModel.TimeModel(mTimeValue);
         mTime.setObject(timeString);
         assertEquals(timeString, mTime.getObject());

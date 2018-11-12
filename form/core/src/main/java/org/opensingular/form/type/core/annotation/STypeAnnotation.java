@@ -21,6 +21,9 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.SPackageCore;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * This type represents an Annotation of a field.
  * For now only composite fields can be anotated but this type does not enforce such rule.
@@ -42,7 +45,7 @@ public class STypeAnnotation extends STypeComposite<SIAnnotation> {
     }
 
     @Override
-    protected void onLoadType(TypeBuilder tb) {
+    protected void onLoadType(@Nonnull TypeBuilder tb) {
         addFieldString(FIELD_TEXT);
         addFieldString(FIELD_CLASSIFIER);
         addFieldBoolean(FIELD_APPROVED);
@@ -52,7 +55,8 @@ public class STypeAnnotation extends STypeComposite<SIAnnotation> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T convert(Object value, Class<T> resultClass) {
+    @Nullable
+    public <T> T convert(@Nullable Object value, @Nonnull Class<T> resultClass) {
         return (T) value;
     }
 }

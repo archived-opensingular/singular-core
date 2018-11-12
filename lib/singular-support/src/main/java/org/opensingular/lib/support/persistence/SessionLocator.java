@@ -14,24 +14,12 @@
  * limitations under the License.
  */
 
-package org.opensingular.form;
+package org.opensingular.lib.support.persistence;
 
-import org.opensingular.form.internal.util.SerializableReference;
+import org.hibernate.Session;
 
-/**
- * Representa uma referência serializável a um dicionário. Deve ser derivado de
- * modo que ao ser deserializado seja capaz de recuperar ou recontruir o
- * dicionário. OS métodos mais comuns seria recriar o dicionário do zero ou
- * recuperar de algum cache estátivo em memória.
- *
- * @author Daniel C. Bordin
- */
-public abstract class RefSDictionary extends SerializableReference<SDictionary> {
+@FunctionalInterface
+public interface SessionLocator {
 
-    public RefSDictionary() {
-    }
-
-    public RefSDictionary(SDictionary dictionary) {
-        super(dictionary);
-    }
+    Session getCurrentSession();
 }
