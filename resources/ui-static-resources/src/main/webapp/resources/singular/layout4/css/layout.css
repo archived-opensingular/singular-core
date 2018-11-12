@@ -2311,6 +2311,9 @@ Theme Panel
   color: #e82724;
   border-bottom: 1px solid #fdd5df; }
 
+.has-error.list-detail-input .table thead tr th a {
+  color: #e82724; }
+
 .has-error .list-detail-body .table tfoot .list-detail-empty td {
   border: 1px solid #fdd5df;
   color: #e82724;
@@ -2346,6 +2349,14 @@ Theme Panel
 .has-error.list-detail-input .table tbody tr td .list-detail-remove,
 .has-error.list-detail-input .table tbody tr td {
   color: #e82724; }
+
+.list-detail-input .table thead tr th a {
+  color: rgba(74, 74, 74, 0.7); }
+
+.list-detail-input .table thead tr th {
+  color: rgba(74, 74, 74, 0.7);
+  position: static !important;
+  /*This config is for correct the display in firefox*/ }
 
 .list-table-input {
   margin-bottom: 15px; }
@@ -2419,34 +2430,43 @@ Theme Panel
   color: rgba(74, 74, 74, 0.7);
   text-align: center; }
 
-.worklist {
-  padding: 15px; }
-  .worklist thead tr th {
-    border-bottom: 1px solid #dfdfdf;
+.worklist thead tr th {
+  border-bottom: 1px solid #dfdfdf;
+  font-size: 12px;
+  vertical-align: middle;
+  background-color: #fff; }
+
+.worklist th {
+  border: 0 !important;
+  text-transform: uppercase; }
+  .worklist th a {
     font-size: 12px;
-    vertical-align: middle;
-    background-color: #fff; }
-  .worklist th {
-    border: 0 !important;
-    text-transform: uppercase; }
-    .worklist th a {
-      font-size: 12px;
-      color: rgba(74, 74, 74, 0.7);
-      font-weight: 600; }
-      .worklist th a:hover {
-        color: #4d4d4d;
-        text-decoration: none; }
-  .worklist tbody tr:hover {
-    color: #666666;
-    background-color: #f2f2f2; }
-  .worklist tr {
-    color: #acb1c2; }
-    .worklist tr:first-child td {
-      border-top: 1px solid #acb1c2 !important; }
-    .worklist tr td {
-      border: 0 !important; }
-  .worklist .label {
-    box-shadow: none; }
+    color: rgba(74, 74, 74, 0.7);
+    font-weight: 600; }
+    .worklist th a:hover {
+      color: #4d4d4d;
+      text-decoration: none; }
+  .worklist th span {
+    font-size: 12px;
+    color: rgba(74, 74, 74, 0.7);
+    font-weight: 600; }
+
+.worklist tbody tr:hover {
+  color: #666666;
+  background-color: #f2f2f2; }
+
+.worklist tr {
+  color: #acb1c2; }
+  .worklist tr:first-child td {
+    border-top: 1px solid #acb1c2 !important; }
+  .worklist tr td {
+    border: 0 !important; }
+
+.worklist .label {
+  box-shadow: none; }
+
+.worklist.table {
+  border-collapse: separate; }
 
 .worklist-action-btn {
   color: #b3b3b3;
@@ -2842,6 +2862,12 @@ Page Loading
     display: none;
     transition: all 2s; }
 
+.box-advanced-filter {
+  border: 1px solid #D5D9E3;
+  padding: 15px;
+  background-color: #fafafb;
+  margin-bottom: 10px; }
+
 /* Cubic Bezier Transition */
 /***
 Login page
@@ -2942,36 +2968,36 @@ Login page
   -moz-border-radius: 15px 15px 15px 15px !important;
   -webkit-border-radius: 15px 15px 15px 15px !important; }
 
-.login .content .form-actions .checkbox {
+.login .content .form-submit .checkbox {
   margin-left: 0;
   padding-left: 0; }
 
-.login .content .forget-form .form-actions {
+.login .content .forget-form .form-submit {
   border: 0;
   margin-bottom: 0;
   padding-bottom: 20px; }
 
-.login .content .register-form .form-actions {
+.login .content .register-form .form-submit {
   border: 0;
   margin-bottom: 0;
   padding-bottom: 0px; }
 
-.login .content .form-actions .btn {
+.login .content .form-submit .btn {
   margin-top: 1px;
   float: right; }
 
-.login .content .form-actions .btn {
+.login .content .form-submit .btn {
   font-weight: 600;
   padding: 10px 20px !important; }
 
-.login .content .form-actions .btn-default {
+.login .content .form-submit .btn-default {
   font-weight: 600;
   padding: 10px 25px !important;
   color: #6c7a8d;
   background-color: #ffffff;
   border: none; }
 
-.login .content .form-actions .btn-default:hover {
+.login .content .form-submit .btn-default:hover {
   background-color: #fafaff;
   color: #45b6af; }
 
@@ -3016,6 +3042,12 @@ Login page
   padding: 10px;
   color: #5D5D5D;
   font-size: 13px; }
+
+.login .logo img.logo-sso {
+  height: auto; }
+
+.page-content-wrapper .page-content {
+  min-height: auto !important; }
 
 @media (max-width: 440px) {
   /***

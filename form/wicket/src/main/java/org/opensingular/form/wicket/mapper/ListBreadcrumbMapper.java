@@ -98,11 +98,6 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
      * DATA TABLE
      */
 
-    /**
-     * @param ctx
-     * @param model
-     * @return
-     */
     @SuppressWarnings("unchecked")
     private IModel<String> newLabelModel(WicketBuildContext ctx, IModel<? extends SInstance> model) {
         IModel<SIList<SInstance>> listModel = $m.get(() -> (SIList<SInstance>) model.getObject());
@@ -215,7 +210,7 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
         }
 
         private void showCrud(WicketBuildContext ctx, AjaxRequestTarget target, IModel<? extends SInstance> itemModel) {
-            ctx.getRootContext().getBreadCrumbs().add((String) ctx.getCurrentInstance().getType().getAttributeValue(SPackageBasic.ATR_LABEL.getNameFull()));
+            ctx.getRootContext().getBreadCrumbs().add(ctx.getCurrentInstance().getType().getAttributeValue(SPackageBasic.ATR_LABEL));
 
             BSContainer<?> rootContainer = ctx.getRootContainer();
 
@@ -333,7 +328,7 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
                 if (label != null) {
                     labelModel = $m.ofValue(label);
                 } else {
-                    labelModel = $m.ofValue((String) columnType.getType(model.getObject()).getAttributeValue(SPackageBasic.ATR_LABEL.getNameFull()));
+                    labelModel = $m.ofValue(columnType.getType(model.getObject()).getAttributeValue(SPackageBasic.ATR_LABEL));
                 }
                 final String typeName = columnType.getTypeName();
                 propertyColumnAppender(builder, labelModel, $m.ofValue(typeName), columnType.getDisplayFunction());

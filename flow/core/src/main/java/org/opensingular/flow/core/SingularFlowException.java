@@ -24,8 +24,6 @@ import javax.annotation.Nullable;
 
 /**
  * The base class of all runtime exceptions for Singular-Flow.
- *
- * @see SingularException
  */
 public class SingularFlowException extends SingularException{
 
@@ -43,7 +41,7 @@ public class SingularFlowException extends SingularException{
      *
      * @param msg the error message
      */
-    public SingularFlowException(String msg) {
+    public SingularFlowException(@Nullable String msg) {
         super(msg);
     }
 
@@ -54,7 +52,7 @@ public class SingularFlowException extends SingularException{
      * @param cause the exception or error that caused this exception to be
      * thrown
      */
-    public SingularFlowException(Throwable cause) {
+    public SingularFlowException(@Nullable Throwable cause) {
         super(cause);
     }
 
@@ -66,7 +64,7 @@ public class SingularFlowException extends SingularException{
      * @param cause  the exception or error that caused this exception to be
      * thrown
      */
-    public SingularFlowException(String msg, Throwable cause) {
+    public SingularFlowException(@Nullable String msg, @Nullable Throwable cause) {
         super(msg, cause);
     }
 
@@ -99,6 +97,7 @@ public class SingularFlowException extends SingularException{
         add(target);
     }
 
+    @Nonnull
     public SingularFlowException addTransitions(@Nonnull STask<?> task) {
         add("transições disponíveis na task", Joiner.on(", ").join(task.getTransitions()));
         return this;
@@ -106,6 +105,7 @@ public class SingularFlowException extends SingularException{
 
 
     /** Adiciona informações sobre a definição da task relacionada a exception. */
+    @Nonnull
     public SingularFlowException add(@Nullable STask<?> task) {
         if (task != null) {
             add(task.getFlowMap().getFlowDefinition());
@@ -115,6 +115,7 @@ public class SingularFlowException extends SingularException{
     }
 
     /** Adiciona informações sobre a definição de fluxo relacionada a exception. */
+    @Nonnull
     public SingularFlowException add(@Nullable FlowDefinition<?> flowDefinition) {
         if (flowDefinition != null) {
             add("flowDefinition", flowDefinition.getName() + " (" + flowDefinition.getClass() + ")");
@@ -123,10 +124,11 @@ public class SingularFlowException extends SingularException{
     }
 
     /** Adiciona as informações sobre a task na exception. */
+    @Nonnull
     public SingularFlowException add(@Nullable TaskInstance task) {
         if (task != null) {
             add("task.id", task.getId());
-            add("task.fullId", () -> task.getFullId());
+            add("task.fullId", task::getFullId);
             add("task.name", task.getName());
             add("task.abbreviation", task.getAbbreviation());
             add(task.getFlowInstance());
@@ -135,9 +137,10 @@ public class SingularFlowException extends SingularException{
     }
 
     /** Adiciona as informações sobre a task na exception. */
+    @Nonnull
     public SingularFlowException add(@Nullable FlowInstance flowInstance) {
         if (flowInstance != null) {
-            add("flowInstance", () -> flowInstance.getFullId());
+            add("flowInstance", flowInstance::getFullId);
         }
         return this;
     }

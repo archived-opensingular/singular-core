@@ -16,7 +16,6 @@
 
 package org.opensingular.form.wicket.util;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -39,9 +38,9 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$L;
@@ -68,7 +67,7 @@ public abstract class WicketFormUtils {
     }
 
     public static boolean isForInstance(Component component, SInstance instance) {
-        return Objects.equal(component.getMetaData(KEY_INSTANCE_ID), instance.getId());
+        return Objects.equals(component.getMetaData(KEY_INSTANCE_ID), instance.getId());
     }
 
     public static void markAsCellContainer(MarkupContainer container) {
@@ -129,9 +128,9 @@ public abstract class WicketFormUtils {
     }
 
     public static Stream<Component> streamChildrenByInstance(Component root, SInstance instance) {
-        Predicate<? super Component> sameInstanceFilter = c -> getInstanceIfAware(c.getDefaultModel())
-            .filter(it -> Objects.equal(it.getName(), instance.getName()))
-            .filter(it -> Objects.equal(it.getId(), instance.getId()))
+        Predicate<? super Component> sameInstanceFilter = c -> getInstanceIfAware(c.getDefaultModel()).filter(
+                it -> Objects.equals(it.getName(), instance.getName())).filter(
+                it -> Objects.equals(it.getId(), instance.getId()))
             .isPresent();
         return streamDescendants(root)
                 .filter(sameInstanceFilter);
@@ -139,8 +138,7 @@ public abstract class WicketFormUtils {
     private static Optional<SInstance> getInstanceIfAware(IModel<?> model) {
         return (model instanceof ISInstanceAwareModel<?>)
                 ? Optional.ofNullable(((ISInstanceAwareModel<?>) model).getSInstance())
-                : Optional.ofNullable(model)
-                .map(it -> it.getObject())
+                : Optional.ofNullable(model).map(IModel::getObject)
                 .map($L.castOrNull(SInstance.class));
     }
 
@@ -182,7 +180,7 @@ public abstract class WicketFormUtils {
             SInstance instance = WicketFormUtils.getInstanceIfAware(comp.getDefaultModel()).orElse(null);
 
             String title = findTitle(comp);
-            if (title != null && !Objects.equal(title, lastTitle)) {
+            if (title != null && !Objects.equals(title, lastTitle)) {
                 lastTitle = title;
                 addTitle(titles, title, instance, lastInstance);
             }
@@ -190,7 +188,7 @@ public abstract class WicketFormUtils {
         }
 
         if (!titles.isEmpty()) {
-            return titles.stream().collect(Collectors.joining(" > "));
+            return String.join(" > ", titles);
         }
         return null;
     }
@@ -249,8 +247,7 @@ public abstract class WicketFormUtils {
                 }
             }
         }
-        Component[] components = list.toArray(new Component[0]);
-        return components;
+        return list.toArray(new Component[0]);
     }
 
     public static void bubbleInstanceAsEvent(Component comp, SInstance instance) {

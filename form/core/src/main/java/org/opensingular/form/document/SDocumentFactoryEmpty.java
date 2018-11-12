@@ -16,6 +16,8 @@
 
 package org.opensingular.form.document;
 
+import javax.annotation.Nonnull;
+
 /**
  * Representa uma factory que não faz nada com o documento.
  *
@@ -50,6 +52,7 @@ final class SDocumentFactoryEmpty extends SDocumentFactory {
             super(factory);
         }
 
+        @Nonnull
         @Override
         protected SDocumentFactory retrieve() {
             return getEmptyInstance();

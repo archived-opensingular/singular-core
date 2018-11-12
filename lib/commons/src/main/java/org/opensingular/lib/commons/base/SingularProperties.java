@@ -16,9 +16,9 @@
 
 package org.opensingular.lib.commons.base;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 
 /**
  * Carrega os arquivos de propriedades do singular e dá fácil acesso ao mesmos, mediante um singleton {@link
@@ -74,6 +74,8 @@ public interface SingularProperties {
     String SINGULAR_MAIL_SMTP_SSL_TRUST = "singular.mail.smtp.ssl.trust";
     String SINGULAR_MAIL_AUTH = "singular.mail.auth";
 
+    String EMAIL_COD_MODULE = "singular.mail.module.cod";
+
     //########    PROPRIEDADES SEGURANÇA    ########
     String SINGULAR_CSRF_ACCEPT_ORIGINS = "singular.csrf.accept.origins";  //A list separated by comma of accepted origins (host names/domain names)
     String SINGULAR_CSRF_ENABLED = "singular.csrf.enabled";  //Property for enable CSRF Security.
@@ -89,7 +91,11 @@ public interface SingularProperties {
     String SYSTEM_PROPERTY_SINGULAR_SERVER_HOME = "singular.server.home";
     String SINGULAR_EAGER_LOAD_FLOW_DEFINITIONS = "singular.flow.eager.load";
 
+    //########    PROPRIEDADES QUARTZ    ########
     String SINGULAR_QUARTZ_JOBSTORE_ENABLED = "singular.quartz.jobstore.enabled";
+    String SINGULAR_QUARTZ_DRIVER_DELEGATE = "singular.quartz.driverDelegateClass";
+    String SINGULAR_QUARTZ_TABLE_PREFIX = "singular.quartz.tablePrefix";
+
 
     String SINGULAR_QUARTZ_DEFAULT_CRON = "singular.quartz.cron.default";
 

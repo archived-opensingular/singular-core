@@ -19,6 +19,8 @@ package org.opensingular.internal.lib.commons.util;
 import org.junit.Assert;
 import org.junit.Test;
 
+import javax.annotation.Nonnull;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -64,23 +66,28 @@ public class TestSingularIOUtils {
     }
 
     @Test
-    public void testMilisFormat() {
-        assertFormatMillis(0, "0 ms");
-        assertFormatMillis(999, "999 ms");
-        assertFormatMillis(1000, "1.0 seconds");
-        assertFormatMillis(1045, "1.0 seconds");
-        assertFormatMillis(1090, "1.1 seconds");
-        assertFormatMillis(1190, "1.2 seconds");
-        assertFormatMillis(10990, "11.0 seconds");
-        assertFormatMillis(1000 * 60, "1.0 minutes");
-        assertFormatMillis((long) (1000 * 60 * 1.1 + 1), "1.1 minutes");
-        assertFormatMillis(1000 * 60 * 60, "1.0 hours");
-        assertFormatMillis(1000 * 60 * 60 * 24, "1.0 days");
+    public void testMillisFormat() {
+        assertFormatMillis(0, "0 ms", "0 ms");
+        assertFormatMillis(999, "999 ms", "999 ms");
+        assertFormatMillis(1000, "1.0 seconds", "1.0s");
+        assertFormatMillis(1045, "1.0 seconds", "1.0s");
+        assertFormatMillis(1090, "1.1 seconds", "1.1s");
+        assertFormatMillis(1190, "1.2 seconds", "1.2s");
+        assertFormatMillis(10990, "11.0 seconds", "11.0s");
+        assertFormatMillis(1000 * 60, "1.0 minutes", "1.0m");
+        assertFormatMillis((long) (1000 * 60 * 1.1 + 1), "1.1 minutes", "1.1m");
+        assertFormatMillis(1000 * 60 * 60, "1.0 hours", "1.0h");
+        assertFormatMillis(1000 * 60 * 60 * 24, "1.0 days", "1.0d");
+        assertFormatMillis(1000 * 60 * 60 * 24 * 364L, "364.0 days", "364.0d");
+        assertFormatMillis(1000 * 60 * 60 * 24 * 365L, "1.0 years", "1.0y");
+        assertFormatMillis(1000 * 60 * 60 * 24 * 365L * 3 /2, "1.5 years", "1.5y");
+        assertFormatMillis(1000 * 60 * 60 * 24 * 365L * 400, "400.0 years", "400.0y");
     }
 
-    private void assertFormatMillis(long millis, String expectedFormat) {
+    private void assertFormatMillis(long millis, @Nonnull String expectedLong, @Nonnull String expectedShort) {
         char decimal = String.format("%.1f", 0.1).charAt(1);
-        assertFormat(expectedFormat, SingularIOUtils.humanReadableMiliSeconds(millis), decimal);
+        assertFormat(expectedLong, SingularIOUtils.humanReadableMilliSeconds(millis), decimal);
+        assertFormat(expectedShort, SingularIOUtils.humanReadableMilliSeconds(millis, true), decimal);
     }
 
     @Test

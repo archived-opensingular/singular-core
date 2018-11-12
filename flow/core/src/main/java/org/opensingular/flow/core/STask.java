@@ -16,8 +16,8 @@
 
 package org.opensingular.flow.core;
 
-import org.opensingular.flow.core.property.MetaDataEnabled;
-import org.opensingular.flow.core.property.MetaDataMap;
+import org.opensingular.flow.core.property.MetaDataEnabledImpl;
+import org.springframework.util.Assert;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({ "serial", "unchecked" })
-public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
+public abstract class STask<K extends STask<?>> extends MetaDataEnabledImpl {
 
     private final FlowMap flowMap;
     private final String name;
@@ -50,7 +50,7 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
 
     private transient int order;
 
-    private MetaDataMap metaDataMap;
+    private SStart startPoint;
 
     public STask(FlowMap flowMap, String name, String abbreviation) {
         Objects.requireNonNull(flowMap);
@@ -121,26 +121,25 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
         return false;
     }
 
-    @Override
+    /** Returns the information for starting a flow instance in this task, if it's a start point. */
     @Nonnull
-    public Optional<MetaDataMap> getMetaDataOpt() {
-        return Optional.ofNullable(metaDataMap);
+    public Optional<SStart> getStartPointInfo() {
+        return Optional.ofNullable(startPoint);
     }
 
-    @Override
-    @Nonnull
-    public MetaDataMap getMetaData() {
-        if (metaDataMap == null) {
-            metaDataMap = new MetaDataMap();
-        }
-        return metaDataMap;
+    /** Set the current task as a start point of the flow. */
+    void setStartPoint(@Nonnull SStart startPoint) {
+        Objects.requireNonNull(startPoint);
+        Assert.isNull(this.startPoint, "Start point already defined for this task");
+        this.startPoint = startPoint;
     }
 
     public STransition addTransition(String actionName, STask<?> destination, boolean showTransitionInExecution) {
         return addTransition(actionName, destination).withAccessControl(UITransitionAccessStrategyImplUI.enabled(showTransitionInExecution, null));
     }
 
-    public STransition addTransition(String actionName, STask<?> destination) {
+    @Nonnull
+    public STransition addTransition(@Nonnull String actionName, @Nonnull STask<?> destination) {
         return addTransition(flowMap.newTransition(this, actionName, destination));
     }
 
@@ -168,7 +167,8 @@ public abstract class STask<K extends STask<?>> implements MetaDataEnabled {
         return defaultTransition;
     }
 
-    private STransition addTransition(STransition transition) {
+    @Nonnull
+    private STransition addTransition(@Nonnull STransition transition) {
         if (transitionsByName.containsKey(transition.getName().toLowerCase())) {
             throw new SingularFlowException(
                     createErrorMsg("Transition with name '" + transition.getName() + "' already defined"), this)

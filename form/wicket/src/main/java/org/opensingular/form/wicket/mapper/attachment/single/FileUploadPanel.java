@@ -25,7 +25,6 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
@@ -35,7 +34,6 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceStreamResource;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.opensingular.form.SIList;
@@ -58,6 +56,7 @@ import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponse
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.AttachmentKeyStrategy;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.lib.commons.base.SingularProperties;
+import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.util.Loggable;
 
 import javax.servlet.http.HttpServletRequest;
@@ -70,7 +69,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.ServletFileUploadStrategy.PARAM_NAME;
-import static org.opensingular.lib.commons.base.SingularProperties.*;
+import static org.opensingular.lib.commons.base.SingularProperties.SINGULAR_FILEUPLOAD_MAXCHUNKSIZE;
 
 public class FileUploadPanel extends Panel implements Loggable {
 
@@ -99,8 +98,10 @@ public class FileUploadPanel extends Panel implements Loggable {
     private AbstractDefaultAjaxBehavior previewCallBack;
 
     private List<FileEventListener> fileUploadedListeners = new ArrayList<>();
-
     private List<FileEventListener> fileRemovedListeners = new ArrayList<>();
+
+    private IConsumer<AjaxRequestTarget> consumerAfterLoadImage; //Behavior that will be executed after load the image.
+    private IConsumer<AjaxRequestTarget> consumerAfterRemoveImage; //Behavior that will be executed after remove the image.
 
     public FileUploadPanel(String id, IModel<SIAttachment> model, ViewMode viewMode) {
         super(id, model);
@@ -181,6 +182,7 @@ public class FileUploadPanel extends Panel implements Loggable {
 
     private void addPreview() {
         preview = new WebMarkupContainer("preview");
+        preview.setOutputMarkupPlaceholderTag(true);
         Image imagePreview = new Image("imagePreview", new ResourceStreamResource(new SIAttachmentIResourceStream(self.getModel())));
         add(preview.add(imagePreview));
         preview.add(new Behavior() {
@@ -194,6 +196,9 @@ public class FileUploadPanel extends Panel implements Loggable {
             @Override
             protected void respond(AjaxRequestTarget target) {
                 target.add(preview);
+                if (consumerAfterLoadImage != null) {
+                    consumerAfterLoadImage.accept(target);
+                }
             }
         };
         this.add(previewCallBack);
@@ -353,6 +358,9 @@ public class FileUploadPanel extends Panel implements Loggable {
             } else {
                 target.add(FileUploadPanel.this);
             }
+            if (consumerAfterRemoveImage != null) {
+                consumerAfterRemoveImage.accept(target);
+            }
         }
     }
 
@@ -400,5 +408,21 @@ public class FileUploadPanel extends Panel implements Loggable {
 
     public void setShowPreview(boolean showPreview) {
         this.showPreview = showPreview;
+    }
+
+    public IConsumer<AjaxRequestTarget> getConsumerAfterLoadImage() {
+        return consumerAfterLoadImage;
+    }
+
+    public void setConsumerAfterLoadImage(IConsumer<AjaxRequestTarget> consumerAfterLoadImage) {
+        this.consumerAfterLoadImage = consumerAfterLoadImage;
+    }
+
+    public IConsumer<AjaxRequestTarget> getConsumerAfterRemoveImage() {
+        return consumerAfterRemoveImage;
+    }
+
+    public void setConsumerAfterRemoveImage(IConsumer<AjaxRequestTarget> consumerAfterRemoveImage) {
+        this.consumerAfterRemoveImage = consumerAfterRemoveImage;
     }
 }

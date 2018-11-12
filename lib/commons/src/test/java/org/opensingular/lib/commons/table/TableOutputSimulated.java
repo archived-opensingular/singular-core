@@ -44,10 +44,10 @@ public class TableOutputSimulated extends TableOutput {
     }
 
     @Override
-    public void generateTableStart(OutputTableContext ctx, TableTool tableTool) { }
+    public void generateTableStart(@Nonnull OutputTableContext ctx, @Nonnull TableTool tableTool) { }
 
     @Override
-    public void generateTableEnd(OutputTableContext ctx, TableTool tableTool) { }
+    public void generateTableEnd(@Nonnull OutputTableContext ctx, @Nonnull TableTool tableTool) { }
 
     @Override
     public void generateBodyBlockStart(@Nonnull OutputTableContext ctx) {}
@@ -56,20 +56,20 @@ public class TableOutputSimulated extends TableOutput {
     public void generateBodyBlockEnd(@Nonnull OutputTableContext ctx) {}
 
     @Override
-    public void generateLineSimpleStart(OutputTableContext ctx, LineInfo line, int lineAlternation) {
+    public void generateLineSimpleStart(@Nonnull OutputTableContext ctx, @Nonnull LineInfo line, int lineAlternation) {
         table.addLine();
     }
 
     @Override
-    public void generateLineSimpleEnd(OutputTableContext ctx) { }
+    public void generateLineSimpleEnd(@Nonnull OutputTableContext ctx) { }
 
     @Override
-    public void generateLineTreeStart(OutputTableContext ctx, LineInfo line, int level) {
+    public void generateLineTreeStart(@Nonnull OutputTableContext ctx, @Nonnull LineInfo line, int level) {
         table.addLine();
     }
 
     @Override
-    public void generateLineTreeEnd(OutputTableContext ctx) {}
+    public void generateLineTreeEnd(@Nonnull OutputTableContext ctx) {}
 
     @Override
     public void generateCell(@Nonnull OutputCellContext ctx) {
@@ -86,21 +86,21 @@ public class TableOutputSimulated extends TableOutput {
     }
 
     @Override
-    public void generateTitleBlockStart(OutputTableContext ctx) {}
+    public void generateTitleBlockStart(@Nonnull OutputTableContext ctx) {}
 
     @Override
-    public void generateTitleBlockEnd(OutputTableContext ctx) { }
+    public void generateTitleBlockEnd(@Nonnull OutputTableContext ctx) { }
 
     @Override
-    public void generateTitleLineStart(OutputTableContext ctx, boolean superTitleLine) {
+    public void generateTitleLineStart(@Nonnull OutputTableContext ctx, boolean superTitleLine) {
         table.addLine();
     }
 
     @Override
-    public void generateTitleLineEnd(OutputTableContext ctx, boolean superTitleLine) { }
+    public void generateTitleLineEnd(@Nonnull OutputTableContext ctx, boolean superTitleLine) { }
 
     @Override
-    public void generateTitleCell(OutputTableContext ctx, Column column, int rowSpan, boolean asSubTitle,
+    public void generateTitleCell(@Nonnull OutputTableContext ctx, @Nonnull Column column, int rowSpan, boolean asSubTitle,
             boolean columnWithSeparator) {
         if (columnWithSeparator) {
             table.add("#");
@@ -109,7 +109,7 @@ public class TableOutputSimulated extends TableOutput {
     }
 
     @Override
-    public void generateTitleCellSuper(OutputTableContext ctx, Column column, int colSpan, boolean columnWithSeparator) {
+    public void generateTitleCellSuper(@Nonnull OutputTableContext ctx, @Nonnull Column column, int colSpan, boolean columnWithSeparator) {
         if (columnWithSeparator) {
             table.add("#");
         }

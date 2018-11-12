@@ -16,6 +16,8 @@
 
 package org.opensingular.form;
 
+import org.opensingular.form.calculation.CalculationContextInstanceOptional;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -34,40 +36,28 @@ final class AttributeValuesManagerForSInstance extends AttributeValuesManager<SI
     public <V> V getAttributeValue(@Nonnull AttrInternalRef ref, @Nullable Class<V> resultClass) {
         SInstance attribute = get(ref);
         if (attribute != null) {
-            return attribute.getValueInTheContextOf(getOwner(), resultClass);
+            return attribute.getValueInTheContextOf(new CalculationContextInstanceOptional(getOwner()), resultClass);
         }
         return getAttributeValueFromType(getOwner(), ref, resultClass);
     }
 
     @Nullable
-    public static <V> V getAttributeValueFromType(@Nonnull SInstance instance, @Nonnull AttrInternalRef ref,
+    static <V> V getAttributeValueFromType(@Nonnull SInstance instance, @Nonnull AttrInternalRef ref,
             @Nullable Class<V> resultClass) {
-        return AttributeValuesManagerForSType.getAttributeValueInTheContextOf(instance.getType(), instance, ref,
-                resultClass);
+        return SAttributeUtil.getAttributeValueInTheContextOf(instance.getType(), instance, ref, resultClass);
     }
 
-    @Nonnull
-    public SInstance getCreating(@Nonnull AttrInternalRef ref) {
-        SInstance entry = get(ref);
-        if (entry == null) {
-            if (ref.isResolved()) {
-                entry = createNewAttribute(ref);
-            } else {
-                entry = createTemporaryAttribute();
-                entry.setAsAttribute(ref, getOwner());
-            }
-            set(ref, entry);
-        }
-        return entry;
+    @Override
+    void setEntryAsAttribute(@Nonnull SInstance entry, @Nonnull AttrInternalRef ref) {
+        entry.setAsAttribute(ref, getOwner());
     }
 
     @Override
     @Nonnull
     protected SInstance createNewAttribute(@Nonnull AttrInternalRef ref) {
-        SType<?> attributeType = AttributeValuesManagerForSType.getAttributeDefinedHierarchy(getOwner().getType(), ref);
+        SType<?> attributeType = SAttributeUtil.getAttributeDefinitionInHierarchy(getOwner().getType(), ref);
         SInstance instanceAtr = attributeType.newInstance(getOwner().getDocument());
         instanceAtr.setAsAttribute(ref, getOwner());
         return instanceAtr;
     }
-
 }

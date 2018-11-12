@@ -66,14 +66,14 @@ import java.util.function.Supplier;
  */
 public class SingularFormPanel extends Panel {
 
-    private ISInstanceAwareModel<SInstance> instanceModel  = new SInstanceRootModel<>();
-    private boolean                       nested;
+    private           ISInstanceAwareModel<SInstance> instanceModel  = new SInstanceRootModel<>();
+    private           boolean                         nested;
     // Container onde os componentes serão adicionados
-    private BSGrid                              container      = new BSGrid("generated");
+    private           BSGrid                          container      = new BSGrid("generated");
     //Pode ser transient pois é usado apenas uma vez na inicialização do painel
-    private transient Supplier<SInstance>       instanceCreator;
+    private transient Supplier<? extends SInstance>   instanceCreator;
     //Pode ser transient pois é usado apenas uma vez na inicialização do painel
-    private transient Consumer<SInstance>       instanceInitializer;
+    private transient Consumer<SInstance>             instanceInitializer;
 
     private ViewMode                            viewMode       = ViewMode.EDIT;
 
@@ -216,7 +216,7 @@ public class SingularFormPanel extends Panel {
 
     /** Define o criador da instância a ser o conteúdo do painel.
      * @return */
-    public final SingularFormPanel setInstanceCreator(@Nonnull Supplier<SInstance> instanceCreator) {
+    public final SingularFormPanel setInstanceCreator(@Nonnull Supplier<? extends SInstance> instanceCreator) {
         Objects.requireNonNull(instanceCreator);
         this.instanceCreator = instanceCreator;
         return this;
@@ -236,7 +236,8 @@ public class SingularFormPanel extends Panel {
             if (instanceCreator != null) {
                 SInstance instance = instanceCreator.get();
                 if (instance == null) {
-                    throw new SingularFormException("O instanceCreator retornou null");
+                    throw new SingularFormException(
+                            "O instanceCreator (" + instanceCreator.getClass().getName() + ") retornou null");
                 }
                 instanceModel.setObject(instance);
             } else {
@@ -252,7 +253,7 @@ public class SingularFormPanel extends Panel {
         }
         updateContainer();
 
-        add(new ModalEventListenerBehavior(modalItems));
+        add(new SFormModalEventListenerBehavior(modalItems));
     }
 
     /**

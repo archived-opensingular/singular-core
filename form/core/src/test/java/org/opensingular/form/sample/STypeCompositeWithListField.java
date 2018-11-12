@@ -36,7 +36,7 @@ public class STypeCompositeWithListField extends STypeComposite<SIComposite> {
     protected void onLoadType(TypeBuilder tb) {
 
         theList = this.addFieldListOf(EMBARCACOES_FIELD_NAME, STypeFirstListElement.class);
-        theList.withMiniumSizeOf(1);
+        theList.withMinimumSizeOf(1);
         theList.withInitListener(list -> list.addNew());
         theList.asAtr().label("Embarcações");
 

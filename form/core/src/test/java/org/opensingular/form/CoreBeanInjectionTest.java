@@ -82,7 +82,7 @@ public class CoreBeanInjectionTest extends TestCaseForm {
 
     @Test
     public void injection2() {
-        RefType refType = RefType.of(() -> SDictionary.create().getType(TypeWithInjectionTest2.class));
+        RefType refType = RefType.of(dic -> dic.get().getType(TypeWithInjectionTest2.class));
 
         TypeWithInjectionTest2 type = (TypeWithInjectionTest2) refType.get();
 
@@ -95,10 +95,7 @@ public class CoreBeanInjectionTest extends TestCaseForm {
 
     @Test
     public void serialization() {
-        RefType refType = RefType.of(() -> {
-            SDictionary dictionary = SDictionary.create();
-            return dictionary.getType(TypeWithInjectionTest.class);
-        });
+        RefType refType = RefType.of(dic -> dic.get().getType(TypeWithInjectionTest.class));
         SInstanceWithInjection instance = (SInstanceWithInjection) SDocumentFactory.empty().createInstance(refType);
 
         assertSerialization(instance);

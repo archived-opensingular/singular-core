@@ -31,7 +31,7 @@ import org.opensingular.internal.lib.commons.injection.SingularInjector;
 import org.opensingular.lib.commons.context.ServiceRegistry;
 import org.opensingular.lib.commons.context.ServiceRegistryLocator;
 import org.opensingular.lib.commons.internal.function.SupplierUtil;
-import org.opensingular.lib.commons.lambda.IFunction;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,20 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -87,9 +74,8 @@ public final class SFormUtil {
         return SingularFormProcessing.evaluateUpdateListeners(i);
     }
 
-    private static boolean isNotValidSimpleName(@Nonnull String name) {
-        Objects.requireNonNull(name);
-        if (name.length() == 0 || !isLetter(name.charAt(0))) {
+    private static boolean isNotValidSimpleName(@Nullable String name) {
+        if (name == null || name.length() == 0 || !isLetter(name.charAt(0))) {
             return true;
         }
         for (int i = name.length() - 1; i != 0; i--) {
@@ -109,8 +95,9 @@ public final class SFormUtil {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';  //NOSONAR
     }
 
+    /** Verifies if the name is a valid for a simple name otherwise throws a exception. */
     @Nonnull
-    static String validateSimpleName(@Nonnull String name) {
+    public static String validateSimpleName(@Nonnull String name) {
         if (isNotValidSimpleName(name)) {
             throw new SingularFormException('\'' + name + "' não é um nome válido para pacote, tipo ou atributo");
         }
@@ -154,7 +141,7 @@ public final class SFormUtil {
     }
 
     /** Checks if the instance is in the same dictionary of scope. If not, throws a exception. */
-    static final void verifySameDictionary(@Nonnull SScope scope, @Nonnull SInstance instance) {
+    static void verifySameDictionary(@Nonnull SScope scope, @Nonnull SInstance instance) {
         if (scope.getDictionary() != instance.getDictionary()) {
             throw new SingularFormException(
                     "O dicionário da instância " + instance + " não é o mesmo dicionário do tipo " + scope +
@@ -163,7 +150,7 @@ public final class SFormUtil {
     }
 
     /** Checks if both scopes are using the same dictionary. If not, throws a exception. */
-    static final void verifySameDictionary(@Nonnull SScope scope1, @Nonnull SScope scope2) {
+    static void verifySameDictionary(@Nonnull SScope scope1, @Nonnull SScope scope2) {
         if (scope1.getDictionary() != scope2.getDictionary()) {
             throw new SingularFormException(scope2.getName() + "(" + scope2.getClass().getName() +
                     ") foi criado em outro dicionário, que não o de " + scope1.getName() + "(" +
@@ -173,7 +160,7 @@ public final class SFormUtil {
 
     /** Finds the common parent type of the two types. */
     @Nonnull
-    static final SType<?> findCommonType(@Nonnull SType<?> type1, @Nonnull SType<?> type2) {
+    static SType<?> findCommonType(@Nonnull SType<?> type1, @Nonnull SType<?> type2) {
         verifySameDictionary(type1, type2);
         for (SType<?> current = type1; ; current = current.getSuperType()) {
             if (type2.isTypeOf(current)) {
@@ -224,7 +211,8 @@ public final class SFormUtil {
      * Retorna o nome do filho atual indo em direção ao raiz mas parando segundo
      * a condicão de parada informada.
      */
-    public static String generatePath(SInstance instance, Predicate<SInstance> stopCondition) {
+    @Nullable
+    public static String generatePath(@Nonnull SInstance instance, @Nonnull Predicate<SInstance> stopCondition) {
         SInstance current = instance;
         List<SInstance> sequencia = null;
         while (!stopCondition.test(current)) {
@@ -252,6 +240,50 @@ public final class SFormUtil {
                 }
                 sb.append(current.getName());
             }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Retorna o nome do filho atual indo em direção ao raiz mas parando segundo
+     * a condicão de parada informada.
+     */
+    @Nullable
+    public static String generatePath(@Nonnull SType<?> type, @Nonnull Predicate<SType<?>> stopCondition) {
+        return generatePath(type, stopCondition, ' ', '.', SType::getNameSimple);
+    }
+
+    /**
+     * Retorna o nome do filho atual indo em direção ao raiz mas parando segundo
+     * a condicão de parada informada.
+     */
+    @Nullable
+    public static String generatePath(@Nonnull SType<?> type, @Nonnull Predicate<SType<?>> stopCondition,
+            char rootPrefix, char separator, Function<SType<?>, String> nameFunc) {
+        SType<?> current = type;
+        List<SType<?>> sequencia = null;
+        while (!stopCondition.test(current)) {
+            if (sequencia == null) {
+                sequencia = new ArrayList<>();
+            }
+            sequencia.add(current);
+            current = current.getParent().orElse(null);
+        }
+        if (sequencia == null) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = sequencia.size() - 1; i != -1; i--) {
+            current = sequencia.get(i);
+            if (sb.length() == 0) {
+                if (rootPrefix != ' ' && !current.getParent().isPresent()) {
+                    sb.append(rootPrefix);
+                }
+            } else if (sb.length() != 0) {
+                sb.append(separator);
+            }
+            String n = nameFunc.apply(current);
+            sb.append(n);
         }
         return sb.toString();
     }
@@ -305,14 +337,29 @@ public final class SFormUtil {
      * mediante a leitura das anotações {@link SInfoType} e {@link SInfoPackage}.
      */
     @Nonnull
-    public static String getTypeName(@Nonnull Class<? extends SType<?>> typeClass) {
+    public static String getTypeName(@Nonnull Class<? extends SType> typeClass) {
         return ClassInspectionCache.getInfo(typeClass, CacheKey.FULL_NAME, SFormUtil::getTypeNameInternal);
     }
 
     @SuppressWarnings("unchecked")
+    @Nonnull
     private static String getTypeNameInternal(@Nonnull Class<?> typeClass) {
-        Class<? extends SPackage> packageClass = getTypePackage((Class<? extends SType<?>>) typeClass);
-        return getInfoPackageName(packageClass) + '.' + getTypeSimpleName((Class<? extends SType<?>>) typeClass);
+        return getTypePackageName(typeClass) + '.' + getTypeSimpleName((Class<? extends SType<?>>) typeClass);
+    }
+
+    /** Calculates the package name for the type class. */
+    @Nonnull
+    public static String getTypePackageName(@Nonnull Class<?> typeClass) {
+        return ClassInspectionCache.getInfo(typeClass, CacheKey.PACKAGE_NAME, SFormUtil::getTypePackageNameInternal);
+    }
+
+    @Nonnull
+    private static String getTypePackageNameInternal(@Nonnull Class<?> typeClass) {
+        Optional<Class<? extends SPackage>> packageClass = getTypePackageClass((Class<? extends SType<?>>) typeClass);
+        if (packageClass.isPresent()) {
+            return getInfoPackageName(packageClass.get());
+        }
+        return typeClass.getPackage().getName();
     }
 
     @Nonnull
@@ -322,41 +369,47 @@ public final class SFormUtil {
     }
 
     @SuppressWarnings("unchecked")
-    private static SimpleName getTypeSimpleNameInternal(Class<?> typeClass) {
-        SInfoType infoType = getInfoType((Class<? extends SType<?>>) typeClass);
-        String typeName = infoType.name();
-        if (StringUtils.isBlank(typeName)) {
+    @Nonnull
+    private static SimpleName getTypeSimpleNameInternal(@Nonnull Class<?> typeClass) {
+        Optional<SInfoType> infoType = getInfoTypeOpt((Class<? extends SType<?>>) typeClass);
+        String typeName = infoType.isPresent() ? StringUtils.trimToNull(infoType.get().name()) : null;
+        if (typeName == null) {
             typeName = typeClass.getSimpleName();
         }
         return new SimpleName(typeName);
     }
 
+    @Nonnull
     public static Optional<String> getTypeLabel(Class<? extends SType<?>> typeClass) {
-        SInfoType infoType = getInfoType((Class<? extends SType<?>>) typeClass);
-        if (StringUtils.isBlank(infoType.label())) {
+        Optional<String> label = getInfoTypeOpt(typeClass).map(SInfoType::label);
+        if (label.isPresent() && StringUtils.isBlank(label.get())) {
             return Optional.empty();
         }
-        return Optional.of(infoType.label());
+        return label;
     }
 
     @Nonnull
-    static SInfoType getInfoType(Class<? extends SType<?>> typeClass) {
-        SInfoType infoType = typeClass.getAnnotation(SInfoType.class);
-        if (infoType == null) {
-            throw new SingularFormException(
-                    "O tipo '" + typeClass.getName() + " não possui a anotação @" + SInfoType.class.getSimpleName() + " em sua definição.");
-        }
-        return infoType;
+    static Optional<SInfoType> getInfoTypeOpt(@Nonnull Class<? extends SType<?>> typeClass) {
+        return Optional.ofNullable(typeClass.getAnnotation(SInfoType.class));
     }
 
     @Nonnull
-    public static Class<? extends SPackage> getTypePackage(Class<? extends SType<?>> typeClass) {
-        Class<? extends SPackage> sPackage = getInfoType(typeClass).spackage();
-        if (sPackage == null) {
-            throw new SingularFormException(
-                    "O tipo '" + typeClass.getName() + "' não define o atributo 'pacote' na anotação @" + SInfoType.class.getSimpleName());
+    public static Optional<Class<? extends SPackage>> getTypePackageClass(
+            @Nonnull Class<? extends SType<?>> typeClass) {
+        return ClassInspectionCache.getInfo(typeClass, CacheKey.PACKAGE_CLASS, SFormUtil::getTypePackageClassInternal);
+    }
+
+    @Nonnull
+    private static Optional<Class<? extends SPackage>> getTypePackageClassInternal(@Nonnull Class<?> typeClass) {
+        Optional<SInfoType> infoType = getInfoTypeOpt((Class<? extends SType<?>>) typeClass);
+        if (infoType.isPresent()) {
+            Class<? extends SPackage> sPackage = infoType.get().spackage();
+            if (sPackage == SPackage.class) {
+                sPackage = null;
+            }
+            return Optional.ofNullable(sPackage);
         }
-        return sPackage;
+        return Optional.empty();
     }
 
     @Nullable
@@ -394,13 +447,19 @@ public final class SFormUtil {
         if (SPackage.class.isAssignableFrom(scopeClass)) {
             return (Class<SPackage>) scopeClass;
         } else if (SType.class.isAssignableFrom(scopeClass)) {
-            return getTypePackage((Class<SType<?>>) scopeClass);
+            Optional<Class<? extends SPackage>> packageClass = getTypePackageClass((Class<SType<?>>) scopeClass);
+            if (packageClass.isPresent()) {
+                return packageClass.get();
+            }
+            throw new SingularFormException(
+                    scopeClass.getName() + " doesn't have a package define with a " + SInfoType.class.getName() +
+                            " annotation");
         } else {
             throw new SingularFormException("Unsupported class: " + scopeClass.getName());
         }
     }
 
-    private synchronized static Map<String, Class<? extends SPackage>> getSingularPackages() {
+    private static synchronized Map<String, Class<? extends SPackage>> getSingularPackages() {
         if (singularPackages == null) {
             singularPackages = SupplierUtil.cached(() -> {
                 Builder<String, Class<? extends SPackage>> builder = ImmutableMap.builder();
@@ -471,4 +530,33 @@ public final class SFormUtil {
         return Optional.empty();
     }
 
+    @Nonnull
+    static <T> T newInstance(@Nonnull Class<T> targetClass) {
+        //It doesn't uses ObjectUtil.newInstance() because SType has a protected constructor
+        try {
+            return targetClass.newInstance();
+        } catch (Exception e) {
+            throw new SingularFormException("Erro instanciando " + targetClass.getName(), e);
+        }
+    }
+
+    /**
+     * Tries to load a {@link SType} class using the name of the class.
+     *
+     * @return Empty if the class doesn't exists or a error  occurs while loading the class.
+     */
+    @Nonnull
+    public static Optional<Class<? extends SType<?>>> tryFindTypeByClassName(@Nonnull String typeClassName) {
+        Objects.requireNonNull(typeClassName);
+        try {
+            Class<?> c = Class.forName(typeClassName);
+            if (SType.class.isAssignableFrom(c)) {
+                return Optional.of((Class<? extends SType<?>>) c);
+            }
+            return Optional.empty();
+        } catch (Exception e) {
+            LoggerFactory.getLogger(SFormUtil.class).error(e.getMessage(), e);
+            return Optional.empty();
+        }
+    }
 }

@@ -58,7 +58,7 @@ public abstract class SDocumentFactory {
      * {@link FormSerializationUtil#checkIfSerializable(SInstance)}).
      */
     @Nonnull
-    public final SInstance createInstance(@Nonnull RefType rootType) {
+    public SInstance createInstance(@Nonnull RefType rootType) {
         return createInstance(rootType, true);
     }
 
@@ -68,7 +68,7 @@ public abstract class SDocumentFactory {
      * {@link SInstance#init()}. Usar como false quando a instância está sendo recuperada da persistência.
      */
     @Nonnull
-    public final SInstance createInstance(@Nonnull RefType rootType, boolean executeInitTypeSetup) {
+    public SInstance createInstance(@Nonnull RefType rootType, boolean executeInitTypeSetup) {
         SType type = Objects.requireNonNull(rootType).get();
 
         SDocument owner = new SDocument();
@@ -90,7 +90,7 @@ public abstract class SDocumentFactory {
      * faz sentido ser serializada em sim.
      */
     @Nonnull
-    public final RefSDocumentFactory getDocumentFactoryRef() {
+    public RefSDocumentFactory getDocumentFactoryRef() {
         if (factoryReference == null) {
             factoryReference = createDocumentFactoryRef();
             if (factoryReference.get() != this.factoryReference.get()) {

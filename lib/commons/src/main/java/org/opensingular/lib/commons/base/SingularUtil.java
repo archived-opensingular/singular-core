@@ -20,9 +20,13 @@ import com.google.common.base.Throwables;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.text.Normalizer;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 
 public final class SingularUtil {
@@ -34,23 +38,67 @@ public final class SingularUtil {
         throw SingularException.rethrow(throwable);
     }
 
-    public static String toSHA1(Object object) {
+    @Nonnull
+    public static String toSHA1(@Nonnull Object object) {
         return toSHA1(object.toString().getBytes(StandardCharsets.UTF_8));
     }
 
-    public static String toSHA1(byte[] bytes) {
+    @Nonnull
+    public static String toSHA1(@Nonnull byte[] bytes) {
+        Objects.requireNonNull(bytes);
         MessageDigest sha1Digest = DigestUtils.getSha1Digest();
         sha1Digest.update(bytes);
 
         return Hex.encodeHexString(sha1Digest.digest());
     }
 
-    public static String convertToJavaIdentity(String original, boolean normalize) {
-        return convertToJavaIdentity(original, false, normalize);
+    /**
+     * Tries to converts a arbitrary string to a valid java identifier (valid characters ans without spaces). If it's
+     * not possible to convert, return a empty result.
+     */
+    @Nonnull
+    public static Optional<String> tryConvertToJavaIdentifier(@Nonnull String original) {
+        return tryConvertToJavaIdentifier(original, false);
+
     }
 
-    public static String convertToJavaIdentity(String original, boolean firstCharacterUpperCase, boolean normalize) {
-        String normalized = normalize ? normalize(original) : original;
+    /**
+     * Tries to converts a arbitrary string to a valid java identifier (valid characters ans without spaces). If it's
+     * not possible to convert, return a empty result.
+     */
+    @Nonnull
+    public static Optional<String> tryConvertToJavaIdentifier(@Nonnull String original,
+            boolean firstCharacterUpperCase) {
+        return Optional.ofNullable(convertToJavaIdentifierInternal(original, firstCharacterUpperCase));
+
+    }
+
+    /**
+     * Converts a arbitrary string to a valid java identifier (valid characters ans without spaces). If it's not
+     * possible to convert, a exception is thrown.
+     */
+    @Nonnull
+    public static String convertToJavaIdentifier(@Nonnull String original) {
+        return convertToJavaIdentifier(original, false);
+    }
+
+    /**
+     * Converts a arbitrary string to a valid java identifier (valid characters ans without spaces). If it's not
+     * possible to convert, a exception is thrown.
+     */
+    @Nonnull
+    public static String convertToJavaIdentifier(@Nonnull String original, boolean firstCharacterUpperCase) {
+        String result = convertToJavaIdentifierInternal(original, firstCharacterUpperCase);
+        if (result == null) {
+            throw new SingularException("'" + original + "' it's no possible to convert to valid identifier");
+        }
+        return result;
+    }
+
+    @Nullable
+    private static String convertToJavaIdentifierInternal(@Nonnull String original, boolean firstCharacterUpperCase) {
+        Objects.requireNonNull(original);
+        String normalized = normalize(original);
         StringBuilder sb = new StringBuilder(normalized.length());
         boolean nextUpper = false;
         for (char c : normalized.toCharArray()) {
@@ -62,10 +110,13 @@ public final class SingularUtil {
                 nextUpper = true;
             }
         }
+        if (sb.length() == 0) {
+            return null;
+        }
         return sb.toString();
     }
 
-    protected static boolean appendJavaIdentifierPart(StringBuilder sb, boolean nextUpper, char c) {
+    private static boolean appendJavaIdentifierPart(StringBuilder sb, boolean nextUpper, char c) {
         char _c = c;
         if (nextUpper) {
             _c = Character.toUpperCase(_c);
@@ -74,7 +125,7 @@ public final class SingularUtil {
         return false;
     }
 
-    protected static void appendLengthZero(boolean firstCharacterUpperCase, StringBuilder sb, char c) {
+    private static void appendLengthZero(boolean firstCharacterUpperCase, StringBuilder sb, char c) {
         char _c = c;
         if (Character.isJavaIdentifierStart(_c)) {
             _c = firstCharacterUpperCase ? Character.toUpperCase(_c) : Character.toLowerCase(_c);
@@ -82,7 +133,14 @@ public final class SingularUtil {
         }
     }
 
-    public static String normalize(String original) {
+    /**
+     * Transforms unicode characters in a simpler common version., because some different unicode characters have the
+     * same semantic meaning. Also removes some special characters.
+     *
+     * @see Normalizer
+     */
+    @Nonnull
+    public static String normalize(@Nonnull String original) {
         return Normalizer.normalize(original, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
 

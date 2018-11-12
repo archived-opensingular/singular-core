@@ -30,8 +30,7 @@ import org.w3c.dom.Text;
 import org.w3c.dom.TypeInfo;
 import org.w3c.dom.UserDataHandler;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,16 +50,6 @@ public class MElementWrapper extends MElement implements EWrapper {
     static final char ELEMENT_PATH_SEPARATOR = '/';
 
     /**
-     * Cache do builderFactory de acordo com a configuração desejada.
-     */
-    private final static DocumentBuilderFactory[] buiderFactory__ = new DocumentBuilderFactory[4];
-
-    /**
-     * Representa o factory de Document.
-     */
-    private static DocumentBuilder documentBuilder__;
-
-    /**
      * Elemento que contem realmente os dados.
      */
     private final ISupplier<Element> original;
@@ -70,10 +59,9 @@ public class MElementWrapper extends MElement implements EWrapper {
      *
      * @param original -
      */
-    MElementWrapper(Element original) {
-        if (original == null) {
-            throw new IllegalArgumentException("Elemento original não pode ser " + "null");
-        } else if (original instanceof MElementWrapper) {
+    MElementWrapper(@Nonnull Element original) {
+        Objects.requireNonNull(original);
+        if (original instanceof MElementWrapper) {
             this.original = ((MElementWrapper) original).original;
         } else {
             this.original = SupplierUtil.serializable(original);
@@ -83,17 +71,17 @@ public class MElementWrapper extends MElement implements EWrapper {
     /**
      * Constroi um MElement raiz com o nome informado.
      */
-    MElementWrapper(String rootName) {
-        original = SupplierUtil.serializable(newRootElement(rootName));
+    MElementWrapper(@Nonnull String rootName) {
+        original = SupplierUtil.serializable(XmlUtil.newRootElement(rootName));
     }
 
     /**
      * Constroi um MElement raiz com o nome informado.
      *
-     * @param namespaceURI Tipicamente o name space possui o formato de uma URL
-     * (não é obrigatório) no formato, por exemplo,
+     * @param namespaceURI  Tipicamente o name space possui o formato de uma URL
+     *                      (não é obrigatório) no formato, por exemplo,
      * @param qualifiedName o nome do elemento que será criado. Pode conter
-     * prefixo (ex.: "fin:ContaPagamento").
+     *                      prefixo (ex.: "fin:ContaPagamento").
      */
     MElementWrapper(String namespaceURI, String qualifiedName) {
         original = SupplierUtil.serializable(newRootElement(namespaceURI, qualifiedName));
@@ -101,8 +89,6 @@ public class MElementWrapper extends MElement implements EWrapper {
 
     /**
      * Obtem o element original.
-     *
-     * @return -
      */
     @Override
     public final Element getOriginal() {
@@ -110,50 +96,18 @@ public class MElementWrapper extends MElement implements EWrapper {
     }
 
     /**
-     * Instanciado de Document precarregado.
-     *
-     * @return sempre != null
-     */
-    static synchronized Document newDocument() {
-
-        if (documentBuilder__ == null) {
-            DocumentBuilderFactory f = getDocumentBuilderFactory(true, false);
-            try {
-                documentBuilder__ = f.newDocumentBuilder();
-            } catch (Exception e) {
-                //} catch(javax.xml.parsers.ParserConfigurationException e) {
-                throw SingularException.rethrow("Não instancia o parser XML: ", e);
-            }
-        }
-        return documentBuilder__.newDocument();
-    }
-
-    /**
-     * Cria um elemento XML em um novo documento.
-     *
-     * @param elementName o nome do elemento que será criado
-     * @return o elemento que foi criado
-     */
-    static Element newRootElement(String elementName) {
-        Document d = newDocument();
-        Element newElement = d.createElementNS(null, elementName);
-        d.appendChild(newElement);
-        return newElement;
-    }
-
-    /**
      * Cria um elemento XML em um novo documento para um determinado namespace.
      *
-     * @param namespaceURI Tipicamente o name space possui o formato de uma URL
-     * (não é obrigatório) no formato, por exemplo,
+     * @param namespaceURI  Tipicamente o name space possui o formato de uma URL
+     *                      (não é obrigatório) no formato, por exemplo,
      * @param qualifiedName o nome do elemento que será criado. Pode conter
-     * prefixo (ex.: "fin:ContaPagamento").
+     *                      prefixo (ex.: "fin:ContaPagamento").
      * @return o elemento que foi criado
      */
-    public static Element newRootElement(String namespaceURI, String qualifiedName) {
+    static Element newRootElement(String namespaceURI, String qualifiedName) {
 
-        Document d = newDocument();
-        Element newElement = d.createElementNS(namespaceURI, qualifiedName);
+        Document d          = XmlUtil.newDocument();
+        Element  newElement = d.createElementNS(namespaceURI, qualifiedName);
 
         //Verifica se precisa colocar um atributo por conta do Namespace
         if ((qualifiedName != null) && (qualifiedName.length() != 0)) {
@@ -171,41 +125,13 @@ public class MElementWrapper extends MElement implements EWrapper {
     }
 
     /**
-     * Retora o document builder de acordo com a configuração desejada. Faz um
-     * cache do DocumentBuilder para evitar rodar o algorítmo de pesquisa toda
-     * vez.
-     *
-     * @param namespaceAware Se o builder irá tratar namespace
-     * @param validating Se o builder irá valdiar o XML em função de um DTD.
-     * Aplicavel apenas quando for fazer parse.
-     * @return sempre diferente de null.
-     */
-    static DocumentBuilderFactory getDocumentBuilderFactory(boolean namespaceAware,
-            boolean validating) {
-        // Utiliza cache de DocumentBuilderFactory para evitar que o algorítmo
-        // de localização do factory execute toda vez. O problema é que quando
-        // em applet, o new Instance fica frequentemente indo ao servidor para
-        // tentar lozalizar um implementação de factory.
-        // Daniel (08/05/2003)
-
-        int index = (namespaceAware ? 1 : 0) + (validating ? 2 : 0);
-        if (buiderFactory__[index] == null) {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(namespaceAware);
-            factory.setValidating(validating);
-            buiderFactory__[index] = factory;
-        }
-        return buiderFactory__[index];
-    }
-
-    /**
      * Metodo utilizado para colocar apenas o conteúdo de um elemento dentro de
      * outro elemento. Os elementos contidos no elemento <code>no</code> serão
      * colocados ao final da lista de elementos elemento <code>pai</code>
      * (append).
      *
      * @param parent elemento que o conteúdo do outro elemento
-     * @param node elemento cujo conteúdo será colocado dentro do elemento pai
+     * @param node   elemento cujo conteúdo será colocado dentro do elemento pai
      */
     static void copyElement(Element parent, Element node) {
         if ((parent == null) || (node == null)) {
@@ -238,7 +164,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      * Cria um novo element com os mesmos atributos e namespace do elemento
      * fornecido.
      *
-     * @param owner Document a ser utilizado na criação do Element
+     * @param owner    Document a ser utilizado na criação do Element
      * @param original Elemento a sercopiado
      * @return Sempre diferente de null
      */
@@ -246,9 +172,9 @@ public class MElementWrapper extends MElement implements EWrapper {
         Element newElement = owner.createElementNS(original.getNamespaceURI(), original.getTagName());
 
         if (original.hasAttributes()) {
-            NamedNodeMap domAttributes = original.getAttributes();
-            int noOfAttributes = domAttributes.getLength();
-            Attr attr;
+            NamedNodeMap domAttributes  = original.getAttributes();
+            int          noOfAttributes = domAttributes.getLength();
+            Attr         attr;
             for (int i = 0; i < noOfAttributes; i++) {
                 attr = (Attr) domAttributes.item(i);
                 if (attr.getNamespaceURI() == null) {
@@ -269,15 +195,15 @@ public class MElementWrapper extends MElement implements EWrapper {
      * elemento sendo copiado. O elemento é copiado ao final da lista de
      * elementos (append) do elemento de destino.
      *
-     * @param parent elemento que receberá um novo elemento com o conteúdo do
-     * elemento <code>no</code>
-     * @param no elemento cujo conteúdo será colocado dentro de um elemento de
-     * nome <code>novoNome</code>, que será colocado dentro do
-     * elemento <code>pai</code>
+     * @param parent  elemento que receberá um novo elemento com o conteúdo do
+     *                elemento <code>no</code>
+     * @param no      elemento cujo conteúdo será colocado dentro de um elemento de
+     *                nome <code>novoNome</code>, que será colocado dentro do
+     *                elemento <code>pai</code>
      * @param newName nome do elemento que receberá o conteúdo do elemento
-     * <code>no</code> e que será colocado dentro de <code>pai</code>;
-     * se for <code>null</code>, é usado o nome do elemento
-     * <code>no</code>
+     *                <code>no</code> e que será colocado dentro de <code>pai</code>;
+     *                se for <code>null</code>, é usado o nome do elemento
+     *                <code>no</code>
      * @return O novo no criado no novo pai
      */
     static Element copyElement(Element parent, Element no, String newName) {
@@ -308,7 +234,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      * binário ao se decidir pelo uso deste formato.
      *
      * @param value o array binário do elemento adicionado (a ser convertido p/
-     * BASE64)
+     *              BASE64)
      * @return o elemento que foi adicionado
      */
     static String toBASE64(byte[] value) {
@@ -329,32 +255,28 @@ public class MElementWrapper extends MElement implements EWrapper {
      *
      * @param in Stream com os dados a serem convertidos p/ BASE64.
      * @return -
-     *
      */
-    public static String toBASE64(InputStream in, Charset charset) {
-        if (in == null) {
-            throw new IllegalArgumentException("inputstream está null");
-        }
+    static String toBASE64(@Nonnull InputStream in, @Nonnull Charset charset) {
         return encodeFromInputStream(in, charset);
     }
 
-    private static String encodeFromInputStream(InputStream in, Charset charset){
-        BufferedReader buff = new BufferedReader(new InputStreamReader(in, charset));
+    @SuppressWarnings("squid:S2095")
+    private static String encodeFromInputStream(@Nonnull InputStream in, @Nonnull Charset charset) {
+        try (BufferedReader buff = new BufferedReader(new InputStreamReader(Objects.requireNonNull(in), charset))) {
 
-        StringBuilder builder = new StringBuilder();
-        String line;
-        try {
-            while((line = buff.readLine()) != null){
+            StringBuilder builder = new StringBuilder();
+            String        line;
+
+            while ((line = buff.readLine()) != null) {
                 builder.append(line);
-                if(buff.ready()){
+                if (buff.ready()) {
                     builder.append("\r\n");
                 }
             }
+            return java.util.Base64.getEncoder().encodeToString(builder.toString().getBytes(charset));
         } catch (IOException e) {
             throw SingularException.rethrow("Error encoding from the input stream", e);
         }
-
-        return java.util.Base64.getEncoder().encodeToString(builder.toString().getBytes(charset));
     }
 
     /**
@@ -375,8 +297,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      * stream informada.
      *
      * @param stringValue String a ser convertida.
-     * @param out Destino do bytes decodificados.
-
+     * @param out         Destino do bytes decodificados.
      */
     static void fromBASE64(String stringValue, OutputStream out) {
         if (stringValue == null || out == null) {
@@ -394,17 +315,17 @@ public class MElementWrapper extends MElement implements EWrapper {
      * Adiciona um elemento a um elemento pai. <br>
      * O elemento é adicionado sem valor.
      *
-     * @param parent o elemento dentro do qual um elemento será inserido
-     * @param namespaceURI poder ser null
+     * @param parent        o elemento dentro do qual um elemento será inserido
+     * @param namespaceURI  poder ser null
      * @param qualifiedName o nome do elemento que será inserido
      * @return o elemento que foi adicionado
      */
     static Element addElementNS(Node parent, String namespaceURI, String qualifiedName) {
-        Node resolvedParent = parent;
-        Document d = resolvedParent.getOwnerDocument();
-        String resolvedNamespaceURI = namespaceURI;
-        String resolvedQualifiedName = qualifiedName;
-        int pos = resolvedQualifiedName.lastIndexOf(ELEMENT_PATH_SEPARATOR);
+        Node     resolvedParent        = parent;
+        Document d                     = resolvedParent.getOwnerDocument();
+        String   resolvedNamespaceURI  = namespaceURI;
+        String   resolvedQualifiedName = qualifiedName;
+        int      pos                   = resolvedQualifiedName.lastIndexOf(ELEMENT_PATH_SEPARATOR);
         if (pos != -1) {
             if (pos == 0) {
                 resolvedParent = XmlUtil.getRootParent(resolvedParent);
@@ -457,8 +378,8 @@ public class MElementWrapper extends MElement implements EWrapper {
      * Adiciona um elemento com valor a um elemento pai. <br>
      *
      * @param parent o elemento dentro do qual um elemento será inserido
-     * @param name o nome do elemento que será inserido
-     * @param value o valor <code>String</code> do elemento adicionado
+     * @param name   o nome do elemento que será inserido
+     * @param value  o valor <code>String</code> do elemento adicionado
      * @return o elemento que foi adicionado
      */
     static Element addElement(Element parent, final String name, String value) {
@@ -472,8 +393,8 @@ public class MElementWrapper extends MElement implements EWrapper {
         }
 
         Element newElement;
-        String elementName = name;
-        int pos = elementName.lastIndexOf('@');
+        String  elementName = name;
+        int     pos         = elementName.lastIndexOf('@');
         if (pos != -1) {
             String attributeName = elementName.substring(pos + 1);
             if ((pos > 1) && (elementName.charAt(pos - 1) == '/')) {
@@ -494,8 +415,8 @@ public class MElementWrapper extends MElement implements EWrapper {
         } else {
             newElement = addElementNS(parent, null, elementName);
             if (value.length() != 0) {
-                Document d = parent.getOwnerDocument();
-                Text txt = d.createTextNode(value);
+                Document d   = parent.getOwnerDocument();
+                Text     txt = d.createTextNode(value);
                 newElement.appendChild(txt);
             }
         }
@@ -504,12 +425,12 @@ public class MElementWrapper extends MElement implements EWrapper {
     }
 
     private static Element getElementCriando(Document d, Node parent, final String namespaceURI,
-            final String qualifiedName) {
+                                             final String qualifiedName) {
 
-        String subTrecho = null;
+        String subTrecho             = null;
         String resolvedQualifiedName = qualifiedName;
-        int pos = resolvedQualifiedName.indexOf(ELEMENT_PATH_SEPARATOR);
-        Node resolvedParent = parent;
+        int    pos                   = resolvedQualifiedName.indexOf(ELEMENT_PATH_SEPARATOR);
+        Node   resolvedParent        = parent;
         if (pos != -1) {
             if (pos == 0) {
                 resolvedParent = XmlUtil.getRootParent(resolvedParent);
@@ -522,9 +443,8 @@ public class MElementWrapper extends MElement implements EWrapper {
             }
         }
 
-        Node n = XmlUtil.nextSiblingOfTypeElement(resolvedParent.getFirstChild(), resolvedQualifiedName);
+        Element e = XmlUtil.nextSiblingOfTypeElement(resolvedParent.getFirstChild(), resolvedQualifiedName);
 
-        Element e = (Element) n;
         if (e == null) {
             String resolvedNamespaceURI = namespaceURI;
             if (isVazio(resolvedNamespaceURI)) {

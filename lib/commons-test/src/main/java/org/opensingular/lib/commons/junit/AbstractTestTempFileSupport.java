@@ -94,8 +94,8 @@ public abstract class AbstractTestTempFileSupport {
     /**
      * After each test method, deletes all the temp files generated with {@link #getTempFileProvider()}, if there is
      * any file and if {@link #setOpenGeneratedFiles(boolean)} is set to false. If {@link
-     * #setOpenGeneratedFiles(boolean)} is set to true, it don't deletes and wait for the {@link #cleanTmpProvider()}
-     * be be called.
+     * #setOpenGeneratedFiles(boolean)} is set to true, it don't deletes and wait for the
+     * {@link #cleanTmpProviderAfterAllTestMethods()} be be called.
      */
     @After
     public void cleanTmpProviderAfterTestMethod() {
@@ -143,7 +143,7 @@ public abstract class AbstractTestTempFileSupport {
         try (FileOutputStream out = new FileOutputStream(file)) {
             fileGenerator.accept(out);
         } catch (Exception e) {
-            TempFileUtils.deleteAndFailQuietily(file, this);
+            TempFileUtils.deleteAndFailQuietly(file, this);
             Throwables.throwIfUnchecked(e);
             throw SingularException.rethrow(e);
         }

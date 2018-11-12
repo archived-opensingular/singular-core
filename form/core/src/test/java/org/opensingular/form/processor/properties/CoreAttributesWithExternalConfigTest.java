@@ -176,7 +176,7 @@ package org.opensingular.form.processor.properties;
 //        }
 //        tempo = System.currentTimeMillis() - tempo;
 //        System.out.println("-------------------------------------------");
-//        System.out.println("  " + name + ": T=" + SingularIOUtils.humanReadableMiliSeconds(tempo) + " R=" + repeticoes +
+//        System.out.println("  " + name + ": T=" + SingularIOUtils.humanReadableMilliSeconds(tempo) + " R=" + repeticoes +
 //                "  qtd/seg=" + ConversorToolkit.printNumber(1000.0 * repeticoes / tempo, 0));
 //    }
 //

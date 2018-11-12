@@ -21,13 +21,7 @@ package org.opensingular.flow.test;
 import org.hamcrest.Matchers;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.StaleObjectStateException;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.opensingular.flow.core.*;
@@ -47,6 +41,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.PersistenceException;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -177,7 +172,7 @@ public class RelocationTest {
         assertEquals(id.getCurrentTaskOrException().getAllocatedUser(), u2);
     }
 
-    @Test(expected = StaleObjectStateException.class)
+    @Test(expected = PersistenceException.class)
     public void lowLevelLockTest() {
         TaskInstanceEntity o = nTE(id);
         save(o);
@@ -216,6 +211,7 @@ public class RelocationTest {
     private TaskInstanceEntity nTE(FlowInstance id) {
         TaskInstanceEntity t = id.getCurrentTaskOrException().getEntityTaskInstance();
         TaskInstanceEntity o = new TaskInstanceEntity();
+        o.setCurrentInstanceStatus(CurrentInstanceStatus.UNDEFINED);
         o.setTask((TaskVersionEntity) t.getTaskVersion());
         o.setFlowInstance(t.getFlowInstance());
         o.setBeginDate(new Date());

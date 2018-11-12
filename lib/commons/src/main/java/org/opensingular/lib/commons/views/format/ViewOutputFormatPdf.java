@@ -43,7 +43,7 @@ public class ViewOutputFormatPdf extends ViewOutputFormatExportable {
             PDFUtil.getInstance().convertHTML2PDF(fileHtml, destination);
             TempFileUtils.deleteOrException(fileHtml, this);
         } finally {
-            TempFileUtils.deleteAndFailQuietily(fileHtml, this);
+            TempFileUtils.deleteAndFailQuietly(fileHtml, this);
         }
     }
 }

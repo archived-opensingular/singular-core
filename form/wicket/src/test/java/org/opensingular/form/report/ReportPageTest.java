@@ -60,7 +60,7 @@ public class ReportPageTest extends SingularWicketTestCase {
 
             @Override
             public String getReportName() {
-                return "";
+                return "TestReport";
             }
 
             @Override

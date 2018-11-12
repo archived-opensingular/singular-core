@@ -19,6 +19,7 @@ package org.opensingular.form.type.util;
 import org.opensingular.form.type.core.SIComparable;
 import org.opensingular.form.SISimple;
 
+import javax.annotation.Nonnull;
 import java.time.YearMonth;
 
 public class SIYearMonth extends SISimple<YearMonth> implements SIComparable<YearMonth> {
@@ -48,6 +49,7 @@ public class SIYearMonth extends SISimple<YearMonth> implements SIComparable<Yea
         return getValue().getMonthValue();
     }
 
+    @Nonnull
     @Override
     public STypeYearMonth getType() {
         return (STypeYearMonth) super.getType();

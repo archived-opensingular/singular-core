@@ -1,7 +1,6 @@
 @import '../../../singular_variables';
 
 .worklist {
-  padding: 15px;
 
   thead tr {
 
@@ -26,6 +25,11 @@
         text-decoration: none;
       }
     }
+    span {
+        font-size: 12px;
+        color: $worklist-table-head-font-color; // altera a linha de titulos da tabela de listagem que não são ordenaveis
+        font-weight: 600;
+    }
   }
 
   tbody {
@@ -34,6 +38,7 @@
         color: $worklist-element-font-color-on-hover;
         background-color: $worklist-element-bg-color-on-hover;
       }
+
     }
   }
 
@@ -54,6 +59,11 @@
   .label {
     box-shadow: none;
   }
+}
+
+
+.worklist.table {
+  border-collapse: separate; //This is for correct the border in the header of table [https://bugzilla.mozilla.org/show_bug.cgi?id=688556]
 }
 
 .worklist-action-btn {

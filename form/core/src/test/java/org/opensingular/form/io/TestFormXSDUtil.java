@@ -17,7 +17,7 @@
  */
  
 package org.opensingular.form.io;
- 
+
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -36,7 +36,6 @@ import org.opensingular.form.STypeList;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.helpers.AssertionsSType;
-import org.opensingular.form.helpers.AssertionsXML;
 import org.opensingular.form.type.core.STypeBoolean;
 import org.opensingular.form.type.core.STypeDate;
 import org.opensingular.form.type.core.STypeDateTime;
@@ -46,7 +45,8 @@ import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeLong;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.STypeTime;
- 
+import org.opensingular.lib.commons.test.AssertionsXML;
+
 import javax.annotation.Nonnull;
  
 /**
@@ -167,7 +167,7 @@ public class TestFormXSDUtil extends TestCaseForm {
         xml = xml.getOnlyChild("xs:element").hasAttributes(3).isAttribute("name", "name").isAttribute("type",
                 "xs:string").isAttribute("xsf:maxLength", "100").hasNoChildren();
  
-        items.withMiniumSizeOf(2).withMaximumSizeOf(4);
+        items.withMinimumSizeOf(2).withMaximumSizeOf(4);
         xml = toXsd(items);
         xml = xml.getOnlyChild("xs:element");
         xml = xml.getOnlyChild("xs:complexType").hasAttributes(0);
@@ -297,7 +297,7 @@ public class TestFormXSDUtil extends TestCaseForm {
     @SInfoPackage(name = TestXSDPackage.PACKAGE_NAME)
     public static class TestXSDPackage extends SPackage {
  
-        public static final String PACKAGE_NAME = "org.TestXSDPackage.form";
+        static final String PACKAGE_NAME = "org.TestXSDPackage.form";
  
     }
  
@@ -324,7 +324,7 @@ public class TestFormXSDUtil extends TestCaseForm {
             documentos = this.addFieldListOfAttachment("documentos", "documento");
             documentos.asAtr().label("Documentos");
             documentos.withMaximumSizeOf(10);
-            documentos.withMiniumSizeOf(0);
+            documentos.withMinimumSizeOf(0);
             documentos.asAtr().required(false);
  
  

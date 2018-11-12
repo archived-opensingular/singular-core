@@ -34,7 +34,8 @@ import java.io.ObjectOutputStream;
 public class SingularIOUtils {
 
     private static final String[] SUFFIXES = {"B", "KB", "MB", "GB", "TB"};
-    private static final String[] TIME_SYMBOS = new String[]{"seconds", "minutes", "hours", "days"};
+    private static final String[] TIME_SYMBOLS = new String[]{"seconds", "minutes", "hours", "days", "years"};
+    private static final String[] TIME_SYMBOLS_SHORT = new String[]{"s", "m", "h", "d", "y"};
 
     private SingularIOUtils() {}
 
@@ -126,16 +127,28 @@ public class SingularIOUtils {
      * do resultado.
      */
     @Nonnull
-    public static String humanReadableMiliSeconds(long mili) {
-        int[] unit = {60, 60, 24, 0};
-        if (mili < 1000) return mili + " ms";
-        double value = mili / 1000d;
+    public static String humanReadableMilliSeconds(long milli) {
+        return humanReadableMilliSeconds(milli, false);
+    }
+
+    /**
+     * Formata os milisegundos na aproximação mais interessante para entendimento humando reduzindo um pouco a precisão
+     * do resultado.
+     */
+    @Nonnull
+    public static String humanReadableMilliSeconds(long milli, boolean shortNames) {
+        int[] unit = {60, 60, 24, 365, 0};
+        if (milli < 1000) return milli + " ms";
+        double value = milli / 1000d;
         int pos = 0;
         while (value >= unit[pos] && pos != unit.length - 1) {
             value = value / unit[pos];
             pos++;
         }
-        return String.format("%.1f %s", value, TIME_SYMBOS[pos]);
+        if (shortNames) {
+            return String.format("%.1f%s", value, TIME_SYMBOLS_SHORT[pos]);
+        }
+        return String.format("%.1f %s", value, TIME_SYMBOLS[pos]);
     }
 
     /**

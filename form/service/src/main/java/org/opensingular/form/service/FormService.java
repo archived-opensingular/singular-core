@@ -16,12 +16,12 @@
 package org.opensingular.form.service;
 
 import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.io.AnnotationIOUtil;
 import org.opensingular.form.io.SFormXMLUtil;
 import org.opensingular.form.persistence.AnnotationKey;
 import org.opensingular.form.persistence.FormKey;
@@ -46,9 +46,9 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -77,14 +77,14 @@ public class FormService implements IFormService {
     private FormTypeService formTypeService;
 
     public FormService() {
-        this.formKeyManager = new FormKeyManager<>(FormKeyLong.class, e -> addInfo(e));
+        this.formKeyManager = new FormKeyManager<>(FormKeyLong.class, this::addInfo);
     }
 
     /**
      * Retornar o manipulador de chave usado por essa implementação para ler e converte FormKey.
      */
     @Nonnull
-    private final FormKeyManager<FormKey> getFormKeyManager() {
+    private FormKeyManager<FormKey> getFormKeyManager() {
         return (FormKeyManager<FormKey>) formKeyManager;
     }
 
@@ -129,7 +129,7 @@ public class FormService implements IFormService {
     }
 
     @Override
-    public final boolean isPersistent(@Nonnull SInstance instance) {
+    public boolean isPersistent(@Nonnull SInstance instance) {
         return getFormKeyManager().isPersistent(instance);
     }
 
@@ -280,14 +280,16 @@ public class FormService implements IFormService {
         formAnnotationDAO.save(formAnnotationEntity);
     }
 
-    private void loadCurrentXmlAnnotationOrEmpty(SDocument document, FormVersionEntity formVersionEntity) {
+    private void loadCurrentXmlAnnotationOrEmpty(@Nonnull SDocument document, @Nonnull FormVersionEntity formVersionEntity) {
         document.getDocumentAnnotations().clear();
-        for (FormAnnotationEntity formAnnotationEntity : Optional.ofNullable(formVersionEntity).map(FormVersionEntity::getFormAnnotations).orElse(Collections.emptyList())) {
-            SFormXMLUtil.annotationLoadFromXml(document,
-                    Optional
-                            .ofNullable(formAnnotationEntity.getAnnotationCurrentVersion())
-                            .map(FormAnnotationVersionEntity::getXml)
-                            .orElse(StringUtils.EMPTY));
+        List<FormAnnotationEntity> annotations = formVersionEntity.getFormAnnotations();
+        if (annotations != null) {
+            for (FormAnnotationEntity formAnnotationEntity : annotations) {
+                FormAnnotationVersionEntity ver = formAnnotationEntity.getAnnotationCurrentVersion();
+                if (ver != null) {
+                    AnnotationIOUtil.loadFromXmlIfAvailable(document, ver.getXml());
+                }
+            }
         }
     }
 
@@ -310,9 +312,6 @@ public class FormService implements IFormService {
 
     /**
      * Extrai as anotações de maneira classificada e separa os xmls por classificador
-     *
-     * @param instance
-     * @return
      */
     @Nonnull
     private Map<String, String> extractAnnotations(@Nonnull SInstance instance) {
@@ -329,6 +328,7 @@ public class FormService implements IFormService {
         return SFormXMLUtil.toStringXMLOrEmptyXML(instance);
     }
 
+    @Nonnull
     public FormKey newVersion(@Nonnull SInstance instance, Integer inclusionActor) {
         return newVersion(instance, inclusionActor, true);
     }
@@ -382,6 +382,6 @@ public class FormService implements IFormService {
     @Override
     @Nonnull
     public Optional<FormEntity> findFormEntity(@Nonnull SDocument document) {
-        return FormKey.fromOpt(document).map(key -> loadFormEntity(key));
+        return FormKey.fromOpt(document).map(this::loadFormEntity);
     }
 }

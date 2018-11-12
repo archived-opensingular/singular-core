@@ -17,11 +17,11 @@
 package org.opensingular.form;
 
 import org.opensingular.form.calculation.SimpleValueCalculation;
+import org.opensingular.lib.commons.util.ObjectUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.function.Function;
 
 public abstract class STranslatorForAttribute implements SAttributeEnabled {
@@ -33,12 +33,7 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
             throw new SingularFormException("Classe '" + aspectClass + "' não funciona como aspecto. Deve extender " +
                     STranslatorForAttribute.class.getName());
         }
-        T instance;
-        try {
-            instance = aspectClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new SingularFormException("Erro criando classe de aspecto '" + aspectClass.getName() + "'", e);
-        }
+        T instance = ObjectUtils.newInstance(aspectClass);
         return of(original, instance);
     }
 
@@ -76,13 +71,9 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
      * Lista todos os atributos com valor associado diretamente ao objeto atual.
      * @return Nunca null
      */
+    @Nonnull
     public Collection<SInstance> getAttributes() {
         return getTarget().getAttributes();
-    }
-
-    /** Retorna a instancia do atributo se houver uma associada diretamente ao objeto atual. */
-    public Optional<SInstance> getAttributeDirectly(String fullName) {
-        return getTarget().getAttributeDirectly(fullName);
     }
 
     //-----------------------------------------------------------
@@ -95,14 +86,15 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
     }
 
     @Override
-    public <V> void setAttributeCalculation(AtrRef<?, ?, V> atr, SimpleValueCalculation<V> value) {
+    public <V> void setAttributeCalculation(@Nonnull AtrRef<?, ?, V> atr, @Nullable SimpleValueCalculation<V> value) {
         getTarget().setAttributeCalculation(atr, value);
     }
 
-    @Override
-    public <V> void setAttributeCalculation(String attributeFullName, String subPath, SimpleValueCalculation<V> value) {
-        getTarget().setAttributeCalculation(attributeFullName, subPath, value);
-    }
+//    @Override
+//    public <V> void setAttributeCalculation(@Nonnull String attributeFullName, @Nullable String subPath,
+//            @Nullable SimpleValueCalculation<V> value) {
+//        getTarget().setAttributeCalculation(attributeFullName, subPath, value);
+//    }
 
     @Override
     public <V> void setAttributeValue(@Nonnull AtrRef<?, ?, V> atr, @Nullable V value) {
@@ -120,32 +112,26 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
     }
 
     @Override
-    public void setAttributeValue(String attributeFullName, String subPath, Object value) {
+    public void setAttributeValue(@Nonnull String attributeFullName, @Nullable String subPath, @Nullable Object value) {
         getTarget().setAttributeValue(attributeFullName, subPath, value);
     }
 
     @Override
-    public <V> V getAttributeValue(String attributeFullName, Class<V> resultClass) {
+    @Nullable
+    public <V> V getAttributeValue(@Nonnull String attributeFullName, @Nullable Class<V> resultClass) {
         return getTarget().getAttributeValue(attributeFullName, resultClass);
     }
 
     @Override
-    public <T> T getAttributeValue(AtrRef<?, ?, ?> atr, Class<T> resultClass) {
+    @Nullable
+    public <T> T getAttributeValue(@Nonnull AtrRef<?, ?, ?> atr, @Nullable Class<T> resultClass) {
         return getTarget().getAttributeValue(atr, resultClass);
     }
 
     @Override
-    public <V> V getAttributeValue(AtrRef<?, ?, V> atr) {return getTarget().getAttributeValue(atr);
-    }
-
-    @Override
-    public boolean hasAttributeValueDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
-        return getTarget().hasAttributeValueDirectly(atr);
-    }
-
-    @Override
-    public boolean hasAttributeDefinedDirectly(@Nonnull AtrRef<?, ?, ?> atr) {
-        return getTarget().hasAttributeDefinedDirectly(atr);
+    @Nullable
+    public <V> V getAttributeValue(@Nonnull AtrRef<?, ?, V> atr) {
+        return getTarget().getAttributeValue(atr);
     }
 
     @Override
@@ -158,8 +144,4 @@ public abstract class STranslatorForAttribute implements SAttributeEnabled {
         return getTarget().getDictionary();
     }
 
-    @Nullable
-    public SAttributeEnabled getParentAttributeContext() {
-        return getTarget().getParentAttributeContext();
-    }
 }

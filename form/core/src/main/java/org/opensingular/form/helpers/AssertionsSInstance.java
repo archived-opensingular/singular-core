@@ -21,6 +21,7 @@ import org.assertj.core.api.AbstractDateAssert;
 import org.assertj.core.api.IterableAssert;
 import org.opensingular.form.ICompositeInstance;
 import org.opensingular.form.SAttributeEnabled;
+import org.opensingular.form.SAttributeUtil;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
@@ -31,6 +32,7 @@ import org.opensingular.form.io.FormSerializationUtil;
 import org.opensingular.form.validation.ValidationError;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -54,6 +56,7 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
     }
 
     @Override
+    @Nonnull
     protected Optional<String> generateDescriptionForCurrentTarget(@Nonnull Optional<SInstance> current) {
         return current.map(i -> "Na instância '" + i.getName());
     }
@@ -70,7 +73,7 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
      */
     public AssertionsSInstance isValueEquals(Object expectedValue) {
         if (expectedValue instanceof SInstance) {
-            assertEquivalentInstance(getTarget(), (SInstance) expectedValue, false, true);
+            isEquivalentInstance(getTarget(), (SInstance) expectedValue, false, true);
             return this;
         } else {
             return isValueEquals((String) null, expectedValue);
@@ -243,15 +246,17 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
     }
 
 
-    public static void assertEquivalentInstance(SInstance original, SInstance copy) {
-        assertEquivalentInstance(original, copy, true);
+    public AssertionsSInstance isEquivalentInstance(@Nonnull SInstance original) {
+        isEquivalentInstance(original, getTarget(), true);
+        return this;
     }
 
-    public static void assertEquivalentInstance(SInstance original, SInstance copy, boolean mustHaveSameId) {
-        assertEquivalentInstance(original, copy, mustHaveSameId, false);
+    private static void isEquivalentInstance(SInstance original, SInstance copy, boolean mustHaveSameId) {
+        isEquivalentInstance(original, copy, mustHaveSameId, false);
     }
 
-    public static void assertEquivalentInstance(SInstance original, SInstance copy, boolean mustHaveSameId, boolean ignoreNullValues) {
+    private static void isEquivalentInstance(SInstance original, SInstance copy, boolean mustHaveSameId,
+            boolean ignoreNullValues) {
         try {
             assertThat(copy).isNotSameAs(original);
             assertThat(copy.getClass()).isEqualTo(original.getClass());
@@ -279,7 +284,7 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
 
                 assertThat(copyChildren.size()).isEqualTo(originalChildren.size());
                 for (int i = 0; i < originalChildren.size(); i++) {
-                    assertEquivalentInstance(originalChildren.get(0), copyChildren.get(0), mustHaveSameId);
+                    isEquivalentInstance(originalChildren.get(0), copyChildren.get(0), mustHaveSameId);
                 }
             } else {
                 assertThat(copy.getValue()).isEqualTo(original.getValue());
@@ -297,7 +302,7 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
         }
     }
 
-    public static void removeNullChildren(List<SInstance> children) {
+    private static void removeNullChildren(List<SInstance> children) {
         children.removeIf(child -> child.getValue() == null);
     }
 
@@ -316,13 +321,11 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
         }
     }
 
-    public static void assertEqualsAttribute(SAttributeEnabled copy, SInstance atrOriginal) {
-        Optional<SInstance> atrNewOpt = copy.getAttributeDirectly(atrOriginal.getAttributeInstanceInfo().getName());
+    private static void assertEqualsAttribute(SAttributeEnabled copy, SInstance atrOriginal) {
+        Optional<SInstance> atrNewOpt = SAttributeUtil.getAttributeDirectly(copy, atrOriginal.getAttributeInstanceInfo().getName());
         try {
             assertThat(atrNewOpt).isPresent();
-            if (atrNewOpt.isPresent()) {
-                assertEquivalentInstance(atrOriginal, atrNewOpt.get(), false);
-            }
+            atrNewOpt.ifPresent(sInstance -> isEquivalentInstance(atrOriginal, sInstance, false));
         } catch (AssertionError e) {
             throw new AssertionError(
                     "Erro comparando atributo '" + atrOriginal.getAttributeInstanceInfo().getName() + "'", e);
@@ -346,9 +349,20 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
         target.forEachChild(child -> assertCorrectDocumentReference(reference, child));
     }
 
+    /** Verifies if the current {@link SInstance} has the expected ID. */
+    @Nonnull
+    public AssertionsSInstance hasID(@Nullable Integer expectedId) {
+        if (!Objects.equals(expectedId, getTarget().getId())) {
+            throw new AssertionError(errorMsg("Invalid ID", expectedId, getTarget().getId()));
+        }
+        return this;
+    }
+
     /** Verifica se não possui nenhuma repetição de IDs entre instancia filhas e depois em todo o documento. */
-    public void assertUniqueIDs() {
-        assertUniqueIDs(getTarget(), new HashMap<Integer, SInstance>());
+    @Nonnull
+    public AssertionsSInstance assertUniqueIDs() {
+        assertUniqueIDs(getTarget(), new HashMap<>());
+        return this;
     }
 
     private void assertUniqueIDs(SInstance target, HashMap<Integer, SInstance> usedIds) {
@@ -406,6 +420,9 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
         STypeComposite<?> compositeType = target.getType();
         for (SInstance child : target) {
             SType<?> expectedType = compositeType.getField(child.getName());
+            if (expectedType == null) {
+                throw new AssertionError("Field " + child.getName() + " not found in " + compositeType.getPathFull());
+            }
             assertExpectedType(expectedType, child, false);
             assertCorrectTypeReferences(child);
         }

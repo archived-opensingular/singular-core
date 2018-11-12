@@ -16,10 +16,6 @@
 
 package org.opensingular.lib.wicket.util.bootstrap.layout;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -45,6 +41,11 @@ import org.opensingular.lib.wicket.util.behavior.PicklistInitBehaviour;
 import org.opensingular.lib.wicket.util.feedback.BSFeedbackPanel;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BSControls> {
@@ -59,12 +60,15 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
 
-    public static final String                       DATEPICKER_DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
-    public static final String                       DATEPICKER_DEFAULT_START_DATE  = "01/01/1900";
-    public static final String                       DATEPICKER_DEFAULT_END_DATE    = "31/12/2999";
-    public static final MetaDataKey<MarkupContainer> DATEPICKER_KEY_CONTAINER       = new MetaDataKey<MarkupContainer>() {};
-    public static final MetaDataKey<BSContainer<?>>  CHECKBOX_DIV                   = new MetaDataKey<BSContainer<?>>() {};
-    public static final MetaDataKey<BSContainer<?>>  CHECKBOX_LABEL                 = new MetaDataKey<BSContainer<?>>() {};
+    public static final String DATEPICKER_DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
+    public static final String DATEPICKER_DEFAULT_START_DATE = "01/01/1900";
+    public static final String DATEPICKER_DEFAULT_END_DATE = "31/12/2999";
+    public static final MetaDataKey<MarkupContainer> DATEPICKER_KEY_CONTAINER = new MetaDataKey<MarkupContainer>() {
+    };
+    public static final MetaDataKey<BSContainer<?>> CHECKBOX_DIV = new MetaDataKey<BSContainer<?>>() {
+    };
+    public static final MetaDataKey<BSContainer<?>> CHECKBOX_LABEL = new MetaDataKey<BSContainer<?>>() {
+    };
 
     private IFeedbackPanelFactory feedbackPanelFactory;
 
@@ -172,14 +176,14 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSControls appendSelect(Component select) {
-        return appendSelect(select, false, true);
+        return appendSelect(select, false, true, null);
     }
 
-    public BSControls appendSelect(Component select, boolean multiple) {
-        return appendSelect(select, multiple, true);
+    public BSControls appendSelect(Component select, boolean multiple, String attrExtra) {
+        return appendSelect(select, multiple, true, attrExtra);
     }
 
-    public BSControls appendSelect(Component select, boolean multiple, boolean bootstrap) {
+    public BSControls appendSelect(Component select, boolean multiple, boolean bootstrap, String attrExtra) {
         if (multiple) {
             select.add(new BSSelectInitBehaviour());
         }
@@ -188,7 +192,8 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
                 ((bootstrap)
                         ? "class='bs-select form-control'"
                         : "class='form-control'")
-                        + (multiple ? "multiple" : ""),
+                        + (multiple ? " multiple " : "")
+                        + Optional.ofNullable(attrExtra).orElse(""),
                 select);
     }
 
@@ -251,7 +256,9 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSInputGroup newInputGroup() {
-        return newComponent(BSInputGroup::new);
+        BSInputGroup bsInputGroup = new BSInputGroup(newChildId());
+        getItems().add(bsInputGroup);
+        return bsInputGroup;
     }
 
     public BSControls appendFeedback(Component feedbackComponent) {

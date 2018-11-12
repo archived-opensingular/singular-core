@@ -24,12 +24,11 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import javax.annotation.Nonnull;
 import java.io.PrintWriter;
-import java.lang.reflect.Field;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**
  * Creation date: (24/04/2000 10:34:52)
@@ -39,69 +38,37 @@ import java.nio.charset.Charset;
 
 public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable {
 
-    /**
-     * Define o tamanho da tabulação
-     */
-    private static final String SPACE = "    ";
-    /**
-     * Tabulações predefinidas p/ evitar montagem constante de string (cache)
-     */
+    public static final XMLMElementWriter INSTANCE = new XMLMElementWriter(StandardCharsets.UTF_8);
 
+    private static final String SPACE = "    "; //Defines the tab size
 
-    private final Charset charset;
+    private String charsetName; //In case of serialization, the name allows to retrieve the charset
 
+    private transient Charset charset;
 
-    /**
-     * Esconde o construtor por ser uma classe utilitária
-     */
-    XMLMElementWriter(Charset charset) {
-        this.charset = charset;
+    XMLMElementWriter(@Nonnull Charset charset) {
+        this.charset = Objects.requireNonNull(charset);
+        this.charsetName = Objects.requireNonNull(charset.name());
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeObject(charset.name());
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        Charset charset = Charset.forName((String) in.readObject());
-        try {
-            Field f = this.getClass().getDeclaredField("charset");
-            f.setAccessible(true);
-            f.set(this, charset);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            getLogger().error(e.getMessage(), e);
+    @Nonnull
+    final Charset getCharset() {
+        if (charset == null) {
+            charset = Charset.forName(charsetName);
         }
+        return charset;
     }
 
-    //printAttributes acrescentado por Joao Rafael
     private void printAttributes(PrintWriter out, Element e) {
         NamedNodeMap map = e.getAttributes();
         int          l   = map.getLength();
         for (int i = 0; i < l; i++) {
             Attr a = (Attr) map.item(i);
-            out.print(" ");
+            out.print(' ');
             out.print(a.getName());
             out.print("=\"");
-            out.print(a.getValue());
-            out.print("\"");
-        }
-    }
-
-    private void printAttributes(PrintWriter out, Element e, boolean htmlEncodeReserverdCharacters) {
-        NamedNodeMap map = e.getAttributes();
-        int          l   = map.getLength();
-        for (int i = 0; i < l; i++) {
-            Attr a = (Attr) map.item(i);
-            out.print(" ");
-            out.print(a.getName());
-            out.print("=\"");
-            String text = a.getValue();
-            if (htmlEncodeReserverdCharacters) {
-                printConvertingSpecialCharacters(out, text.toCharArray());
-            } else {
-                out.print(text);
-            }
-            out.print("\"");
+            printConvertingSpecialCharactersAttribute(out, a.getValue());
+            out.print('"');
         }
     }
 
@@ -127,25 +94,6 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
      * Escreve o XML de forma que um eventual parse gere o mesmo XML.
      * Para impressões mais legíveis utilize printTabulado().
      *
-     * @param out               saída destino
-     * @param e                 Elemento a partir do qual será impresso.
-     * @param printHeader       Se true, adiciona string de indentificação de arquivo
-     *                          XML. Se false, depois não será possível fazer parse
-     *                          do resultado sem informaçoes complementares (header).
-     * @param converteEspeciais converte os caracteres de escape.
-     */
-    @Override
-    public void printDocument(PrintWriter out, Element e, boolean printHeader, boolean converteEspeciais) {
-        if (printHeader) {
-            printHeader(out);
-        }
-        printElement(out, e, converteEspeciais);
-    }
-
-    /**
-     * Escreve o XML de forma que um eventual parse gere o mesmo XML.
-     * Para impressões mais legíveis utilize printTabulado().
-     *
      * @param out         saída destino
      * @param e           Elemento a partir do qual será impresso.
      * @param printHeader Se true, adiciona string de indentificação de arquivo
@@ -158,18 +106,18 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
             printHeader(out);
             out.println();
         }
-        printElement(out, e, 0);
+        printElement(out, e, 0, false);
     }
 
-    private void printHeader(PrintWriter out) {
+    private void printHeader(@Nonnull PrintWriter out) {
         out.print("<?xml version=\"1.0\" encoding=\"");
-        out.print(charset);
+        out.print(getCharset());
         out.print("\"?>");
     }
 
-    private void printElement(PrintWriter out, Element e) {
+    private void printElement(@Nonnull PrintWriter out, @Nonnull Element e) {
         if (!e.hasChildNodes()) {
-            out.print("<");
+            out.print('<');
             out.print(e.getNodeName());
             printAttributes(out, e);
             out.print("/>");
@@ -179,7 +127,7 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
         out.print('<');
         out.print(e.getNodeName());
         printAttributes(out, e);
-        out.print(">");
+        out.print('>');
 
         NodeList nList = e.getChildNodes();
         int      tam   = nList.getLength();
@@ -191,31 +139,7 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
         out.print('>');
     }
 
-    private void printElement(PrintWriter out, Element e, boolean converteEspeciais) {
-        if (!e.hasChildNodes()) {
-            out.print("<");
-            out.print(e.getNodeName());
-            printAttributes(out, e, converteEspeciais);
-            out.print("/>");
-            return;
-        }
-
-        out.print('<');
-        out.print(e.getNodeName());
-        printAttributes(out, e, converteEspeciais);
-        out.print(">");
-
-        NodeList nList = e.getChildNodes();
-        int      tam   = nList.getLength();
-        for (int i = 0; i < tam; i++) {
-            printNode(out, nList.item(i), converteEspeciais);
-        }
-        out.print("</");
-        out.print(e.getNodeName());
-        out.print('>');
-    }
-
-    private void printElement(PrintWriter out, Element e, int level) {
+    private void printElement(PrintWriter out, Element e, int level, boolean beautifyLineBreak) {
         printSpace(out, level);
         if (!e.hasChildNodes()) {
             out.print('<');
@@ -239,7 +163,7 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
                 out.println();
             }
             for (int i = 0; i < tam; i++) {
-                printNode(out, nList.item(i), level + 1);
+                printNode(out, nList.item(i), level + 1, beautifyLineBreak);
             }
             if (skipLine) {
                 printSpace(out, level);
@@ -257,25 +181,9 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
                 printElement(out, (Element) node);
                 break;
             case Node.TEXT_NODE:
-                out.print(node.getNodeValue());
-                break;
-            default:
-                throw new SingularException(
-                        "Tipo de nó '" + node.getNodeName() + "' desconhecido: " + node.getNodeType());
-        }
-    }
-
-    private void printNode(PrintWriter out, Node node, boolean convertSpecialsCharacters) {
-        switch (node.getNodeType()) {
-            case Node.ELEMENT_NODE:
-                printElement(out, (Element) node, convertSpecialsCharacters);
-                break;
-            case Node.TEXT_NODE:
-                String text = node.getNodeValue();
-                if (convertSpecialsCharacters) {
-                    printConvertingSpecialCharacters(out, text.toCharArray());
-                } else {
-                    out.print(node.getNodeValue());
+                String txt = node.getNodeValue();
+                if (txt != null) {
+                    printConvertingSpecialCharactersTextNode(out, txt);
                 }
                 break;
             default:
@@ -285,21 +193,21 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
     }
 
 
-    private void printNode(PrintWriter out, Node node, int level) {
+    private void printNode(PrintWriter out, Node node, int level, boolean beautifyLineBreak) {
         switch (node.getNodeType()) {
             case Node.ELEMENT_NODE:
-                printElement(out, (Element) node, level);
+                printElement(out, (Element) node, level, beautifyLineBreak);
                 break;
             case Node.TEXT_NODE:
                 String txt = node.getNodeValue();
-                if (txt == null) {
-                    //Ignora
-                } else if (txt.indexOf('\n') == -1) {
-                    out.print(txt);
-                } else {
-                    out.println();
-                    printText(out, txt, level);
-                    printSpace(out, level - 1);
+                if (txt != null) {
+                    if (!beautifyLineBreak || txt.indexOf('\n') == -1) {
+                        printConvertingSpecialCharactersTextNode(out, txt);
+                    } else {
+                        out.println();
+                        printText(out, txt, level);
+                        printSpace(out, level - 1);
+                    }
                 }
                 break;
             default:
@@ -308,7 +216,7 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
         }
     }
 
-    private void printText(PrintWriter out, String txt, int level) {
+    private void printText(@Nonnull PrintWriter out, @Nonnull String txt, int level) {
         int     tam         = txt.length();
         int     posi        = 0;
         boolean consome     = false;
@@ -326,13 +234,15 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
             }
             if (c == '\n') {
                 printSpace(out, level);
-                out.println(txt.substring(posi, i));
+                printConvertingSpecialCharactersTextNode(out, txt.substring(posi, i));
+                out.println();
                 consome = true;
                 consomeChar = '\r';
                 posi = i + 1;
             } else if (c == '\r') {
                 printSpace(out, level);
-                out.println(txt.substring(posi, i));
+                printConvertingSpecialCharactersTextNode(out, txt.substring(posi, i));
+                out.println();
                 consome = true;
                 consomeChar = '\n';
                 posi = i + 1;
@@ -342,11 +252,12 @@ public class XMLMElementWriter extends AbstractToolkitWriter implements Loggable
             out.println();
         } else {
             printSpace(out, level);
-            out.println(txt.substring(posi));
+            printConvertingSpecialCharactersTextNode(out, txt.substring(posi));
+            out.println();
         }
     }
 
-    private void printSpace(PrintWriter out, int level) {
+    private void printSpace(@Nonnull PrintWriter out, int level) {
         String[] listOfSpaces = new String[15];
         if (level >= listOfSpaces.length) {
             //Indentação maior que o cache de espaços

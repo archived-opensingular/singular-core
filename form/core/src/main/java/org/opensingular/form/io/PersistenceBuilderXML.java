@@ -19,25 +19,45 @@ package org.opensingular.form.io;
 import org.opensingular.form.SInstance;
 import org.opensingular.internal.lib.commons.xml.MElement;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class PersistenceBuilderXML {
 
     private boolean persistId = true;
     private boolean persistNull = false;
     private boolean persistAttributes = false;
     private boolean returnNullXML = true;
+    private MElement parent;
+    private String parentName;
 
+    @Nonnull
     public PersistenceBuilderXML withPersistId(boolean v) {
         persistId = v;
         return this;
     }
 
+    @Nonnull
     public PersistenceBuilderXML withPersistNull(boolean v) {
         persistNull = v;
         return this;
     }
 
+    @Nonnull
     public PersistenceBuilderXML withPersistAttributes(boolean v) {
         persistAttributes = v;
+        return this;
+    }
+
+    @Nonnull
+    public PersistenceBuilderXML withParent(@Nullable MElement parent) {
+        return withParent(parent, null);
+    }
+
+    @Nonnull
+    public PersistenceBuilderXML withParent(@Nullable MElement parent, @Nullable String parentName) {
+        this.parent = parent;
+        this.parentName = parentName;
         return this;
     }
 
@@ -45,31 +65,41 @@ public class PersistenceBuilderXML {
      * No caso do XML resultante não conter nenhum nó, se true implica em retorna um MELement null. Se false, retorna um
      * XML apenas com o nó raiz.
      */
+    @Nonnull
     public PersistenceBuilderXML withReturnNullXML(boolean v) {
         returnNullXML = v;
         return this;
     }
 
-    public boolean isPersistId() {
+    boolean isPersistId() {
         return persistId;
     }
 
-    public boolean isPersistNull() {
+    boolean isPersistNull() {
         return persistNull;
     }
 
-    public boolean isPersistAttributes() {
+    boolean isPersistAttributes() {
         return persistAttributes;
+    }
+
+    MElement getParent() {
+        return parent;
+    }
+
+    String getParentName() {
+        return parentName;
     }
 
     /**
      * Se true, indica que o resultado pode gerar um XML null. Se false, indica que minimamente retornara ao menos um
      * Elment com conteudo vazio.
      */
-    public boolean isReturnNullXML() { return returnNullXML; }
+    boolean isReturnNullXML() { return returnNullXML; }
 
-    public MElement toXML(SInstance instance) {
-        return SFormXMLUtil.toXML(null, null, instance, this);
+    @Nullable
+    public MElement toXML(@Nonnull SInstance instance) {
+        return SFormXMLUtil.toXML(instance, this);
     }
 
 }

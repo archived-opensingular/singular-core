@@ -16,23 +16,54 @@
 
 package org.opensingular.form.persistence.dao;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class IndexedDataQueryBuilder {
 
-    private final String        schema;
-    private       StringBuilder select;
-    private       StringBuilder from;
-    private       StringBuilder join;
-    private int colCount = 0;
+    private final String schema;
+    private StringBuilder select;
+    private StringBuilder from = new StringBuilder(" FROM ");
+    private StringBuilder join = new StringBuilder();
+    private StringBuilder where;
+    private StringBuilder joinCache;
+    private StringBuilder order;
 
     public IndexedDataQueryBuilder(String schema) {
         this.schema = schema;
 
-        select = new StringBuilder("select distinct tipoformulario.co_tipo_formulario as co_tipo_formulario \n");
-        from = new StringBuilder("from ").append(this.schema).append(".tb_tipo_formulario tipoformulario\n  inner join ")
-                .append(this.schema).append(".tb_formulario formulario on tipoformulario.co_tipo_formulario = formulario.co_tipo_formulario \n");
-        join = new StringBuilder();
+        select = new StringBuilder("SELECT DISTINCT 'EMPTY' \n");
+        joinCache = new StringBuilder();
+        where = new StringBuilder(" WHERE 1 = 1 ");
+        order = new StringBuilder();
     }
 
+    public void createSelect(String selectClause) {
+        select = new StringBuilder(selectClause);
+    }
+
+    public void appendToSelect(String columnName) {
+        select.append("  , ").append(columnName);
+    }
+
+    public void appendToJoin(String joinClause) {
+        join.append(joinClause);
+    }
+
+
+    public void appendToWhere(String joinClause) {
+        where.append(joinClause);
+    }
+
+    public void appendToOrder(String joinClause) {
+        if(StringUtils.isEmpty(order)){
+            order.append(" ORDER BY ");
+        }
+        order.append(joinClause);
+    }
+
+    public void appendToFrom(String fromClause) {
+        from.append(fromClause);
+    }
 
     public IndexedDataQueryBuilder addColumn(String columnAlias, String[] fieldName) {
         addColumnToSelect(columnAlias);
@@ -49,23 +80,38 @@ public class IndexedDataQueryBuilder {
      * @return
      */
     public String createQueryForIndexedData() {
-        return select.toString() + from.toString() + join.toString();
+        return new StringBuilder()
+                .append(select)
+                .append(from)
+                .append(join)
+                .append(joinCache)
+                .append(where)
+                .append(order).toString();
     }
 
     private void addColumnToSelect(String column) {
-        if (colCount == 0) {
-            select.append("  , ").append(column).append(".co_versao_formulario as co_versao_formulario \n");
-        }
-        select.append("  , ").append(column).append(".ds_valor as ").append(column).append('\n');
+
+        select.append("  , ").append(column)
+                .append(".DS_VALOR as ")
+                .append(column)
+                .append('\n');
     }
 
     private void addJoinClause(String columnAlias, String fieldsNames) {
-        String joinAlias = "tb_cache_campo_" + ++colCount;
 
-        join.append("  inner join ").append(schema).append(".tb_cache_campo ").append(joinAlias).append(" on ").append(joinAlias).append(".co_tipo_formulario = tipoformulario.co_tipo_formulario \n");
-        join.append("  inner join ").append(schema).append(".tb_cache_valor ").append(columnAlias).append(" on ").append(columnAlias).append(".co_cache_campo = ").append(joinAlias).append(".co_cache_campo \n");
-        join.append("          and ").append(columnAlias).append(".co_versao_formulario = formulario.co_versao_atual \n");
-        join.append("          and ").append(joinAlias).append(".ds_caminho_campo in (").append(fieldsNames).append(") \n");
+        String leftSubQuery = "  LEFT JOIN (SELECT " +
+                " CACHE_VALOR.co_versao_formulario as co_versao_formulario, " +
+                " CACHE_CAMPO.co_tipo_formulario              as co_tipo_formulario, " +
+                " CONCAT(CACHE_VALOR.DS_VALOR, CACHE_VALOR.NU_VALOR, CACHE_VALOR.DT_VALOR) as ds_valor " +
+                " FROM " + schema + ".tb_cache_campo CACHE_CAMPO " +
+                " INNER JOIN DBSINGULAR.tb_cache_valor CACHE_VALOR " +
+                "                 on CACHE_VALOR.co_cache_campo = CACHE_CAMPO.co_cache_campo " +
+                "                    and CACHE_CAMPO.ds_caminho_campo in (" + fieldsNames + ") " +
+                " ) " + columnAlias + " on " + columnAlias + ".co_versao_formulario = currentV.CO_VERSAO_FORMULARIO " +
+                " and " + columnAlias + ".co_tipo_formulario = tpForm.CO_TIPO_FORMULARIO ";
+
+        joinCache.append(leftSubQuery);
+
     }
 
     private String getFieldsNames(String[] fields) {

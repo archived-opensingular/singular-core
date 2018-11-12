@@ -46,7 +46,7 @@ public class AssertionsSType extends AssertionsSAttributeEnabled<AssertionsSType
      * Retorna um novo objeto de assertiva para o tipo indicado pelo caminho informado.
      */
     public AssertionsSType field(String fieldPath) {
-        isInstanceOf(STypeComposite.class);
+        //isInstanceOf(STypeComposite.class);
         return new AssertionsSType(getTarget().getLocalType(fieldPath));
     }
 
@@ -88,12 +88,68 @@ public class AssertionsSType extends AssertionsSAttributeEnabled<AssertionsSType
         return this;
     }
 
-    AssertionsSType checkCorrectJavaSuperClassDuringExtension(@Nonnull SType<?> expectedSuperType) {
+    final void checkCorrectJavaSuperClassDuringExtension(@Nonnull SType<?> expectedSuperType) {
         if (!expectedSuperType.getClass().isAssignableFrom(getTarget().getClass())) {
             throw new AssertionError(errorMsg(
                     "A classe do tipo " + getTarget() + " deveria igual ou extender a classe " +
                             expectedSuperType.getClass().getName() + ", que e a classe de seu super tipo " +
                             expectedSuperType + ". Em vez disso, é uma classe " + getTarget().getClass().getName()));
+        }
+    }
+
+    /** Verifies if the current type has the indicated type as its parent type. Otherwise, throws a exception. */
+    @Nonnull
+    public AssertionsSType isParent(@Nullable SType<?> expectedParent) {
+        Assertions.assertThat(getTarget().getParent().orElse(null)).isSameAs(expectedParent);
+        return this;
+    }
+
+    /**
+     * Verify if the current type has a complementary extension ({@link SType#getComplementarySuperType()} of the
+     * indicated type. Also verifies if this extension is correctly done. Throws a exception if the condicions are
+     * not met.
+     */
+    @Nonnull
+    public AssertionsSType isDirectComplementaryExtensionOf(@Nullable SType<?> expectedComplementarySuperType) {
+        if (expectedComplementarySuperType == null) {
+            Optional<SType<?>> complementary = getTarget().getComplementarySuperType();
+            if (complementary.isPresent()) {
+                throw new AssertionError(errorMsg("Complementary super type invalid", null, complementary.get()));
+            }
+            return this;
+        }
+        isNotSameAs(expectedComplementarySuperType);
+        if (getTarget().getComplementarySuperType().orElse(null) != expectedComplementarySuperType) {
+            throw new AssertionError(errorMsg("Complementary super type invalid", expectedComplementarySuperType,
+                    getTarget().getComplementarySuperType().orElse(null)));
+        }
+        checkCorrectJavaSuperClassDuringExtension(expectedComplementarySuperType);
+        return this;
+    }
+
+    /**
+     * Verifies if the current type is directly or indirectly a type of the informed expected super type. Otherwise,
+     * throws a exception.
+     */
+    @Nonnull
+    public AssertionsSType isExtensionOf(@Nonnull SType<?> expectedSuperType) {
+        isNotSameAs(expectedSuperType);
+        if (!getTarget().isTypeOf(expectedSuperType)) {
+            throw new AssertionError(errorMsg("Was expected to extend " + expectedSuperType));
+        }
+        checkCorrectJavaSuperClassDuringExtension(expectedSuperType);
+        return this;
+    }
+
+    /**
+     * Verifies if the current type is not directly or indirectly a type of the informed expected super type. Otherwise,
+     * throws a exception.
+     */
+    @Nonnull
+    public AssertionsSType isNotExtensionOf(@Nonnull SType<?> expectedSuperType) {
+        isNotSameAs(expectedSuperType);
+        if (getTarget().isTypeOf(expectedSuperType)) {
+            throw new AssertionError(errorMsg("Shouldn't extend " + expectedSuperType));
         }
         return this;
     }
@@ -151,6 +207,29 @@ public class AssertionsSType extends AssertionsSAttributeEnabled<AssertionsSType
         } else if (getTarget().isList()) {
             Assertions.assertThat(expectedSuperType).isInstanceOf(STypeList.class);
             listElementType().isExtensionCorrect(((STypeList<?,?>) expectedSuperType).getElementsType());
+        }
+        return this;
+    }
+
+    /**
+     * Verifies is the current type is a direct complementary extension of the informed type (use {@link
+     * #isDirectComplementaryExtensionOf(SType)} and if the internal structure of the extension is consistent.
+     * Otherwise, throws a exception.
+     */
+    @Nonnull
+    public AssertionsSType isComplementaryExtensionCorrect(@Nonnull SType<?> complementarySuperType) {
+        isDirectComplementaryExtensionOf(complementarySuperType);
+        if (getTarget().isComposite()) {
+            Assertions.assertThat(complementarySuperType).isInstanceOf(STypeComposite.class);
+            if (!getTarget().isRecursiveReference()) {
+                for (SType<?> fieldSuper : ((STypeComposite<?>) complementarySuperType).getFields()) {
+                    field(fieldSuper.getNameSimple()).isComplementaryExtensionCorrect(fieldSuper);
+                }
+            }
+        } else if (getTarget().isList()) {
+            Assertions.assertThat(complementarySuperType).isInstanceOf(STypeList.class);
+            listElementType().isComplementaryExtensionCorrect(
+                    ((STypeList<?, ?>) complementarySuperType).getElementsType());
         }
         return this;
     }
