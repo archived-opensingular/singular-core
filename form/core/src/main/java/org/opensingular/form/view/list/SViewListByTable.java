@@ -24,8 +24,8 @@ import javax.annotation.Nullable;
 
 public class SViewListByTable extends AbstractSViewListWithControls<SViewListByTable> {
 
-    private boolean renderCompositeFieldsAsColumns = true;
-    private boolean editVisible = false; //This variable is used to determine if will have a column for edit.
+    private boolean                 renderCompositeFieldsAsColumns = true;
+    private boolean                 enableInsert                   = false; //This variable is used to determine if will have a column for edit.
     private ButtonsConfigWithInsert buttonsConfig;
 
     public boolean isRenderCompositeFieldsAsColumns() {
@@ -52,7 +52,7 @@ public class SViewListByTable extends AbstractSViewListWithControls<SViewListByT
      * @return <code>this</code>
      */
     public SViewListByTable enableInsert(@Nullable String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon, boolean visibleEdit) {
-        this.editVisible = visibleEdit;
+        this.enableInsert = visibleEdit;
         getButtonsConfig().setInsertButton(new ButtonAction(visibleFor, hint, icon));
         return this;
     }
@@ -69,12 +69,12 @@ public class SViewListByTable extends AbstractSViewListWithControls<SViewListByT
      * By default the insert line is disable.
      */
     public SViewListByTable disableInsert() {
-        this.editVisible = false;
+        this.enableInsert = false;
         return enableInsert(s -> false);
     }
 
     public SViewListByTable enableInsert() {
-        this.editVisible = true;
+        this.enableInsert = true;
         return enableInsert(s -> true);
     }
 
@@ -83,8 +83,8 @@ public class SViewListByTable extends AbstractSViewListWithControls<SViewListByT
      *
      * @return True if edit button could be visible. False if the edit button will never be visible.
      */
-    public boolean isEditVisible() {
-        return editVisible;
+    public boolean isEnableInsert() {
+        return enableInsert;
     }
 
     /**

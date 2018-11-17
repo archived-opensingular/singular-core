@@ -65,7 +65,7 @@ public class TableElementsView extends ElementsView {
 
         final ISupplier<SViewListByTable> viewSupplier = ctx.getViewSupplier(SViewListByTable.class);
 
-        if (viewSupplier.get().isEditVisible() && ctx.getViewMode().isEdition()) {
+        if (viewSupplier.get().isEnableInsert() && ctx.getViewMode().isEdition()) {
             final BSTDataCell actionColumn = row.newCol();
             if (viewSupplier.get().getButtonsConfig().isInsertEnabled(item.getModelObject())) {
                 ButtonAction editButton = viewSupplier.get().getButtonsConfig().getInsertButton();
