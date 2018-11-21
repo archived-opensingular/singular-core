@@ -31,6 +31,8 @@ import org.opensingular.flow.core.variable.ValidationResult;
 import org.opensingular.flow.core.variable.VarDefinition;
 import org.opensingular.flow.core.variable.VarInstance;
 import org.opensingular.flow.core.variable.VarInstanceMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,6 +42,8 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 
 class FlowEngine {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FlowEngine.class);
 
     private FlowEngine() {}
 
@@ -117,6 +121,7 @@ class FlowEngine {
                 currentDestiny.execute(executionContext);
                 getPersistenceService().flushSession();
             } catch(Exception e) {
+                LOGGER.error(e.getMessage(), e);
                 SingularFlowException e2 = new SingularFlowException(
                         "Error running task '" + currentDestiny.getName() + "'", e);
                 e2.add(currentDestiny);
