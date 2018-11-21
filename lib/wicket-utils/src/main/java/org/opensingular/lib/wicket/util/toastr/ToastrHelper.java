@@ -80,7 +80,7 @@ public class ToastrHelper implements Serializable {
     public static String generateJs(Exception exception, ToastrType toastrType, boolean withDocumentReadyFunction) {
         ToastrSettings settings = getDefaultSettings();
         settings.getToastrType().setValue(toastrType);
-        settings.getNotificationTitle().setValue(JavaScriptUtils.escapeQuotes(exception.getMessage()).toString());
+        settings.getNotificationTitle().setValue(org.opensingular.lib.wicket.util.util.JavaScriptUtils.javaScriptEscape(exception.getMessage()));
 
         ToastJsGenerator generator = new ToastJsGenerator(settings, withDocumentReadyFunction);
         return generator.generateJs();
