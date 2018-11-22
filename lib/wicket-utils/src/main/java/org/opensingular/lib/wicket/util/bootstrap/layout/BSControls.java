@@ -179,6 +179,10 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         return appendSelect(select, false, true, null);
     }
 
+    public BSControls appendSelect(Component select, boolean multiple) {
+        return appendSelect(select, multiple, true, null);
+    }
+
     public BSControls appendSelect(Component select, boolean multiple, String attrExtra) {
         return appendSelect(select, multiple, true, attrExtra);
     }
