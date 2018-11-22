@@ -348,7 +348,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
         try {
             final IFlowDataService<?> dataService = task.getFlowMap().getFlowDefinition().getDataService();
             final Collection<? extends FlowInstance> instances = dataService.retrieveAllInstancesIn(task);
-            getLogger().info("Start running job: {} - {} instances. ", task.getName(), Optional.ofNullable(instances).map(Collection::size).orElse(0));
+            logJobStarted(task, instances);
             if (task.isCalledInBlock()) {
                 return task.executarByBloco(instances);
             } else {
@@ -358,7 +358,7 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
                 return null;
             }
         } finally {
-            getLogger().info("Job executed : {}", task.getName());
+            getLogger().debug("Job executed : {}", task.getName());
         }
     }
 
@@ -366,11 +366,11 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
         try {
             final IFlowDataService<?> dataService = task.getFlowMap().getFlowDefinition().getDataService();
             final Collection<? extends FlowInstance> instances = dataService.retrieveAllInstancesIn(task);
-            getLogger().info("Start running job: {} - {} instances. ", task.getName(), Optional.of(instances).map(Collection::size).orElse(0));
+            logJobStarted(task, instances);
             for (FlowInstance instance : instances) {
                 TaskInstance taskInstance = instance.getCurrentTaskOrException();
                 if (action.getPredicate().test(taskInstance)) {
-                    getLogger().info("{}: Condicao Atingida '{}' executando  {} ",
+                    getLogger().debug("{}: Condicao Atingida '{}' executando  {} ",
                             instance.getFullId(),
                             action.getPredicate().getDescription(taskInstance),
                             action.getCompleteDescription());
@@ -379,8 +379,17 @@ public abstract class SingularFlowConfigurationBean implements Loggable {
                 }
             }
         } finally {
-            getLogger().info("Job executed : {}", task.getName());
+            getLogger().debug("Job executed : {}", task.getName());
         }
         return null;
+    }
+
+    private void logJobStarted(STask<?> task, Collection<? extends FlowInstance> instances) {
+        Integer instanceNumber = Optional.ofNullable(instances).map(Collection::size).orElse(0);
+        if (instanceNumber > 0) {
+            getLogger().info("Start running job: {} - {} instances. ", task.getName(), instanceNumber);
+        } else {
+            getLogger().debug("Start running job: {} - {} instances. ", task.getName(), instanceNumber);
+        }
     }
 }
