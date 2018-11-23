@@ -29,10 +29,16 @@ public interface ITaskDefinition {
 
     @Nonnull
     default String getKey() {
-        return taskNameToTaskKey(getName());
+        if (this instanceof Enum) {
+            return ((Enum) this).name();
+        } else {
+            return taskNameToTaskKey(getName());
+        }
     }
 
-    /** Creates a {@link ITaskDefinition} with the name informed and the key calculated based in the name. */
+    /**
+     * Creates a {@link ITaskDefinition} with the name informed and the key calculated based in the name.
+     */
     @Nonnull
     public static ITaskDefinition of(@Nonnull String name) {
         return of(name, taskNameToTaskKey(name));
@@ -43,7 +49,9 @@ public interface ITaskDefinition {
         return SingularUtil.convertToJavaIdentifier(name).toUpperCase();
     }
 
-    /** Creates a {@link ITaskDefinition} with the name and key informed. */
+    /**
+     * Creates a {@link ITaskDefinition} with the name and key informed.
+     */
     @Nonnull
     public static ITaskDefinition of(@Nonnull String name, @Nonnull String key) {
         return new ITaskDefinition() {
