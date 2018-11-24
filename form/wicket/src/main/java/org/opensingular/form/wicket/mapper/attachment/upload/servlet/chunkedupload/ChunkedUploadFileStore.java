@@ -159,14 +159,20 @@ public class ChunkedUploadFileStore implements HttpSessionBindingListener, Seria
                 }
             }
 
+            @SuppressWarnings({"fb-contrib:BED_BOGUS_EXCEPTION_DECLARATION", "fb-contrib:CSI_CHAR_SET_ISSUES_USE_STANDARD_CHARSET"})
             @Override
             public String getString(String encoding) throws UnsupportedEncodingException {
-                return new String(get(), DiskFileItem.DEFAULT_CHARSET);
+                return new String(get(), encoding);
             }
 
+            @SuppressWarnings({"fb-contrib:CSI_CHAR_SET_ISSUES_USE_STANDARD_CHARSET"})
             @Override
             public String getString() {
-                return new String(get());
+                try {
+                    return new String(get(), DiskFileItem.DEFAULT_CHARSET);
+                } catch (UnsupportedEncodingException e) {
+                    throw new SingularFormException(e.getMessage(), e);
+                }
             }
 
             @Override
