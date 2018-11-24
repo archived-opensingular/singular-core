@@ -33,9 +33,9 @@ public class ContentRangeHeaderParser implements Serializable {
             contentRange = contentRange.replaceAll("bytes", "").trim();
             String[] parts = contentRange.split("/");
             String[] range = parts[0].split("-");
-            byteArrayStartIndex = Long.valueOf(range[0]);
-            byteArrayEndIndex = Long.valueOf(range[1]);
-            totalBytes = Long.valueOf(parts[1]);
+            byteArrayStartIndex = Long.parseLong(range[0]);
+            byteArrayEndIndex = Long.parseLong(range[1]);
+            totalBytes = Long.parseLong(parts[1]);
         }
     }
 

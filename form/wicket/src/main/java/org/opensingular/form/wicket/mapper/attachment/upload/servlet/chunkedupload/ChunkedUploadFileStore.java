@@ -20,6 +20,7 @@ import com.google.common.io.Files;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemHeaders;
 import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.IOUtils;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.wicket.mapper.attachment.upload.ServletFileUploadFactory;
@@ -37,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +49,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.ServletFileUploadStrategy.PARAM_NAME;
 
-public class ChunkedUploadFileStore implements HttpSessionBindingListener {
+public class ChunkedUploadFileStore implements HttpSessionBindingListener, Serializable {
 
     private static final String SESSION_KEY = ChunkedUploadFileStore.class.getName();
     private static       Logger LOGGER      = LoggerFactory.getLogger(ChunkedUploadFileStore.class);
@@ -93,13 +95,14 @@ public class ChunkedUploadFileStore implements HttpSessionBindingListener {
         ContentDispositionHeaderParser contentDispositionHeaderParser = new ContentDispositionHeaderParser(req);
         Map<String, List<FileItem>>    params                         = servletFileUploadFactory.makeServletFileUpload(uploadInfo).parseParameterMap(req);
         if (contentRangeHeaderParser.exists()) {
-            assembleChunked(params.get(PARAM_NAME), contentRangeHeaderParser.isLastChunk(), contentDispositionHeaderParser.getFileName());
+            assembleChunks(params.get(PARAM_NAME), contentRangeHeaderParser.isLastChunk(), contentDispositionHeaderParser.getFileName());
         } else {
             assembleSinglePost(params.get(PARAM_NAME));
         }
     }
 
-    private void assembleChunked(List<FileItem> fileItems, boolean lastChunk, String fileName) throws IOException {
+    @SuppressWarnings("squid:S134")
+    private void assembleChunks(List<FileItem> fileItems, boolean lastChunk, String fileName) throws IOException {
         List<FileItem> fileItemList = requestFileAssembly.computeIfAbsent(fileName, k -> new ArrayList<>());
         if (fileItems != null) {
             fileItemList.addAll(fileItems);
@@ -158,7 +161,7 @@ public class ChunkedUploadFileStore implements HttpSessionBindingListener {
 
             @Override
             public String getString(String encoding) throws UnsupportedEncodingException {
-                return new String(get(), encoding);
+                return new String(get(), DiskFileItem.DEFAULT_CHARSET);
             }
 
             @Override

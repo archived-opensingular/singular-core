@@ -157,7 +157,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
                 super.onSubmit(target, form);
 
                 SInstance source = innerSingularFormPanel.getInstance();
-                SInstance copy = source.getDocument().getDocumentFactoryRef().get().createInstance(source.getDocument().getRootRefType().get(), false);
+                SInstance copy   = source.getDocument().getDocumentFactoryRef().get().createInstance(source.getDocument().getRootRefType().orElseThrow(() -> new SingularFormException("Null rootRefType")), false);
                 Value.copyValues(source, copy);
                 dataTableFilter.setFilter(copy);
 
