@@ -46,4 +46,16 @@ public class ContentRangeHeaderParser implements Serializable {
     public boolean isLastChunk() {
         return byteArrayEndIndex == totalBytes - 1;
     }
+
+    public long getByteArrayStartIndex() {
+        return byteArrayStartIndex;
+    }
+
+    public long getByteArrayEndIndex() {
+        return byteArrayEndIndex;
+    }
+
+    public long getTotalBytes() {
+        return totalBytes;
+    }
 }
