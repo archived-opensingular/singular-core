@@ -96,8 +96,7 @@ public final class ServletFileUploadStrategyHandler implements Loggable {
      * @return list of available strategies.
      */
     protected List<ServletFileUploadStrategy> listAvailableStrategies() {
-        return Arrays.asList(new ServletFileUploadStrategy[]{
-                DEFAULT_STRATEGY,
-                new SimplePostFilesStrategy()});
+        return Arrays.asList(DEFAULT_STRATEGY,
+                new SimplePostFilesStrategy());
     }
 }
