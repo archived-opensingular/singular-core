@@ -134,6 +134,7 @@ public class ChunkedUploadFileStore implements HttpSessionBindingListener, Seria
                 return delegate.getContentType();
             }
 
+            @SuppressWarnings("findsecbugs:FILE_UPLOAD_FILENAME")
             @Override
             public String getName() {
                 return delegate.getName();
@@ -154,7 +155,7 @@ public class ChunkedUploadFileStore implements HttpSessionBindingListener, Seria
                 try {
                     return IOUtils.toByteArray(getInputStream());
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOGGER.error(e.getMessage(), e);
                     throw new SingularFormException(e.getMessage(), e);
                 }
             }
@@ -171,6 +172,7 @@ public class ChunkedUploadFileStore implements HttpSessionBindingListener, Seria
                 try {
                     return new String(get(), DiskFileItem.DEFAULT_CHARSET);
                 } catch (UnsupportedEncodingException e) {
+                    LOGGER.error(e.getMessage(), e);
                     throw new SingularFormException(e.getMessage(), e);
                 }
             }
@@ -180,6 +182,7 @@ public class ChunkedUploadFileStore implements HttpSessionBindingListener, Seria
                 Files.copy(f, file);
             }
 
+            @SuppressWarnings("squid:S899")
             @Override
             public void delete() {
                 f.delete();
