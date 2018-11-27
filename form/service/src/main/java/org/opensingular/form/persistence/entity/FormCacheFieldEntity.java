@@ -16,6 +16,9 @@
 
 package org.opensingular.form.persistence.entity;
 
+import org.opensingular.lib.support.persistence.entity.BaseEntity;
+import org.opensingular.lib.support.persistence.util.Constants;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -26,9 +29,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.opensingular.lib.support.persistence.entity.BaseEntity;
-import org.opensingular.lib.support.persistence.util.Constants;
 
 /**
  * The persistent class for the TB_CACHE_CAMPO database table.
@@ -49,7 +49,7 @@ public class FormCacheFieldEntity extends BaseEntity<Long> {
     @JoinColumn(name = "CO_TIPO_FORMULARIO", foreignKey = @ForeignKey(name = "FK_CACHE_CAMPO_TIPO_FORMULARIO"))
     private FormTypeEntity formTypeEntity;
 
-    @Column(name = "DS_CAMINHO_CAMPO", length = 255)
+    @Column(name = "DS_CAMINHO_CAMPO", length = 800)
     private String path;
 
     public FormCacheFieldEntity() {
