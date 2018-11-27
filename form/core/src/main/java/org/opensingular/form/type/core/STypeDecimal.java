@@ -60,6 +60,9 @@ public class STypeDecimal extends STypeSimple<SIBigDecimal, BigDecimal> {
     public String toStringDisplayDefault(BigDecimal bigDecimal) {
         int size = bigDecimal.toString().length();
         DecimalFormat decimalFormat;
+        if(bigDecimal.scale() > 2){
+            return bigDecimal.toString();
+        }
         if(size <= 6){
             decimalFormat = new DecimalFormat("0.00");
         } else {
