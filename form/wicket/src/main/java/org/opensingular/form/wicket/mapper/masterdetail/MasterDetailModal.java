@@ -18,6 +18,7 @@ package org.opensingular.form.wicket.mapper.masterdetail;
 
 import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
@@ -81,20 +82,23 @@ class MasterDetailModal extends BFModalWindow {
         addButton = new ActionAjaxButton("btn") {
             @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                boolean hide = true;
-                target.add(table);
-                if (viewMode.isEdition()) {
-                    WicketFormProcessing.processDependentTypes(this.getPage(), target, model.getObject());
-                    boolean valid = WicketFormProcessing.onFormSubmit((WebMarkupContainer) table, target, MasterDetailModal.this.getModel(), true);
-                    if (viewSupplier.get().isEnforceValidationOnAdd() && !valid) {
-                        hide = false;
-                        if (viewSupplier.get().getEnforcedValidationMessage() != null) {
-                            new ToastrHelper(MasterDetailModal.this).addToastrMessage(ToastrType.ERROR, viewSupplier.get().getEnforcedValidationMessage());
-                        }
+                boolean mustHide        = true;
+                boolean mustProcessForm = viewMode.isEdition();
+                if (mustProcessForm && viewSupplier.get().isEnforceValidationOnAdd()) {
+                    boolean invalid = WicketFormProcessing.validateErrors(MasterDetailModal.this.getBodyContainer(), target, MasterDetailModal.this.getModel().getObject(), false);
+                    mustHide = !invalid;
+                    mustProcessForm = !invalid;
+                    if (invalid && viewSupplier.get().getEnforcedValidationMessage() != null) {
+                        new ToastrHelper(MasterDetailModal.this.getBodyContainer()).addToastrMessage(ToastrType.ERROR, viewSupplier.get().getEnforcedValidationMessage());
                     }
                 }
-                if (hide) {
+                if (mustProcessForm) {
+                    WicketFormProcessing.processDependentTypes(this.getPage(), target, model.getObject());
+                    WicketFormProcessing.onFormSubmit((WebMarkupContainer) table, target, MasterDetailModal.this.getModel(), true);
+                }
+                if (mustHide) {
                     MasterDetailModal.this.hide(target);
+                    target.add(table);
                 }
             }
         };
