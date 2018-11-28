@@ -16,6 +16,7 @@
 
 package org.opensingular.form.wicket.mapper.masterdetail;
 
+import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -38,6 +39,7 @@ import org.opensingular.lib.wicket.util.ajax.ActionAjaxLink;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.modal.BSModalBorder;
 import org.opensingular.lib.wicket.util.scripts.Scripts;
+import org.opensingular.lib.wicket.util.toastr.ToastrHelper;
 
 import javax.annotation.Nullable;
 
@@ -46,19 +48,19 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 class MasterDetailModal extends BFModalWindow {
 
-    protected final IModel<String> listLabel;
-    protected final WicketBuildContext ctx;
-    protected final Component table;
-    protected final ViewMode viewMode;
+    protected final IModel<String>                     listLabel;
+    protected final WicketBuildContext                 ctx;
+    protected final Component                          table;
+    protected final ViewMode                           viewMode;
     protected final ISupplier<SViewListByMasterDetail> viewSupplier;
 
-    protected IModel<SInstance> currentInstance;
+    protected IModel<SInstance>            currentInstance;
     protected IConsumer<AjaxRequestTarget> closeCallback;
-    protected BSContainer<?> containerExterno;
-    protected FormStateUtil.FormState formState;
-    protected IModel<String> actionLabel;
-    protected ActionAjaxButton addButton;
-    private IConsumer<AjaxRequestTarget> onHideCallback;
+    protected BSContainer<?>               containerExterno;
+    protected FormStateUtil.FormState      formState;
+    protected IModel<String>               actionLabel;
+    protected ActionAjaxButton             addButton;
+    private   IConsumer<AjaxRequestTarget> onHideCallback;
 
     MasterDetailModal(String id,
                       IModel<SIList<SInstance>> model,
@@ -81,11 +83,20 @@ class MasterDetailModal extends BFModalWindow {
         addButton = new ActionAjaxButton("btn") {
             @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
+                boolean hide = true;
                 target.add(table);
-                MasterDetailModal.this.hide(target);
                 if (viewMode.isEdition()) {
                     WicketFormProcessing.processDependentTypes(this.getPage(), target, model.getObject());
-                    WicketFormProcessing.onFormSubmit((WebMarkupContainer) table, target, MasterDetailModal.this.getModel(), true);
+                    boolean valid = WicketFormProcessing.onFormSubmit((WebMarkupContainer) table, target, MasterDetailModal.this.getModel(), true);
+                    if (viewSupplier.get().isEnforceValidationOnAdd() && !valid) {
+                        hide = false;
+                        if (viewSupplier.get().getEnforcedValidationMessage() != null) {
+                            new ToastrHelper(MasterDetailModal.this).addToastrMessage(ToastrType.ERROR, viewSupplier.get().getEnforcedValidationMessage());
+                        }
+                    }
+                }
+                if (hide) {
+                    MasterDetailModal.this.hide(target);
                 }
             }
         };
@@ -184,8 +195,8 @@ class MasterDetailModal extends BFModalWindow {
 
         setTitleText($m.get(() -> (prefix + " " + listLabel.getObject()).trim()));
 
-        BSContainer<?> modalBody = new BSContainer<>("bogoMips");
-        ViewMode viewModeModal = viewMode;
+        BSContainer<?> modalBody     = new BSContainer<>("bogoMips");
+        ViewMode       viewModeModal = viewMode;
 
         setBody(modalBody);
 
