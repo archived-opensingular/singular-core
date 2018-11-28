@@ -22,17 +22,19 @@ import org.opensingular.form.enums.ModalSize;
 public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<SViewListByMasterDetail>
         implements ConfigurableModal<SViewListByMasterDetail> {
 
-    private boolean editEnabled = true;
-    private String newActionLabel = "Adicionar";
+    private boolean editEnabled    = true;
+    private String  newActionLabel = "Adicionar";
 
-    private String editActionLabel = "Atualizar";
+    private String    editActionLabel = "Atualizar";
     private ModalSize modalSize;
 
     private String actionColumnLabel = "Ações";
 
     private SType<?> sortableColumn;
-    private boolean ascendingMode = true;
-    private boolean disableSort = false;
+    private boolean  ascendingMode          = true;
+    private boolean  disableSort            = false;
+    private boolean  enforceValidationOnAdd = false;
+    private String   enforcedValidationMessage;
 
     public SViewListByMasterDetail disableEdit() {
         this.editEnabled = false;
@@ -129,5 +131,38 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
 
     public boolean isDisableSort() {
         return disableSort;
+    }
+
+    /**
+     * If set, adding invalid elements is now allowed.
+     * Element SInstance must be valid to be added to the corresponding SIList.
+     *
+     * @param message message to be displayed when the list element is not valid.
+     *                A null message disables the message exhibition
+     * @return
+     */
+    public SViewListByMasterDetail enforceValidationOnAdd(String message) {
+        this.enforcedValidationMessage = message;
+        this.enforceValidationOnAdd = true;
+        return this;
+    }
+
+    /**
+     * If set, adding invalid elements is now allowed.
+     * Element SInstance must be valid to be added to the corresponding SIList.
+     *
+     * @return
+     */
+    public SViewListByMasterDetail enforceValidationOnAdd() {
+        return enforceValidationOnAdd("Não é possível adicionar enquanto houver correções a serem feitas");
+    }
+
+
+    public String getEnforcedValidationMessage() {
+        return enforcedValidationMessage;
+    }
+
+    public boolean isEnforceValidationOnAdd() {
+        return enforceValidationOnAdd;
     }
 }

@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.event.Broadcast;
 import org.apache.wicket.model.IModel;
@@ -42,11 +43,12 @@ import org.opensingular.form.wicket.util.WicketFormUtils;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.ref.Out;
 import org.opensingular.lib.commons.util.HTMLUtil;
+import org.opensingular.lib.commons.util.Loggable;
 
 /**
  * Implementação de <code>SInstanceAction.Delegate</code> integrada com a infraestrutura Wicket.
  */
-public class WicketSIconActionDelegate implements SInstanceAction.Delegate, Serializable {
+public class WicketSIconActionDelegate implements SInstanceAction.Delegate, Serializable, Loggable {
 
     private IModel<? extends SInstance> instanceModel;
     private transient List<?>           contextList;
@@ -100,21 +102,29 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate, Seri
     @Override
     public void refreshFieldForInstance(SInstance instance) {
         final Optional<AjaxRequestTarget> optTarget = getInternalContext(AjaxRequestTarget.class);
-        final Optional<Component> optComp = getInternalContext(Component.class);
-        if (optComp.isPresent()) {
-            final Component comp = optComp.get();
+        final Optional<Page> optPage = getInternalContext(Page.class);
 
+        final Page page = (optPage.isPresent())
+            ? optPage.get()
+            : getPage(getInternalContext(Component.class));
+
+        if (page != null) {
             if (optTarget.isPresent()) {
-                final AjaxRequestTarget target = optTarget.get();
-
-                target.add(
+                optTarget.get().add(
                     WicketFormUtils.normalizeComponentsToAjaxRefresh(
-                        WicketFormUtils.streamChildrenByInstance(comp.getPage(), instance)
+                        WicketFormUtils.streamChildrenByInstance(page, instance)
                             .collect(toSet())));
-
             }
+            WicketFormUtils.breadthInstanceAsEvent(page, instance);
+        }
+    }
 
-            WicketFormUtils.breadthInstanceAsEvent(comp.getPage(), instance);
+    private Page getPage(Optional<Component> optComp) {
+        try {
+            return (optComp.isPresent()) ? optComp.get().getPage() : null;
+        } catch (IllegalStateException ex) {
+            getLogger().debug(ex.getMessage(), ex);
+            return null;
         }
     }
 

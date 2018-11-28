@@ -18,11 +18,19 @@ package org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.opensingular.form.wicket.mapper.attachment.upload.*;
+import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
+import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKeyFactory;
+import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadConfig;
+import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadItem;
+import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManager;
+import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManagerFactory;
+import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadProcessor;
+import org.opensingular.form.wicket.mapper.attachment.upload.ServletFileUploadFactory;
+import org.opensingular.form.wicket.mapper.attachment.upload.UploadResponseWriter;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
+import org.opensingular.form.wicket.mapper.attachment.upload.servlet.chunkedupload.ChunkedUploadFileStore;
 import org.opensingular.lib.commons.base.SingularProperties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +39,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -40,10 +47,10 @@ import java.util.Optional;
 public class AttachmentKeyStrategy implements ServletFileUploadStrategy {
 
     protected FileUploadManagerFactory uploadManagerFactory;
-    protected AttachmentKeyFactory keyFactory;
+    protected AttachmentKeyFactory     keyFactory;
     protected ServletFileUploadFactory servletFileUploadFactory;
-    protected FileUploadProcessor upProcessor;
-    protected UploadResponseWriter upResponseWriter;
+    protected FileUploadProcessor      upProcessor;
+    protected UploadResponseWriter     upResponseWriter;
 
     @Override
     public void init() {
@@ -70,7 +77,7 @@ public class AttachmentKeyStrategy implements ServletFileUploadStrategy {
             return;
         }
 
-        FileUploadManager fileUploadManager = uploadManagerFactory.getFileUploadManagerFromSessionOrMakeAndAttach(req.getSession());
+        FileUploadManager    fileUploadManager  = uploadManagerFactory.getFileUploadManagerFromSessionOrMakeAndAttach(req.getSession());
         Optional<UploadInfo> uploadInfoOptional = fileUploadManager.findUploadInfoByAttachmentKey(attachmentKey);
 
         if (!uploadInfoOptional.isPresent()) {
@@ -78,12 +85,15 @@ public class AttachmentKeyStrategy implements ServletFileUploadStrategy {
             return;
         }
 
-        UploadInfo uploadInfo = uploadInfoOptional.get();
-        List<UploadResponseInfo> responses = new ArrayList<>();
+        UploadInfo               uploadInfo = uploadInfoOptional.get();
+        List<UploadResponseInfo> responses  = new ArrayList<>();
         try {
-            Map<String, List<FileItem>> params = servletFileUploadFactory.makeServletFileUpload(uploadInfo).parseParameterMap(req);
-            for (FileItem item : params.get(PARAM_NAME)) {
-                responses.addAll(upProcessor.process(toFileUploadItem(item), uploadInfo, fileUploadManager));
+            ChunkedUploadFileStore chunkedUploadFileStore = ChunkedUploadFileStore.getChunkedUploadFileStoreFromSessionOrMakeAndAttach(req.getSession(), servletFileUploadFactory);
+            synchronized (chunkedUploadFileStore) {//SessionVariable
+                chunkedUploadFileStore.assemble(uploadInfo, req);
+                while (chunkedUploadFileStore.hasDoneItems()) {
+                    responses.addAll(upProcessor.process(toFileUploadItem(chunkedUploadFileStore.popDoneItem()), uploadInfo, fileUploadManager));
+                }
             }
         } finally {
             upResponseWriter.writeJsonArrayResponseTo(resp, responses);

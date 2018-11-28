@@ -76,21 +76,4 @@ public class SListMultipleChoice<T> extends ListMultipleChoice<T> {
         }
     }
 
-    @Override
-    protected void setOptionAttributes(AppendingStringBuffer buffer, T choice, int index, String selected) {
-
-        if (isEnabled() && isSelected(choice, index, selected)) {
-            buffer.append("selected=\"selected\" ");
-        }
-
-        if (isDisabled(choice, index, selected)) {
-            buffer.append("disabled=\"disabled\" ");
-        }
-
-        buffer.append("value=\"");
-        buffer.append(Strings.escapeMarkup(getChoiceRenderer().getIdValue(choice, index)));
-        buffer.append('"');
-
-    }
-
 }
