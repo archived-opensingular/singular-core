@@ -25,7 +25,7 @@ import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.type.core.SIComparable;
-import org.opensingular.form.view.SViewListByMasterDetail;
+import org.opensingular.form.view.list.SViewListByMasterDetail;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.util.Loggable;
@@ -110,7 +110,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
 
     private void sortListByConfigView(List<SInstance> sortableList) {
         if (viewSupplier != null) {
-            boolean ascMode;
+            boolean                 ascMode;
             SViewListByMasterDetail view = viewSupplier.get();
             ascMode = view.isAscendingMode();
             if (view.getSortableColumn() != null) {

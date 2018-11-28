@@ -175,7 +175,7 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
         protected void buildHeading(BSContainer<?> heading, Form<?> form) {
             heading.appendTag("span", new Label("_title", listLabel));
             heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(listLabel.getObject()))));
-            if (viewMode.isEdition() && ctx.getViewSupplier(SViewBreadcrumb.class).get().isNewEnabled(listModel.getObject())) {
+            if (viewMode.isEdition() && ctx.getViewSupplier(SViewBreadcrumb.class).get().isAddEnabled(listModel.getObject())) {
                 appendAddButton(heading, ctx.getModel(), ctx);
             }
         }
@@ -346,7 +346,7 @@ public class ListBreadcrumbMapper extends AbstractListMapper {
             builder.appendActionColumn($m.ofValue(""), actionColumn -> {
                 if (viewMode.isEdition()) {
 
-                    IFunction<IModel<?>, Boolean> visibleFor = m -> viewSupplier.get().isDeleteEnabled((SInstance) m.getObject());
+                    IFunction<IModel<?>, Boolean> visibleFor = m -> viewSupplier.get().getButtonsConfig().isDeleteEnabled((SInstance) m.getObject());
 
                     actionColumn.appendAction(new BSActionPanel.ActionConfig().visibleFor(visibleFor)
                         .iconeModel(Model.of(DefaultIcons.MINUS), Model.of(MapperCommons.ICON_STYLE))

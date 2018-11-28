@@ -16,10 +16,7 @@
 
 package org.opensingular.form.validation;
 
-import org.opensingular.form.SingularFormException;
 import org.apache.commons.validator.routines.EmailValidator;
-
-import java.util.regex.Pattern;
 
 public class SingularEmailValidator extends EmailValidator {
 
@@ -57,17 +54,5 @@ public class SingularEmailValidator extends EmailValidator {
                 return EMAIL_VALIDATOR;
             }
         }
-    }
-
-    @Override
-    protected boolean isValidUser(String user) {
-        if (user == null) {
-            return false;
-        }
-        if (user.length() > 64) {
-            throw new SingularFormException("A parte destinada ao usuário do e-mail não pode conter mais que 64 caracteres.");
-        }
-        final Pattern userPattern = Pattern.compile("[0-9a-zA-Z._]+");
-        return userPattern.matcher(user).matches();
     }
 }

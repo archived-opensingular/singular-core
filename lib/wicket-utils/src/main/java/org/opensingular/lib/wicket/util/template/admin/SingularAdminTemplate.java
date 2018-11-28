@@ -38,11 +38,7 @@ import org.opensingular.lib.wicket.util.template.SingularTemplate;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
@@ -126,11 +122,13 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
 
     private void addPageContentTitle() {
         Label title = new Label("content-title", getContentTitle());
+        title.add($b.visibleIfModelObject(StringUtils::isNotEmpty));
         pageContent.add(title);
     }
 
     private void addPageContentSubtitle() {
         Label subttile = new Label("content-subtitle", getContentSubtitle());
+        subttile.add($b.visibleIfModelObject(StringUtils::isNotEmpty));
         pageContent.add(subttile);
     }
 
@@ -142,6 +140,7 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
             }
         };
         iconMarkup.add(WicketUtils.$b.classAppender(DefaultIcons.QUESTION_CIRCLE.getCssClass()));
+        iconMarkup.add($b.visibleIfModelObject(StringUtils::isNotEmpty));
         pageContent.add(iconMarkup);
 
         iconMarkup.add(WicketUtils.$b.onReadyScript(

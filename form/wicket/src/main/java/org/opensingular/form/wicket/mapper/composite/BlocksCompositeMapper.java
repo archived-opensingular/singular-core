@@ -289,7 +289,7 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
             titleLabel.add(new ClassAttributeModifier() {
                 @Override
                 protected Set<String> update(Set<String> oldClasses) {
-                    if (block.getTypes().size() == 1) {
+                    if (block.getTypes().size() == 1 && ctx.getViewMode().isEdition()) {
                         final SIComposite sic = ctx.getCurrentInstance();
                         final SInstance firstChild = sic.getField(block.getTypes().get(0));
                         return RequiredBehaviorUtil.updateRequiredClasses(oldClasses, firstChild);

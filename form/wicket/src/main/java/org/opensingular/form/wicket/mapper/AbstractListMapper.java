@@ -16,9 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import java.util.Optional;
-import java.util.Set;
-
 import org.apache.commons.collections.Factory;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
@@ -28,7 +25,7 @@ import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
-import org.opensingular.form.view.AbstractSViewListWithControls;
+import org.opensingular.form.view.list.AbstractSViewListWithControls;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackPanel;
@@ -37,6 +34,9 @@ import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.util.Shortcuts;
+
+import java.util.Optional;
+import java.util.Set;
 
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
@@ -70,7 +70,7 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
     }
 
     public static boolean canAddItems(WicketBuildContext ctx) {
-        return ((AbstractSViewListWithControls<?>) ctx.getView()).isNewEnabled((SIList<?>) ctx.getModel().getObject())
+        return ((AbstractSViewListWithControls<?>) ctx.getView()).isAddEnabled((SIList<?>) ctx.getModel().getObject())
             && ctx.getViewMode().isEdition();
     }
 

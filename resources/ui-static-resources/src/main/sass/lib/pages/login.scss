@@ -19,9 +19,14 @@ $bg-color: #e8e9f0;
   padding: 15px;
   text-align: center;
 
-  img {
+  .logo-default {
+    background-position: 50%;
+    background-image: url($brand-logo-url);
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-size: contain;
     width: 200px;
-    height: 25px;
+    height: 50px;
   }
 }
 
@@ -205,9 +210,6 @@ $bg-color: #e8e9f0;
   font-size: 13px;
 }
 
-.login .logo img.logo-sso {
-  height: auto;
-}
 .page-content-wrapper .page-content {
   min-height: auto !important;
 }

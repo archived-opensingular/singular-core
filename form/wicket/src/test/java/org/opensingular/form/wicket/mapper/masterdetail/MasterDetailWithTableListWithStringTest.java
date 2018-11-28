@@ -19,7 +19,6 @@
 package org.opensingular.form.wicket.mapper.masterdetail;
 
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,8 +26,8 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.type.core.STypeString;
-import org.opensingular.form.view.SViewListByMasterDetail;
-import org.opensingular.form.view.SViewListByTable;
+import org.opensingular.form.view.list.SViewListByMasterDetail;
+import org.opensingular.form.view.list.SViewListByTable;
 import org.opensingular.form.wicket.helpers.SingularFormDummyPageTester;
 
 import static org.assertj.core.api.Assertions.assertThat;

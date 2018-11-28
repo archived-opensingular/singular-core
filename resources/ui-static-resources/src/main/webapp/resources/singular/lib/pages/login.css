@@ -11,9 +11,14 @@ Login page
   margin-top: 60px;
   padding: 15px;
   text-align: center; }
-  .login .logo img {
+  .login .logo .logo-default {
+    background-position: 50%;
+    background-image: url("/singular-static/resources/singular/img/logo/logo_singular.png");
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-size: contain;
     width: 200px;
-    height: 25px; }
+    height: 50px; }
 
 .login .content {
   background-color: #ffffff;
@@ -172,9 +177,6 @@ Login page
   padding: 10px;
   color: #5D5D5D;
   font-size: 13px; }
-
-.login .logo img.logo-sso {
-  height: auto; }
 
 .page-content-wrapper .page-content {
   min-height: auto !important; }

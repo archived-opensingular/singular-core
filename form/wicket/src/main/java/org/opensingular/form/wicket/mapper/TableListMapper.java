@@ -33,10 +33,9 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
-import org.opensingular.form.view.SViewListByTable;
+import org.opensingular.form.view.list.SViewListByTable;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
-import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.mapper.behavior.RequiredLabelClassAppender;
 import org.opensingular.form.wicket.mapper.buttons.ElementsView;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
@@ -171,30 +170,31 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         final ElementsView       tableRows         = new TableElementsView("_e", list, ctx, form, tableBody, confirmationModal);
         final WebMarkupContainer tableFooter       = new WebMarkupContainer("_ft");
         final BSContainer<?>     footerBody        = new BSContainer<>("_fb");
-        final SType<SInstance>   elementsType      = list.getObject().getElementsType();final ISupplier<SViewListByTable> viewSupplier = ctx.getViewSupplier(SViewListByTable.class);
+        final SType<SInstance>   elementsType      = list.getObject().getElementsType();final
+        ISupplier<SViewListByTable> viewSupplier = ctx.getViewSupplier(SViewListByTable.class);
 
         notEmptyContent.add($b.onConfigure(c -> c.setVisible(!list.getObject().isEmpty())));
 
         if (elementsType.isComposite()) {
             final STypeComposite<?> compositeElementsType = (STypeComposite<?>) elementsType;
-            final BSTRow row = tableHeader.newRow();
 
-            if (viewSupplier.get().isInsertEnabled() && isEdition) {
-                row.newTHeaderCell($m.ofValue(""));
+            final BSTRow rowHeader = tableHeader.newRow();
+            if (viewSupplier.get().isEnableInsert() && ctx.getViewMode().isEdition()) {
+                rowHeader.newTHeaderCell($m.ofValue(""));
             }
 
             Collection<SType<?>> fields = compositeElementsType
-                .getFields()
-                .stream()
-                .filter(t -> shouldRenderHeaderForSType(t, viewSupplier))
-                .collect(Collectors.toList());
+                    .getFields()
+                    .stream()
+                    .filter(t -> shouldRenderHeaderForSType(t, viewSupplier))
+                    .collect(Collectors.toList());
 
             int sumWidthPref = fields.stream().mapToInt((x) -> x.asAtrBootstrap().getColPreference(1)).sum();
 
             IConsumer<SType<?>> columnCallback = field -> {
                 final Integer preferentialWidth = field.asAtrBootstrap().getColPreference(1);
                 final IModel<String> headerModel = $m.ofValue(field.asAtr().getLabel());
-                final BSTDataCell cell = row.newTHeaderCell(headerModel);
+                final BSTDataCell cell = rowHeader.newTHeaderCell(headerModel);
                 final String width = String.format("width:%.0f%%;", (100.0 * preferentialWidth) / sumWidthPref);
                 final boolean requiredField = field.asAtr().isRequired();
 
@@ -222,15 +222,15 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             }
         }
 
-        tableFooter.add($b.onConfigure(c -> c.setVisible(!(viewSupplier.get().isNewEnabled(list.getObject()) && isEdition))));
+        tableFooter.add($b.onConfigure(c -> c.setVisible(!(viewSupplier.get().isAddEnabled(list.getObject()) && isEdition))));
 
         template
-            .add(notEmptyContent
-                .add(tableHeader)
-                .add(tableBody
-                    .add(tableRows))
-                .add(tableFooter
-                    .add(footerBody)));
+                .add(notEmptyContent
+                        .add(tableHeader)
+                        .add(tableBody
+                                .add(tableRows))
+                        .add(tableFooter
+                                .add(footerBody)));
 
         content.getParent().add(dependsOnModifier(list));
     }

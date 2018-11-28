@@ -26,7 +26,7 @@ import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.type.core.attachment.helper.FileTypes;
 import org.opensingular.form.util.SingularPredicates;
 import org.opensingular.form.view.SViewCheckBox;
-import org.opensingular.form.view.SViewListByTable;
+import org.opensingular.form.view.list.SViewListByTable;
 
 @SInfoType(name = "LatitudeLongitudeMapper", spackage = SPackageUtil.class)
 public class STypeLatitudeLongitudeMultipleMarkable extends STypeComposite<SILatitudeLongitudeMultipleMarkable> {
@@ -60,10 +60,10 @@ public class STypeLatitudeLongitudeMultipleMarkable extends STypeComposite<SILat
                 .help("Ao selecionar a utilização de upload todos os dados da tabela serão removidos. Os tipos suportados são: " + FileTypes.KML)
                 .label("Utilizar upload de arquivo ");
 
-        points.withView(new SViewListByTable().setNewEnabled(list -> {
+        points.withView(new SViewListByTable().setAddEnabled(list -> {
             SILatitudeLongitudeMultipleMarkable latLongList = (SILatitudeLongitudeMultipleMarkable) list.getParent();
             return latLongList != null && !latLongList.hasFile();
-        }).setDeleteEnabled(instance -> {
+        }).enableDelete(instance -> {
             SILatitudeLongitudeMultipleMarkable latLongList = (SILatitudeLongitudeMultipleMarkable) instance.getParent().getParent();
             return latLongList != null && !latLongList.hasFile();
         }))

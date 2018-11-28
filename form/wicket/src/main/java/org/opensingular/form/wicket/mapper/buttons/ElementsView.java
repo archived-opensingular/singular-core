@@ -1,11 +1,5 @@
 package org.opensingular.form.wicket.mapper.buttons;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -16,7 +10,8 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
-import org.opensingular.form.view.AbstractSViewListWithControls;
+import org.opensingular.form.view.list.AbstractSViewListWithControls;
+import org.opensingular.form.view.list.ButtonAction;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.model.SInstanceListItemModel;
 import org.opensingular.form.wicket.repeater.PathInstanceItemReuseStrategy;
@@ -26,6 +21,12 @@ import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.behavior.FadeInOnceBehavior;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public abstract class ElementsView extends RefreshingView<SInstance> {
 
@@ -163,13 +164,14 @@ public abstract class ElementsView extends RefreshingView<SInstance> {
     }
 
     protected RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, Item<SInstance> item,
-            BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<? extends AbstractSViewListWithControls>  viewListByTable) {
-        return new RemoverButton("_remover_", form, elementsView,item,confirmationModal).createRemoverButton(cell, viewListByTable);
+            BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<? extends AbstractSViewListWithControls>  viewSupplier) {
+        ButtonAction deleteButton = viewSupplier.get().getButtonsConfig().getDeleteButton();
+        return new RemoverButton("_remover_", form, elementsView,item,confirmationModal, deleteButton).createRemoverButton(cell);
     }
 
     protected InserirButton appendInserirButton(ElementsView elementsView, Form<?> form, Item<SInstance> item,
-            BSContainer<?> cell) {
-        return new InserirButton("_inserir_", elementsView, form, item).createInserirButton(cell);
+                                                BSContainer<?> cell, ButtonAction editButton ) {
+        return new InserirButton("_inserir_", elementsView, form, item, editButton).createInserirButton(cell);
     }
 
 }

@@ -38,6 +38,14 @@ public class FormAttachmentEntityId implements Serializable {
         this.attachmentCod = attachmentCod;
     }
 
+    public Long getFormVersionCod() {
+        return formVersionCod;
+    }
+
+    public Long getAttachmentCod() {
+        return attachmentCod;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

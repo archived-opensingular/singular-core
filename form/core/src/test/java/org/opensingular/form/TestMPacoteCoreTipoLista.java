@@ -445,7 +445,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
     }
 
     @Test
-    public void testListInstantionWithoutElementTypeDefinied() {
+    public void testListInstantionWithoutElementTypeDefined() {
         SDictionary dictionary = createTestDictionary();
 
         SIList<SIString> siList = (SIList<SIString>) dictionary.newInstance(STypeList.class);

@@ -99,6 +99,10 @@ public abstract class FlowDefinition<I extends FlowInstance> extends MetaDataEna
     /**
      * Instancia uma nova definição de fluxo do tipo informado.
      *
+     * @param instanceClass
+     *            a chave do fluxo.
+     * @param instanceClass
+     *            o tipo da instância da definição a ser instanciada.
      * @param instanceClass o tipo da instância da definição a ser instanciada.
      */
     protected FlowDefinition(Class<I> instanceClass) {

@@ -10,7 +10,8 @@ import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
-import org.opensingular.form.view.SViewListByTable;
+import org.opensingular.form.view.list.ButtonAction;
+import org.opensingular.form.view.list.SViewListByTable;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
@@ -64,10 +65,13 @@ public class TableElementsView extends ElementsView {
 
         final ISupplier<SViewListByTable> viewSupplier = ctx.getViewSupplier(SViewListByTable.class);
 
-        if (viewSupplier.get().isInsertEnabled() && ctx.getViewMode().isEdition()) {
+        if (viewSupplier.get().isEnableInsert() && ctx.getViewMode().isEdition()) {
             final BSTDataCell actionColumn = row.newCol();
-            actionColumn.add($b.attrAppender("style", "width:20px", ";"));
-            appendInserirButton(this, form, item, actionColumn);
+            if (viewSupplier.get().getButtonsConfig().isInsertEnabled(item.getModelObject())) {
+                ButtonAction editButton = viewSupplier.get().getButtonsConfig().getInsertButton();
+                actionColumn.add($b.attrAppender("style", "width:20px", ";"));
+                appendInserirButton(this, form, item, actionColumn, editButton);
+            }
         }
 
 

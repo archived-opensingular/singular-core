@@ -16,7 +16,12 @@
 
 package org.opensingular.form.view;
 
-import org.opensingular.form.*;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.STypeList;
+import org.opensingular.form.STypeSimple;
+import org.opensingular.form.view.list.SViewListByForm;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;

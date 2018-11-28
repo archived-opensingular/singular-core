@@ -28,7 +28,11 @@ import org.opensingular.form.flatview.mapper.TableFlatViewGenerator;
 import org.opensingular.form.type.core.STypeMonetary;
 import org.opensingular.form.type.core.attachment.STypeAttachment;
 import org.opensingular.form.type.country.brazil.STypeUF;
-import org.opensingular.form.view.*;
+import org.opensingular.form.view.SView;
+import org.opensingular.form.view.SViewByBlock;
+import org.opensingular.form.view.SViewSelectionBySelect;
+import org.opensingular.form.view.SViewTab;
+import org.opensingular.form.view.list.SViewListByTable;
 
 import javax.annotation.Nonnull;
 

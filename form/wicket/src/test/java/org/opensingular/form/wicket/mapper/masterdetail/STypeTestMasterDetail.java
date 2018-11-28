@@ -40,7 +40,7 @@ public class STypeTestMasterDetail extends STypeComposite<TestSIMasterDetail> {
         inicio = addField("inicio", STypeYearMonth.class, true);
         empresa = addFieldString("empresa", true);
         inicio
-                .asAtr().label("Data inicial")
+                .asAtr().label("Data inicial").required()
                 .asAtrBootstrap().colPreference(3);
         empresa
                 .asAtr().label("Empresa")

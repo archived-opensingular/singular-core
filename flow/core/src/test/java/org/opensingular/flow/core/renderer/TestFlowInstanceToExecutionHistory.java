@@ -52,13 +52,13 @@ public class TestFlowInstanceToExecutionHistory extends TestFlowExecutionSupport
                 "The number of transactions marked as executed is [1] but was expected to be [2]");
         history.assertOneTransitionMarked(StepsFH.First, StepsFH.ResultA);
         SingularTestUtil.assertException(() -> history.assertNoTransitionMarked(StepsFH.First, StepsFH.ResultA),
-                AssertionError.class, "There is 1 transition(s) from 'FIRSTX' to 'RESULTAX' marked as executed");
+                AssertionError.class, "There is 1 transition(s) from 'First' to 'ResultA' marked as executed but none was expected. Executed transactions: [resultax]");
         SingularTestUtil.assertException(() -> history.assertOneTransitionMarked(StepsFH.ResultA, StepsFH.End),
-                AssertionError.class, "There is no transition from 'RESULTAX' to 'ENDX'");
+                AssertionError.class, "There is no transition from 'ResultA' to 'End'");
         history.assertNoTransitionMarked(StepsFH.ResultA, StepsFH.End);
         history.assertCurrentTask(StepsFH.ResultA);
         SingularTestUtil.assertException(() -> history.assertCurrentTask(StepsFH.End), AssertionError.class,
-                "The current task was expcted to be [endx] but it is [resultax]");
+                "The current task was expcted to be [end] but it is [resulta]");
 
         history.assertTaskMarked(StepsFH.First, StepsFH.ResultA);
         SingularTestUtil.assertException(() -> history.assertTaskMarked(StepsFH.First), AssertionError.class,

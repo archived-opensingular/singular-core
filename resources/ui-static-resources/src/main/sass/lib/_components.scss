@@ -28,6 +28,7 @@
 
 .decorator-actions {
   padding: 0 0 2px;
+  vertical-align: baseline;
 
   >.btn-group {
     >.btn {
@@ -41,8 +42,15 @@
   }
 }
 
+h4 + .decorator-actions.align-left,
+h4 + .decorator-actions.align-right {
+  position: relative;
+}
+
 .decorator-actions.align-left {
-  display: inline;
+  display: inline-block;
+  position: absolute;
+  height: 100%;
   margin-left: 1em;
 }
 .decorator-actions.align-right {
@@ -50,18 +58,23 @@
 }
 
 .annotation-icon {
-	display: table-cell;
-    vertical-align: middle;
-    float: right;
+	display: inline;
+  vertical-align: middle;
+  float: right;
 }
 
 
 .labelBar {
-	display: table;
+	display: block;
 	width: 100%;
-	> .control-label{
-	display: table-cell;
+	> .control-label {
+	  display: inline-block;
     vertical-align: middle;
+    &.ellipsis {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
 	}
 }
 

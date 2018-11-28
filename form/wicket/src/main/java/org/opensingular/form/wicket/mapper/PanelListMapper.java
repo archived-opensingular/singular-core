@@ -16,11 +16,6 @@
 
 package org.opensingular.form.wicket.mapper;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -37,8 +32,9 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
-import org.opensingular.form.view.AbstractSViewListWithControls;
-import org.opensingular.form.view.SViewListByForm;
+import org.opensingular.form.view.list.AbstractSViewListWithControls;
+import org.opensingular.form.view.list.ButtonAction;
+import org.opensingular.form.view.list.SViewListByForm;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.buttons.ElementsView;
 import org.opensingular.form.wicket.mapper.buttons.RemoverButton;
@@ -49,6 +45,7 @@ import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.ReadOnlyCurrentInstanceModel;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSCol;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
@@ -56,10 +53,6 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
 
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -192,35 +185,38 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
 
             final BSRow header = grid.newRow();
             header.add($b.classAppender("list-item-header"));
-            final BSCol title = header.newCol(11).newGrid().newColInRow();
+            final BSCol titleGrid = header.newCol(11).newGrid().newColInRow();
             Model<Serializable> model = new Model<Serializable>() {
                 @Override
                 public Serializable getObject() {
-                    if (viewSupplier.get().getHeaderPath() != null) {
-                        return Optional.ofNullable(item.getModelObject().getValue(viewSupplier.get().getHeaderPath())).orElse("").toString();
-                    } else {
                         return item.getModelObject().toStringDisplay();
-                    }
                 }
             };
-            title.newTemplateTag(tp -> "<span wicket:id='_title' ></span>")
+            titleGrid.newTemplateTag(tp -> "<span wicket:id='_title' ></span>")
                 .add(new Label("_title", model));
 
             final BSGrid btnGrid = header.newCol(1).newGrid();
 
             header.add($b.classAppender("list-icons"));
 
-            if ((viewSupplier.get() != null) && (viewSupplier.get().isInsertEnabled()) && ctx.getViewMode().isEdition()) {
-                appendInserirButton(this, form, item, btnGrid.newColInRow()).add($b.classAppender("pull-right"));
+            if (isEdition(viewSupplier) && (viewSupplier.get().getButtonsConfig().isInsertEnabled(item.getModelObject()))) {
+                ButtonAction editButton = viewSupplier.get().getButtonsConfig().getInsertButton();
+                appendInserirButton(this, form, item, titleGrid, editButton)
+                        .add($b.classAppender("pull-left"))
+                        .add($b.attrAppender("style", " margin-right:10px", ";"));
             }
 
             final BSCol btnCell = btnGrid.newColInRow();
 
-            if (ctx.getViewMode().isEdition()) {
+            if (isEdition(viewSupplier) && viewSupplier.get().getButtonsConfig().isDeleteEnabled(item.getModelObject())) {
                 appendRemoverButton(this, form, item, btnCell, confirmationModal, viewSupplier)
                         .add($b.classAppender("pull-right"));
             }
 
+        }
+
+        private boolean isEdition(ISupplier<SViewListByForm> viewSupplier) {
+            return viewSupplier.get() != null && ctx.getViewMode().isEdition();
         }
 
         private void buildBody(Item<SInstance> item, BSGrid grid) {
@@ -232,12 +228,11 @@ public class PanelListMapper extends AbstractListMapper implements ISInstanceAct
         @Override
         protected RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, Item<SInstance> item,
                 BSContainer<?> cell, ConfirmationModal confirmationModal, ISupplier<? extends AbstractSViewListWithControls> viewSupplier) {
-            final RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item, confirmationModal);
-            cell.newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + DefaultIcons.REMOVE + "' />")
+            ButtonAction deleteButton = viewSupplier.get().getButtonsConfig().getDeleteButton();
+            final RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item, confirmationModal, deleteButton);
+            final Icon deleteIcon = Optional.ofNullable(deleteButton.getIcon()).orElse(DefaultIcons.REMOVE);
+            cell.newTemplateTag(tp -> "<i  wicket:id='_remover_' class='singular-remove-btn " + deleteIcon + "' />")
                     .add(btn);
-            if (viewSupplier.get() != null) {
-                btn.add($b.onConfigure(c -> c.setVisible(viewSupplier.get().isDeleteEnabled(item.getModelObject()))));
-            }
             return btn;
         }
 

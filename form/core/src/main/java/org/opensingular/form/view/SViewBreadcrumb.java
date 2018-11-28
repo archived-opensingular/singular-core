@@ -16,6 +16,8 @@
 
 package org.opensingular.form.view;
 
+import org.opensingular.form.view.list.AbstractSViewListWithCustomColumns;
+
 public class SViewBreadcrumb extends AbstractSViewListWithCustomColumns<SViewBreadcrumb> {
 
     private boolean editEnabled = true;

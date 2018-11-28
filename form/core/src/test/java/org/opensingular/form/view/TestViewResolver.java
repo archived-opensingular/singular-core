@@ -33,6 +33,7 @@ import org.opensingular.form.type.core.STypeBoolean;
 import org.opensingular.form.type.core.STypeDate;
 import org.opensingular.form.type.core.STypeInteger;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.view.list.SViewListByForm;
 
 import java.io.Serializable;
 import java.util.ArrayList;

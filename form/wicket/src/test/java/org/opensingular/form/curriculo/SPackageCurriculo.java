@@ -35,9 +35,9 @@ import org.opensingular.form.type.util.STypeEMail;
 import org.opensingular.form.type.util.STypePersonName;
 import org.opensingular.form.type.util.STypeYearMonth;
 import org.opensingular.form.util.SingularPredicates;
-import org.opensingular.form.view.SViewListByForm;
-import org.opensingular.form.view.SViewListByTable;
 import org.opensingular.form.view.SViewTab;
+import org.opensingular.form.view.list.SViewListByForm;
+import org.opensingular.form.view.list.SViewListByTable;
 
 @SInfoPackage(name = "mform.exemplo.curriculo")
 public class SPackageCurriculo extends SPackage {
