@@ -43,11 +43,12 @@ import org.opensingular.form.wicket.util.WicketFormUtils;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.ref.Out;
 import org.opensingular.lib.commons.util.HTMLUtil;
+import org.opensingular.lib.commons.util.Loggable;
 
 /**
  * Implementação de <code>SInstanceAction.Delegate</code> integrada com a infraestrutura Wicket.
  */
-public class WicketSIconActionDelegate implements SInstanceAction.Delegate, Serializable {
+public class WicketSIconActionDelegate implements SInstanceAction.Delegate, Serializable, Loggable {
 
     private IModel<? extends SInstance> instanceModel;
     private transient List<?>           contextList;
@@ -122,6 +123,7 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate, Seri
         try {
             return (optComp.isPresent()) ? optComp.get().getPage() : null;
         } catch (IllegalStateException ex) {
+            getLogger().debug(ex.getMessage(), ex);
             return null;
         }
     }
