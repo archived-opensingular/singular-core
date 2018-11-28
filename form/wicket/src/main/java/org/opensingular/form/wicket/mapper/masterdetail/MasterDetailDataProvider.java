@@ -110,7 +110,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
 
     private void sortListByConfigView(List<SInstance> sortableList) {
         if (viewSupplier != null) {
-            boolean ascMode;
+            boolean                 ascMode;
             SViewListByMasterDetail view = viewSupplier.get();
             ascMode = view.isAscendingMode();
             if (view.getSortableColumn() != null) {

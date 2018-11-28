@@ -30,17 +30,19 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
         implements ConfigurableModal<SViewListByMasterDetail> {
 
     private ButtonsMasterDetailConfig buttonsConfig;
-    private boolean editFieldsInModalEnabled = true;
-    private String newActionLabel = "Adicionar";
+    private boolean                   editFieldsInModalEnabled = true;
+    private String                    newActionLabel           = "Adicionar";
 
-    private String editActionLabel = "Atualizar";
+    private String    editActionLabel = "Atualizar";
     private ModalSize modalSize;
 
     private String actionColumnLabel = "Ações";
 
     private SType<?> sortableColumn;
-    private boolean ascendingMode = true;
-    private boolean disableSort = false;
+    private boolean  ascendingMode = true;
+    private boolean  disableSort   = false;
+    private String   enforcedValidationMessage;
+    private boolean  enforceValidationOnAdd;
 
     /**
      * This method will disable the edition of the element's of the Master detail.
@@ -231,5 +233,37 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
         return object.stream().anyMatch(s -> getButtonsConfig().isDeleteEnabled(s)
                 || getButtonsConfig().isEditEnabled(s)
                 || getButtonsConfig().isViewEnabled(s));
+    }
+
+    /**
+     * If set, adding invalid elements is now allowed.
+     * Element SInstance must be valid to be added to the corresponding SIList.
+     *
+     * @param message message to be displayed when the list element is not valid.
+     *                A null message disables the message exhibition
+     * @return
+     */
+    public SViewListByMasterDetail enforceValidationOnAdd(String message) {
+        this.enforcedValidationMessage = message;
+        this.enforceValidationOnAdd = true;
+        return this;
+    }
+
+    /**
+     * If set, adding invalid elements is now allowed.
+     * Element SInstance must be valid to be added to the corresponding SIList.
+     *
+     * @return
+     */
+    public SViewListByMasterDetail enforceValidationOnAdd() {
+        return enforceValidationOnAdd("Não é possível adicionar enquanto houver correções a serem feitas");
+    }
+
+    public String getEnforcedValidationMessage() {
+        return enforcedValidationMessage;
+    }
+
+    public boolean isEnforceValidationOnAdd() {
+        return enforceValidationOnAdd;
     }
 }
