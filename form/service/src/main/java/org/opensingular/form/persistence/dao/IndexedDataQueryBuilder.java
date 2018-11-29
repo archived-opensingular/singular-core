@@ -100,15 +100,15 @@ public class IndexedDataQueryBuilder {
     private void addJoinClause(String columnAlias, String fieldsNames) {
 
         String leftSubQuery = "  LEFT JOIN (SELECT " +
-                " CACHE_VALOR.co_versao_formulario as co_versao_formulario, " +
-                " CACHE_CAMPO.co_tipo_formulario              as co_tipo_formulario, " +
+                " CACHE_VALOR.CO_VERSAO_FORMULARIO as co_versao_formulario, " +
+                " CACHE_CAMPO.CO_TIPO_FORMULARIO              as co_tipo_formulario, " +
                 " CONCAT(CACHE_VALOR.DS_VALOR, CACHE_VALOR.NU_VALOR, CACHE_VALOR.DT_VALOR) as ds_valor " +
-                " FROM " + schema + ".tb_cache_campo CACHE_CAMPO " +
-                " INNER JOIN DBSINGULAR.tb_cache_valor CACHE_VALOR " +
-                "                 on CACHE_VALOR.co_cache_campo = CACHE_CAMPO.co_cache_campo " +
-                "                    and CACHE_CAMPO.ds_caminho_campo in (" + fieldsNames + ") " +
-                " ) " + columnAlias + " on " + columnAlias + ".co_versao_formulario = currentV.CO_VERSAO_FORMULARIO " +
-                " and " + columnAlias + ".co_tipo_formulario = tpForm.CO_TIPO_FORMULARIO ";
+                " FROM " + schema + ".TB_CACHE_CAMPO CACHE_CAMPO " +
+                " INNER JOIN DBSINGULAR.TB_CACHE_VALOR CACHE_VALOR " +
+                "                 on CACHE_VALOR.CO_CACHE_CAMPO = CACHE_CAMPO.CO_CACHE_CAMPO " +
+                "                    and CACHE_CAMPO.DS_CAMINHO_CAMPO in (" + fieldsNames + ") " +
+                " ) " + columnAlias + " on " + columnAlias + ".CO_VERSAO_FORMULARIO = currentV.CO_VERSAO_FORMULARIO " +
+                " and " + columnAlias + ".CO_TIPO_FORMULARIO = tpForm.CO_TIPO_FORMULARIO ";
 
         joinCache.append(leftSubQuery);
 
