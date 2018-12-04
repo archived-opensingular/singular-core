@@ -18,10 +18,13 @@ package org.opensingular.form.type.country.brazil;
 
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInfoType;
+import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.lib.commons.util.Loggable;
+
+import java.util.function.Predicate;
 
 @SInfoType(name = "EnderecoCompleto", spackage = SPackageCountryBrazil.class)
 public class STypeAddress extends STypeComposite<SIComposite> implements Loggable {
@@ -40,9 +43,10 @@ public class STypeAddress extends STypeComposite<SIComposite> implements Loggabl
         cep = this.addField("cep", STypeCEP.class);
         cep.asAtrBootstrap().colPreference(2);
         cep.asAtrIndex().indexed(Boolean.TRUE);
+        cep.asAtr().required(requiredChildrenWhenParentIsRequired());
 
         logradouro = this.addFieldString("logradouro");
-        logradouro.asAtr().label("Logradouro").asAtrBootstrap().colPreference(8);
+        logradouro.asAtr().label("Logradouro").required(requiredChildrenWhenParentIsRequired()).asAtrBootstrap().colPreference(8);
         logradouro.asAtrIndex().indexed(Boolean.TRUE);
 
         numero = this.addFieldString("numero");
@@ -58,13 +62,18 @@ public class STypeAddress extends STypeComposite<SIComposite> implements Loggabl
         complemento.asAtr().label("Complemento").asAtrBootstrap().colPreference(6);
 
         bairro = this.addFieldString("bairro");
-        bairro.asAtr().label("Bairro").asAtrBootstrap().colPreference(6);
+        bairro.asAtr().label("Bairro").required(requiredChildrenWhenParentIsRequired()).asAtrBootstrap().colPreference(6);
 
         cidade = this.addFieldString("cidade");
-        cidade.asAtr().label("Cidade").asAtrBootstrap().colPreference(6);
+        cidade.asAtr().label("Cidade").required(requiredChildrenWhenParentIsRequired()).asAtrBootstrap().colPreference(6);
 
         estado = this.addField("estado", STypeUF.class);
         estado.asAtrIndex().indexed(Boolean.TRUE);
+        estado.asAtr().required(requiredChildrenWhenParentIsRequired());
 
+    }
+
+    private Predicate<SInstance> requiredChildrenWhenParentIsRequired() {
+        return s -> s.getParent().isRequired();
     }
 }
