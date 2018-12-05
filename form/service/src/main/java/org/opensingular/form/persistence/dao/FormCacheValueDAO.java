@@ -16,7 +16,7 @@
 
 package org.opensingular.form.persistence.dao;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.opensingular.form.persistence.entity.FormCacheValueEntity;
 import org.opensingular.lib.support.persistence.BaseDAO;
 

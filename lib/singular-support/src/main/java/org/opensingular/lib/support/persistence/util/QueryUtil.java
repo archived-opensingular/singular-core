@@ -16,7 +16,7 @@
 
 package org.opensingular.lib.support.persistence.util;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 
 import java.util.Collection;
 import java.util.Date;
