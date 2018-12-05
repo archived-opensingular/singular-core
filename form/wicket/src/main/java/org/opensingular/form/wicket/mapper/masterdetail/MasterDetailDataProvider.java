@@ -238,7 +238,7 @@ public class MasterDetailDataProvider extends BaseDataProvider<SInstance, String
          * @return Predicate verify if have a Stype with the <code>sortableProperty</code> for a SIntance.
          */
         private Predicate<SInstance> isCurrentSortInstance() {
-            return i -> i.getType().getName().equals(sortableProperty)
+            return i -> i.getType().isTypeOf(i.getType().getDictionary().getType(sortableProperty))
                 || SFormUtil.findChildByName(i, sortableProperty).isPresent();
         }
 
