@@ -39,7 +39,7 @@ public class STypeAddress extends STypeComposite<SIComposite> implements Loggabl
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-
+        asAtr().displayString("${logradouro!}, ${complemento!}, ${numero!}, ${bairro!}, CEP: ${cep!} - ${cidade!} - [${estado.sigla!}]");
         cep = this.addField("cep", STypeCEP.class);
         cep.asAtrBootstrap().colPreference(2);
         cep.asAtrIndex().indexed(Boolean.TRUE);
