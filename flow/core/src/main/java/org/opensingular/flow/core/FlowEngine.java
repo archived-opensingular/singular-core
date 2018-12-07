@@ -104,7 +104,7 @@ class FlowEngine {
             getPersistenceService().flushSession();
 
             if (!currentDestiny.isImmediateExecution()) {
-                return taskInitialization(flowInstance, currentOrigin, currentTransition, currentDestiny, currentParam,
+                return initializeTask(flowInstance, currentOrigin, currentTransition, currentDestiny, currentParam,
                         newTaskInstance);
             }
 
@@ -168,9 +168,9 @@ class FlowEngine {
         return currentTransition != null && currentOrigin == null;
     }
 
-    private static <P extends FlowInstance> TaskInstance taskInitialization(P flowInstance, TaskInstance originTaskInstance,
-                                                                            STransition transition, STask<?> destinyTask, VarInstanceMap<?, ?> paramIn,
-                                                                            @Nonnull TaskInstance newTaskInstance) {
+    private static <P extends FlowInstance> TaskInstance initializeTask(P flowInstance, TaskInstance originTaskInstance,
+                                                                        STransition transition, STask<?> destinyTask, VarInstanceMap<?, ?> paramIn,
+                                                                        @Nonnull TaskInstance newTaskInstance) {
         initTask(flowInstance, destinyTask, newTaskInstance);
 
         if (transition != null && transition.hasAutomaticRoleUsersToSet()) {
