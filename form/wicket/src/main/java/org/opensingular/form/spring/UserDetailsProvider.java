@@ -39,7 +39,12 @@ public class UserDetailsProvider implements Serializable, Provider<UserDetails> 
     }
 
     public <T extends UserDetails> Optional<T> getOpt(Class<T> clazz) {
-        return Optional.ofNullable(getTyped());
+        UserDetails user = get();
+        if (user != null && clazz.isAssignableFrom(user.getClass())) {
+            return Optional.ofNullable(getTyped());
+        } else {
+            return Optional.empty();
+        }
     }
 
     public <T extends UserDetails> T getTyped() {
