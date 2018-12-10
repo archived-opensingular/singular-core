@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterInputStream;
@@ -78,7 +79,7 @@ public class AttachmentContentDao<T extends AttachmentContentEntity> extends Bas
             try (FileOutputStream fos = new FileOutputStream(file)) {
                 IOUtils.copy(inZip, fos);
             }
-            T                   fileEntity     = createInstance();
+            T fileEntity = createInstance();
             /* o TempFileInputStream abaixo não deve ser fechado aqui, fica a cargo do hibernate */
             fileEntity.setContent(getSession().getLobHelper().createBlob(new TempFileInputStream(file), file.length()));//NOSONAR
             fileEntity.setHashSha1(hashSha1);
@@ -94,5 +95,12 @@ public class AttachmentContentDao<T extends AttachmentContentEntity> extends Bas
     @Nonnull
     protected T createInstance() {
         return ObjectUtils.newInstance(entityClass);
+    }
+
+    public Optional<T> findAndRefreshContent(Long codContent) {
+        return find(codContent).map(ace -> {
+            getSession().refresh(ace);
+            return ace;
+        });
     }
 }
