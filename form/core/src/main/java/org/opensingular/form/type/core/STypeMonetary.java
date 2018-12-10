@@ -27,9 +27,12 @@ public class STypeMonetary extends STypeDecimal {
 
     @Override
     public String toStringDisplayDefault(BigDecimal bigDecimal) {
-        int size = bigDecimal.toString().length();
+        if (bigDecimal == null) {
+            return "";
+        }
+        int           size = bigDecimal.toString().length();
         DecimalFormat decimalFormat;
-        if(size <= 6){
+        if (size <= 6) {
             decimalFormat = new DecimalFormat("R$ 0.00");
         } else {
             decimalFormat = new DecimalFormat("R$ 0,000.00");
