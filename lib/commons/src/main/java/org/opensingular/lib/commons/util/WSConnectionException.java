@@ -18,6 +18,9 @@ package org.opensingular.lib.commons.util;
 
 import org.opensingular.lib.commons.base.SingularException;
 
+/**
+ * Exceção para ser utilizada quando um serviço lança uma exceção que não seja {@link javax.xml.ws.soap.SOAPFaultException}
+ */
 public class WSConnectionException extends SingularException {
 
     protected WSConnectionException(String error) {
@@ -36,23 +39,23 @@ public class WSConnectionException extends SingularException {
         return rethrow(null, e);
     }
 
-    public static WSConnectionException rethrow(String message) {
-        return rethrow(message, null);
+    public static WSConnectionException rethrow(String serviceName) {
+        return rethrow(serviceName, null);
     }
 
-    public static WSConnectionException rethrow(String message, Throwable e) {
+    public static WSConnectionException rethrow(String serviceName, Throwable e) {
         if (e instanceof WSConnectionException) {
             return (WSConnectionException) e;
         } else {
-            return new WSConnectionException(message, e);
+            return new WSConnectionException(serviceName, e);
         }
     }
 
-    public static WSConnectionException rethrow(String message, String specificError, Throwable e) {
+    public static WSConnectionException rethrow(String serviceName, String specificError, Throwable e) {
         if (e instanceof WSConnectionException) {
             return (WSConnectionException) e;
         } else {
-            return new WSConnectionException(message, specificError, e);
+            return new WSConnectionException(serviceName, specificError, e);
         }
     }
 

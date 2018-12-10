@@ -29,7 +29,7 @@ import java.util.function.Supplier;
  *
  * @param <T>
  */
-public class WSClientDefaultFactory<T> implements WSClientSafeWrapper.WSClientFactory<T> {
+public class WSClientDefaultFactory<T> implements WSClientFactory<T> {
 
     private Supplier<Optional<String>> urlSupplier;
 
