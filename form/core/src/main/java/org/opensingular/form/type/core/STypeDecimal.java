@@ -58,6 +58,9 @@ public class STypeDecimal extends STypeSimple<SIBigDecimal, BigDecimal> {
 
     @Override
     public String toStringDisplayDefault(BigDecimal bigDecimal) {
+        if (bigDecimal == null) {
+            return "";
+        }
         int size = bigDecimal.toString().length();
         DecimalFormat decimalFormat;
         if(bigDecimal.scale() > 2){
