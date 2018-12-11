@@ -26,11 +26,19 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * * Classe WSClientSafeWrapper.
+ * @deprecated Deprecado, visto que o problema de referência quebrada não ocorre em servidores mais novos,
+ *              utilizar a {@link WSClientWrapper}
  */
+@Deprecated
 public class WSClientSafeWrapper {
 
     /**
@@ -102,21 +110,6 @@ public class WSClientSafeWrapper {
 
     private static boolean isDefaultObjectMethod(Method method) {
         return Arrays.asList(Object.class.getMethods()).contains(method);
-    }
-
-    /**
-     * Fábrica para criação de objetos do tipo WSClient.
-     *
-     * @param <T> um generic type
-     */
-    public interface WSClientFactory<T> {
-
-        /**
-         * Obtém uma referência de reference.
-         *
-         * @return uma referência de reference
-         */
-        public T getReference();
     }
 
 

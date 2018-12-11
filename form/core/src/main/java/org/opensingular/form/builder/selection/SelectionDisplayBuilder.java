@@ -30,7 +30,7 @@ public class SelectionDisplayBuilder<TYPE extends Serializable, ROOT_TYPE extend
     }
 
     public ConverterBuilder<TYPE, ROOT_TYPE, ELEMENT_TYPE> selfDisplay() {
-        type.asAtrProvider().displayFunction((String o) -> o);
+        type.asAtrProvider().displayFunction(String::valueOf);
         return next();
     }
 
