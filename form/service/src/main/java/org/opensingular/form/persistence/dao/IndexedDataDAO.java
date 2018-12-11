@@ -16,7 +16,7 @@
 
 package org.opensingular.form.persistence.dao;
 
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.StandardBasicTypes;
 import org.opensingular.form.persistence.dto.BaseDTO;
@@ -45,7 +45,7 @@ public class IndexedDataDAO {
         return builder.createQueryForIndexedData();
     }
 
-    protected void addScalarsFromDTO(SQLQuery query, Class<? extends BaseDTO> dto) {
+    protected void addScalarsFromDTO(NativeQuery<?> query, Class<? extends BaseDTO> dto) {
         for (Field field : dto.getDeclaredFields()) {
             if (field.getAnnotation(STypeIndexed.class).returnColumn()) {
                 if (BigDecimal.class.isAssignableFrom(field.getType())) {

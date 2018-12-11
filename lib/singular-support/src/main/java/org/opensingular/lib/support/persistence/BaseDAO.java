@@ -20,9 +20,9 @@ package org.opensingular.lib.support.persistence;
 import net.vidageek.mirror.dsl.Mirror;
 import net.vidageek.mirror.list.dsl.MirrorList;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
@@ -31,6 +31,7 @@ import javax.persistence.Transient;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -116,7 +117,7 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
 
     public <T> List<T> findByExample(T filter, Integer maxResults) {
         try {
-            Criteria criteria = getSession().createCriteria(entityClass);
+            Criteria          criteria   = getSession().createCriteria(entityClass);
             MirrorList<Field> properties = new Mirror().on(entityClass).reflectAll().fields();
 
             for (Field f : properties) {
@@ -125,7 +126,7 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
                     continue;
                 }
                 Object value = f.get(filter);
-                if (value != null) {
+                if (value != null && (!(value instanceof Collection) || !((Collection) value).isEmpty())) {
                     criteria.add(Restrictions.eq(f.getName(), value));
                 }
             }
@@ -156,13 +157,17 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
         return criteria.list();
     }
 
-    /** Executa o critéria buscando apenas um resultado e garante que o resultado seja da classe especificada. */
+    /**
+     * Executa o critéria buscando apenas um resultado e garante que o resultado seja da classe especificada.
+     */
     protected final static <K> Optional<K> findUniqueResult(Class<K> expectedResultClass, Criteria criteria) {
         Object result = criteria.setMaxResults(1).uniqueResult();
         return Optional.ofNullable(expectedResultClass.cast(result));
     }
 
-    /** Executa a consulta buscando apenas um resultado e garante que o resultado seja da classe especificada. */
+    /**
+     * Executa a consulta buscando apenas um resultado e garante que o resultado seja da classe especificada.
+     */
     protected final static <K> Optional<K> findUniqueResult(Class<K> expectedResultClass, Query query) {
         Object result = query.setMaxResults(1).uniqueResult();
         return Optional.ofNullable(expectedResultClass.cast(result));

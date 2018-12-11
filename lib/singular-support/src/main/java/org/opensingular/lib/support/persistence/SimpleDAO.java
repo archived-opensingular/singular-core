@@ -16,8 +16,9 @@
 
 package org.opensingular.lib.support.persistence;
 
-import org.hibernate.Query;
+
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.support.persistence.util.QueryUtil;
 

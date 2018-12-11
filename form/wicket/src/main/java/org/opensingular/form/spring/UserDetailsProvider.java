@@ -23,33 +23,33 @@ import javax.inject.Provider;
 import java.io.Serializable;
 import java.util.Optional;
 
-public class UserDetailsProvider<T extends UserDetails> implements Serializable, Provider<T> {
-
-    private Class<T> expectedClass;
-
-    @SuppressWarnings("unchecked")
-    public UserDetailsProvider() {
-        this((Class<T>) UserDetails.class);
-    }
-
-    public UserDetailsProvider(Class<T> expectedClass) {
-        this.expectedClass = expectedClass;
-    }
+public class UserDetailsProvider implements Serializable, Provider<UserDetails> {
 
 
-    public T get() {
+    public UserDetails get() {
         if (SecurityContextHolder.getContext().getAuthentication() != null
                 && SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDetails) {
-            return expectedClass.cast(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+            return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         }
         return null;
     }
 
-    public Optional<T> getOptional() {
-        if (SecurityContextHolder.getContext().getAuthentication() != null
-                && SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDetails) {
-            return Optional.of(expectedClass.cast(SecurityContextHolder.getContext().getAuthentication().getPrincipal()));
-        }
-        return Optional.empty();
+    public <T extends UserDetails> Optional<T> getOpt() {
+        return Optional.ofNullable(getTyped());
     }
+
+    public <T extends UserDetails> Optional<T> getOpt(Class<T> clazz) {
+        UserDetails user = get();
+        if (user != null && clazz.isAssignableFrom(user.getClass())) {
+            return Optional.ofNullable(getTyped());
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public <T extends UserDetails> T getTyped() {
+        return (T) get();
+    }
+
+
 }

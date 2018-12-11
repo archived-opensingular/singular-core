@@ -18,7 +18,7 @@ package org.opensingular.form.persistence.dao;
 
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.joda.time.DateTime;
 import org.opensingular.form.persistence.entity.AbstractFormAttachmentEntity;
 import org.opensingular.form.persistence.entity.AttachmentContentEntity;
