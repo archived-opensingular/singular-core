@@ -17,7 +17,6 @@
 package org.opensingular.flow.core;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -35,11 +34,11 @@ public final class RefTransition implements Serializable {
     private transient STransition transition;
 
     RefTransition(@Nonnull TaskInstance originTaskInstance) {
-        this(originTaskInstance, findTransition(originTaskInstance, null));
+        this(originTaskInstance, originTaskInstance.findTransition(null));
     }
 
     RefTransition(@Nonnull TaskInstance originTaskInstance, @Nonnull String transitionName) {
-        this(originTaskInstance, findTransition(originTaskInstance, transitionName));
+        this(originTaskInstance, originTaskInstance.findTransition(transitionName));
     }
 
     RefTransition(@Nonnull TaskInstance originTaskInstance, @Nonnull STransition transition) {
@@ -64,16 +63,9 @@ public final class RefTransition implements Serializable {
     @Nonnull
     public STransition getTransition() {
         if (transition == null) {
-            transition= findTransition(originTaskInstance, transitionName);
+            transition= originTaskInstance.findTransition(transitionName);
         }
         return transition;
     }
 
-    @Nonnull
-    private static STransition findTransition(@Nonnull TaskInstance taskInstance, @Nullable String transitionName) {
-        if (transitionName == null) {
-            return taskInstance.getFlowTaskOrException().resolveDefaultTransitionOrException();
-        }
-        return taskInstance.getFlowTaskOrException().getTransitionOrException(transitionName);
-    }
 }

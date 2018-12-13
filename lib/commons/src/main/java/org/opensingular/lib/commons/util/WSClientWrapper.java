@@ -78,7 +78,7 @@ public class WSClientWrapper {
                     Throwable cause = e.getCause();
                     log.error(cause.getMessage(), cause);
                     if (cause instanceof SOAPFaultException) {
-                        throw WSFaultException.rethrow((SOAPFaultException) cause);
+                        throw WSFaultException.rethrow(humanName, (SOAPFaultException) cause);
                     } else {
                         throw WSConnectionException.rethrow(humanName, e);
                     }

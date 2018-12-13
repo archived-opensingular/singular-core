@@ -25,20 +25,8 @@ import javax.xml.ws.soap.SOAPFaultException;
  */
 public class WSFaultException extends SingularException {
 
-    protected WSFaultException(String error) {
-        super(error);
-    }
-
-    protected WSFaultException(String message, SOAPFaultException e) {
-        super(message, e);
-    }
-
-    public static WSFaultException rethrow(SOAPFaultException e) {
-        return rethrow(null, e);
-    }
-
-    public static WSFaultException rethrow(String message) {
-        return rethrow(message, null);
+    protected WSFaultException(String serviceName, SOAPFaultException e) {
+        super(String.format("O %s não está funcionando corretamente. Não foi possível realizar a operação. %s", serviceName, e.getMessage()), e);
     }
 
     public static WSFaultException rethrow(String message, SOAPFaultException e) {
