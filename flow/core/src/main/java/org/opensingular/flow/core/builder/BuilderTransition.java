@@ -20,6 +20,8 @@ import org.opensingular.flow.core.DisplayInfoTransition;
 import org.opensingular.flow.core.EventType;
 import org.opensingular.flow.core.FlowInstance;
 import org.opensingular.flow.core.ITaskDefinition;
+import org.opensingular.flow.core.ITransitionContext;
+import org.opensingular.flow.core.ITransitionListener;
 import org.opensingular.flow.core.SParametersEnabled;
 import org.opensingular.flow.core.STransition;
 import org.opensingular.flow.core.TaskInstance;
@@ -64,6 +66,11 @@ public interface BuilderTransition<SELF extends BuilderTransition<SELF>> extends
 
     public default SELF defineBusinessRoleInTransition(BuilderBusinessRole<?> businessRole) {
         getTransition().defineBusinessRoleInTransition(businessRole.getBusinessRole());
+        return self();
+    }
+
+    public default <K extends ITransitionContext> SELF withListener(ITransitionListener<K> iTransitionListener) {
+        getTransition().addListener(iTransitionListener);
         return self();
     }
 

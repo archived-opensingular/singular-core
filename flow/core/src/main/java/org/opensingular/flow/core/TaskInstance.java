@@ -33,6 +33,7 @@ import org.opensingular.flow.core.service.IPersistenceService;
 import org.opensingular.lib.commons.net.Lnk;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
@@ -69,6 +70,14 @@ public class TaskInstance implements Serializable {
     TaskInstance(@Nonnull IEntityTaskInstance task) {
         this.entityTask = Objects.requireNonNull(task);
         this.taskCod = Objects.requireNonNull(task.getCod());
+    }
+
+    @Nonnull
+    public STransition findTransition(@Nullable String transitionName) {
+        if (transitionName == null) {
+            return getFlowTaskOrException().resolveDefaultTransitionOrException();
+        }
+        return getFlowTaskOrException().getTransitionOrException(transitionName);
     }
 
     @SuppressWarnings("unchecked")
