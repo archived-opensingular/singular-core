@@ -63,7 +63,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     private BFModalWindow bfModalWindow;
     private AjaxButton submitButton;
     private HiddenField<String> hiddenInput;
-    private String markupId;
+    private String previewFrameMarkupId;
 
     /**
      * Default constructor
@@ -79,14 +79,14 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
      * @param readOnly           True if is just readOnly model; False if is editable.
      * @param wicketBuildContext The WicketBuildContext
      * @param hiddenInput        The hidden input of the Page who calls.
-     * @param markupId           The markupId of the Label of the Page who calls.
+     * @param previewFrameMarkupId           The previewFrameMarkupId of the Label of the Page who calls.
      */
     public RichTextNewTabPage(String title, boolean readOnly, WicketBuildContext wicketBuildContext,
-                              HiddenField<String> hiddenInput, String markupId) {
+                              HiddenField<String> hiddenInput, String previewFrameMarkupId) {
         this.readOnly = readOnly;
         this.wicketBuildContext = wicketBuildContext;
         this.hiddenInput = hiddenInput;
-        this.markupId = markupId;
+        this.previewFrameMarkupId = previewFrameMarkupId;
         add(new Label("title", Model.of(title)));
         this.modelTextArea = hiddenInput.getModel();
 
@@ -130,7 +130,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
                     .reduce(new StringBuilder(), (s, b) -> s.append(b).append(", "), StringBuilder::append).toString());
             params.put("hiddenInput", this.hiddenInput.getMarkupId());
             params.put("showSaveButton", String.valueOf(view.isShowSaveButton()));
-            params.put("htmlContainer", this.markupId);
+            params.put("previewFrameMarkupId", this.previewFrameMarkupId);
             params.put("callbackUrl", eventSaveCallbackBehavior.getCallbackUrl().toString());
             params.put("isEnabled", String.valueOf(!readOnly));
             params.put("a4LayoutEnabled", view.isA4LayoutEnabled());
