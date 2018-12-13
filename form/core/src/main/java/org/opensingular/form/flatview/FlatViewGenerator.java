@@ -36,6 +36,4 @@ public interface FlatViewGenerator {
      * @param context the context
      */
     void writeOnCanvas(DocumentCanvas canvas, FlatViewContext context);
-
-
 }
