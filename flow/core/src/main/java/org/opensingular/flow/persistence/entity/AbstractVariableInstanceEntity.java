@@ -29,6 +29,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.opensingular.flow.core.entity.IEntityFlowInstance;
 import org.opensingular.flow.core.entity.IEntityVariableInstance;
 import org.opensingular.flow.core.entity.IEntityVariableType;
@@ -64,6 +65,7 @@ public abstract class AbstractVariableInstanceEntity<FLOW_INSTANCE extends IEnti
     private String name;
 
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     @Column(name = "VL_VARIAVEL", length = 8000)
     private String value;
 
