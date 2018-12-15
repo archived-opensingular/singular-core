@@ -254,6 +254,10 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
         return displayInfo;
     }
 
+    public List<ITransitionListener> getTransitionListeners() {
+        return Collections.unmodifiableList(transitionListeners);
+    }
+
     public void notifyBeforeTransition(ITransitionContext iTransitionContext) {
         for (ITransitionListener<ITransitionContext> transitionListener : transitionListeners) {
             getFlowMap().getFlowDefinition().inject(transitionListener);
