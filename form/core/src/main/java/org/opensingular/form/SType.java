@@ -619,6 +619,10 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         return v;
     }
 
+    public void resetToDefaultView() {
+        this.withView(SView.DEFAULT);
+    }
+
     public SView getView() {
         return this.view;
     }
