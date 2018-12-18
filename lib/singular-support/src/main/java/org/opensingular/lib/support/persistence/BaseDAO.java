@@ -21,13 +21,15 @@ import net.vidageek.mirror.dsl.Mirror;
 import net.vidageek.mirror.list.dsl.MirrorList;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Transient;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -70,7 +72,7 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
     @Nonnull
     public Optional<T> find(@Nonnull ID id) {
         Objects.requireNonNull(id);
-        return Optional.ofNullable((T) getSession().createCriteria(entityClass).add(Restrictions.idEq(id)).uniqueResult());
+        return Optional.ofNullable(getSession().get(entityClass, id));
     }
 
     @Nonnull
@@ -83,7 +85,7 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
     }
 
     public List<T> listAll() {
-        return getSession().createCriteria(entityClass).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        return getSession().createQuery("select e from " + entityClass.getName() + " e ", entityClass).list();
     }
 
     public T merge(T newEntity) {
@@ -102,22 +104,28 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
         return findByProperty(propertyName, value, null, null);
     }
 
-    public <T> List<T> findByProperty(String propertyName, String value, Integer maxResults) {
+    public List<T> findByProperty(String propertyName, String value, Integer maxResults) {
         return findByProperty(propertyName, value, null, maxResults);
     }
 
-    public <T> T findByUniqueProperty(String propertyName, Object value) {
-        return (T) getSession().createCriteria(entityClass).add(Restrictions.eq(propertyName, value)).setMaxResults(1).uniqueResult();
+    public T findByUniqueProperty(String propertyName, Object value) {
+        CriteriaBuilder  criteriaBuilder = getSession().getCriteriaBuilder();
+        CriteriaQuery<T> query           = criteriaBuilder.createQuery(entityClass);
+        Root<T>          root            = query.from(entityClass);
+        query.where(criteriaBuilder.equal(root.get(propertyName), value));
+        return getSession().createQuery(query).setMaxResults(1).uniqueResult();
     }
 
-    public <T> List<T> findByExample(T filter) {
+    public List<T> findByExample(T filter) {
         return findByExample(filter, null);
     }
 
-
-    public <T> List<T> findByExample(T filter, Integer maxResults) {
+    public List<T> findByExample(T filter, Integer maxResults) {
         try {
-            Criteria          criteria   = getSession().createCriteria(entityClass);
+            CriteriaBuilder  criteriaBuilder = getSession().getCriteriaBuilder();
+            CriteriaQuery<T> criteriaQuery   = criteriaBuilder.createQuery(entityClass);
+            Root<T>          root            = criteriaQuery.from(entityClass);
+
             MirrorList<Field> properties = new Mirror().on(entityClass).reflectAll().fields();
 
             for (Field f : properties) {
@@ -127,34 +135,40 @@ public class BaseDAO<T extends BaseEntity, ID extends Serializable> extends Simp
                 }
                 Object value = f.get(filter);
                 if (value != null && (!(value instanceof Collection) || !((Collection) value).isEmpty())) {
-                    criteria.add(Restrictions.eq(f.getName(), value));
+                    criteriaQuery.where(criteriaBuilder.equal(root.get(f.getName()), value));
                 }
             }
+
+            Query<T> query = getSession().createQuery(criteriaQuery);
+
             if (maxResults != null) {
-                criteria.setMaxResults(maxResults);
+                query.setMaxResults(maxResults);
             }
 
-            return criteria.list();
-
+            return query.list();
         } catch (IllegalAccessException e) {
             throw SingularException.rethrow(e.getMessage(), e);
         }
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> findByProperty(String propertyName, String value, MatchMode matchMode, Integer maxResults) {
-        Criteria criteria = getSession().createCriteria(entityClass);
+    public List<T> findByProperty(String propertyName, String value, MatchMode matchMode, Integer maxResults) {
+        CriteriaBuilder  criteriaBuilder = getSession().getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery   = criteriaBuilder.createQuery(entityClass);
+        Root<T>          root            = criteriaQuery.from(entityClass);
 
         if (value != null && !value.isEmpty()) {
             MatchMode mode = matchMode == null ? MatchMode.EXACT : matchMode;
-            criteria.add(Restrictions.ilike(propertyName, value, mode));
+            criteriaQuery.where(criteriaBuilder.like(root.get(propertyName), mode.toMatchString(value)));
         }
+
+        Query<T> query = getSession().createQuery(criteriaQuery);
 
         if (maxResults != null) {
-            criteria.setMaxResults(maxResults);
+            query.setMaxResults(maxResults);
         }
 
-        return criteria.list();
+        return query.list();
     }
 
     /**
