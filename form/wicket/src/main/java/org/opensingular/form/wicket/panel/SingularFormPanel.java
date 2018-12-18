@@ -457,8 +457,9 @@ public class SingularFormPanel extends Panel {
             stack.push(child);
     }
 
-    public void setNested(boolean nested) {
+    public SingularFormPanel setNested(boolean nested) {
         this.nested = nested;
+        return this;
     }
 
     public void setFirstFieldFocusEnabled(boolean firstFieldFocusEnabled) {
