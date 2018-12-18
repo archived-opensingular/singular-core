@@ -87,6 +87,7 @@ public class RecursosStaticosSingularTemplate {
                         "/singular-static/resources/singular/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.pt-BR.min.js",
                         "/singular-static/resources/singular/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js",
                         "/singular-static/resources/singular/global/plugins/bootstrap-select/js/bootstrap-select.min.js",
+                        "/singular-static/resources/singular/global/plugins/bootstrap-select/js/i18n/defaults-pt_BR.js",
                         "/singular-static/resources/singular/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js",
                         "/singular-static/resources/singular/global/plugins/jquery-multi-select/js/jquery.multi-select.js",
                         "/singular-static/resources/singular/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js",
