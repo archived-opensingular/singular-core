@@ -164,14 +164,14 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         });
         template.add(emptyContent);
 
-        final WebMarkupContainer notEmptyContent = new WebMarkupContainer("not-empty-content");
-        final BSTSection         tableHeader       = new BSTSection("_h").setTagName("thead");
-        final WebMarkupContainer tableBody         = new WebMarkupContainer("_b");
-        final ElementsView       tableRows         = new TableElementsView("_e", list, ctx, form, tableBody, confirmationModal);
-        final WebMarkupContainer tableFooter       = new WebMarkupContainer("_ft");
-        final BSContainer<?>     footerBody        = new BSContainer<>("_fb");
-        final SType<SInstance>   elementsType      = list.getObject().getElementsType();final
-        ISupplier<SViewListByTable> viewSupplier = ctx.getViewSupplier(SViewListByTable.class);
+        final WebMarkupContainer          notEmptyContent  = new WebMarkupContainer("not-empty-content");
+        final BSTSection                  tableHeader      = new BSTSection("_h").setTagName("thead");
+        final WebMarkupContainer          tableBody        = new WebMarkupContainer("_b");
+        final ElementsView                tableRows        = new TableElementsView("_e", list, ctx, form, tableBody, confirmationModal);
+        final WebMarkupContainer          tableFooter      = new WebMarkupContainer("_ft");
+        final BSContainer<?>              footerBody       = new BSContainer<>("_fb");
+        final SType<SInstance>            elementsType     = list.getObject().getElementsType();
+        final ISupplier<SViewListByTable> viewSupplier     = ctx.getViewSupplier(SViewListByTable.class);
 
         notEmptyContent.add($b.onConfigure(c -> c.setVisible(!list.getObject().isEmpty())));
 
@@ -179,8 +179,16 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             final STypeComposite<?> compositeElementsType = (STypeComposite<?>) elementsType;
 
             final BSTRow rowHeader = tableHeader.newRow();
-            if (viewSupplier.get().isEnableInsert() && ctx.getViewMode().isEdition()) {
-                rowHeader.newTHeaderCell($m.ofValue(""));
+            if (ctx.getViewMode().isEdition()) {
+                rowHeader.newTHeaderCell($m.ofValue("")).add(new Behavior() {
+                    @Override
+                    public void onConfigure(Component component) {
+                        super.onConfigure(component);
+                        component.setVisible(list.getObject()
+                                .stream()
+                                .anyMatch((i) -> viewSupplier.get().getButtonsConfig().isInsertEnabled(i)));
+                    }
+                });
             }
 
             Collection<SType<?>> fields = compositeElementsType
