@@ -47,6 +47,7 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
 
     private ITaskPredicate predicate;
     private DisplayInfoTransition displayInfo;
+    private List<ITransitionListener> transitionListeners = new ArrayList<>();
 
     protected STransition(@Nonnull STask<?> origin, @Nonnull String name, @Nonnull STask<?> destination) {
         this.origin = Objects.requireNonNull(origin);
@@ -251,6 +252,21 @@ public class STransition extends SParametersEnabled implements MetaDataEnabled {
             displayInfo = new DisplayInfoTransition(this);
         }
         return displayInfo;
+    }
+
+    public List<ITransitionListener> getTransitionListeners() {
+        return Collections.unmodifiableList(transitionListeners);
+    }
+
+    public void notifyBeforeTransition(ITransitionContext iTransitionContext) {
+        for (ITransitionListener<ITransitionContext> transitionListener : transitionListeners) {
+            getFlowMap().getFlowDefinition().inject(transitionListener);
+            transitionListener.beforeTransition(iTransitionContext);
+        }
+    }
+
+    public void addListener(ITransitionListener<? extends ITransitionContext> iTransitionListener) {
+        transitionListeners.add(iTransitionListener);
     }
 
     @FunctionalInterface

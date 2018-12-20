@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-(function (htmlContainer, hiddenInput, callbackUrl, isEnabled, showSaveButton, buttonsList, submitButtonId, classDisableDoubleClick) {
+(function (previewFrameMarkupId, hiddenInput, callbackUrl, isEnabled, showSaveButton, buttonsList, submitButtonId, classDisableDoubleClick) {
 
     $(document).ready(function () {
         if (!opener) {
@@ -77,8 +77,8 @@
 
                         $('#ck-text-area').val(data);
                         $('#' + submitButtonId).click();
-                        var jQuerRefOfHtmlContainer = opener.$('#' + htmlContainer);
-                        jQuerRefOfHtmlContainer.html(data);
+                        var jQuerRefOfpreviewFrameMarkupId = opener.$('#' + previewFrameMarkupId);
+                        jQuerRefOfpreviewFrameMarkupId[0].contentWindow.document.body.innerHTML = data;
 
                         var jQueryRefOfHiddenInput = opener.$('#' + hiddenInput);
                         jQueryRefOfHiddenInput.val(data);
@@ -90,8 +90,8 @@
                         var msgException = "A página do requerimento foi fechada, ou foi aberta de forma indevida."
                             + "<p> Não será possivel salvar o Requerimento.</p>";
                         if (window.opener) {
-                            var jQuerRefOfHtmlContainer = opener.$('#' + htmlContainer);
-                            jQuerRefOfHtmlContainer.html(data);
+                            var jQuerRefOfpreviewFrameMarkupId = opener.$('#' + previewFrameMarkupId);
+                            jQuerRefOfpreviewFrameMarkupId[0].contentWindow.document.body.innerHTML = data;
 
                             var jQueryRefOfHiddenInput = opener.$('#' + hiddenInput);
                             jQueryRefOfHiddenInput.val(data);
@@ -252,4 +252,4 @@
     }
 
 
-})('${htmlContainer}', '${hiddenInput}', '${callbackUrl}', '${isEnabled}', '${showSaveButton}', '${buttonsList}', '${submitButtonId}', '${classDisableDoubleClick}');
+})('${previewFrameMarkupId}', '${hiddenInput}', '${callbackUrl}', '${isEnabled}', '${showSaveButton}', '${buttonsList}', '${submitButtonId}', '${classDisableDoubleClick}');

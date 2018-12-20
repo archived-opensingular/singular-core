@@ -16,6 +16,7 @@
 
 package org.opensingular.form.persistence.entity;
 
+import org.hibernate.annotations.Type;
 import org.opensingular.lib.support.persistence.entity.BaseEntity;
 import org.opensingular.lib.support.persistence.util.Constants;
 
@@ -47,6 +48,7 @@ public class FormAnnotationVersionEntity extends BaseEntity<Long> {
     private Date inclusionDate;
 
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     @Column(name = "XML_ANOTACAO", nullable = false)
     private String xml;
 
