@@ -50,19 +50,25 @@ import java.util.Properties;
  */
 public final class PropertyMap {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PropertyMap.class);
+    private static final Logger  LOGGER                               = LoggerFactory.getLogger(PropertyMap.class);
+    private static final String  SINGULAR_PROPERTIES_ALLOW_OVERRIDE   = "singular.properties.allow.override";
+    private static final boolean SINGULAR_PROPERTIES_OVERRIDE_ALLOWED = "true".equalsIgnoreCase(System.getProperty(SINGULAR_PROPERTIES_ALLOW_OVERRIDE));
 
     private final LinkedHashMap<String, PropertyEntry> entries = new LinkedHashMap<>();
-    private final PropertyMap parent;
-    private boolean frozen;
+    private final PropertyMap                          parent;
+    private       boolean                              frozen;
 
-    public PropertyMap() {this(null);}
+    public PropertyMap() {
+        this(null);
+    }
 
     /**
      * Crates a {@link PropertyMap} with parent map that will be used to look for a property value if it isn't found in
      * the current one.
      */
-    public PropertyMap(@Nullable PropertyMap parent) {this.parent = parent;}
+    public PropertyMap(@Nullable PropertyMap parent) {
+        this.parent = parent;
+    }
 
     /**
      * Read a {@link Properties} from the source and loads it's content to the map detecting conflicting definition
@@ -87,7 +93,7 @@ public final class PropertyMap {
     private List<URL> findResources(@Nonnull String resourceName) {
         try {
             Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources(resourceName);
-            List<URL> list = EnumerationUtils.toList(resources);
+            List<URL>        list      = EnumerationUtils.toList(resources);
             Collections.sort(list, (url1, url2) -> url1.toString().compareTo(url2.toString()));
             return list;
         } catch (Exception e) {
@@ -106,7 +112,7 @@ public final class PropertyMap {
     }
 
     private void readProperties(@Nonnull ISupplierEx<Properties, Exception> propertiesLoader,
-            @Nonnull PropertySource<?> source) {
+                                @Nonnull PropertySource<?> source) {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("   Lendo arquivo de propriedades {}", source);
         }
@@ -125,12 +131,17 @@ public final class PropertyMap {
             add((String) entry.getKey(), (String) entry.getValue(), source);
         }
     }
-    /** Sets the value for a property registering it by a unknown source.*/
+
+    /**
+     * Sets the value for a property registering it by a unknown source.
+     */
     public void add(@Nonnull String key, @Nullable String value) {
         add(key, value, PropertySource.UNKNOWN);
     }
 
-    /** Sets the value for a property. */
+    /**
+     * Sets the value for a property.
+     */
     public void add(@Nonnull String key, @Nullable String value, @Nonnull PropertySource source) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(source);
@@ -140,29 +151,44 @@ public final class PropertyMap {
         }
         PropertyEntry current = entries.get(key);
         if (current != null) {
-            SingularPropertyException e = new SingularPropertyException("The property '" + key +
-                    "' is already defined. It's not allowed to have the same property set twice.");
-            e.add("key", key);
-            e.add("current Source", current.getSource());
-            e.add("new Source", source);
-            if (Objects.equals(current.getValue(), value2)) {
-                e.add("values", "both are equals");
+            if (SINGULAR_PROPERTIES_OVERRIDE_ALLOWED) {
+                String warnMessage = "Property override...";
+                warnMessage += "\n####################################################################";
+                warnMessage += "\n# OVERRIDING THE PROPERTY: " + key;
+                warnMessage += "\n# CURRENT SOURCE: " + current.getSource();
+                warnMessage += "\n# OLD VALUE: " + value2;
+                warnMessage += "\n# NEW VALUE: " + current.getValue();
+                warnMessage += "\n####################################################################";
+                LOGGER.warn(warnMessage);
+            } else {
+                SingularPropertyException e = new SingularPropertyException("The property '" + key +
+                        "' is already defined. It's not allowed to have the same property set twice.");
+                e.add("key", key);
+                e.add("current Source", current.getSource());
+                e.add("new Source", source);
+                if (Objects.equals(current.getValue(), value2)) {
+                    e.add("values", "both are equals");
+                }
+                //e.add("current Value", current.getValue());
+                //e.add("new Value", value);
+                throw e;
             }
-            //e.add("current Value", current.getValue());
-            //e.add("new Value", value);
-            throw e;
         }
         entries.put(key, new PropertyEntry(key, value2, source));
     }
 
-    /** Looks for the value of the key in the current map and into the parent map if necessary. */
+    /**
+     * Looks for the value of the key in the current map and into the parent map if necessary.
+     */
     @Nullable
     public String getValue(@Nonnull String key) {
         PropertyEntry entry = getEntry(key);
         return entry == null ? null : entry.getValue();
     }
 
-    /** Looks for the property associated to the key in the current map and into the parent map if necessary. */
+    /**
+     * Looks for the property associated to the key in the current map and into the parent map if necessary.
+     */
     @Nullable
     public PropertyEntry getEntry(@Nonnull String key) {
         PropertyEntry entry = entries.get(key);
@@ -172,17 +198,23 @@ public final class PropertyMap {
         return entry;
     }
 
-    /** Verifies if there is a register of value for the key. This register may set a null value to key. */
+    /**
+     * Verifies if there is a register of value for the key. This register may set a null value to key.
+     */
     public boolean containsKey(@Nonnull String key) {
         return entries.containsKey(key) || (parent != null && parent.containsKey(key));
     }
 
-    /** Looks the values of the current map and renders invalid any further attempt to change values in the map. */
+    /**
+     * Looks the values of the current map and renders invalid any further attempt to change values in the map.
+     */
     public void frozen() {
         this.frozen = true;
     }
 
-    /** Verifies if this map is locked for change in values. */
+    /**
+     * Verifies if this map is locked for change in values.
+     */
     public boolean isFrozen() {
         return frozen;
     }
