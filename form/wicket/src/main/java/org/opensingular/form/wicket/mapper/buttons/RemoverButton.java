@@ -7,6 +7,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.view.list.ButtonAction;
 import org.opensingular.form.wicket.mapper.MapperCommons;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
+import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.form.wicket.util.WicketFormUtils;
 import org.opensingular.lib.commons.ui.Icon;
 import org.opensingular.lib.wicket.util.ajax.ActionAjaxButton;
@@ -42,15 +43,16 @@ public class RemoverButton extends ActionAjaxButton {
     @Override
     protected void onAction(AjaxRequestTarget target, Form<?> form) {
         target.add(WicketFormUtils.findUpdatableComponentInHierarchy(confirmationModal));
-        confirmationModal.show(target, this::removeItem);
+        confirmationModal.show(target, t -> removeItem(t, form));
     }
 
-    protected void removeItem(AjaxRequestTarget target) {
+    protected void removeItem(AjaxRequestTarget target, Form<?> form) {
         elementsView.removeItem(target, item);
         target.appendJavaScript(JQuery.$(this).append(".prop('disabled',true);"));
         if (elementsView.getModelObject().isEmpty()) {
             target.add(this.getForm());
         }
+        WicketFormProcessing.onFieldProcess(form, target, elementsView.getModel());
         behaviorAfterRemoveItem(target);
     }
 
