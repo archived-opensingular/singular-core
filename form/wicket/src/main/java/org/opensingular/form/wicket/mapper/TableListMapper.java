@@ -52,12 +52,12 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTDataCell;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.table.BSTSection;
+import org.opensingular.lib.wicket.util.util.Shortcuts;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.opensingular.form.wicket.mapper.components.MetronicPanel.dependsOnModifier;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
@@ -66,7 +66,7 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 public class TableListMapper extends AbstractListMapper implements ISInstanceActionCapable {
 
     private SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
-    public ConfirmationModal  confirmationModal;
+    public  ConfirmationModal         confirmationModal;
 
     @Override
     public void addSInstanceActionsProvider(int sortPosition, ISInstanceActionsProvider provider) {
@@ -86,13 +86,13 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
 
         ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, Boolean.TRUE);
         confirmationModal = ctx.getExternalContainer().newComponent(ConfirmationModal::new);
-        ctx.getContainer().appendComponent((String id) -> buildPanel(ctx,  id));
+        ctx.getContainer().appendComponent((String id) -> buildPanel(ctx, id));
     }
 
     protected TableListPanel buildPanel(WicketBuildContext ctx, String id) {
 
-        final IModel<SIList<SInstance>> listModel        = new ReadOnlyCurrentInstanceModel<>(ctx);
-        final  ViewMode                  viewMode    = ctx.getViewMode();
+        final IModel<SIList<SInstance>> listModel   = new ReadOnlyCurrentInstanceModel<>(ctx);
+        final ViewMode                  viewMode    = ctx.getViewMode();
         final Boolean                   isEdition   = viewMode == null || viewMode.isEdition();
         final SIList<SInstance>         iList       = listModel.getObject();
         final SType<?>                  currentType = ctx.getCurrentInstance().getType();
@@ -109,7 +109,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                              WicketBuildContext ctx) {
 
         final IModel<String> label = $m.ofValue(ctx.getCurrentInstance().getType().asAtr().getLabel());
-        final Label title = new Label("_title", label);
+        final Label          title = new Label("_title", label);
         title.add($b.visibleIfModelObject(StringUtils::isNotBlank));
 
         ctx.configureContainer(label);
@@ -117,40 +117,40 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         header.appendTag("span", title);
 
         IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
-            this,
-            RequestCycle.get().find(AjaxRequestTarget.class),
-            list,
-            list.getObject(),
-            ctx,
-            ctx.getContainer());
+                this,
+                RequestCycle.get().find(AjaxRequestTarget.class),
+                list,
+                list.getObject(),
+                ctx,
+                ctx.getContainer());
 
         SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
-            header,
-            this.instanceActionsProviders,
-            list,
-            false,
-            internalContextListProvider);
+                header,
+                this.instanceActionsProviders,
+                list,
+                false,
+                internalContextListProvider);
 
         title.add(new RequiredLabelClassAppender(list));
 
     }
 
     private void buildContent(BSContainer<?> content, Form<?> form, IModel<SIList<SInstance>> list,
-        WicketBuildContext ctx, boolean isEdition, ConfirmationModal confirmationModal) {
+                              WicketBuildContext ctx, boolean isEdition, ConfirmationModal confirmationModal) {
 
         final String markup = ""
-            + " <div class='list-table-empty' wicket:id='empty-content'>                                             "
-            + "     <p class='list-table-empty-message'>Nenhum item foi adicionado. </p>                             "
-            + " </div>                                                                                               "
-            + " <div wicket:id='not-empty-content'>                                                                  "
-            + "     <table class='table table-condensed table-unstyled' style='margin-bottom:0px'>                   "
-            + "          <thead wicket:id='_h'></thead>                                                              "
-            + "          <tbody wicket:id='_b'><wicket:container wicket:id='_e'><tr wicket:id='_r'></tr></wicket:container></tbody> "
-            + "          <tfoot wicket:id='_ft'>                                                                     "
-            + "              <tr><td colspan='99' wicket:id='_fb'></td></tr>                                         "
-            + "          </tfoot>                                                                                    "
-            + "     </table>                                                                                         "
-            + " </div>                                                                                               ";
+                + " <div class='list-table-empty' wicket:id='empty-content'>                                             "
+                + "     <p class='list-table-empty-message'>Nenhum item foi adicionado. </p>                             "
+                + " </div>                                                                                               "
+                + " <div wicket:id='not-empty-content'>                                                                  "
+                + "     <table class='table table-condensed table-unstyled' style='margin-bottom:0px'>                   "
+                + "          <thead wicket:id='_h'></thead>                                                              "
+                + "          <tbody wicket:id='_b'><wicket:container wicket:id='_e'><tr wicket:id='_r'></tr></wicket:container></tbody> "
+                + "          <tfoot wicket:id='_ft'>                                                                     "
+                + "              <tr><td colspan='99' wicket:id='_fb'></td></tr>                                         "
+                + "          </tfoot>                                                                                    "
+                + "     </table>                                                                                         "
+                + " </div>                                                                                               ";
 
         final TemplatePanel template = content.newTemplateTag(tp -> markup);
 
@@ -170,63 +170,57 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
         final ElementsView                tableRows        = new TableElementsView("_e", list, ctx, form, tableBody, confirmationModal);
         final WebMarkupContainer          tableFooter      = new WebMarkupContainer("_ft");
         final BSContainer<?>              footerBody       = new BSContainer<>("_fb");
-        final SType<SInstance>            elementsType     = list.getObject().getElementsType();
+        final IModel<SType<?>>            elementTypeModel = Shortcuts.$m.map(list, SIList::getElementsType);
         final ISupplier<SViewListByTable> viewSupplier     = ctx.getViewSupplier(SViewListByTable.class);
 
         notEmptyContent.add($b.onConfigure(c -> c.setVisible(!list.getObject().isEmpty())));
 
-        if (elementsType.isComposite()) {
-            final STypeComposite<?> compositeElementsType = (STypeComposite<?>) elementsType;
+        if (elementTypeModel.getObject().isComposite()) {
 
             final BSTRow rowHeader = tableHeader.newRow();
-            if (ctx.getViewMode().isEdition()) {
+            if (isEdition) {
                 rowHeader.newTHeaderCell($m.ofValue("")).add(new Behavior() {
                     @Override
                     public void onConfigure(Component component) {
                         super.onConfigure(component);
-                        component.setVisible(list.getObject()
-                                .stream()
-                                .anyMatch((i) -> viewSupplier.get().getButtonsConfig().isInsertEnabled(i)));
+                        component.setVisible(list.getObject().stream().anyMatch((i) -> viewSupplier.get().getButtonsConfig().isInsertEnabled(i)));
                     }
                 });
             }
 
-            Collection<SType<?>> fields = compositeElementsType
-                    .getFields()
-                    .stream()
-                    .filter(t -> shouldRenderHeaderForSType(t, viewSupplier))
-                    .collect(Collectors.toList());
+            final List<IModel<SType<?>>> columns      = collectFieldsThatWillBeRendered(elementTypeModel, viewSupplier);
+            final int                    sumWidthPref = columns.stream().mapToInt((x) -> x.getObject().asAtrBootstrap().getColPreference(1)).sum();
 
-            int sumWidthPref = fields.stream().mapToInt((x) -> x.asAtrBootstrap().getColPreference(1)).sum();
-
-            IConsumer<SType<?>> columnCallback = field -> {
-                final Integer preferentialWidth = field.asAtrBootstrap().getColPreference(1);
-                final IModel<String> headerModel = $m.ofValue(field.asAtr().getLabel());
-                final BSTDataCell cell = rowHeader.newTHeaderCell(headerModel);
-                final String width = String.format("width:%.0f%%;", (100.0 * preferentialWidth) / sumWidthPref);
-                final boolean requiredField = field.asAtr().isRequired();
+            final IConsumer<IModel<SType<?>>> columnConfigurer = fieldModel -> {
+                final IModel<String> headerModel = $m.map(fieldModel, i -> i.asAtr().getLabel());
 
                 ctx.configureContainer(headerModel);
 
-                cell.setInnerStyle(width);
-                cell.add(new ClassAttributeModifier() {
-                    @Override
-                    protected Set<String> update(Set<String> oldClasses) {
-                        if (requiredField && isEdition) {
-                            oldClasses.add("singular-form-required");
-                        } else {
-                            oldClasses.remove("singular-form-required");
+                final Integer     preferentialWidth = fieldModel.getObject().asAtrBootstrap().getColPreference(1);
+                final BSTDataCell cell              = rowHeader.newTHeaderCell(headerModel);
+                cell.setInnerStyle(String.format("width:%.0f%%;", (100.0 * preferentialWidth) / sumWidthPref));
+
+                if (isEdition) {
+                    cell.add(new ClassAttributeModifier() {
+                        @Override
+                        protected Set<String> update(Set<String> oldClasses) {
+                            if (list.getObject().stream().map(i -> i.getField(fieldModel.getObject())).anyMatch(SInstance::isRequired)) {
+                                oldClasses.add("singular-form-required");
+                            } else {
+                                oldClasses.remove("singular-form-required");
+                            }
+                            return oldClasses;
                         }
-                        return oldClasses;
-                    }
-                });
+                    });
+                }
             };
 
             if (viewSupplier.get().isRenderCompositeFieldsAsColumns()) {
-                for (SType<?> field : fields)
-                    columnCallback.accept(field);
+                for (IModel<SType<?>> field : columns) {
+                    columnConfigurer.accept(field);
+                }
             } else {
-                columnCallback.accept(compositeElementsType);
+                columnConfigurer.accept(elementTypeModel);
             }
         }
 
@@ -241,6 +235,18 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                                 .add(footerBody)));
 
         content.getParent().add(dependsOnModifier(list));
+    }
+
+    private List<IModel<SType<?>>> collectFieldsThatWillBeRendered(IModel<SType<?>> elementTypeModel, ISupplier<SViewListByTable> viewSupplier) {
+        final List<IModel<SType<?>>> compositeFieldsModel = new ArrayList<>();
+        final STypeComposite<?>      compositeElementType = (STypeComposite<?>) elementTypeModel.getObject();
+        for (int aux = 0; aux < compositeElementType.getFields().size(); aux++) {
+            if (shouldRenderHeaderForSType(compositeElementType.getField(aux), viewSupplier)) {
+                final int index = aux;
+                compositeFieldsModel.add($m.map(elementTypeModel, type -> ((STypeComposite<?>) type).getField(index)));
+            }
+        }
+        return compositeFieldsModel;
     }
 
     private static boolean shouldRenderHeaderForSType(SType<?> type, ISupplier<SViewListByTable> viewSupplier) {
