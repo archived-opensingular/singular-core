@@ -108,7 +108,7 @@ public class TaskInstance implements Serializable {
     @Nonnull
     public STask<?> getFlowTaskOrException() {
         return getFlowTask().orElseThrow(() -> new SingularFlowException(
-                "Era esperado encontra a definição para a entidade de tarefa, mas não há correspondente entre o BD e " +
+                "Era esperado encontrar a definição para a entidade de tarefa, mas não há correspondente entre o BD e " +
                         "a definição do fluxo",
                 this));
     }
