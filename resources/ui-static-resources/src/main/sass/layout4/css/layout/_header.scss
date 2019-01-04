@@ -7,6 +7,10 @@ Page Header
   border-top: $page-header-border-top;
 }
 
+.page-container-bg-solid{
+  min-height: 400px;
+}
+
 .page-header.navbar {
   width: 100%;
   padding: 0 20px 0 20px;
