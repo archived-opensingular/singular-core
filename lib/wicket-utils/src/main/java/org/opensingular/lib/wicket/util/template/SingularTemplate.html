@@ -23,16 +23,15 @@
 <head>
     <meta charset="utf-8"/>
     <title>
-        <wicket:message key="label.page.title.global"/>
-        |
-        <wicket:fragment wicket:id="pageTitle" />
+        <wicket:container wicket:id="title"/>
+        <wicket:container wicket:id="subtitle"/>
     </title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1" name="viewport"/>
     <meta content="" name="description"/>
     <meta content="" name="author"/>
     <script type="text/javascript" src="/singular-static/resources/singular/plugins/jquery.min.js"></script>
-    <link rel="shortcut icon" href="/singular-static/resources/singular/img/favicon.png"/>
+    <link wicket:id="favicon" rel="shortcut icon"/>
     <style type="text/css">
         div.blocking_overlay {
             position: fixed;

@@ -16,19 +16,25 @@
 
 package org.opensingular.lib.wicket.util.template;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
 import org.apache.wicket.markup.head.filter.JavaScriptFilteredIntoFooterHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderResponseDecorator;
+import org.apache.wicket.markup.html.TransparentWebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.lib.wicket.util.application.SkinnableApplication;
 import org.opensingular.lib.wicket.util.behavior.KeepSessionAliveBehavior;
+import org.opensingular.lib.wicket.util.model.SingularPropertyModel;
 
 public abstract class SingularTemplate extends WebPage {
 
@@ -60,11 +66,52 @@ public abstract class SingularTemplate extends WebPage {
         getApplication()
                 .getJavaScriptLibrarySettings()
                 .setJQueryReference(new PackageResourceReference(SingularTemplate.class, "empty.js"));
-        add(new Label("pageTitle", getPageTitleModel()));
+        add(createPageTitle());
+        add(createPageSubtitle());
         add(new HeaderResponseContainer(JAVASCRIPT_CONTAINER, JAVASCRIPT_CONTAINER));
         add(new KeepSessionAliveBehavior());
+        add(createFavicon());
     }
 
+    private Label createPageTitle() {
+        return new Label("title", createPageTitleModel());
+    }
+
+    private Label createPageSubtitle() {
+        return new Label("subtitle", new LoadableDetachableModel<String>() {
+            @Override
+            protected String load() {
+                String val = getPageTitleModel().getObject();
+                if (val != null) {
+                    return " | " + val;
+                }
+                return StringUtils.EMPTY;
+            }
+        });
+    }
+
+    private Component createFavicon() {
+        final TransparentWebMarkupContainer favicon    = new TransparentWebMarkupContainer("favicon");
+        final IModel<String>                faviconUrl = createFaviconUrlModel();
+        favicon.add(AttributeAppender.replace("href", faviconUrl));
+        return favicon;
+    }
+
+    /**
+     * Override this to include new rules to fetch de favion url
+     */
+    protected IModel<String> createFaviconUrlModel() {
+        return new SingularPropertyModel("singular.template.favicon",
+                "/singular-static/resources/singular/img/favicon.png");
+    }
+
+    /**
+     * Override this to include new rules to fetch de page title
+     */
+    protected IModel<String> createPageTitleModel() {
+        return new SingularPropertyModel("singular.application.name",
+                getString("label.page.title.global"));
+    }
 
     @Override
     public void renderHead(IHeaderResponse response) {
@@ -92,5 +139,4 @@ public abstract class SingularTemplate extends WebPage {
     public SkinOptions getSkinOptions() {
         return skinOptions;
     }
-
 }
