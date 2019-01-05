@@ -29,6 +29,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
@@ -37,7 +38,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.opensingular.lib.wicket.util.jquery.JQuery.$;
 
 public class PortletRichTextPanel extends Panel implements Loggable {
 
@@ -114,6 +114,7 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     private void build(WicketBuildContext ctx) {
         label = new Label("label", Model.of(Optional.ofNullable(ctx.getCurrentInstance().asAtr().getLabel()).orElse(EMPTY)));
         hiddenInput = new HiddenField<>("hiddenInput", new SInstanceValueModel<>(ctx.getModel()));
+        hiddenInput.setEnabled(ctx.getViewMode() == ViewMode.EDIT);
         htmlContent = new WebMarkupContainer("htmlContent");
 
         add(label);
