@@ -320,6 +320,9 @@ Page Header
 .page-header {
   border-top: 0px solid #40BAA7; }
 
+.page-container-bg-solid {
+  min-height: 400px; }
+
 .page-header.navbar {
   width: 100%;
   padding: 0 20px 0 20px;
