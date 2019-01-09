@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2016 Singular Studios (a.k.a Atom Tecnologia) - www.opensingular.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.opensingular.lib.wicket.util.template;
 
 import java.nio.charset.StandardCharsets;
@@ -70,6 +86,7 @@ public class RecursosStaticosSingularTemplate {
                         "/singular-static/resources/singular/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.pt-BR.min.js",
                         "/singular-static/resources/singular/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js",
                         "/singular-static/resources/singular/global/plugins/bootstrap-select/js/bootstrap-select.min.js",
+                        "/singular-static/resources/singular/global/plugins/bootstrap-select/js/i18n/defaults-pt_BR.js",
                         "/singular-static/resources/singular/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js",
                         "/singular-static/resources/singular/global/plugins/jquery-multi-select/js/jquery.multi-select.js",
                         "/singular-static/resources/singular/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js",
