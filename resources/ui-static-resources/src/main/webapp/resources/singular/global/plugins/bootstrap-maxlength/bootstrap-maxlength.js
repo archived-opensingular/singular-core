@@ -1,3 +1,12 @@
+/* ==========================================================
+ *
+ * bootstrap-maxlength.js v 1.7.0
+ * Copyright 2015 Maurizio Napoleoni @mimonap
+ * Licensed under MIT License
+ * URL: https://github.com/mimo84/bootstrap-maxlength/blob/master/LICENSE
+ *
+ * ========================================================== */
+
 (function ($) {
   'use strict';
   /**
@@ -39,7 +48,8 @@
           utf8: false, // counts using bytesize rather than length. eg: '£' is counted as 2 characters.
           appendToParent: false, // append the indicator to the input field's parent instead of body
           twoCharLinebreak: true,  // count linebreak as 2 characters to match IE/Chrome textarea validation. As well as DB storage.
-          customMaxAttribute: null  // null = use maxlength attribute and browser functionality, string = use specified attribute instead.
+          customMaxAttribute: null,  // null = use maxlength attribute and browser functionality, string = use specified attribute instead.
+          allowOverMax: false
           // Form submit validation is handled on your own.  when maxlength has been exceeded 'overmax' class added to element
         };
 
@@ -166,6 +176,11 @@
        * @param indicator
        */
       function hideRemaining(currentInput, indicator) {
+
+        if (options.alwaysShow) {
+          return;
+        }
+
         indicator.css({
           display: 'none'
         });
@@ -395,9 +410,9 @@
        *
        */
       function getMaxLength(currentInput) {
-        var max = currentInput.attr('maxlength');
+        var max = currentInput.attr('maxlength') || options.customMaxAttribute;
 
-        if (options.customMaxAttribute) {
+        if (options.customMaxAttribute && !options.allowOverMax) {
           var custom = currentInput.attr(options.customMaxAttribute);
           if (!max || custom < max) {
             max = custom;
@@ -484,7 +499,7 @@
         });
 
         currentInput.on('blur', function () {
-          if (maxLengthIndicator && !options.showOnReady) {
+          if (maxLengthIndicator && !options.showOnReady && !options.alwaysShow) {
             maxLengthIndicator.remove();
           }
         });
