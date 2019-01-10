@@ -82,7 +82,11 @@ public class ProviderLoader {
             final Serializable converted = converter.toObject(ins);
             if (converted != null && !ids.contains(idFunction.apply(converted))) {
                 if (!enableDanglingValues) {
-                    instance.clearInstance();
+                    if(instance instanceof SIList){
+                        ((SIList) instance).remove(ins);
+                    } else {
+                        instance.clearInstance();
+                    }
                 } else {
                     values.add(i, converted);
                 }
