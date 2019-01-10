@@ -18,6 +18,7 @@ package org.opensingular.form.wicket.util;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
@@ -30,7 +31,7 @@ import java.util.List;
 public class SInstanceBoundedComponentUpdateVisitor implements IVisitor<Component, Void> {
 
     private final AjaxRequestTarget ajaxRequestTarget;
-    private final List<SInstance> instances;
+    private final List<SInstance>   instances;
 
     public SInstanceBoundedComponentUpdateVisitor(AjaxRequestTarget ajaxRequestTarget, List<SInstance> instances) {
         this.ajaxRequestTarget = ajaxRequestTarget;
@@ -44,6 +45,10 @@ public class SInstanceBoundedComponentUpdateVisitor implements IVisitor<Componen
             SInstance compSInstance = ((ISInstanceAwareModel) model).getSInstance();
             if (compSInstance != null && instances.stream().anyMatch(compSInstance::isSameOrDescendantOf)) {
                 WicketFormProcessing.refreshComponentOrCellContainer(ajaxRequestTarget, component);
+                /*Como o valor pode ter sido alterado no updatelistener, é necessario chamar modelChanged*/
+                if (component instanceof FormComponent) {
+                    component.modelChanged();
+                }
             }
         }
     }
