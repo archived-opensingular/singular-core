@@ -18,6 +18,7 @@ package org.opensingular.lib.commons.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public final class FormatUtil {
 
@@ -84,5 +85,15 @@ public final class FormatUtil {
         if (value == null)
             return nullDescription;
         return (value.booleanValue()) ? trueDescription : falseDescription;
+    }
+
+    public static String dateMonthYearDescribe(Date dataVigencia) {
+        if(dataVigencia != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
+            String format = dateFormat.format(dataVigencia);
+            return format.replaceFirst(" ", " de ");
+        }
+        return null;
+
     }
 }

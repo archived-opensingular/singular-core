@@ -21,12 +21,15 @@ package org.opensingular.lib.commons.util;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Calendar;
+import java.util.Date;
 
 public class FormatUtilTest {
 
     @Test
-    public void dateToDefaultTimestampStringTest(){
+    public void dateToDefaultTimestampStringTest() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, 2017);
         calendar.set(Calendar.MONTH, Calendar.JANUARY);
@@ -38,7 +41,7 @@ public class FormatUtilTest {
     }
 
     @Test
-    public void appendSecondsTest(){
+    public void appendSecondsTest() {
         StringBuilder time = new StringBuilder();
         FormatUtil.appendSeconds(time, 0);
         Assert.assertEquals("", time.toString());
@@ -52,7 +55,7 @@ public class FormatUtilTest {
     }
 
     @Test
-    public void appendMinutesTest(){
+    public void appendMinutesTest() {
         StringBuilder time = new StringBuilder();
         FormatUtil.appendMinutes(time, 0);
         Assert.assertEquals("", time.toString());
@@ -67,7 +70,7 @@ public class FormatUtilTest {
     }
 
     @Test
-    public void appendHoursTest(){
+    public void appendHoursTest() {
         StringBuilder time = new StringBuilder();
         FormatUtil.appendHours(time, 0);
         Assert.assertEquals("", time.toString());
@@ -82,7 +85,7 @@ public class FormatUtilTest {
     }
 
     @Test
-    public void appendDaysTest(){
+    public void appendDaysTest() {
         StringBuilder time = new StringBuilder();
         FormatUtil.appendDays(time, 0);
         Assert.assertEquals("", time.toString());
@@ -93,7 +96,7 @@ public class FormatUtilTest {
     }
 
     @Test
-    public void booleanDescriptionTest(){
+    public void booleanDescriptionTest() {
         String resultado = FormatUtil.booleanDescription(null, "Verdadeiro", "Falso");
 
         Assert.assertEquals("", resultado);
@@ -103,5 +106,21 @@ public class FormatUtilTest {
 
         resultado = FormatUtil.booleanDescription(false, "Verdadeiro", "Falso");
         Assert.assertEquals("Falso", resultado);
+    }
+
+    @Test
+    public void dateMonthYearDescribeTest() {
+        if (ZoneId.systemDefault().getId().equals("America/Sao_Paulo")) {
+            LocalDate dateJanuary = LocalDate.of(2019, 1, 1);
+            LocalDate dateOctober = LocalDate.of(2019, 10, 10);
+
+            Date date = Date.from(dateJanuary.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            String dateJanuaryDescribe = FormatUtil.dateMonthYearDescribe(date);
+            Assert.assertTrue(dateJanuaryDescribe.contains("Janeiro"));
+
+            date = Date.from(dateOctober.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            String dateOctoberDescribe = FormatUtil.dateMonthYearDescribe(date);
+            Assert.assertTrue("Data mês/ano",dateOctoberDescribe.equalsIgnoreCase("Outubro de 2019"));
+        }
     }
 }
