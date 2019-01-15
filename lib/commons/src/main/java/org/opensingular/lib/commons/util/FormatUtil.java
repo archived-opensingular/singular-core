@@ -16,13 +16,17 @@
 
 package org.opensingular.lib.commons.util;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public final class FormatUtil {
 
-    private FormatUtil() {}
+    private FormatUtil() {
+    }
 
     public static String dateToDefaultTimestampString(Date date) {
         return new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
@@ -77,23 +81,41 @@ public final class FormatUtil {
         }
         return time;
     }
-    
+
     public static String booleanDescription(Boolean value, String trueDescription, String falseDescription) {
         return booleanDescription(value, trueDescription, falseDescription, "");
     }
+
     public static String booleanDescription(Boolean value, String trueDescription, String falseDescription, String nullDescription) {
         if (value == null)
             return nullDescription;
         return (value.booleanValue()) ? trueDescription : falseDescription;
     }
 
-    public static String dateMonthYearDescribe(Date dataVigencia) {
-        if(dataVigencia != null) {
+    public static String dateMonthYearDescribe(Date date) {
+        if (date != null) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
-            String format = dateFormat.format(dataVigencia);
+            String format = dateFormat.format(date);
             return format.replaceFirst(" ", " de ");
         }
         return null;
 
+    }
+
+    public static String formatListToString(List<String> listOfWords, String joiner, String lastJoiner, String lastCharacter) {
+        return formatListToString(listOfWords, joiner, lastJoiner).concat(lastCharacter);
+    }
+
+    public static String formatListToString(List<String> listOfWords, String joiner, String lastJoiner) {
+        if (CollectionUtils.isNotEmpty(listOfWords)) {
+            if (listOfWords.size() == 1) {
+                return listOfWords.get(0);
+            }
+            int last = listOfWords.size() - 1;
+            return String.join(lastJoiner,
+                    String.join(joiner, listOfWords.subList(0, last)),
+                    listOfWords.get(last));
+        }
+        return "";
     }
 }

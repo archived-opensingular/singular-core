@@ -23,8 +23,11 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 public class FormatUtilTest {
 
@@ -120,7 +123,20 @@ public class FormatUtilTest {
 
             date = Date.from(dateOctober.atStartOfDay(ZoneId.systemDefault()).toInstant());
             String dateOctoberDescribe = FormatUtil.dateMonthYearDescribe(date);
-            Assert.assertTrue("Data mês/ano",dateOctoberDescribe.equalsIgnoreCase("Outubro de 2019"));
+            Assert.assertEquals("Data mês/ano", dateOctoberDescribe.equalsIgnoreCase("Outubro de 2019"));
         }
+    }
+
+    @Test
+    public void formatListToString() {
+        List<String> fruits = Arrays.asList("Apple", "Banana", "Grape", "Watermelon", "Melon");
+        String formattedFruits = FormatUtil.formatListToString(fruits, ", ", " and ");
+        Assert.assertEquals(formattedFruits, "Apple, Banana, Grape, Watermelon and Melon");
+
+        formattedFruits = FormatUtil.formatListToString(fruits, ", ", " and ", "!");
+        Assert.assertEquals(formattedFruits, "Apple, Banana, Grape, Watermelon and Melon!");
+
+        String one = FormatUtil.formatListToString(Collections.singletonList("One"), ", ", " and ", "!");
+        Assert.assertEquals(one, "One!");
     }
 }
