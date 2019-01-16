@@ -75,7 +75,7 @@ public class DefaultHibernatePersistenceService extends
 
     @Override
     protected RoleInstanceEntity newEntityRole(FlowInstanceEntity instance, RoleDefinitionEntity role, SUser user, SUser allocator) {
-        SUser resolvedUser = saveUserIfNeeded(user);
+        SUser resolvedUser = saveOrUpdateUserIfNeeded(user);
         final RoleInstanceEntity entityRole = new RoleInstanceEntity();
         entityRole.setFlowInstance(instance);
         entityRole.setUser((Actor) resolvedUser);

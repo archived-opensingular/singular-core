@@ -21,10 +21,25 @@ package org.opensingular.flow.test;
 import org.hamcrest.Matchers;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.opensingular.flow.core.*;
+import org.opensingular.flow.core.CurrentInstanceStatus;
+import org.opensingular.flow.core.DefinitionInfo;
+import org.opensingular.flow.core.ExecutionContext;
+import org.opensingular.flow.core.Flow;
+import org.opensingular.flow.core.FlowDefinition;
+import org.opensingular.flow.core.FlowDefinitionCache;
+import org.opensingular.flow.core.FlowInstance;
+import org.opensingular.flow.core.FlowMap;
+import org.opensingular.flow.core.ITaskDefinition;
+import org.opensingular.flow.core.SUser;
+import org.opensingular.flow.core.TaskInstance;
 import org.opensingular.flow.core.builder.FlowBuilderImpl;
 import org.opensingular.flow.core.defaults.PermissiveTaskAccessStrategy;
 import org.opensingular.flow.persistence.entity.Actor;
@@ -125,7 +140,7 @@ public class RelocationTest {
     public void relocateTask(FlowInstance flowInstance,
                              String username,
                              Integer lastVersion) {
-        SUser user = Flow.getConfigBean().getUserService().saveUserIfNeededOrException(username);
+        SUser user = Flow.getConfigBean().getUserService().saveOrUpdateUserIfNeededOrException(username);
         Integer lastVersion2 = (lastVersion == null) ? Integer.valueOf(0) : lastVersion;
         flowInstance.getCurrentTaskOrException().relocateTask(user, user, false, "", lastVersion2);
     }

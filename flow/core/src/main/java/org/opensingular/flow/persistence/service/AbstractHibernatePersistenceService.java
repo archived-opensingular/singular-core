@@ -112,7 +112,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     @Override
     public ROLE_INSTANCE setInstanceUserRole(FLOW_INSTANCE instance, ROLE_DEFINITION role, SUser user) {
-        SUser resolvedUser = saveUserIfNeeded(user);
+        SUser resolvedUser = saveOrUpdateUserIfNeeded(user);
 
         ROLE_INSTANCE entityRole = newEntityRole(instance, role, resolvedUser, Flow.getUserIfAvailable());
 
@@ -129,8 +129,8 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         sw.refresh(flowInstance);
     }
 
-    public SUser saveUserIfNeeded(SUser sUser) {
-        return Flow.getConfigBean().getUserService().saveUserIfNeeded(sUser);
+    public SUser saveOrUpdateUserIfNeeded(SUser sUser) {
+        return Flow.getConfigBean().getUserService().saveOrUpdateUserIfNeeded(sUser);
     }
 
     protected abstract Class<TASK_INSTANCE> getClassTaskInstance();
@@ -184,7 +184,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     @Override
     public void completeTask(TASK_INSTANCE task, String transitionAbbreviation, SUser responsibleUser) {
-        SUser resolvedUser = saveUserIfNeeded(responsibleUser);
+        SUser resolvedUser = saveOrUpdateUserIfNeeded(responsibleUser);
         task.setEndDate(new Date());
         IEntityTaskTransitionVersion transition = task.getTaskVersion().getTransition(transitionAbbreviation);
         task.setExecutedTransition(transition);
@@ -204,7 +204,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     @Override
     public void relocateTask(TASK_INSTANCE taskInstance, SUser user) {
-        taskInstance.setAllocatedUser(saveUserIfNeeded(user));
+        taskInstance.setAllocatedUser(saveOrUpdateUserIfNeeded(user));
         updateTask(taskInstance);
     }
 
@@ -216,7 +216,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
             SUser responsibleUser, Date dateHour, FLOW_INSTANCE generatedFlowInstance) {
         IEntityTaskHistoricType taskHistoryType = retrieveOrCreateTaskHistoricType(typeDescription);
 
-        SUser resolvedUser = saveUserIfNeeded(responsibleUser);
+        SUser resolvedUser = saveOrUpdateUserIfNeeded(responsibleUser);
         IEntityTaskInstanceHistory history = newTaskInstanceHistory(task, taskHistoryType, allocatedUser, resolvedUser);
 
         history.setAllocationStartDate(dateHour == null ? new Date() : dateHour);

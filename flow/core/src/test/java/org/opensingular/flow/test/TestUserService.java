@@ -48,7 +48,7 @@ public class TestUserService implements IUserService {
 
     @Override
     @Nonnull
-    public Optional<SUser> saveUserIfNeeded(@Nonnull String codUsuario) {
+    public Optional<SUser> saveOrUpdateUserIfNeeded(@Nonnull String codUsuario) {
         return Optional.ofNullable(testDAO.getSomeUser(Integer.parseInt(codUsuario)));
     }
 
