@@ -146,7 +146,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             + " <div class='list-table-empty' wicket:id='empty-content'>                                             "
             + "     <p class='list-table-empty-message'>Nenhum item foi adicionado. </p>                             "
             + " </div>                                                                                               "
-            + " <div wicket:id='not-empty-content'>                                                                  "
+            + " <div wicket:id='not-empty-content' class='table-responsive'>                                                                  "
             + "     <table class='table table-condensed table-unstyled' style='margin-bottom:0px'>                   "
             + "          <thead wicket:id='_h'></thead>                                                              "
             + "          <tbody wicket:id='_b'><wicket:container wicket:id='_e'><tr wicket:id='_r'></tr></wicket:container></tbody> "

@@ -36,7 +36,7 @@ public class CountDownBehaviour extends Behavior {
         String js = "";
 
         js += " $('#" + component.getMarkupId(true) + "').maxlength({ ";
-        js += "     alwaysShow: true,";
+        js += "     threshold: 9999,";
         js += "     validate: true";
         js += " }); ";
 
