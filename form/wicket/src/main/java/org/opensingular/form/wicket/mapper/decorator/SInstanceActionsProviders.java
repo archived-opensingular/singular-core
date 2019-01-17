@@ -16,22 +16,22 @@
 
 package org.opensingular.form.wicket.mapper.decorator;
 
-import static java.util.Comparator.*;
-import static java.util.stream.Collectors.*;
+import com.google.common.collect.Lists;
+import org.apache.wicket.model.IModel;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.decorator.action.ISInstanceActionCapable;
+import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
+import org.opensingular.form.decorator.action.SInstanceAction;
+import org.opensingular.form.type.core.annotation.AnnotationClassifier;
+import org.opensingular.lib.commons.lambda.IPredicate;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.apache.wicket.model.IModel;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.decorator.action.ISInstanceActionCapable;
-import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
-import org.opensingular.form.decorator.action.SInstanceAction;
-import org.opensingular.lib.commons.lambda.IPredicate;
-
-import com.google.common.collect.Lists;
+import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -41,6 +41,7 @@ public class SInstanceActionsProviders implements Serializable {
 
     private List<Entry>             entries;
     private ISInstanceActionCapable owner;
+    private AnnotationClassifier    annotationClassifier;
 
     /**
      * Construtor.
@@ -83,7 +84,7 @@ public class SInstanceActionsProviders implements Serializable {
 
         return this.entries.stream()
             .map(it -> it.provider)
-            .flatMap(it -> Lists.newArrayList(it.getActions(owner, model.getObject())).stream());
+            .flatMap(it -> Lists.newArrayList(it.getActions(owner, model.getObject(), annotationClassifier)).stream());
     }
 
     private static final class Entry implements Serializable {

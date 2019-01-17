@@ -78,6 +78,7 @@ public class SingularFormPanel extends Panel {
     private ViewMode                            viewMode       = ViewMode.EDIT;
 
     private AnnotationMode                      annotationMode = AnnotationMode.NONE;
+    private Object annotationClassifier;
 
     private boolean                             firstRender    = true;
 
@@ -277,6 +278,7 @@ public class SingularFormPanel extends Panel {
         // Chama o builder wicket para construção do formulário
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), externalContainer, getInstanceModel());
         ctx.setAnnotationMode(getAnnotationMode());
+        ctx.setAnnotationMode(getAnnotationMode());
         ctx.setNested(nested);
         ctx.setPreFormPanelFactory(preFormPanelFactory);
         ctx.addListeners(getBuildListeners());
@@ -318,6 +320,15 @@ public class SingularFormPanel extends Panel {
      * @return */
     public SingularFormPanel setAnnotationMode(@Nonnull AnnotationMode annotationMode) {
         this.annotationMode = Objects.requireNonNull(annotationMode);
+        return this;
+    }
+
+    public Object getAnnotationClassifier() {
+        return annotationClassifier;
+    }
+
+    public SingularFormPanel setAnnotationClassifier(Object annotationClassifier) {
+        this.annotationClassifier = annotationClassifier;
         return this;
     }
 

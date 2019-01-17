@@ -154,7 +154,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
         return getAnnotationService().getAnnotationOrCreate(target());
     }
 
-    public <T extends Enum<T> & AnnotationClassifier> SIAnnotation annotation(T classifier) {
+    public <T extends AnnotationClassifier> SIAnnotation annotation(T classifier) {
         return getAnnotationService().getAnnotationOrCreate(target(), classifier);
     }
 

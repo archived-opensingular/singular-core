@@ -31,6 +31,8 @@ import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.type.core.STypeBoolean;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.type.core.annotation.AnnotationClassifier;
+import org.opensingular.form.type.core.annotation.AtrAnnotation;
 import org.opensingular.form.type.core.annotation.SIAnnotation;
 import org.opensingular.form.view.SViewBooleanSwitch;
 import org.opensingular.form.view.SViewTextArea;
@@ -62,23 +64,38 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
 
     @Override
     public Iterable<SInstanceAction> getActions(ISInstanceActionCapable target, SInstance instance) {
-        final boolean annotatable = instance.asAtrAnnotation().isAnnotated();
+        return getActions(target, instance, null);
+    }
+
+    @Override
+    public Iterable<SInstanceAction> getActions(ISInstanceActionCapable target, SInstance instance, AnnotationClassifier annotationClassifier) {
+        final boolean annotatable = getAnnotation(instance, annotationClassifier).isAnnotated();
         if (!annotatable || !annotationsVisible.test(instance))
             return Collections.emptyList();
 
         final boolean editable = annotationsEditable.test(instance);
 
         SInstanceAction editAction = new SInstanceAction(SInstanceAction.ActionType.NORMAL)
-                .setIcon(resolveIcon(instance))
+                .setIcon(resolveIcon(instance, annotationClassifier))
                 .setText(getEditActionTitle(instance))
                 .setPosition(Integer.MAX_VALUE)
-                .setPreview(resolvePreview(instance, editable))
-                .setActionHandler(new EditAnnotationHandler());
+                .setPreview(resolvePreview(instance, editable, annotationClassifier))
+                .setActionHandler(new EditAnnotationHandler(annotationClassifier));
 
         return Collections.singletonList(editAction);
     }
 
-    private static String getEditActionTitle(SInstance instance) {
+    public AtrAnnotation getAnnotation(SInstance instance, AnnotationClassifier annotationClassifier) {
+        AtrAnnotation atrAnnotation = instance.asAtrAnnotation();
+        if (annotationClassifier == null) {
+            return atrAnnotation;
+        } else {
+            SIAnnotation annotation = atrAnnotation.annotation(annotationClassifier);
+            return annotation.asAtrAnnotation();
+        }
+    }
+
+    private String getEditActionTitle(SInstance instance) {
         String label = instance.asAtr().getLabel();
         if (label != null) {
             return "Comentários sobre " + label;
@@ -87,8 +104,8 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
         }
     }
 
-    private static Preview resolvePreview(SInstance instance, boolean editable) {
-        if (isEmpty(instance)) {
+    private Preview resolvePreview(SInstance instance, boolean editable, AnnotationClassifier annotationClassifier) {
+        if (isEmpty(instance, annotationClassifier)) {
             return (!editable)
                     ? new Preview()
                     .setMessage("<i>Nenhum comentário</i>")
@@ -104,10 +121,10 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
                                     + "<hr/>"
                                     + "%s"
                                     + "</div>",
-                            HTMLUtil.escapeHtml(Objects.toString(instance.asAtrAnnotation().text(), "")),
-                            isTrue(instance.asAtrAnnotation().approved())
+                            HTMLUtil.escapeHtml(Objects.toString(getAnnotation(instance, annotationClassifier).text(), "")),
+                            isTrue(getAnnotation(instance, annotationClassifier).approved())
                                     ? "<div class='annotation-status annotation-status-approved'>Aprovado</div>"
-                                    : isFalse(instance.asAtrAnnotation().approved())
+                                    : isFalse(getAnnotation(instance, annotationClassifier).approved())
                                     ? "<div class='annotation-status annotation-status-rejected'>Rejeitado</div>"
                                     : ""))
                     .setFormat("html")
@@ -117,34 +134,34 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
                                     new SInstanceAction(ActionType.LINK)
                                             .setText("Editar")
                                             .setIcon(SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_EDIT))
-                                            .setActionHandler(new EditAnnotationHandler()),
+                                            .setActionHandler(new EditAnnotationHandler(annotationClassifier)),
                                     new SInstanceAction(ActionType.LINK)
                                             .setText("Remover")
                                             .setIcon(SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_REMOVE))
-                                            .setActionHandler(new RemoveAnnotationHandler()))
+                                            .setActionHandler(new RemoveAnnotationHandler(annotationClassifier)))
                                     : Collections.emptyList());
         }
     }
 
-    private static SIcon resolveIcon(SInstance instance) {
-        if (isApproved(instance))
+    private SIcon resolveIcon(SInstance instance, AnnotationClassifier annotationClassifier) {
+        if (isApproved(instance, annotationClassifier))
             return SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_APPROVED).setColors("#7f7", "transparent");
-        else if (isRejected(instance))
+        else if (isRejected(instance, annotationClassifier))
             return SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_REJECTED).setColors("#f77", "transparent");
         else
             return SIcon.resolve(SingularFormAnnotationsIconProvider.ANNOTATION_EMPTY).setColors("#aaa", "transparent");
     }
 
-    private static boolean isEmpty(SInstance instance) {
-        return !isApproved(instance) && !isRejected(instance);
+    private boolean isEmpty(SInstance instance, AnnotationClassifier annotationClassifier) {
+        return !isApproved(instance, annotationClassifier) && !isRejected(instance, annotationClassifier);
     }
 
-    private static boolean isRejected(SInstance instance) {
-        return isFalse(instance.asAtrAnnotation().approved());
+    private boolean isRejected(SInstance instance, AnnotationClassifier annotationClassifier) {
+        return isFalse(getAnnotation(instance, annotationClassifier).approved());
     }
 
-    private static boolean isApproved(SInstance instance) {
-        return isTrue(instance.asAtrAnnotation().approved());
+    private boolean isApproved(SInstance instance, AnnotationClassifier annotationClassifier) {
+        return isTrue(getAnnotation(instance, annotationClassifier).approved());
     }
 
     private static final class EditAnotacaoRefType extends RefType {
@@ -173,15 +190,21 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
         }
     }
 
-    private static final class EditAnnotationHandler implements ActionHandler {
+    private final class EditAnnotationHandler implements ActionHandler {
+        private final AnnotationClassifier annotationClassifier;
+
+        public EditAnnotationHandler(AnnotationClassifier annotationClassifier) {
+            this.annotationClassifier = annotationClassifier;
+        }
+
         @Override
         public void onAction(SInstanceAction action, ISupplier<SInstance> fieldInstance, Delegate delegate) {
             ISupplier<SInstance> formSupplier = () -> {
                 SInstance ins = SDocumentFactory.empty().createInstance(new EditAnotacaoRefType());
                 ins.getField(EditAnotacaoRefType.APPROVED)
-                        .setValue(fieldInstance.get().asAtrAnnotation().approved());
+                        .setValue(getAnnotation(fieldInstance.get(), annotationClassifier).approved());
                 ins.getField(EditAnotacaoRefType.JUSTIFICATION)
-                        .setValue(fieldInstance.get().asAtrAnnotation().text());
+                        .setValue(getAnnotation(fieldInstance.get(), annotationClassifier).text());
                 return ins;
             };
             Out<SInstanceAction.FormDelegate> formDelegate = new Out<>();
@@ -192,7 +215,7 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
                     fd -> Arrays.asList(
                             new SInstanceAction(SInstanceAction.ActionType.CONFIRM)
                                     .setText("Confirmar")
-                                    .setActionHandler(new ConfirmarEdicaoHandler(fd)), //
+                                    .setActionHandler(new ConfirmarEdicaoHandler(fd, annotationClassifier)), //
                             new SInstanceAction(SInstanceAction.ActionType.CANCEL)
                                     .setText("Cancelar")
                                     .setActionHandler(new CloseFormHandler(fd)) //
@@ -200,7 +223,13 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
         }
     }
 
-    private static final class RemoveAnnotationHandler implements ActionHandler {
+    private final class RemoveAnnotationHandler implements ActionHandler {
+        private final AnnotationClassifier annotationClassifier;
+
+        public RemoveAnnotationHandler(AnnotationClassifier annotationClassifier) {
+            this.annotationClassifier = annotationClassifier;
+        }
+
         @Override
         public void onAction(SInstanceAction action, ISupplier<SInstance> fieldInstance, Delegate delegate) {
             Out<FormDelegate> formDelegate = new Out<>();
@@ -212,7 +241,7 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
                             new SInstanceAction(ActionType.CONFIRM)
                                     .setText("Apagar")
                                     .setActionHandler((a, i, d) -> {
-                                        d.getInstanceRef().get().asAtrAnnotation().clear();
+                                        getAnnotation(d.getInstanceRef().get(), annotationClassifier).clear();
                                         d.refreshFieldForInstance(d.getInstanceRef().get());
                                         fd.close();
                                     }),
@@ -223,18 +252,20 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
         }
     }
 
-    private static final class ConfirmarEdicaoHandler implements ActionHandler {
+    private final class ConfirmarEdicaoHandler implements ActionHandler {
         private final FormDelegate formDelegate;
+        private final AnnotationClassifier annotationClassifier;
 
-        public ConfirmarEdicaoHandler(FormDelegate formDelegate) {
+        public ConfirmarEdicaoHandler(FormDelegate formDelegate, AnnotationClassifier annotationClassifier) {
             this.formDelegate = formDelegate;
+            this.annotationClassifier = annotationClassifier;
         }
 
         @Override
         public void onAction(SInstanceAction action, ISupplier<SInstance> actionInstanceSupplier, Delegate delegate) {
             final SInstance formInstance = formDelegate.getFormInstance();
             final SInstance fieldInstance = delegate.getInstanceRef().get();
-            final SIAnnotation annotationInstance = fieldInstance.asAtrAnnotation().annotation();
+            final SIAnnotation annotationInstance = getAnnotation(fieldInstance, annotationClassifier).annotation();
 
             annotationInstance.setApproved(formInstance.getValue(EditAnotacaoRefType.APPROVED));
             annotationInstance.setText(formInstance.getValue(EditAnotacaoRefType.JUSTIFICATION));
