@@ -26,7 +26,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.context.IFormBuildContext;
+import org.opensingular.form.decorator.action.ActionClassifier;
 import org.opensingular.form.document.SDocument;
+import org.opensingular.form.type.core.annotation.AnnotationClassifier;
+import org.opensingular.form.type.core.annotation.AtrAnnotation;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.ViewResolver;
 import org.opensingular.form.wicket.IWicketComponentMapper.HintKey;
@@ -90,7 +93,7 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
     private ViewMode                                                     viewMode;
 
     private AnnotationMode                                               annotation       = AnnotationMode.NONE;
-    private Object                                               annotationClassifier;
+    private ActionClassifier                                             actionClassifier = AtrAnnotation.DefaultAnnotationClassifier.DEFAULT_ANNOTATION;
 
     private boolean                                                      nested           = false;
     private boolean                                                      showBreadcrumb;
@@ -128,7 +131,8 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
 
     public WicketBuildContext createChild(BSContainer<?> childContainer, BSContainer<?> externalContainer, IModel<? extends SInstance> model) {
         return configureNestedContext(new WicketBuildContext(this, childContainer, externalContainer, model)
-            .setAnnotationMode(getAnnotationMode()));
+            .setAnnotationMode(getAnnotationMode()))
+            .setActionClassifier(getActionClassifier());
     }
 
     private WicketBuildContext configureNestedContext(WicketBuildContext context) {
@@ -161,6 +165,22 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
     public WicketBuildContext setAnnotationMode(AnnotationMode mode) {
         Objects.requireNonNull(mode);
         annotation = mode;
+        return this;
+    }
+
+    public ActionClassifier getActionClassifier() {
+        return actionClassifier;
+    }
+
+    public AnnotationClassifier getAnnotationClassifier() {
+        if (actionClassifier instanceof AnnotationClassifier) {
+            return (AnnotationClassifier) actionClassifier;
+        }
+        return null;
+    }
+
+    public WicketBuildContext setActionClassifier(ActionClassifier actionClassifier) {
+        this.actionClassifier = actionClassifier;
         return this;
     }
 

@@ -32,7 +32,6 @@ import org.opensingular.form.document.SDocumentFactory;
 import org.opensingular.form.type.core.STypeBoolean;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.form.type.core.annotation.AnnotationClassifier;
-import org.opensingular.form.type.core.annotation.AtrAnnotation;
 import org.opensingular.form.type.core.annotation.SIAnnotation;
 import org.opensingular.form.view.SViewBooleanSwitch;
 import org.opensingular.form.view.SViewTextArea;
@@ -68,8 +67,13 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
     }
 
     @Override
-    public Iterable<SInstanceAction> getActions(ISInstanceActionCapable target, SInstance instance, AnnotationClassifier annotationClassifier) {
-        final boolean annotatable = getAnnotation(instance, annotationClassifier).isAnnotated();
+    public Iterable<SInstanceAction> getActions(ISInstanceActionCapable target, SInstance instance, ActionClassifier actionClassifier) {
+        AnnotationClassifier annotationClassifier = null;
+        if (actionClassifier instanceof AnnotationClassifier) {
+            annotationClassifier = (AnnotationClassifier) actionClassifier;
+        }
+
+        final boolean annotatable = instance.asAtrAnnotation().isAnnotated();
         if (!annotatable || !annotationsVisible.test(instance))
             return Collections.emptyList();
 
@@ -83,16 +87,6 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
                 .setActionHandler(new EditAnnotationHandler(annotationClassifier));
 
         return Collections.singletonList(editAction);
-    }
-
-    public AtrAnnotation getAnnotation(SInstance instance, AnnotationClassifier annotationClassifier) {
-        AtrAnnotation atrAnnotation = instance.asAtrAnnotation();
-        if (annotationClassifier == null) {
-            return atrAnnotation;
-        } else {
-            SIAnnotation annotation = atrAnnotation.annotation(annotationClassifier);
-            return annotation.asAtrAnnotation();
-        }
     }
 
     private String getEditActionTitle(SInstance instance) {
@@ -121,10 +115,10 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
                                     + "<hr/>"
                                     + "%s"
                                     + "</div>",
-                            HTMLUtil.escapeHtml(Objects.toString(getAnnotation(instance, annotationClassifier).text(), "")),
-                            isTrue(getAnnotation(instance, annotationClassifier).approved())
+                            HTMLUtil.escapeHtml(Objects.toString(instance.asAtrAnnotation().text(annotationClassifier), "")),
+                            isTrue(instance.asAtrAnnotation().approved(annotationClassifier))
                                     ? "<div class='annotation-status annotation-status-approved'>Aprovado</div>"
-                                    : isFalse(getAnnotation(instance, annotationClassifier).approved())
+                                    : isFalse(instance.asAtrAnnotation().approved(annotationClassifier))
                                     ? "<div class='annotation-status annotation-status-rejected'>Rejeitado</div>"
                                     : ""))
                     .setFormat("html")
@@ -157,11 +151,11 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
     }
 
     private boolean isRejected(SInstance instance, AnnotationClassifier annotationClassifier) {
-        return isFalse(getAnnotation(instance, annotationClassifier).approved());
+        return isFalse(instance.asAtrAnnotation().approved(annotationClassifier));
     }
 
     private boolean isApproved(SInstance instance, AnnotationClassifier annotationClassifier) {
-        return isTrue(getAnnotation(instance, annotationClassifier).approved());
+        return isTrue(instance.asAtrAnnotation().approved(annotationClassifier));
     }
 
     private static final class EditAnotacaoRefType extends RefType {
@@ -202,9 +196,9 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
             ISupplier<SInstance> formSupplier = () -> {
                 SInstance ins = SDocumentFactory.empty().createInstance(new EditAnotacaoRefType());
                 ins.getField(EditAnotacaoRefType.APPROVED)
-                        .setValue(getAnnotation(fieldInstance.get(), annotationClassifier).approved());
+                        .setValue(fieldInstance.get().asAtrAnnotation().approved(annotationClassifier));
                 ins.getField(EditAnotacaoRefType.JUSTIFICATION)
-                        .setValue(getAnnotation(fieldInstance.get(), annotationClassifier).text());
+                        .setValue(fieldInstance.get().asAtrAnnotation().text(annotationClassifier));
                 return ins;
             };
             Out<SInstanceAction.FormDelegate> formDelegate = new Out<>();
@@ -241,7 +235,7 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
                             new SInstanceAction(ActionType.CONFIRM)
                                     .setText("Apagar")
                                     .setActionHandler((a, i, d) -> {
-                                        getAnnotation(d.getInstanceRef().get(), annotationClassifier).clear();
+                                        d.getInstanceRef().get().asAtrAnnotation().clear(annotationClassifier);
                                         d.refreshFieldForInstance(d.getInstanceRef().get());
                                         fd.close();
                                     }),
@@ -265,7 +259,7 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
         public void onAction(SInstanceAction action, ISupplier<SInstance> actionInstanceSupplier, Delegate delegate) {
             final SInstance formInstance = formDelegate.getFormInstance();
             final SInstance fieldInstance = delegate.getInstanceRef().get();
-            final SIAnnotation annotationInstance = getAnnotation(fieldInstance, annotationClassifier).annotation();
+            final SIAnnotation annotationInstance = fieldInstance.asAtrAnnotation().annotation(annotationClassifier);
 
             annotationInstance.setApproved(formInstance.getValue(EditAnotacaoRefType.APPROVED));
             annotationInstance.setText(formInstance.getValue(EditAnotacaoRefType.JUSTIFICATION));

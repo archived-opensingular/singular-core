@@ -129,7 +129,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                 this.instanceActionsProviders,
                 list,
                 false,
-                internalContextListProvider);
+                internalContextListProvider, ctx.getActionClassifier());
 
         title.add(new RequiredLabelClassAppender(list));
 

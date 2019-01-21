@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package org.opensingular.form.type.core.annotation;
-
-import org.opensingular.form.decorator.action.ActionClassifier;
+package org.opensingular.form.decorator.action;
 
 /**
- * Interface de marcação para informar o tipo de anotação caso haja.
+ * Interface de marcação para informar o tipo de ação caso haja.
  *
  * Essa interface deve ser SEMPRE implementada utilizando enum.
  */
-public interface AnnotationClassifier extends ActionClassifier {
+public interface ActionClassifier {
 
+    String name();
+
+    int ordinal();
 }

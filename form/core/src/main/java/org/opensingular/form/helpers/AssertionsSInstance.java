@@ -29,6 +29,7 @@ import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.io.FormSerializationUtil;
+import org.opensingular.form.type.core.annotation.AnnotationClassifier;
 import org.opensingular.form.validation.ValidationError;
 
 import javax.annotation.Nonnull;
@@ -41,6 +42,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.opensingular.form.type.core.annotation.AtrAnnotation.DefaultAnnotationClassifier.DEFAULT_ANNOTATION;
 
 /**
  * Classe de apoio a a escrita de assertivas referentes a um {@link SInstance}. Dispara {@link AssertionError} se uma
@@ -190,26 +192,38 @@ public class AssertionsSInstance extends AssertionsSAttributeEnabled<AssertionsS
     }
 
     /** Verifica se a anotação existe e possui o texto experado. */
+    public AssertionsSInstance isAnnotationTextEquals(String expectedText, AnnotationClassifier annotationClassifier) {
+        return isAnnotationTextEquals((String) null, expectedText, annotationClassifier);
+    }
+
     public AssertionsSInstance isAnnotationTextEquals(String expectedText) {
-        return isAnnotationTextEquals((String) null, expectedText);
+        return isAnnotationTextEquals((String) null, expectedText, DEFAULT_ANNOTATION);
     }
 
     /** Verifica se a anotação existe e possui o texto experado. */
+    public AssertionsSInstance isAnnotationTextEquals(SType<?> field, String expectedText, AnnotationClassifier annotationClassifier) {
+        return isAnnotationTextEquals(field.getNameSimple(), expectedText, annotationClassifier);
+    }
+
     public AssertionsSInstance isAnnotationTextEquals(SType<?> field, String expectedText) {
-        return isAnnotationTextEquals(field.getNameSimple(), expectedText);
+        return isAnnotationTextEquals(field, expectedText, DEFAULT_ANNOTATION);
     }
 
     /**
      * Verifica se a anotação existe e possui o texto experado. Se o caminho for null, então faz o teste para a
      * instância atual.
      */
-    public AssertionsSInstance isAnnotationTextEquals(String fieldPath, String expectedText) {
+    public AssertionsSInstance isAnnotationTextEquals(String fieldPath, String expectedText, AnnotationClassifier annotationClassifier) {
         AssertionsSInstance field = field(fieldPath);
-        String currentText = field.getTarget().asAtrAnnotation().text();
+        String currentText = field.getTarget().asAtrAnnotation().text(annotationClassifier);
         if(! Objects.equals(expectedText, currentText)) {
             throw new AssertionError(field.errorMsg("Texto da anotação incorreto", expectedText, currentText));
         }
         return this;
+    }
+
+    public AssertionsSInstance isAnnotationTextEquals(String fieldPath, String expectedText) {
+        return isAnnotationTextEquals(fieldPath, expectedText, DEFAULT_ANNOTATION);
     }
 
     public IterableAssert<ValidationError> assertThatValidationErrors(){

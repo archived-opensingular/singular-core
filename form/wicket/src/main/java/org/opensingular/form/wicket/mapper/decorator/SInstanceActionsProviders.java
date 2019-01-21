@@ -19,10 +19,10 @@ package org.opensingular.form.wicket.mapper.decorator;
 import com.google.common.collect.Lists;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.decorator.action.ActionClassifier;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.decorator.action.SInstanceAction;
-import org.opensingular.form.type.core.annotation.AnnotationClassifier;
 import org.opensingular.lib.commons.lambda.IPredicate;
 
 import java.io.Serializable;
@@ -41,7 +41,6 @@ public class SInstanceActionsProviders implements Serializable {
 
     private List<Entry>             entries;
     private ISInstanceActionCapable owner;
-    private AnnotationClassifier    annotationClassifier;
 
     /**
      * Construtor.
@@ -64,27 +63,27 @@ public class SInstanceActionsProviders implements Serializable {
     /**
      * Retorna uma lista ordenada de ações correspondentes à instância do model
      */
-    public List<SInstanceAction> actionList(final IModel<? extends SInstance> model) {
-        return actionStream(model)
+    public List<SInstanceAction> actionList(final IModel<? extends SInstance> model, ActionClassifier actionClassifier) {
+        return actionStream(model, actionClassifier)
             .collect(toList());
     }
 
     /**
      * Retorna uma lista filtrada e ordenada de ações correspondentes à instância do model
      */
-    public List<SInstanceAction> actionList(final IModel<? extends SInstance> model, IPredicate<SInstanceAction> filter) {
-        return actionStream(model)
+    public List<SInstanceAction> actionList(final IModel<? extends SInstance> model, IPredicate<SInstanceAction> filter, ActionClassifier actionClassifier) {
+        return actionStream(model, actionClassifier)
             .filter(filter)
             .collect(toList());
     }
 
-    private Stream<SInstanceAction> actionStream(final IModel<? extends SInstance> model) {
+    private Stream<SInstanceAction> actionStream(final IModel<? extends SInstance> model, ActionClassifier actionClassifier) {
         if (this.entries == null)
             return Stream.empty();
 
         return this.entries.stream()
             .map(it -> it.provider)
-            .flatMap(it -> Lists.newArrayList(it.getActions(owner, model.getObject(), annotationClassifier)).stream());
+            .flatMap(it -> Lists.newArrayList(it.getActions(owner, model.getObject(), actionClassifier)).stream());
     }
 
     private static final class Entry implements Serializable {

@@ -103,7 +103,8 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
                     instanceActionsProviders,
                     model,
                     false,
-                    internalContextListProvider);
+                    internalContextListProvider,
+                    ctx.getActionClassifier());
             formGroup.appendDiv(labelBar);
         }
 

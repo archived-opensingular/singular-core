@@ -123,7 +123,7 @@ public class FormatUtilTest {
 
             date = Date.from(dateOctober.atStartOfDay(ZoneId.systemDefault()).toInstant());
             String dateOctoberDescribe = FormatUtil.dateMonthYearDescribe(date);
-            Assert.assertEquals("Data mês/ano", dateOctoberDescribe.equalsIgnoreCase("Outubro de 2019"));
+            Assert.assertTrue("Data mês/ano", dateOctoberDescribe.equalsIgnoreCase("Outubro de 2019"));
         }
     }
 

@@ -83,7 +83,7 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
                     instanceActionsProviders,
                     model,
                     false,
-                    internalContextListProvider);
+                    internalContextListProvider, ctx.getActionClassifier());
         }
 
         input.add(DisabledClassBehavior.getInstance());

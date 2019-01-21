@@ -20,7 +20,11 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.form.*;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SInstances;
+import org.opensingular.form.SingularFormException;
 import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
@@ -29,7 +33,12 @@ import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.util.transformer.Value;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Gerencia as anotações associadas a um {@link SDocument}.
@@ -67,7 +76,7 @@ public class DocumentAnnotations {
         return getAnnotationOrCreate(instance, (String) null);
     }
 
-    final <T extends Enum<T> & AnnotationClassifier> SIAnnotation getAnnotationOrCreate(SInstance instance,
+    final <T extends AnnotationClassifier> SIAnnotation getAnnotationOrCreate(SInstance instance,
             T classifier) {
         return getAnnotationOrCreate(instance, classifier.name());
     }
@@ -304,10 +313,11 @@ public class DocumentAnnotations {
     /**
      * @return True if this SIinstance is an annotated type and if the anotation has any value.
      */
-    public boolean hasAnnotation(SInstance instance) {
+    public boolean hasAnnotation(SInstance instance, AnnotationClassifier annotationClassifier) {
         if (annotationsMap != null && ! annotationsMap.isEmpty()) {
             for( SIAnnotation si : annotationsMap.get(instance.getId())) {
-                if (StringUtils.isNotBlank(si.getText()) || si.getApproved() != null) {
+                if (annotationClassifier.name().equals(si.getClassifier())
+                        && (StringUtils.isNotBlank(si.getText()) || si.getApproved() != null)) {
                     return true;
                 }
             }
@@ -318,8 +328,8 @@ public class DocumentAnnotations {
     /**
      * Retorna true se a instância ou algum de seus filhos tiver alguma anotação preenchida (não em branco).
      */
-    public boolean hasAnyAnnotationsOnTree(SInstance instance) {
-        return SInstances.hasAny(instance, i -> hasAnnotation(i));
+    public boolean hasAnyAnnotationsOnTree(SInstance instance, AnnotationClassifier annotationClassifier) {
+        return SInstances.hasAny(instance, i -> hasAnnotation(i, annotationClassifier));
     }
 
     /**
@@ -327,13 +337,13 @@ public class DocumentAnnotations {
      * @param instance
      * @return
      */
-    public boolean hasAnyRefusalOnTree(SInstance instance) {
-        return SInstances.hasAny(instance, i -> hasAnnotation(i) && BooleanUtils.isFalse(i.asAtrAnnotation().annotation().getApproved()));
+    public boolean hasAnyRefusalOnTree(SInstance instance, AnnotationClassifier annotationClassifier) {
+        return SInstances.hasAny(instance, i -> hasAnnotation(i, annotationClassifier) && BooleanUtils.isFalse(i.asAtrAnnotation().annotation(annotationClassifier).getApproved()));
     }
 
     /** Retorna true se a instância ou algum de seus filhos tiver uma anotação marcadada como não aprovada. */
-    public boolean hasAnyRefusal(SInstance instance) {
-        return SInstances.hasAny(instance, i -> hasAnnotation(i) && BooleanUtils.isFalse(i.asAtrAnnotation().annotation().getApproved()));
+    public boolean hasAnyRefusal(SInstance instance, AnnotationClassifier annotationClassifier) {
+        return SInstances.hasAny(instance, i -> hasAnnotation(i, annotationClassifier) && BooleanUtils.isFalse(i.asAtrAnnotation().annotation(annotationClassifier).getApproved()));
     }
 
     /**

@@ -16,12 +16,6 @@
 
 package org.opensingular.form.wicket.mapper.composite;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -54,6 +48,12 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -164,7 +164,7 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
             if (ctx.getHint(HIDE_LABEL))
                 return null;
             
-            final List<SInstanceAction> actionsIterator = mapper.getInstanceActionsProviders().actionList(model);
+            final List<SInstanceAction> actionsIterator = mapper.getInstanceActionsProviders().actionList(model, ctx.getActionClassifier());
             final IModel<String> label = $m.ofValue(trimToEmpty(getInstance().asAtr().getLabel()));
 
             final boolean hasLabel = isNotBlank(label.getObject());
@@ -192,7 +192,8 @@ public abstract class AbstractCompositeMapper implements IWicketComponentMapper,
                     mapper.getInstanceActionsProviders(),
                     model,
                     false,
-                    internalContextListProvider);
+                    internalContextListProvider,
+                    ctx.getActionClassifier());
 
                 return column;
             }

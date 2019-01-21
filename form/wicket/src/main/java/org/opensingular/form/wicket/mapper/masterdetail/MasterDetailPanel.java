@@ -151,7 +151,7 @@ public class MasterDetailPanel extends Panel {
                 this.instanceActionsProviders,
                 ctx.getModel(),
                 false,
-                internalContextListProvider);
+                internalContextListProvider, ctx.getActionClassifier());
 
     }
 
@@ -173,7 +173,7 @@ public class MasterDetailPanel extends Panel {
     private WebMarkupContainer newHead(String id) {
         WebMarkupContainer thisHead = new WebMarkupContainer(id);
         thisHead.add($b.visibleIf(() -> !ctx.getHint(HIDE_LABEL)
-                || !this.instanceActionsProviders.actionList(this.list).isEmpty()));
+                || !this.instanceActionsProviders.actionList(this.list, ctx.getActionClassifier()).isEmpty()));
         return thisHead;
     }
 
@@ -385,9 +385,9 @@ public class MasterDetailPanel extends Panel {
 
 
     private BSActionPanel.ActionConfig<SInstance> buildShowAnnotationsActionConfig() {
-        IPredicate<SInstance> hasAnyRefusal    = it -> it.asAtrAnnotation().hasAnyRefusal();
+        IPredicate<SInstance> hasAnyRefusal    = it -> it.asAtrAnnotation().hasAnyRefusal(ctx.getAnnotationClassifier());
         IPredicate<SInstance> hasAnyAnnotable  = it -> it.asAtrAnnotation().hasAnyAnnotable();
-        IPredicate<SInstance> hasAnyAnnotation = it -> it.asAtrAnnotation().hasAnyAnnotationOnTree();
+        IPredicate<SInstance> hasAnyAnnotation = it -> it.asAtrAnnotation().hasAnyAnnotationOnTree(ctx.getAnnotationClassifier());
         //@formatter:off
         IFunction<SInstance, String> titleFunc = it ->
                 hasAnyRefusal.test(it) ? "Possui anotação rejeitada"

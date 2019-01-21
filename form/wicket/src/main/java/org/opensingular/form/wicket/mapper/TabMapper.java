@@ -242,7 +242,7 @@ public class TabMapper implements IWicketComponentMapper {
             SInstance field = instance.getField(name);
             if (field != null) {
                 AtrAnnotation annotatedField = field.asAtrAnnotation();
-                if (annotatedField.hasAnyAnnotationOnTree()) {
+                if (annotatedField.hasAnyAnnotationOnTree(ctx.getAnnotationClassifier())) {
                     checkAnnotation(annotatedField);
                 } else if (ctx.getRootContext().getAnnotationMode().editable() &&
                         annotatedField.hasAnyAnnotable()) {
@@ -252,7 +252,7 @@ public class TabMapper implements IWicketComponentMapper {
         }
 
         private void checkAnnotation(AtrAnnotation annotatedField) {
-            if (annotatedField.hasAnyRefusal()) {
+            if (annotatedField.hasAnyRefusal(ctx.getAnnotationClassifier())) {
                 hasRejected = true;
             } else {
                 hasApproved = true;

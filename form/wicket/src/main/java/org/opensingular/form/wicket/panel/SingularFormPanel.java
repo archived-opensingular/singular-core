@@ -36,6 +36,8 @@ import org.opensingular.form.document.RefSDocumentFactory;
 import org.opensingular.form.document.RefType;
 import org.opensingular.form.document.SDocument;
 import org.opensingular.form.document.SDocumentFactory;
+import org.opensingular.form.type.core.annotation.AnnotationClassifier;
+import org.opensingular.form.type.core.annotation.AtrAnnotation;
 import org.opensingular.form.wicket.IWicketBuildListener;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.WicketBuildListeners;
@@ -78,7 +80,7 @@ public class SingularFormPanel extends Panel {
     private ViewMode                            viewMode       = ViewMode.EDIT;
 
     private AnnotationMode                      annotationMode = AnnotationMode.NONE;
-    private Object annotationClassifier;
+    private AnnotationClassifier                annotationClassifier = AtrAnnotation.DefaultAnnotationClassifier.DEFAULT_ANNOTATION;
 
     private boolean                             firstRender    = true;
 
@@ -278,7 +280,7 @@ public class SingularFormPanel extends Panel {
         // Chama o builder wicket para construção do formulário
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), externalContainer, getInstanceModel());
         ctx.setAnnotationMode(getAnnotationMode());
-        ctx.setAnnotationMode(getAnnotationMode());
+        ctx.setActionClassifier(getAnnotationClassifier());
         ctx.setNested(nested);
         ctx.setPreFormPanelFactory(preFormPanelFactory);
         ctx.addListeners(getBuildListeners());
@@ -323,11 +325,11 @@ public class SingularFormPanel extends Panel {
         return this;
     }
 
-    public Object getAnnotationClassifier() {
+    public AnnotationClassifier getAnnotationClassifier() {
         return annotationClassifier;
     }
 
-    public SingularFormPanel setAnnotationClassifier(Object annotationClassifier) {
+    public SingularFormPanel setAnnotationClassifier(AnnotationClassifier annotationClassifier) {
         this.annotationClassifier = annotationClassifier;
         return this;
     }
