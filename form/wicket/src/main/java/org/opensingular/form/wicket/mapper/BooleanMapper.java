@@ -26,6 +26,7 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
+import org.opensingular.form.decorator.action.SInstanceAction;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.view.SViewCheckBox;
 import org.opensingular.form.wicket.IWicketComponentMapper;
@@ -37,8 +38,10 @@ import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.form.wicket.model.AttributeModel;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSCol;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
 
 import java.util.Arrays;
@@ -133,9 +136,33 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
     }
 
     protected void buildForVisualization(WicketBuildContext ctx) {
-        final BSControls formGroup = ctx.getContainer().newFormGroup();
         final IModel<? extends SInstance> model = ctx.getModel();
+        final List<SInstanceAction> actionsIterator = instanceActionsProviders.actionList(model, ctx.getActionClassifier());
+        final boolean hasActions = !actionsIterator.isEmpty();
+        if (hasActions) {
 
+            final BSContainer<?> parentCol = ctx.getContainer();
+            final BSGrid grid = parentCol.newGrid();
+            BSCol column = grid.newColInRow();
+
+            IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
+                    this,
+                    RequestCycle.get().find(AjaxRequestTarget.class),
+                    model,
+                    model.getObject(),
+                    ctx,
+                    ctx.getContainer());
+
+            SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
+                    column,
+                    instanceActionsProviders,
+                    model,
+                    false,
+                    internalContextListProvider, ctx.getActionClassifier());
+
+
+        }
+        final BSControls formGroup = ctx.getContainer().newFormGroup();
 
         if (viewIsConfigToChangeAlignmentLabel(ctx)) {
             formGroup.appendLabel(createLabel(ctx));
@@ -148,6 +175,7 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
         } else {
             createTagForViewCheckBox(formGroup, ctx, true);
         }
+
 
     }
 
