@@ -93,9 +93,11 @@ public class AtrAnnotation extends STranslatorForAttribute {
         if (classifiers == null) {
             classifiers = new ArrayList<>();
         }
-        for (T classifier : classifiersParam) {
-            if (!classifiers.contains(classifier.name())) {
-                classifiers.add(classifier.name());
+        if(classifiers instanceof ArrayList) {
+            for (T classifier : classifiersParam) {
+                if (!classifiers.contains(classifier.name())) {
+                    classifiers.add(classifier.name());
+                }
             }
         }
         setAttributeValue(SPackageBasic.ATR_ANNOTATED, classifiers);
