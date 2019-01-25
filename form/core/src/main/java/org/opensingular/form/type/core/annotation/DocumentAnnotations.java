@@ -33,6 +33,7 @@ import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.util.transformer.Value;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -98,12 +99,12 @@ public class DocumentAnnotations {
     }
 
     /** Verifice se instancia recebe o classificador de anotação informado. */
-    private void isValidClassifier(SInstance instance, String classifier) {
+    private void isValidClassifier(SInstance instance, @Nonnull String classifier) {
         if (AtrAnnotation.DefaultAnnotationClassifier.DEFAULT_ANNOTATION.name().equals(classifier)) {
             return;
         }
         List<String> classifiers = instance.getAttributeValue(SPackageBasic.ATR_ANNOTATED);
-        if (classifiers == null || !classifiers.contains(classifier)) {
+        if (classifiers instanceof ArrayList && !classifiers.contains(classifier)) {
             throw new SingularFormException(String.format(
                     "Classificador de anotação desconhecido para o tipo: %s. Certifique-se que a tipo foi marcado" +
                             " como setAnnotated(%s) ",
