@@ -3172,5 +3172,8 @@ div.checker.disabled span.checked:hover {
   overflow-y: auto;
   max-height: 130px; }
 
+.annotation-toggle-container {
+  margin-left: 8px; }
+
 .ms-elem-selectable span {
   margin-right: -10px !important; }
