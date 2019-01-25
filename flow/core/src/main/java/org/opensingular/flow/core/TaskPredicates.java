@@ -25,6 +25,7 @@ import javax.annotation.Nonnull;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -32,24 +33,31 @@ import java.util.stream.Stream;
 
 public class TaskPredicates {
 
-    private TaskPredicates() {}
+    private TaskPredicates() {
+    }
 
 
-    /** Cria um predicado que retorna as tarefas com a mesma abreviação (sigla) da definição de task informada. */
+    /**
+     * Cria um predicado que retorna as tarefas com a mesma abreviação (sigla) da definição de task informada.
+     */
     @Nonnull
     public static Predicate<TaskInstance> simpleTaskType(@Nonnull ITaskDefinition taskRef) {
         Objects.requireNonNull(taskRef);
         return simpleTaskType(taskRef.getKey());
     }
 
-    /** Cria um predicado que retorna as tarefas com a mesma abreviação (sigla).*/
+    /**
+     * Cria um predicado que retorna as tarefas com a mesma abreviação (sigla).
+     */
     @Nonnull
     static Predicate<TaskInstance> simpleTaskType(@Nonnull String abbreviation) {
         Objects.requireNonNull(abbreviation);
         return t -> t.isAtTask(abbreviation);
     }
 
-    /** Cria um predicado que retorna as tarefas com a mesma abreviação (sigla) da definição de task informada. */
+    /**
+     * Cria um predicado que retorna as tarefas com a mesma abreviação (sigla) da definição de task informada.
+     */
     @Nonnull
     public static Predicate<TaskInstance> simpleTaskType(@Nonnull STask<?> type) {
         Objects.requireNonNull(type);
@@ -70,7 +78,9 @@ public class TaskPredicates {
         return t -> keys.contains(t.getAbbreviation());
     }
 
-    /** Cria um predicado que retorna as tarefas encerradas*/
+    /**
+     * Cria um predicado que retorna as tarefas encerradas
+     */
     public static Predicate<TaskInstance> finished() {
         return t -> t.isFinished();
     }
@@ -80,7 +90,7 @@ public class TaskPredicates {
     }
 
     public static ITaskPredicate timeLimitInDays(final int numberOfDays) {
-        TaskPredicateImpl taskPredicateImpl = new TaskPredicateImpl("Prazo Extrapolado "+numberOfDays+" dias", (taskInstance) -> {
+        TaskPredicateImpl taskPredicateImpl = new TaskPredicateImpl("Prazo Extrapolado " + numberOfDays + " dias", (taskInstance) -> {
             Date date = taskInstance.getTargetEndDate();
             if (date != null) {
                 return Days.daysBetween(new DateTime(date), DateTime.now()).getDays() > numberOfDays;
@@ -90,6 +100,13 @@ public class TaskPredicates {
         taskPredicateImpl.setFullDescription("Prazo Extrapolado em " + numberOfDays + " dias");
         taskPredicateImpl.setEventType(EventType.TIMER);
         return taskPredicateImpl;
+    }
+
+    public static Predicate<TaskInstance> typeByTask(@Nonnull TaskType taskType) {
+        return t -> {
+            Optional<STask<?>> flowTask = t.getFlowTask();
+            return flowTask.isPresent() && taskType.equals(flowTask.get().getTaskType());
+        };
     }
 
     public static class TaskPredicateImpl implements ITaskPredicate {
