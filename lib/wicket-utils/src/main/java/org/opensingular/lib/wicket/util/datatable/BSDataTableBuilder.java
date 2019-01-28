@@ -106,6 +106,16 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> implements 
     public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(IModel<String> displayModel, S sortProperty, String propertyExpression) {
         return appendColumn(new BSPropertyColumn<>(displayModel, sortProperty, propertyExpression));
     }
+
+    public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(IModel<String> displayModel, S sortProperty, String propertyExpression, String cssClass) {
+        return appendColumn(new BSPropertyColumn<T, S>(displayModel, sortProperty, propertyExpression){
+            @Override
+            public String getCssClass() {
+                return cssClass;
+            }
+        });
+    }
+
     public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(String headerTitle, S sortProperty, String propertyExpression) {
         return appendPropertyColumn(Model.of(headerTitle), sortProperty, propertyExpression);
     }
