@@ -351,7 +351,7 @@ public class DocumentAnnotations {
      * Retorna true sea instância ou algums de seus filhos é capaz de receber anotação. Ou seja, se foi marcado como
      * anotável.
      */
-    public boolean hasAnyAnnotable(SInstance instance) {
-        return SInstances.hasAny(instance, i -> i.asAtrAnnotation().isAnnotated());
+    public boolean hasAnyAnnotable(SInstance instance, AnnotationClassifier classifier) {
+        return SInstances.hasAny(instance, i -> i.asAtrAnnotation().isAnnotated(classifier));
     }
 }
