@@ -114,8 +114,6 @@ public class FormatUtilTest {
 
     @Test
     public void dateMonthYearDescribeTest() {
-        Locale originalDefaultLocale = Locale.getDefault();
-        Locale.setDefault(new Locale("pt", "BR"));
         if ("America/Sao_Paulo".equals(ZoneId.systemDefault().getId())) {
             LocalDate dateJanuary = LocalDate.of(2019, 1, 1);
             LocalDate dateOctober = LocalDate.of(2019, 10, 10);
@@ -128,7 +126,6 @@ public class FormatUtilTest {
             String dateOctoberDescribe = FormatUtil.dateMonthYearDescribe(date);
             Assert.assertTrue("Data mês/ano", "Outubro de 2019".equalsIgnoreCase(dateOctoberDescribe));
         }
-        Locale.setDefault(originalDefaultLocale);
     }
 
     @Test
