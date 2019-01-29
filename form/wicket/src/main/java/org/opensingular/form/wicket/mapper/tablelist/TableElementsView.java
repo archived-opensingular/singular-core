@@ -1,6 +1,5 @@
 package org.opensingular.form.wicket.mapper.tablelist;
 
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.Item;
@@ -29,26 +28,28 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class TableElementsView extends ElementsView {
-
     private final WicketBuildContext ctx;
-    private final Form<?> form;
-    private final ConfirmationModal confirmationModal;
+    private final Form<?>            form;
+    private final ConfirmationModal  confirmationModal;
 
-    public TableElementsView(String id, IModel<SIList<SInstance>> model, WicketBuildContext ctx, Form<?> form,
-            WebMarkupContainer parentContainer, ConfirmationModal confirmationModal) {
+    public TableElementsView(String                    id,
+                             IModel<SIList<SInstance>> model,
+                             WicketBuildContext        ctx,
+                             Form<?>                   form,
+                             WebMarkupContainer        parentContainer,
+                             ConfirmationModal         confirmationModal) {
         super(id, model, parentContainer);
+        super.setRenderedChildFunction(c -> c.get("_r"));
         this.confirmationModal = confirmationModal;
-        super.setRenderedChildFunction(c -> ((MarkupContainer) c).get("_r"));
         this.ctx = ctx;
         this.form = form;
     }
 
     @Override
     protected void populateItem(Item<SInstance> item) {
-
-        final BSTRow row = new BSTRow("_r", IBSGridCol.BSGridSize.MD);
+        final BSTRow            row       = new BSTRow("_r", IBSGridCol.BSGridSize.MD);
         final IModel<SInstance> itemModel = item.getModel();
-        final SInstance instance = itemModel.getObject();
+        final SInstance         instance  = itemModel.getObject();
 
         SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(new FeedbackFence(row))
                 .addInstanceModel(itemModel)
@@ -65,18 +66,17 @@ public class TableElementsView extends ElementsView {
 
         final ISupplier<SViewListByTable> viewSupplier = ctx.getViewSupplier(SViewListByTable.class);
 
-        if (viewSupplier.get().isEnableInsert() && ctx.getViewMode().isEdition()) {
-            final BSTDataCell actionColumn = row.newCol();
+        if (ctx.getViewMode().isEdition()) {
             if (viewSupplier.get().getButtonsConfig().isInsertEnabled(item.getModelObject())) {
-                ButtonAction editButton = viewSupplier.get().getButtonsConfig().getInsertButton();
+                final BSTDataCell actionColumn = row.newCol();
+                ButtonAction      editButton   = viewSupplier.get().getButtonsConfig().getInsertButton();
                 actionColumn.add($b.attrAppender("style", "width:20px", ";"));
                 appendInserirButton(this, form, item, actionColumn, editButton);
             }
         }
 
-
         if ((instance instanceof SIComposite) && viewSupplier.get().isRenderCompositeFieldsAsColumns()) {
-            final SIComposite ci = (SIComposite) instance;
+            final SIComposite       ci = (SIComposite) instance;
             final STypeComposite<?> ct = ci.getType();
 
             for (SType<?> ft : ct.getFields()) {

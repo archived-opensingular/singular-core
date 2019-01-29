@@ -86,7 +86,7 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
                     instanceActionsProviders,
                     model,
                     false,
-                    internalContextListProvider);
+                    internalContextListProvider, ctx.getActionClassifier());
         }
 
         input.add(DisabledClassBehavior.getInstance());
@@ -137,7 +137,7 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
 
     protected void buildForVisualization(WicketBuildContext ctx) {
         final IModel<? extends SInstance> model = ctx.getModel();
-        final List<SInstanceAction> actionsIterator = instanceActionsProviders.actionList(model);
+        final List<SInstanceAction> actionsIterator = instanceActionsProviders.actionList(model, ctx.getActionClassifier());
         final boolean hasActions = !actionsIterator.isEmpty();
         if (hasActions) {
 
@@ -158,7 +158,7 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
                     instanceActionsProviders,
                     model,
                     false,
-                    internalContextListProvider);
+                    internalContextListProvider, ctx.getActionClassifier());
 
 
         }

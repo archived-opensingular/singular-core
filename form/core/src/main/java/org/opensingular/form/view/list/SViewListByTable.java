@@ -23,9 +23,7 @@ import org.opensingular.lib.commons.ui.Icon;
 import javax.annotation.Nullable;
 
 public class SViewListByTable extends AbstractSViewListWithControls<SViewListByTable> {
-
     private boolean                 renderCompositeFieldsAsColumns = true;
-    private boolean                 enableInsert                   = false; //This variable is used to determine if will have a column for edit.
     private ButtonsConfigWithInsert buttonsConfig;
 
     public boolean isRenderCompositeFieldsAsColumns() {
@@ -52,7 +50,6 @@ public class SViewListByTable extends AbstractSViewListWithControls<SViewListByT
      * @return <code>this</code>
      */
     public SViewListByTable enableInsert(@Nullable String hint, @Nullable IPredicate<SInstance> visibleFor, @Nullable Icon icon, boolean visibleEdit) {
-        this.enableInsert = visibleEdit;
         getButtonsConfig().setInsertButton(new ButtonAction(visibleFor, hint, icon));
         return this;
     }
@@ -69,22 +66,11 @@ public class SViewListByTable extends AbstractSViewListWithControls<SViewListByT
      * By default the insert line is disable.
      */
     public SViewListByTable disableInsert() {
-        this.enableInsert = false;
         return enableInsert(s -> false);
     }
 
     public SViewListByTable enableInsert() {
-        this.enableInsert = true;
         return enableInsert(s -> true);
-    }
-
-    /**
-     * If edit button can be visible this method will return true.
-     *
-     * @return True if edit button could be visible. False if the edit button will never be visible.
-     */
-    public boolean isEnableInsert() {
-        return enableInsert;
     }
 
     /**
@@ -97,5 +83,4 @@ public class SViewListByTable extends AbstractSViewListWithControls<SViewListByT
         }
         return buttonsConfig;
     }
-
 }

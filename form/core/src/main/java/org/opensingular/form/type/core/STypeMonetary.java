@@ -24,20 +24,15 @@ import java.text.DecimalFormat;
 @SInfoType(name = "Monetary", spackage = SPackageCore.class)
 public class STypeMonetary extends STypeDecimal {
 
+    private static final DecimalFormat FORMAT = new DecimalFormat("R$ #,##0.00");
 
     @Override
     public String toStringDisplayDefault(BigDecimal bigDecimal) {
         if (bigDecimal == null) {
             return "";
         }
-        int           size = bigDecimal.toString().length();
-        DecimalFormat decimalFormat;
-        if (size <= 6) {
-            decimalFormat = new DecimalFormat("R$ 0.00");
-        } else {
-            decimalFormat = new DecimalFormat("R$ 0,000.00");
-        }
-        return decimalFormat.format(bigDecimal);
+
+        return FORMAT.format(bigDecimal);
     }
 
 }

@@ -25,6 +25,7 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.decorator.action.ActionClassifier;
 import org.opensingular.form.decorator.action.SInstanceAction;
 import org.opensingular.form.decorator.action.SInstanceAction.ActionHandler;
 import org.opensingular.form.decorator.action.SInstanceAction.Preview;
@@ -121,15 +122,15 @@ public class SInstanceActionsPanel extends TemplatePanel {
     }
 
     public static void addLeftSecondaryRightPanelsTo(
-        BSContainer<?> container,
-        SInstanceActionsProviders instanceActionsProviders,
-        IModel<? extends SInstance> model,
-        boolean large,
-        IFunction<AjaxRequestTarget, List<?>> internalContextListProvider) {
+            BSContainer<?> container,
+            SInstanceActionsProviders instanceActionsProviders,
+            IModel<? extends SInstance> model,
+            boolean large,
+            IFunction<AjaxRequestTarget, List<?>> internalContextListProvider, ActionClassifier actionClassifier) {
 
-        ISupplier<? extends List<SInstanceAction>> filterLeft = () -> instanceActionsProviders.actionList(model, it -> !it.isSecondary() && it.getPosition() < 0);
-        ISupplier<? extends List<SInstanceAction>> filterRight = () -> instanceActionsProviders.actionList(model, it -> !it.isSecondary() && it.getPosition() >= 0);
-        ISupplier<? extends List<SInstanceAction>> filterSecondary = () -> instanceActionsProviders.actionList(model, it -> it.isSecondary());
+        ISupplier<? extends List<SInstanceAction>> filterLeft = () -> instanceActionsProviders.actionList(model, it -> !it.isSecondary() && it.getPosition() < 0, actionClassifier);
+        ISupplier<? extends List<SInstanceAction>> filterRight = () -> instanceActionsProviders.actionList(model, it -> !it.isSecondary() && it.getPosition() >= 0, actionClassifier);
+        ISupplier<? extends List<SInstanceAction>> filterSecondary = () -> instanceActionsProviders.actionList(model, it -> it.isSecondary(), actionClassifier);
         container
             .appendTag("div", new SInstanceActionsPanel("actionsLeft", model, internalContextListProvider, SInstanceActionsPanel.Mode.BAR, filterLeft)
                 .setLarge(large)
@@ -143,14 +144,14 @@ public class SInstanceActionsPanel extends TemplatePanel {
     }
 
     public static void addPrimarySecondaryPanelsTo(
-        BSContainer<?> container,
-        SInstanceActionsProviders instanceActionsProviders,
-        IModel<? extends SInstance> model,
-        boolean large,
-        IFunction<AjaxRequestTarget, List<?>> internalContextListProvider) {
+            BSContainer<?> container,
+            SInstanceActionsProviders instanceActionsProviders,
+            IModel<? extends SInstance> model,
+            boolean large,
+            IFunction<AjaxRequestTarget, List<?>> internalContextListProvider, ActionClassifier actionClassifier) {
 
-        ISupplier<? extends List<SInstanceAction>> filterPrimary = () -> instanceActionsProviders.actionList(model, it -> !it.isSecondary());
-        ISupplier<? extends List<SInstanceAction>> filterSecondary = () -> instanceActionsProviders.actionList(model, it -> it.isSecondary());
+        ISupplier<? extends List<SInstanceAction>> filterPrimary = () -> instanceActionsProviders.actionList(model, it -> !it.isSecondary(), actionClassifier);
+        ISupplier<? extends List<SInstanceAction>> filterSecondary = () -> instanceActionsProviders.actionList(model, it -> it.isSecondary(), actionClassifier);
         container
             .appendTag("div", new SInstanceActionsPanel("actionsPrimary", model, internalContextListProvider, SInstanceActionsPanel.Mode.BAR, filterPrimary)
                 .setLarge(large)

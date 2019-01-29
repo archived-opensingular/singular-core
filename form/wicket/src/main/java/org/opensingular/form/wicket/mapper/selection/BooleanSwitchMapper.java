@@ -102,7 +102,7 @@ public class BooleanSwitchMapper implements IWicketComponentMapper, ISInstanceAc
             instanceActionsProviders,
             model,
             false,
-            internalContextListProvider);
+            internalContextListProvider, ctx.getActionClassifier());
     }
 
     @Override

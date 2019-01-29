@@ -18,7 +18,6 @@ package org.opensingular.form.wicket.mapper.attachment.list;
 
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.SIList;
@@ -37,7 +36,7 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.*;
+import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 
 public class AttachmentListMapper extends AbstractListMapper implements ISInstanceActionCapable {
 
@@ -75,7 +74,7 @@ public class AttachmentListMapper extends AbstractListMapper implements ISInstan
                 this.instanceActionsProviders,
                 model,
                 false,
-                internalContextListProvider);
+                internalContextListProvider, ctx.getActionClassifier());
     }
 
     @Override

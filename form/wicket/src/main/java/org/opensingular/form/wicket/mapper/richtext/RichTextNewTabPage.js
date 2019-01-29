@@ -140,9 +140,10 @@
                     {name: 'others', items: ids.split(",")}
                 ],
                 on: {
-                    'instanceReady': function () {
+                    'instanceReady': function (evt) {
                         $('.cke_contents').height($('#bodyPage').height() - $('.cke_contents').offset().top - $('.cke_bottom').height() - 20);
                         configureIconButtons();
+                        configureLineBreak(evt);
                     }
                 }
             };
@@ -249,6 +250,10 @@
             console.log("Don't find extra buttons!");
         }
 
+    }
+
+    function configureLineBreak(evt) {
+        evt.editor.dataProcessor.writer.lineBreakChars = '\n';
     }
 
 

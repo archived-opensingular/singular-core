@@ -1,5 +1,6 @@
 package org.opensingular.internal.lib.commons.xml;
 
+import org.apache.commons.io.IOUtils;
 import org.opensingular.lib.commons.base.SingularException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -16,6 +17,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -31,14 +33,18 @@ import java.util.Objects;
  */
 public class BinaryElementIO {
 
-    /** Writes the binary representation of the {@link Element} into the output. */
+    /**
+     * Writes the binary representation of the {@link Element} into the output.
+     */
     public static void write(@Nonnull OutputStream out, @Nonnull Element element) throws IOException {
         DataOutputStream out2 = new DataOutputStream(out);
-        DictionaryWrite dic = new DictionaryWrite();
+        DictionaryWrite  dic  = new DictionaryWrite();
         write(out2, dic, element);
     }
 
-    /** Generates the binary representation of the {@link Element}. */
+    /**
+     * Generates the binary representation of the {@link Element}.
+     */
     public static byte[] write(@Nonnull Element element) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             write(out, element);
@@ -78,11 +84,15 @@ public class BinaryElementIO {
         out2.writeInt(entry.index);
         if (entry.newEntry) {
             out2.writeShort(entry.type.ordinal());
-            out2.writeUTF(entry.value);
+            byte[] content = entry.value.getBytes(StandardCharsets.UTF_8);
+            out2.writeInt(content.length);
+            IOUtils.write(content, out2);
         }
     }
 
-    /** Converts the binary representation to a DOM's {@link Element}. */
+    /**
+     * Converts the binary representation to a DOM's {@link Element}.
+     */
     @Nonnull
     public static MElement read(@Nonnull byte[] content) throws IOException {
         try (ByteArrayInputStream in = new ByteArrayInputStream(content)) {
@@ -90,11 +100,13 @@ public class BinaryElementIO {
         }
     }
 
-    /** Reads the {@link Element} from the indicated stream. */
+    /**
+     * Reads the {@link Element} from the indicated stream.
+     */
     @Nonnull
     public static MElement read(@Nonnull InputStream in) throws IOException {
-        DictionaryRead dic = new DictionaryRead();
-        DataInputStream in2 = new DataInputStream(in);
+        DictionaryRead  dic   = new DictionaryRead();
+        DataInputStream in2   = new DataInputStream(in);
         DictionaryEntry entry = readNext(in2, dic);
         if (entry.type != EntryType.ELEMENT) {
             throw new SingularException("Invalid Form. Type= " + entry.type);
@@ -104,7 +116,7 @@ public class BinaryElementIO {
 
     @Nonnull
     private static MElement readElement(DataInputStream in, DictionaryRead dic, MElement parent,
-            @Nonnull DictionaryEntry entry) throws IOException {
+                                        @Nonnull DictionaryEntry entry) throws IOException {
         MElement xml;
         if (parent == null) {
             xml = MElement.newInstance(entry.value);
@@ -136,21 +148,24 @@ public class BinaryElementIO {
     @Nonnull
     private static DictionaryEntry readNext(@Nonnull DataInputStream in, @Nonnull DictionaryRead dic)
             throws IOException {
-        Integer index = in.readInt();
+        Integer         index = in.readInt();
         DictionaryEntry entry = dic.get(index);
         if (entry == null) {
-            EntryType type = EntryType.values()[in.readShort()];
-            String value = in.readUTF();
+            EntryType type    = EntryType.values()[in.readShort()];
+            int       length  = in.readInt();
+            byte[]    content = new byte[length];
+            IOUtils.read(in, content);
+            String value = new String(content, StandardCharsets.UTF_8);
             entry = dic.register(index, type, value);
         }
         return entry;
     }
 
     private static class DictionaryWrite {
-        private Map<DictionaryEntry, DictionaryEntry> elements = new HashMap<>();
+        private Map<DictionaryEntry, DictionaryEntry> elements   = new HashMap<>();
         private Map<DictionaryEntry, DictionaryEntry> attributes = new HashMap<>();
-        private Map<DictionaryEntry, DictionaryEntry> values = new HashMap<>();
-        private int count = 0;
+        private Map<DictionaryEntry, DictionaryEntry> values     = new HashMap<>();
+        private int                                   count      = 0;
 
         private final DictionaryEntry elementEnd;
 
@@ -181,9 +196,9 @@ public class BinaryElementIO {
 
         @Nonnull
         private DictionaryEntry get(@Nonnull Map<DictionaryEntry, DictionaryEntry> map, @Nonnull EntryType type,
-                String value) {
+                                    String value) {
             DictionaryEntry entry = new DictionaryEntry(count, type, value);
-            DictionaryEntry e = map.get(entry);
+            DictionaryEntry e     = map.get(entry);
             if (e == null) {
                 map.put(entry, entry);
                 count++;
@@ -217,9 +232,9 @@ public class BinaryElementIO {
     }
 
     private static class DictionaryEntry {
-        public final Integer index;
+        public final Integer   index;
         public final EntryType type;
-        public final String value;
+        public final String    value;
         boolean newEntry;
 
         private DictionaryEntry(@Nonnull Integer index, @Nonnull EntryType type, @Nullable String value) {

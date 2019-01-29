@@ -862,4 +862,29 @@ public class FlowInstance implements Serializable {
     public Optional<TaskInstance> getLastFinishedTask() {
         return getNewestTask(TaskPredicates.finished());
     }
+
+
+    /**
+     * Retorna a última tarefa encerrada que seja do tipo humana.
+     * Caso a tarefa atual esteja finalizada essa será retornada.
+     * Caso a tarefa atual esteja ativa, será retornada a tarefa imediatamente anterior.
+     */
+    @Nonnull
+    public Optional<TaskInstance> getLastHumanFinishedTask() {
+        return getLastFinishedTaskByType(TaskType.HUMAN);
+    }
+
+
+    /**
+     * Retorna a última tarefa encerrada que seja do tipo passada como parametro.
+     * Caso a tarefa atual esteja finalizada essa será retornada.
+     * Caso a tarefa atual esteja ativa, será retornada a tarefa imediatamente anterior.
+     *
+     * @param taskType
+     * @return
+     */
+    @Nonnull
+    public Optional<TaskInstance> getLastFinishedTaskByType(@Nonnull TaskType taskType) {
+        return getNewestTask(TaskPredicates.finished().and(TaskPredicates.typeByTask(taskType)));
+    }
 }

@@ -389,6 +389,40 @@ public abstract class SInstances {
     }
 
     /**
+     * Lista os descendentes de <code>node</code> do tipo especificado.
+     *
+     * @param instance       instância inicial da busca
+     * @param descendantClass classe do descendente
+     * @return Lista das instâncias de descendentes do tipo especificado
+     */
+    public static <D extends SInstance> List<D> listDescendants(SInstance instance, Class<? extends SType<D>> descendantClass) {
+        return listDescendants(instance, descendantClass, Function.identity());
+    }
+
+    /**
+     * Lista os descendentes de <code>node</code> do tipo especificado.
+     *
+     * @param instance       instância inicial da busca
+     * @param descendantClass classe do descendente
+     * @return Lista das instâncias de descendentes do tipo especificado
+     */
+    @SuppressWarnings("unchecked")
+    public static <D extends SInstance, V> List<V> listDescendants(SInstance instance, Class<? extends SType<D>> descendantClass, Function<D, V> function) {
+        List<V> result = new ArrayList<>();
+        final Deque<SInstance> deque = new ArrayDeque<>();
+        deque.add(instance);
+        while (!deque.isEmpty()) {
+            final SInstance node = deque.removeFirst();
+            if (descendantClass.isAssignableFrom(node.getType().getClass())) {
+                result.add(function.apply((D) node));
+            } else {
+                addAllChildren(deque, node);
+            }
+        }
+        return result;
+    }
+
+    /**
      * Retorna uma Stream que percorre os descendentes de <code>node</code> do tipo especificado.
      *
      * @param root           instância inicial da busca

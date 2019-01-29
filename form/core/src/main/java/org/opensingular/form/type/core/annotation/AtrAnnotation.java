@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.opensingular.form.type.core.annotation.AtrAnnotation.DefaultAnnotationClassifier.DEFAULT_ANNOTATION;
+
 /**
  * Decorates an Instance as annotated enabling access to its anotations.
  *
@@ -58,7 +60,7 @@ public class AtrAnnotation extends STranslatorForAttribute {
      * @return this
      */
     public AtrAnnotation setAnnotated() {
-        setAnnotated(DefaultAnnotationClassifier.DEFAULT_ANNOTATION);
+        setAnnotated(DEFAULT_ANNOTATION);
         return this;
     }
 
@@ -91,9 +93,11 @@ public class AtrAnnotation extends STranslatorForAttribute {
         if (classifiers == null) {
             classifiers = new ArrayList<>();
         }
-        for (T classifier : classifiersParam) {
-            if (!classifiers.contains(classifier.name())) {
-                classifiers.add(classifier.name());
+        if(classifiers instanceof ArrayList) {
+            for (T classifier : classifiersParam) {
+                if (!classifiers.contains(classifier.name())) {
+                    classifiers.add(classifier.name());
+                }
             }
         }
         setAttributeValue(SPackageBasic.ATR_ANNOTATED, classifiers);
@@ -111,63 +115,119 @@ public class AtrAnnotation extends STranslatorForAttribute {
      * @param value Text value of the annotation.
      * @return this
      */
+    public AtrAnnotation text(String value, AnnotationClassifier annotationClassifier) {
+        annotation(annotationClassifier).setText(value);
+        return this;
+    }
+
+    /**
+     * @param value Text value of the annotation for the {@link DefaultAnnotationClassifier#DEFAULT_ANNOTATION}.
+     * @return this
+     */
     public AtrAnnotation text(String value) {
-        annotation().setText(value);
+        text(value, DEFAULT_ANNOTATION);
         return this;
     }
 
     /**
      * @return Text value of the annotation.
      */
+    public String text(AnnotationClassifier annotationClassifier) {
+        return annotation(annotationClassifier).getText();
+    }
+
+    /**
+     * @return Text value of the annotation for the {@link DefaultAnnotationClassifier#DEFAULT_ANNOTATION}.
+     */
     public String text() {
-        return annotation().getText();
+        return text(DEFAULT_ANNOTATION);
     }
     
     /**
      * Clear annotation
      * @return this
      */
+    public AtrAnnotation clear(AnnotationClassifier annotationClassifier) {
+        return approved(null, annotationClassifier).text(null, annotationClassifier);
+    }
+
+    /**
+     * Clear annotation for the {@link DefaultAnnotationClassifier#DEFAULT_ANNOTATION}
+     * @return this
+     */
     public AtrAnnotation clear() {
-        return approved(null).text(null);
+        return clear(DEFAULT_ANNOTATION);
     }
 
     /**
      * @param isApproved Informs if the annotation approves the content of the instance or not.
      * @return this
      */
+    public AtrAnnotation approved(Boolean isApproved, AnnotationClassifier annotationClassifier) {
+        annotation(annotationClassifier).setApproved(isApproved);
+        return this;
+    }
+
+    /**
+     * @param isApproved Informs if the annotation approves the content of the instance or not
+     *                   using the {@link DefaultAnnotationClassifier#DEFAULT_ANNOTATION}.
+     * @return this
+     */
     public AtrAnnotation approved(Boolean isApproved) {
-        annotation().setApproved(isApproved);
+        approved(isApproved, DEFAULT_ANNOTATION);
         return this;
     }
 
     /**
      * @return Informs if the annotation approves the content of the instance or not.
      */
+    public Boolean approved(AnnotationClassifier annotationClassifier) {
+        return annotation(annotationClassifier).getApproved();
+    }
+
+    /**
+     * @return Informs if the annotation approves the content of the instance or not
+     * for the {@link DefaultAnnotationClassifier#DEFAULT_ANNOTATION}.
+     */
     public Boolean approved() {
-        return annotation().getApproved();
+        return approved(DEFAULT_ANNOTATION);
     }
 
     /**
      * @return Current annotation if this instance, if none is present one is created.
      */
-    public SIAnnotation annotation() {
-        return getAnnotationService().getAnnotationOrCreate(target());
+    public SIAnnotation annotation(AnnotationClassifier annotationClassifier) {
+        return getAnnotationService().getAnnotationOrCreate(target(), annotationClassifier);
     }
 
-    public <T extends Enum<T> & AnnotationClassifier> SIAnnotation annotation(T classifier) {
-        return getAnnotationService().getAnnotationOrCreate(target(), classifier);
+    /**
+     * @return Current annotation if this instance, if none is present one is created
+     * or the {@link DefaultAnnotationClassifier#DEFAULT_ANNOTATION}.
+     */
+    public SIAnnotation annotation() {
+        return annotation(DEFAULT_ANNOTATION);
     }
 
     /**
      * @return True if this SIinstance is an annotated type and if the anotation has any value.
      */
-    public boolean hasAnnotation() {
-        return getAnnotationService().hasAnnotation(target());
+    public boolean hasAnnotation(AnnotationClassifier annotationClassifier) {
+        return getAnnotationService().hasAnnotation(target(), annotationClassifier);
     }
 
-    /** Retorna true se a instância ou algum de seus filhos tiver alguma anotação preenchida (não em branco). */
+    /**
+     * Retorna true se a instância ou algum de seus filhos tiver alguma anotação preenchida (não em branco).
+     */
+    public boolean hasAnyAnnotationOnTree(AnnotationClassifier annotationClassifier) {
+        return getAnnotationService().hasAnyAnnotationsOnTree(target(), annotationClassifier);
+    }
+
+    /**
+     * Retorna true se a instância ou algum de seus filhos tiver alguma anotação preenchida (não em branco)
+     * para o {@link DefaultAnnotationClassifier#DEFAULT_ANNOTATION}.
+     */
     public boolean hasAnyAnnotationOnTree() {
-        return getAnnotationService().hasAnyAnnotationsOnTree(target());
+        return hasAnyAnnotationOnTree(DEFAULT_ANNOTATION);
     }
 
     /**
@@ -175,13 +235,21 @@ public class AtrAnnotation extends STranslatorForAttribute {
      * @return
      * true if there is any refusal
      */
+    public boolean hasAnyRefusalOnTree(AnnotationClassifier annotationClassifier) {
+        return getAnnotationService().hasAnyRefusalOnTree(target(), annotationClassifier);
+    }
+
     public boolean hasAnyRefusalOnTree() {
-        return getAnnotationService().hasAnyRefusalOnTree(target());
+        return hasAnyRefusalOnTree(DEFAULT_ANNOTATION);
     }
 
     /** Retorna true se a instância ou algum de seus filhos tiver uma anotação marcadada como não aprovada. */
+    public boolean hasAnyRefusal(AnnotationClassifier annotationClassifier) {
+        return getAnnotationService().hasAnyRefusal(target(), annotationClassifier);
+    }
+
     public boolean hasAnyRefusal() {
-        return getAnnotationService().hasAnyRefusal(target());
+        return hasAnyRefusal(DEFAULT_ANNOTATION);
     }
 
     /**
@@ -189,6 +257,10 @@ public class AtrAnnotation extends STranslatorForAttribute {
      * anotável.
      */
     public boolean hasAnyAnnotable() {
+        return hasAnyAnnotationOnTree(DEFAULT_ANNOTATION);
+    }
+
+    public boolean hasAnyAnnotable(AnnotationClassifier annotationClassifier) {
         return getAnnotationService().hasAnyAnnotable(target());
     }
 

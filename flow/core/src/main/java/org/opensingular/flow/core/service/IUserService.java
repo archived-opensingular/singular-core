@@ -58,19 +58,19 @@ public interface IUserService {
 
     public SUser findUserByCod(String username);
 
-    default SUser saveUserIfNeeded(SUser sUser) {
+    default SUser saveOrUpdateUserIfNeeded(SUser sUser) {
         return sUser;
     }
 
     @Nonnull
-    default Optional<SUser> saveUserIfNeeded(@Nonnull String codUsuario) {
+    default Optional<SUser> saveOrUpdateUserIfNeeded(@Nonnull String codUsuario) {
         Objects.requireNonNull(codUsuario);
         return Optional.empty();
     }
 
     @Nonnull
-    default SUser saveUserIfNeededOrException(@Nonnull String codUsuario) {
-        return saveUserIfNeeded(codUsuario).orElseThrow(
+    default SUser saveOrUpdateUserIfNeededOrException(@Nonnull String codUsuario) {
+        return saveOrUpdateUserIfNeeded(codUsuario).orElseThrow(
                 () -> new SingularFlowException("usuario não encontrado codUsuario=" + codUsuario));
     }
 

@@ -75,7 +75,7 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        for (String script : initializerJavascripts) {
+        for (String script : getInitializerJavascripts()) {
             response.render(OnDomReadyHeaderItem.forScript(script));
         }
     }
@@ -194,7 +194,7 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
                 @Override
                 public void onAfterRespond(Map<String, Component> map, AjaxRequestTarget.IJavaScriptResponse response) {
                     if (!map.isEmpty()) {
-                        initializerJavascripts.forEach(response::addJavaScript);
+                        getInitializerJavascripts().forEach(response::addJavaScript);
                     }
                 }
 
@@ -204,6 +204,10 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
                 }
             });
         }
+    }
+
+    protected List<String> getInitializerJavascripts() {
+        return initializerJavascripts;
     }
 
     protected abstract IModel<String> getContentTitle();

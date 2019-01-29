@@ -16,34 +16,6 @@
 
 package org.opensingular.form.wicket;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Stream;
-import java.util.stream.Stream.Builder;
-
-import static com.google.common.collect.Lists.*;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Stream;
-import java.util.stream.Stream.Builder;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
@@ -54,7 +26,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.context.IFormBuildContext;
+import org.opensingular.form.decorator.action.ActionClassifier;
 import org.opensingular.form.document.SDocument;
+import org.opensingular.form.type.core.annotation.AnnotationClassifier;
+import org.opensingular.form.type.core.annotation.AtrAnnotation;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.ViewResolver;
 import org.opensingular.form.wicket.IWicketComponentMapper.HintKey;
@@ -78,9 +53,6 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
 import org.opensingular.lib.wicket.util.model.IReadOnlyModel;
 import org.slf4j.LoggerFactory;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.newLinkedList;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -121,6 +93,7 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
     private ViewMode                                                     viewMode;
 
     private AnnotationMode                                               annotation       = AnnotationMode.NONE;
+    private ActionClassifier                                             actionClassifier = AtrAnnotation.DefaultAnnotationClassifier.DEFAULT_ANNOTATION;
 
     private boolean                                                      nested           = false;
     private boolean                                                      showBreadcrumb;
@@ -158,7 +131,8 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
 
     public WicketBuildContext createChild(BSContainer<?> childContainer, BSContainer<?> externalContainer, IModel<? extends SInstance> model) {
         return configureNestedContext(new WicketBuildContext(this, childContainer, externalContainer, model)
-            .setAnnotationMode(getAnnotationMode()));
+            .setAnnotationMode(getAnnotationMode()))
+            .setActionClassifier(getActionClassifier());
     }
 
     private WicketBuildContext configureNestedContext(WicketBuildContext context) {
@@ -191,6 +165,22 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
     public WicketBuildContext setAnnotationMode(AnnotationMode mode) {
         Objects.requireNonNull(mode);
         annotation = mode;
+        return this;
+    }
+
+    public ActionClassifier getActionClassifier() {
+        return actionClassifier;
+    }
+
+    public AnnotationClassifier getAnnotationClassifier() {
+        if (actionClassifier instanceof AnnotationClassifier) {
+            return (AnnotationClassifier) actionClassifier;
+        }
+        return null;
+    }
+
+    public WicketBuildContext setActionClassifier(ActionClassifier actionClassifier) {
+        this.actionClassifier = actionClassifier;
         return this;
     }
 

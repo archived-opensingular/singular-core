@@ -61,7 +61,8 @@ public class SIListFlatViewGenerator extends AbstractFlatViewGenerator {
         String titlePattern = "";
         boolean prefixWithChildTitle = true;
         if (elementsType.asAtr().getLabel() == null) {
-            if(instance.getType().asAtr().getLabel() != null){
+            if(instance.getType().asAtr().getLabel() != null
+                || instance.asAtr().getLabel() != null){
                 titlePattern += context.getLabel();
             } else {
                 titlePattern += elementsType.getNameSimple();

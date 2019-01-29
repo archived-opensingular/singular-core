@@ -16,8 +16,13 @@
 
 package org.opensingular.form.type.core.annotation;
 
+import org.opensingular.form.decorator.action.ActionClassifier;
+
 /**
  * Interface de marcação para informar o tipo de anotação caso haja.
+ *
+ * Essa interface deve ser SEMPRE implementada utilizando enum.
  */
-public interface AnnotationClassifier {
+public interface AnnotationClassifier extends ActionClassifier {
+
 }

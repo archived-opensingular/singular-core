@@ -18,6 +18,7 @@
 
 package org.opensingular.lib.support.persistence.entityanddao;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +34,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -167,18 +169,31 @@ public class BaseDAOTest {
 
     @Test
     public void findByExample(){
-        TestEntity entity = new TestEntity(11, "Eleven", "Ell");
-        TestEntity entity2 = new TestEntity(12, "Doze", "Doz");
-        dao.save(entity);
-        dao.save(entity2);
+        dao.save(new TestEntity(11, "Bulbasaur", "Grama"));
+        dao.save(new TestEntity(12, "Pikachu", "Eletrico"));
+        dao.save(new TestEntity(13, "Charmander", "Fogo"));
+        dao.save(new TestEntity(14, "Charmeleon", "Fogo"));
 
-        List<TestEntity> byExample = dao.findByExample(entity);
-        assertThat(byExample).hasSize(1);
-        Assert.assertEquals("Eleven", byExample.get(0).getName());
+        List<TestEntity> ex;
 
-        List<TestEntity> byExample2 = dao.findByExample(entity2, 1);
-        assertThat(byExample2).hasSize(1);
-        Assert.assertEquals("Doze", byExample2.get(0).getName());
+        ex = dao.findByExample(new TestEntity(null, "Bulbasaur", "Grama"));
+        Assertions.assertThat(ex).hasSize(1);
+        Assert.assertEquals("Bulbasaur", ex.get(0).getName());
+
+        ex = dao.findByExample(new TestEntity(null, "Pikachu", null), 1);
+        Assertions.assertThat(ex).hasSize(1);
+        Assert.assertEquals("Pikachu", ex.get(0).getName());
+
+        ex = dao.findByExample(new TestEntity(null, null, "Eletrico"), 1);
+        Assertions.assertThat(ex).hasSize(1);
+        Assert.assertEquals("Eletrico", ex.get(0).getOtherField());
+
+        ex = dao.findByExample(new TestEntity(null, "", "Fogo"), 2);
+        Assertions.assertThat(ex).hasSize(2);
+        Assertions.assertThat(ex.stream().map(TestEntity::getName).collect(Collectors.toList())).contains("Charmeleon", "Charmander");
+
+        ex = dao.findByExample(new TestEntity(null, null, null));
+        Assertions.assertThat(ex).hasSize(4);
     }
 
     @Test

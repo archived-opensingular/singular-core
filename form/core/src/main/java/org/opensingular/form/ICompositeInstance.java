@@ -166,6 +166,9 @@ public interface ICompositeInstance {
     default <D extends SInstance> List<D> listDescendants(SType<D> descendantType) {
         return SInstances.listDescendants((SInstance) this, descendantType);
     }
+    default <D extends SInstance> List<D> listDescendants(Class<? extends SType<D>> descendantClass) {
+        return SInstances.listDescendants((SInstance) this, descendantClass);
+    }
     default <D extends SInstance, V> List<V> listDescendants(SType<?> descendantType, Function<D, V> function) {
         return SInstances.listDescendants((SInstance) this, descendantType, function);
     }

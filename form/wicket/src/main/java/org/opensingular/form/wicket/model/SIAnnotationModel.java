@@ -17,12 +17,11 @@
 package org.opensingular.form.wicket.model;
 
 import org.apache.wicket.model.IModel;
-
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.type.core.annotation.AnnotationClassifier;
 import org.opensingular.form.type.core.annotation.SIAnnotation;
 
-public class SIAnnotationModel<C extends Enum<C> & AnnotationClassifier> extends AbstractSInstanceModel<SIAnnotation> {
+public class SIAnnotationModel<C extends AnnotationClassifier> extends AbstractSInstanceModel<SIAnnotation> {
 
     private IModel<? extends SIComposite> referencedInstanceModel;
     private C                             classifier;

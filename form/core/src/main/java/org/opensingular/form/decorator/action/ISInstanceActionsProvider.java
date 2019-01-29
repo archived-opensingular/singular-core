@@ -16,9 +16,9 @@
 
 package org.opensingular.form.decorator.action;
 
-import java.io.Serializable;
-
 import org.opensingular.form.SInstance;
+
+import java.io.Serializable;
 
 /**
  * Provedor de ações sobre instâncias.
@@ -29,5 +29,9 @@ public interface ISInstanceActionsProvider extends Serializable {
      * Retorna as ações apropriadas para uma instância.
      */
     Iterable<SInstanceAction> getActions(ISInstanceActionCapable target, SInstance instance);
+
+    default Iterable<SInstanceAction> getActions(ISInstanceActionCapable target, SInstance instance, ActionClassifier actionClassifier) {
+        return getActions(target, instance);
+    }
 
 }

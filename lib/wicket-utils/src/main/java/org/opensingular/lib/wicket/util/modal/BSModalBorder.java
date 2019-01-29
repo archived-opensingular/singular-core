@@ -190,7 +190,7 @@ public class BSModalBorder extends Border {
                 .add(new AttributeAppender("class", modalSizeModel, " ")));
 
         dialog.add($b.onReadyScript(comp -> JQuery.$(comp) + ".on('keypress', function (e) {"
-                + "  var buttons = $(this).find('.btn-primary:visible');"
+                + "  var buttons = $(this).find('.btn-primary:visible,.confirm-btn:visible');"
                 + "  if (e.target.tagName.toLowerCase() != 'textarea' && buttons.length > 0 && e.which === 13) {"
                 + "    e.preventDefault();"
                 + "    $(buttons[buttons.length - 1]).click();"

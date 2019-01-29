@@ -283,7 +283,8 @@ public class BlocksCompositeMapper extends AbstractCompositeMapper {
                     mapper.getInstanceActionsProviders(),
                     model,
                     false,
-                    internalContextListProvider);
+                    internalContextListProvider,
+                    ctx.getActionClassifier());
             }
 
             titleLabel.add(new ClassAttributeModifier() {

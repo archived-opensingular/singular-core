@@ -26,11 +26,17 @@ public class CountDownBehaviour extends Behavior {
 
     @Override
     public void renderHead(Component component, IHeaderResponse response) {
+        /*Não aplica o countdown caso o componente já tenha mascara (causa problemas em dispositivos moveis)*/
+        if(component.getBehaviors()
+                .stream()
+                .anyMatch(b -> b.getClass().isAssignableFrom(InputMaskBehavior.class))){
+            return;
+        }
 
         String js = "";
 
         js += " $('#" + component.getMarkupId(true) + "').maxlength({ ";
-        js += "     alwaysShow: true,";
+        js += "     threshold: 9999,";
         js += "     validate: true";
         js += " }); ";
 
