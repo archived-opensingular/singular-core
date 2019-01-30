@@ -89,9 +89,9 @@
                         clearTimeout(window.blocking_overlay_timeoutId);
                     }
                 }
-                $('[data-toggle="tooltip"]').tooltip();
+                $('[data-toggle="tooltip"]').tooltip({trigger: 'hover'});
             });
-            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="tooltip"]').tooltip({trigger: 'hover'});
         });
     </script>
 </wicket:extend>

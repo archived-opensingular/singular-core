@@ -53,7 +53,6 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         response.render(OnDomReadyHeaderItem.forScript(updatePreviewScript()));
-        ;
     }
 
     public PortletRichTextPanel(String id, WicketBuildContext ctx, boolean readOnlyMode) {

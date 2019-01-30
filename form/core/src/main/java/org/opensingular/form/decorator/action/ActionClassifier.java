@@ -16,12 +16,14 @@
 
 package org.opensingular.form.decorator.action;
 
+import java.io.Serializable;
+
 /**
  * Interface de marcação para informar o tipo de ação caso haja.
  *
  * Essa interface deve ser SEMPRE implementada utilizando enum.
  */
-public interface ActionClassifier {
+public interface ActionClassifier extends Serializable {
 
     String name();
 
