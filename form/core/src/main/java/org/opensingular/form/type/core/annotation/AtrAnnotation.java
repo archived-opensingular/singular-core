@@ -220,6 +220,13 @@ public class AtrAnnotation extends STranslatorForAttribute {
     /**
      * @return True if this SIinstance is an annotated type and if the anotation has any value.
      */
+    public boolean hasAnnotation() {
+        return getAnnotationService().hasAnnotation(target(), DEFAULT_ANNOTATION);
+    }
+
+    /**
+     * @return True if this SIinstance is an annotated type and if the anotation has any value.
+     */
     public boolean hasAnnotation(AnnotationClassifier annotationClassifier) {
         return getAnnotationService().hasAnnotation(target(), annotationClassifier);
     }
