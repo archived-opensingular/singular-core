@@ -92,7 +92,7 @@ public class TableFlatViewGenerator extends AbstractFlatViewGenerator {
     private void doRenderCompositeFieldAsColumns(STypeComposite<?> elementsType, List<String> headerColumns) {
         for (SType<?> e : elementsType.getFields()) {
             if (e.asAtr().isVisible()) {
-                headerColumns.add(e.asAtr().getLabel());
+                headerColumns.add(StringUtils.trimToEmpty(e.asAtr().getLabel()));
             }
         }
     }
