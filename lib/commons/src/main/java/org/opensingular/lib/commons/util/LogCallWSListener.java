@@ -6,7 +6,7 @@ import java.util.List;
 
 public class LogCallWSListener implements WSClientListener, Loggable {
 
-    public static final List<Method> OBJECT_METHODS = Arrays.asList(Object.class.getMethods());
+    private static final List<Method> OBJECT_METHODS = Arrays.asList(Object.class.getMethods());
 
     private static boolean isDefaultObjectMethod(Method method) {
         return OBJECT_METHODS.contains(method);
