@@ -95,15 +95,15 @@ public class ChunkedUploadFileStore implements HttpSessionBindingListener, Seria
         ContentDispositionHeaderParser contentDispositionHeaderParser = new ContentDispositionHeaderParser(req);
         Map<String, List<FileItem>>    params                         = servletFileUploadFactory.makeServletFileUpload(uploadInfo).parseParameterMap(req);
         if (contentRangeHeaderParser.exists()) {
-            assembleChunks(params.get(PARAM_NAME), contentRangeHeaderParser.isLastChunk(), contentDispositionHeaderParser.getFileName());
+            assembleChunks(params.get(PARAM_NAME), contentRangeHeaderParser.isLastChunk(), contentDispositionHeaderParser.getFileName() + uploadInfo.getUploadId().asString());
         } else {
             assembleSinglePost(params.get(PARAM_NAME));
         }
     }
 
     @SuppressWarnings("squid:S134")
-    private void assembleChunks(List<FileItem> fileItems, boolean lastChunk, String fileName) throws IOException {
-        List<FileItem> fileItemList = requestFileAssembly.computeIfAbsent(fileName, k -> new ArrayList<>());
+    private void assembleChunks(List<FileItem> fileItems, boolean lastChunk, String uploadKey) throws IOException {
+        List<FileItem> fileItemList = requestFileAssembly.computeIfAbsent(uploadKey, k -> new ArrayList<>());
         if (fileItems != null) {
             fileItemList.addAll(fileItems);
             if (lastChunk) {
@@ -111,12 +111,13 @@ public class ChunkedUploadFileStore implements HttpSessionBindingListener, Seria
                 File f    = File.createTempFile(UUID.randomUUID().toString(), UUID.randomUUID().toString());
                 try (FileOutputStream fos = new FileOutputStream(f)) {
                     for (FileItem fileItem : fileItemList) {
-                        IOUtils.copy(fileItem.getInputStream(), fos);
-                        size += fileItem.getSize();
+                        size += IOUtils.copy(fileItem.getInputStream(), fos);
                     }
                 }
                 FileItem delegate  = fileItemList.get(fileItemList.size() - 1);
                 long     finalSize = size;
+                fileItemList.clear();
+                requestFileAssembly.remove(uploadKey);
                 doneItems.offer(wrapFileItem(f, delegate, finalSize));
             }
         }
