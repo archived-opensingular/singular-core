@@ -28,7 +28,7 @@ import java.util.List;
 
 public class ProviderLoader {
 
-    private boolean enableDanglingValues;
+    private boolean              enableDanglingValues;
     private ISupplier<SInstance> instanceISupplier;
 
     public ProviderLoader(ISupplier<SInstance> instanceISupplier, boolean enableDanglingValues) {
@@ -57,7 +57,7 @@ public class ProviderLoader {
                 final SInstanceConverter        converter  = instance.asAtrProvider().getConverter();
                 final List<Object>              ids        = new ArrayList<>();
                 final IFunction<Object, Object> idFunction = instance.asAtrProvider().getIdFunction();
-            /*Collect All Ids*/
+                /*Collect All Ids*/
                 values.forEach(v -> ids.add(idFunction.apply(v)));
                 List<SInstance> selectedInstances = new ArrayList<>();
                 if (instance instanceof SIList) {
@@ -72,7 +72,7 @@ public class ProviderLoader {
         return values;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "squid:S134"})
     public void collectSelectedInstances(SInstance instance, List<Serializable> values, SInstanceConverter converter,
                                          List<Object> ids, IFunction<Object, Object> idFunction,
                                          List<SInstance> selectedInstances) {
@@ -82,7 +82,7 @@ public class ProviderLoader {
             final Serializable converted = converter.toObject(ins);
             if (converted != null && !ids.contains(idFunction.apply(converted))) {
                 if (!enableDanglingValues) {
-                    if(instance instanceof SIList){
+                    if (instance instanceof SIList) {
                         ((SIList) instance).remove(ins);
                     } else {
                         instance.clearInstance();

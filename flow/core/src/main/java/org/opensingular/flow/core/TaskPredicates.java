@@ -105,7 +105,7 @@ public class TaskPredicates {
     public static Predicate<TaskInstance> typeByTask(@Nonnull TaskType taskType) {
         return t -> {
             Optional<STask<?>> flowTask = t.getFlowTask();
-            return flowTask.isPresent() && taskType.equals(flowTask.get().getTaskType());
+            return flowTask.isPresent() && taskType == flowTask.get().getTaskType();
         };
     }
 

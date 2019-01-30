@@ -204,7 +204,14 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                     cell.add(new ClassAttributeModifier() {
                         @Override
                         protected Set<String> update(Set<String> oldClasses) {
-                            if (list.getObject().stream().map(i -> i.getField(fieldModel.getObject().getNameSimple())).anyMatch(SInstance::isRequired)) {
+                            boolean required = list.getObject()
+                                    .stream()
+                                    .map(i -> i
+                                            .getFieldOpt(fieldModel.getObject().getNameSimple())
+                                            .orElse(i))
+                                    .anyMatch(SInstance::isRequired);
+
+                            if (required) {
                                 oldClasses.add("singular-form-required");
                             } else {
                                 oldClasses.remove("singular-form-required");
