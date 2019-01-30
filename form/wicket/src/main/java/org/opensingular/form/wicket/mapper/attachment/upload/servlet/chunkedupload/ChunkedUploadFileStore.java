@@ -116,7 +116,7 @@ public class ChunkedUploadFileStore implements HttpSessionBindingListener, Seria
                 }
                 FileItem delegate  = fileItemList.get(fileItemList.size() - 1);
                 long     finalSize = size;
-                fileItemList.clear();
+                fileItemList.forEach(FileItem::delete);
                 requestFileAssembly.remove(uploadKey);
                 doneItems.offer(wrapFileItem(f, delegate, finalSize));
             }
