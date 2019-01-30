@@ -245,7 +245,7 @@ public class TabMapper implements IWicketComponentMapper {
                 if (annotatedField.hasAnyAnnotationOnTree(ctx.getAnnotationClassifier())) {
                     checkAnnotation(annotatedField);
                 } else if (ctx.getRootContext().getAnnotationMode().editable() &&
-                        annotatedField.hasAnyAnnotable()) {
+                        annotatedField.hasAnyAnnotable(ctx.getAnnotationClassifier())) {
                     isAnnotated = true;
                 }
             }
