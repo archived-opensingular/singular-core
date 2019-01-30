@@ -217,10 +217,10 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
         }
     }
 
-    private final class RemoveAnnotationHandler implements ActionHandler {
+    private static final class RemoveAnnotationHandler implements ActionHandler {
         private final AnnotationClassifier annotationClassifier;
 
-        public RemoveAnnotationHandler(AnnotationClassifier annotationClassifier) {
+        RemoveAnnotationHandler(AnnotationClassifier annotationClassifier) {
             this.annotationClassifier = annotationClassifier;
         }
 
