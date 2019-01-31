@@ -16,12 +16,21 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import static org.opensingular.lib.wicket.util.util.Shortcuts.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
 import org.apache.wicket.model.IModel;
@@ -44,20 +53,11 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
 import org.opensingular.lib.wicket.util.output.BOutputPanel;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
-
 public abstract class AbstractControlsFieldComponentMapper implements IWicketComponentMapper, ISInstanceActionCapable {
 
-    private final static MetaDataKey<Boolean> MDK_COMPONENT_CONFIGURED = new MetaDataKey<Boolean>() {
-    };
+    private final static MetaDataKey<Boolean> MDK_COMPONENT_CONFIGURED = new MetaDataKey<Boolean>() {};
 
-    private final SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
+    private final SInstanceActionsProviders   instanceActionsProviders = new SInstanceActionsProviders(this);
 
     protected abstract Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel);
 
@@ -81,30 +81,64 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         final BSContainer<?> container = ctx.getContainer();
         final AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
         final ViewMode viewMode = ctx.getViewMode();
-        final BSControls formGroup = container.newFormGroup();
+
+        final BSControls formGroup;// = container.newFormGroup();
+
+        IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
+            AbstractControlsFieldComponentMapper.this,
+            RequestCycle.get().find(AjaxRequestTarget.class),
+            model,
+            model.getObject(),
+            ctx,
+            ctx.getContainer());
 
         BSLabel label = createLabel(ctx);
 
         if (hintNoDecoration) {
+
+            BSContainer<?> content = container.newComponent(BSContainer::new);
+            formGroup = content.newFormGroup();
+            content.add(new Behavior() {
+                public void renderHead(Component component, org.apache.wicket.markup.head.IHeaderResponse response) {
+                    response.render(CssHeaderItem.forCSS(""
+                        + "\n .d-flex {"
+                        + "\n   display: -ms-flexbox !important;"
+                        + "\n   display: flex !important;"
+                        + "\n }"
+                        + "\n .flex-grow-1 {"
+                        + "\n   -ms-flex-positive: 1 !important;"
+                        + "\n   flex-grow: 1 !important;"
+                        + "\n }"
+                        + "",
+                        "d-flex"));
+                }
+            });
+
+            content.add($b.classAppender("d-flex"));
+            formGroup.add($b.classAppender("flex-grow-1"));
+
+            SInstanceActionsPanel.addAllAsSecondaryPanelTo(
+                content,
+                instanceActionsProviders,
+                model,
+                false,
+                internalContextListProvider,
+                ctx.getActionClassifier());
+
             formGroup.appendLabel(label);
+
         } else {
+            formGroup = container.newFormGroup();
+
             BSControls labelBar = createLabelBar(label);
 
-            IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
-                    AbstractControlsFieldComponentMapper.this,
-                    RequestCycle.get().find(AjaxRequestTarget.class),
-                    model,
-                    model.getObject(),
-                    ctx,
-                    ctx.getContainer());
-
             SInstanceActionsPanel.addLeftSecondaryRightPanelsTo(
-                    labelBar,
-                    instanceActionsProviders,
-                    model,
-                    false,
-                    internalContextListProvider,
-                    ctx.getActionClassifier());
+                labelBar,
+                instanceActionsProviders,
+                model,
+                false,
+                internalContextListProvider,
+                ctx.getActionClassifier());
             formGroup.appendDiv(labelBar);
         }
 
@@ -178,7 +212,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
 
     protected FormComponent<?>[] findAjaxComponents(Component input) {
         if (input instanceof FormComponent) {
-            return new FormComponent[]{(FormComponent<?>) input};
+            return new FormComponent[] { (FormComponent<?>) input };
         } else if (input instanceof MarkupContainer) {
             List<FormComponent<?>> formComponents = new ArrayList<>();
             ((MarkupContainer) input).visitChildren((component, iVisit) -> {

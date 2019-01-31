@@ -17,6 +17,8 @@
 package org.opensingular.form.type.core.annotation;
 
 import org.opensingular.form.SInfoType;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
 import org.opensingular.form.STypeList;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.SPackageCore;
@@ -28,12 +30,13 @@ import org.opensingular.form.type.core.SPackageCore;
  * @author Fabricio Buzeto
  */
 @SInfoType(name = STypeAnnotationList.NAME, spackage = SPackageCore.class)
-public class STypeAnnotationList extends STypeList {
+public class STypeAnnotationList<E extends SType<I>, I extends SInstance> extends STypeList<E, I> {
 
     public static final String NAME = "AnnotationList";
 
     @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected void onLoadType(TypeBuilder tb) {
-        setElementsType(STypeAnnotation.class);
+        setElementsType((Class) STypeAnnotation.class);
     }
 }
