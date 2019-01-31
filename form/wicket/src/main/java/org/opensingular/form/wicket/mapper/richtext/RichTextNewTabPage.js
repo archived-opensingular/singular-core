@@ -67,48 +67,58 @@
                 editItens.push('Source');
             }
 
+            var msgException = "A página do requerimento foi fechada, ou foi aberta de forma indevida."
+                + "<p> Não será possivel salvar o Requerimento.</p>";
+
             var config = {
                 extraPlugins: plugin,
                 allowedContent: true,
                 skin: 'office2013',
                 language: 'pt-br',
                 buttonPlugin: {
-                    onEvent: function (data) {
+                    onFinishedAndClose: function (data) {
 
                         $('#ck-text-area').val(data);
                         $('#' + submitButtonId).click();
                         var jQuerRefOfpreviewFrameMarkupId = opener.$('#' + previewFrameMarkupId);
-                        jQuerRefOfpreviewFrameMarkupId[0].contentWindow.document.body.innerHTML = data;
-
-                        var jQueryRefOfHiddenInput = opener.$('#' + hiddenInput);
-                        jQueryRefOfHiddenInput.val(data);
-                        jQueryRefOfHiddenInput.trigger("singular:process");
-                    },
-
-                    onSaveAction: function (data) {
-
-                        var msgException = "A página do requerimento foi fechada, ou foi aberta de forma indevida."
-                            + "<p> Não será possivel salvar o Requerimento.</p>";
-                        if (window.opener) {
-                            var jQuerRefOfpreviewFrameMarkupId = opener.$('#' + previewFrameMarkupId);
+                        if(jQuerRefOfpreviewFrameMarkupId[0] === undefined){
+                            toastr.error(msgException);
+                        } else {
                             jQuerRefOfpreviewFrameMarkupId[0].contentWindow.document.body.innerHTML = data;
 
                             var jQueryRefOfHiddenInput = opener.$('#' + hiddenInput);
                             jQueryRefOfHiddenInput.val(data);
                             jQueryRefOfHiddenInput.trigger("singular:process");
+                            window.close();
+                        }
+                    },
 
-                            $('#ck-text-area').val(data);
-                            $('#' + submitButtonId).click();
+                    onSaveAction: function (data) {
 
-                            try {
-                                if (window.opener.AbstractFormPage) {
-                                    window.opener.AbstractFormPage.onSave();
-                                    toastr.success("Requerimento salvo com sucesso.");
-                                } else {
-                                    toastr.error(msgException);
+                        if (window.opener) {
+                            var jQuerRefOfpreviewFrameMarkupId = opener.$('#' + previewFrameMarkupId);
+                            if(jQuerRefOfpreviewFrameMarkupId[0] === undefined){
+                                toastr.error(msgException);
+                            } else {
+                                jQuerRefOfpreviewFrameMarkupId[0].contentWindow.document.body.innerHTML = data;
+
+                                var jQueryRefOfHiddenInput = opener.$('#' + hiddenInput);
+                                jQueryRefOfHiddenInput.val(data);
+                                jQueryRefOfHiddenInput.trigger("singular:process");
+
+                                $('#ck-text-area').val(data);
+                                $('#' + submitButtonId).click();
+
+                                try {
+                                    if (window.opener.AbstractFormPage) {
+                                        window.opener.AbstractFormPage.onSave();
+                                        toastr.success("Requerimento salvo com sucesso.");
+                                    } else {
+                                        toastr.error(msgException);
+                                    }
+                                } catch (e) {
+                                    toastr.error("Ocorreu um erro ao salvar o requerimento.");
                                 }
-                            } catch (e) {
-                                toastr.error("Ocorreu um erro ao salvar o requerimento.");
                             }
                         } else {
                             toastr.error(msgException);
