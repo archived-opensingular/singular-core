@@ -29,7 +29,7 @@ import java.math.BigDecimal;
 @SInfoType(name = "LatitudeLongitude", spackage = SPackageUtil.class)
 public class STypeLatitudeLongitude extends STypeComposite<SILatitudeLongitude> {
 
-    public static final String FIELD_LATITUDE  = "latitude";
+    public static final String FIELD_LATITUDE = "latitude";
     public static final String FIELD_LONGITUDE = "longitude";
 
     public STypeDecimal latitude;
@@ -48,12 +48,14 @@ public class STypeLatitudeLongitude extends STypeComposite<SILatitudeLongitude> 
                 .asAtr().label("Latitude").fractionalMaxLength(15)
                 .asAtrBootstrap().colPreference(2);
 
-        latitude.addInstanceValidator(validatable ->{
-            if(validatable.getInstance().getValue() != null){
-                if (validatable.getInstance().getValue().compareTo(new BigDecimal(85)) > 0){
+        latitude.asAtr().required(s -> s.getParent().isRequired());
+
+        latitude.addInstanceValidator(validatable -> {
+            if (validatable.getInstance().getValue() != null) {
+                if (validatable.getInstance().getValue().compareTo(new BigDecimal(85)) > 0) {
                     validatable.error("O valor máximo para latitude é 85º");
                 }
-                if (validatable.getInstance().getValue().compareTo(new BigDecimal(-85)) < 0){
+                if (validatable.getInstance().getValue().compareTo(new BigDecimal(-85)) < 0) {
                     validatable.error("O valor mínimo para latitude é -85º");
                 }
             }
@@ -62,13 +64,14 @@ public class STypeLatitudeLongitude extends STypeComposite<SILatitudeLongitude> 
         longitude
                 .asAtr().label("Longitude").fractionalMaxLength(15)
                 .asAtrBootstrap().colPreference(2);
+        longitude.asAtr().required(s -> s.getParent().isRequired());
 
-        longitude.addInstanceValidator(validatable ->{
-            if(validatable.getInstance().getValue() != null){
-                if (validatable.getInstance().getValue().compareTo(new BigDecimal(180)) > 0){
+        longitude.addInstanceValidator(validatable -> {
+            if (validatable.getInstance().getValue() != null) {
+                if (validatable.getInstance().getValue().compareTo(new BigDecimal(180)) > 0) {
                     validatable.error("O valor máximo para longitude é 180º");
                 }
-                if (validatable.getInstance().getValue().compareTo(new BigDecimal(-180)) < 0){
+                if (validatable.getInstance().getValue().compareTo(new BigDecimal(-180)) < 0) {
                     validatable.error("O valor mínimo para longitude é -180º");
                 }
             }

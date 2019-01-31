@@ -46,7 +46,7 @@ public class Scripts {
         js += ";(function (zindex){ ";
         js += "     $('.modal-backdrop').each(function(index) { ";
         js += "         var zIndex = $(this).css('z-index'); ";
-        js += "         $(this).css('z-index', zindex-1+index); ";
+        js += "         $(this).css('z-index', zindex-2+index); ";
         js += "     }); ";
         js += "     $('.modal').each(function(index) { ";
         js += "         var zIndex = $(this).css('z-index'); ";

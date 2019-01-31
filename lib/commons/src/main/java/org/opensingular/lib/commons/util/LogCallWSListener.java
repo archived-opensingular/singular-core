@@ -1,12 +1,15 @@
 package org.opensingular.lib.commons.util;
 
+import com.google.common.collect.Sets;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class LogCallWSListener implements WSClientListener, Loggable {
 
-    public static final List<Method> OBJECT_METHODS = Arrays.asList(Object.class.getMethods());
+    private static final Set<Method> OBJECT_METHODS = Sets.newHashSet(Object.class.getMethods());
 
     private static boolean isDefaultObjectMethod(Method method) {
         return OBJECT_METHODS.contains(method);

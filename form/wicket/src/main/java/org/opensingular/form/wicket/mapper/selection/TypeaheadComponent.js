@@ -211,7 +211,7 @@
             function onTypeaheadFieldBlur() {
                 if (!inputJQueryRef.data(SINGULAR_CHANGE_KEY)) {
                     inputJQueryRef.data(SINGULAR_BLUR_KEY, window.setTimeout(function () {
-                        if (!inputJQueryRef.data(SINGULAR_CHANGE_KEY)) {
+                        if (!inputJQueryRef.data(SINGULAR_CHANGE_KEY) && inputJQueryRef.is(':enabled')) {
                             inputJQueryRef.trigger(SINGULAR_VALIDATE);
                             console.log("triggered singular validate");
                         }

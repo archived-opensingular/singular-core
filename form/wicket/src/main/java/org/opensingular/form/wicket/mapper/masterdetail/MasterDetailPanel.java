@@ -386,7 +386,7 @@ public class MasterDetailPanel extends Panel {
 
     private BSActionPanel.ActionConfig<SInstance> buildShowAnnotationsActionConfig() {
         IPredicate<SInstance> hasAnyRefusal    = it -> it.asAtrAnnotation().hasAnyRefusal(ctx.getAnnotationClassifier());
-        IPredicate<SInstance> hasAnyAnnotable  = it -> it.asAtrAnnotation().hasAnyAnnotable();
+        IPredicate<SInstance> hasAnyAnnotable  = it -> it.asAtrAnnotation().hasAnyAnnotable(ctx.getAnnotationClassifier());
         IPredicate<SInstance> hasAnyAnnotation = it -> it.asAtrAnnotation().hasAnyAnnotationOnTree(ctx.getAnnotationClassifier());
         //@formatter:off
         IFunction<SInstance, String> titleFunc = it ->

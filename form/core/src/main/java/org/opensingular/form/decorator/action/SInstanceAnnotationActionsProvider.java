@@ -217,10 +217,10 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
         }
     }
 
-    private final class RemoveAnnotationHandler implements ActionHandler {
+    private static final class RemoveAnnotationHandler implements ActionHandler {
         private final AnnotationClassifier annotationClassifier;
 
-        public RemoveAnnotationHandler(AnnotationClassifier annotationClassifier) {
+        RemoveAnnotationHandler(AnnotationClassifier annotationClassifier) {
             this.annotationClassifier = annotationClassifier;
         }
 
@@ -246,11 +246,11 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
         }
     }
 
-    private final class ConfirmarEdicaoHandler implements ActionHandler {
+    private static final class ConfirmarEdicaoHandler implements ActionHandler {
         private final FormDelegate formDelegate;
         private final AnnotationClassifier annotationClassifier;
 
-        public ConfirmarEdicaoHandler(FormDelegate formDelegate, AnnotationClassifier annotationClassifier) {
+        ConfirmarEdicaoHandler(FormDelegate formDelegate, AnnotationClassifier annotationClassifier) {
             this.formDelegate = formDelegate;
             this.annotationClassifier = annotationClassifier;
         }
@@ -272,7 +272,7 @@ public class SInstanceAnnotationActionsProvider implements ISInstanceActionsProv
     private static final class CloseFormHandler implements ActionHandler {
         private final FormDelegate formDelegate;
 
-        public CloseFormHandler(FormDelegate formDelegate) {
+        CloseFormHandler(FormDelegate formDelegate) {
             this.formDelegate = formDelegate;
         }
 

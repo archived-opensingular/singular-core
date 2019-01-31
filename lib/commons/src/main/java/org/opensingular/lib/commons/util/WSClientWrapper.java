@@ -59,7 +59,7 @@ public class WSClientWrapper {
         return wrap(wsIface, humanName, factory, Collections.singletonList(new LogCallWSListener()));
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "fb-contrib:LEST_LOST_EXCEPTION_STACK_TRACE"})
     public static <T> T wrap(final Class<T> wsIface, final String humanName, final WSClientFactory<T> factory, final List<WSClientListener> listeners) {
         return (T) Proxy.newProxyInstance(wsIface.getClassLoader(), new Class[]{wsIface}, new InvocationHandler() {
 

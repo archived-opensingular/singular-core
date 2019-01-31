@@ -25,6 +25,7 @@ import org.opensingular.form.STypeComposite;
 import org.opensingular.form.flatview.AbstractFlatViewGenerator;
 import org.opensingular.form.flatview.FlatViewContext;
 import org.opensingular.form.flatview.FlatViewGenerator;
+import org.opensingular.form.view.ViewResolver;
 import org.opensingular.form.view.list.SViewListByTable;
 import org.opensingular.lib.commons.canvas.DocumentCanvas;
 import org.opensingular.lib.commons.canvas.EmptyDocumentCanvas;
@@ -35,27 +36,16 @@ import org.opensingular.lib.commons.canvas.table.TableRowCanvas;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Show list of composites in a table
- *
- * Note: is important to include border to table.
- * This is a simple example that can be use.
- *   <code>
- *         table, th, td {
- *             border: 1px solid black;
- *             padding: 10px;
- *             border-collapse: collapse;
- *         }
- *   </code>
  */
 public class TableFlatViewGenerator extends AbstractFlatViewGenerator {
     @Override
     protected void doWriteOnCanvas(DocumentCanvas canvas, FlatViewContext context) {
         canvas.addSubtitle(context.getLabel());
 
-        SIList<?> siList = context.getInstanceAs(SIList.class);
+        SIList<?> siList = getElementList(context);
         SType<?> elementsType = siList.getElementsType();
         boolean renderCompositeFieldsAsColumns = elementsType.isComposite() && isRenderCompositeFieldAsColumns(siList);
 
@@ -63,17 +53,9 @@ public class TableFlatViewGenerator extends AbstractFlatViewGenerator {
         if (renderCompositeFieldsAsColumns) {
             doRenderCompositeFieldAsColumns((STypeComposite<?>) elementsType, headerColumns);
         } else {
-            if (elementsType instanceof STypeComposite) {
-                headerColumns = (List<String>) ((STypeComposite) elementsType).getFields()
-                        .stream()
-                        .filter(s -> StringUtils.isNotEmpty(((SType) s).asAtr().getLabel()))
-                        .map(s -> ((SType) s).asAtr().getLabel())
-                        .collect(Collectors.toList());
-            } else {
-                String label = elementsType.asAtr().getLabel();
-                if (label != null) {
-                    headerColumns.add(label);
-                }
+            String label = elementsType.asAtr().getLabel();
+            if (label != null) {
+                headerColumns.add(label);
             }
         }
 
@@ -87,6 +69,10 @@ public class TableFlatViewGenerator extends AbstractFlatViewGenerator {
         for (SInstance child : siList) {
             writeChild(renderCompositeFieldsAsColumns, tableBody, child);
         }
+    }
+
+    protected SIList<?> getElementList(FlatViewContext context) {
+        return context.getInstanceAs(SIList.class);
     }
 
     private void writeHeaders(List<String> headerColumns, TableCanvas tableCanvas) {
@@ -110,14 +96,14 @@ public class TableFlatViewGenerator extends AbstractFlatViewGenerator {
     private void doRenderCompositeFieldAsColumns(STypeComposite<?> elementsType, List<String> headerColumns) {
         for (SType<?> e : elementsType.getFields()) {
             if (e.asAtr().isVisible()) {
-                headerColumns.add(e.asAtr().getLabel());
+                headerColumns.add(StringUtils.trimToEmpty(e.asAtr().getLabel()));
             }
         }
     }
 
     private boolean isRenderCompositeFieldAsColumns(SIList<?> siList) {
-        SViewListByTable view = (SViewListByTable) siList.getType().getView();
-        boolean renderCompositeFieldsAsColumns = false;
+        SViewListByTable view                           = (SViewListByTable) ViewResolver.resolveView(siList.getType());
+        boolean          renderCompositeFieldsAsColumns = false;
         if (view != null) {
             renderCompositeFieldsAsColumns = view.isRenderCompositeFieldsAsColumns();
         }

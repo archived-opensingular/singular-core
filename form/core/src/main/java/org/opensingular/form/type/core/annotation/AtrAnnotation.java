@@ -83,6 +83,15 @@ public class AtrAnnotation extends STranslatorForAttribute {
         return list != null && !list.isEmpty();
     }
 
+
+    /**
+     * Retorna true se a instância pode ser anotada. Ou seja, se está marcada para receber anotação.
+     */
+    public boolean isAnnotated(AnnotationClassifier classifier) {
+        List<String> list = getAttributeValue(SPackageBasic.ATR_ANNOTATED);
+        return list != null && !list.isEmpty() && list.contains(classifier.name());
+    }
+
     /**
      * MArca o tipo como anotado definindo o tipo da anotação
      *
@@ -211,6 +220,13 @@ public class AtrAnnotation extends STranslatorForAttribute {
     /**
      * @return True if this SIinstance is an annotated type and if the anotation has any value.
      */
+    public boolean hasAnnotation() {
+        return getAnnotationService().hasAnnotation(target(), DEFAULT_ANNOTATION);
+    }
+
+    /**
+     * @return True if this SIinstance is an annotated type and if the anotation has any value.
+     */
     public boolean hasAnnotation(AnnotationClassifier annotationClassifier) {
         return getAnnotationService().hasAnnotation(target(), annotationClassifier);
     }
@@ -257,11 +273,11 @@ public class AtrAnnotation extends STranslatorForAttribute {
      * anotável.
      */
     public boolean hasAnyAnnotable() {
-        return hasAnyAnnotationOnTree(DEFAULT_ANNOTATION);
+        return hasAnyAnnotable(DEFAULT_ANNOTATION);
     }
 
     public boolean hasAnyAnnotable(AnnotationClassifier annotationClassifier) {
-        return getAnnotationService().hasAnyAnnotable(target());
+        return getAnnotationService().hasAnyAnnotable(target(), annotationClassifier);
     }
 
     public AtrAnnotation setNotAnnotated(){

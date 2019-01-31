@@ -16,10 +16,10 @@
 
 package org.opensingular.form.type.util;
 
-import org.opensingular.form.TypeBuilder;
-import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.SInfoType;
+import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeString;
+import org.opensingular.form.validation.ValidationErrorLevel;
 import org.opensingular.form.validation.validator.InstanceValidators;
 
 @SInfoType(name = "EMail", spackage = SPackageUtil.class)

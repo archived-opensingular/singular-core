@@ -18,6 +18,13 @@ package org.opensingular.form.persistence.dao;
 
 import org.apache.commons.lang3.StringUtils;
 
+
+/**
+ * This class is used by Singular Studio for SEI!.
+ * <p>
+ * Note: The query have to has a join with TB_VERSAO_FORMULARIO with alias currentV
+ * And join with TB_TIPO_FORMULARIO with alias tpForm
+ */
 public class IndexedDataQueryBuilder {
 
     private final String schema;
@@ -55,7 +62,7 @@ public class IndexedDataQueryBuilder {
     }
 
     public void appendToOrder(String joinClause) {
-        if(StringUtils.isEmpty(order)){
+        if (StringUtils.isEmpty(order)) {
             order.append(" ORDER BY ");
         }
         order.append(joinClause);
@@ -80,6 +87,15 @@ public class IndexedDataQueryBuilder {
      * @return
      */
     public String createQueryForIndexedData() {
+
+        if (!join.toString().contains("currentV")) {
+            String joinFormTables = " LEFT JOIN DBSINGULAR.TB_TIPO_FORMULARIO tpForm "
+                    + "ON cpAdd.CO_TIPO_FORMULARIO = tpForm.CO_TIPO_FORMULARIO"
+                    + " LEFT JOIN " + schema + ".TB_VERSAO_FORMULARIO currentV "
+                    + "ON cpAdd.CO_VERSAO_ATUAL = currentV.CO_VERSAO_FORMULARIO ";
+            join.append(joinFormTables);
+        }
+
         return new StringBuilder()
                 .append(select)
                 .append(from)
@@ -100,15 +116,15 @@ public class IndexedDataQueryBuilder {
     private void addJoinClause(String columnAlias, String fieldsNames) {
 
         String leftSubQuery = "  LEFT JOIN (SELECT " +
-                " CACHE_VALOR.co_versao_formulario as co_versao_formulario, " +
-                " CACHE_CAMPO.co_tipo_formulario              as co_tipo_formulario, " +
-                " CONCAT(CACHE_VALOR.DS_VALOR, CACHE_VALOR.NU_VALOR, CACHE_VALOR.DT_VALOR) as ds_valor " +
-                " FROM " + schema + ".tb_cache_campo CACHE_CAMPO " +
-                " INNER JOIN DBSINGULAR.tb_cache_valor CACHE_VALOR " +
-                "                 on CACHE_VALOR.co_cache_campo = CACHE_CAMPO.co_cache_campo " +
-                "                    and CACHE_CAMPO.ds_caminho_campo in (" + fieldsNames + ") " +
-                " ) " + columnAlias + " on " + columnAlias + ".co_versao_formulario = currentV.CO_VERSAO_FORMULARIO " +
-                " and " + columnAlias + ".co_tipo_formulario = tpForm.CO_TIPO_FORMULARIO ";
+                " CACHE_VALOR.CO_VERSAO_FORMULARIO as co_versao_formulario, " +
+                " CACHE_CAMPO.CO_TIPO_FORMULARIO              as co_tipo_formulario, " +
+                " COALESCE(CACHE_VALOR.DS_VALOR, CACHE_VALOR.NU_VALOR, CACHE_VALOR.DT_VALOR) as ds_valor " +
+                " FROM " + schema + ".TB_CACHE_CAMPO CACHE_CAMPO " +
+                " INNER JOIN DBSINGULAR.TB_CACHE_VALOR CACHE_VALOR " +
+                "                 on CACHE_VALOR.CO_CACHE_CAMPO = CACHE_CAMPO.CO_CACHE_CAMPO " +
+                "                    and CACHE_CAMPO.DS_CAMINHO_CAMPO in (" + fieldsNames + ") " +
+                " ) " + columnAlias + " on " + columnAlias + ".CO_VERSAO_FORMULARIO = currentV.CO_VERSAO_FORMULARIO " +
+                " and " + columnAlias + ".CO_TIPO_FORMULARIO = tpForm.CO_TIPO_FORMULARIO ";
 
         joinCache.append(leftSubQuery);
 
