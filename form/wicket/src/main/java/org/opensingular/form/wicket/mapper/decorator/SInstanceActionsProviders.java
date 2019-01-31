@@ -18,6 +18,7 @@ package org.opensingular.form.wicket.mapper.decorator;
 
 import com.google.common.collect.Lists;
 import org.apache.wicket.model.IModel;
+import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.ActionClassifier;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
@@ -84,6 +85,24 @@ public class SInstanceActionsProviders implements Serializable {
         return this.entries.stream()
             .map(it -> it.provider)
             .flatMap(it -> Lists.newArrayList(it.getActions(owner, model.getObject(), actionClassifier)).stream());
+    }
+    
+    /**
+     * Retorna uma lista filtrada e ordenada de ações correspondentes à instância do model
+     */
+    public List<SInstanceAction> listFieldActionList(final IModel<? extends SIList<?>> model, IPredicate<SInstanceAction> filter, String field, ActionClassifier actionClassifier) {
+        return listFieldActionStream(model, field, actionClassifier)
+            .filter(filter)
+            .collect(toList());
+    }
+    
+    private Stream<SInstanceAction> listFieldActionStream(final IModel<? extends SIList<?>> model, String field, ActionClassifier actionClassifier) {
+        if (this.entries == null)
+            return Stream.empty();
+        
+        return this.entries.stream()
+            .map(it -> it.provider)
+            .flatMap(it -> Lists.newArrayList(it.getListFieldActions(owner, model.getObject(), field, actionClassifier)).stream());
     }
 
     private static final class Entry implements Serializable {

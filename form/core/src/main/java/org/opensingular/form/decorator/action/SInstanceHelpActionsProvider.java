@@ -21,7 +21,9 @@ import static org.apache.commons.lang3.StringUtils.*;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.STypeComposite;
 
 /**
  * Provider para a ação de exibição do Help do campo.
@@ -30,7 +32,19 @@ public class SInstanceHelpActionsProvider implements ISInstanceActionsProvider {
 
     @Override
     public Iterable<SInstanceAction> getActions(ISInstanceActionCapable target, SInstance instance) {
-        final String helpText = instance.asAtr().getHelp();
+        return doHelpAction(instance.asAtr().getHelp());
+    }
+
+    @Override
+    public Iterable<SInstanceAction> getListFieldActions(ISInstanceActionCapable target, SIList<?> instance, String field) {
+        if ((instance.getElementsType() instanceof STypeComposite<?>) && isNotBlank(field)) {
+            STypeComposite<?> compositeType = (STypeComposite<?>) instance.getElementsType();
+            return doHelpAction(compositeType.getField(field).asAtr().getHelp());
+        }
+        return doHelpAction(instance.getElementsType().asAtr().getHelp());
+    }
+
+    private Iterable<SInstanceAction> doHelpAction(final String helpText) {
         return (isBlank(helpText))
             ? Collections.emptyList()
             : Arrays.asList(new SInstanceAction(SInstanceAction.ActionType.NORMAL)
@@ -38,7 +52,7 @@ public class SInstanceHelpActionsProvider implements ISInstanceActionsProvider {
                 .setText("Ajuda")
                 .setPosition(Integer.MIN_VALUE)
                 .setPreview(new SInstanceAction.Preview()
-                        .setMessage(helpText)
-                        .setFormat("HTML")));
+                    .setMessage(helpText)
+                    .setFormat("HTML")));
     }
 }
