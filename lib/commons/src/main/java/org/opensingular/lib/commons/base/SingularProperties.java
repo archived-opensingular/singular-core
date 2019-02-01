@@ -106,7 +106,7 @@ public interface SingularProperties {
 
     //########    PROPRIEDADES JAVA MEDOLY    ########
     String SINGULAR_JAVAMELODY_ENABLED = "singular.javamelody.enabled";
-    String SINGULAR_MONITORING_PASSWORD = "singular.monitoring.password";
+    String SINGULAR_MONITORING_SECURITY_KEY = "singular.monitoring.password";
     String SINGULAR_MONITORING_USERNAME = "singular.monitoring.username";
 
     static SingularProperties get() {
