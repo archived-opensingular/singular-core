@@ -16,12 +16,10 @@
 
 package org.opensingular.lib.commons.util;
 
-import org.opensingular.lib.commons.base.SingularException;
-
 /**
  * Exceção para ser utilizada quando um serviço lança uma exceção que não seja {@link javax.xml.ws.soap.SOAPFaultException}
  */
-public class WSConnectionException extends SingularException {
+public class WSConnectionException extends SingularIntegrationException {
 
     protected WSConnectionException(String error) {
         super(error);
