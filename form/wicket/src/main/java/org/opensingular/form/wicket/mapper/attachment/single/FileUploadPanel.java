@@ -165,6 +165,7 @@ public class FileUploadPanel extends Panel implements Loggable {
 
         fileField = new FileUploadField("fileUpload", dummyModel(self.getModel()));
         fileField.add(new DisabledClassBehavior("singular-upload-disabled"));
+        fileField.add(new AttributeAppender("title", "Nenhum arquivo selecionado."));
         add(uploadFileButton.add(fileField));
         add(removeFileButton.add(new AttributeAppender("title", "Excluir")));
 
