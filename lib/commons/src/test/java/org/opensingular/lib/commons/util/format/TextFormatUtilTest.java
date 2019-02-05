@@ -61,7 +61,7 @@ public class TextFormatUtilTest {
     @Test
     public void formatCepTest() {
         String cep = "72130000";
-        Assert.assertEquals("72130-000", TextFormatUtil.formatCep(cep));
+        Assert.assertEquals("72.130-000", TextFormatUtil.formatCep(cep));
     }
 
 }

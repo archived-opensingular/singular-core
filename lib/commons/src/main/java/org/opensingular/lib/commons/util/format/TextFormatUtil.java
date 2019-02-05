@@ -34,7 +34,7 @@ public class TextFormatUtil {
 
     public static String formatNumeroUnicoProcesso(String nup) {
         return StringUtils.isNumeric(nup) &&
-                nup.length() == 20 ? nup.replaceAll("(.{7})(.{2})(.{4})(.{1})(.{2})(.{4})", "$1-$2.$3.$4.$5.$6") : null;
+                nup.length() == 17 ? nup.replaceAll("(.{5})(.{6})(.{4})(.{2})", "$1.$2/$3-$4") : null;
     }
 
     public static String formatCep(String cep) {
