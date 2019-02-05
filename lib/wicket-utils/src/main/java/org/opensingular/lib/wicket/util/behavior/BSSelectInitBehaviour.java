@@ -17,13 +17,27 @@
 package org.opensingular.lib.wicket.util.behavior;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.json.JSONObject;
+import org.opensingular.lib.wicket.util.multiselect.ChosenOptions;
 
 
 public class BSSelectInitBehaviour extends InitScriptBehaviour {
+    private final ChosenOptions chosenOptions;
+
+    public BSSelectInitBehaviour(ChosenOptions chosenOptions) {
+        this.chosenOptions = chosenOptions;
+    }
 
     @Override
     public String getScript(Component component) {
-        return String.format("$('#%s').selectpicker()", component.getMarkupId(true));
+        JSONObject config = new JSONObject();
+        config.put("disable_search", chosenOptions.isDisableSearch());
+        config.put("no_results_text", chosenOptions.getNoResultsText());
+        config.put("placeholder_text_multiple", chosenOptions.getDataPlaceholder());
+        config.put("placeholder_text_single", chosenOptions.getDataPlaceholder());
+        config.put("disable_search_threshold", chosenOptions.getDisableSearchThreshold());
+        config.put("hide_results_on_select", chosenOptions.isHideResultsOnSelect());
+        config.put("width", chosenOptions.getWidth());
+        return String.format("$('#%s').chosen(%s);", component.getMarkupId(), config.toString());
     }
-
 }

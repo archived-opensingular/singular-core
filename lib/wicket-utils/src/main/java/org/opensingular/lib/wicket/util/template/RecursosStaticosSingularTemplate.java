@@ -60,6 +60,7 @@ public class RecursosStaticosSingularTemplate {
                 skinnableResource("/global/plugins/jquery-file-upload/css/jquery.fileupload.css", skinFolderFormatted),
                 skinnableResource("/global/plugins/bootstrap-toastr/toastr.min.css", skinFolderFormatted),
                 skinnableResource("/global/plugins/typeahead/typeahead.css", skinFolderFormatted),
+                skinnableResource("/global/plugins/chosen/chosen.min.css", skinFolderFormatted),
                 skinnableResource("/layout4/css/custom.css", skinFolderFormatted),
                 skinnableResource("/css/custom.css", skinFolderFormatted),
                 skinnableResource("/layout4/css/themes/default.css", skinFolderFormatted),
@@ -110,6 +111,7 @@ public class RecursosStaticosSingularTemplate {
                         "/singular-static/resources/singular/global/plugins/bootstrap-toastr/toastr.min.js",
                         "/singular-static/resources/singular/global/plugins/typeahead/typeahead.bundle.min.js",
                         "/singular-static/resources/singular/global/plugins/jstree/dist/jstree.min.js",
+                        "/singular-static/resources/singular/global/plugins/chosen/chosen.jquery.min.js",
                         "/singular-static/resources/singular/plugins/stringjs/string.min.js",
                         "/singular-static/resources/singular/plugins/jquery-maskmoney/dist/jquery.maskMoney.min.js",
                         "/singular-static/resources/singular/plugins/ckeditor/ckeditor.js"

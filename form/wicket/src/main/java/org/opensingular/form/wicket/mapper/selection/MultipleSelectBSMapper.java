@@ -22,6 +22,7 @@ import org.opensingular.form.view.SMultiSelectionBySelectView;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.model.ReadOnlyModelValue;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
+import org.opensingular.lib.wicket.util.multiselect.ChosenOptions;
 
 @SuppressWarnings("serial")
 public class MultipleSelectBSMapper extends MultipleSelectMapper {
@@ -29,8 +30,17 @@ public class MultipleSelectBSMapper extends MultipleSelectMapper {
     @Override
     protected Component appendFormGroup(BSControls formGroup, WicketBuildContext ctx) {
         final ListMultipleChoice<?> choices = retrieveChoices(ctx.getModel(), new ReadOnlyModelValue(ctx.getModel()));
-        String attrExtra = ((SMultiSelectionBySelectView) ctx.getView()).isWithLiveFilter() ? "data-live-search='true'" : "";
-        formGroup.appendSelect(choices.setMaxRows(5), true, attrExtra);
+        formGroup.appendMultiSelect(choices.setMaxRows(5), createChosenOptions(((SMultiSelectionBySelectView) ctx.getView())));
         return choices;
+    }
+
+    private ChosenOptions createChosenOptions(SMultiSelectionBySelectView view) {
+        return new ChosenOptions()
+                .setDataPlaceholder(view.getDataPlaceholder())
+                .setDisableSearch(view.isDisableSearch())
+                .setDisableSearchThreshold(view.getDisableSearchThreshold())
+                .setHideResultsOnSelect(view.isHideResultsOnSelect())
+                .setNoResultsText(view.getNoResultsText())
+                .setShowSpinner(view.isShowSpinner());
     }
 }

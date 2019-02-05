@@ -21,6 +21,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
@@ -32,6 +33,9 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.ui.Alignment;
 import org.opensingular.lib.wicket.util.behavior.BSSelectInitBehaviour;
@@ -40,6 +44,7 @@ import org.opensingular.lib.wicket.util.behavior.DatePickerSettings;
 import org.opensingular.lib.wicket.util.behavior.PicklistInitBehaviour;
 import org.opensingular.lib.wicket.util.feedback.BSFeedbackPanel;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
+import org.opensingular.lib.wicket.util.multiselect.ChosenOptions;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -60,14 +65,14 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
 
-    public static final String DATEPICKER_DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
-    public static final String DATEPICKER_DEFAULT_START_DATE = "01/01/1900";
-    public static final String DATEPICKER_DEFAULT_END_DATE = "31/12/2999";
-    public static final MetaDataKey<MarkupContainer> DATEPICKER_KEY_CONTAINER = new MetaDataKey<MarkupContainer>() {
+    public static final String                       DATEPICKER_DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
+    public static final String                       DATEPICKER_DEFAULT_START_DATE  = "01/01/1900";
+    public static final String                       DATEPICKER_DEFAULT_END_DATE    = "31/12/2999";
+    public static final MetaDataKey<MarkupContainer> DATEPICKER_KEY_CONTAINER       = new MetaDataKey<MarkupContainer>() {
     };
-    public static final MetaDataKey<BSContainer<?>> CHECKBOX_DIV = new MetaDataKey<BSContainer<?>>() {
+    public static final MetaDataKey<BSContainer<?>>  CHECKBOX_DIV                   = new MetaDataKey<BSContainer<?>>() {
     };
-    public static final MetaDataKey<BSContainer<?>> CHECKBOX_LABEL = new MetaDataKey<BSContainer<?>>() {
+    public static final MetaDataKey<BSContainer<?>>  CHECKBOX_LABEL                 = new MetaDataKey<BSContainer<?>>() {
     };
 
     private IFeedbackPanelFactory feedbackPanelFactory;
@@ -92,7 +97,7 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSControls appendCheckbox(Component checkbox, Component label, Alignment alignment) {
-        final BSContainer<?> checkboxDiv = new BSContainer<>("_" + checkbox.getId());
+        final BSContainer<?> checkboxDiv   = new BSContainer<>("_" + checkbox.getId());
         final BSContainer<?> checkboxLabel = new BSContainer<>("_");
 
         checkbox.setMetaData(CHECKBOX_DIV, checkboxDiv);
@@ -176,29 +181,45 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSControls appendSelect(Component select) {
-        return appendSelect(select, false, true, null);
+        return appendSelect(select, true, null);
     }
 
-    public BSControls appendSelect(Component select, boolean multiple) {
-        return appendSelect(select, multiple, null);
-    }
-
-    public BSControls appendSelect(Component select, boolean multiple, String attrExtra) {
-        return appendSelect(select, multiple, true, attrExtra);
-    }
-
-    public BSControls appendSelect(Component select, boolean multiple, boolean bootstrap, String attrExtra) {
-        if (multiple) {
-            select.add(new BSSelectInitBehaviour());
-        }
+    public BSControls appendSelect(Component select, boolean bootstrap, String attrExtra) {
         select.add(new AttributeModifier("title", new ResourceModel("BSControls.Select.Title", "")));
         return super.appendTag("select", true,
                 ((bootstrap)
                         ? "class='bs-select form-control'"
                         : "class='form-control'")
-                        + (multiple ? " multiple " : "")
                         + Optional.ofNullable(attrExtra).orElse(""),
                 select);
+    }
+
+    public BSControls appendMultiSelect(Component select, ChosenOptions options) {
+        final BSControls wrapper = new BSControls("wrapper");
+        String           attrs   = " multiple ";
+
+        if (options.isShowSpinner()) {
+            final IRequestHandler handler = new ResourceReferenceRequestHandler(AbstractDefaultAjaxBehavior.INDICATOR);
+            final Label spinner = new Label("spinner", "<img alt=\"Loading...\"" +
+                    " src=\"" + RequestCycle.get().urlFor(handler) + "\"/>");
+            spinner.setEscapeModelStrings(false);
+            wrapper.appendLabel(spinner);
+
+            select.add(new Behavior() {
+                @Override
+                public void renderHead(Component component, IHeaderResponse response) {
+                    super.renderHead(component, response);
+                    response.render(OnDomReadyHeaderItem
+                            .forScript("$('#" + select.getMarkupId() + "').on(\"chosen:ready\"," +
+                                    " function(){$(\"#" + spinner.getMarkupId() + "\").hide()});"));
+                }
+            });
+
+            attrs += "style='display:none;'";
+        }
+
+        return appendTag("div", true, null,
+                wrapper.appendTag("select", true, attrs, select.add(new BSSelectInitBehaviour(options))));
     }
 
     @Deprecated
@@ -268,8 +289,8 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSControls appendFeedback(Component fence, IFeedbackMessageFilter filter, IConsumer<Component> feedbackComponentConsumer) {
-        IFeedbackPanelFactory factory = ObjectUtils.defaultIfNull(feedbackPanelFactory, IFeedbackPanelFactory.DEFAULT);
-        Component feedbackComponent = factory.newFeedbackPanel("controlErrors", fence, filter);
+        IFeedbackPanelFactory factory           = ObjectUtils.defaultIfNull(feedbackPanelFactory, IFeedbackPanelFactory.DEFAULT);
+        Component             feedbackComponent = factory.newFeedbackPanel("controlErrors", fence, filter);
         appendTag("span", true, "class='help-block'", feedbackComponent);
         feedbackComponentConsumer.accept(feedbackComponent);
         return this;

@@ -16,32 +16,66 @@
 
 package org.opensingular.form.view;
 
-/**
- * View for the Multi Select.
- * Para maiores informações sobre o componente:
- * <a href='https://developer.snapappointments.com/bootstrap-select/examples/#live-search' ></a>
- */
 public class SMultiSelectionBySelectView extends AbstractSViewList {
 
-    //This will include the Live filter.
-    boolean withLiveFilter = false;
+    private String  dataPlaceholder        = "Selecione";
+    private String  noResultsText          = "Nenhum resultado encontrado!";
+    private boolean disableSearch          = false;
+    private boolean hideResultsOnSelect    = false;
+    private boolean showSpinner            = false;
+    private int     disableSearchThreshold = 0;
 
-    /**
-     * Method for show the filter for multi select.
-     * Default: False, don't show the filter.
-     *
-     * @param withLiveFilter True for show the live filter. False for not.
-     * @return <code>this</code>
-     */
-    public SMultiSelectionBySelectView withLiveFilter(boolean withLiveFilter) {
-        this.withLiveFilter = withLiveFilter;
+    public String getDataPlaceholder() {
+        return dataPlaceholder;
+    }
+
+    public SMultiSelectionBySelectView setDataPlaceholder(String dataPlaceholder) {
+        this.dataPlaceholder = dataPlaceholder;
         return this;
     }
 
-    /**
-     * @return True for show the filter, false for not.
-     */
-    public boolean isWithLiveFilter() {
-        return withLiveFilter;
+    public String getNoResultsText() {
+        return noResultsText;
+    }
+
+    public SMultiSelectionBySelectView setNoResultsText(String noResultsText) {
+        this.noResultsText = noResultsText;
+        return this;
+    }
+
+    public boolean isDisableSearch() {
+        return disableSearch;
+    }
+
+    public SMultiSelectionBySelectView setDisableSearch(boolean disableSearch) {
+        this.disableSearch = disableSearch;
+        return this;
+    }
+
+    public boolean isHideResultsOnSelect() {
+        return hideResultsOnSelect;
+    }
+
+    public SMultiSelectionBySelectView setHideResultsOnSelect(boolean hideResultsOnSelect) {
+        this.hideResultsOnSelect = hideResultsOnSelect;
+        return this;
+    }
+
+    public int getDisableSearchThreshold() {
+        return disableSearchThreshold;
+    }
+
+    public SMultiSelectionBySelectView setDisableSearchThreshold(int disableSearchThreshold) {
+        this.disableSearchThreshold = disableSearchThreshold;
+        return this;
+    }
+
+    public boolean isShowSpinner() {
+        return showSpinner;
+    }
+
+    public SMultiSelectionBySelectView setShowSpinner(boolean showSpinner) {
+        this.showSpinner = showSpinner;
+        return this;
     }
 }
