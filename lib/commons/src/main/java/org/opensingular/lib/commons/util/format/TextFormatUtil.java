@@ -32,11 +32,6 @@ public class TextFormatUtil {
                 (telefone.length() == 11 || telefone.length() == 10) ? telefone.replaceAll("(.{2})(.{4,5})(.{4})", "($1) $2-$3") : null;
     }
 
-    public static String formatNumeroUnicoProcesso(String nup) {
-        return StringUtils.isNumeric(nup) &&
-                nup.length() == 17 ? nup.replaceAll("(.{5})(.{6})(.{4})(.{2})", "$1.$2/$3-$4") : null;
-    }
-
     public static String formatCep(String cep) {
         return StringUtils.isNumeric(cep) &&
                 cep.length() == 8 ? cep.replaceAll("(.{2})(.{3})(.{3})", "$1.$2-$3") : null;

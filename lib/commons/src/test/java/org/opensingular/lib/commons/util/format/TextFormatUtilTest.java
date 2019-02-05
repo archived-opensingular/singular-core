@@ -53,12 +53,6 @@ public class TextFormatUtilTest {
     }
 
     @Test
-    public void formatNumeroUnicoProcessoTest() {
-        String nup = "99970000004201815";
-        Assert.assertEquals("99970.000004/2018-15", TextFormatUtil.formatNumeroUnicoProcesso(nup));
-    }
-
-    @Test
     public void formatCepTest() {
         String cep = "72130000";
         Assert.assertEquals("72.130-000", TextFormatUtil.formatCep(cep));
