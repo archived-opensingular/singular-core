@@ -50,7 +50,12 @@ public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected ListMultipleChoice<?> retrieveChoices(IModel<? extends SInstance> model, final IModel<List<Serializable>> valuesModel) {
-        return new SListMultipleChoice(model.getObject().getName(), new MultipleSelectSInstanceAwareModel(model), valuesModel, renderer(model));
+        return retrieveChoices(model.getObject().getName(), model, valuesModel);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected ListMultipleChoice<?> retrieveChoices(String markupId, IModel<? extends SInstance> model, final IModel<List<Serializable>> valuesModel) {
+        return new SListMultipleChoice(markupId, new MultipleSelectSInstanceAwareModel(model), valuesModel, renderer(model));
     }
 
     protected IChoiceRenderer<Serializable> renderer(IModel<? extends SInstance> model) {
