@@ -44,7 +44,7 @@ public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {
 
     protected Component appendFormGroup(BSControls formGroup, WicketBuildContext ctx) {
         final ListMultipleChoice<?> choices = retrieveChoices(ctx.getModel(), new ReadOnlyModelValue(ctx.getModel()));
-        formGroup.appendSelect(choices.setMaxRows(5), false, null);
+        formGroup.appendSelect(choices.setMaxRows(5), true, false, null);
         return choices;
     }
 
