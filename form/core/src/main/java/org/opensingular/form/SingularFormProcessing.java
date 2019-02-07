@@ -211,7 +211,7 @@ public class SingularFormProcessing {
      */
     private static String getIndexesKey(String path) {
 
-        final Pattern indexFinder    = Pattern.compile("(\\[\\d\\])");
+        final Pattern indexFinder    = Pattern.compile("(\\[\\d+\\])");
         final Pattern bracketsFinder = Pattern.compile("[\\[\\]]");
 
         final Matcher       matcher = indexFinder.matcher(path);
