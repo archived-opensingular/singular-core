@@ -46,7 +46,9 @@ import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
+import org.opensingular.form.wicket.util.WicketFormUtils;
 import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSCol;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
@@ -281,14 +283,15 @@ public class SingularFormPanel extends Panel {
             externalContainer = bodyContainer;
         }
         // Chama o builder wicket para construção do formulário
-        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), externalContainer, getInstanceModel());
+        BSCol cellContainer = this.container.newColInRow();
+        WicketFormUtils.setCellContainer(SingularFormPanel.this, cellContainer);
+        WicketBuildContext ctx = new WicketBuildContext(cellContainer, externalContainer, getInstanceModel());
         ctx.setAnnotationMode(getAnnotationMode());
         ctx.setActionClassifier(getAnnotationClassifier());
         ctx.setNested(nested);
         ctx.setPreFormPanelFactory(preFormPanelFactory);
         ctx.addListeners(getBuildListeners());
         addOrReplace(ctx.createFeedbackPanel("feedback", this).setShowBox(true));
-
         ctx.build(getViewMode());
     }
 
