@@ -29,11 +29,17 @@ public final class FormatUtil {
     }
 
     public static String dateToDefaultTimestampString(Date date) {
+        if(date != null) {
         return new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
+        }
+        return null;
     }
 
     public static String dateToDefaultDateString(Date date) {
-        return new SimpleDateFormat("dd/MM/yyyy").format(date);
+        if(date != null) {
+            return new SimpleDateFormat("dd/MM/yyyy").format(date);
+        }
+        return null;
     }
 
     public static StringBuilder appendSeconds(StringBuilder time, long seconds) {
