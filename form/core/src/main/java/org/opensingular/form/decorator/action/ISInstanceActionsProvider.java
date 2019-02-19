@@ -21,6 +21,7 @@ import org.opensingular.form.SInstance;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Provedor de ações sobre instâncias.
@@ -36,10 +37,10 @@ public interface ISInstanceActionsProvider extends Serializable {
         return getActions(target, instance);
     }
     
-    default Iterable<SInstanceAction> getListFieldActions(ISInstanceActionCapable target, SIList<?> instance, String field) {
+    default List<SInstanceAction> getListFieldActions(ISInstanceActionCapable target, SIList<?> instance, String field) {
         return Collections.emptyList();
     }
-    default Iterable<SInstanceAction> getListFieldActions(ISInstanceActionCapable target, SIList<?> instance, String field, ActionClassifier actionClassifier) {
+    default List<SInstanceAction> getListFieldActions(ISInstanceActionCapable target, SIList<?> instance, String field, ActionClassifier actionClassifier) {
         return getListFieldActions(target, instance, field);
     }
 

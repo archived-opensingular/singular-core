@@ -20,10 +20,13 @@ import static org.apache.commons.lang3.StringUtils.*;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
+import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.basic.AtrBasic;
 
 /**
  * Provider para a ação de exibição do Help do campo.
@@ -32,26 +35,37 @@ public class SInstanceHelpActionsProvider implements ISInstanceActionsProvider {
 
     @Override
     public Iterable<SInstanceAction> getActions(ISInstanceActionCapable target, SInstance instance) {
-        return doHelpAction(instance.asAtr().getHelp());
+        if ((instance.getParent() instanceof SIComposite) && (instance.getParent().getParent() instanceof SIList<?>)) {
+            SIList<?> parent = (SIList<?>) instance.getParent().getParent();
+            if (!this.getListFieldActions(target, parent, instance.getType().getNameSimple()).isEmpty()) {
+                return Collections.emptyList();
+            }
+        }
+        return doHelpAction(instance.asAtr().getLabel(), instance.asAtr().getHelp());
     }
 
     @Override
-    public Iterable<SInstanceAction> getListFieldActions(ISInstanceActionCapable target, SIList<?> instance, String field) {
+    public List<SInstanceAction> getListFieldActions(ISInstanceActionCapable target, SIList<?> instance, String field) {
+        final AtrBasic atr;
         if ((instance.getElementsType() instanceof STypeComposite<?>) && isNotBlank(field)) {
             STypeComposite<?> compositeType = (STypeComposite<?>) instance.getElementsType();
-            return doHelpAction(compositeType.getField(field).asAtr().getHelp());
+            atr = compositeType.getField(field).asAtr();
+        } else {
+            atr = instance.getElementsType().asAtr();
         }
-        return doHelpAction(instance.getElementsType().asAtr().getHelp());
+        return doHelpAction(atr.getLabel(), atr.getHelp());
     }
 
-    private Iterable<SInstanceAction> doHelpAction(final String helpText) {
+    private List<SInstanceAction> doHelpAction(String title, final String helpText) {
         return (isBlank(helpText))
             ? Collections.emptyList()
             : Arrays.asList(new SInstanceAction(SInstanceAction.ActionType.NORMAL)
                 .setIcon(SIcon.resolve("question"))
                 .setText("Ajuda")
                 .setPosition(Integer.MIN_VALUE)
+                .setImportant(true)
                 .setPreview(new SInstanceAction.Preview()
+                    .setTitle(title)
                     .setMessage(helpText)
                     .setFormat("HTML")));
     }

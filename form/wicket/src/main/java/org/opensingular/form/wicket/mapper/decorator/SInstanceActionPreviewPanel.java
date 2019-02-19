@@ -49,7 +49,7 @@ public class SInstanceActionPreviewPanel extends Panel {
         add(new SInstanceActionsPanel("actionsContainer",
             instanceModel,
             internalContextListProvider,
-            SInstanceActionsPanel.Mode.BAR,
+            SInstanceActionsPanel.Mode.HBAR,
             () -> actionsModel.getObject())
                 .setActionClassFunction(it -> "singular-form-action-preview-action")
                 .setLinkClassFunction(it -> "singular-form-action-preview-link"));

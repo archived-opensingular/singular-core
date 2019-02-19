@@ -35,7 +35,7 @@ public class SInstanceAction implements Serializable {
      * Tipo de ação. Pode alterar a forma como a ação é exibida na tela.
      */
     public enum ActionType {
-        PRIMARY, NORMAL, LINK, DANGER, CONFIRM, CANCEL;
+    PRIMARY, NORMAL, LINK, DANGER, CONFIRM, CANCEL;
     }
 
     /**
@@ -108,6 +108,7 @@ public class SInstanceAction implements Serializable {
     private String        text;
     private String        description;
     private int           position  = 0;
+    private boolean       important = false;
     private boolean       secondary = false;
     private ActionHandler actionHandler;
     private Preview       preview;
@@ -126,30 +127,65 @@ public class SInstanceAction implements Serializable {
     }
 
     //@formatter:off
-    /** Tipo da mensagem para exibição */
-    public ActionType      getType()          { return type         ; }
-    /** Texto da label para exibição */
-    public String          getText()          { return text         ; }
-    /** Ícone para exibição */
-    public SIcon           getIcon()          { return icon         ; }
-    /** Descrição da ação para exibição */
-    public String          getDescription()   { return description  ; }
-    /** Posição da ação para exibição */
-    public int             getPosition()      { return position     ; }
-    /** Flag para agrupamento de ações */
-    public boolean         isSecondary()      { return secondary    ; }
-    /** Callback de execução da ação */
-    public ActionHandler   getActionHandler() { return actionHandler; }
-    /** Callback de geração de preview */
-    public Preview         getPreview()       { return preview      ; }
+    /** Tipo da mensagem para exibição  */ public ActionType      getType()          { return type         ; }
+    /** Texto da label para exibição    */ public String          getText()          { return text         ; }
+    /** Ícone para exibição             */ public SIcon           getIcon()          { return icon         ; }
+    /** Descrição da ação para exibição */ public String          getDescription()   { return description  ; }
+    /** Posição da ação para exibição   */ public int             getPosition()      { return position     ; }
+    /** Flag para exibição de ações     */ public boolean         isImportant()      { return important    ; }
+    /** Flag para agrupamento de ações  */ public boolean         isSecondary()      { return secondary    ; }
+    /** Callback de execução da ação    */ public ActionHandler   getActionHandler() { return actionHandler; }
+    /** Callback de geração de preview  */ public Preview         getPreview()       { return preview      ; }
     
     public SInstanceAction setType         (ActionType       type) { this.type          = type       ; return this; }
     public SInstanceAction setText         (String           text) { this.text          = text       ; return this; }
     public SInstanceAction setIcon         (SIcon            icon) { this.icon          = icon       ; return this; }
     public SInstanceAction setDescription  (String    description) { this.description   = description; return this; }
     public SInstanceAction setPosition     (int          position) { this.position      = position   ; return this; }
+    public SInstanceAction setImportant    (boolean     important) { this.important     = important  ; return this; }
     public SInstanceAction setSecondary    (boolean     secondary) { this.secondary     = secondary  ; return this; }
     public SInstanceAction setActionHandler(ActionHandler handler) { this.actionHandler = handler    ; return this; }
     public SInstanceAction setPreview      (Preview       preview) { this.preview       = preview    ; return this; }
     //@formatter:on
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((actionHandler == null) ? 0 : actionHandler.hashCode());
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((icon == null) ? 0 : icon.hashCode());
+        result = prime * result + (important ? 1231 : 1237);
+        result = prime * result + ((preview == null) ? 0 : preview.hashCode());
+        result = prime * result + ((text == null) ? 0 : text.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        SInstanceAction other = (SInstanceAction) obj;
+        if (actionHandler == null) {
+            if (other.actionHandler != null) return false;
+        } else if (!actionHandler.equals(other.actionHandler)) return false;
+        if (description == null) {
+            if (other.description != null) return false;
+        } else if (!description.equals(other.description)) return false;
+        if (icon == null) {
+            if (other.icon != null) return false;
+        } else if (!icon.equals(other.icon)) return false;
+        if (important != other.important) return false;
+        if (preview == null) {
+            if (other.preview != null) return false;
+        } else if (!preview.equals(other.preview)) return false;
+        if (text == null) {
+            if (other.text != null) return false;
+        } else if (!text.equals(other.text)) return false;
+        if (type != other.type) return false;
+        return true;
+    }
+
 }

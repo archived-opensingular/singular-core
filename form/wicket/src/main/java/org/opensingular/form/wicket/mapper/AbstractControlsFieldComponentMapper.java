@@ -53,9 +53,12 @@ import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
 import org.opensingular.lib.wicket.util.output.BOutputPanel;
 
+import com.google.common.collect.ImmutableMap;
+
 public abstract class AbstractControlsFieldComponentMapper implements IWicketComponentMapper, ISInstanceActionCapable {
 
-    private final static MetaDataKey<Boolean> MDK_COMPONENT_CONFIGURED = new MetaDataKey<Boolean>() {};
+    private final static MetaDataKey<Boolean> MDK_COMPONENT_CONFIGURED = new MetaDataKey<Boolean>() {
+                                                                       };
 
     private final SInstanceActionsProviders   instanceActionsProviders = new SInstanceActionsProviders(this);
 
@@ -117,13 +120,16 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
             content.add($b.classAppender("d-flex"));
             formGroup.add($b.classAppender("flex-grow-1"));
 
-            SInstanceActionsPanel.addAllAsSecondaryPanelTo(
+            Component sidePanel = SInstanceActionsPanel.addImportantAndSecondaryVerticalPanelTo(
                 content,
                 instanceActionsProviders,
                 model,
                 false,
                 internalContextListProvider,
                 ctx.getActionClassifier());
+            sidePanel
+            .add($b.classAppender("flex-grow-0"))
+            .add($b.styleAppender(ImmutableMap.of("margin-top", "4px")));
 
             formGroup.appendLabel(label);
 
