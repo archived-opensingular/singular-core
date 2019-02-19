@@ -18,6 +18,11 @@
 
 package org.opensingular.form.document;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.opensingular.form.SDictionary;
 import org.opensingular.form.TestCaseForm;
 import org.opensingular.form.event.ISInstanceListener;
@@ -27,11 +32,6 @@ import org.opensingular.form.event.SInstanceValueChangeEvent;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.type.core.SIString;
 import org.opensingular.form.type.core.STypeString;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public class TestSDocumentEvents extends TestCaseForm {
@@ -112,6 +112,37 @@ public class TestSDocumentEvents extends TestCaseForm {
         assertEventsCount(4, globalCollector);
         assertEventsCount(2, attributeCollector);
         assertEventsCount(2, valueCollector);
+    }
+
+
+
+    @Test
+    public void testRemoveListener() {
+        doc.getInstanceListeners().add(SInstanceEventType.ATTRIBUTE_CHANGED, globalCollector);
+        doc.getInstanceListeners().add(SInstanceEventType.ATTRIBUTE_CHANGED, globalCollector);
+        doc.getInstanceListeners().add(SInstanceEventType.ATTRIBUTE_CHANGED, globalCollector);
+
+        Assert.assertEquals(3, getSizeOfListeners(SInstanceEventType.ATTRIBUTE_CHANGED));
+
+        doc.getInstanceListeners().remove(SInstanceEventType.ATTRIBUTE_CHANGED, globalCollector);
+
+        Assert.assertEquals(2, getSizeOfListeners(SInstanceEventType.ATTRIBUTE_CHANGED));
+
+        doc.getInstanceListeners().add(SInstanceEventType.VALUE_CHANGED, globalCollector);
+        doc.getInstanceListeners().add(SInstanceEventType.VALUE_CHANGED, globalCollector);
+
+        Assert.assertEquals(2, getSizeOfListeners(SInstanceEventType.VALUE_CHANGED));
+
+        SInstanceEventType[] eventTypes = new SInstanceEventType[] {SInstanceEventType.VALUE_CHANGED, SInstanceEventType.ATTRIBUTE_CHANGED};
+        doc.getInstanceListeners().remove(eventTypes, globalCollector);
+
+        Assert.assertEquals(1, getSizeOfListeners(SInstanceEventType.VALUE_CHANGED));
+        Assert.assertEquals(1, getSizeOfListeners(SInstanceEventType.ATTRIBUTE_CHANGED));
+
+    }
+
+    private int getSizeOfListeners(SInstanceEventType valueChanged) {
+        return doc.getInstanceListeners().getInstanceListeners(valueChanged).size();
     }
 
     private static void assertEventsCount(int expected, ISInstanceListener.EventCollector collector) {
