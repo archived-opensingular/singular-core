@@ -77,22 +77,17 @@ public class SingularFormWicketTest {
 
     @Test
     public void invokePrivateMethodTest() throws Exception {
-
-
-
-        SingularFormWicket f1 = Mockito.spy(new SingularFormWicket("1"){
-
-        });
-        new Mirror().on(f1).invoke().method("markFormsSubmitted").withoutArgs();
+        SingularFormWicket f1 = Mockito.spy(new SingularFormWicket("1"){});
 
         Form f2 = new Form<>("12");
-        new Mirror().on(f2).invoke().method("markFormsSubmitted").withoutArgs();
         f1.add(f2);
+
         IFormSubmitter formSubmitter = Mockito.mock(AjaxFormSubmitBehavior.AjaxFormSubmitter.class);
         Mockito.when(formSubmitter.getForm()).thenReturn(f2);
 
+        new Mirror().on(f1).invoke().method("markFormsSubmitted").withArgs(formSubmitter);
+        new Mirror().on(f2).invoke().method("markFormsSubmitted").withArgs(formSubmitter);
 
         f1.process(formSubmitter);
-
     }
 }
