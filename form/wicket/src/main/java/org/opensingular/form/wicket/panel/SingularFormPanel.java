@@ -46,7 +46,9 @@ import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
+import org.opensingular.form.wicket.util.WicketFormUtils;
 import org.opensingular.lib.commons.lambda.ISupplier;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSCol;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
 import org.opensingular.lib.wicket.util.bootstrap.layout.IBSComponentFactory;
@@ -68,7 +70,6 @@ import java.util.function.Supplier;
  */
 public class SingularFormPanel extends Panel {
 
-    private           ISInstanceAwareModel<SInstance> instanceModel  = new SInstanceRootModel<>();
     private           boolean                         nested;
     // Container onde os componentes serão adicionados
     private           BSGrid                          container      = new BSGrid("generated");
@@ -90,7 +91,7 @@ public class SingularFormPanel extends Panel {
 
     private List<IWicketBuildListener>          buildListeners;
 
-    final BSContainer<?>                        modalItems     = new BSContainer<>("modalItems");
+    private final BSContainer<?> modalItems = new BSContainer<>("modalItems");
 
     //Set this if is this panel is nested inside a modal, to prevent z-index errors
     private BSContainer<?> modalContainer = null;
@@ -102,7 +103,11 @@ public class SingularFormPanel extends Panel {
      * @param id o markup id wicket
      */
     public SingularFormPanel(@Nonnull String id) {
-        this(id, false);
+        this(id, false, new SInstanceRootModel<>());
+    }
+
+    public SingularFormPanel(@Nonnull String id, boolean nested) {
+        this(id, nested, new SInstanceRootModel<>());
     }
 
     /**
@@ -112,7 +117,7 @@ public class SingularFormPanel extends Panel {
      * @param typeClass Tipo a ser utilizado para montar o formulário.
      */
     public SingularFormPanel(@Nonnull String id, @Nonnull Class<? extends SType<?>> typeClass) {
-        this(id, false);
+        this(id, false, new SInstanceRootModel<>());
         setInstanceFromType(typeClass);
     }
 
@@ -123,7 +128,7 @@ public class SingularFormPanel extends Panel {
      * @param refType Tipo a ser utilizado para montar o formulário.
      */
     public SingularFormPanel(@Nonnull String id, @Nonnull RefType refType) {
-        this(id, false);
+        this(id, false, new SInstanceRootModel<>());
         setInstanceFromType(refType);
     }
 
@@ -134,7 +139,7 @@ public class SingularFormPanel extends Panel {
      * @param typeSupplier Supllier do tipo a ser utilizado para montar o formulário.
      */
     public SingularFormPanel(@Nonnull String id, @Nonnull ISupplier<SType<?>> typeSupplier) {
-        this(id, false);
+        this(id, false, new SInstanceRootModel<>());
         setInstanceFromType(typeSupplier);
     }
 
@@ -145,7 +150,7 @@ public class SingularFormPanel extends Panel {
      * @param instance Conteúdo do painel.
      */
     public SingularFormPanel(@Nonnull String id, @Nonnull SInstance instance) {
-        this(id, false);
+        this(id, false, new SInstanceRootModel<>());
         setInstance(instance);
     }
 
@@ -156,7 +161,7 @@ public class SingularFormPanel extends Panel {
      * @param instanceCreator Criado da instância a ser trabalhada no painel.
      */
     public SingularFormPanel(@Nonnull String id, @Nonnull Supplier<SInstance> instanceCreator) {
-        this(id, false);
+        this(id, false, new SInstanceRootModel<>());
         setInstanceCreator(instanceCreator);
     }
 
@@ -166,8 +171,8 @@ public class SingularFormPanel extends Panel {
      * @param id     o markup id wicket
      * @param nested indica se o painel está aninhado em uma modal.
      */
-    public SingularFormPanel(@Nonnull String id, boolean nested) {
-        super(id);
+    public SingularFormPanel(@Nonnull String id, boolean nested, @Nonnull ISInstanceAwareModel<SInstance> instanceModel) {
+        super(id, instanceModel);
         this.nested = nested;
     }
 
@@ -178,8 +183,7 @@ public class SingularFormPanel extends Panel {
      * @param instanceModel o model com o conteúdo do painel.
      */
     public SingularFormPanel(@Nonnull String id, @Nonnull ISInstanceAwareModel<SInstance> instanceModel) {
-        this(id, false);
-        this.instanceModel = instanceModel;
+        this(id, false, instanceModel);
     }
 
     /**
@@ -225,6 +229,7 @@ public class SingularFormPanel extends Panel {
         return this;
     }
 
+
     /**
      * Método wicket, local onde os componentes são adicionados
      */
@@ -235,14 +240,14 @@ public class SingularFormPanel extends Panel {
         add(new WebMarkupContainer("modalContainer")
             .add(modalItems));
 
-        if (instanceModel.getObject() == null) {
+        if (getDefaultModelObject() == null) {
             if (instanceCreator != null) {
                 SInstance instance = instanceCreator.get();
                 if (instance == null) {
                     throw new SingularFormException(
                             "O instanceCreator (" + instanceCreator.getClass().getName() + ") retornou null");
                 }
-                instanceModel.setObject(instance);
+                getInstanceModel().setObject(instance);
             } else {
                 throw new SingularFormException(
                     "A SInstance do painel está null. Chame um dos métodos setInstanceXXX() antes que o método " +
@@ -252,7 +257,7 @@ public class SingularFormPanel extends Panel {
             }
         }
         if (instanceInitializer != null) {
-            instanceInitializer.accept(instanceModel.getObject());
+            instanceInitializer.accept((SInstance) getDefaultModelObject());
         }
         updateContainer();
 
@@ -278,14 +283,15 @@ public class SingularFormPanel extends Panel {
             externalContainer = bodyContainer;
         }
         // Chama o builder wicket para construção do formulário
-        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), externalContainer, getInstanceModel());
+        BSCol cellContainer = this.container.newColInRow();
+        WicketFormUtils.setCellContainer(SingularFormPanel.this, cellContainer);
+        WicketBuildContext ctx = new WicketBuildContext(cellContainer, externalContainer, getInstanceModel());
         ctx.setAnnotationMode(getAnnotationMode());
         ctx.setActionClassifier(getAnnotationClassifier());
         ctx.setNested(nested);
         ctx.setPreFormPanelFactory(preFormPanelFactory);
         ctx.addListeners(getBuildListeners());
         addOrReplace(ctx.createFeedbackPanel("feedback", this).setShowBox(true));
-
         ctx.build(getViewMode());
     }
 
@@ -338,8 +344,8 @@ public class SingularFormPanel extends Panel {
      * Retorna o model da instância sendo trabalhar pelo painel.
      */
     @Nonnull
-    public final IModel<? extends SInstance> getInstanceModel() {
-        return instanceModel;
+    public final IModel<SInstance> getInstanceModel() {
+        return (IModel<SInstance>) getDefaultModel();
     }
 
     /**
@@ -361,10 +367,10 @@ public class SingularFormPanel extends Panel {
      */
     public final SingularFormPanel setInstance(@Nonnull SInstance instance) {
         Objects.requireNonNull(instance);
-        if (instanceModel.getSInstance() != null) {
+        if (getInstanceModel().getObject() != null) {
             throw new SingularFormException("A SInstance já está setada nesse painel");
         }
-        instanceModel.setObject(instance);
+        getInstanceModel().setObject(instance);
         return this;
     }
 
@@ -381,10 +387,6 @@ public class SingularFormPanel extends Panel {
     public final SingularFormPanel setViewMode(@Nonnull ViewMode viewMode) {
         this.viewMode = Objects.requireNonNull(viewMode);
         return this;
-    }
-
-    public final String getRootTypeSubtitle() {
-        return getInstance().asAtr().getSubtitle();
     }
 
     public final SingularFormPanel setPreFormPanelFactory(IBSComponentFactory<Component> preFormPanelFactory) {

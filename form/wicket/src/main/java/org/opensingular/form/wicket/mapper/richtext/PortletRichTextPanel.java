@@ -126,13 +126,6 @@ public class PortletRichTextPanel extends Panel implements Loggable {
 
     private WebMarkupContainer createButtonOpenEditor() {
         return new Link<String>("button") {
-
-            @Override
-            protected void onConfigure() {
-                super.onConfigure();
-                this.setVisible(PortletRichTextPanel.this.isEnabledInHierarchy());
-            }
-
             @Override
             public void onClick() {
                 throw new RestartResponseException(new RichTextNewTabPage(label.getDefaultModelObject().toString(),
@@ -145,6 +138,10 @@ public class PortletRichTextPanel extends Panel implements Loggable {
                 tag.put("onclick", "window.open('" + getURL() + "', '_blank" + previewFrameUuid + "');");
             }
 
+            @Override
+            public boolean isEnabledInHierarchy() {
+                return true;
+            }
         };
     }
 

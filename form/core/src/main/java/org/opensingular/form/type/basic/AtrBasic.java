@@ -16,25 +16,7 @@
 
 package org.opensingular.form.type.basic;
 
-import static java.util.stream.Collectors.*;
-import static org.apache.commons.lang3.StringUtils.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.ObjectUtils;
 import org.opensingular.form.AtrRef;
 import org.opensingular.form.SAttributeEnabled;
@@ -49,7 +31,23 @@ import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 
-import com.google.common.collect.Lists;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.joining;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 
 public class AtrBasic extends STranslatorForAttribute {
@@ -581,6 +579,18 @@ public class AtrBasic extends STranslatorForAttribute {
         setAttributeValue(SPackageBasic.ATR_HELP, val);
         return this;
     }
+
+    /**
+     * Defines the help attribute of the current type.
+     *
+     * @param valueCalculation The SimpleValueCalculation of the help.
+     * @return this AtrBasic with ATR_HELP.
+     */
+    public AtrBasic help(SimpleValueCalculation<String> valueCalculation) {
+        setAttributeCalculation(SPackageBasic.ATR_HELP, valueCalculation);
+        return this;
+    }
+
 
     /**
      * Returns the current type's help attribute.

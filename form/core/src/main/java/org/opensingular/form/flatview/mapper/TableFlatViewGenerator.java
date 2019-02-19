@@ -45,7 +45,7 @@ public class TableFlatViewGenerator extends AbstractFlatViewGenerator {
     protected void doWriteOnCanvas(DocumentCanvas canvas, FlatViewContext context) {
         canvas.addSubtitle(context.getLabel());
 
-        SIList<?> siList = context.getInstanceAs(SIList.class);
+        SIList<?> siList = getElementList(context);
         SType<?> elementsType = siList.getElementsType();
         boolean renderCompositeFieldsAsColumns = elementsType.isComposite() && isRenderCompositeFieldAsColumns(siList);
 
@@ -69,6 +69,10 @@ public class TableFlatViewGenerator extends AbstractFlatViewGenerator {
         for (SInstance child : siList) {
             writeChild(renderCompositeFieldsAsColumns, tableBody, child);
         }
+    }
+
+    protected SIList<?> getElementList(FlatViewContext context) {
+        return context.getInstanceAs(SIList.class);
     }
 
     private void writeHeaders(List<String> headerColumns, TableCanvas tableCanvas) {
