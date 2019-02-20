@@ -110,3 +110,13 @@
     right: 4px;
     position: absolute;
 }
+
+.annotation-d-flex {
+  display: -ms-flexbox !important;
+  display: flex !important;
+}
+
+.annotation-flex-grow-1 {
+  -ms-flex-positive: 1 !important;
+  flex-grow: 1 !important;
+}
