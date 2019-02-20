@@ -15,6 +15,7 @@ import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
+import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import org.opensingular.form.wicket.mapper.buttons.ElementsView;
 import org.opensingular.form.wicket.mapper.components.ConfirmationModal;
 import org.opensingular.form.wicket.model.SInstanceFieldModel;
@@ -60,6 +61,7 @@ public class TableElementsView extends ElementsView {
         row.add($b.classAppender("has-errors", $m.ofValue(feedbackHandler).map(SValidationFeedbackHandler::containsNestedErrors)));
 
 
+        ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, Boolean.TRUE); //Solução temporaria para o item -> SGL-912
         if (!(ctx.getView() instanceof SViewListByTable)) {
             return;
         }
@@ -78,7 +80,6 @@ public class TableElementsView extends ElementsView {
         if ((instance instanceof SIComposite) && viewSupplier.get().isRenderCompositeFieldsAsColumns()) {
             final SIComposite       ci = (SIComposite) instance;
             final STypeComposite<?> ct = ci.getType();
-
             for (SType<?> ft : ct.getFields()) {
                 IModel<SInstance> fm = new SInstanceFieldModel<>(item.getModel(), ft.getNameSimple());
                 ctx.createChild(row.newCol(), ctx.getExternalContainer(), fm).setHint(HIDE_LABEL, Boolean.TRUE).build();
