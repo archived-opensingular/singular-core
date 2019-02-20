@@ -6,7 +6,7 @@
     <groupId>org.opensingular</groupId>
     <artifactId>singular</artifactId>
 
-    <version>1.6.9.9-SNAPSHOT</version>
+    <version>1.6.9.9</version>
     <name>[singular]</name>
     <description>Singular Core Technologies</description>
     <url>http://opensingular.org</url>
@@ -499,7 +499,7 @@
         <wicket.version>7.3.0</wicket.version>
         <hibernate.version>4.3.11.Final</hibernate.version>
         <slf4j.version>1.7.12</slf4j.version>
-        <singular.version>1.6.9.9-SNAPSHOT</singular.version>
+        <singular.version>1.6.9.9</singular.version>
     </properties>
 
 
