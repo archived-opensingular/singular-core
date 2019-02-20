@@ -34,15 +34,12 @@ import org.opensingular.form.wicket.util.WicketFormProcessing;
  * <p>
  * Note: Esse botão tem como função alertar o Wicket que o valor foi alterado, para que ele seja atualizado na tela.
  */
-public abstract class SingularUpdateAjaxLink<T> extends AjaxLink<T> {
+public abstract class SIntanceUpdateAjaxLink extends AjaxLink<SInstance> {
+    private Form<?> form;
 
-    private Form form;
-    private final IModel<? extends SInstance> currentInstance;
-
-    public SingularUpdateAjaxLink(String id, Form form, IModel<? extends SInstance> currentInstance) {
-        super(id);
+    public SIntanceUpdateAjaxLink(String id, Form<?> form, IModel<SInstance> currentInstance) {
+        super(id, currentInstance);
         this.form = form;
-        this.currentInstance = currentInstance;
     }
 
     /**
@@ -66,7 +63,7 @@ public abstract class SingularUpdateAjaxLink<T> extends AjaxLink<T> {
      * @param changeModelListener
      */
     private void onBeforeClick(ISInstanceListener changeModelListener) {
-        currentInstance.getObject().getDocument().getInstanceListeners().add(SInstanceEventType.VALUE_CHANGED, changeModelListener);
+        getModelObject().getDocument().getInstanceListeners().add(SInstanceEventType.VALUE_CHANGED, changeModelListener);
 
     }
 
@@ -76,7 +73,7 @@ public abstract class SingularUpdateAjaxLink<T> extends AjaxLink<T> {
      * @param changeModelListener
      */
     private void onAfterClick(ISInstanceListener changeModelListener) {
-        currentInstance.getObject().getDocument().getInstanceListeners().remove(SInstanceEventType.VALUE_CHANGED, changeModelListener);
+        getModelObject().getDocument().getInstanceListeners().remove(SInstanceEventType.VALUE_CHANGED, changeModelListener);
     }
 
     /**
@@ -101,6 +98,5 @@ public abstract class SingularUpdateAjaxLink<T> extends AjaxLink<T> {
             }
         };
     }
-
 }
 
