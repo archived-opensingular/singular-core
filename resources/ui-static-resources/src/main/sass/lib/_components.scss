@@ -61,6 +61,7 @@ h4 + .decorator-actions.align-right {
 	display: inline;
   vertical-align: middle;
   float: right;
+  margin-left: 8px;
 }
 
 
@@ -123,10 +124,6 @@ div.checker.disabled span.checked:hover {
 .annotation-toggle-container .annotation-text {
   overflow-y: auto;
   max-height: 130px;
-}
-
-.annotation-toggle-container {
-  margin-left: 8px;
 }
 
 .ms-elem-selectable span {
