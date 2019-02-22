@@ -23,6 +23,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
 import org.apache.wicket.model.IModel;
@@ -66,8 +67,13 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
 
     protected Component appendReadOnlyInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
-        final SInstance mi = model.getObject();
-        final BOutputPanel comp = new BOutputPanel(mi.getName(), $m.ofValue(getReadOnlyFormattedText(ctx, model)));
+        final SInstance                   mi    = model.getObject();
+        final Component                   comp;
+        if (ctx.getHint(DISABLED_AS_TEXT_ONLY)) {
+            comp = new Label("output", $m.ofValue(getReadOnlyFormattedText(ctx, model)));
+        } else {
+            comp = new BOutputPanel(mi.getName(), $m.ofValue(getReadOnlyFormattedText(ctx, model)));
+        }
         formGroup.appendTag("div", comp);
         return comp;
     }
@@ -134,7 +140,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
 
         final Component input;
 
-        if (viewMode.isEdition()) {
+        if (viewMode.isEdition() && !isRenderDisabledAsOnlyText(ctx)) {
             input = appendInput(ctx, formGroup, labelModel);
             formGroup.appendFeedback(ctx.createFeedbackCompactPanel("feedback"));
             formGroup.add(new ClassAttributeModifier() {
@@ -156,6 +162,12 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         if ((input instanceof LabeledWebMarkupContainer) && (((LabeledWebMarkupContainer) input).getLabel() == null)) {
             ((LabeledWebMarkupContainer) input).setLabel(labelModel);
         }
+    }
+
+    private boolean isRenderDisabledAsOnlyText(WicketBuildContext ctx) {
+        boolean disabled = !ctx.getCurrentInstance().asAtr().isEnabled();
+        boolean hintDisabledAsTextOnly = ctx.getHint(DISABLED_AS_TEXT_ONLY);
+        return disabled && hintDisabledAsTextOnly;
     }
 
     /**
