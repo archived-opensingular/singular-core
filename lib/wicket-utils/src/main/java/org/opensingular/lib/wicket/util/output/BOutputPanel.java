@@ -16,10 +16,10 @@
 
 package org.opensingular.lib.wicket.util.output;
 
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSWellBorder;
 
 
 public class BOutputPanel extends Panel {
@@ -39,8 +39,7 @@ public class BOutputPanel extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-//        add(BSWellBorder.small("well").add(outputTextLabel));
-        add(new WebMarkupContainer("well").add(outputTextLabel));
+        add(BSWellBorder.small("well").add(outputTextLabel));
     }
 
     public Label getOutputTextLabel() {
