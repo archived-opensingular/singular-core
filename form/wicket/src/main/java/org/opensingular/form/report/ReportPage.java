@@ -19,7 +19,6 @@ package org.opensingular.form.report;
 import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;

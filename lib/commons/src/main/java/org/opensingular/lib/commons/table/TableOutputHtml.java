@@ -577,7 +577,7 @@ public class TableOutputHtml extends TableOutput {
         return entry.getValue() == null ? "null" : entry.getValue();
     }
 
-    private String datatablesOptions() {
+    protected String datatablesOptions() {
         return "{'oLanguage' : {\n" +
                 "    'sEmptyTable': 'Nenhum registro encontrado',\n" +
                 "    'sInfo': 'Mostrando de _START_ até _END_ de _TOTAL_ registros',\n" +
