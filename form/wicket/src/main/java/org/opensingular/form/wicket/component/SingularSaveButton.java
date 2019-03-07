@@ -46,7 +46,7 @@ public abstract class SingularSaveButton extends SingularValidationButton {
         }
     }
 
-    protected boolean isValidate() {
+    protected final boolean isValidate() {
         return validate;
     }
 }
