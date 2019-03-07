@@ -25,13 +25,13 @@ import org.opensingular.form.aspect.SingleAspectRegistry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class FormFilterRegistry extends SingleAspectRegistry<FormFilter, Class<? extends SType<?>>> {
+public class FormFilterRegistry extends SingleAspectRegistry<FormFilter, Class<? extends SType>> {
 
     public FormFilterRegistry(@Nonnull AspectRef<FormFilter> aspectRef) {
         super(aspectRef, new QualifierStrategyBySType());
     }
 
-    public static class QualifierStrategyBySType extends QualifierStrategyByClassQualifier<Class<? extends SType<?>>> {
+    public static class QualifierStrategyBySType extends QualifierStrategyByClassQualifier<Class<? extends SType>> {
         @Nullable
         @Override
         protected Class<? extends SType> extractQualifier(@Nonnull SInstance instance) {
@@ -40,7 +40,7 @@ public class FormFilterRegistry extends SingleAspectRegistry<FormFilter, Class<?
 
         @Nullable
         @Override
-        protected Class<? extends SType> extractQualifier(@Nonnull SType<?> type) {
+        protected Class<? extends SType> extractQualifier(@Nonnull SType type) {
             return type.getClass();
         }
     }
