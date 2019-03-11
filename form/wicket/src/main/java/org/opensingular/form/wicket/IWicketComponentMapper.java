@@ -81,6 +81,23 @@ public interface IWicketComponentMapper extends Serializable {
     };
 
     /**
+     * This hint makes fields that are disabled to
+     * be shown as text only, instead of fields marked
+     * as disabled.
+     */
+    HintKey<Boolean> DISABLED_AS_TEXT_ONLY = new HintKey<Boolean>() {
+        @Override
+        public Boolean getDefaultValue() {
+            return Boolean.FALSE;
+        }
+
+        @Override
+        public boolean isInheritable() {
+            return true;
+        }
+    };
+
+    /**
      * Method responsible for create and configurate the label used by the default's inputs by Singular form.
      *
      * @param ctx The WicketBuildCOntext, to know if contains the <code>HIDE_LABEL</code> configuration.
