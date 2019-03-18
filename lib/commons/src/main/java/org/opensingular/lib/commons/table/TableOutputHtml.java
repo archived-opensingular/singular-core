@@ -125,7 +125,12 @@ public class TableOutputHtml extends TableOutput {
                 "    $(document).ready(function(){\n" +
                 "        var table = $('#" + tableid + "');\n" +
                 "        if(table.DataTable){\n" +
-                "            table.DataTable(" + datatablesOptions() + ");\n" +
+                "            var t = table.DataTable(" + datatablesOptions() + ");\n" +
+                "            t.on( 'order.dt search.dt', function () {\n" +
+                "                    t.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {\n" +
+                "                        cell.innerHTML = i+1;\n" +
+                "                    } );\n" +
+                "                } ).draw('full-hold');\n" +
                 "        }\n" +
                 "    });}\n" +
                 "}());");
@@ -577,7 +582,7 @@ public class TableOutputHtml extends TableOutput {
         return entry.getValue() == null ? "null" : entry.getValue();
     }
 
-    private String datatablesOptions() {
+    protected String datatablesOptions() {
         return "{'oLanguage' : {\n" +
                 "    'sEmptyTable': 'Nenhum registro encontrado',\n" +
                 "    'sInfo': 'Mostrando de _START_ até _END_ de _TOTAL_ registros',\n" +
