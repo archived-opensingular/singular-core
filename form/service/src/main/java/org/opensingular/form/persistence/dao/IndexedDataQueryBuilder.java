@@ -17,6 +17,11 @@
 package org.opensingular.form.persistence.dao;
 
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.lib.commons.util.FormatUtil;
+import org.springframework.jdbc.support.JdbcUtils;
+
+import java.text.MessageFormat;
+import java.util.regex.Pattern;
 
 
 /**
@@ -27,13 +32,13 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class IndexedDataQueryBuilder {
 
-    private final String schema;
-    private StringBuilder select;
-    private StringBuilder from = new StringBuilder(" FROM ");
-    private StringBuilder join = new StringBuilder();
-    private StringBuilder where;
-    private StringBuilder joinCache;
-    private StringBuilder order;
+    private final String        schema;
+    private       StringBuilder select;
+    private       StringBuilder from = new StringBuilder(" FROM ");
+    private       StringBuilder join = new StringBuilder();
+    private       StringBuilder where;
+    private       StringBuilder joinCache;
+    private       StringBuilder order;
 
     public IndexedDataQueryBuilder(String schema) {
         this.schema = schema;
@@ -118,7 +123,7 @@ public class IndexedDataQueryBuilder {
         String leftSubQuery = "  LEFT JOIN (SELECT " +
                 " CACHE_VALOR.CO_VERSAO_FORMULARIO as co_versao_formulario, " +
                 " CACHE_CAMPO.CO_TIPO_FORMULARIO              as co_tipo_formulario, " +
-                " COALESCE(CACHE_VALOR.DS_VALOR, " + schema + ".to_char(CACHE_VALOR.NU_VALOR), " + schema + ".to_char(CACHE_VALOR.DT_VALOR)) as ds_valor " +
+                " COALESCE(CACHE_VALOR.DS_VALOR, to_char(CACHE_VALOR.NU_VALOR),  TO_CHAR(CACHE_VALOR.DT_VALOR, 'YYYY-MM-DD HH24:MI:SS')) as ds_valor " +
                 " FROM " + schema + ".TB_CACHE_CAMPO CACHE_CAMPO " +
                 " INNER JOIN DBSINGULAR.TB_CACHE_VALOR CACHE_VALOR " +
                 "                 on CACHE_VALOR.CO_CACHE_CAMPO = CACHE_CAMPO.CO_CACHE_CAMPO " +
@@ -129,6 +134,7 @@ public class IndexedDataQueryBuilder {
         joinCache.append(leftSubQuery);
 
     }
+
 
     private String getFieldsNames(String[] fields) {
         StringBuilder fieldsNames = new StringBuilder();
