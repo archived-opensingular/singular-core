@@ -31,6 +31,9 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
+import org.opensingular.form.event.ISInstanceListener;
+import org.opensingular.form.event.SInstanceEvent;
+import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
@@ -143,7 +146,8 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         if (viewMode.isEdition() && !isRenderDisabledAsOnlyText(ctx)) {
             input = appendInput(ctx, formGroup, labelModel);
             formGroup.appendFeedback(ctx.createFeedbackCompactPanel("feedback"));
-            formGroup.add(new ClassAttributeModifier() {
+            formGroup.add(new ClassAttributeModifier()
+            {
                 @Override
                 protected Set<String> update(Set<String> oldClasses) {
                     if (model.getObject().getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION) != null) {
@@ -153,8 +157,17 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
                 }
             });
             input.add(DisabledClassBehavior.getInstance());
-
             configureAjaxListeners(ctx, model, label, input);
+
+            model.getObject().getDocument().getInstanceListeners().add(SInstanceEventType.VALUE_CHANGED, new ISInstanceListener() {
+                @Override
+                public void onInstanceEvent(SInstanceEvent evt) {
+                    if(evt.getSource() == model.getObject()){
+                        input.modelChanged();
+                    }
+                }
+            });
+
         } else {
             input = appendReadOnlyInput(ctx, formGroup, labelModel);
         }
