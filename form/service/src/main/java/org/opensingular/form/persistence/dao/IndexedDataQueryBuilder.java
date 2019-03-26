@@ -123,7 +123,7 @@ public class IndexedDataQueryBuilder {
         String leftSubQuery = "  LEFT JOIN (SELECT " +
                 " CACHE_VALOR.CO_VERSAO_FORMULARIO as co_versao_formulario, " +
                 " CACHE_CAMPO.CO_TIPO_FORMULARIO              as co_tipo_formulario, " +
-                " COALESCE(CACHE_VALOR.DS_VALOR, to_char(CACHE_VALOR.NU_VALOR),  TO_CHAR(CACHE_VALOR.DT_VALOR, 'YYYY-MM-DD HH24:MI:SS')) as ds_valor " +
+                " COALESCE(cast(CACHE_VALOR.DS_VALOR as char), cast(CACHE_VALOR.NU_VALOR as char),  cast(CACHE_VALOR.DT_VALOR as char)) as ds_valor " +
                 " FROM " + schema + ".TB_CACHE_CAMPO CACHE_CAMPO " +
                 " INNER JOIN DBSINGULAR.TB_CACHE_VALOR CACHE_VALOR " +
                 "                 on CACHE_VALOR.CO_CACHE_CAMPO = CACHE_CAMPO.CO_CACHE_CAMPO " +
