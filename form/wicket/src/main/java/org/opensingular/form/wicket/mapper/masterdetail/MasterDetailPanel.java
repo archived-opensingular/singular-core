@@ -285,7 +285,9 @@ public class MasterDetailPanel extends Panel {
             final String         typeName   = columnType.getTypeName();
             final String         columnSort = disabledSort ? null : columnType.getColumnSortName();
             final IModel<String> labelModel = $m.ofValue(label);
-            propertyColumnAppender(builder, labelModel, typeName, columnSort, columnType.getDisplayFunction());
+            if(StringUtils.isNotEmpty(label)) {
+                propertyColumnAppender(builder, labelModel, typeName, columnSort, columnType.getDisplayFunction());
+            }
         }
 
         actionColumnAppender(builder, modal, ctx, viewMode, viewSupplier);
