@@ -2364,9 +2364,7 @@ Theme Panel
   color: rgba(74, 74, 74, 0.7); }
 
 .list-detail-input .table thead tr th {
-  color: rgba(74, 74, 74, 0.7);
-  position: static !important;
-  /*This config is for correct the display in firefox*/ }
+  color: rgba(74, 74, 74, 0.7); }
 
 .list-table-input {
   margin-bottom: 15px; }
