@@ -171,9 +171,11 @@ public class MasterDetailPanel extends Panel {
     }
 
     private WebMarkupContainer newHead(String id) {
+        final AtrBasic     attr     = list.getObject().asAtr();
+        boolean            hasLabel = StringUtils.isNotEmpty(trimToEmpty(attr.getLabel()));
         WebMarkupContainer thisHead = new WebMarkupContainer(id);
-        thisHead.add($b.visibleIf(() -> !ctx.getHint(HIDE_LABEL)
-                || !this.instanceActionsProviders.actionList(this.list, ctx.getActionClassifier()).isEmpty()));
+        thisHead.add($b.visibleIf(() -> hasLabel && (!ctx.getHint(HIDE_LABEL)
+                || !this.instanceActionsProviders.actionList(this.list, ctx.getActionClassifier()).isEmpty())));
         return thisHead;
     }
 
@@ -209,7 +211,6 @@ public class MasterDetailPanel extends Panel {
         ctx.configureContainer(labelModel);
 
         Label label = new Label("headLabel", labelModel);
-
         if (ctx.getViewMode() != null && ctx.getViewMode().isEdition()) {
             label.add(new RequiredLabelClassAppender(ctx.getModel()));
         }
@@ -285,7 +286,7 @@ public class MasterDetailPanel extends Panel {
             final String         typeName   = columnType.getTypeName();
             final String         columnSort = disabledSort ? null : columnType.getColumnSortName();
             final IModel<String> labelModel = $m.ofValue(label);
-            if(StringUtils.isNotEmpty(label)) {
+            if (StringUtils.isNotEmpty(label)) {
                 propertyColumnAppender(builder, labelModel, typeName, columnSort, columnType.getDisplayFunction());
             }
         }
@@ -301,20 +302,17 @@ public class MasterDetailPanel extends Panel {
                                       WicketBuildContext ctx,
                                       ViewMode vm,
                                       ISupplier<SViewListByMasterDetail> viewSupplier) {
-        if (canCreateNewElement(viewSupplier) || viewSupplier.get().haveAnyActionButton(list.getObject())) {
-            //If user can create new element must have at last one action, probably edit.
-            builder.appendActionColumn($m.ofValue(viewSupplier.get().getActionColumnLabel()), ac -> {
-                if (vm.isEdition()) {
-                    ac.appendAction(buildEditActionConfig(viewSupplier), buildViewOrEditAction(modal, ctx, null));
-                    ac.appendAction(buildRemoveActionConfig(viewSupplier), buildRemoveAction(ctx));
-                }
-                ac.appendAction(buildViewActionConfig(vm, viewSupplier), buildViewOrEditAction(modal, ctx, ViewMode.READ_ONLY));
-                ac.appendAction(buildShowErrorsActionConfig(), new ShowErrorsAction());
-                if (ctx.getAnnotationMode().enabled()) {
-                    ac.appendAction(buildShowAnnotationsActionConfig(), buildViewOrEditAction(modal, ctx, null));
-                }
-            });
-        }
+        builder.appendActionColumn($m.ofValue(viewSupplier.get().getActionColumnLabel()), ac -> {
+            if (vm.isEdition()) {
+                ac.appendAction(buildEditActionConfig(viewSupplier), buildViewOrEditAction(modal, ctx, null));
+                ac.appendAction(buildRemoveActionConfig(viewSupplier), buildRemoveAction(ctx));
+            }
+            ac.appendAction(buildViewActionConfig(vm, viewSupplier), buildViewOrEditAction(modal, ctx, ViewMode.READ_ONLY));
+            ac.appendAction(buildShowErrorsActionConfig(), new ShowErrorsAction());
+            if (ctx.getAnnotationMode().enabled()) {
+                ac.appendAction(buildShowAnnotationsActionConfig(), buildViewOrEditAction(modal, ctx, null));
+            }
+        });
     }
 
     private BSActionPanel.ActionConfig<SInstance> buildRemoveActionConfig(ISupplier<SViewListByMasterDetail> viewSupplier) {
@@ -383,7 +381,6 @@ public class MasterDetailPanel extends Panel {
                 .visibleFor(rowModel -> !rowModel.getObject().getNestedValidationErrors().isEmpty())
                 .style($m.ofValue(MapperCommons.BUTTON_STYLE));
     }
-
 
 
     private BSActionPanel.ActionConfig<SInstance> buildShowAnnotationsActionConfig() {
