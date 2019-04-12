@@ -25,9 +25,9 @@
             <span wicket:id="arrow" class="arrow"></span>
         </a>
         <ul class="sub-menu" wicket:id="sub-menu" style="display: none;">
-            <wicket:fragment wicket:id="itens">
-                <wicket:fragment wicket:id="menu-item"></wicket:fragment>
-            </wicket:fragment>
+            <wicket:container wicket:id="itens">
+                <wicket:container wicket:id="menu-item"></wicket:container>
+            </wicket:container>
         </ul>
     </li>
 </wicket:panel>

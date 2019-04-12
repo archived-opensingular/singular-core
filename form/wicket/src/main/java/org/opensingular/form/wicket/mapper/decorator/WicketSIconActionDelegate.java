@@ -83,7 +83,7 @@ public class WicketSIconActionDelegate implements SInstanceAction.Delegate, Seri
             .map(it -> new SInstanceRootModel<>(it))
             .orElse(null);
         ISupplier<String> textProvider = () -> (text instanceof String)
-            ? HTMLUtil.escapeHtml((String) text)
+            ? (String) text
             : Objects.toString(text, "");
         SInstanceActionOpenModalEvent evt = new SInstanceActionOpenModalEvent(
             title,

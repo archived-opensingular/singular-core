@@ -66,11 +66,11 @@ public class SingularPropertiesImplTest {
         Assert.assertEquals(SingularPropertiesTest.MOCK_PROPERTY_CLASSPATH_VALUE, SingularProperties.get(SingularPropertiesTest.MOCK_PROPERTY_KEY));
     }
 
-    @Test(expected = SingularException.class)
+   /* @Test(expected = SingularException.class)
     public void reloadAndOverrideTestException() throws MalformedURLException {
         SingularPropertiesImpl singularProperties = SingularPropertiesImpl.get();
         singularProperties.reloadAndOverrideWith(new URL("http://www.notexistentsite.com/"));
-    }
+    }*/
 
     @Test
     public void containsKey(){

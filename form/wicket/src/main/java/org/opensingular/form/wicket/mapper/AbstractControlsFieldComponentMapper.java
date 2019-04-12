@@ -16,12 +16,14 @@
 
 package org.opensingular.form.wicket.mapper;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
 import org.apache.wicket.model.IModel;
@@ -29,6 +31,9 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
+import org.opensingular.form.event.ISInstanceListener;
+import org.opensingular.form.event.SInstanceEvent;
+import org.opensingular.form.event.SInstanceEventType;
 import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
@@ -55,9 +60,9 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 public abstract class AbstractControlsFieldComponentMapper implements IWicketComponentMapper, ISInstanceActionCapable {
 
     private final static MetaDataKey<Boolean> MDK_COMPONENT_CONFIGURED = new MetaDataKey<Boolean>() {
-    };
+                                                                       };
 
-    private final SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
+    private final SInstanceActionsProviders   instanceActionsProviders = new SInstanceActionsProviders(this);
 
     protected abstract Component appendInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel);
 
@@ -65,8 +70,13 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
 
     protected Component appendReadOnlyInput(WicketBuildContext ctx, BSControls formGroup, IModel<String> labelModel) {
         final IModel<? extends SInstance> model = ctx.getModel();
-        final SInstance mi = model.getObject();
-        final BOutputPanel comp = new BOutputPanel(mi.getName(), $m.ofValue(getReadOnlyFormattedText(ctx, model)));
+        final SInstance                   mi    = model.getObject();
+        final Component                   comp;
+        if (ctx.getHint(DISABLED_AS_TEXT_ONLY)) {
+            comp = new Label("output", $m.ofValue(getReadOnlyFormattedText(ctx, model)));
+        } else {
+            comp = new BOutputPanel(mi.getName(), $m.ofValue(getReadOnlyFormattedText(ctx, model)));
+        }
         formGroup.appendTag("div", comp);
         return comp;
     }
@@ -81,30 +91,51 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         final BSContainer<?> container = ctx.getContainer();
         final AttributeModel<String> subtitle = new AttributeModel<>(model, SPackageBasic.ATR_SUBTITLE);
         final ViewMode viewMode = ctx.getViewMode();
-        final BSControls formGroup = container.newFormGroup();
+
+        final BSControls formGroup;// = container.newFormGroup();
+
+        IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
+            AbstractControlsFieldComponentMapper.this,
+            RequestCycle.get().find(AjaxRequestTarget.class),
+            model,
+            model.getObject(),
+            ctx,
+            ctx.getContainer());
 
         BSLabel label = createLabel(ctx);
 
         if (hintNoDecoration) {
+
+            BSContainer<?> content = container.newComponent(BSContainer::new);
+            formGroup = content.newFormGroup();
+
+            content.add($b.classAppender("annotation-d-flex"));
+            formGroup.add($b.classAppender("annotation-flex-grow-1"));
+
+            Component sidePanel = SInstanceActionsPanel.addImportantAndSecondaryVerticalPanelTo(
+                content,
+                instanceActionsProviders,
+                model,
+                false,
+                internalContextListProvider,
+                ctx.getActionClassifier());
+            sidePanel
+            .add($b.styleAppender(ImmutableMap.of("margin-top", "4px")));
+
             formGroup.appendLabel(label);
+
         } else {
+            formGroup = container.newFormGroup();
+
             BSControls labelBar = createLabelBar(label);
 
-            IFunction<AjaxRequestTarget, List<?>> internalContextListProvider = target -> Arrays.asList(
-                    AbstractControlsFieldComponentMapper.this,
-                    RequestCycle.get().find(AjaxRequestTarget.class),
-                    model,
-                    model.getObject(),
-                    ctx,
-                    ctx.getContainer());
-
             SInstanceActionsPanel.addLeftSecondaryRightPanelsTo(
-                    labelBar,
-                    instanceActionsProviders,
-                    model,
-                    false,
-                    internalContextListProvider,
-                    ctx.getActionClassifier());
+                labelBar,
+                instanceActionsProviders,
+                model,
+                false,
+                internalContextListProvider,
+                ctx.getActionClassifier());
             formGroup.appendDiv(labelBar);
         }
 
@@ -112,10 +143,11 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
 
         final Component input;
 
-        if (viewMode.isEdition()) {
+        if (viewMode.isEdition() && !isRenderDisabledAsOnlyText(ctx)) {
             input = appendInput(ctx, formGroup, labelModel);
             formGroup.appendFeedback(ctx.createFeedbackCompactPanel("feedback"));
-            formGroup.add(new ClassAttributeModifier() {
+            formGroup.add(new ClassAttributeModifier()
+            {
                 @Override
                 protected Set<String> update(Set<String> oldClasses) {
                     if (model.getObject().getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION) != null) {
@@ -125,8 +157,17 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
                 }
             });
             input.add(DisabledClassBehavior.getInstance());
-
             configureAjaxListeners(ctx, model, label, input);
+
+            model.getObject().getDocument().getInstanceListeners().add(SInstanceEventType.VALUE_CHANGED, new ISInstanceListener() {
+                @Override
+                public void onInstanceEvent(SInstanceEvent evt) {
+                    if(evt.getSource() == model.getObject()){
+                        input.modelChanged();
+                    }
+                }
+            });
+
         } else {
             input = appendReadOnlyInput(ctx, formGroup, labelModel);
         }
@@ -134,6 +175,12 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
         if ((input instanceof LabeledWebMarkupContainer) && (((LabeledWebMarkupContainer) input).getLabel() == null)) {
             ((LabeledWebMarkupContainer) input).setLabel(labelModel);
         }
+    }
+
+    private boolean isRenderDisabledAsOnlyText(WicketBuildContext ctx) {
+        boolean disabled = !ctx.getCurrentInstance().asAtr().isEnabled();
+        boolean hintDisabledAsTextOnly = ctx.getHint(DISABLED_AS_TEXT_ONLY);
+        return disabled && hintDisabledAsTextOnly;
     }
 
     /**
@@ -178,7 +225,7 @@ public abstract class AbstractControlsFieldComponentMapper implements IWicketCom
 
     protected FormComponent<?>[] findAjaxComponents(Component input) {
         if (input instanceof FormComponent) {
-            return new FormComponent[]{(FormComponent<?>) input};
+            return new FormComponent[] { (FormComponent<?>) input };
         } else if (input instanceof MarkupContainer) {
             List<FormComponent<?>> formComponents = new ArrayList<>();
             ((MarkupContainer) input).visitChildren((component, iVisit) -> {

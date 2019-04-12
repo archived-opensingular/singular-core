@@ -314,6 +314,14 @@ button {
   right: 4px;
   position: absolute; }
 
+.annotation-d-flex {
+  display: -ms-flexbox !important;
+  display: flex !important; }
+
+.annotation-flex-grow-1 {
+  -ms-flex-positive: 1 !important;
+  flex-grow: 1 !important; }
+
 /***
 Page Header
 ***/
@@ -2356,9 +2364,7 @@ Theme Panel
   color: rgba(74, 74, 74, 0.7); }
 
 .list-detail-input .table thead tr th {
-  color: rgba(74, 74, 74, 0.7);
-  position: static !important;
-  /*This config is for correct the display in firefox*/ }
+  color: rgba(74, 74, 74, 0.7); }
 
 .list-table-input {
   margin-bottom: 15px; }
@@ -3122,7 +3128,8 @@ h4 + .decorator-actions.align-right {
 .annotation-icon {
   display: inline;
   vertical-align: middle;
-  float: right; }
+  float: right;
+  margin-left: 8px; }
 
 .labelBar {
   display: block;
@@ -3171,9 +3178,6 @@ div.checker.disabled span.checked:hover {
 .annotation-toggle-container .annotation-text {
   overflow-y: auto;
   max-height: 130px; }
-
-.annotation-toggle-container {
-  margin-left: 8px; }
 
 .ms-elem-selectable span {
   margin-right: -10px !important; }

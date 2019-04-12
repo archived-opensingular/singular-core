@@ -151,6 +151,7 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
     }
 
     @Nullable
+    @SuppressWarnings("rawtypes")
     private static SType<?> extractListType(@Nonnull SType<?> listCandidate) {
         return ((STypeList) listCandidate).elementsType;
     }
@@ -223,7 +224,7 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
         return this;
     }
 
-    public <T extends Enum<T>> SType selectionOfEnum(Class<T> enumType) {
+    public <T extends Enum<T>> SType<?> selectionOfEnum(Class<T> enumType) {
         this.selectionOf(Enum.class)
                 .id(Enum::name)
                 .display(Enum::toString)

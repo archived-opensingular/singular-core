@@ -40,8 +40,11 @@ public abstract class SingularButton extends AjaxButton {
         super.onSubmit(target, form);
 
         //HACK: a solução que eu preferia usar faria o onSubmit() final, mas daí quebraria a compatibilidade. Discutir.
-        if (isShouldProcessFormSubmitWithoutValidation())
-            WicketFormProcessing.onFormSubmit(form, target, getCurrentInstance(), false);
+        if (isShouldProcessFormSubmitWithoutValidation()) {
+            if (getCurrentInstance().getObject() != null) {
+                WicketFormProcessing.onFormSubmit(form, target, getCurrentInstance(), false);
+            }
+        }
     }
 
     protected boolean isShouldProcessFormSubmitWithoutValidation() {

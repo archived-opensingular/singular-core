@@ -30,11 +30,17 @@ public final class FormatUtil {
     }
 
     public static String dateToDefaultTimestampString(Date date) {
+        if(date != null) {
         return DateFormatUtil.dateToDefaultTimestampString(date);
+        }
+        return null;
     }
 
     public static String dateToDefaultDateString(Date date) {
-        return DateFormatUtil.dateToDefaultDateString(date);
+        if(date != null) {
+            return DateFormatUtil.dateToDefaultDateString(date);
+        }
+        return null;
     }
 
     public static StringBuilder appendSeconds(StringBuilder time, long seconds) {

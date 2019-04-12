@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 (function($){
-console.log('3');
 
 $(function () {
     "use strict";

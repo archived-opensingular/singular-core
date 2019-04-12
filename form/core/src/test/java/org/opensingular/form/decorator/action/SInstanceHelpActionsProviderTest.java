@@ -18,18 +18,21 @@
 
 package org.opensingular.form.decorator.action;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.TestCaseForm;
+import org.opensingular.form.calculation.CalculationContext;
+import org.opensingular.form.calculation.SimpleValueCalculation;
 import org.opensingular.form.type.core.STypeString;
 
-import com.google.common.collect.Lists;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @RunWith(Parameterized.class)
 public class SInstanceHelpActionsProviderTest extends TestCaseForm {
@@ -67,4 +70,30 @@ public class SInstanceHelpActionsProviderTest extends TestCaseForm {
         assertNotNull(helpAction.getPreview());
     }
 
+    @Test
+    public void testCalculation() {
+
+        SInstance instance = super.createSerializableTestInstance(STypeString.class);
+
+        Iterable<SInstanceAction> preHelp = new SInstanceHelpActionsProvider().getActions(new MockSInstanceActionCapable(), instance);
+        assertFalse(preHelp.iterator().hasNext());
+
+        instance.asAtr().help(new SimpleValueCalculation<String>() {
+            @Nullable
+            @Override
+            public String calculate(@Nonnull CalculationContext context) {
+                return "HELP!!!";
+            }
+        });
+
+        Iterable<SInstanceAction> postHelp = new SInstanceHelpActionsProvider().getActions(new MockSInstanceActionCapable(), instance);
+        assertTrue(postHelp.iterator().hasNext());
+
+        List<SInstanceAction> actions = Lists.newArrayList(postHelp);
+        assertEquals(1, actions.size());
+
+        SInstanceAction helpAction = actions.get(0);
+
+        assertNotNull(helpAction.getPreview());
+    }
 }

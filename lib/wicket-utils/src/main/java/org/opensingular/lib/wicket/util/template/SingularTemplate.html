@@ -16,9 +16,7 @@
   ~ limitations under the License.
   -->
 
-<!--[if IE 8]><html lang="en" class="ie8 no-js" xmlns:wicket="http://wicket.apache.org"><![endif]-->
-<!--[if IE 9]><html lang="en" class="ie9 no-js" xmlns:wicket="http://wicket.apache.org"><![endif]-->
-<!--[if !IE]><!--><html lang="en" class="no-js" xmlns:wicket="http://wicket.apache.org"><!--<![endif]-->
+<html lang="en" class="no-js" xmlns:wicket="http://wicket.apache.org">
 
 <head>
     <meta charset="utf-8"/>
@@ -31,7 +29,16 @@
     <meta content="" name="description"/>
     <meta content="" name="author"/>
     <script type="text/javascript" src="/singular-static/resources/singular/plugins/jquery.min.js"></script>
+    <script type="text/javascript" src="/singular-static/resources/singular/plugins/jquery-migrate.min.js"></script>
     <link wicket:id="favicon" rel="shortcut icon"/>
+    <script type="text/javascript">
+        var enableAJAXPageBlock = true;
+    </script>
+</head>
+
+<body class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo page-md page-footer-fixed">
+    <wicket:child/>
+    <wicket:container wicket:id="javascript-container"/>
     <style type="text/css">
         div.blocking_overlay {
             position: fixed;
@@ -44,17 +51,5 @@
             background: #fff no-repeat center center;
         }
     </style>
-
-    <script type="text/javascript">
-        var enableAJAXPageBlock = true;
-    </script>
-</head>
-
-<body class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo page-md page-footer-fixed">
-<wicket:child/>
-<wicket:container wicket:id="javascript-container"/>
 </body>
-
-<!--[if IE 8]> </html> <![endif]-->
-<!--[if IE 9]> </html> <![endif]-->
-<!--[if !IE]> <!--> </html> <!--<![endif]-->
+</html>

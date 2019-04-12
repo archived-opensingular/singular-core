@@ -47,6 +47,10 @@ public class TablePopulator {
         return last;
     }
 
+    public InfoCell setValue(Column column, Object value) {
+        return setValue(column.getIndex(), value);
+    }
+
     public InfoCell setValue(int pos, Object value) {
         return setValue(cells.get(cells.size() - 1), pos, value);
     }
