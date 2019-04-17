@@ -1435,13 +1435,13 @@ Page content
   float: left;
   padding: 5px 0 10px 0; }
   .page-head .page-title > h1 {
-    color: #697882;
+    color: #353535;
     font-size: 22px;
     font-weight: 400;
     margin: 0;
     padding: 0; }
     .page-head .page-title > h1 > small {
-      color: #9eacb4;
+      color: #686868;
       font-size: 13px;
       font-weight: 400; }
 
@@ -2226,9 +2226,9 @@ Theme Panel
     clear: both; }
 
 .list-detail-input .table {
-  color: #a4a4a4; }
+  color: #686868; }
   .list-detail-input .table tr:hover {
-    color: #4a4a4a; }
+    color: #353535; }
   .list-detail-input .table td {
     border-bottom: 1px solid #dfdfdf; }
   .list-detail-input .table thead tr th {
@@ -2449,14 +2449,14 @@ Theme Panel
   text-transform: uppercase; }
   .worklist th a {
     font-size: 12px;
-    color: rgba(74, 74, 74, 0.7);
+    color: #424242;
     font-weight: 600; }
     .worklist th a:hover {
       color: #4d4d4d;
       text-decoration: none; }
   .worklist th span {
     font-size: 12px;
-    color: rgba(74, 74, 74, 0.7);
+    color: #424242;
     font-weight: 600; }
 
 .worklist tbody tr:hover {
@@ -2464,9 +2464,9 @@ Theme Panel
   background-color: #f2f2f2; }
 
 .worklist tr {
-  color: #acb1c2; }
+  color: #686868; }
   .worklist tr:first-child td {
-    border-top: 1px solid #acb1c2 !important; }
+    border-top: 1px solid #3c3c3c !important; }
   .worklist tr td {
     border: 0 !important; }
 
