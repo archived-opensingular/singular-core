@@ -80,9 +80,8 @@ public class AtrBasic extends STranslatorForAttribute {
      * @return this AtrBasic with ATR_LABEL.
      */
     public AtrBasic labelWithHTML(String value) {
-        label(value);
-        setAttributeValue(SPackageBasic.ATR_ENABLE_HTML_IN_LABEL, Boolean.TRUE);
-        return this;
+        this.label(value);
+        return this.enableLabelWithHTML();
     }
 
     /**
@@ -103,7 +102,16 @@ public class AtrBasic extends STranslatorForAttribute {
      * @return this AtrBasic with ATR_LABEL.
      */
     public AtrBasic labelWithHTML(SimpleValueCalculation<String> valueCalculation) {
-        label(valueCalculation);
+        this.label(valueCalculation);
+        return this.enableLabelWithHTML();
+    }
+
+    /**
+     * Enables the current type's label attributes with HTML support.
+     *
+     * @return this AtrBasic with ATR_LABEL.
+     */
+    public AtrBasic enableLabelWithHTML() {
         setAttributeValue(SPackageBasic.ATR_ENABLE_HTML_IN_LABEL, Boolean.TRUE);
         return this;
     }
