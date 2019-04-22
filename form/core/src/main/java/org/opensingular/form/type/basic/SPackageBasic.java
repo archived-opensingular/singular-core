@@ -202,6 +202,7 @@ public class SPackageBasic extends SPackage {
         pb.getAttribute(ATR_HELP).asAtr().label("Texto Ajuda");
         pb.getAttribute(ATR_MINIMUM_SIZE).asAtr().label("Tamanho Mínimo Lista");
         pb.getAttribute(ATR_MAXIMUM_SIZE).asAtr().label("Tamanho Máximo Lista");
+        pb.getAttribute(ATR_ALLOWED_FILE_TYPES).asAtr().label("Tipos de anexo permitido");
         //@formatter:on
 
     }
