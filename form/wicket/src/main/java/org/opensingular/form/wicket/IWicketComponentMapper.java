@@ -108,6 +108,7 @@ public interface IWicketComponentMapper extends Serializable {
         BSLabel label = new BSLabel("label", labelModel);
         label.add(DisabledClassBehavior.getInstance());
         label.setVisible(!ctx.getHint(NO_DECORATION));
+        label.setEscapeModelStrings(!ctx.getCurrentInstance().asAtr().isEnabledHTMLInLabel());
         label.add($b.onConfigure(c -> {
             if (ctx.getHint(HIDE_LABEL) || StringUtils.isEmpty(labelModel.getObject())) {
                 c.setVisible(false);

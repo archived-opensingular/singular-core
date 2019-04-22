@@ -119,6 +119,7 @@ public class FileUploadListPanel extends Panel implements Loggable {
         downloader = new DownloadSupportedBehavior(model);
 
         Label label = new Label("uploadLabel", $m.get(() -> ctx.getCurrentInstance().asAtr().getLabel()));
+        label.setEscapeModelStrings(!ctx.getCurrentInstance().asAtr().isEnabledHTMLInLabel());
         label.add($b.visibleIfModelObject(StringUtils::isNotEmpty));
 
         BSContainer<?> sInstanceActionsContainer = new BSContainer<>("sInstanceActionsContainer");
