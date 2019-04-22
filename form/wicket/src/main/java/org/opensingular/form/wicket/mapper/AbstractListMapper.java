@@ -17,6 +17,7 @@
 package org.opensingular.form.wicket.mapper;
 
 import org.apache.commons.collections.Factory;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -25,13 +26,17 @@ import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
+import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.view.list.AbstractSViewListWithControls;
 import org.opensingular.form.wicket.IWicketComponentMapper;
 import org.opensingular.form.wicket.WicketBuildContext;
+import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
 import org.opensingular.form.wicket.feedback.SValidationFeedbackPanel;
 import org.opensingular.form.wicket.mapper.buttons.AddButton;
+import org.opensingular.form.wicket.model.AttributeModel;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSLabel;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 import org.opensingular.lib.wicket.util.util.Shortcuts;
 
@@ -105,5 +110,19 @@ public abstract class AbstractListMapper implements IWicketComponentMapper {
                 list.addNew();
             }
         }
+    }
+
+    @Override
+    public BSLabel createLabel(WicketBuildContext ctx) {
+        final AttributeModel<String> labelModel = new AttributeModel<>(ctx.getModel(), SPackageBasic.ATR_LABEL);
+        BSLabel label = new BSLabel("label", labelModel);
+        label.add(DisabledClassBehavior.getInstance());
+        label.setVisible(!ctx.getHint(NO_DECORATION));
+        label.add(Shortcuts.$b.onConfigure(c -> {
+            if (ctx.getHint(HIDE_LABEL) || StringUtils.isEmpty(labelModel.getObject())) {
+                c.setVisible(false);
+            }
+        }));
+        return label;
     }
 }
