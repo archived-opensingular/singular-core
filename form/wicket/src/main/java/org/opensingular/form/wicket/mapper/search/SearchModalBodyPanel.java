@@ -29,6 +29,7 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.form.SIComposite;
@@ -53,6 +54,7 @@ import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.util.Loggable;
+import org.opensingular.lib.wicket.util.datatable.BSDataTable;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 import org.opensingular.lib.wicket.util.datatable.IBSAction;
@@ -86,6 +88,8 @@ class SearchModalBodyPanel extends Panel implements Loggable {
     private SingularFormPanel innerSingularFormPanel;
     private DataTableFilter   dataTableFilter;
     private MarkupContainer   resultTable;
+
+    private IModel<Object> selected;
 
     SearchModalBodyPanel(String id, WicketBuildContext ctx, IConsumer<AjaxRequestTarget> selectCallback) {
         super(id);
@@ -204,6 +208,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         builder.appendActionColumn(Model.of(), (actionColumn) -> actionColumn
                 .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(DefaultIcons.ARROW_RIGHT)).titleFunction(m -> "Selecionar"),
                         (IBSAction<Object>) (target, model) -> {
+                            SearchModalBodyPanel.this.selected = model;
                             SInstanceConverter converter = getInstance().asAtrProvider().getConverter();
                             if (converter == null && !(getInstance() instanceof SIComposite || getInstance() instanceof SIList)) {
                                 converter = new SimpleSInstanceConverter<>();
@@ -214,7 +219,21 @@ class SearchModalBodyPanel extends Panel implements Loggable {
                             selectCallback.accept(target);
                         }));
 
-        return builder.build(RESULT_TABLE_ID);
+
+        return builder.build(RESULT_TABLE_ID)
+                .setOnNewRowItem(i -> i.add(getSelectedRowBehavior()));
+    }
+
+    private Behavior getSelectedRowBehavior() {
+        return new Behavior() {
+            @Override
+            public void onConfigure(Component component) {
+                super.onConfigure(component);
+                if (component.getDefaultModel().equals(selected)) {
+                    component.add($b.classAppender(" selected-item "));
+                }
+            }
+        };
     }
 
     private void configureColumns(BSDataTableBuilder<Object, ?, ?> builder, Column column) {

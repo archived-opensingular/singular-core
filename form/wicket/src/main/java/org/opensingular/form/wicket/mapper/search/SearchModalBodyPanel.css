@@ -1,3 +1,7 @@
 td.column-clicked {
     cursor: pointer;
 }
+
+tr.selected-item {
+    background-color: #c7cacc !important;
+}
