@@ -28,4 +28,8 @@ public interface FilteredProvider<R extends Serializable> extends Provider<R, SI
         /*Método para ser sobrescrito para implementar um possível update das instancias.*/
     }
 
+    @Override
+    default boolean enabledDanglingValue() {
+        return false;
+    }
 }

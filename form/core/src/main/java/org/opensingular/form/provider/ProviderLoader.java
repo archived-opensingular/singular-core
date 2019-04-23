@@ -46,7 +46,7 @@ public class ProviderLoader {
         final Provider           provider = instance.asAtrProvider().getProvider();
         final List<Serializable> values   = new ArrayList<>();
 
-        if (provider != null) {
+        if (provider != null && provider.enabledDanglingValue()) {
             final List<Serializable> result = provider.load(providerContext);
             if (result != null) {
                 values.addAll(result);
