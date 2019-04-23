@@ -24,4 +24,8 @@ public interface FilteredProvider<R extends Serializable> extends Provider<R, SI
 
     void configureProvider(Config cfg);
 
+    default void updateInstance(SInstance instanceParent, SInstance instanceFilter) {
+        /*Método para ser sobrescrito para implementar um possível update das instancias.*/
+    }
+
 }

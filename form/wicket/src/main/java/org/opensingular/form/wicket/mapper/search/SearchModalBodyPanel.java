@@ -211,7 +211,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
                             if (converter != null) {
                                 converter.fillInstance(getInstance(), (Serializable) model.getObject());
                             }
-                            selectCallback.accept(target);
+                           selectCallback.accept(target);
                         }));
 
         return builder.build(RESULT_TABLE_ID);
@@ -257,6 +257,10 @@ class SearchModalBodyPanel extends Panel implements Loggable {
 
     private SInstance getInstance() {
         return ctx.getModel().getObject();
+    }
+
+    SInstance getFilterInstance() {
+        return innerSingularFormPanel.getInstance();
     }
 
     private static class DataTableFilter implements Serializable {
