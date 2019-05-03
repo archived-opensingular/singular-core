@@ -153,7 +153,7 @@ public class BooleanMapper implements IWicketComponentMapper, ISInstanceActionCa
                     ctx,
                     ctx.getContainer());
 
-            SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
+            SInstanceActionsPanel.addImportantAndSecondaryVerticalPanelTo(
                     column,
                     instanceActionsProviders,
                     model,
