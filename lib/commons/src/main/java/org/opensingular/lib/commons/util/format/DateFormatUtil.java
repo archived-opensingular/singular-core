@@ -7,19 +7,22 @@ import java.util.Objects;
 
 public class DateFormatUtil {
 
+    public static final SimpleDateFormat DATE_HOUR_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
+
     private DateFormatUtil() {
     }
 
     public static String dateToDefaultTimestampString(Date date) {
         if(date != null) {
-            return new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
+            return DATE_HOUR_FORMAT.format(date);
         }
         return null;
     }
 
     public static String dateToDefaultDateString(Date date) {
         if(date != null) {
-            return new SimpleDateFormat("dd/MM/yyyy").format(date);
+            return DATE_FORMAT.format(date);
         }
         return null;
     }
