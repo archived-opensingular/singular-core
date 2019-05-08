@@ -19,7 +19,6 @@
 package org.opensingular.form.wicket.mapper.selection;
 
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.form.Button;
 import org.junit.Test;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
@@ -117,7 +116,7 @@ public class STypeSelectItemModalSearchTest {
         tester.getDummyPage().setTypeBuilder(STypeSelectItemModalSearchTest::buildBaseType);
         tester.startDummyPage();
 
-        Button link = tester.getAssertionsForm().getSubComponentWithId(SearchModalPanel.MODAL_TRIGGER_ID).getTarget(Button.class);
+        AjaxLink link = tester.getAssertionsForm().getSubComponentWithId(SearchModalPanel.MODAL_TRIGGER_ID).getTarget(AjaxLink.class);
         tester.executeAjaxEvent(link, "click");
 
         AjaxLink ajaxLink = tester.getAssertionsForm().getSubComponentWithId("link").getTarget(AjaxLink.class);
