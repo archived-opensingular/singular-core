@@ -16,7 +16,6 @@
 
 package org.opensingular.form.view.list;
 
-import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.enums.ModalSize;
@@ -221,18 +220,6 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
 
     public SViewListByMasterDetail enableEdit() {
         return enableEdit(s -> true);
-    }
-
-    /**
-     * This method will verify if have any action button visible.
-     *
-     * @param object The list of all rows in the table.
-     * @return True if have any button, false for not.
-     */
-    public boolean haveAnyActionButton(SIList<SInstance> object) {
-        return object.stream().anyMatch(s -> getButtonsConfig().isDeleteEnabled(s)
-                || getButtonsConfig().isEditEnabled(s)
-                || getButtonsConfig().isViewEnabled(s));
     }
 
     /**

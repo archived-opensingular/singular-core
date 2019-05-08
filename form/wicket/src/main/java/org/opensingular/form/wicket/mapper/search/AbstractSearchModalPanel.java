@@ -16,9 +16,8 @@
 
 package org.opensingular.form.wicket.mapper.search;
 
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.opensingular.form.SIComposite;
@@ -72,8 +71,8 @@ public abstract class AbstractSearchModalPanel extends Panel {
     protected void onInitialize() {
         super.onInitialize();
         buildAndAppendModalToRootContainer();
-        valueField = new TextField<>(VALUE_FIELD_ID, valueModel);
-        add(valueField, buildModelTrigger());
+        add(valueField());
+        add(modalTrigger());
     }
 
     protected abstract void buildAndAppendModalToRootContainer();
@@ -84,22 +83,22 @@ public abstract class AbstractSearchModalPanel extends Panel {
         return ctx;
     }
 
-    private Button buildModelTrigger() {
-        final Button modalTrigger = new Button(MODAL_TRIGGER_ID);
-        modalTrigger.add(new AjaxEventBehavior("click") {
+    private TextField<String> valueField() {
+       return valueField = new TextField<>(VALUE_FIELD_ID, valueModel);
+    }
+
+    private AjaxLink<Void> modalTrigger() {
+        return new AjaxLink<Void>(MODAL_TRIGGER_ID){
             @Override
-            protected void onEvent(AjaxRequestTarget target) {
-                target.add(ctx.getExternalContainer());
+            public void onClick(AjaxRequestTarget target) {
                 getModal().show(target);
             }
-        });
-        return modalTrigger;
+        };
     }
 
     protected void accept(AjaxRequestTarget target) {
         getModal().hide(target);
         target.add(valueField);
-        valueField.getBehaviors(AjaxUpdateInputBehavior.class)
-                .forEach(ajax -> ajax.onUpdate(target));
+        valueField.getBehaviors(AjaxUpdateInputBehavior.class).forEach(ajax -> ajax.onUpdate(target));
     }
 }

@@ -74,6 +74,17 @@ public class AtrBasic extends STranslatorForAttribute {
     }
 
     /**
+     * Defines the label attributes of the current type with HTML support.
+     *
+     * @param value The String of the label.
+     * @return this AtrBasic with ATR_LABEL.
+     */
+    public AtrBasic labelWithHTML(String value) {
+        this.label(value);
+        return this.enableLabelWithHTML();
+    }
+
+    /**
      * Defines the label attribute of the current type.
      *
      * @param valueCalculation The SimpleValueCalculation of the label.
@@ -81,6 +92,27 @@ public class AtrBasic extends STranslatorForAttribute {
      */
     public AtrBasic label(SimpleValueCalculation<String> valueCalculation) {
         setAttributeCalculation(SPackageBasic.ATR_LABEL, valueCalculation);
+        return this;
+    }
+
+    /**
+     * Defines the label attributes of the current type with HTML support.
+     *
+     * @param valueCalculation The SimpleValueCalculation of the label.
+     * @return this AtrBasic with ATR_LABEL.
+     */
+    public AtrBasic labelWithHTML(SimpleValueCalculation<String> valueCalculation) {
+        this.label(valueCalculation);
+        return this.enableLabelWithHTML();
+    }
+
+    /**
+     * Enables the current type's label attributes with HTML support.
+     *
+     * @return this AtrBasic with ATR_LABEL.
+     */
+    public AtrBasic enableLabelWithHTML() {
+        setAttributeValue(SPackageBasic.ATR_ENABLE_HTML_IN_LABEL, Boolean.TRUE);
         return this;
     }
 
@@ -99,6 +131,15 @@ public class AtrBasic extends STranslatorForAttribute {
      */
     public String getLabel() {
         return getAttributeValue(SPackageBasic.ATR_LABEL);
+    }
+
+    /**
+     * Returns if the current type's label has HTML support.
+     *
+     * @return The current type's ATR_ENABLE_HTML_IN_LABEL value.
+     */
+    public Boolean isEnabledHTMLInLabel() {
+        return getAttributeValue(SPackageBasic.ATR_ENABLE_HTML_IN_LABEL);
     }
 
     /**

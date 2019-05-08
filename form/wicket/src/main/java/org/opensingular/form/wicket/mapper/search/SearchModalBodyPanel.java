@@ -20,7 +20,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -28,8 +28,8 @@ import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.form.SIComposite;
@@ -54,6 +54,7 @@ import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.util.Loggable;
+import org.opensingular.lib.wicket.util.datatable.BSDataTable;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 import org.opensingular.lib.wicket.util.datatable.IBSAction;
@@ -67,11 +68,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Iterator;
-import java.util.Optional;
-
 import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 
@@ -79,19 +75,21 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 class SearchModalBodyPanel extends Panel implements Loggable {
 
     private static final String FILTER_BUTTON_ID = "filterButton";
-    private static final String FORM_PANEL_ID = "formPanel";
-    private static final String RESULT_TABLE_ID = "resultTable";
-    public static final String FILTRAR = "Filtrar";
+    private static final String FORM_PANEL_ID    = "formPanel";
+    private static final String RESULT_TABLE_ID  = "resultTable";
+    public static final  String FILTRAR          = "Filtrar";
 
-    private final WicketBuildContext ctx;
+    private final WicketBuildContext          ctx;
     private final ISupplier<SViewSearchModal> viewSupplier;
 
     @SuppressWarnings("squid:S1068")
     private final IConsumer<AjaxRequestTarget> selectCallback;
 
     private SingularFormPanel innerSingularFormPanel;
-    private DataTableFilter dataTableFilter;
-    private MarkupContainer resultTable;
+    private DataTableFilter   dataTableFilter;
+    private MarkupContainer   resultTable;
+
+    private IModel<Object> selected;
 
     SearchModalBodyPanel(String id, WicketBuildContext ctx, IConsumer<AjaxRequestTarget> selectCallback) {
         super(id);
@@ -115,7 +113,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
     protected void onInitialize() {
         super.onInitialize();
 
-        final AjaxButton filterButton;
+        final Component filterButton;
         dataTableFilter = new DataTableFilter();
         innerSingularFormPanel = buildInnerSingularFormPanel();
         filterButton = buildFilterButton();
@@ -157,24 +155,19 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         return (FilteredPagedProvider) provider;
     }
 
-    private AjaxButton buildFilterButton() {
-        AjaxButton ajaxButton = new AjaxButton(FILTER_BUTTON_ID) {
+    private Component buildFilterButton() {
+        return new AjaxLink<Void>(FILTER_BUTTON_ID) {
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                super.onSubmit(target, form);
-
+            public void onClick(AjaxRequestTarget target) {
                 SInstance source = innerSingularFormPanel.getInstance();
-                SInstance copy   = source.getDocument().getDocumentFactoryRef().get().createInstance(source.getDocument().getRootRefType().orElseThrow(() -> new SingularFormException("Null rootRefType")), false);
+                SInstance copy = source.getDocument().getDocumentFactoryRef().get()
+                        .createInstance(source.getDocument().getRootRefType().orElseThrow(() -> new SingularFormException("Null rootRefType")), false);
                 Value.copyValues(source, copy);
                 dataTableFilter.setFilter(copy);
-
                 resultTable.setVisible(true);
                 target.add(resultTable);
             }
-        };
-        String buttonLabel = viewSupplier.get().getButtonLabel();
-        ajaxButton.add(new Label("label", Optional.ofNullable(buttonLabel).orElse(FILTRAR)));
-        return ajaxButton;
+        }.add(new Label("label", Optional.ofNullable(viewSupplier.get().getButtonLabel()).orElse(FILTRAR)));
     }
 
     private WebMarkupContainer buildResultTable(Config config) {
@@ -215,6 +208,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         builder.appendActionColumn(Model.of(), (actionColumn) -> actionColumn
                 .appendAction(new BSActionPanel.ActionConfig<>().iconeModel(Model.of(DefaultIcons.ARROW_RIGHT)).titleFunction(m -> "Selecionar"),
                         (IBSAction<Object>) (target, model) -> {
+                            SearchModalBodyPanel.this.selected = model;
                             SInstanceConverter converter = getInstance().asAtrProvider().getConverter();
                             if (converter == null && !(getInstance() instanceof SIComposite || getInstance() instanceof SIList)) {
                                 converter = new SimpleSInstanceConverter<>();
@@ -222,10 +216,24 @@ class SearchModalBodyPanel extends Panel implements Loggable {
                             if (converter != null) {
                                 converter.fillInstance(getInstance(), (Serializable) model.getObject());
                             }
-                            selectCallback.accept(target);
+                           selectCallback.accept(target);
                         }));
 
-        return builder.build(RESULT_TABLE_ID);
+
+        return builder.build(RESULT_TABLE_ID)
+                .setOnNewRowItem(i -> i.add(getSelectedRowBehavior()));
+    }
+
+    private Behavior getSelectedRowBehavior() {
+        return new Behavior() {
+            @Override
+            public void onConfigure(Component component) {
+                super.onConfigure(component);
+                if (component.getDefaultModel().equals(selected)) {
+                    component.add($b.classAppender(" selected-item "));
+                }
+            }
+        };
     }
 
     private void configureColumns(BSDataTableBuilder<Object, ?, ?> builder, Column column) {
@@ -270,12 +278,16 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         return ctx.getModel().getObject();
     }
 
+    SInstance getFilterInstance() {
+        return innerSingularFormPanel.getInstance();
+    }
+
     private static class DataTableFilter implements Serializable {
 
-        private boolean   firstFilter = true; //This represent's the creation of the table.
-        private long      size        = 0L; //The size of the elements of the table.
-        private ArrayList elements    = new ArrayList(); //All the elements of the table. THIS IS A ArrayList FOR Serializable.
-        private ISInstanceAwareModel<SInstance> instanceModel  = new SInstanceRootModel<>();
+        private boolean                         firstFilter   = true; //This represent's the creation of the table.
+        private long                            size          = 0L; //The size of the elements of the table.
+        private ArrayList                       elements      = new ArrayList(); //All the elements of the table. THIS IS A ArrayList FOR Serializable.
+        private ISInstanceAwareModel<SInstance> instanceModel = new SInstanceRootModel<>();
 
         public long getSize() {
             return size;

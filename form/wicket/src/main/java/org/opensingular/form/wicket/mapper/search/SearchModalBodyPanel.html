@@ -18,17 +18,18 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <body>
 <wicket:panel>
-
-    <div>
-        <div wicket:id="formPanel"/>
-    </div>
-    <div align="right">
-        <button type="button" wicket:id="filterButton" class="btn">
-            <wicket:container wicket:id="label"></wicket:container>
-        </button>
+    <div class="box-advanced-filter">
+        <div>
+            <div wicket:id="formPanel"/>
+        </div>
+        <div align="right">
+            <a type="button" wicket:id="filterButton" class="btn">
+                <i class="fa fa-search"></i>
+                <wicket:container wicket:id="label"></wicket:container>
+            </a>
+        </div>
     </div>
     <table wicket:id="resultTable"/>
-
 </wicket:panel>
 </body>
 </html>
