@@ -45,33 +45,41 @@ import javax.annotation.Nonnull;
 public class SPackageBootstrap extends SPackage {
 
     public static final int MAX_COL_PREFERENCE = 12;
-    
+
     //@formatter:off
-    public static final AtrRef<STypeInteger, SIInteger, Integer> ATR_COL_PREFERENCE    = new AtrRef<>(SPackageBootstrap.class, "larguraColuna"  , STypeInteger.class, SIInteger.class, Integer.class);
+    public static final AtrRef<STypeInteger, SIInteger, Integer> ATR_COL_PREFERENCE    = new AtrRef<>(SPackageBootstrap.class, "larguraColuna", STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer> ATR_COL_XS_PREFERENCE = new AtrRef<>(SPackageBootstrap.class, "larguraColunaXS", STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer> ATR_COL_SM_PREFERENCE = new AtrRef<>(SPackageBootstrap.class, "larguraColunaSM", STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer> ATR_COL_MD_PREFERENCE = new AtrRef<>(SPackageBootstrap.class, "larguraColunaMD", STypeInteger.class, SIInteger.class, Integer.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer> ATR_COL_LG_PREFERENCE = new AtrRef<>(SPackageBootstrap.class, "larguraColunaLG", STypeInteger.class, SIInteger.class, Integer.class);
-    public static final AtrRef<STypeBoolean, SIBoolean, Boolean> ATR_COL_ON_NEW_ROW    = new AtrRef<>(SPackageBootstrap.class, "newRow"         , STypeBoolean.class, SIBoolean.class, Boolean.class);
+    public static final AtrRef<STypeBoolean, SIBoolean, Boolean> ATR_COL_ON_NEW_ROW    = new AtrRef<>(SPackageBootstrap.class, "newRow", STypeBoolean.class, SIBoolean.class, Boolean.class);
     //@formatter:on
 
     @Override
     protected void onLoadPackage(@Nonnull PackageBuilder pb) {
         addAtrColumnPreference(pb, ATR_COL_PREFERENCE, "Largura preferencial")
-//            .help("Valor entre <b>1 e 12</b> ou em branco")
+                .help("Valor entre <b>1 e 12</b> ou em branco")
                 .maxLength(2);
-        addAtrColumnPreference(pb, ATR_COL_XS_PREFERENCE, "Largura preferencial XS");
-        addAtrColumnPreference(pb, ATR_COL_SM_PREFERENCE, "Largura preferencial SM");
-        addAtrColumnPreference(pb, ATR_COL_MD_PREFERENCE, "Largura preferencial MD");
-        addAtrColumnPreference(pb, ATR_COL_LG_PREFERENCE, "Largura preferencial LG");
+        addAtrColumnPreference(pb, ATR_COL_XS_PREFERENCE, "Largura preferencial XS")
+                .help("Valor entre <b>1 e 12</b> ou em branco")
+                .maxLength(2);
+        addAtrColumnPreference(pb, ATR_COL_SM_PREFERENCE, "Largura preferencial SM")
+                .help("Valor entre <b>1 e 12</b> ou em branco")
+                .maxLength(2);
+        addAtrColumnPreference(pb, ATR_COL_MD_PREFERENCE, "Largura preferencial MD")
+                .help("Valor entre <b>1 e 12</b> ou em branco")
+                .maxLength(2);
+        addAtrColumnPreference(pb, ATR_COL_LG_PREFERENCE, "Largura preferencial LG")
+                .help("Valor entre <b>1 e 12</b> ou em branco")
+                .maxLength(2);
 
         pb.createAttributeIntoType(SType.class, ATR_COL_ON_NEW_ROW).asAtr().label("Exibir em Nova Linha");
 
         final SimpleValueCalculationInstanceOptional<Integer> calcsForSingle = SimpleValueCalculationInstanceOptional.nil(Integer.class)
-            .appendOnView(SViewSelectionByRadio.class, SPackageBootstrap.MAX_COL_PREFERENCE)
-            .appendOnView(SViewSelectionBySelect.class, 6)
-            .appendOnView(SViewAutoComplete.class, 6)
-            .appendOnView(SViewSearchModal.class, 6);
+                .appendOnView(SViewSelectionByRadio.class, SPackageBootstrap.MAX_COL_PREFERENCE)
+                .appendOnView(SViewSelectionBySelect.class, 6)
+                .appendOnView(SViewAutoComplete.class, 6)
+                .appendOnView(SViewSearchModal.class, 6);
 
         SimpleValueCalculationInstanceOptional<Integer> calcForSingleDefault2 = calcsForSingle.orElse(2);
         SimpleValueCalculationInstanceOptional<Integer> calcForSingleDefault3 = calcsForSingle.orElse(3);
@@ -79,21 +87,21 @@ public class SPackageBootstrap extends SPackage {
         SimpleValueCalculationInstanceOptional<Integer> calcForSingleDefault6 = calcsForSingle.orElse(6);
 
         SimpleValueCalculationInstanceOptional<Integer> calcsForMultiple = SimpleValueCalculationInstanceOptional.nil(Integer.class)
-            .appendOnView(SMultiSelectionByPicklistView.class, SPackageBootstrap.MAX_COL_PREFERENCE)
-            .appendOnView(SMultiSelectionByCheckboxView.class, 4)
-            .appendOnView(SMultiSelectionBySelectView.class, 4)
-            .orElse(MAX_COL_PREFERENCE);
+                .appendOnView(SMultiSelectionByPicklistView.class, SPackageBootstrap.MAX_COL_PREFERENCE)
+                .appendOnView(SMultiSelectionByCheckboxView.class, 4)
+                .appendOnView(SMultiSelectionBySelectView.class, 4)
+                .orElse(MAX_COL_PREFERENCE);
 
         pb.getType(STypeList.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcsForMultiple);
 
         pb.getType(STypeComposite.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcsForSingle
-            .prependOnView(SViewAttachmentList.class, MAX_COL_PREFERENCE)
-            .orElse(MAX_COL_PREFERENCE));
+                .prependOnView(SViewAttachmentList.class, MAX_COL_PREFERENCE)
+                .orElse(MAX_COL_PREFERENCE));
 
         pb.getType(STypeSimple.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault4);
 
         pb.getType(STypeString.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault6
-            .prependOnView(SViewTextArea.class, SPackageBootstrap.MAX_COL_PREFERENCE));
+                .prependOnView(SViewTextArea.class, SPackageBootstrap.MAX_COL_PREFERENCE));
 
         pb.getType(STypeDecimal.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault3);
         pb.getType(STypeInteger.class).setAttributeCalculationInstanceOptional(ATR_COL_PREFERENCE, calcForSingleDefault3);
