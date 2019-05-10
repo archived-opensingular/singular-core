@@ -17,11 +17,6 @@
 package org.opensingular.form.persistence.dao;
 
 import org.apache.commons.lang3.StringUtils;
-import org.opensingular.lib.commons.util.FormatUtil;
-import org.springframework.jdbc.support.JdbcUtils;
-
-import java.text.MessageFormat;
-import java.util.regex.Pattern;
 
 
 /**
@@ -123,7 +118,7 @@ public class IndexedDataQueryBuilder {
         String leftSubQuery = "  LEFT JOIN (SELECT " +
                 " CACHE_VALOR.CO_VERSAO_FORMULARIO as co_versao_formulario, " +
                 " CACHE_CAMPO.CO_TIPO_FORMULARIO              as co_tipo_formulario, " +
-                " COALESCE(cast(CACHE_VALOR.DS_VALOR as char), cast(CACHE_VALOR.NU_VALOR as char),  cast(CACHE_VALOR.DT_VALOR as char)) as ds_valor " +
+                " COALESCE(cast(CACHE_VALOR.DS_VALOR as varchar), cast(CACHE_VALOR.NU_VALOR as varchar),  cast(CACHE_VALOR.DT_VALOR as varchar)) as ds_valor " +
                 " FROM " + schema + ".TB_CACHE_CAMPO CACHE_CAMPO " +
                 " INNER JOIN DBSINGULAR.TB_CACHE_VALOR CACHE_VALOR " +
                 "                 on CACHE_VALOR.CO_CACHE_CAMPO = CACHE_CAMPO.CO_CACHE_CAMPO " +
