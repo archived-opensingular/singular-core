@@ -86,6 +86,7 @@ public abstract class ChosenMultiSelectField<T> extends GenericPanel<T> {
         config.put("placeholder_text_multiple", emptyLabel);
         config.put("placeholder_text_single", emptyLabel);
         config.put("hide_results_on_select", false);
+        config.put("search_contains", true);
         config.put("width", "100%");
         return String.format("$('#%s').chosen(%s);", choiceField.getMarkupId(), config.toString());
     }
