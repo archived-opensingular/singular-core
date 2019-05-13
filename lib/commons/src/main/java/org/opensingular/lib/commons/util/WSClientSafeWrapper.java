@@ -66,9 +66,9 @@ public class WSClientSafeWrapper {
                     Callable<Object> task = () -> method.invoke(ref, args);
                     Future<Object> future = executor.submit(task);
                     try {
-                        return future.get(45, TimeUnit.SECONDS);
+                        return future.get(30, TimeUnit.MINUTES);
                     } catch (TimeoutException ex) {
-                        log.error("WEB-SERVICE NÃO RESPONDEU A TEMPO (45 segundos)");
+                        log.error("WEB-SERVICE NÃO RESPONDEU A TEMPO (30 minutos)");
                         throw WSConnectionException.rethrow(humanName, ex);
                     } finally {
                         future.cancel(true);
