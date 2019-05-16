@@ -68,10 +68,12 @@ public abstract class SInstances {
     @SuppressWarnings("unchecked")
     public static <I extends SInstance, R> Optional<R> visit(SInstance rootInstance, IVisitFilter filter, IVisitor<I, R> visitor) {
         final Visit<R> visit = new Visit<>(null);
-        visitor.onInstance((I) rootInstance, visit);
-        if (visit.dontGoDeeper || visit.stopped)
-            return Optional.ofNullable(visit.result);
+        if (filter.visitObject(rootInstance)) {
+            visitor.onInstance((I) rootInstance, visit);
+            if (visit.dontGoDeeper || visit.stopped)
+                return Optional.ofNullable(visit.result);
 
+        }
         internalVisitChildren(rootInstance, visitor, filter, visit);
         return Optional.ofNullable(visit.result);
     }
@@ -542,11 +544,11 @@ public abstract class SInstances {
             if (object instanceof SInstance) {
                 SInstance ins = (SInstance) object;
                 if (type.isAssignableFrom(ins.getType().getClass())) {
-                    return false;
+                    return true;
                 }
             }
 
-            return true;
+            return false;
         }
 
         @Override
