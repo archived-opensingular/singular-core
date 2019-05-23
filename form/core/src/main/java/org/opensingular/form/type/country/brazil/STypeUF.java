@@ -16,6 +16,7 @@
 
 package org.opensingular.form.type.country.brazil;
 
+import org.opensingular.form.ICompositeSimpleType;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInfoType;
 import org.opensingular.form.STypeComposite;
@@ -25,7 +26,7 @@ import org.opensingular.form.type.generic.STGenericComposite;
 import org.opensingular.lib.commons.util.Loggable;
 
 @SInfoType(name = "UnidadeFederacao", spackage = SPackageCountryBrazil.class)
-public class STypeUF extends STGenericComposite<SIUF> implements Loggable {
+public class STypeUF extends STGenericComposite<SIUF> implements ICompositeSimpleType, Loggable {
 
     public STypeString sigla;
     public STypeString nome;

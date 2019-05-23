@@ -16,17 +16,19 @@
 
 package org.opensingular.form.decorator.action;
 
-import static org.apache.commons.lang3.StringUtils.*;
+import org.opensingular.form.SIComposite;
+import org.opensingular.form.SIList;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SType;
+import org.opensingular.form.STypeComposite;
+import org.opensingular.form.type.basic.AtrBasic;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.opensingular.form.SIComposite;
-import org.opensingular.form.SIList;
-import org.opensingular.form.SInstance;
-import org.opensingular.form.STypeComposite;
-import org.opensingular.form.type.basic.AtrBasic;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Provider para a ação de exibição do Help do campo.
@@ -49,7 +51,12 @@ public class SInstanceHelpActionsProvider implements ISInstanceActionsProvider {
         final AtrBasic atr;
         if ((instance.getElementsType() instanceof STypeComposite<?>) && isNotBlank(field)) {
             STypeComposite<?> compositeType = (STypeComposite<?>) instance.getElementsType();
-            atr = compositeType.getField(field).asAtr();
+            SType<?>          foundField    = compositeType.getField(field);
+            if (foundField != null) {
+                atr = foundField.asAtr();
+            } else {
+                atr = instance.getElementsType().asAtr();
+            }
         } else {
             atr = instance.getElementsType().asAtr();
         }
@@ -58,15 +65,15 @@ public class SInstanceHelpActionsProvider implements ISInstanceActionsProvider {
 
     private List<SInstanceAction> doHelpAction(String title, final String helpText) {
         return (isBlank(helpText))
-            ? Collections.emptyList()
-            : Arrays.asList(new SInstanceAction(SInstanceAction.ActionType.NORMAL)
+                ? Collections.emptyList()
+                : Arrays.asList(new SInstanceAction(SInstanceAction.ActionType.NORMAL)
                 .setIcon(SIcon.resolve("question"))
                 .setText("Ajuda")
                 .setPosition(Integer.MIN_VALUE)
                 .setImportant(true)
                 .setPreview(new SInstanceAction.Preview()
-                    .setTitle(title)
-                    .setMessage(helpText)
-                    .setFormat("HTML")));
+                        .setTitle(title)
+                        .setMessage(helpText)
+                        .setFormat("HTML")));
     }
 }
