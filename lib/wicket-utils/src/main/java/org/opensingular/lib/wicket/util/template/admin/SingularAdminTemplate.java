@@ -38,7 +38,11 @@ import org.opensingular.lib.wicket.util.template.SingularTemplate;
 import org.opensingular.lib.wicket.util.util.WicketUtils;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
@@ -95,7 +99,7 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
         pageHeader = getSingularAdminApp()
                 .map(app -> app.buildPageHeader("app-header", isWithMenu(), this))
                 .orElseThrow(this::makeNotSingularAppError);
-        pageBody.add(pageHeader);
+        pageBody.add(getPageHeader());
     }
 
     private void addPageMenu() {
@@ -204,6 +208,10 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
                 }
             });
         }
+    }
+
+    public MarkupContainer getPageHeader() {
+        return pageHeader;
     }
 
     protected List<String> getInitializerJavascripts() {
