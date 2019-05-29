@@ -54,7 +54,6 @@ import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.util.Loggable;
-import org.opensingular.lib.wicket.util.datatable.BSDataTable;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 import org.opensingular.lib.wicket.util.datatable.IBSAction;
@@ -74,10 +73,12 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 @SuppressWarnings("unchecked")
 class SearchModalBodyPanel extends Panel implements Loggable {
 
-    private static final String FILTER_BUTTON_ID = "filterButton";
-    private static final String FORM_PANEL_ID    = "formPanel";
-    private static final String RESULT_TABLE_ID  = "resultTable";
-    public static final  String FILTRAR          = "Filtrar";
+    private static final String FILTER_BUTTON_ID         = "filterButton";
+    private static final String REMOVE_ELEMENT_BUTTON_ID = "removeElementButton";
+    private static final String FORM_PANEL_ID            = "formPanel";
+    private static final String RESULT_TABLE_ID          = "resultTable";
+    public static final  String FILTRAR                  = "Filtrar";
+    public static final  String REMOVER                  = "Remover";
 
     private final WicketBuildContext          ctx;
     private final ISupplier<SViewSearchModal> viewSupplier;
@@ -117,6 +118,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         dataTableFilter = new DataTableFilter();
         innerSingularFormPanel = buildInnerSingularFormPanel();
         filterButton = buildFilterButton();
+        add(buildRemoveElement());
         resultTable = buildResultTable(getConfig());
         resultTable.add(new Behavior() {
             @Override
@@ -170,6 +172,19 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         }.add(new Label("label", Optional.ofNullable(viewSupplier.get().getButtonLabel()).orElse(FILTRAR)));
     }
 
+    private Component buildRemoveElement() {
+        return new AjaxLink<Void>(REMOVE_ELEMENT_BUTTON_ID) {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                innerSingularFormPanel.getInstance().clearInstance();
+                getInstance().clearInstance();
+                selected = new Model();
+                selectCallback.accept(target);
+            }
+        }.add(new Label("label", Optional.ofNullable(viewSupplier.get().getButtonLabel()).orElse(REMOVER)))
+                .setVisible(this.viewSupplier.get().isShowRemoveButton());
+    }
+
     private WebMarkupContainer buildResultTable(Config config) {
 
         final BSDataTableBuilder<Object, ?, ?> builder = new BSDataTableBuilder(new BaseDataProvider() {
@@ -216,7 +231,7 @@ class SearchModalBodyPanel extends Panel implements Loggable {
                             if (converter != null) {
                                 converter.fillInstance(getInstance(), (Serializable) model.getObject());
                             }
-                           selectCallback.accept(target);
+                            selectCallback.accept(target);
                         }));
 
 
