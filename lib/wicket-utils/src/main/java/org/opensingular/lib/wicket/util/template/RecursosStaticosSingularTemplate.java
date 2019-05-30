@@ -116,7 +116,8 @@ public class RecursosStaticosSingularTemplate {
                         "/singular-static/resources/singular/plugins/ckeditor/ckeditor.js",
                         "/singular-static/resources/singular/plugins/photoswipe/photoswipe.min.js",
                         "/singular-static/resources/singular/plugins/photoswipe/photoswipe-ui-default.min.js",
-                        "/singular-static/resources/singular/plugins/photoswipe/jquery-photoswipe.js"
+                        "/singular-static/resources/singular/plugins/photoswipe/jquery-photoswipe.js",
+                        "/singular-static/resources/singular/global/scripts/iframeResizer.contentWindow.min.js"
                 ).map(JavaScriptHeaderItem::forUrl)).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
     }
 }
