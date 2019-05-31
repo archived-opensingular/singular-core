@@ -62,6 +62,8 @@ public interface SingularProperties {
 
     String EMAIL_COD_MODULE = "singular.mail.module.cod";
 
+    String SINGULAR_MODULE_COD = "singular.module.cod";
+
 //    ParmDef<String> ADDRESS = new ParmDef<>("Asasd.ad.asda " , String.class, "dadad")
 
     static SingularProperties get() {
