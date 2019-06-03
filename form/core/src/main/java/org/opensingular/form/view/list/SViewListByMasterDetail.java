@@ -43,6 +43,8 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
     private String   enforcedValidationMessage;
     private boolean  enforceValidationOnAdd;
 
+    private boolean validateAllLineOnConfirmAndCancel = false;
+
     private long rowsPerPage = 10L;
 
     /**
@@ -263,5 +265,15 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
 
     public long getRowsPerPage() {
         return rowsPerPage;
+    }
+
+    public SViewListByMasterDetail setValidateAllLineOnConfirmAndCancel(boolean validateAllLineOnConfirmAndCancel) {
+        this.validateAllLineOnConfirmAndCancel = validateAllLineOnConfirmAndCancel;
+        return this;
+    }
+
+
+    public boolean isValidateAllLineOnConfirmAndCancel() {
+        return validateAllLineOnConfirmAndCancel;
     }
 }
