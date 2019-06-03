@@ -20,7 +20,7 @@ package org.opensingular.form.wicket.mapper.selection;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.TextField;
 import org.junit.Test;
 import org.opensingular.form.SInstance;
@@ -82,8 +82,8 @@ public class SearchModalMapperTest {
 
         tester.assertInvisible(dependentFieldComp.getPageRelativePath());
 
-        Button openModalButton = tester.getAssertionsForm()
-                .getSubComponentWithId(SearchModalPanel.MODAL_TRIGGER_ID).getTarget(Button.class);
+        AjaxLink openModalButton = tester.getAssertionsForm()
+                .getSubComponentWithId(SearchModalPanel.MODAL_TRIGGER_ID).getTarget(AjaxLink.class);
         tester.executeAjaxEvent(openModalButton, "click");
 
         AssertionsWComponentList links = tester.getAssertionsForm().getSubComponents(ActionAjaxLink.class);

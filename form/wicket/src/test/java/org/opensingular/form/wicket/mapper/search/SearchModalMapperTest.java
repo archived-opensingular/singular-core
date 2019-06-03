@@ -18,7 +18,7 @@
 
 package org.opensingular.form.wicket.mapper.search;
 
-import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.util.tester.TagTester;
 import org.junit.Assert;
 import org.junit.Before;
@@ -145,7 +145,7 @@ public class SearchModalMapperTest {
     private void openModal() {
         tester.executeAjaxEvent(tester.getAssertionsForm()
                 .getSubComponentWithId(SearchModalPanel.MODAL_TRIGGER_ID)
-                .getTarget(Button.class), "click");
+                .getTarget(AjaxLink.class), "click");
     }
 
     @Test

@@ -56,7 +56,7 @@ public final class SingularPropertiesImpl implements SingularProperties {
                 }
                 return confDir;
             } else if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn("      Não exite o diretório {}", confDir);
+                LOGGER.warn("      Não existe o diretório {}", confDir);
             }
         }
         return null;
