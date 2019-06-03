@@ -18,4 +18,14 @@ package org.opensingular.form.view;
 
 
 public class SViewAttachmentList extends SView {
+    private boolean showPageBlockWhileUploading;
+
+    public boolean isShowPageBlockWhileUploading() {
+        return showPageBlockWhileUploading;
+    }
+
+    public SViewAttachmentList setShowPageBlockWhileUploading(boolean showPageBlockWhileUploading) {
+        this.showPageBlockWhileUploading = showPageBlockWhileUploading;
+        return this;
+    }
 }
