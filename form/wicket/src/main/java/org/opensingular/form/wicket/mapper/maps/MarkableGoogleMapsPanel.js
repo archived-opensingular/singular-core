@@ -65,7 +65,10 @@
             var isKmlUrlVisible = metadados.isKmlUrlVisible;
             configureMapMultipleMarkers(metadados.idLat, metadados.idLng, tableContainerElement, zoomElement, metadados.idMap, metadados.idClearButton, JSON.parse(metadados.readOnly), metadados.callbackUrl, urlKml, isKmlUrlVisible);
         } else {
-            document.getElementById(metadados.idMap).style.visibility = "hidden";
+            var mapElem = document.getElementById(metadados.idMap);
+            if (mapElem) {
+                mapElem.style.visibility = "hidden";
+            }
         }
     }
 
