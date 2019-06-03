@@ -43,6 +43,8 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
     private String   enforcedValidationMessage;
     private boolean  enforceValidationOnAdd;
 
+    private long rowsPerPage = 10L;
+
     /**
      * This method will disable the edition of the element's of the Master detail.
      *
@@ -252,5 +254,14 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
 
     public boolean isEnforceValidationOnAdd() {
         return enforceValidationOnAdd;
+    }
+
+    public SViewListByMasterDetail setRowsPerPage(long rowsPerPage) {
+        this.rowsPerPage = rowsPerPage;
+        return this;
+    }
+
+    public long getRowsPerPage() {
+        return rowsPerPage;
     }
 }

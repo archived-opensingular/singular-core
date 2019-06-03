@@ -87,7 +87,7 @@ class MasterDetailModal extends BFModalWindow {
                 boolean mustHide        = true;
                 boolean mustProcessForm = viewMode.isEdition();
                 if (mustProcessForm && viewSupplier.get().isEnforceValidationOnAdd()) {
-                    boolean invalid = WicketFormProcessing.validateErrors(MasterDetailModal.this.getBodyContainer(), target, MasterDetailModal.this.getModel().getObject(), false);
+                    boolean invalid = WicketFormProcessing.validateErrors(MasterDetailModal.this.getBodyContainer(), target,currentInstance.getObject(), false);
                     mustHide = !invalid;
                     mustProcessForm = !invalid;
                     if (invalid && viewSupplier.get().getEnforcedValidationMessage() != null) {
@@ -96,7 +96,7 @@ class MasterDetailModal extends BFModalWindow {
                 }
                 if (mustProcessForm) {
                     WicketFormProcessing.processDependentTypes(this.getPage(), target, model.getObject());
-                    WicketFormProcessing.onFormSubmit((WebMarkupContainer) table, target, MasterDetailModal.this.getModel(), true);
+                    WicketFormProcessing.onFormSubmit((WebMarkupContainer) table, target, currentInstance, true);
                 }
                 if (mustHide) {
                     MasterDetailModal.this.hide(target);

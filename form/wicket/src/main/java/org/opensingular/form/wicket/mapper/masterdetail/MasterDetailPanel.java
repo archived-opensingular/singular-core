@@ -185,6 +185,8 @@ public class MasterDetailPanel extends Panel {
         final BSDataTable<SInstance, ?>                dataTable;
 
         configureColumns(viewSupplier.get().getColumns(), builder, modal, ctx, ctx.getViewMode(), viewSupplier);
+        builder.setRowsPerPage(viewSupplier.get().getRowsPerPage());
+
         dataTable = builder.build(id);
 
         dataTable.setOnNewRowItem((IConsumer<Item<SInstance>>) rowItem -> {
