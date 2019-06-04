@@ -7,22 +7,16 @@ import java.util.Objects;
 
 public class DateFormatUtil {
 
-    public static final SimpleDateFormat DATE_HOUR_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
-
-    private DateFormatUtil() {
-    }
-
     public static String dateToDefaultTimestampString(Date date) {
         if(date != null) {
-            return DATE_HOUR_FORMAT.format(date);
+            return getDateHourFormat().format(date);
         }
         return null;
     }
 
     public static String dateToDefaultDateString(Date date) {
         if(date != null) {
-            return DATE_FORMAT.format(date);
+            return getDateFormat().format(date);
         }
         return null;
     }
@@ -86,5 +80,14 @@ public class DateFormatUtil {
         SimpleDateFormat sdf = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", Locale.getDefault());
         return Objects.nonNull(data) ? sdf.format(data) : null;
     }
+
+    private static SimpleDateFormat getDateHourFormat(){
+        return new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    }
+
+    private static SimpleDateFormat getDateFormat(){
+        return new SimpleDateFormat("dd/MM/yyyy");
+    }
+
 
 }
