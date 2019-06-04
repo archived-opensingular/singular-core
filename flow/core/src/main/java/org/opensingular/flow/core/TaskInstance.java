@@ -404,4 +404,17 @@ public class TaskInstance implements Serializable {
     public boolean isAllocated() {
         return getAllocatedUser() != null;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TaskInstance)) return false;
+        TaskInstance that = (TaskInstance) o;
+        return Objects.equals(taskCod, that.taskCod);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(taskCod);
+    }
 }
