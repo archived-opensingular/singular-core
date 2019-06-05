@@ -19,7 +19,6 @@ package org.opensingular.form.report;
 import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
@@ -49,9 +48,9 @@ public abstract class ReportPage extends SingularAdminTemplate {
     public static final String MESSAGE        = "message";
 
     private MetronicMenu   menu;
-    private Component      body;
+    protected Component      body;
     private String         identity;
-    private SingularReport activeReport;
+    protected SingularReport activeReport;
 
     public ReportPage(PageParameters parameters) {
         super(parameters);
@@ -75,7 +74,7 @@ public abstract class ReportPage extends SingularAdminTemplate {
         addBody();
     }
 
-    private void addBody() {
+    protected void addBody() {
         if (activeReport != null) {
             body = new SingularReportPanel("body", activeReport);
         }

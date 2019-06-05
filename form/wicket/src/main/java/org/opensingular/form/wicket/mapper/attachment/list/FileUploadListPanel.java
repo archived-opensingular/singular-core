@@ -41,6 +41,8 @@ import org.opensingular.form.servlet.MimeTypes;
 import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.view.SView;
+import org.opensingular.form.view.SViewAttachmentList;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.behavior.DisabledClassBehavior;
 import org.opensingular.form.wicket.enums.ViewMode;
@@ -119,6 +121,7 @@ public class FileUploadListPanel extends Panel implements Loggable {
         downloader = new DownloadSupportedBehavior(model);
 
         Label label = new Label("uploadLabel", $m.get(() -> ctx.getCurrentInstance().asAtr().getLabel()));
+        label.setEscapeModelStrings(!ctx.getCurrentInstance().asAtr().isEnabledHTMLInLabel());
         label.add($b.visibleIfModelObject(StringUtils::isNotEmpty));
 
         BSContainer<?> sInstanceActionsContainer = new BSContainer<>("sInstanceActionsContainer");
@@ -207,7 +210,12 @@ public class FileUploadListPanel extends Panel implements Loggable {
         PackageTextTemplate fileUploadJSTemplate = new PackageTextTemplate(FileUploadListPanel.class, "FileUploadListPanel.js");
         Map<String, String> params               = new HashMap<>();
         params.put("maxChunkSize", SingularProperties.get(SINGULAR_FILEUPLOAD_MAXCHUNKSIZE, DEFAULT_FILE_UPLOAD_MAX_CHUNK_SIZE));
-
+        SView view = ctx.getView();
+        if (view instanceof SViewAttachmentList && ((SViewAttachmentList) view).isShowPageBlockWhileUploading()) {
+            params.put("showPageBlock", "true");
+        } else {
+            params.put("showPageBlock", "false");
+        }
         response.render(OnDomReadyHeaderItem.forScript(fileUploadJSTemplate.interpolate(params).asString()));
         response.render(OnDomReadyHeaderItem.forScript(generateInitJS()));
     }
@@ -227,8 +235,8 @@ public class FileUploadListPanel extends Panel implements Loggable {
                     .put("add_url", adder.getUrl())
                     .put("remove_url", remover.getUrl())
                     .put("max_file_size", getMaxFileSize())
-                    .put("allowed_file_types", getAllowedTypes())
-                    .put("allowed_file_extensions", getAllowedExtensions())
+                    .put("allowed_file_types", JSONObject.wrap(getAllowedTypes()))
+                    .put("allowed_file_extensions", JSONObject.wrap(getAllowedExtensions()))
                     .toString(2) + "); "
                     + "\n });";
             //@formatter:on

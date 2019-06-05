@@ -70,7 +70,7 @@ public class AttachmentMapper extends AbstractControlsFieldComponentMapper {
             + "\n<div wicket:id='well'>"
             + "\n  <div stype='min-height: 20px; white-space: pre-wrap; word-wrap: break-word;'>"
             + "\n    <i class='fa fa-file'></i>"
-            + "\n    <a wicket:id='downloadLink'></a>"
+            + "\n    <a wicket:id='downloadLink' target='_blank'></a>"
             + "\n  </div>"
             + "\n</div>"
             + "\n";

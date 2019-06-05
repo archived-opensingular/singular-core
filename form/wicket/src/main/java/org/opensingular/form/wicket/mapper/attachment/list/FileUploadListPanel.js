@@ -147,6 +147,13 @@
                             params.allowed_file_types,
                             params.allowed_file_extensions)) {
                         data.submit();
+                        if(${showPageBlock}) {
+                            $('#blocking_overlay').css('opacity', '0.2').show();
+                            window.blocking_overlay_timeoutId = setTimeout(function () {
+                                $('#blocking_overlay').css('opacity', '0.5').show();
+                                App.startPageLoading({animate: true});
+                            }, 1200);
+                        }
                     }
 
                     return true;
@@ -213,6 +220,15 @@
                                     }
                                 }
                             );
+                        }
+                        if(${showPageBlock}) {
+                            var $blocking_overlay = $('#blocking_overlay');
+                            $blocking_overlay.hide();
+                            $blocking_overlay.css('opacity', '0.0');
+                            App.stopPageLoading();
+                            if (window.blocking_overlay_timeoutId) {
+                                clearTimeout(window.blocking_overlay_timeoutId);
+                            }
                         }
                     });
                 },

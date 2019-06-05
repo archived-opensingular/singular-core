@@ -28,7 +28,7 @@ import java.util.List;
 
 public class UploadResponseWriter implements Serializable {
 
-    public static final String APPLICATION_JSON = "application/json";
+    public static final String APPLICATION_JSON = "application/json;charset=utf-8";
 
     public void writeJsonObjectResponseTo(HttpServletResponse response, UploadResponseInfo uploadResponseInfo) {
         doWrite(response, uploadResponseInfo.toString());

@@ -29,6 +29,7 @@ public class SViewSearchModal extends SView implements ConfigurableModal<SViewSe
     private ModalSize size;
     private boolean enableRowClick;
     private String labelButton;
+    private boolean showRemoveButton;
 
     /**
      * Instantiates a new S view search modal.
@@ -122,6 +123,15 @@ public class SViewSearchModal extends SView implements ConfigurableModal<SViewSe
     public SViewSearchModal setLabelButton(String labelButton) {
         this.labelButton = labelButton;
         return this;
+    }
+
+    public SViewSearchModal withRemoveButton(boolean showRemoveButton) {
+        this.showRemoveButton = showRemoveButton;
+        return this;
+    }
+
+    public boolean isShowRemoveButton() {
+        return showRemoveButton;
     }
 }
 

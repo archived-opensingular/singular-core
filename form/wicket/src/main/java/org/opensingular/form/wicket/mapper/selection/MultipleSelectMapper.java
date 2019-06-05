@@ -53,6 +53,10 @@ public class MultipleSelectMapper extends AbstractControlsFieldComponentMapper {
         return new SListMultipleChoice(model.getObject().getName(), new MultipleSelectSInstanceAwareModel(model), valuesModel, renderer(model));
     }
 
+    protected ListMultipleChoice<?> retrieveChoices(String markupId, IModel<? extends SInstance> model, IModel<List<Serializable>> valuesModel) {
+        return new SListMultipleChoice(markupId, new MultipleSelectSInstanceAwareModel(model), valuesModel, this.renderer(model));
+    }
+
     protected IChoiceRenderer<Serializable> renderer(IModel<? extends SInstance> model) {
         return new SingularChoiceRenderer(model);
     }

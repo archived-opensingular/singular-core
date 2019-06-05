@@ -63,6 +63,27 @@ public interface StudioCRUDPermissionStrategy {
             return true;
         }
     };
+    StudioCRUDPermissionStrategy DISABLE_DELETE = new StudioCRUDPermissionStrategy() {
+        @Override
+        public boolean canCreate() {
+            return true;
+        }
+
+        @Override
+        public boolean canEdit() {
+            return true;
+        }
+
+        @Override
+        public boolean canRemove() {
+            return false;
+        }
+
+        @Override
+        public boolean canView() {
+            return true;
+        }
+    };
 
     boolean canCreate();
 
