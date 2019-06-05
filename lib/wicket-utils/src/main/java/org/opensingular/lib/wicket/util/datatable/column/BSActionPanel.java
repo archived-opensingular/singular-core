@@ -161,18 +161,18 @@ public class BSActionPanel<T> extends Panel {
 
     public static class ActionConfig<T> implements Serializable {
 
-        protected IModel<?> labelModel = $m.ofValue("");
-        protected IModel<Icon>   iconeModel;
-        protected IModel<String> iconeStyle;
-        protected IModel<String> iconeClass;
-        protected IModel<String> stripeModel;
-        protected IModel<String> styleClasses = $m.ofValue("btn btn-link btn-xs black md-skip");
-        protected IModel<String>               style;
-        protected IFunction<IModel<T>, String> titleFunction;
-        protected IFunction<IModel<T>, IModel<Icon>> iconFunction;
-        protected boolean withText = false;
+        protected IModel<?>                                       labelModel   = $m.ofValue("");
+        protected IModel<Icon>                                    iconeModel;
+        protected IModel<String>                                  iconeStyle;
+        protected IModel<String>                                  iconeClass;
+        protected IModel<String>                                  stripeModel;
+        protected IModel<String>                                  styleClasses = $m.ofValue("btn btn-link btn-xs black");
+        protected IModel<String>                                  style;
+        protected IFunction<IModel<T>, String>                    titleFunction;
+        protected IFunction<IModel<T>, IModel<Icon>>              iconFunction;
+        protected boolean                                         withText     = false;
         protected IBiFunction<String, IModel<T>, MarkupContainer> linkFactory;
-        protected IFunction<IModel<T>, Boolean> visibleFor = m -> Boolean.TRUE;
+        protected IFunction<IModel<T>, Boolean>                   visibleFor   = m -> Boolean.TRUE;
 
         public ActionConfig<T> labelModel(IModel<?> labelModel) {
             this.labelModel = labelModel;
