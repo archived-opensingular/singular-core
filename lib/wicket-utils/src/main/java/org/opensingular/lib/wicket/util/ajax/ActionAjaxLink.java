@@ -16,23 +16,13 @@
 
 package org.opensingular.lib.wicket.util.ajax;
 
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.model.IModel;
 
-import org.opensingular.lib.wicket.util.util.WicketEventUtils;
-
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public abstract class ActionAjaxLink<T> extends AjaxLink<T> {
-    
-    private final static Logger LOGGER = Logger.getLogger(ActionAjaxLink.class.getName());
-    
     public ActionAjaxLink(String id, IModel<T> model) {
         super(id, model);
     }
@@ -45,13 +35,7 @@ public abstract class ActionAjaxLink<T> extends AjaxLink<T> {
 
     @Override
     public void onClick(AjaxRequestTarget target) {
-        try {
-            onAction(target);
-        } catch (RuntimeException ex) {
-            LOGGER.log(Level.INFO, "Ajax error", ex);
-            WicketEventUtils.addErrorMessage(this, null, $m.ofValue(ex.getMessage())); // TODO substituir por esquema de exceção de negócio
-            WicketEventUtils.sendAjaxErrorEvent(this, target);
-        }
+        onAction(target);
     }
 
     @Override
