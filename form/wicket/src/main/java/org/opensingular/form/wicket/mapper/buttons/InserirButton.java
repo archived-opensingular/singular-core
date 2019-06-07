@@ -35,6 +35,7 @@ public class InserirButton extends ActionAjaxButton {
     protected void onAction(AjaxRequestTarget target, Form<?> form) {
         elementsView.insertItem(target, item.getIndex());
         target.focusComponent(this);
+        target.add(form);
     }
 
     public InserirButton createInserirButton(BSContainer<?> cell) {
