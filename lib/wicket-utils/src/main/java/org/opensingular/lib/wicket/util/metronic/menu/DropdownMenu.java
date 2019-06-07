@@ -23,13 +23,14 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.Model;
-
 import org.opensingular.lib.commons.lambda.IFunction;
+import org.opensingular.lib.commons.ui.Icon;
+import org.opensingular.lib.wicket.util.util.Shortcuts;
 
 public class DropdownMenu extends Panel {
-
-    private String fixedLabel = "Novo";
-    private RepeatingView menus = new RepeatingView("menus");
+    private Icon          icon;
+    private String        fixedLabel = "Novo";
+    private RepeatingView menus      = new RepeatingView("menus");
 
     public DropdownMenu(String id) {
         super(id);
@@ -40,12 +41,27 @@ public class DropdownMenu extends Panel {
         this.fixedLabel = fixedLabel;
     }
 
+    public DropdownMenu(String id, String fixedLabel, Icon icon) {
+        this(id, fixedLabel);
+        this.icon = icon;
+    }
+
     @Override
     protected void onInitialize() {
         super.onInitialize();
+        add(buildIcon());
         add(buildLabel());
         add(menus);
+    }
 
+    private WebMarkupContainer buildIcon() {
+        WebMarkupContainer iconContainer = new WebMarkupContainer("icon");
+        if (icon != null) {
+            iconContainer.add(Shortcuts.$b.classAppender(icon.getCssClass()));
+        } else {
+            iconContainer.setVisible(false);
+        }
+        return iconContainer;
     }
 
     private Component buildLabel() {
@@ -63,18 +79,13 @@ public class DropdownMenu extends Panel {
         menus.add(item);
     }
 
-//    @Override
-//    public boolean isVisible() {
-//        return menus.size() > 0;
-//    }
-
     public String getLabel() {
         return fixedLabel;
     }
-    
+
     @Override
     protected void onConfigure() {
-    	super.onConfigure();
+        super.onConfigure();
         menus.replaceWith((menus = new RepeatingView("menus")));
         this.setVisible(menus.size() > 0);
     }

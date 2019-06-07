@@ -16,6 +16,7 @@
 
 package org.opensingular.form.wicket.mapper.search;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -54,6 +55,7 @@ import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.util.Loggable;
+import org.opensingular.lib.wicket.util.datatable.BSDataTable;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 import org.opensingular.lib.wicket.util.datatable.IBSAction;
@@ -94,8 +96,8 @@ class SearchModalBodyPanel extends Panel implements Loggable {
 
     SearchModalBodyPanel(String id, WicketBuildContext ctx, IConsumer<AjaxRequestTarget> selectCallback) {
         super(id);
-        this.ctx = ctx;
-        this.viewSupplier = ctx.getViewSupplier(SViewSearchModal.class);
+        this.ctx            = ctx;
+        this.viewSupplier   = ctx.getViewSupplier(SViewSearchModal.class);
         this.selectCallback = selectCallback;
         validate();
     }
@@ -115,9 +117,9 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         super.onInitialize();
 
         final Component filterButton;
-        dataTableFilter = new DataTableFilter();
+        dataTableFilter        = new DataTableFilter();
         innerSingularFormPanel = buildInnerSingularFormPanel();
-        filterButton = buildFilterButton();
+        filterButton           = buildFilterButton();
         add(buildRemoveElement());
         resultTable = buildResultTable(getConfig());
         resultTable.add(new Behavior() {
@@ -234,6 +236,10 @@ class SearchModalBodyPanel extends Panel implements Loggable {
                             selectCallback.accept(target);
                         }));
 
+        final String noRecordsMessage = viewSupplier.get().getNoRecordsMessage();
+        if (StringUtils.isNotEmpty(noRecordsMessage)) {
+            builder.setNoRecordsMessage(Model.of(noRecordsMessage));
+        }
 
         return builder.build(RESULT_TABLE_ID)
                 .setOnNewRowItem(i -> i.add(getSelectedRowBehavior()));

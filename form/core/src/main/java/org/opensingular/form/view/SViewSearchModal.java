@@ -30,6 +30,7 @@ public class SViewSearchModal extends SView implements ConfigurableModal<SViewSe
     private boolean enableRowClick;
     private String labelButton;
     private boolean showRemoveButton;
+    private String noRecordsMessage;
 
     /**
      * Instantiates a new S view search modal.
@@ -132,6 +133,15 @@ public class SViewSearchModal extends SView implements ConfigurableModal<SViewSe
 
     public boolean isShowRemoveButton() {
         return showRemoveButton;
+    }
+
+    public SViewSearchModal setNoRecordsMessage(String noRecordsMessage) {
+        this.noRecordsMessage = noRecordsMessage;
+        return this;
+    }
+
+    public String getNoRecordsMessage() {
+        return noRecordsMessage;
     }
 }
 
