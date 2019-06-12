@@ -16,13 +16,14 @@
 
 package org.opensingular.lib.commons.util;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.opensingular.lib.commons.util.format.BooleanFormatUtil;
+import org.opensingular.lib.commons.util.format.DateFormatUtil;
+import org.opensingular.lib.commons.util.format.ListFormatUtil;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
+//TODO remover essa classe e criar um utilitario que tenha todas as implementações do formatters.
 public final class FormatUtil {
 
     private FormatUtil() {
@@ -30,98 +31,51 @@ public final class FormatUtil {
 
     public static String dateToDefaultTimestampString(Date date) {
         if(date != null) {
-        return new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
+        return DateFormatUtil.dateToDefaultTimestampString(date);
         }
         return null;
     }
 
     public static String dateToDefaultDateString(Date date) {
         if(date != null) {
-            return new SimpleDateFormat("dd/MM/yyyy").format(date);
+            return DateFormatUtil.dateToDefaultDateString(date);
         }
         return null;
     }
 
     public static StringBuilder appendSeconds(StringBuilder time, long seconds) {
-        if (seconds > 0) {
-            if (seconds < 60) {
-                time.append(seconds);
-            } else {
-                appendMinutes(time, seconds / 60);
-                time.append(seconds % 60);
-            }
-            time.append(" s ");
-        }
-        return time;
+        return DateFormatUtil.appendSeconds(time, seconds);
     }
 
     public static StringBuilder appendMinutes(StringBuilder time, long minutes) {
-        if (minutes > 0) {
-            if (minutes < 60) {
-                time.append(minutes);
-            } else {
-                appendHours(time, minutes / 60);
-                time.append(minutes % 60);
-            }
-            time.append(" min ");
-        }
-        return time;
+        return DateFormatUtil.appendMinutes(time, minutes);
     }
 
     public static StringBuilder appendHours(StringBuilder time, long hours) {
-        if (hours > 0) {
-            if (hours < 24) {
-                time.append(hours);
-            } else {
-                appendDays(time, hours / 24);
-                time.append(hours % 24);
-            }
-            time.append(" h ");
-        }
-        return time;
+        return DateFormatUtil.appendHours(time, hours);
     }
 
     public static StringBuilder appendDays(StringBuilder time, long days) {
-        if (days > 0) {
-            time.append(days).append(" d ");
-        }
-        return time;
+        return DateFormatUtil.appendDays(time, days);
     }
 
     public static String booleanDescription(Boolean value, String trueDescription, String falseDescription) {
-        return booleanDescription(value, trueDescription, falseDescription, "");
+        return BooleanFormatUtil.booleanDescription(value, trueDescription, falseDescription);
     }
 
     public static String booleanDescription(Boolean value, String trueDescription, String falseDescription, String nullDescription) {
-        if (value == null)
-            return nullDescription;
-        return (value.booleanValue()) ? trueDescription : falseDescription;
+        return BooleanFormatUtil.booleanDescription(value, trueDescription, falseDescription, nullDescription);
     }
 
     public static String dateMonthYearDescribe(Date date) {
-        if (date != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
-            String format = dateFormat.format(date);
-            return format.replaceFirst(" ", " de ");
-        }
-        return null;
-
+        return DateFormatUtil.dateMonthYearDescribe(date);
     }
 
     public static String formatListToString(List<String> listOfWords, String joiner, String lastJoiner, String lastCharacter) {
-        return formatListToString(listOfWords, joiner, lastJoiner).concat(lastCharacter);
+        return ListFormatUtil.formatListToString(listOfWords, joiner, lastJoiner, lastCharacter);
     }
 
     public static String formatListToString(List<String> listOfWords, String joiner, String lastJoiner) {
-        if (CollectionUtils.isNotEmpty(listOfWords)) {
-            if (listOfWords.size() == 1) {
-                return listOfWords.get(0);
-            }
-            int last = listOfWords.size() - 1;
-            return String.join(lastJoiner,
-                    String.join(joiner, listOfWords.subList(0, last)),
-                    listOfWords.get(last));
-        }
-        return "";
+        return ListFormatUtil.formatListToString(listOfWords, joiner, lastJoiner);
     }
 }

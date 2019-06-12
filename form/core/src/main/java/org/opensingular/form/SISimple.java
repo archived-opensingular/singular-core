@@ -16,7 +16,7 @@
 
 package org.opensingular.form;
 
-import com.sun.istack.internal.Nullable;
+import javax.annotation.Nullable;
 import org.opensingular.form.calculation.CalculationContext;
 import org.opensingular.form.calculation.CalculationContextInstanceOptional;
 import org.opensingular.form.calculation.SimpleValueCalculation;

@@ -68,6 +68,7 @@ public class SPackageBasic extends SPackage {
     public static final AtrRef<?, ?, Object>                                      ATR_DEFAULT_IF_NULL       = AtrRef.ofSelfReference(SPackageBasic.class, "defaultIfNull");
     public static final AtrRef<?, ?, Object>                                      ATR_INITIAL_VALUE         = AtrRef.ofSelfReference(SPackageBasic.class, "initialValue" );
     public static final AtrRef<STypeString, SIString, String>                     ATR_LABEL                 = new AtrRef<>(SPackageBasic.class, "label"                 , STypeString.class, SIString.class, String.class);
+    public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_ENABLE_HTML_IN_LABEL  = new AtrRef<>(SPackageBasic.class, "enableHTMLInLabel"            , STypeBoolean.class, SIBoolean.class, Boolean.class);
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_TRIM                  = new AtrRef<>(SPackageBasic.class, "trim"                  , STypeBoolean.class, SIBoolean.class, Boolean.class);
     public static final AtrRef<STypeFormula, SIComposite, Object>                 ATR_FORMULA               = new AtrRef<>(SPackageBasic.class, "formula"               , STypeFormula.class, SIComposite.class, Object.class);
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                  ATR_EMPTY_TO_NULL         = new AtrRef<>(SPackageBasic.class, "emptyToNull"           , STypeBoolean.class, SIBoolean.class, Boolean.class);
@@ -146,6 +147,7 @@ public class SPackageBasic extends SPackage {
 
         // Aplica os atributos ao tipos
         pb.createAttributeIntoType(SType.class, ATR_LABEL);
+        pb.createAttributeIntoType(SType.class, ATR_ENABLE_HTML_IN_LABEL);
         pb.createAttributeIntoType(SType.class, ATR_SUBTITLE);
         pb.createAttributeIntoType(SType.class, ATR_BASIC_MASK);
         pb.createAttributeIntoType(SType.class, ATR_REGEX_MASK);
@@ -186,6 +188,7 @@ public class SPackageBasic extends SPackage {
         // defina o meta dado do meta dado
         //@formatter:off
         pb.getAttribute(ATR_LABEL).asAtr().label("Label").maxLength(50);
+        pb.getAttribute(ATR_ENABLE_HTML_IN_LABEL).withDefaultValueIfNull(Boolean.FALSE).asAtr().label("Hablitar HTML no label");
         pb.getAttribute(ATR_SUBTITLE).asAtr().label("Sub Título").maxLength(50);
         pb.getAttribute(ATR_BASIC_MASK).asAtr().label("Basic mask").maxLength(20);
         pb.getAttribute(ATR_MAX_LENGTH).asAtr().label("Tamanho Máximo").maxLength(4);

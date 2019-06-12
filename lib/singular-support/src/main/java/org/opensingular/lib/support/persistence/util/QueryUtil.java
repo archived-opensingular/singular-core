@@ -17,6 +17,7 @@
 package org.opensingular.lib.support.persistence.util;
 
 import org.hibernate.query.Query;
+import org.hibernate.type.Type;
 
 import java.util.Collection;
 import java.util.Date;
@@ -49,5 +50,21 @@ public class QueryUtil {
         }
 
         return objectName;
+    }
+
+    public static void setParamOrNull(Query query, String name, Object[] filter, Type type) {
+        if (filter != null && filter.length > 0) {
+            query.setParameterList(name, filter, type);
+        } else {
+            query.setParameter(name, null, type);
+        }
+    }
+
+    public static void setParamOrNull(Query query, String name, Object filter, Type type) {
+        if (filter != null) {
+            query.setParameter(name, filter, type);
+        } else {
+            query.setParameter(name, null, type);
+        }
     }
 }

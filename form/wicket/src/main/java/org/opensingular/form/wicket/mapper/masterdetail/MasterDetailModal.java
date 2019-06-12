@@ -18,7 +18,6 @@ package org.opensingular.form.wicket.mapper.masterdetail;
 
 import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
@@ -71,24 +70,24 @@ class MasterDetailModal extends BFModalWindow {
                       BSContainer<?> containerExterno) {
         super(id, model, true, false);
 
-        this.listLabel = listLabel;
-        this.ctx = ctx;
-        this.table = ctx.getContainer();
-        this.viewMode = viewMode;
+        this.listLabel        = listLabel;
+        this.ctx              = ctx;
+        this.table            = ctx.getContainer();
+        this.viewMode         = viewMode;
         this.containerExterno = containerExterno;
-        this.viewSupplier = ctx.getViewSupplier(SViewListByMasterDetail.class);
+        this.viewSupplier     = ctx.getViewSupplier(SViewListByMasterDetail.class);
 
         setSize(BSModalBorder.Size.valueOf(viewSupplier.get().getModalSize()));
 
         actionLabel = $m.ofValue("");
-        addButton = new ActionAjaxButton("btn") {
+        addButton   = new ActionAjaxButton("btn") {
             @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 boolean mustHide        = true;
                 boolean mustProcessForm = viewMode.isEdition();
                 if (mustProcessForm && viewSupplier.get().isEnforceValidationOnAdd()) {
-                    boolean invalid = WicketFormProcessing.validateErrors(MasterDetailModal.this.getBodyContainer(), target, MasterDetailModal.this.getModel().getObject(), false);
-                    mustHide = !invalid;
+                    boolean invalid = WicketFormProcessing.validateErrors(MasterDetailModal.this.getBodyContainer(), target, currentInstance.getObject(), false);
+                    mustHide        = !invalid;
                     mustProcessForm = !invalid;
                     if (invalid && viewSupplier.get().getEnforcedValidationMessage() != null) {
                         new ToastrHelper(MasterDetailModal.this.getBodyContainer()).addToastrMessage(ToastrType.ERROR, viewSupplier.get().getEnforcedValidationMessage());
@@ -96,7 +95,11 @@ class MasterDetailModal extends BFModalWindow {
                 }
                 if (mustProcessForm) {
                     WicketFormProcessing.processDependentTypes(this.getPage(), target, model.getObject());
-                    WicketFormProcessing.onFormSubmit((WebMarkupContainer) table, target, MasterDetailModal.this.getModel(), true);
+                    if (viewSupplier.get().isValidateAllLineOnConfirmAndCancel()) {
+                        WicketFormProcessing.onFormSubmit((WebMarkupContainer) table, target, model, true);
+                    } else {
+                        WicketFormProcessing.onFormSubmit((WebMarkupContainer) table, target, currentInstance, true);
+                    }
                 }
                 if (mustHide) {
                     MasterDetailModal.this.hide(target);
@@ -113,9 +116,10 @@ class MasterDetailModal extends BFModalWindow {
                 @Override
                 protected void onAction(AjaxRequestTarget target) {
                     rollbackTheInstance(target);
-                    WicketFormProcessing.validateErrors(this.getParent(), target, model.getObject(), false);
+                    if (viewSupplier.get().isValidateAllLineOnConfirmAndCancel()) {
+                        WicketFormProcessing.validateErrors(this.getParent(), target, model.getObject(), false);
+                    }
                 }
-
             });
         }
 
@@ -154,7 +158,7 @@ class MasterDetailModal extends BFModalWindow {
 
     void showNew(AjaxRequestTarget target) {
         SIList<SInstance> list = getModelObject();
-        closeCallback = target1 -> revert();
+        closeCallback   = target1 -> revert();
         currentInstance = new SInstanceListItemModel<>(getModel(), list.indexOf(list.addNew()));
         actionLabel.setObject(viewSupplier.get().getNewActionLabel());
         MasterDetailModal.this.configureNewContent(actionLabel.getObject(), target, null);
@@ -170,7 +174,7 @@ class MasterDetailModal extends BFModalWindow {
      *                 If it's null, it will use a rule of view to get the viewMode.
      */
     void showExisting(AjaxRequestTarget target, IModel<SInstance> forEdit, WicketBuildContext ctx, @Nullable ViewMode viewMode) {
-        closeCallback = null;
+        closeCallback   = null;
         currentInstance = forEdit;
         String prefix;
         if (ctx.getViewMode().isEdition()) {

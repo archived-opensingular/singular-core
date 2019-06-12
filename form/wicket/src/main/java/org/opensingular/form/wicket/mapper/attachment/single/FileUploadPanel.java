@@ -248,9 +248,9 @@ public class FileUploadPanel extends Panel implements Loggable {
                     .put("download_url", getDownloaderUrl())
                     .put("add_url", getAdderUrl())
                     .put("max_file_size", getMaxFileSize())
-                    .put("allowed_file_types", getAllowedFileTypes())
+                    .put("allowed_file_types", JSONObject.wrap(getAllowedFileTypes()))
                     .put("preview_update_callback", previewCallBack.getCallbackUrl())
-                    .put("allowed_file_extensions", getAllowedExtensions())
+                    .put("allowed_file_extensions", JSONObject.wrap(getAllowedExtensions()))
                     .toString(2) + "); "
                     + "\n });";
             //@formatter:on

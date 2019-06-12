@@ -16,7 +16,6 @@
 
 package org.opensingular.form.view.list;
 
-import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
 import org.opensingular.form.enums.ModalSize;
@@ -43,6 +42,10 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
     private boolean  disableSort   = false;
     private String   enforcedValidationMessage;
     private boolean  enforceValidationOnAdd;
+
+    private boolean validateAllLineOnConfirmAndCancel = false;
+
+    private long rowsPerPage = 10L;
 
     /**
      * This method will disable the edition of the element's of the Master detail.
@@ -224,18 +227,6 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
     }
 
     /**
-     * This method will verify if have any action button visible.
-     *
-     * @param object The list of all rows in the table.
-     * @return True if have any button, false for not.
-     */
-    public boolean haveAnyActionButton(SIList<SInstance> object) {
-        return object.stream().anyMatch(s -> getButtonsConfig().isDeleteEnabled(s)
-                || getButtonsConfig().isEditEnabled(s)
-                || getButtonsConfig().isViewEnabled(s));
-    }
-
-    /**
      * If set, adding invalid elements is now allowed.
      * Element SInstance must be valid to be added to the corresponding SIList.
      *
@@ -265,5 +256,24 @@ public class SViewListByMasterDetail extends AbstractSViewListWithCustomColumns<
 
     public boolean isEnforceValidationOnAdd() {
         return enforceValidationOnAdd;
+    }
+
+    public SViewListByMasterDetail setRowsPerPage(long rowsPerPage) {
+        this.rowsPerPage = rowsPerPage;
+        return this;
+    }
+
+    public long getRowsPerPage() {
+        return rowsPerPage;
+    }
+
+    public SViewListByMasterDetail setValidateAllLineOnConfirmAndCancel(boolean validateAllLineOnConfirmAndCancel) {
+        this.validateAllLineOnConfirmAndCancel = validateAllLineOnConfirmAndCancel;
+        return this;
+    }
+
+
+    public boolean isValidateAllLineOnConfirmAndCancel() {
+        return validateAllLineOnConfirmAndCancel;
     }
 }

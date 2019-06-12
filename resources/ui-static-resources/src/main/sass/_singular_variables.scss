@@ -11,6 +11,10 @@ $color-success-green: #5AB879;
 $color-grey-01: darken(#FAFBFC, 5%);
 $color-grey-03: darken(#BBBFCD, 5%);
 
+$color-grey-04: darken(#757575, 5%);
+$color-grey-06: darken(#494949, 5%);
+$color-grey-08: darken(#424242, 5%);
+
 $color-grey-05: hsl(0, 0, 50%);
 $color-grey-07: hsl(0, 0, 75%);
 $color-grey-09: darken(#3B3F51, 5%);
@@ -43,21 +47,23 @@ $color-background-cancel-button: #EDEFF3; // altera a cor do botão para cancela
 
 //Form list tables
 
-$list-element-font-color: #a4a4a4; // altera a cor da fonte dos itens das tabelas do form
-$list-element-font-color-on-hover: #4a4a4a; // altera a cor da fonte ao passar o mouse sobre os itens da tabela do form
+$list-element-font-color: $color-grey-04; // altera a cor da fonte dos itens das tabelas do form
+$list-element-font-color-on-hover: $color-grey-08; // altera a cor da fonte ao passar o mouse sobre os itens da tabela do form
+$list-background-element-font-color-on-hover: $color-grey-01; // altera a cor do background ao passar o mouse sobre os itens da tabela do form
 $table-line-color: #dfdfdf; // altera a cor da linha das tabelas do form
 $table-head-font-color: rgba(74, 74, 74, 0.7); // altera cor da fonte da linha de titulo das tabelas do form
 $table-empty-message-font-color: rgba(74, 74, 74, 0.7); // altera a cor da fonte da mensagem de tabela vazia no form
 
 
+
 //Worklist table
 
-$worklist-table-head-font-color: rgba(74, 74, 74, 0.7); // altera a cor da fonte da linha de titulos da tabela de listagem
+$worklist-table-head-font-color: #424242; // altera a cor da fonte da linha de titulos da tabela de listagem
 $worklist-table-head-font-color-on-hover: rgba(77, 77, 77, 1); // altera a cor da fonte da linha de titulos da tabela de listagem ao passar o mouse
-$worklist-element-font-color: $color-grey-03; // altera a cor da fonte dos itens da tabela de listagem e do titulo da coluna "Ações"
+$worklist-element-font-color: $color-grey-04; // altera a cor da fonte dos itens da tabela de listagem e do titulo da coluna "Ações"
 $worklist-element-font-color-on-hover: rgba(102, 102, 102, 1); // altera a cor da fonte dos itens da tabela de listagem ao passar o mouse
 $worklist-element-bg-color-on-hover: rgba(242, 242, 242, 1); // altera a cor do fundo dos itens da tabela de listagem ao passar o mouse
-$worklist-table-line-color: $color-grey-03; // altera a cor da linha após o título da tabela de listagem
+$worklist-table-line-color: $color-grey-06; // altera a cor da linha após o título da tabela de listagem
 $worklist-action-btn-color: rgba(179, 179, 179, 1); // altera a cor dos botões dos itens da listagem
 $worklist-action-btn-color-on-hover: rgba(128, 128, 128, 1); // altera a cor dos botões dos itens da listagem ao passar o mouse
 

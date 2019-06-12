@@ -52,6 +52,9 @@ public class STypeAttachment extends STypeComposite<SIAttachment> implements ICo
         name = addFieldString(FIELD_NAME);
         hashSHA1 = addFieldString(FIELD_HASH_SHA1);
         fileSize = addFieldInteger(FIELD_FILE_SIZE);
+        name
+                .asAtr()
+                .maxLength(255);//TAMANHO MÁXIMO DE ARQUIVO NO WINDOWS NTFS
     }
 
 }
