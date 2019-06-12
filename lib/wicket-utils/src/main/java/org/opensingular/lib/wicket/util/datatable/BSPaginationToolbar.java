@@ -23,21 +23,27 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
+import java.util.HashMap;
+
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
 public class BSPaginationToolbar extends AbstractToolbar {
+    /**
+     * "Exibindo ${first} a ${last} de ${count} registros"
+     */
+    private static final String PAGINATION_MSG_TEMPLATE = "bspaginationtoolbar.navigation.template";
 
     private WebMarkupContainer paginator;
     private WebMarkupContainer itensPerPageSelector;
     private WebMarkupContainer countContainer;
-    private BSPaginationPanel pagination;
-    private IModel<String> counterLabelModel = new Model<>();
+    private BSPaginationPanel  pagination;
+    private IModel<String>     counterLabelModel = new Model<>();
 
     private Long initialRowsPerPage;
 
     public BSPaginationToolbar(DataTable<?, ?> table) {
         super(table);
-        paginator = new WebMarkupContainer("paginator");
+        paginator      = new WebMarkupContainer("paginator");
         countContainer = new WebMarkupContainer("countContainer");
         countContainer.add(new Label("countLabel", counterLabelModel));
         add(countContainer);
@@ -75,7 +81,14 @@ public class BSPaginationToolbar extends AbstractToolbar {
 
         countContainer.setVisible(toolbarVisible);
         if (countContainer.isVisible()) {
-            String messageCount = String.format("Exibindo %d a %d de %d registros", getNumberOfFirstElement(), getNumberOfLastElement(), getTable().getItemCount());
+            final HashMap<String, Object> map = new HashMap<>();
+            map.put("first", getNumberOfFirstElement());
+            map.put("last", getNumberOfLastElement());
+            map.put("count", getTable().getItemCount());
+
+            String messageCount = getString(PAGINATION_MSG_TEMPLATE, Model.of(map)
+                    , String.format("Exibindo %d a %d de %d registros", getNumberOfFirstElement(), getNumberOfLastElement(), getTable().getItemCount()));
+
             counterLabelModel.setObject(messageCount);
         }
         this.setVisible(toolbarVisible);
