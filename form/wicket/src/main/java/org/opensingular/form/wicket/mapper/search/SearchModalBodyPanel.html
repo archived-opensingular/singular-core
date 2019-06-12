@@ -18,6 +18,11 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <body>
 <wicket:panel>
+    <wicket:enclosure>
+        <div class="alert alert-warning">
+            <strong><i class="fa fa-warning"></i> Atenção!</strong> <wicket:container wicket:id="alertMessage"></wicket:container>
+        </div>
+    </wicket:enclosure>
     <div class="box-advanced-filter">
         <div>
             <div wicket:id="formPanel"/>

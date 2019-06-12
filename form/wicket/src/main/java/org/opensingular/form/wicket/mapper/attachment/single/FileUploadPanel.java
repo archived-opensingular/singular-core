@@ -228,6 +228,7 @@ public class FileUploadPanel extends Panel implements Loggable {
         super.renderHead(response);
         PackageTextTemplate fileUploadJSTemplate = new PackageTextTemplate(FileUploadPanel.class, "FileUploadPanel.js");
         fileUploadJSTemplate.setCharset(StandardCharsets.UTF_8);
+        fileUploadJSTemplate.setEncoding("UTF-8");
         Map<String, String> params = new HashMap<>();
         params.put("maxChunkSize", SingularProperties.get(SINGULAR_FILEUPLOAD_MAXCHUNKSIZE, DEFAULT_FILE_UPLOAD_MAX_CHUNK_SIZE));
 

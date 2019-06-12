@@ -31,6 +31,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.form.SIComposite;
@@ -53,9 +54,9 @@ import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.util.Loggable;
-import org.opensingular.lib.wicket.util.datatable.BSDataTable;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
 import org.opensingular.lib.wicket.util.datatable.BaseDataProvider;
 import org.opensingular.lib.wicket.util.datatable.IBSAction;
@@ -132,6 +133,23 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         add(innerSingularFormPanel);
         add(filterButton);
         add(resultTable);
+
+        add(new Label("alertMessage", new LoadableDetachableModel<String>() {
+            @Override
+            protected String load() {
+                IFunction<SInstance, String> msgProvider = viewSupplier.get().getAlertMessageProvider();
+                if (msgProvider != null) {
+                    return msgProvider.apply(getInstance());
+                }
+                return null;
+            }
+        }) {
+            @Override
+            public boolean isVisible() {
+                final Object modelObject = getDefaultModelObject();
+                return modelObject != null && StringUtils.isNotEmpty(getDefaultModel().toString());
+            }
+        });
 
         innerSingularFormPanel.add($b.onEnterDelegate(filterButton, SINGULAR_PROCESS_EVENT));
 
