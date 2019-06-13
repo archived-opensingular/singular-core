@@ -3118,7 +3118,6 @@ h4 + .decorator-actions.align-right {
 
 .decorator-actions.align-left {
   display: inline-block;
-  position: absolute;
   height: 100%;
   margin-left: 1em; }
 
