@@ -17,18 +17,27 @@
 package org.opensingular.form.wicket.mapper.composite;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.form.SIComposite;
-import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
+import org.opensingular.form.SingularFormException;
+import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.view.SViewByBlock;
 import org.opensingular.form.view.SViewCompositeModal;
 import org.opensingular.form.view.SViewTab;
+import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
+import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.component.SingularButton;
 import org.opensingular.form.wicket.enums.ViewMode;
+import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
@@ -42,6 +51,11 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 public class CompositeModalMapper extends DefaultCompositeMapper {
 
     private SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
+
+    @Override
+    public void addSInstanceActionsProvider(int sortPosition, ISInstanceActionsProvider provider) {
+        this.instanceActionsProviders.addSInstanceActionsProvider(sortPosition, provider);
+    }
 
     @Override
     protected ICompositeViewBuilder getViewBuilder(WicketBuildContext ctx) {
@@ -60,7 +74,10 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
             ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, Boolean.FALSE);
             final IModel<SIComposite> model = (IModel<SIComposite>) ctx.getModel();
 
-            final ViewMode            viewMode        = ctx.getViewMode();
+            final ViewMode viewMode = ctx.getViewMode();
+            if (!(ctx.getView() instanceof SViewCompositeModal)) {
+                throw new SingularFormException("CompositeModalMapper deve ser utilizado com SViewCompositeModal", ctx.getCurrentInstance());
+            }
             final SViewCompositeModal view            = (SViewCompositeModal) ctx.getView();
             final BSContainer<?>      currentExternal = new BSContainer<>("externalContainerAtual");
             final BSContainer<?>      currentSibling  = new BSContainer<>("externalContainerIrmao");
@@ -86,6 +103,8 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
                     "<label wicket:id=\"label\" class=\"control-label composite-modal-label\"></label>" +
                             "<a wicket:id=\"btn\" class=\"btn btn-add\"><wicket:container wicket:id=\"link-label\" /></a>" +
                             "");
+            panel.add(getCssResourceBehavior());
+            panel.setOutputMarkupId(true);
             panel.add(label);
             panel.add(button);
 
@@ -120,6 +139,15 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
             return $m.get(() -> listModel.getObject().asAtr().getLabel());
         }
 
+    }
+
+    private Behavior getCssResourceBehavior() {
+        return new Behavior() {
+            @Override
+            public void renderHead(Component component, IHeaderResponse response) {
+                response.render(CssHeaderItem.forReference(new PackageResourceReference(CompositeModalMapper.class, "CompositeModalMapper.css")));
+            }
+        };
     }
 
     public Label getLabel(IModel<SIComposite> model) {
