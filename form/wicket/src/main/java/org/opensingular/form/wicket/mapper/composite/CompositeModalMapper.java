@@ -16,11 +16,15 @@
 
 package org.opensingular.form.wicket.mapper.composite;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
 import org.opensingular.form.view.SViewByBlock;
+import org.opensingular.form.view.SViewCompositeModal;
 import org.opensingular.form.view.SViewTab;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.component.SingularButton;
@@ -56,10 +60,10 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
             ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, Boolean.FALSE);
             final IModel<SIComposite> model = (IModel<SIComposite>) ctx.getModel();
 
-
-            final ViewMode       viewMode        = ctx.getViewMode();
-            final BSContainer<?> currentExternal = new BSContainer<>("externalContainerAtual");
-            final BSContainer<?> currentSibling  = new BSContainer<>("externalContainerIrmao");
+            final ViewMode            viewMode        = ctx.getViewMode();
+            final SViewCompositeModal view            = (SViewCompositeModal) ctx.getView();
+            final BSContainer<?>      currentExternal = new BSContainer<>("externalContainerAtual");
+            final BSContainer<?>      currentSibling  = new BSContainer<>("externalContainerIrmao");
 
             ctx.getExternalContainer().appendTag("div", true, null, currentExternal);
             ctx.getExternalContainer().appendTag("div", true, null, currentSibling);
@@ -76,19 +80,29 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
 
             currentExternal.appendTag("div", true, null, modal);
 
-            SingularButton button = getButton(model, modal);
-            TemplatePanel  panel  = ctx.getContainer().newTemplateTag(t -> "<a wicket:id=\"btn\" class=\"btn btn-default\">Editar</a>");
+            SingularButton button = getButton(view, model, modal);
+            Label          label  = getLabel(model);
+            TemplatePanel panel = ctx.getContainer().newTemplateTag(t ->
+                    "<label wicket:id=\"label\" class=\"control-label composite-modal-label\"></label>" +
+                            "<a wicket:id=\"btn\" class=\"btn btn-add\"><wicket:container wicket:id=\"link-label\" /></a>" +
+                            "");
+            panel.add(label);
             panel.add(button);
 
         }
 
-        public SingularButton getButton(IModel<SIComposite> model, CompositeModal modal) {
-            return new SingularButton("btn", model) {
+        public SingularButton getButton(SViewCompositeModal view, IModel<SIComposite> model, CompositeModal modal) {
+            SingularButton button = new SingularButton("btn", model) {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                     modal.show(target);
                 }
             };
+            IModel<String> labelModel = $m.ofValue(view.getEditActionLabel() + " " + StringUtils.trimToEmpty(model.getObject().asAtr().getLabel()));
+            Label          label      = new Label("link-label", labelModel);
+            button.add(label);
+            return button;
+
         }
 
         @Override
@@ -106,5 +120,14 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
             return $m.get(() -> listModel.getObject().asAtr().getLabel());
         }
 
+    }
+
+    public Label getLabel(IModel<SIComposite> model) {
+        return new Label("label", $m.get(() -> {
+            if (model.getObject() != null && model.getObject().isNotEmptyOfData()) {
+                return model.getObject().toStringDisplay();
+            }
+            return "";
+        }));
     }
 }

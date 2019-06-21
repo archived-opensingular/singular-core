@@ -18,20 +18,23 @@ package org.opensingular.form.view;
 
 import org.opensingular.form.enums.ModalSize;
 
-public class SViewCompositeModal extends SView {
+public class SViewCompositeModal extends SView implements ConfigurableModal<SViewCompositeModal> {
+
+    private String    editActionLabel = "Editar";
+    private ModalSize modalSize       = ModalSize.LARGE;
+
+    public SViewCompositeModal setEditActionLabel(String editPrefix) {
+        this.editActionLabel = editPrefix;
+        return this;
+    }
 
     public boolean isValidateAllLineOnConfirmAndCancel() {
         return false;
     }
 
 
-    public String getNewActionLabel() {
-        return "Novo";
-    }
-
-
     public String getEditActionLabel() {
-        return "Edit";
+        return editActionLabel;
     }
 
 
@@ -41,7 +44,12 @@ public class SViewCompositeModal extends SView {
 
 
     public ModalSize getModalSize() {
-        return ModalSize.LARGE;
+        return modalSize;
+    }
+
+    @Override
+    public void setModalSize(ModalSize size) {
+        this.modalSize = modalSize;
     }
 
 

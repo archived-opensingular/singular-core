@@ -77,7 +77,7 @@ public class CompositeModal extends BFModalWindow {
         this.containerExterno = containerExterno;
         this.viewSupplier = ctx.getViewSupplier(SViewCompositeModal.class);
 
-        setSize(BSModalBorder.Size.valueOf(getIFormModalView().getModalSize()));
+        setSize(BSModalBorder.Size.valueOf(getView().getModalSize()));
 
         actionLabel = $m.ofValue("");
         addButton = new ActionAjaxButton("btn") {
@@ -85,17 +85,17 @@ public class CompositeModal extends BFModalWindow {
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 boolean mustHide        = true;
                 boolean mustProcessForm = viewMode.isEdition();
-                if (mustProcessForm && getIFormModalView().isEnforceValidationOnAdd()) {
+                if (mustProcessForm && getView().isEnforceValidationOnAdd()) {
                     boolean invalid = WicketFormProcessing.validateErrors(CompositeModal.this.getBodyContainer(), target, currentInstance.getObject(), false);
                     mustHide = !invalid;
                     mustProcessForm = !invalid;
-                    if (invalid && getIFormModalView().getEnforcedValidationMessage() != null) {
-                        new ToastrHelper(CompositeModal.this.getBodyContainer()).addToastrMessage(ToastrType.ERROR, getIFormModalView().getEnforcedValidationMessage());
+                    if (invalid && getView().getEnforcedValidationMessage() != null) {
+                        new ToastrHelper(CompositeModal.this.getBodyContainer()).addToastrMessage(ToastrType.ERROR, getView().getEnforcedValidationMessage());
                     }
                 }
                 if (mustProcessForm) {
                     WicketFormProcessing.processDependentTypes(this.getPage(), target, model.getObject());
-                    if (getIFormModalView().isValidateAllLineOnConfirmAndCancel()) {
+                    if (getView().isValidateAllLineOnConfirmAndCancel()) {
                         WicketFormProcessing.onFormSubmit((WebMarkupContainer) table, target, model, true);
                     } else {
                         WicketFormProcessing.onFormSubmit((WebMarkupContainer) table, target, currentInstance, true);
@@ -116,7 +116,7 @@ public class CompositeModal extends BFModalWindow {
                 @Override
                 protected void onAction(AjaxRequestTarget target) {
                     rollbackTheInstance(target);
-                    if (getIFormModalView().isValidateAllLineOnConfirmAndCancel()) {
+                    if (getView().isValidateAllLineOnConfirmAndCancel()) {
                         WicketFormProcessing.validateErrors(this.getParent(), target, model.getObject(), false);
                     }
                 }
@@ -127,7 +127,7 @@ public class CompositeModal extends BFModalWindow {
 
     }
 
-    public SViewCompositeModal getIFormModalView() {
+    public SViewCompositeModal getView() {
         return viewSupplier.get();
     }
 
@@ -173,7 +173,7 @@ public class CompositeModal extends BFModalWindow {
         currentInstance = forEdit;
         String prefix;
         if (ctx.getViewMode().isEdition()) {
-            prefix = getIFormModalView().getEditActionLabel();
+            prefix = getView().getEditActionLabel();
             actionLabel.setObject(prefix);
         } else {
             prefix = "";
@@ -203,7 +203,7 @@ public class CompositeModal extends BFModalWindow {
 
         setBody(modalBody);
 
-        boolean isEnabled = !getIFormModalView().isEditEnabled() || ViewMode.READ_ONLY == viewModeReadOnly;
+        boolean isEnabled = !getView().isEditEnabled() || ViewMode.READ_ONLY == viewModeReadOnly;
         if (isEnabled) {
             viewModeModal = ViewMode.READ_ONLY;
         }
