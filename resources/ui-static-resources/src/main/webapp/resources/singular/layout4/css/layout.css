@@ -2523,6 +2523,13 @@ Theme Panel
     font-size: 1.4rem;
     color: gray; }
 
+.btn.has-errors {
+  border-color: #e82724;
+  color: #e82724; }
+  .btn.has-errors:hover, .btn.has-errors:focus, .btn.has-errors:active {
+    background-color: #e82724;
+    color: white; }
+
 /* Page Portlet Fullscreen */
 .page-portlet-fullscreen .page-quick-sidebar-wrapper,
 .page-portlet-fullscreen .page-quick-sidebar-toggler {

@@ -22,6 +22,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
@@ -84,8 +85,9 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
 
             ctx.getExternalContainer().appendTag("div", true, null, currentExternal);
             ctx.getExternalContainer().appendTag("div", true, null, currentSibling);
+            ctx = ctx.createChild(ctx.getContainer(), currentSibling, ctx.getModel());
 
-            final CompositeModal modal = new CompositeModal("mods", model, newItemLabelModel(model), ctx, viewMode, currentSibling) {
+            final CompositeModal modal = new CompositeModal("mods", model, newItemLabelModel(model), ctx, viewMode, ctx.getExternalContainer()) {
                 @Override
                 protected WicketBuildContext buildModalContent(BSContainer<?> modalBody, ViewMode viewModeModal) {
                     buildFields(ctx, modalBody.newGrid());
@@ -98,15 +100,19 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
             currentExternal.appendTag("div", true, null, modal);
 
             SingularButton button = getButton(view, model, modal);
-            Label          label  = getLabel(model);
+//            Label          label  = getLabel(model);
             TemplatePanel panel = ctx.getContainer().newTemplateTag(t ->
-                    "<label wicket:id=\"label\" class=\"control-label composite-modal-label\"></label>" +
-                            "<a wicket:id=\"btn\" class=\"btn btn-add\"><wicket:container wicket:id=\"link-label\" /></a>" +
+//                    "<label wicket:id=\"label\" class=\"control-label composite-modal-label\"></label>" +
+                            "<a wicket:id=\"btn\" class=\"btn btn-add\">" +
+                                "<wicket:container wicket:id=\"link-label\" />" +
+                                "<i wicket:id=\"icon-error\" class=\"fa fa-exclamation-triangle\"></i>" +
+                            "</a>" +
                             "");
             panel.add(getCssResourceBehavior());
             panel.setOutputMarkupId(true);
-            panel.add(label);
+//            panel.add(label);
             panel.add(button);
+
 
         }
 
@@ -120,6 +126,28 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
             IModel<String> labelModel = $m.ofValue(view.getEditActionLabel() + " " + StringUtils.trimToEmpty(model.getObject().asAtr().getLabel()));
             Label          label      = new Label("link-label", labelModel);
             button.add(label);
+
+            WebMarkupContainer iconError = new WebMarkupContainer("icon-error");
+            button.add(iconError);
+
+            SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(new FeedbackFence(button))
+                    .addInstanceModel(model)
+                    .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(button)));
+            button.add($b.classAppender("has-errors", $m.ofValue(feedbackHandler).map(SValidationFeedbackHandler::containsNestedErrors)));
+            button.add($b.attr("data-toggle", "tooltip"));
+            button.add($b.attr("data-placement", "right"));
+            button.add($b.attr("title", $m.get(() -> {
+                int qtdErros = feedbackHandler.collectNestedErrors().size();
+                if (qtdErros > 0) {
+                    return String.format("%s erro(s) encontrado(s)", qtdErros);
+                } else {
+                    return "";
+                }
+            })));
+
+            iconError.add($b.visibleIf($m.ofValue(feedbackHandler).map(SValidationFeedbackHandler::containsNestedErrors)));
+
+
             return button;
 
         }
