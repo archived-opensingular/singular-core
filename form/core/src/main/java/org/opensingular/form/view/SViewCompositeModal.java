@@ -18,7 +18,7 @@ package org.opensingular.form.view;
 
 import org.opensingular.form.enums.ModalSize;
 
-public class SViewCompositeModal extends SView implements ConfigurableModal<SViewCompositeModal> {
+public class SViewCompositeModal extends SView implements ConfigurableViewModal<SViewCompositeModal> {
 
     private String    editActionLabel = "Editar";
     private ModalSize modalSize       = ModalSize.LARGE;
@@ -41,7 +41,6 @@ public class SViewCompositeModal extends SView implements ConfigurableModal<SVie
     public boolean isEditEnabled() {
         return true;
     }
-
 
     public ModalSize getModalSize() {
         return modalSize;
