@@ -17,6 +17,7 @@
 package org.opensingular.form.wicket.mapper.composite;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
@@ -32,6 +33,7 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.SInstanceViewState;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
+import org.opensingular.form.type.core.annotation.AtrAnnotation;
 import org.opensingular.form.view.SViewByBlock;
 import org.opensingular.form.view.SViewCompositeModal;
 import org.opensingular.form.view.SViewTab;
@@ -110,6 +112,7 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
                             "<a wicket:id=\"btn\" class=\"btn btn-add\">" +
                                 "<wicket:container wicket:id=\"link-label\" />" +
                                 "<i wicket:id=\"icon-error\" class=\"fa fa-exclamation-triangle\"></i>" +
+                                "<i wicket:id=\"icon-annotation\" ></i>" +
                             "</a>" +
                             "");
             panel.add(getCssResourceBehavior());
@@ -156,6 +159,9 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
 
             iconError.add($b.visibleIf($m.ofValue(feedbackHandler).map(SValidationFeedbackHandler::containsNestedErrors)));
 
+            WebMarkupContainer iconAnnotation = new WebMarkupContainer("icon-annotation");
+            iconAnnotation.add(new AttributeModifier("class", $m.get(() -> new CompositeAnnotationIconState(ctx, model.getObject()).getIconCss())));
+            button.add(iconAnnotation);
 
             return button;
 
@@ -211,5 +217,45 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
             }
             return "";
         }));
+    }
+
+    private static class CompositeAnnotationIconState {
+        boolean isAnnotated, hasRejected, hasApproved;
+        private       WicketBuildContext ctx;
+        private final SIComposite        instance;
+
+        public CompositeAnnotationIconState(WicketBuildContext ctx, SIComposite instance) {
+            this.ctx = ctx;
+            this.instance = instance;
+
+            defineState();
+        }
+
+        private void defineState() {
+            if (ctx.getRootContext().getAnnotationMode().enabled()) {
+                checkSubtree();
+            }
+        }
+
+        private void checkSubtree() {
+            AtrAnnotation atrAnnotation = instance.asAtrAnnotation();
+            isAnnotated = atrAnnotation.hasAnyAnnotable();
+            if (atrAnnotation.hasAnyAnnotationOnTree()) {
+                hasRejected = atrAnnotation.hasAnyRefusal();
+                hasApproved = !hasRejected;
+            }
+        }
+
+        private String getIconCss() {
+            if (hasRejected) {
+                return "annotation-icon annotation-icon-rejected";
+            } else if (hasApproved) {
+                return "annotation-icon annotation-icon-approved";
+            } else if (isAnnotated) {
+                return "annotation-icon annotation-icon-empty";
+            } else {
+                return "";
+            }
+        }
     }
 }
