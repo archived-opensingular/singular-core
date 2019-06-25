@@ -24,7 +24,6 @@ import org.opensingular.lib.wicket.util.toastr.ToastrHelper;
 
 import javax.annotation.Nullable;
 
-import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 /**
@@ -91,7 +90,7 @@ public abstract class AbstractCompositeModal extends BFModalWindow {
             }
         };
 
-        addButton.add($b.visibleIf(() -> currentInstance.getObject().asAtr().isEnabled()));
+//        addButton.add($b.visibleIf(() -> currentInstance.getObject().asAtr().isEnabled()));
         this.addButton(BSModalBorder.ButtonStyle.EMPTY, actionLabel, addButton);
 
         if (viewMode.isEdition()) {
@@ -153,7 +152,7 @@ public abstract class AbstractCompositeModal extends BFModalWindow {
         closeCallback = null;
         currentInstance = forEdit;
         String prefix;
-        if (ctx.getViewMode().isEdition()) {
+        if (isEdition(ctx)) {
             prefix = getView().getEditActionLabel();
             actionLabel.setObject(prefix);
         } else {
@@ -162,6 +161,11 @@ public abstract class AbstractCompositeModal extends BFModalWindow {
         }
         saveState();
         configureNewContent(prefix, target, viewMode);
+    }
+
+    public boolean isEdition(WicketBuildContext ctx) {
+        return ctx.getViewMode().isEdition() && ((ConfigurableViewModal<?>) ctx.getView()).isEditEnabled()
+                && currentInstance.getObject().asAtr().isEnabled();
     }
 
     protected void revert() {

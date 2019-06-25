@@ -28,6 +28,8 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SInstanceViewState;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.view.SViewByBlock;
@@ -41,8 +43,11 @@ import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
+import org.opensingular.form.wicket.model.SInstanceFieldModel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSCol;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 
 import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
@@ -75,7 +80,6 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
             ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, Boolean.FALSE);
             final IModel<SIComposite> model = (IModel<SIComposite>) ctx.getModel();
 
-            final ViewMode viewMode = ctx.getViewMode();
             if (!(ctx.getView() instanceof SViewCompositeModal)) {
                 throw new SingularFormException("CompositeModalMapper deve ser utilizado com SViewCompositeModal", ctx.getCurrentInstance());
             }
@@ -87,7 +91,7 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
             ctx.getExternalContainer().appendTag("div", true, null, currentSibling);
             ctx = ctx.createChild(ctx.getContainer(), currentSibling, ctx.getModel());
 
-            final CompositeModal modal = new CompositeModal("mods", model, newItemLabelModel(model), ctx, viewMode, ctx.getExternalContainer()) {
+            final CompositeModal modal = new CompositeModal("mods", model, newItemLabelModel(model), ctx, getViewMode(view), ctx.getExternalContainer()) {
                 @Override
                 protected WicketBuildContext buildModalContent(BSContainer<?> modalBody, ViewMode viewModeModal) {
                     buildFields(ctx, modalBody.newGrid());
@@ -122,8 +126,13 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                     modal.show(target);
                 }
+
+                @Override
+                public boolean isEnabledInHierarchy() {
+                    return true;
+                }
             };
-            IModel<String> labelModel = $m.ofValue(view.getEditActionLabel() + " " + StringUtils.trimToEmpty(model.getObject().asAtr().getLabel()));
+            IModel<String> labelModel = $m.ofValue((isEdition(view) ? view.getEditActionLabel() : view.getViewActionLabel()) + " " + StringUtils.trimToEmpty(model.getObject().asAtr().getLabel()));
             Label          label      = new Label("link-label", labelModel);
             button.add(label);
 
@@ -152,6 +161,11 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
 
         }
 
+        private boolean isEdition(SViewCompositeModal view) {
+            return ctx.getViewMode().isEdition() && view.isEditEnabled()
+                    && SInstanceViewState.get(ctx.getCurrentInstance()).isEnabled();
+        }
+
         @Override
         protected void buildFields(WicketBuildContext ctx, BSGrid grid) {
             if (((ctx.getCurrentInstance().getParent() == null) && (!ctx.isNested())) ||
@@ -165,6 +179,18 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
         private IModel<String> newItemLabelModel(IModel<SIComposite> listModel) {
             //Alteração do model para evitar que haja perda de referencias na renderização das tabelas na tela
             return $m.get(() -> listModel.getObject().asAtr().getLabel());
+        }
+
+        protected void buildField(final BSRow row, final SInstanceFieldModel<SInstance> mField) {
+            final SViewCompositeModal view            = (SViewCompositeModal) ctx.getView();
+            SInstance iField = mField.getObject();
+            BSCol     col    = row.newCol();
+            configureColspan(ctx, iField, col);
+            ctx.createChild(col, ctx.getExternalContainer(), mField).build(getViewMode(view));
+        }
+
+        private ViewMode getViewMode(SViewCompositeModal view) {
+            return isEdition(view) ? ViewMode.EDIT : ViewMode.READ_ONLY;
         }
 
     }

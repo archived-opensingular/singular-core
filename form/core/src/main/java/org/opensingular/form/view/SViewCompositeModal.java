@@ -20,16 +20,24 @@ import org.opensingular.form.enums.ModalSize;
 
 public class SViewCompositeModal extends SView implements ConfigurableViewModal<SViewCompositeModal> {
 
-    private String    editActionLabel = "Editar";
-    private ModalSize modalSize       = ModalSize.LARGE;
+    private String    editActionLabel          = "Editar";
+    private String    viewActionLabel          = "Visualizar";
+    private ModalSize modalSize                = ModalSize.LARGE;
+    private boolean   validateAllLineOnConfirmAndCancel;
+    private boolean   editFieldsInModalEnabled = true;
 
-    public SViewCompositeModal setEditActionLabel(String editPrefix) {
-        this.editActionLabel = editPrefix;
+    public SViewCompositeModal withEditActionLabel(String editActionLabel) {
+        this.editActionLabel = editActionLabel;
+        return this;
+    }
+
+    public SViewCompositeModal setValidateAllLineOnConfirmAndCancel(boolean validateAllLineOnConfirmAndCancel) {
+        this.validateAllLineOnConfirmAndCancel = validateAllLineOnConfirmAndCancel;
         return this;
     }
 
     public boolean isValidateAllLineOnConfirmAndCancel() {
-        return false;
+        return validateAllLineOnConfirmAndCancel;
     }
 
 
@@ -37,9 +45,13 @@ public class SViewCompositeModal extends SView implements ConfigurableViewModal<
         return editActionLabel;
     }
 
+    public SViewCompositeModal disabledEditFieldsInModal() {
+        this.editFieldsInModalEnabled = false;
+        return this;
+    }
 
     public boolean isEditEnabled() {
-        return true;
+        return editFieldsInModalEnabled;
     }
 
     public ModalSize getModalSize() {
@@ -58,6 +70,15 @@ public class SViewCompositeModal extends SView implements ConfigurableViewModal<
 
 
     public String getEnforcedValidationMessage() {
-        return "";
+        return null;
+    }
+
+    public String getViewActionLabel() {
+        return viewActionLabel;
+    }
+
+    public SViewCompositeModal withViewActionLabel(String viewActionLabel) {
+        this.viewActionLabel = viewActionLabel;
+        return this;
     }
 }
