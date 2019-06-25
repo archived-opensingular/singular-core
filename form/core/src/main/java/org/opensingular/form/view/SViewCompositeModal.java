@@ -25,6 +25,7 @@ public class SViewCompositeModal extends SView implements ConfigurableViewModal<
     private ModalSize modalSize                = ModalSize.LARGE;
     private boolean   validateAllLineOnConfirmAndCancel;
     private boolean   editFieldsInModalEnabled = true;
+    private String    displayString = "";
 
     public SViewCompositeModal withEditActionLabel(String editActionLabel) {
         this.editActionLabel = editActionLabel;
@@ -80,5 +81,14 @@ public class SViewCompositeModal extends SView implements ConfigurableViewModal<
     public SViewCompositeModal withViewActionLabel(String viewActionLabel) {
         this.viewActionLabel = viewActionLabel;
         return this;
+    }
+
+    public SViewCompositeModal withDisplayString(String displayString) {
+        this.displayString = displayString;
+        return this;
+    }
+
+    public String getDisplayString() {
+        return displayString;
     }
 }

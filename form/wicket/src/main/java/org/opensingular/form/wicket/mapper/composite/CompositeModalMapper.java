@@ -32,7 +32,9 @@ import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SInstanceViewState;
 import org.opensingular.form.SingularFormException;
+import org.opensingular.form.calculation.CalculationContext;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
+import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
 import org.opensingular.form.type.core.annotation.AtrAnnotation;
 import org.opensingular.form.view.SViewByBlock;
 import org.opensingular.form.view.SViewCompositeModal;
@@ -106,9 +108,9 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
             currentExternal.appendTag("div", true, null, modal);
 
             SingularButton button = getButton(view, model, modal);
-//            Label          label  = getLabel(model);
+            Label          label  = getLabel(model);
             TemplatePanel panel = ctx.getContainer().newTemplateTag(t ->
-//                    "<label wicket:id=\"label\" class=\"control-label composite-modal-label\"></label>" +
+                    "<label wicket:id=\"label\" class=\"control-label composite-modal-label\"></label>" +
                             "<a wicket:id=\"btn\" class=\"btn btn-add\">" +
                                 "<wicket:container wicket:id=\"link-label\" />" +
                                 "<i wicket:id=\"icon-error\" class=\"fa fa-exclamation-triangle\"></i>" +
@@ -117,7 +119,7 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
                             "");
             panel.add(getCssResourceBehavior());
             panel.setOutputMarkupId(true);
-//            panel.add(label);
+            panel.add(label);
             panel.add(button);
 
 
@@ -199,6 +201,19 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
             return isEdition(view) ? ViewMode.EDIT : ViewMode.READ_ONLY;
         }
 
+        public Label getLabel(IModel<SIComposite> model) {
+            SViewCompositeModal viewCompositeModal = (SViewCompositeModal) ctx.getView();
+            String              displayString      = viewCompositeModal.getDisplayString();
+            return new Label("label", $m.get(() -> {
+                if (model.getObject() != null && model.getObject().isNotEmptyOfData()
+                    && !displayString.isEmpty()) {
+                    CalculationContext calculationContext = new CalculationContext(model.getObject(), model.getObject());
+                    return FormFreemarkerUtil.get().createInstanceCalculation(displayString).calculate(calculationContext);
+                }
+                return "";
+            }));
+        }
+
     }
 
     private Behavior getCssResourceBehavior() {
@@ -208,15 +223,6 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
                 response.render(CssHeaderItem.forReference(new PackageResourceReference(CompositeModalMapper.class, "CompositeModalMapper.css")));
             }
         };
-    }
-
-    public Label getLabel(IModel<SIComposite> model) {
-        return new Label("label", $m.get(() -> {
-            if (model.getObject() != null && model.getObject().isNotEmptyOfData()) {
-                return model.getObject().toStringDisplay();
-            }
-            return "";
-        }));
     }
 
     private static class CompositeAnnotationIconState {
