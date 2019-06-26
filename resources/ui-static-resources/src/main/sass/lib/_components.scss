@@ -1,3 +1,5 @@
+@import '../singular_variables.scss';
+
 .richtext-panel {
   box-shadow: none;
   border: 1px solid $color-gray-default;
@@ -130,3 +132,139 @@ div.checker.disabled span.checked:hover {
   margin-right: -10px !important;
 }
 
+
+select.form-control + .chosen-container.chosen-container-single .chosen-single {
+  display: block;
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #555;
+  vertical-align: middle;
+  background-color: #fff;
+  border: 1px solid rgb(213, 217, 227);
+  border-radius: 3px;
+  background-image: none;
+}
+
+select.form-control + .chosen-container.chosen-container-single .chosen-single div {
+  top: 4px;
+  color: #000;
+}
+
+select.form-control + .chosen-container .chosen-drop {
+  background-color: #FFF;
+  border: 1px solid rgb(213, 217, 227);
+  border-radius: 3px;
+  background-clip: padding-box;
+  margin: 2px 0 0;
+}
+
+select.form-control + .chosen-container .chosen-search input[type=text] {
+  display: block;
+  width: 100%;
+  height: 34px;
+  /*padding: 6px 12px;*/
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #555;
+  vertical-align: middle;
+  background-color: #FFF;
+  border: 1px solid rgb(213, 217, 227);
+  border-radius: 3px;
+  background-image: none;
+}
+
+select.form-control + .chosen-container .chosen-results {
+  margin: 2px 0 0;
+  padding: 5px 0;
+  font-size: 14px;
+  list-style: none;
+  background-color: #fff;
+  margin-bottom: 5px;
+}
+
+select.form-control + .chosen-container .chosen-results li,
+select.form-control + .chosen-container .chosen-results li.active-result {
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: normal;
+  line-height: 1.428571429;
+  color: #333;
+  white-space: nowrap;
+  background-image: none;
+}
+
+select.form-control + .chosen-container .chosen-results li:hover,
+select.form-control + .chosen-container .chosen-results li.active-result:hover,
+select.form-control + .chosen-container .chosen-results li.highlighted {
+  color: #FFF;
+  text-decoration: none;
+  background-color: $color-primary;
+  background-image: none;
+}
+
+select.form-control + .chosen-container-multi .chosen-choices {
+  display: block;
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #555;
+  vertical-align: middle;
+  background-color: #FFF;
+  border: 1px solid rgb(213, 217, 227);
+  border-radius: 3px;
+  background-image: none;
+}
+
+select.form-control + .chosen-container-multi .chosen-choices li.search-field input[type="text"] {
+  height: auto;
+  padding: 5px 0;
+}
+
+select.form-control + .chosen-container-multi .chosen-choices li.search-choice {
+  background-image: none;
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: normal;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  margin: 1px 1px 0 0;
+  cursor: pointer;
+  border-radius: 3px;
+  padding: 3px 18px 3px 5px;
+  color: #333;
+  background-color: #FFF;
+}
+
+select.form-control + .chosen-container-multi.chosen-container-active .chosen-choices,
+select.form-control + .chosen-container.chosen-container-single.chosen-container-active .chosen-single,
+select.form-control + .chosen-container .chosen-search input[type=text]:focus {
+  border-color: $color-primary;
+  outline: 0;
+}
+
+select.form-control + .chosen-container-multi .chosen-results li.result-selected {
+  display: list-item;
+  color: #ccc;
+  cursor: default;
+  background-color: white;
+}
+
+select.form-control + .chosen-container-active .chosen-choices {
+  box-shadow: none;
+}
+
+
+.chosen-container .search-field {
+  width: 0;
+}
+
+input.chosen-search-input {
+  width: 1px !important;
+}
+
+.chosen-container-multi .chosen-choices li.search-choice .search-choice-close {
+  top: 6px;
+}
