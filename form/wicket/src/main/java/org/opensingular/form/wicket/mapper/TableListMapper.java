@@ -233,7 +233,7 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
             }
         }
 
-        tableFooter.add($b.onConfigure(c -> c.setVisible(!(viewSupplier.get().isAddEnabled(list.getObject()) && isEdition))));
+        tableFooter.add($b.onConfigure(c -> c.setVisible(viewSupplier.get().isAddEnabled(list.getObject()))));
 
         template
             .add(notEmptyContent
