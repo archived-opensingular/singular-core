@@ -15,5 +15,5 @@
  */
 
 .composite-modal-label {
-    padding-right: 5px;
+    padding-right: 0px; /* se for maior que zero quebra a célula quando é exibido em uma coluna estreita de tabela.*/
 }
