@@ -38,14 +38,14 @@ import java.util.Optional;
 public interface SingularProperties {
 
     //########    FILES CONFIG    ########
-    // Limites globais são limites máximos, não configuráveis por arquivo.
+
+    //Essa propriedade não gera um retorno esperado por causa do CHUNK.
     String FILEUPLOAD_GLOBAL_MAX_REQUEST_SIZE = "singular.fileupload.global_max_request_size";
-    String FILEUPLOAD_GLOBAL_MAX_FILE_SIZE = "singular.fileupload.global_max_file_size";
-    String FILEUPLOAD_GLOBAL_MAX_FILE_COUNT = "singular.fileupload.global_max_file_count";
-    String FILEUPLOAD_GLOBAL_MAX_FILE_AGE = "singular.fileupload.global_max_file_age";
-    // Limites default são limites configuráveis por arquivo. Não podem exceder os limites globais.
-    String FILEUPLOAD_DEFAULT_MAX_REQUEST_SIZE = "singular.fileupload.default_max_request_size";
     String FILEUPLOAD_DEFAULT_MAX_FILE_SIZE = "singular.fileupload.default_max_file_size";
+
+    String FILEUPLOAD_DEFAULT_MAX_REQUEST_SIZE = "singular.fileupload.default_max_request_size";
+    String FILEUPLOAD_GLOBAL_MAX_FILE_SIZE = "singular.fileupload.global_max_file_size";
+    String SINGULAR_FILEUPLOAD_MAXCHUNKSIZE = "singular.fileupload.maxchunksize";
 
     //########    GOOGLE MAPS    ########
     String SINGULAR_GOOGLEMAPS_JS_KEY = "singular.googlemaps.js.key";
@@ -100,9 +100,6 @@ public interface SingularProperties {
     String SINGULAR_QUARTZ_DEFAULT_CRON = "singular.quartz.cron.default";
 
     String SINGULAR_WICKET_DEBUG_ENABLED = "singular.wicket.debug.enabled";
-
-    String SINGULAR_FILEUPLOAD_MAXCHUNKSIZE = "singular.fileupload.maxchunksize";
-
 
     //########    PROPRIEDADES JAVA MEDOLY    ########
     String SINGULAR_JAVAMELODY_ENABLED = "singular.javamelody.enabled";

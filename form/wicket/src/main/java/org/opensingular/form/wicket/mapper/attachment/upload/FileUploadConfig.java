@@ -24,23 +24,17 @@ import java.io.Serializable;
 import static org.opensingular.internal.lib.commons.util.ConversionUtils.toLongHumane;
 import static org.opensingular.lib.commons.base.SingularProperties.FILEUPLOAD_DEFAULT_MAX_FILE_SIZE;
 import static org.opensingular.lib.commons.base.SingularProperties.FILEUPLOAD_DEFAULT_MAX_REQUEST_SIZE;
-import static org.opensingular.lib.commons.base.SingularProperties.FILEUPLOAD_GLOBAL_MAX_FILE_AGE;
-import static org.opensingular.lib.commons.base.SingularProperties.FILEUPLOAD_GLOBAL_MAX_FILE_COUNT;
 import static org.opensingular.lib.commons.base.SingularProperties.FILEUPLOAD_GLOBAL_MAX_FILE_SIZE;
 import static org.opensingular.lib.commons.base.SingularProperties.FILEUPLOAD_GLOBAL_MAX_REQUEST_SIZE;
 
 public class FileUploadConfig implements Serializable {
 
-    private final long globalMaxFileAge;
-    private final long globalMaxFileCount;
     private final long globalMaxFileSize;
     private final long globalMaxRequestSize;
     private final long defaultMaxFileSize;
     private final long defaultMaxRequestSize;
 
     public FileUploadConfig(@Nonnull SingularProperties sp) {
-        this.globalMaxFileAge = readLong(sp, FILEUPLOAD_GLOBAL_MAX_FILE_AGE);
-        this.globalMaxFileCount = readLong(sp, FILEUPLOAD_GLOBAL_MAX_FILE_COUNT);
         this.globalMaxFileSize = readLong(sp, FILEUPLOAD_GLOBAL_MAX_FILE_SIZE);
         this.globalMaxRequestSize = readLong(sp, FILEUPLOAD_GLOBAL_MAX_REQUEST_SIZE);
         this.defaultMaxFileSize = readLong(sp, FILEUPLOAD_DEFAULT_MAX_FILE_SIZE);
@@ -51,27 +45,31 @@ public class FileUploadConfig implements Serializable {
         return toLongHumane(sp.getPropertyOpt(key).orElse(null), Long.MAX_VALUE);
     }
 
-    public long getGlobalMaxFileAge() {
-        return globalMaxFileAge;
-    }
-
-    public long getGlobalMaxFileCount() {
-        return globalMaxFileCount;
-    }
-
-    public long getGlobalMaxFileSize() {
+    private long getGlobalMaxFileSize() {
         return globalMaxFileSize;
     }
 
-    public long getGlobalMaxRequestSize() {
+    private long getGlobalMaxRequestSize() {
         return globalMaxRequestSize;
     }
 
-    public long getDefaultMaxFileSize() {
+    private long getDefaultMaxFileSize() {
         return defaultMaxFileSize;
     }
 
-    public long getDefaultMaxRequestSize() {
+    private long getDefaultMaxRequestSize() {
         return defaultMaxRequestSize;
+    }
+
+    private long resolveMax(long specifiedMax, long defaultMax, long globalMax) {
+        return Math.min((specifiedMax > 0) ? specifiedMax : defaultMax, globalMax);
+    }
+
+    public long resolveMaxPerFile(Long specifiedMax) {
+        return resolveMax(specifiedMax, getDefaultMaxFileSize(), getGlobalMaxFileSize());
+    }
+
+    long resolveMaxPerRequest(long specifiedMax) {
+        return resolveMax(specifiedMax, getDefaultMaxRequestSize(), getGlobalMaxRequestSize());
     }
 }
