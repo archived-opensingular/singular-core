@@ -24,9 +24,14 @@ import org.opensingular.lib.commons.base.SingularException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -214,5 +219,51 @@ public abstract class TempFileUtils {
      */
     public static void writeByteArrayToFile(File file, byte[] bytes) throws IOException {
         FileUtils.writeByteArrayToFile(file, bytes);
+    }
+
+    /**
+     * Cria um novo arquivo codificado em Base64 a partir do
+     * arquivo passado como parâmetro
+     *
+     * @param arquivo arquivo a ser codificado em Base64
+     * @return um novo arquivo codificado em Base64
+     * @throws IOException
+     *             Métodos subjeito a erros de entrada e saída.
+     */
+    public static File stream2Base64File(File arquivo) throws IOException {
+        FileInputStream input = new FileInputStream(arquivo);
+        return stream2Base64File(input);
+    }
+
+    /**
+     * Cria um novo arquivo codificado em Base64 a partir do
+     * InputStream passado como parâmetro
+     *
+     * @param is
+     *            um is a ser codificado em Base64
+     * @return um novo arquivo codificado em Base64
+     * @throws IOException
+     *             Métodos subjeito a erros de entrada e saída.
+     */
+    public static File stream2Base64File(InputStream is) throws IOException {
+        final File tempFile = File.createTempFile(PREFIX, SUFFIX);
+        tempFile.deleteOnExit();
+
+        try (OutputStream encOutputStream = java.util.Base64.getEncoder()
+                .wrap( new FileOutputStream(tempFile) )) {
+
+            IOUtils.copy(is, encOutputStream);
+            encOutputStream.flush();
+        }
+
+        return tempFile;
+    }
+
+    public static String readPartOfFileToString(File base64Conteudo, int offset, int tam) throws IOException {
+        try (FileChannel ch = new RandomAccessFile(base64Conteudo, "r").getChannel()) {
+            ByteBuffer bb = ByteBuffer.allocate(tam);
+            int        n  = ch.read(bb, offset);
+            return new String(bb.array());
+        }
     }
 }
