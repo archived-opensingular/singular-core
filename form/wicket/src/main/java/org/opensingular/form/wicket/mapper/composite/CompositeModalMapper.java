@@ -17,18 +17,25 @@
 package org.opensingular.form.wicket.mapper.composite;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.form.SIComposite;
+import org.opensingular.form.SInstance;
+import org.opensingular.form.SInstanceViewState;
 import org.opensingular.form.SingularFormException;
+import org.opensingular.form.calculation.CalculationContext;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
+import org.opensingular.form.internal.freemarker.FormFreemarkerUtil;
+import org.opensingular.form.type.core.annotation.AtrAnnotation;
 import org.opensingular.form.view.SViewByBlock;
 import org.opensingular.form.view.SViewCompositeModal;
 import org.opensingular.form.view.SViewTab;
@@ -40,8 +47,11 @@ import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsProviders;
+import org.opensingular.form.wicket.model.SInstanceFieldModel;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSCol;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSContainer;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSGrid;
+import org.opensingular.lib.wicket.util.bootstrap.layout.BSRow;
 import org.opensingular.lib.wicket.util.bootstrap.layout.TemplatePanel;
 
 import static org.opensingular.form.wicket.AjaxUpdateListenersFactory.SINGULAR_PROCESS_EVENT;
@@ -74,7 +84,6 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
             ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, Boolean.FALSE);
             final IModel<SIComposite> model = (IModel<SIComposite>) ctx.getModel();
 
-            final ViewMode viewMode = ctx.getViewMode();
             if (!(ctx.getView() instanceof SViewCompositeModal)) {
                 throw new SingularFormException("CompositeModalMapper deve ser utilizado com SViewCompositeModal", ctx.getCurrentInstance());
             }
@@ -84,8 +93,9 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
 
             ctx.getExternalContainer().appendTag("div", true, null, currentExternal);
             ctx.getExternalContainer().appendTag("div", true, null, currentSibling);
+            ctx = ctx.createChild(ctx.getContainer(), currentSibling, ctx.getModel());
 
-            final CompositeModal modal = new CompositeModal("mods", model, newItemLabelModel(model), ctx, viewMode, currentSibling) {
+            final CompositeModal modal = new CompositeModal("mods", model, newItemLabelModel(model), ctx, getViewMode(view), ctx.getExternalContainer()) {
                 @Override
                 protected WicketBuildContext buildModalContent(BSContainer<?> modalBody, ViewMode viewModeModal) {
                     buildFields(ctx, modalBody.newGrid());
@@ -101,12 +111,17 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
             Label          label  = getLabel(model);
             TemplatePanel panel = ctx.getContainer().newTemplateTag(t ->
                     "<label wicket:id=\"label\" class=\"control-label composite-modal-label\"></label>" +
-                            "<a wicket:id=\"btn\" class=\"btn btn-add\"><wicket:container wicket:id=\"link-label\" /></a>" +
+                            "<a wicket:id=\"btn\" class=\"btn btn-add\">" +
+                                "<wicket:container wicket:id=\"link-label\" />" +
+                                "<i wicket:id=\"icon-error\" class=\"fa fa-exclamation-triangle\"></i>" +
+                                "<i wicket:id=\"icon-annotation\" ></i>" +
+                            "</a>" +
                             "");
             panel.add(getCssResourceBehavior());
             panel.setOutputMarkupId(true);
             panel.add(label);
             panel.add(button);
+
 
         }
 
@@ -116,12 +131,47 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                     modal.show(target);
                 }
+
+                @Override
+                public boolean isEnabledInHierarchy() {
+                    return true;
+                }
             };
-            IModel<String> labelModel = $m.ofValue(view.getEditActionLabel() + " " + StringUtils.trimToEmpty(model.getObject().asAtr().getLabel()));
+            IModel<String> labelModel = $m.ofValue((isEdition(view) ? view.getEditActionLabel() : view.getViewActionLabel()) + " " + StringUtils.trimToEmpty(model.getObject().asAtr().getLabel()));
             Label          label      = new Label("link-label", labelModel);
             button.add(label);
+
+            WebMarkupContainer iconError = new WebMarkupContainer("icon-error");
+            button.add(iconError);
+
+            SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(new FeedbackFence(button))
+                    .addInstanceModel(model)
+                    .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(button)));
+            button.add($b.classAppender("has-errors", $m.ofValue(feedbackHandler).map(SValidationFeedbackHandler::containsNestedErrors)));
+            button.add($b.attr("data-toggle", "tooltip"));
+            button.add($b.attr("data-placement", "right"));
+            button.add($b.attr("title", $m.get(() -> {
+                int qtdErros = feedbackHandler.collectNestedErrors().size();
+                if (qtdErros > 0) {
+                    return String.format("%s erro(s) encontrado(s)", qtdErros);
+                } else {
+                    return "";
+                }
+            })));
+
+            iconError.add($b.visibleIf($m.ofValue(feedbackHandler).map(SValidationFeedbackHandler::containsNestedErrors)));
+
+            WebMarkupContainer iconAnnotation = new WebMarkupContainer("icon-annotation");
+            iconAnnotation.add(new AttributeModifier("class", $m.get(() -> new CompositeAnnotationIconState(ctx, model.getObject()).getIconCss())));
+            button.add(iconAnnotation);
+
             return button;
 
+        }
+
+        private boolean isEdition(SViewCompositeModal view) {
+            return ctx.getViewMode().isEdition() && view.isEditEnabled()
+                    && SInstanceViewState.get(ctx.getCurrentInstance()).isEnabled();
         }
 
         @Override
@@ -139,6 +189,31 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
             return $m.get(() -> listModel.getObject().asAtr().getLabel());
         }
 
+        protected void buildField(final BSRow row, final SInstanceFieldModel<SInstance> mField) {
+            final SViewCompositeModal view            = (SViewCompositeModal) ctx.getView();
+            SInstance iField = mField.getObject();
+            BSCol     col    = row.newCol();
+            configureColspan(ctx, iField, col);
+            ctx.createChild(col, ctx.getExternalContainer(), mField).build(getViewMode(view));
+        }
+
+        private ViewMode getViewMode(SViewCompositeModal view) {
+            return isEdition(view) ? ViewMode.EDIT : ViewMode.READ_ONLY;
+        }
+
+        public Label getLabel(IModel<SIComposite> model) {
+            SViewCompositeModal viewCompositeModal = (SViewCompositeModal) ctx.getView();
+            String              displayString      = viewCompositeModal.getDisplayString();
+            return new Label("label", $m.get(() -> {
+                if (model.getObject() != null && model.getObject().isNotEmptyOfData()
+                    && !displayString.isEmpty()) {
+                    CalculationContext calculationContext = new CalculationContext(model.getObject(), model.getObject());
+                    return FormFreemarkerUtil.get().createInstanceCalculation(displayString).calculate(calculationContext);
+                }
+                return "";
+            }));
+        }
+
     }
 
     private Behavior getCssResourceBehavior() {
@@ -150,12 +225,43 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
         };
     }
 
-    public Label getLabel(IModel<SIComposite> model) {
-        return new Label("label", $m.get(() -> {
-            if (model.getObject() != null && model.getObject().isNotEmptyOfData()) {
-                return model.getObject().toStringDisplay();
+    private static class CompositeAnnotationIconState {
+        boolean isAnnotated, hasRejected, hasApproved;
+        private       WicketBuildContext ctx;
+        private final SIComposite        instance;
+
+        public CompositeAnnotationIconState(WicketBuildContext ctx, SIComposite instance) {
+            this.ctx = ctx;
+            this.instance = instance;
+
+            defineState();
+        }
+
+        private void defineState() {
+            if (ctx.getRootContext().getAnnotationMode().enabled()) {
+                checkSubtree();
             }
-            return "";
-        }));
+        }
+
+        private void checkSubtree() {
+            AtrAnnotation atrAnnotation = instance.asAtrAnnotation();
+            isAnnotated = atrAnnotation.hasAnyAnnotable();
+            if (atrAnnotation.hasAnyAnnotationOnTree()) {
+                hasRejected = atrAnnotation.hasAnyRefusal();
+                hasApproved = !hasRejected;
+            }
+        }
+
+        private String getIconCss() {
+            if (hasRejected) {
+                return "annotation-icon annotation-icon-rejected";
+            } else if (hasApproved) {
+                return "annotation-icon annotation-icon-approved";
+            } else if (isAnnotated) {
+                return "annotation-icon annotation-icon-empty";
+            } else {
+                return "";
+            }
+        }
     }
 }

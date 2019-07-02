@@ -1,0 +1,16 @@
+
+$has-error-background-hover: #e82724;
+$has-error-font-color: #e82724;
+$has-error-border-color: #e82724;
+
+.btn.has-errors {
+  border-color: $has-error-border-color;
+  color: $has-error-font-color;
+
+  &:hover,
+  &:focus,
+  &:active {
+    background-color: $has-error-background-hover;
+    color: white;
+  }
+}
