@@ -50,6 +50,7 @@ import org.opensingular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavi
 import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
 import org.opensingular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
+import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadConfig;
 import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManager;
 import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManagerFactory;
 import org.opensingular.form.wicket.mapper.attachment.upload.UploadResponseWriter;
@@ -257,7 +258,8 @@ public class FileUploadListPanel extends Panel implements Loggable {
     }
 
     private long getMaxFileSize() {
-        return getModelObject().getElementsType().asAtr().getMaxFileSize();
+        Long             maxFileSizeStype = getModelObject().getElementsType().asAtr().getMaxFileSize();
+        return new FileUploadConfig(SingularProperties.get()).resolveMaxPerFile(maxFileSizeStype);
     }
 
     @SuppressWarnings("unchecked")
