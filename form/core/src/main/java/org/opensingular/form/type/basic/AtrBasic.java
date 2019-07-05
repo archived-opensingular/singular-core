@@ -276,6 +276,7 @@ public class AtrBasic extends STranslatorForAttribute {
     public List<String> getAllowedFileTypes() {
         return Optional.ofNullable(getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES)).map(in -> Arrays.asList(defaultString(
                 getAttributeValue(SPackageBasic.ATR_ALLOWED_FILE_TYPES))
+                .toLowerCase()
                 .split(ALLOWED_FILE_TYPES_SPLIT_REGEX)))
                 .orElse(Collections.emptyList());
     }

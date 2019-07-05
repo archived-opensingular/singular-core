@@ -71,6 +71,7 @@
                 + "<p> Não será possivel salvar o Requerimento.</p>";
 
             var config = {
+                title: document.title,
                 extraPlugins: plugin,
                 allowedContent: true,
                 skin: 'office2013',

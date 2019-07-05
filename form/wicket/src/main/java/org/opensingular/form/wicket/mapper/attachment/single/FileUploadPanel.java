@@ -49,6 +49,7 @@ import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
 import org.opensingular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
 import org.opensingular.form.wicket.mapper.attachment.image.SIAttachmentIResourceStream;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
+import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadConfig;
 import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManager;
 import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManagerFactory;
 import org.opensingular.form.wicket.mapper.attachment.upload.UploadResponseWriter;
@@ -76,20 +77,20 @@ public class FileUploadPanel extends Panel implements Loggable {
     public static final String DEFAULT_FILE_UPLOAD_MAX_CHUNK_SIZE = "2000000";
 
     private final FileUploadManagerFactory upManagerFactory = new FileUploadManagerFactory();
-    private final UploadResponseWriter upResponseWriter = new UploadResponseWriter();
+    private final UploadResponseWriter     upResponseWriter = new UploadResponseWriter();
 
-    private AddFileBehavior adder;
-    private final ViewMode viewMode;
+    private       AddFileBehavior adder;
+    private final ViewMode        viewMode;
 
-    private final FileUploadPanel self = this;
-    private final AjaxButton removeFileButton = new RemoveButton("remove_btn");
+    private final FileUploadPanel    self             = this;
+    private final AjaxButton         removeFileButton = new RemoveButton("remove_btn");
     private final WebMarkupContainer uploadFileButton = new UploadButton("upload_btn");
 
-    private FileUploadField fileField;
+    private FileUploadField    fileField;
     private WebMarkupContainer filesContainer, progressBar, downloadLinkContainer;
     private DownloadSupportedBehavior downloader;
-    private DownloadLink downloadLink;
-    private AttachmentKey uploadId;
+    private DownloadLink              downloadLink;
+    private AttachmentKey             uploadId;
 
     private boolean showPreview = false;
 
@@ -98,7 +99,7 @@ public class FileUploadPanel extends Panel implements Loggable {
     private AbstractDefaultAjaxBehavior previewCallBack;
 
     private List<FileEventListener> fileUploadedListeners = new ArrayList<>();
-    private List<FileEventListener> fileRemovedListeners = new ArrayList<>();
+    private List<FileEventListener> fileRemovedListeners  = new ArrayList<>();
 
     private IConsumer<AjaxRequestTarget> consumerAfterLoadImage; //Behavior that will be executed after load the image.
     private IConsumer<AjaxRequestTarget> consumerAfterRemoveImage; //Behavior that will be executed after remove the image.
@@ -213,8 +214,18 @@ public class FileUploadPanel extends Panel implements Loggable {
 
         if (uploadId == null || !fileUploadManager.findUploadInfoByAttachmentKey(uploadId).isPresent()) {
             final SIAttachment attachment = getModelObject();
-            this.uploadId = fileUploadManager.createUpload(attachment.asAtr().getMaxFileSize(), null, attachment.asAtr().getAllowedFileTypes(), this::getTemporaryHandler);
+            this.uploadId = fileUploadManager.createUpload(getMaxFileSizeByProperties(), null, attachment.asAtr().getAllowedFileTypes(), this::getTemporaryHandler);
         }
+    }
+
+    /**
+     * This method will verify if the maxFileSize of the SType is minor than the Global config,
+     * if it's not, than the max value will be the global one.
+     *
+     * @return Return the min of max file size.
+     */
+    private long getMaxFileSizeByProperties() {
+        return new FileUploadConfig(SingularProperties.get()).resolveMaxPerFile(getMaxFileSize());
     }
 
     private IAttachmentPersistenceHandler getTemporaryHandler() {
@@ -226,7 +237,7 @@ public class FileUploadPanel extends Panel implements Loggable {
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         PackageTextTemplate fileUploadJSTemplate = new PackageTextTemplate(FileUploadPanel.class, "FileUploadPanel.js");
-        Map<String, String> params = new HashMap<>();
+        Map<String, String> params               = new HashMap<>();
         params.put("maxChunkSize", SingularProperties.get(SINGULAR_FILEUPLOAD_MAXCHUNKSIZE, DEFAULT_FILE_UPLOAD_MAX_CHUNK_SIZE));
 
         response.render(OnDomReadyHeaderItem.forScript(fileUploadJSTemplate.interpolate(params).asString()));
@@ -247,7 +258,7 @@ public class FileUploadPanel extends Panel implements Loggable {
                     .put("upload_url", getUploadUrl())
                     .put("download_url", getDownloaderUrl())
                     .put("add_url", getAdderUrl())
-                    .put("max_file_size", getMaxFileSize())
+                    .put("max_file_size", getMaxFileSizeByProperties())
                     .put("allowed_file_types", JSONObject.wrap(getAllowedFileTypes()))
                     .put("preview_update_callback", previewCallBack.getCallbackUrl())
                     .put("allowed_file_extensions", JSONObject.wrap(getAllowedExtensions()))
@@ -378,7 +389,7 @@ public class FileUploadPanel extends Panel implements Loggable {
 
             try {
                 final String pFileId = getParamFileId("fileId").toString();
-                final String pName = getParamFileId("name").toString();
+                final String pName   = getParamFileId("name").toString();
 
                 getLogger().debug("FileUploadPanel.AddFileBehavior(fileId={},name={})", pFileId, pName);
 
