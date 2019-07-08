@@ -215,6 +215,8 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                         }
                     });
 
+                    ctx.addRenderedAsListField(fieldModel.getObject().getPathFull());
+
                     SInstanceActionsPanel.addPrimarySecondaryPanelsTo(
                         cell,
                         list,

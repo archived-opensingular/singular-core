@@ -95,10 +95,11 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
     private AnnotationMode                                               annotation       = AnnotationMode.NONE;
     private ActionClassifier                                             actionClassifier = AtrAnnotation.DefaultAnnotationClassifier.DEFAULT_ANNOTATION;
 
-    private boolean                                                      nested           = false;
+    private boolean                                                      nested              = false;
     private boolean                                                      showBreadcrumb;
-    private List<String>                                                 breadCrumbs      = newArrayList();
-    private Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> breadCrumbStatus = newLinkedList();
+    private List<String>                                                 breadCrumbs         = newArrayList();
+    private List<String>                                                 renderedAsListField = newArrayList();
+    private Deque<ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus> breadCrumbStatus    = newLinkedList();
     private ListBreadcrumbMapper.BreadCrumbPanel.BreadCrumbStatus        selectedBreadCrumbStatus;
 
     private IBSComponentFactory<Component>                               preFormPanelFactory;
@@ -429,6 +430,19 @@ public class WicketBuildContext implements Serializable, IFormBuildContext {
 
     public void setView(SView view) {
         this.view = view;
+    }
+
+    public void addRenderedAsListField(String typeNamePathFull) {
+        renderedAsListField.add(typeNamePathFull);
+    }
+
+    public List<String> getAllRenderedAsListField() {
+        List<String> allRenderedAsListField = new ArrayList<>(renderedAsListField);
+        if (parent != null) {
+            allRenderedAsListField.addAll(parent.getAllRenderedAsListField());
+        }
+
+        return allRenderedAsListField;
     }
 
     private static final class InitRootContainerBehavior extends Behavior {

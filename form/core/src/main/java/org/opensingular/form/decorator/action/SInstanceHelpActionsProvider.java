@@ -16,7 +16,6 @@
 
 package org.opensingular.form.decorator.action;
 
-import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SType;
@@ -35,14 +34,18 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  */
 public class SInstanceHelpActionsProvider implements ISInstanceActionsProvider {
 
+    private final List<String> renderedAsListField;
+
+    public SInstanceHelpActionsProvider(List<String> renderedAsListField) {
+        this.renderedAsListField = renderedAsListField;
+    }
+
     @Override
     public Iterable<SInstanceAction> getActions(ISInstanceActionCapable target, SInstance instance) {
-        if ((instance.getParent() instanceof SIComposite) && (instance.getParent().getParent() instanceof SIList<?>)) {
-            SIList<?> parent = (SIList<?>) instance.getParent().getParent();
-            if (!this.getListFieldActions(target, parent, instance.getType().getNameSimple()).isEmpty()) {
-                return Collections.emptyList();
-            }
+        if (renderedAsListField.contains(instance.getType().getPathFull())) {
+            return Collections.emptyList();
         }
+
         return doHelpAction(instance.asAtr().getLabel(), instance.asAtr().getHelp());
     }
 
