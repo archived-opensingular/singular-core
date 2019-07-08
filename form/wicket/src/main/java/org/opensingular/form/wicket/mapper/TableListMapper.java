@@ -28,11 +28,13 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.SInstances;
 import org.opensingular.form.SType;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
+import org.opensingular.form.type.basic.SPackageBasic;
 import org.opensingular.form.view.list.SViewListByTable;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.enums.ViewMode;
@@ -194,6 +196,14 @@ public class TableListMapper extends AbstractListMapper implements ISInstanceAct
                 final Integer preferentialWidth = fieldModel.getObject().asAtrBootstrap().getColPreference(1);
                 final BSTDataCell cell = rowHeader.newTHeaderCell(headerModel);
                 cell.setInnerStyle(String.format("width:%.0f%%;", (100.0 * preferentialWidth) / sumWidthPref));
+
+                cell
+                        .add($b.visibleIf(() -> list.getObject()
+                                .stream()
+                                .map(i -> i
+                                        .getFieldOpt(fieldModel.getObject().getNameSimple())
+                                        .orElse(i))
+                                .anyMatch(s -> SInstances.attributeValue(s, SPackageBasic.ATR_VISIBLE, true))));
 
                 if (isEdition) {
                     cell.add(new ClassAttributeModifier() {

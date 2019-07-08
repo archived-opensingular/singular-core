@@ -16,9 +16,7 @@
 
 package org.opensingular.form.type.core;
 
-import org.apache.commons.lang3.StringUtils;
 import org.opensingular.form.SInfoType;
-import org.opensingular.form.STypeSimple;
 
 @SInfoType(name = "HiddenString", spackage = SPackageCore.class)
 public class STypeHiddenString extends STypeString {

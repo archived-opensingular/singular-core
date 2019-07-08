@@ -295,7 +295,7 @@ public class TypeProcessorPublicFieldsReferences implements TypeProcessorPosRegi
         Field[] fields = aClass.getFields();
         for (Field field : fields) {
             int mods = field.getModifiers();
-            if (Modifier.isPublic(mods) && !(Modifier.isStatic(mods) && Modifier.isFinal(mods) &&
+            if (Modifier.isPublic(mods) && !(Modifier.isStatic(mods) || Modifier.isFinal(mods) ||
                     !SType.class.isAssignableFrom(field.getType()))) {
                 info.add(new PublicFieldRef(field));
             }
