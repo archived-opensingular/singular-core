@@ -30,6 +30,7 @@ import org.opensingular.form.type.core.STypeString;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,12 +55,12 @@ public class SInstanceHelpActionsProviderTest extends TestCaseForm {
 
         SInstance instance = super.createSerializableTestInstance(STypeString.class);
 
-        Iterable<SInstanceAction> preHelp = new SInstanceHelpActionsProvider().getActions(new MockSInstanceActionCapable(), instance);
+        Iterable<SInstanceAction> preHelp = new SInstanceHelpActionsProvider(Collections.emptyList()).getActions(new MockSInstanceActionCapable(), instance);
         assertFalse(preHelp.iterator().hasNext());
 
         instance.asAtr().help("HELP!!!");
 
-        Iterable<SInstanceAction> postHelp = new SInstanceHelpActionsProvider().getActions(new MockSInstanceActionCapable(), instance);
+        Iterable<SInstanceAction> postHelp = new SInstanceHelpActionsProvider(Collections.emptyList()).getActions(new MockSInstanceActionCapable(), instance);
         assertTrue(postHelp.iterator().hasNext());
 
         List<SInstanceAction> actions = Lists.newArrayList(postHelp);
@@ -75,7 +76,7 @@ public class SInstanceHelpActionsProviderTest extends TestCaseForm {
 
         SInstance instance = super.createSerializableTestInstance(STypeString.class);
 
-        Iterable<SInstanceAction> preHelp = new SInstanceHelpActionsProvider().getActions(new MockSInstanceActionCapable(), instance);
+        Iterable<SInstanceAction> preHelp = new SInstanceHelpActionsProvider(Collections.emptyList()).getActions(new MockSInstanceActionCapable(), instance);
         assertFalse(preHelp.iterator().hasNext());
 
         instance.asAtr().help(new SimpleValueCalculation<String>() {
@@ -86,7 +87,7 @@ public class SInstanceHelpActionsProviderTest extends TestCaseForm {
             }
         });
 
-        Iterable<SInstanceAction> postHelp = new SInstanceHelpActionsProvider().getActions(new MockSInstanceActionCapable(), instance);
+        Iterable<SInstanceAction> postHelp = new SInstanceHelpActionsProvider(Collections.emptyList()).getActions(new MockSInstanceActionCapable(), instance);
         assertTrue(postHelp.iterator().hasNext());
 
         List<SInstanceAction> actions = Lists.newArrayList(postHelp);
