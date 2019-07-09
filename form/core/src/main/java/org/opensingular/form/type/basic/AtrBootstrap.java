@@ -72,7 +72,12 @@ public class AtrBootstrap extends STranslatorForAttribute {
      * Inicia uma nova linha para renderizar o campo
      */
     public AtrBootstrap newRow() {
-        setAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW, Boolean.TRUE);
+        newRow(Boolean.TRUE);
+        return this;
+    }
+
+    public AtrBootstrap newRow(Boolean value) {
+        setAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW, value);
         return this;
     }
 
