@@ -447,7 +447,7 @@ public class SingularFormPanel extends Panel {
         return Arrays.asList(
 
             WicketBuildListeners.onBeforeBuildIfMapperIs(ISInstanceActionCapable.class,
-                (ctx, mapper, iac) -> iac.addSInstanceActionsProvider(Integer.MAX_VALUE, new SInstanceHelpActionsProvider())),
+                (ctx, mapper, iac) -> iac.addSInstanceActionsProvider(Integer.MAX_VALUE, new SInstanceHelpActionsProvider(ctx.getAllRenderedAsListField()))),
 
             WicketBuildListeners.onBeforeBuildIfMapperIs(ISInstanceActionCapable.class,
                 (ctx, mapper, iac) -> iac.addSInstanceActionsProvider(Integer.MAX_VALUE, new SInstanceAnnotationActionsProvider(
