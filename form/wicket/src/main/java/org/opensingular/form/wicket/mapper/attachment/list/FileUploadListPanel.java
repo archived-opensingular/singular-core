@@ -51,7 +51,6 @@ import org.opensingular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavi
 import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
 import org.opensingular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
-import org.opensingular.form.wicket.mapper.attachment.upload.FilePdfOcrUploadListener;
 import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadConfig;
 import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManager;
 import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManagerFactory;
@@ -176,7 +175,6 @@ public class FileUploadListPanel extends Panel implements Loggable {
             add($b.classAppender("FileUploadListPanel_empty"));
         }
 
-        registerFileUploadedListener(new FilePdfOcrUploadListener());
     }
 
     private boolean isEdition(ViewMode viewMode) {

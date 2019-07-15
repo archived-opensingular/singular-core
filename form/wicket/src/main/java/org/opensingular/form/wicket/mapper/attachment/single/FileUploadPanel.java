@@ -49,7 +49,6 @@ import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
 import org.opensingular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
 import org.opensingular.form.wicket.mapper.attachment.image.SIAttachmentIResourceStream;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
-import org.opensingular.form.wicket.mapper.attachment.upload.FilePdfOcrUploadListener;
 import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadConfig;
 import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManager;
 import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManagerFactory;
@@ -108,7 +107,6 @@ public class FileUploadPanel extends Panel implements Loggable {
 
     public FileUploadPanel(String id, IModel<SIAttachment> model, ViewMode viewMode) {
         super(id, model);
-        registerFileUploadedListener(new FilePdfOcrUploadListener());
         this.viewMode = viewMode;
         buildFileUploadInput();
     }
