@@ -17,7 +17,14 @@
 package org.opensingular.form.view;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SViewAttachmentList extends SView {
+
+    private List<FileEventListener> fileUploadedListeners = new ArrayList<>();
+    private List<FileEventListener> fileRemovedListeners  = new ArrayList<>();
+
     private boolean showPageBlockWhileUploading;
 
     public boolean isShowPageBlockWhileUploading() {
@@ -27,5 +34,23 @@ public class SViewAttachmentList extends SView {
     public SViewAttachmentList setShowPageBlockWhileUploading(boolean showPageBlockWhileUploading) {
         this.showPageBlockWhileUploading = showPageBlockWhileUploading;
         return this;
+    }
+
+    public SViewAttachmentList withFileUploadedListener(FileEventListener fileUploadedListener) {
+        this.fileUploadedListeners.add(fileUploadedListener);
+        return this;
+    }
+
+    public List<FileEventListener> getFileUploadedListeners() {
+        return fileUploadedListeners;
+    }
+
+    public SViewAttachmentList withFileRemovedListener(FileEventListener fileRemovedListener) {
+        this.fileRemovedListeners.add(fileRemovedListener);
+        return this;
+    }
+
+    public List<FileEventListener> getFileRemovedListeners() {
+        return fileRemovedListeners;
     }
 }

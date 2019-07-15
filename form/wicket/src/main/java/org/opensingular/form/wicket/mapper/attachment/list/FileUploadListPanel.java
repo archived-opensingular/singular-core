@@ -41,6 +41,7 @@ import org.opensingular.form.servlet.MimeTypes;
 import org.opensingular.form.type.basic.AtrBasic;
 import org.opensingular.form.type.core.attachment.IAttachmentPersistenceHandler;
 import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.view.FileEventListener;
 import org.opensingular.form.view.SView;
 import org.opensingular.form.view.SViewAttachmentList;
 import org.opensingular.form.wicket.WicketBuildContext;
@@ -50,9 +51,11 @@ import org.opensingular.form.wicket.mapper.attachment.BaseJQueryFileUploadBehavi
 import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
 import org.opensingular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
+import org.opensingular.form.wicket.mapper.attachment.upload.FilePdfOcrUploadListener;
 import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadConfig;
 import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManager;
 import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManagerFactory;
+import org.opensingular.form.wicket.mapper.attachment.upload.SingularUploadException;
 import org.opensingular.form.wicket.mapper.attachment.upload.UploadResponseWriter;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.FileUploadServlet;
@@ -108,6 +111,9 @@ public class FileUploadListPanel extends Panel implements Loggable {
     private final RemoveFileBehavior        remover;
     private final DownloadSupportedBehavior downloader;
     private final WicketBuildContext        ctx;
+
+    private List<FileEventListener> fileUploadedListeners = new ArrayList<>();
+    private List<FileEventListener> fileRemovedListeners  = new ArrayList<>();
 
     private AttachmentKey uploadId;
 
@@ -169,6 +175,8 @@ public class FileUploadListPanel extends Panel implements Loggable {
         if (viewMode != null && viewMode.isVisualization() && model.getObject().isEmpty()) {
             add($b.classAppender("FileUploadListPanel_empty"));
         }
+
+        registerFileUploadedListener(new FilePdfOcrUploadListener());
     }
 
     private boolean isEdition(ViewMode viewMode) {
@@ -284,6 +292,16 @@ public class FileUploadListPanel extends Panel implements Loggable {
         return upManagerFactory.getFileUploadManagerFromSessionOrMakeAndAttach(getServletRequest().getSession());
     }
 
+    public FileUploadListPanel registerFileUploadedListener(FileEventListener fileUploadedListener) {
+        this.fileUploadedListeners.add(fileUploadedListener);
+        return this;
+    }
+
+    public FileUploadListPanel registerFileRemovedListener(FileEventListener fileRemovedListener) {
+        this.fileRemovedListeners.add(fileRemovedListener);
+        return this;
+    }
+
     public static class LabelWithIcon extends Label {
 
         private final Icon           icon;
@@ -329,7 +347,17 @@ public class FileUploadListPanel extends Panel implements Loggable {
                 Optional<UploadResponseInfo> responseInfo = getFileUploadManager().consumeFile(pFileId, attachment -> {
                     final SIAttachment si = currentInstance().addNew();
                     si.update(attachment);
-                    return new UploadResponseInfo(si);
+
+                    try {
+                        for (FileEventListener fileUploadedListener : fileUploadedListeners) {
+                            fileUploadedListener.accept(si);
+                        }
+
+                        return new UploadResponseInfo(si);
+                    } catch (SingularUploadException e) {
+                        return new UploadResponseInfo(e.getFileName(), e.getMessage());
+                    }
+
                 });
 
                 UploadResponseInfo uploadResponseInfo = responseInfo

@@ -49,9 +49,11 @@ import org.opensingular.form.wicket.mapper.attachment.DownloadLink;
 import org.opensingular.form.wicket.mapper.attachment.DownloadSupportedBehavior;
 import org.opensingular.form.wicket.mapper.attachment.image.SIAttachmentIResourceStream;
 import org.opensingular.form.wicket.mapper.attachment.upload.AttachmentKey;
+import org.opensingular.form.wicket.mapper.attachment.upload.FilePdfOcrUploadListener;
 import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadConfig;
 import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManager;
 import org.opensingular.form.wicket.mapper.attachment.upload.FileUploadManagerFactory;
+import org.opensingular.form.wicket.mapper.attachment.upload.SingularUploadException;
 import org.opensingular.form.wicket.mapper.attachment.upload.UploadResponseWriter;
 import org.opensingular.form.wicket.mapper.attachment.upload.info.UploadResponseInfo;
 import org.opensingular.form.wicket.mapper.attachment.upload.servlet.strategy.AttachmentKeyStrategy;
@@ -106,6 +108,7 @@ public class FileUploadPanel extends Panel implements Loggable {
 
     public FileUploadPanel(String id, IModel<SIAttachment> model, ViewMode viewMode) {
         super(id, model);
+        registerFileUploadedListener(new FilePdfOcrUploadListener());
         this.viewMode = viewMode;
         buildFileUploadInput();
     }
@@ -396,10 +399,15 @@ public class FileUploadPanel extends Panel implements Loggable {
                 Optional<UploadResponseInfo> responseInfo = getFileUploadManager().consumeFile(pFileId, attachment -> {
                     final SIAttachment si = (SIAttachment) FileUploadPanel.this.getDefaultModel().getObject();
                     si.update(attachment);
-                    for (FileEventListener fileUploadedListener : fileUploadedListeners) {
-                        fileUploadedListener.accept(si);
+                    try {
+                        for (FileEventListener fileUploadedListener : fileUploadedListeners) {
+                            fileUploadedListener.accept(si);
+                        }
+
+                        return new UploadResponseInfo(si);
+                    } catch (SingularUploadException e) {
+                        return new UploadResponseInfo(e.getFileName(), e.getMessage());
                     }
-                    return new UploadResponseInfo(si);
                 });
 
                 UploadResponseInfo uploadResponseInfo = responseInfo
