@@ -19,11 +19,12 @@ package org.opensingular.form.wicket.mapper.attachment.upload.info;
 import com.google.common.collect.ComparisonChain;
 import org.json.JSONObject;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
+import org.opensingular.lib.commons.util.Loggable;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-public class FileUploadInfo implements Serializable, Comparable<FileUploadInfo> {
+public class FileUploadInfo implements Serializable, Comparable<FileUploadInfo>, Loggable {
 
     public final IAttachmentRef attachmentRef;
 

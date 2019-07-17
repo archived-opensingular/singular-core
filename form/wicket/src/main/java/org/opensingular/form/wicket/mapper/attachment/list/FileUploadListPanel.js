@@ -36,6 +36,7 @@
                 $box.addClass('FileUploadListPanel_error');
                 $box.find('.fa-file-text').removeClass('fa-file-text').addClass('fa-remove').css('color', 'red');
                 $box.find('.list-item-uploading').removeClass('list-item-uploading').addClass('list-item-uploaded');
+                $box.find('.list-action-uploading').removeClass('list-action-uploading');
                 $box.find('.list-action-remove').removeClass('hidden').click(function (e) {
                     $box.remove();
                     window.FileUploadListPanel.setUploadItemState(panel_id, box_id, null);
@@ -176,7 +177,9 @@
                                     size: resp.size
                                 },
                                 function (dataSInstance, status, jqXHR) {
-                                    if (status == 'success') {
+                                    if (dataSInstance.errorMessage) {
+                                        FileUploadListPanel.setUploadItemState(params.component_id, fake_id, 'error', dataSInstance.errorMessage);
+                                    } else if (status == 'success') {
                                         FileUploadListPanel.setUploadItemState(params.component_id, fake_id, 'success');
                                         var $box = $('#upload-box-' + fake_id);
                                         $box.find('.fa-file-text').removeClass('fa-file-text').addClass('fa-check');

@@ -25,6 +25,8 @@ import org.opensingular.form.SInstance;
 import org.opensingular.form.decorator.action.ISInstanceActionCapable;
 import org.opensingular.form.decorator.action.ISInstanceActionsProvider;
 import org.opensingular.form.type.core.attachment.SIAttachment;
+import org.opensingular.form.view.FileEventListener;
+import org.opensingular.form.view.SViewAttachmentList;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.AbstractListMapper;
 import org.opensingular.form.wicket.mapper.decorator.SInstanceActionsPanel;
@@ -49,6 +51,7 @@ public class AttachmentListMapper extends AbstractListMapper implements ISInstan
     public void buildView(WicketBuildContext ctx) {
         this.ctx = ctx;
         final FileUploadListPanel comp = new FileUploadListPanel(MULTIPLE_HIDDEN_UPLOAD_FIELD_ID, (IModel<SIList<SIAttachment>>) ctx.getModel(), ctx, this::addSInstanceActions);
+        registerListeners(ctx, comp);
         ctx.getContainer().appendTag("div", comp);
         final WicketBuildContext.OnFieldUpdatedListener listener = new WicketBuildContext.OnFieldUpdatedListener();
         comp.add(new AjaxEventBehavior(SINGULAR_PROCESS_EVENT) {
@@ -57,6 +60,18 @@ public class AttachmentListMapper extends AbstractListMapper implements ISInstan
                 listener.onProcess(comp, target, ctx.getModel());
             }
         });
+    }
+
+    private void registerListeners(WicketBuildContext ctx, FileUploadListPanel container) {
+        if (ctx.getView() instanceof SViewAttachmentList) {
+            SViewAttachmentList viewAttachment = (SViewAttachmentList) ctx.getView();
+            for (FileEventListener uploadListener : viewAttachment.getFileUploadedListeners()) {
+                container.registerFileUploadedListener(uploadListener);
+            }
+            for (FileEventListener removedListener : viewAttachment.getFileRemovedListeners()) {
+                container.registerFileRemovedListener(removedListener);
+            }
+        }
     }
 
     private void addSInstanceActions(BSContainer<?> container) {
