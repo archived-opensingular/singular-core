@@ -68,6 +68,24 @@
                 }
             };
 
+            var disableUpload = function () {
+                choose_btn.addClass('disabled');
+                choose_btn.find('input').first().prop('disabled', true)
+                choose_btn.find('span').first().text("Enviando");
+                choose_btn.find('i').first().attr('class', 'fa fa-refresh fa-spin');
+            };
+
+            var enableUpload = function () {
+                choose_btn.removeClass('disabled');
+                choose_btn.find('input').first().prop('disabled', false)
+                choose_btn.find('span').first().text("Escolher");
+                choose_btn.find('i').first().attr('class', 'fa fa-upload');
+            };
+
+            var startUploadValidation = function () {
+                choose_btn.find('span').first().text("Validando");
+            };
+
             updateActionButtons();
 
             if (verifyIfButtonUploadIsDisplayed()) {
@@ -97,6 +115,7 @@
                                 data.submit();
                             });
                         }
+                        disableUpload();
                         return true;
                     },
                     start: function (e, data) {
@@ -110,7 +129,9 @@
                         $.each(data.result, function (index, fileString) {
                             var resp = JSON.parse(fileString);
                             // console.log('f',resp, $('#' + params.files_id ));
+                            startUploadValidation();
                             if (resp.errorMessage) {
+                                enableUpload();
                                 updateActionButtons();
                                 toastr.error(resp.name + ': ' + resp.errorMessage);
                                 $('#' + params.progress_bar_id).hide();
@@ -152,6 +173,7 @@
                                             updateActionButtons();
                                             $('#' + params.file_field_id).trigger("singular:process");
                                         }
+                                        enableUpload();
                                     }
                                 );
                             }
