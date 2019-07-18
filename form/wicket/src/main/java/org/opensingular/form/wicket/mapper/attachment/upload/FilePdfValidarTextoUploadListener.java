@@ -2,7 +2,7 @@ package org.opensingular.form.wicket.mapper.attachment.upload;
 
 import org.opensingular.form.type.core.attachment.SIAttachment;
 
-public class FilePdfOcrUploadListener extends AbstractPdfUploadListener {
+public class FilePdfValidarTextoUploadListener extends AbstractPdfUploadListener {
 
     @Override
     protected void acceptPdfWithoutText(SIAttachment attachment) {
