@@ -19,25 +19,29 @@ package org.opensingular.form.view;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SViewAttachment extends SView {
+public class SViewAttachment extends SView implements SViewSupportsUploadListener<SViewAttachment> {
 
     private List<FileEventListener> fileUploadedListeners = new ArrayList<>();
     private List<FileEventListener> fileRemovedListeners = new ArrayList<>();
 
+    @Override
     public SViewAttachment withFileUploadedListener(FileEventListener fileUploadedListener) {
         this.fileUploadedListeners.add(fileUploadedListener);
         return this;
     }
 
+    @Override
     public List<FileEventListener> getFileUploadedListeners() {
         return fileUploadedListeners;
     }
 
+    @Override
     public SViewAttachment withFileRemovedListener(FileEventListener fileRemovedListener) {
         this.fileRemovedListeners.add(fileRemovedListener);
         return this;
     }
 
+    @Override
     public List<FileEventListener> getFileRemovedListeners() {
         return fileRemovedListeners;
     }
