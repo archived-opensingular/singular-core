@@ -15,8 +15,8 @@ import java.util.UUID;
 
 public class OcrUtil {
 
-    public static final String GHOSTSCRIPT_PDF_TO_TIFF_COMMAND = "singular.fileupload.ocr.gs.command";
-    public static final String TESSERACT_PDF_OCR_COMMAND       = "singular.fileupload.ocr.tesseract.command";
+    public static final String PDF_TO_TIFF_COMMAND       = "singular.fileupload.ocr.pdf_to_tiff.command";
+    public static final String TESSERACT_PDF_OCR_COMMAND = "singular.fileupload.ocr.tesseract.command";
 
     public static File runOcrOnPdf(String path) {
         ITesseract tesseract = new Tesseract();
@@ -42,7 +42,7 @@ public class OcrUtil {
         try {
             Runtime rt        = Runtime.getRuntime();
             File    tiffFile  = File.createTempFile(UUID.randomUUID().toString(), ".tiff");
-            Process pdfToTiff = rt.exec(MessageFormat.format(SingularProperties.get(GHOSTSCRIPT_PDF_TO_TIFF_COMMAND), pdfFile.getAbsolutePath(), tiffFile.getAbsolutePath()));
+            Process pdfToTiff = rt.exec(MessageFormat.format(SingularProperties.get(PDF_TO_TIFF_COMMAND), pdfFile.getAbsolutePath(), tiffFile.getAbsolutePath()));
             if (pdfToTiff.waitFor() == 0) {
                 Process tesseract = rt.exec(MessageFormat.format(SingularProperties.get(TESSERACT_PDF_OCR_COMMAND), tiffFile.getAbsolutePath(), pdfFile.getAbsolutePath()));
                 tesseract.waitFor();
