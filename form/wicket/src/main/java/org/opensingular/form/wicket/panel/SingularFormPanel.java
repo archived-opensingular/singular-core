@@ -174,6 +174,7 @@ public class SingularFormPanel extends Panel {
     public SingularFormPanel(@Nonnull String id, boolean nested, @Nonnull ISInstanceAwareModel<SInstance> instanceModel) {
         super(id, instanceModel);
         this.nested = nested;
+        setOutputMarkupPlaceholderTag(true);
     }
 
     /**
@@ -310,8 +311,8 @@ public class SingularFormPanel extends Panel {
         response.render(JavaScriptHeaderItem
             .forReference(new JQueryPluginResourceReference(SingularFormPanel.class, "SingularFormPanel.js")));
         if (firstFieldFocusEnabled && firstRender && viewMode.isEdition()) {
-            response.render(
-                OnDomReadyHeaderItem.forScript("SingularFormPanel.initFocus('" + this.getMarkupId() + "');"));
+            response.render(OnDomReadyHeaderItem
+                    .forScript("if(typeof SingularFormPanel !== 'undefined'){SingularFormPanel.initFocus('" + this.getMarkupId() + "');}"));
             firstRender = false;
         }
     }
