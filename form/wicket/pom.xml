@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.opensingular</groupId>
         <artifactId>singular-form</artifactId>
-        <version>1.9.1-SNAPSHOT</version>
+        <version>1.9.1-RC6</version>
     </parent>
 
     <artifactId>singular-form-wicket</artifactId>
@@ -91,6 +91,12 @@
             <groupId>org.skyscreamer</groupId>
             <artifactId>jsonassert</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sourceforge.tess4j</groupId>
+            <artifactId>tess4j</artifactId>
+            <version>4.3.1</version>
         </dependency>
 
     </dependencies>

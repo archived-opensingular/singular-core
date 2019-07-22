@@ -68,6 +68,24 @@
                 }
             };
 
+            var disableUpload = function () {
+                choose_btn.addClass('disabled');
+                choose_btn.find('input').first().prop('disabled', true)
+                choose_btn.find('span').first().text("Enviando");
+                choose_btn.find('i').first().attr('class', 'fa fa-refresh fa-spin');
+            };
+
+            var enableUpload = function () {
+                choose_btn.removeClass('disabled');
+                choose_btn.find('input').first().prop('disabled', false)
+                choose_btn.find('span').first().text("Escolher");
+                choose_btn.find('i').first().attr('class', 'fa fa-upload');
+            };
+
+            var startUploadValidation = function () {
+                choose_btn.find('span').first().text("Validando");
+            };
+
             updateActionButtons();
 
             if (verifyIfButtonUploadIsDisplayed()) {
@@ -97,6 +115,7 @@
                                 data.submit();
                             });
                         }
+                        disableUpload();
                         return true;
                     },
                     start: function (e, data) {
@@ -110,7 +129,9 @@
                         $.each(data.result, function (index, fileString) {
                             var resp = JSON.parse(fileString);
                             // console.log('f',resp, $('#' + params.files_id ));
+                            startUploadValidation();
                             if (resp.errorMessage) {
+                                enableUpload();
                                 updateActionButtons();
                                 toastr.error(resp.name + ': ' + resp.errorMessage);
                                 $('#' + params.progress_bar_id).hide();
@@ -124,28 +145,35 @@
                                         size: resp.size
                                     },
                                     function (dataSInstance, status, jqXHR) {
-                                        var $link = $('<a></a>').text(dataSInstance.name);
-                                        DownloadSupportedBehavior.resolveUrl(
-                                            params.download_url,
-                                            dataSInstance.fileId,
-                                            dataSInstance.name,
-                                            function (url) {
-                                                $link.attr('href', url);
-                                                if (params.preview_update_callback) {
-                                                    Wicket.Ajax.post({u: params.preview_update_callback});
+                                        if (dataSInstance.errorMessage) {
+                                            updateActionButtons();
+                                            toastr.error(dataSInstance.name + ': ' + dataSInstance.errorMessage);
+                                            $('#' + params.progress_bar_id).hide();
+                                        } else {
+                                            var $link = $('<a></a>').text(dataSInstance.name);
+                                            DownloadSupportedBehavior.resolveUrl(
+                                                params.download_url,
+                                                dataSInstance.fileId,
+                                                dataSInstance.name,
+                                                function (url) {
+                                                    $link.attr('href', url);
+                                                    if (params.preview_update_callback) {
+                                                        Wicket.Ajax.post({u: params.preview_update_callback});
+                                                    }
                                                 }
+                                            );
+                                            $link.attr('title', dataSInstance.name);
+                                            if (DownloadSupportedBehavior.isContentTypeBrowserFriendly(dataSInstance.name)) {
+                                                $link.attr('target', '_blank');
                                             }
-                                        );
-                                        $link.attr('title', dataSInstance.name);
-                                        if (DownloadSupportedBehavior.isContentTypeBrowserFriendly(dataSInstance.name)) {
-                                            $link.attr('target', '_blank');
-                                        }
-                                        ;
-                                        $('#' + params.files_id).empty().append($link);
-                                        $('#' + params.progress_bar_id).hide();
+                                            ;
+                                            $('#' + params.files_id).empty().append($link);
+                                            $('#' + params.progress_bar_id).hide();
 
-                                        updateActionButtons();
-                                        $('#' + params.file_field_id).trigger("singular:process");
+                                            updateActionButtons();
+                                            $('#' + params.file_field_id).trigger("singular:process");
+                                        }
+                                        enableUpload();
                                     }
                                 );
                             }
