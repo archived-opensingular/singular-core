@@ -16,11 +16,16 @@
 
 package org.opensingular.form.wicket.component;
 
+import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.visit.IVisitor;
 import org.opensingular.form.SInstance;
+import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
+import org.opensingular.lib.wicket.util.toastr.ToastrHelper;
 
 /**
  * This button should be used to validate the form and save.
@@ -34,22 +39,38 @@ public abstract class SingularValidationButton extends SingularButton {
     protected abstract void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel);
 
     protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
+        new ToastrHelper(getPage()).
+                addToastrMessage(ToastrType.ERROR, getString("message.save.error"));
     }
 
     @Override
     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
         super.onSubmit(target, form);
-        if (WicketFormProcessing.onFormSubmit(form, target, getCurrentInstance(), true)) {
+        final MarkupContainer container = findSFormContainer();
+        if (WicketFormProcessing.onFormSubmit(container, target, getCurrentInstance(), true)) {
             onValidationSuccess(target, form, getCurrentInstance());
         } else {
             onValidationError(target, form, getCurrentInstance());
         }
-        target.add(form);
+        target.add(container);
+    }
+
+    /**
+     * Tries to find a SingularFormPanel nested inside the form, if no results is founded returns the form
+     *
+     * @return the container
+     */
+    private MarkupContainer findSFormContainer() {
+        final MarkupContainer container = getForm()
+                .visitChildren(SingularFormPanel.class, (IVisitor<SingularFormPanel, SingularFormPanel>) (a, v) -> v.stop(a));
+        if (container != null) {
+            return container;
+        }
+        return getForm();
     }
 
     @Override
     protected boolean isShouldProcessFormSubmitWithoutValidation() {
         return false;
     }
-
 }

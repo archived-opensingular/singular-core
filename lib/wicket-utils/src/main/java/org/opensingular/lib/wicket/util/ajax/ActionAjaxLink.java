@@ -16,23 +16,24 @@
 
 package org.opensingular.lib.wicket.util.ajax;
 
-import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.model.IModel;
-
 import org.opensingular.lib.wicket.util.util.WicketEventUtils;
 
-@SuppressWarnings({ "serial" })
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static org.opensingular.lib.wicket.util.util.WicketUtils.$m;
+
+@SuppressWarnings({"serial"})
 public abstract class ActionAjaxLink<T> extends AjaxLink<T> {
-    
+
     private final static Logger LOGGER = Logger.getLogger(ActionAjaxLink.class.getName());
-    
+
+    private boolean catchException = false;
+
     public ActionAjaxLink(String id, IModel<T> model) {
         super(id, model);
     }
@@ -48,9 +49,12 @@ public abstract class ActionAjaxLink<T> extends AjaxLink<T> {
         try {
             onAction(target);
         } catch (RuntimeException ex) {
-            LOGGER.log(Level.INFO, "Ajax error", ex);
-            WicketEventUtils.addErrorMessage(this, null, $m.ofValue(ex.getMessage())); // TODO substituir por esquema de exceção de negócio
-            WicketEventUtils.sendAjaxErrorEvent(this, target);
+            if (catchException) {
+                LOGGER.log(Level.INFO, "Ajax error", ex);
+                WicketEventUtils.addErrorMessage(this, null, $m.ofValue(ex.getMessage())); // TODO substituir por esquema de exceção de negócio
+                WicketEventUtils.sendAjaxErrorEvent(this, target);
+            }
+            throw ex;
         }
     }
 
@@ -72,5 +76,9 @@ public abstract class ActionAjaxLink<T> extends AjaxLink<T> {
     @SuppressWarnings("unchecked")
     public ActionAjaxLink<T> setBody(IModel<?> bodyModel) {
         return (ActionAjaxLink<T>) super.setBody(bodyModel);
+    }
+
+    public void setCatchException(boolean catchException) {
+        this.catchException = catchException;
     }
 }
