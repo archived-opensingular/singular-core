@@ -82,4 +82,8 @@ public interface RichTextAction<T extends RichTextContext> {
     default void prepare(SInstance formSInstance, SInstance actionSInstance){
         //NOOP
     }
+
+    default boolean isVisible(SInstance formSInstance){
+        return true;
+    }
 }

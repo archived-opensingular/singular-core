@@ -53,17 +53,17 @@ import java.util.Map;
 public class RichTextNewTabPage extends WebPage implements Loggable {
 
     private static final IHeaderResponseDecorator JAVASCRIPT_DECORATOR = response -> new JavaScriptFilteredIntoFooterHeaderResponse(response, SingularTemplate.JAVASCRIPT_CONTAINER);
-    private static final String JAVASCRIPT_CONTAINER = "javascript-container";
+    private static final String                   JAVASCRIPT_CONTAINER = "javascript-container";
 
     private WicketBuildContext wicketBuildContext;
-    private IModel<String> modelTextArea;
+    private IModel<String>     modelTextArea;
 
-    private boolean readOnly;
+    private boolean                     readOnly;
     private AbstractDefaultAjaxBehavior eventSaveCallbackBehavior;
-    private BFModalWindow bfModalWindow;
-    private AjaxButton submitButton;
-    private HiddenField<String> hiddenInput;
-    private String previewFrameMarkupId;
+    private BFModalWindow               bfModalWindow;
+    private AjaxButton                  submitButton;
+    private HiddenField<String>         hiddenInput;
+    private String                      previewFrameMarkupId;
 
     /**
      * Default constructor
@@ -75,17 +75,17 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     /**
      * The new Rich Text Page constructor.
      *
-     * @param title              The title of page.
-     * @param readOnly           True if is just readOnly model; False if is editable.
-     * @param wicketBuildContext The WicketBuildContext
-     * @param hiddenInput        The hidden input of the Page who calls.
-     * @param previewFrameMarkupId           The previewFrameMarkupId of the Label of the Page who calls.
+     * @param title                The title of page.
+     * @param readOnly             True if is just readOnly model; False if is editable.
+     * @param wicketBuildContext   The WicketBuildContext
+     * @param hiddenInput          The hidden input of the Page who calls.
+     * @param previewFrameMarkupId The previewFrameMarkupId of the Label of the Page who calls.
      */
     public RichTextNewTabPage(String title, boolean readOnly, WicketBuildContext wicketBuildContext,
                               HiddenField<String> hiddenInput, String previewFrameMarkupId) {
-        this.readOnly = readOnly;
-        this.wicketBuildContext = wicketBuildContext;
-        this.hiddenInput = hiddenInput;
+        this.readOnly             = readOnly;
+        this.wicketBuildContext   = wicketBuildContext;
+        this.hiddenInput          = hiddenInput;
         this.previewFrameMarkupId = previewFrameMarkupId;
         add(new Label("title", Model.of(title)));
         this.modelTextArea = hiddenInput.getModel();
@@ -120,7 +120,7 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
 
         try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "RichTextNewTabPage.js")) {
             final Map<String, Object> params = new HashMap<>();
-            SViewByRichTextNewTab view = retrieveView();
+            SViewByRichTextNewTab     view   = retrieveView();
 
             params.put("submitButtonId", submitButton.getMarkupId());
             params.put("classDisableDoubleClick", view
@@ -168,12 +168,14 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     private String renderButtonsList(SViewByRichTextNewTab view) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < view.getTextActionList().size(); i++) {
-            RichTextAction richTextAction = view.getTextActionList().get(i);
-            String actionButtonFormatted = i + "#$" + richTextAction.getLabel()
-                    + "#$" + richTextAction.getIcon().getCssClass()
-                    + "#$" + richTextAction.getLabelInline()
-                    + ",,";
-            sb.append(actionButtonFormatted);
+            final RichTextAction richTextAction = view.getTextActionList().get(i);
+            if (richTextAction.isVisible(wicketBuildContext.getCurrentInstance())) {
+                String actionButtonFormatted = i + "#$" + richTextAction.getLabel()
+                        + "#$" + richTextAction.getIcon().getCssClass()
+                        + "#$" + richTextAction.getLabelInline()
+                        + ",,";
+                sb.append(actionButtonFormatted);
+            }
         }
         if (sb.length() > 0) {
             sb.setLength(sb.length() - 2);
