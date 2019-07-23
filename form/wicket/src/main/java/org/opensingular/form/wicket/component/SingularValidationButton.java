@@ -40,7 +40,8 @@ public abstract class SingularValidationButton extends SingularButton {
 
     protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
         new ToastrHelper(getPage()).
-                addToastrMessage(ToastrType.ERROR, getString("message.save.error"));
+                addToastrMessage(ToastrType.ERROR, getString("message.save.error", null,
+                        "O formulário não pode ser salvo enquanto houver correções a serem feitas."));
     }
 
     @Override
