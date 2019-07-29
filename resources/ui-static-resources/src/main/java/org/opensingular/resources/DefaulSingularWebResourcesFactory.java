@@ -8,7 +8,6 @@ import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.resource.JQueryPluginResourceReference;
-import org.apache.wicket.resource.JQueryResourceReference;
 import org.opensingular.lib.wicket.SingularWebResourcesFactory;
 
 import java.util.LinkedHashSet;
