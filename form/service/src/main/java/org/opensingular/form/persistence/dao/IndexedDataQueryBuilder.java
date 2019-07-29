@@ -18,7 +18,7 @@ package org.opensingular.form.persistence.dao;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.MariaDBDialect;
+import org.hibernate.dialect.MySQLDialect;
 
 
 /**
@@ -123,7 +123,7 @@ public class IndexedDataQueryBuilder {
     private void addJoinClause(String columnAlias, String fieldsNames) {
 
         String coalaseSubQuerySelectValue;
-        if (dialect != null && MariaDBDialect.class.isAssignableFrom(dialect)) {
+        if (dialect != null && MySQLDialect.class.isAssignableFrom(dialect)) {
             coalaseSubQuerySelectValue = " COALESCE(cast(CACHE_VALOR.DS_VALOR as CHAR), cast(CACHE_VALOR.NU_VALOR as CHAR),  " +
                     "cast(CACHE_VALOR.DT_VALOR as CHAR)) as ds_valor ";
         } else {
