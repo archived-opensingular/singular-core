@@ -1,5 +1,5 @@
 @import '../../global/css/variables'; // global variables.
-@import '../../global/components/_mixins'; // global mixings.
+@import '../../global/components/mixins'; // global mixings.
 
 /***
 Login page
@@ -21,7 +21,6 @@ $bg-color: #e8e9f0;
 
   .logo-default {
     background-position: 50%;
-    background-image: url($brand-logo-url);
     display: inline-block;
     background-repeat: no-repeat;
     background-size: contain;
