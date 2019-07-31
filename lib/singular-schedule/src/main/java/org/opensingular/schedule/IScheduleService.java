@@ -16,10 +16,10 @@
 
 package org.opensingular.schedule;
 
-import java.util.Set;
-
 import org.quartz.JobKey;
 import org.quartz.SchedulerException;
+
+import java.util.Set;
 
 public interface IScheduleService {
 
@@ -35,4 +35,10 @@ public interface IScheduleService {
 
     Set<JobKey> getAllJobKeys() throws SchedulerException;
 
+    /**
+     * Method to delete a scheduled job
+     *
+     * @param scheduledJob The Job to be deleted.
+     */
+    void deleteJob(IScheduledJob scheduledJob);
 }
