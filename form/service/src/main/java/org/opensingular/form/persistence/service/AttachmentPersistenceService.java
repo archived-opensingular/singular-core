@@ -109,7 +109,7 @@ public class AttachmentPersistenceService<T extends AttachmentEntity, C extends 
     }
 
     public void loadAttachmentContent(Long codContent, OutputStream fos) {
-        Optional<C> content = attachmentContentDao.findAndRefreshContent(codContent);
+        Optional<C> content = attachmentContentDao.find(codContent);
         if (! content.isPresent()) {
             throw SingularException.rethrow("Attachment Content not found id=" + codContent);
         }
