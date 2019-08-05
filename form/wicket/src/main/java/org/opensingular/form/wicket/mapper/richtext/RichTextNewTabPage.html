@@ -16,35 +16,8 @@
   -->
 
 <html xmlns:wicket="http://wicket.apache.org" style="height: 100%;">
-<meta charset="utf-8"/>
-<head>
-    <title wicket:id="title">Title</title>
-
-    <style type="text/css">
-        [class^="cke_button_label cke_button__extra"] {
-            display: inline !important;
-        }
-
-        .cke_button__finishandclose_label,
-        .cke_button__cancel_label,
-        .cke_button__savebutton_label,
-        .cke_button__closed_label {
-            display: inline !important;
-        }
-        .cke_singular_icon-font-awesome {
-            font-family:'FontAwesome' !important;
-            font-size: 17px !important;
-        }
-        .cke_singular_icon-simple-line {
-            font-family:'Simple-Line-Icons' !important;
-            font-size: 17px !important;
-
-        }
-
-    </style>
-</head>
-<body id="bodyPage" class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo page-md" style="height: 100%;">
-
+<body class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo page-md" style="height: 100%;">
+<wicket:extend>
 <div>
     <div class="page-header navbar navbar-fixed-top">
         <div class="page-header-inner">
@@ -59,7 +32,7 @@
 
 <div class="clearfix"></div>
 
-<div wicket:id="pageContainer" class="page-container" >
+<div id="bodyPage" wicket:id="pageContainer" class="bodyPage page-container" >
 
     <form wicket:id="form">
         <textarea wicket:id="conteudo" id="ck-text-area" style="display: none;"></textarea>
@@ -69,6 +42,6 @@
     </form>
 
 </div>
-<wicket:container wicket:id="javascript-container"/>
+</wicket:extend>
 </body>
 </html>
