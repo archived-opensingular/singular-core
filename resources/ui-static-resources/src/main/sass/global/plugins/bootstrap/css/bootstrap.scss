@@ -9,8 +9,8 @@
 @import "../../../../bootstrap/mixins";
 
 // Override bootstrap variables to match Metronic style
-@import "../../../../global/css/variables";
-@import "../../../../global/css/bootstrap-override";
+@import "../../../css/variables";
+@import "../../../css/bootstrap-override";
 
 @import "../../../../singular_variables";
 

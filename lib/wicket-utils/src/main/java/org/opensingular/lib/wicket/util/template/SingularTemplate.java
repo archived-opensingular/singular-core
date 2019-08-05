@@ -18,7 +18,9 @@ package org.opensingular.lib.wicket.util.template;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.SharedResources;
 import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
 import org.apache.wicket.markup.head.filter.JavaScriptFilteredIntoFooterHeaderResponse;
@@ -29,43 +31,33 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.opensingular.lib.wicket.util.application.SkinnableApplication;
+import org.apache.wicket.request.resource.SharedResourceReference;
+import org.apache.wicket.util.template.PackageTextTemplate;
+import org.opensingular.lib.wicket.SingularWebResourcesFactory;
 import org.opensingular.lib.wicket.util.behavior.KeepSessionAliveBehavior;
 import org.opensingular.lib.wicket.util.model.SingularPropertyModel;
 
-public abstract class SingularTemplate extends WebPage {
+import javax.inject.Inject;
+import java.util.Collections;
 
+public abstract class SingularTemplate extends WebPage {
     public static final String                   JAVASCRIPT_CONTAINER = "javascript-container";
     public static final IHeaderResponseDecorator JAVASCRIPT_DECORATOR = (response) -> new JavaScriptFilteredIntoFooterHeaderResponse(response, SingularTemplate.JAVASCRIPT_CONTAINER);
 
-    protected String skinnableResource(String uri) {
-        return "/singular-static/resources/" + getCurrentSkinFolder() + uri;
-    }
-
-    public final SkinOptions skinOptions = new SkinOptions();
+    @Inject
+    private SingularWebResourcesFactory singularWebResourcesFactory;
 
     public SingularTemplate() {
-        initSkins();
     }
 
     public SingularTemplate(PageParameters parameters) {
         super(parameters);
-        initSkins();
     }
 
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        getApplication().setHeaderResponseDecorator(JAVASCRIPT_DECORATOR);
-
-        /*Essa estratégia é utilizada para garantir que o jquery será sempre carregado pois está fixo no html
-         * sem esse artificio páginas sem componentes ajax do wicket apresentarão erros de javascript.*/
-        getApplication()
-                .getJavaScriptLibrarySettings()
-                .setJQueryReference(new PackageResourceReference(SingularTemplate.class, "empty.js"));
         add(createPageTitle());
         add(createPageSubtitle());
         add(new HeaderResponseContainer(JAVASCRIPT_CONTAINER, JAVASCRIPT_CONTAINER));
@@ -101,42 +93,28 @@ public abstract class SingularTemplate extends WebPage {
      * Override this to include new rules to fetch de favion url
      */
     protected IModel<String> createFaviconUrlModel() {
-        return new SingularPropertyModel("singular.template.favicon",
-                "/singular-static/resources/singular/img/favicon.png");
+        return new SingularPropertyModel("singular.template.favicon", urlFor(new SharedResourceReference("favicon"), null).toString());
     }
 
     /**
      * Override this to include new rules to fetch de page title
      */
     protected IModel<String> createPageTitleModel() {
-        return new SingularPropertyModel("singular.application.name",
-                getString("label.page.title.global"));
+        return new SingularPropertyModel("singular.application.name", getString("label.page.title.global"));
     }
 
     @Override
     public void renderHead(IHeaderResponse response) {
-        RecursosStaticosSingularTemplate.getStyles(getCurrentSkinFolder()).forEach(response::render);
-        RecursosStaticosSingularTemplate.getJavaScriptsUrls().forEach(response::render);
+        singularWebResourcesFactory.getStyleHeaders().forEach(response::render);
+        singularWebResourcesFactory.getScriptHeaders().forEach(response::render);
+        final PackageTextTemplate singularTemplateCssTemplate =
+                new PackageTextTemplate(SingularTemplate.class, "SingularTemplate.css");
+        final String singularTemplateCss = singularTemplateCssTemplate.interpolate(
+                Collections.singletonMap("logo", getRequestCycle().urlFor(new SharedResourceReference("logo"), null))).getString();
+        response.render(CssHeaderItem.forCSS(singularTemplateCss, null));
     }
 
     protected IModel<String> getPageTitleModel() {
         return new StringResourceModel("label.page.title.local").setDefaultValue("");
-    }
-
-    protected void initSkins() {
-        final WebApplication wa = WebApplication.get();
-        if (wa instanceof SkinnableApplication) {
-            ((SkinnableApplication) wa).initSkins(skinOptions);
-        } else {
-            skinOptions.addDefaulSkin("singular");
-        }
-    }
-
-    public String getCurrentSkinFolder() {
-        return skinOptions.currentSkin().getName();
-    }
-
-    public SkinOptions getSkinOptions() {
-        return skinOptions;
     }
 }

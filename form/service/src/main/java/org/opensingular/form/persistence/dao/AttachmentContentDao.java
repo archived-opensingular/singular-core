@@ -96,11 +96,4 @@ public class AttachmentContentDao<T extends AttachmentContentEntity> extends Bas
     protected T createInstance() {
         return ObjectUtils.newInstance(entityClass);
     }
-
-    public Optional<T> findAndRefreshContent(Long codContent) {
-        return find(codContent).map(ace -> {
-            getSession().refresh(ace);
-            return ace;
-        });
-    }
 }

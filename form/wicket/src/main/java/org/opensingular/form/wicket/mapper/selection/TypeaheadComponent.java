@@ -24,7 +24,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.markup.head.CssReferenceHeaderItem;
-import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -50,15 +49,11 @@ import org.opensingular.form.wicket.model.AbstractSInstanceAwareModel;
 import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.util.WicketFormProcessing;
 import org.opensingular.lib.commons.lambda.IFunction;
-import org.opensingular.lib.wicket.util.template.RecursosStaticosSingularTemplate;
-import org.opensingular.lib.wicket.util.template.SingularTemplate;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -81,14 +76,6 @@ import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 public class TypeaheadComponent extends Panel {
 
     public final CssReferenceHeaderItem CSS_REFERENCE = CssReferenceHeaderItem.forReference(new PackageResourceReference(TypeaheadComponent.class, "TypeaheadComponent.css") {
-        @Override
-        public List<HeaderItem> getDependencies() {
-            if (getPage() instanceof SingularTemplate) {
-                return RecursosStaticosSingularTemplate.getStyles(((SingularTemplate) getPage()).getCurrentSkinFolder());
-            } else {
-                return Collections.emptyList();
-            }
-        }
     });
 
     private static final long serialVersionUID = -3639240121493651170L;
@@ -109,7 +96,7 @@ public class TypeaheadComponent extends Panel {
         super(id);
         this.model = model;
         this.fetch = fetch;
-        container = buildContainer();
+        container  = buildContainer();
         add(container);
     }
 
@@ -383,9 +370,9 @@ class BloodhoundDataBehavior extends AbstractDefaultAjaxBehavior {
     private Map<String, TypeaheadCache> cache;
 
     public BloodhoundDataBehavior(IModel<? extends SInstance> model, Map<String, TypeaheadCache> cache) {
-        this.model = model;
+        this.model       = model;
         this.filterModel = Model.of("");
-        this.cache = cache;
+        this.cache       = cache;
     }
 
     @Override
@@ -445,7 +432,7 @@ class TypeaheadCache implements Serializable {
 
     TypeaheadCache(Serializable trueValue, String display) {
         this.trueValue = trueValue;
-        this.display = display;
+        this.display   = display;
     }
 
     public Serializable getTrueValue() {
