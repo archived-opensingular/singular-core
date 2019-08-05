@@ -18,7 +18,6 @@ package org.opensingular.lib.wicket.util.template;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.SharedResources;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -74,7 +73,7 @@ public abstract class SingularTemplate extends WebPage {
             @Override
             protected String load() {
                 String val = getPageTitleModel().getObject();
-                if (val != null) {
+                if (StringUtils.isNotEmpty(val)) {
                     return " | " + val;
                 }
                 return StringUtils.EMPTY;
