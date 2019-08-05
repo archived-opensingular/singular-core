@@ -16,16 +16,16 @@
 
 package org.opensingular.schedule.quartz;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-import java.util.Set;
-
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.schedule.IScheduleService;
 import org.opensingular.schedule.IScheduledJob;
 import org.quartz.JobKey;
 import org.quartz.SchedulerException;
+
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 public class QuartzScheduleService implements IScheduleService, Loggable {
 
@@ -153,5 +153,18 @@ public class QuartzScheduleService implements IScheduleService, Loggable {
 
     public void setQuartzSchedulerFactory(SingularQuartzSchedulerAcessor quartzSchedulerFactory) {
         this.quartzSchedulerFactory = quartzSchedulerFactory;
+    }
+
+    /**
+     * Method to delete a scheduled job, or remove it from list to be executed.
+     *
+     * @param scheduledJob The Job to be deleted.
+     */
+    public void deleteJob(IScheduledJob scheduledJob) {
+        try {
+            quartzSchedulerFactory.deleteJob(JobKey.jobKey(scheduledJob.getId()));
+        } catch (Exception e) {
+            throw SingularException.rethrow(e);
+        }
     }
 }

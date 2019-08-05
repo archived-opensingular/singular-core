@@ -15,12 +15,6 @@
  */
 package org.opensingular.schedule.quartz;
 
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.MissingResourceException;
-import java.util.Properties;
-import java.util.ResourceBundle;
-
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.schedule.IScheduledJob;
 import org.quartz.JobDetail;
@@ -34,6 +28,12 @@ import org.quartz.impl.SchedulerRepository;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.simpl.SimpleThreadPool;
 import org.quartz.spi.JobFactory;
+
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.MissingResourceException;
+import java.util.Properties;
+import java.util.ResourceBundle;
 
 /**
  * Factory that creates and configures a Quartz {@link org.quartz.Scheduler}.
@@ -487,6 +487,10 @@ public class QuartzSingularSchedulerFactory extends SingularSchedulerAccessor {
     @Override
     public void triggerJob(JobKey jobKey) throws SchedulerException{
         getScheduler().triggerJob(jobKey);
+    }
+
+    public boolean deleteJob(JobKey jobKey) throws SchedulerException {
+        return getScheduler().deleteJob(jobKey);
     }
 }
 
