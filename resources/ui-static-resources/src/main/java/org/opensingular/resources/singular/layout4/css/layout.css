@@ -368,7 +368,6 @@ Page Header
       transform: translateY(-50%);
       font-size: 18px; }
     .page-header.navbar .page-logo .logo-default {
-      background-image: url("/singular-static/resources/singular/img/logo/logo_singular.png");
       height: 49px;
       width: 200px;
       background-repeat: no-repeat;
@@ -2898,7 +2897,6 @@ Login page
   text-align: center; }
   .login .logo .logo-default {
     background-position: 50%;
-    background-image: url("/singular-static/resources/singular/img/logo/logo_singular.png");
     display: inline-block;
     background-repeat: no-repeat;
     background-size: contain;

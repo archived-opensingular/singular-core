@@ -1,9 +1,9 @@
 //## Default dark header theme color file
 
-@import '../../../global/css/_variables';  // global metronic framework variables
-@import '../../../global/components/_mixins'; // global metronic framework mixings
+@import '../../../global/css/variables';  // global metronic framework variables
+@import '../../../global/components/mixins'; // global metronic framework mixings
 
-@import '../_variables'; // theme level variables
+@import '../variables'; // theme level variables
 
 // Theme Colors Settigns
 
@@ -116,7 +116,7 @@ $footer-fixed-bg-color: 												$bg-color !default;
 
 
 
-@import '_base';
+@import 'base';
 
 // Toast
 $toast-success-color: #1BBC9B !default;
