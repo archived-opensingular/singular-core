@@ -17,6 +17,8 @@
 package org.opensingular.form.persistence.dao;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.MySQLDialect;
 
 
 /**
@@ -27,13 +29,14 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class IndexedDataQueryBuilder {
 
-    private final String        schema;
-    private       StringBuilder select;
-    private       StringBuilder from = new StringBuilder(" FROM ");
-    private       StringBuilder join = new StringBuilder();
-    private       StringBuilder where;
-    private       StringBuilder joinCache;
-    private       StringBuilder order;
+    private final String                   schema;
+    private       StringBuilder            select;
+    private       StringBuilder            from = new StringBuilder(" FROM ");
+    private       StringBuilder            join = new StringBuilder();
+    private       StringBuilder            where;
+    private       StringBuilder            joinCache;
+    private       StringBuilder            order;
+    private       Class<? extends Dialect> dialect;
 
     public IndexedDataQueryBuilder(String schema) {
         this.schema = schema;
@@ -42,6 +45,10 @@ public class IndexedDataQueryBuilder {
         joinCache = new StringBuilder();
         where = new StringBuilder(" WHERE 1 = 1 ");
         order = new StringBuilder();
+    }
+
+    public void setDialect(Class<? extends Dialect> dialect) {
+        this.dialect = dialect;
     }
 
     public void createSelect(String selectClause) {
@@ -115,10 +122,19 @@ public class IndexedDataQueryBuilder {
 
     private void addJoinClause(String columnAlias, String fieldsNames) {
 
+        String coalaseSubQuerySelectValue;
+        if (dialect != null && MySQLDialect.class.isAssignableFrom(dialect)) {
+            coalaseSubQuerySelectValue = " COALESCE(cast(CACHE_VALOR.DS_VALOR as CHAR), cast(CACHE_VALOR.NU_VALOR as CHAR),  " +
+                    "cast(CACHE_VALOR.DT_VALOR as CHAR)) as ds_valor ";
+        } else {
+            coalaseSubQuerySelectValue = " COALESCE(cast(CACHE_VALOR.DS_VALOR as varchar), cast(CACHE_VALOR.NU_VALOR as varchar), " +
+                    " cast(CACHE_VALOR.DT_VALOR as varchar)) as ds_valor ";
+        }
+
         String leftSubQuery = "  LEFT JOIN (SELECT " +
                 " CACHE_VALOR.CO_VERSAO_FORMULARIO as co_versao_formulario, " +
                 " CACHE_CAMPO.CO_TIPO_FORMULARIO              as co_tipo_formulario, " +
-                " COALESCE(cast(CACHE_VALOR.DS_VALOR as varchar), cast(CACHE_VALOR.NU_VALOR as varchar),  cast(CACHE_VALOR.DT_VALOR as varchar)) as ds_valor " +
+                coalaseSubQuerySelectValue +
                 " FROM " + schema + ".TB_CACHE_CAMPO CACHE_CAMPO " +
                 " INNER JOIN DBSINGULAR.TB_CACHE_VALOR CACHE_VALOR " +
                 "                 on CACHE_VALOR.CO_CACHE_CAMPO = CACHE_CAMPO.CO_CACHE_CAMPO " +
