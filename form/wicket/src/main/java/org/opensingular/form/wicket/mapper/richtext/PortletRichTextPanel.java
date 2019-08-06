@@ -17,7 +17,6 @@
 package org.opensingular.form.wicket.mapper.richtext;
 
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -33,6 +32,7 @@ import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.model.SInstanceValueModel;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
+import org.opensingular.lib.wicket.util.util.Shortcuts;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -42,12 +42,12 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 public class PortletRichTextPanel extends Panel implements Loggable {
 
     private HiddenField<String> hiddenInput;
-    private Label label;
-    private WicketBuildContext ctx;
-    private boolean readOnlyMode;
-    private WebMarkupContainer buttonEditar;
-    private WebMarkupContainer htmlContent;
-    private String previewFrameUuid = UUID.randomUUID().toString();
+    private Label               label;
+    private WicketBuildContext  ctx;
+    private boolean             readOnlyMode;
+    private WebMarkupContainer  buttonEditar;
+    private WebMarkupContainer  htmlContent;
+    private String              previewFrameUuid = UUID.randomUUID().toString();
 
     @Override
     public void renderHead(IHeaderResponse response) {
@@ -57,7 +57,7 @@ public class PortletRichTextPanel extends Panel implements Loggable {
 
     public PortletRichTextPanel(String id, WicketBuildContext ctx, boolean readOnlyMode) {
         super(id);
-        this.ctx = ctx;
+        this.ctx          = ctx;
         this.readOnlyMode = readOnlyMode;
     }
 
@@ -111,7 +111,7 @@ public class PortletRichTextPanel extends Panel implements Loggable {
     }
 
     private void build(WicketBuildContext ctx) {
-        label = new Label("label", Model.of(Optional.ofNullable(ctx.getCurrentInstance().asAtr().getLabel()).orElse(EMPTY)));
+        label       = new Label("label", Model.of(Optional.ofNullable(ctx.getCurrentInstance().asAtr().getLabel()).orElse(EMPTY)));
         hiddenInput = new HiddenField<>("hiddenInput", new SInstanceValueModel<>(ctx.getModel()));
         hiddenInput.setEnabled(ctx.getViewMode() == ViewMode.EDIT);
         htmlContent = new WebMarkupContainer("htmlContent");
@@ -128,8 +128,14 @@ public class PortletRichTextPanel extends Panel implements Loggable {
         return new Link<String>("button") {
             @Override
             public void onClick() {
-                throw new RestartResponseException(new RichTextNewTabPage(label.getDefaultModelObject().toString(),
-                        isReadOnlyMode(), PortletRichTextPanel.this.ctx, hiddenInput, previewFrameUuid));
+                if (isReadOnlyMode()) {
+                    setResponsePage(new RichTextViewPage(Shortcuts.$m.map(ctx.getModel(), m -> m.asAtr().getLabel())
+                            , new SInstanceValueModel<>(ctx.getModel())));
+                } else {
+                    setResponsePage(new RichTextNewTabPage(label.getDefaultModelObject().toString()
+                            , false
+                            , PortletRichTextPanel.this.ctx, hiddenInput, previewFrameUuid));
+                }
             }
 
             @Override

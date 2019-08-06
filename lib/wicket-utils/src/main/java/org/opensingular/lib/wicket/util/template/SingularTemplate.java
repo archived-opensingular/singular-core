@@ -110,7 +110,7 @@ public abstract class SingularTemplate extends WebPage {
      */
     protected IModel<String> createPageTitleModel() {
         return new SingularPropertyModel("singular.application.name",
-                getString("label.page.title.global"));
+                getString("label.page.title.global", null, StringUtils.EMPTY));
     }
 
     @Override
