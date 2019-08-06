@@ -16,10 +16,6 @@
 
 package org.opensingular.schedule.quartz;
 
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.Set;
-
 import org.opensingular.lib.commons.base.SingularException;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
@@ -27,6 +23,10 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.spi.JobFactory;
+
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  * Interface responsible for the integration of Quartz Scheduler and Singular.
@@ -78,4 +78,14 @@ public interface SingularQuartzSchedulerAcessor {
     void triggerJob(JobKey jobKey) throws SchedulerException;
 
     Set<JobKey> getAllJobKeys() throws SchedulerException;
+
+    /**
+     * Delete the identified <code>Job</code> from the Scheduler - and any
+     * associated <code>Trigger</code>s.
+     *
+     * @return true if the Job was found and deleted.
+     * @throws SchedulerException
+     *           if there is an internal Scheduler error.
+     */
+    boolean deleteJob(JobKey jobKey) throws SchedulerException;
 }

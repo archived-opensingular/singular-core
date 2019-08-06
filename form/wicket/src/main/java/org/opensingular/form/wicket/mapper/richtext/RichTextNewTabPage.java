@@ -21,49 +21,43 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
 import org.apache.wicket.markup.html.TransparentWebMarkupContainer;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.PageExpiredException;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.opensingular.form.view.richtext.RichTextAction;
 import org.opensingular.form.view.richtext.SViewByRichTextNewTab;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.component.BFModalWindow;
 import org.opensingular.lib.commons.util.Loggable;
-import org.opensingular.lib.wicket.SingularWebResourcesFactory;
+import org.opensingular.lib.wicket.util.template.SingularTemplate;
 import org.wicketstuff.annotation.mount.MountPath;
 
-import javax.inject.Inject;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.opensingular.lib.wicket.util.template.SingularTemplate.JAVASCRIPT_CONTAINER;
-
 @MountPath("richtextnewtabpage")
-public class RichTextNewTabPage extends WebPage implements Loggable {
-    @Inject
-    private SingularWebResourcesFactory singularWebResourcesFactory;
+public class RichTextNewTabPage extends SingularTemplate implements Loggable {
 
     private WicketBuildContext wicketBuildContext;
     private IModel<String>     modelTextArea;
 
-    private boolean                     readOnly;
+    private Model<Boolean>              readOnly;
     private AbstractDefaultAjaxBehavior eventSaveCallbackBehavior;
     private BFModalWindow               bfModalWindow;
     private AjaxButton                  submitButton;
     private HiddenField<String>         hiddenInput;
-    private String                      previewFrameMarkupId;
+    private Model<String>               previewFrameMarkupId;
+    private Model<String>               title;
 
     /**
      * Default constructor
@@ -83,11 +77,11 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
      */
     public RichTextNewTabPage(String title, boolean readOnly, WicketBuildContext wicketBuildContext,
                               HiddenField<String> hiddenInput, String previewFrameMarkupId) {
-        this.readOnly             = readOnly;
-        this.wicketBuildContext   = wicketBuildContext;
-        this.hiddenInput          = hiddenInput;
-        this.previewFrameMarkupId = previewFrameMarkupId;
-        add(new Label("title", Model.of(title)));
+        this.readOnly = Model.of(readOnly);
+        this.wicketBuildContext = wicketBuildContext;
+        this.hiddenInput = hiddenInput;
+        this.previewFrameMarkupId = Model.of(previewFrameMarkupId);
+        this.title = Model.of(title);
         this.modelTextArea = hiddenInput.getModel();
 
     }
@@ -101,7 +95,6 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         createModal(form);
         createCallBackBehavior();
         add(form);
-        add(new HeaderResponseContainer(JAVASCRIPT_CONTAINER, JAVASCRIPT_CONTAINER));
         add(createPageContainer());
     }
 
@@ -116,9 +109,8 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-
-        singularWebResourcesFactory.getStyleHeaders().forEach(response::render);
-        singularWebResourcesFactory.getScriptHeaders().forEach(response::render);
+        response.render(CssHeaderItem.forReference(new PackageResourceReference(RichTextNewTabPage.class,
+                "RichTextNewTabPage.css")));
 
         try (PackageTextTemplate packageTextTemplate = new PackageTextTemplate(getClass(), "RichTextNewTabPage.js")) {
             final Map<String, Object> params = new HashMap<>();
@@ -132,9 +124,9 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
                     .reduce(new StringBuilder(), (s, b) -> s.append(b).append(", "), StringBuilder::append).toString());
             params.put("hiddenInput", this.hiddenInput.getMarkupId());
             params.put("showSaveButton", String.valueOf(view.isShowSaveButton()));
-            params.put("previewFrameMarkupId", this.previewFrameMarkupId);
+            params.put("previewFrameMarkupId", this.previewFrameMarkupId.getObject());
             params.put("callbackUrl", eventSaveCallbackBehavior.getCallbackUrl().toString());
-            params.put("isEnabled", String.valueOf(!readOnly));
+            params.put("isEnabled", String.valueOf(!readOnly.getObject()));
             params.put("a4LayoutEnabled", view.isA4LayoutEnabled());
             params.put("sourceViewEnabled", view.isSourceViewEnabled());
 
@@ -217,4 +209,18 @@ public class RichTextNewTabPage extends WebPage implements Loggable {
         form.add(new TextArea<>("conteudo", modelTextArea));
     }
 
+    @Override
+    protected IModel<String> createPageTitleModel() {
+        return title;
+    }
+
+    @Override
+    protected void detachModel() {
+        super.detachModel();
+        title.detach();
+        previewFrameMarkupId.detach();
+        modelTextArea.detach();
+        hiddenInput.detach();
+        readOnly.detach();
+    }
 }
