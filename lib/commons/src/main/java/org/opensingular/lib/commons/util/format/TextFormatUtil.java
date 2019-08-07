@@ -37,4 +37,18 @@ public class TextFormatUtil {
                 cep.length() == 8 ? cep.replaceAll("(.{2})(.{3})(.{3})", "$1.$2-$3") : null;
     }
 
+    /**
+     * Trunca a String value se o seu tamanho for maior que maxLenght, adicionando "..." ao final
+     *
+     * @param value     o valor a ser truncado
+     * @param maxLenght seu maior tamanho possível
+     * @return o valor trucado e concatenado com "..." se o seu tamanho for maior que maxLenght
+     */
+    public static String truncate(String value, int maxLenght) {
+        if (value != null && value.length() > maxLenght) {
+            return value.substring(0, maxLenght - 3).concat("...");
+        }
+        return value;
+    }
+
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -11,18 +12,21 @@
 
     <artifactId>singular-ui-resources</artifactId>
     <name>[singular :: common :: ui-static-resources]</name>
-    <packaging>war</packaging>
 
     <build>
-    	<finalName>singular-static</finalName>
-    
+        <finalName>singular-static</finalName>
         <resources>
             <resource>
                 <filtering>false</filtering>
-                <directory>src/main/resources</directory>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
             </resource>
         </resources>
-
         <plugins>
             <plugin>
                 <groupId>com.github.warmuuh</groupId>
@@ -38,7 +42,7 @@
                 </executions>
                 <configuration>
                     <inputPath>${basedir}/src/main/sass</inputPath>
-                    <outputPath>${basedir}/src/main/webapp/resources/singular</outputPath>
+                    <outputPath>${basedir}/src/main/java/org/opensingular/resources/singular</outputPath>
                     <generateSourceMap>false</generateSourceMap>
                 </configuration>
             </plugin>
@@ -52,6 +56,9 @@
             <artifactId>singular-commons-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.opensingular</groupId>
+            <artifactId>singular-wicket-utils</artifactId>
+        </dependency>
     </dependencies>
-
 </project>

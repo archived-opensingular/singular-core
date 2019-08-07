@@ -26,11 +26,13 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptContentHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.wicket.util.jquery.JQuery;
 import org.opensingular.lib.wicket.util.resource.DefaultIcons;
@@ -53,7 +55,7 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
     protected MarkupContainer pageFooter;
     protected MarkupContainer pageMenu;
     protected MarkupContainer pageContent;
-    private List<String> initializerJavascripts = Collections.singletonList("App.init();");
+    private   List<String>    initializerJavascripts = Collections.singletonList("App.init();");
 
     public SingularAdminTemplate() {
         this(null);
@@ -82,6 +84,10 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
         for (String script : getInitializerJavascripts()) {
             response.render(OnDomReadyHeaderItem.forScript(script));
         }
+        response.render(JavaScriptContentHeaderItem.forReference(new PackageResourceReference(
+                SingularAdminTemplate.class, "SingularAdminTemplate.js")));
+        response.render(JavaScriptContentHeaderItem.forReference(new PackageResourceReference(
+                SingularAdminTemplate.class, "SingularAdminTemplate.js")));
     }
 
     private void addPageBody() {
@@ -148,19 +154,19 @@ public abstract class SingularAdminTemplate extends SingularTemplate {
         pageContent.add(iconMarkup);
 
         iconMarkup.add(WicketUtils.$b.onReadyScript(
-            component -> "var $helpIcon = " + JQuery.$(component) + ";"
-                    + "$helpIcon"
-                    + "  .data('content', '" + getHelpText().getObject() + "')"
-                    + "  .popover({"
-                    + "    'container':'body',"
-                    + "    'html':true,"
-                    + "    'placement':'auto right',"
-                    + "    'trigger':'manual'"
-                    + "  });"
-                    + "$helpIcon"
-                    + "  .hover("
-                    + "    function(){ $helpIcon.popover('show'); },"
-                    + "    function(){ $helpIcon.popover('hide'); });"
+                component -> "var $helpIcon = " + JQuery.$(component) + ";"
+                        + "$helpIcon"
+                        + "  .data('content', '" + getHelpText().getObject() + "')"
+                        + "  .popover({"
+                        + "    'container':'body',"
+                        + "    'html':true,"
+                        + "    'placement':'auto right',"
+                        + "    'trigger':'manual'"
+                        + "  });"
+                        + "$helpIcon"
+                        + "  .hover("
+                        + "    function(){ $helpIcon.popover('show'); },"
+                        + "    function(){ $helpIcon.popover('hide'); });"
         ));
     }
 
