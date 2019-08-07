@@ -1,3 +1,7 @@
 .logo-default {
     background-image: url(${logo});
 }
+
+.error-image {
+    background: url(${errorImage}) no-repeat 100%;
+}

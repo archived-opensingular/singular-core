@@ -160,6 +160,11 @@ public class DefaulSingularWebResourcesFactory implements SingularWebResourcesFa
         return newPackageResourceReference(getLogoPath()).getResource();
     }
 
+    @Override
+    public IResource gerErrorImage() {
+        return newPackageResourceReference(gerErrorImagePath()).getResource();
+    }
+
     protected JavaScriptHeaderItem newJavaScriptForIEHeader(String path) {
         for (SingularResourceScope scope : scopes) {
             if (PackageResource.exists(scope.getClass(), scope.resolve(path), null, null, null)) {
@@ -198,6 +203,10 @@ public class DefaulSingularWebResourcesFactory implements SingularWebResourcesFa
 
     protected String getLogoPath() {
         return "img/logo/logo_singular.png";
+    }
+
+    protected String gerErrorImagePath() {
+        return "img/errorserver.svg";
     }
 
     protected String getjQuerypath() {

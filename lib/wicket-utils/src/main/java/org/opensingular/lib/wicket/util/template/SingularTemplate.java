@@ -16,6 +16,7 @@
 
 package org.opensingular.lib.wicket.util.template;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -38,7 +39,6 @@ import org.opensingular.lib.wicket.util.behavior.KeepSessionAliveBehavior;
 import org.opensingular.lib.wicket.util.model.SingularPropertyModel;
 
 import javax.inject.Inject;
-import java.util.Collections;
 
 public abstract class SingularTemplate extends WebPage {
     public static final String                   JAVASCRIPT_CONTAINER = "javascript-container";
@@ -106,11 +106,12 @@ public abstract class SingularTemplate extends WebPage {
     public void renderHead(IHeaderResponse response) {
         singularWebResourcesFactory.getStyleHeaders().forEach(response::render);
         singularWebResourcesFactory.getScriptHeaders().forEach(response::render);
-        final PackageTextTemplate singularTemplateCssTemplate =
-                new PackageTextTemplate(SingularTemplate.class, "SingularTemplate.css");
-        final String singularTemplateCss = singularTemplateCssTemplate.interpolate(
-                Collections.singletonMap("logo", getRequestCycle().urlFor(new SharedResourceReference("logo"), null))).getString();
-        response.render(CssHeaderItem.forCSS(singularTemplateCss, null));
+        final ImmutableMap<String, CharSequence> model = ImmutableMap.of(
+                "logo", getRequestCycle().urlFor(singularWebResourcesFactory.getLogoResourceReference(), null),
+                "errorImage", getRequestCycle().urlFor(singularWebResourcesFactory.gerErrorImageResourceReference(), null));
+
+        final PackageTextTemplate cssTemplate = new PackageTextTemplate(SingularTemplate.class, "SingularTemplate.css");
+        response.render(CssHeaderItem.forCSS(cssTemplate.interpolate(model).getString(), null));
     }
 
     protected IModel<String> getPageTitleModel() {

@@ -2501,7 +2501,6 @@ Theme Panel
   margin: 0 auto;
   text-align: center; }
   .error-container .error-image {
-    background: url("/singular-static/resources/singular/img/errorserver.svg") no-repeat 100%;
     display: block;
     height: 270px;
     margin-bottom: 0px 0px 20px 0px; }
