@@ -45,7 +45,7 @@ public class DefaulSingularWebResourcesFactory implements SingularWebResourcesFa
         paths.add("global/plugins/ion.rangeslider/css/normalize.css");
         paths.add("global/plugins/ion.rangeslider/css/ion.rangeSlider.css");
         paths.add("global/plugins/ion.rangeslider/css/ion.rangeSlider.skinHTML5.css");
-        paths.add("global/plugins/datatables/datatables.css");
+        paths.add("global/plugins/datatables/datatables.min.css");
         paths.add("global/plugins/morris/morris.css");
         paths.add("global/css/components-md.css");
         paths.add("global/css/plugins-md.css");
