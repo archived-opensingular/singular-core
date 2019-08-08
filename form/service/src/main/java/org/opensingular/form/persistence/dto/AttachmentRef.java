@@ -23,11 +23,11 @@ import org.opensingular.form.persistence.entity.AttachmentEntity;
 import org.opensingular.form.persistence.service.AttachmentPersistenceService;
 import org.opensingular.form.type.core.attachment.IAttachmentRef;
 import org.opensingular.lib.commons.base.SingularUtil;
+import org.opensingular.lib.commons.io.TempFileInputStream;
 import org.opensingular.lib.commons.util.TempFileUtils;
 import org.opensingular.lib.support.spring.util.ApplicationContextProvider;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -90,7 +90,7 @@ public class AttachmentRef implements IAttachmentRef {
                     persistenceHandler.loadAttachmentContent(codContent, fos);
                 }
             }
-            return CompressionUtil.inflateToInputStream(new FileInputStream(file));
+            return CompressionUtil.inflateToInputStream(new TempFileInputStream(file));
         } catch (Exception e) {
             if (file != null) {
                 TempFileUtils.deleteAndFailQuietly(file, getClass());
