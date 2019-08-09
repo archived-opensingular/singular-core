@@ -8,9 +8,9 @@ import org.opensingular.form.type.core.attachment.SIAttachment;
 import org.opensingular.form.wicket.util.OcrUtil;
 import org.opensingular.lib.commons.base.SingularException;
 import org.opensingular.lib.commons.base.SingularProperties;
-import org.opensingular.lib.commons.io.TempFileInputStream;
 import org.opensingular.lib.commons.util.Loggable;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,7 +60,7 @@ public class OcrHelper implements Loggable {
         return attachment.getFileName().toLowerCase().endsWith(".pdf");
     }
 
-    public InputStream toOcrStream(InputStream attachment, boolean isCloseOriginalStream) {
+    public File toOcrFile(InputStream attachment, boolean isCloseOriginalStream) {
         try {
             final Path             ocrContent          = Files.createTempFile("ocr", ".pdf");
             final FileOutputStream ocrContentOutStream = new FileOutputStream(ocrContent.toFile());
@@ -72,7 +72,7 @@ public class OcrHelper implements Loggable {
                 attachment.close();
             }
 
-            return new TempFileInputStream(OcrUtil.runOcrOnPdfCommandLine(ocrContent.toFile()));
+            return OcrUtil.runOcrOnPdfCommandLine(ocrContent.toFile());
         } catch (Exception ex) {
             throw SingularException.rethrow("Não foi possivel inflar o inputstream do anexo", ex);
         }
