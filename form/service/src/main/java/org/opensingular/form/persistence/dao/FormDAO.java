@@ -39,7 +39,6 @@ public class FormDAO extends BaseDAO<FormEntity, Long> {
     @Override
     public void saveOrUpdate(FormEntity newEntity) {
         super.saveOrUpdate(newEntity);
-        getSession().flush();
     }
 
     public List<FormEntity> listByFormAbbreviation(String formAbbreviation) {
