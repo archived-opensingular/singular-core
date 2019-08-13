@@ -30,10 +30,13 @@ public class FormDAO extends BaseDAO<FormEntity, Long> {
     }
 
     public void delete(Long key) {
-        find(key).ifPresent(formEntity -> {
-            getSession().delete(formEntity.getCurrentFormVersionEntity());
-            getSession().delete(formEntity);
-        });
+        find(key).ifPresent(this::delete);
+    }
+
+    @Override
+    public void delete(FormEntity formEntity) {
+        getSession().delete(formEntity.getCurrentFormVersionEntity());
+        getSession().delete(formEntity);
     }
 
     @Override
