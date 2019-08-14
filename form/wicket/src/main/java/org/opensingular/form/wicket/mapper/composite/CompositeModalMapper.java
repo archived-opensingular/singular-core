@@ -21,12 +21,12 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.visit.IVisit;
@@ -45,7 +45,6 @@ import org.opensingular.form.view.SViewTab;
 import org.opensingular.form.wicket.ISValidationFeedbackHandlerListener;
 import org.opensingular.form.wicket.SValidationFeedbackHandler;
 import org.opensingular.form.wicket.WicketBuildContext;
-import org.opensingular.form.wicket.component.SingularButton;
 import org.opensingular.form.wicket.enums.ViewMode;
 import org.opensingular.form.wicket.feedback.FeedbackFence;
 import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
@@ -100,9 +99,10 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
                 modal = createNewModal(model, view);
             }
 
-            SingularButton button = getButton(view, model, modal);
-            Label          label  = getLabel(model);
-            TemplatePanel panel = ctx.getContainer().newTemplateTag(t ->
+            final AjaxLink showEditFormLink = createShowEditFormLink(view, model, modal);
+            final Label    label            = getLabel(model);
+
+            final TemplatePanel panel = ctx.getContainer().newTemplateTag(t ->
                     "<label wicket:id=\"label\" class=\"control-label composite-modal-label\"></label>" +
                             "<a wicket:id=\"btn\" class=\"btn btn-add\">" +
                             "<wicket:container wicket:id=\"link-label\" />" +
@@ -110,10 +110,11 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
                             "<i wicket:id=\"icon-annotation\" ></i>" +
                             "</a>" +
                             "");
+
             panel.add(getCssResourceBehavior());
             panel.setOutputMarkupId(true);
             panel.add(label);
-            panel.add(button);
+            panel.add(showEditFormLink);
         }
 
         private CompositeModal findExistingModal(IModel<SIComposite> model) {
@@ -129,7 +130,6 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
         }
 
         private CompositeModal createNewModal(IModel<SIComposite> model, SViewCompositeModal view) {
-            CompositeModal       modal;
             final BSContainer<?> currentExternal = new BSContainer<>("externalContainerAtual");
             final BSContainer<?> currentSibling  = new BSContainer<>("externalContainerIrmao");
 
@@ -137,7 +137,7 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
             ctx.getExternalContainer().appendTag("div", true, null, currentSibling);
             ctx = ctx.createChild(ctx.getContainer(), currentSibling, ctx.getModel());
 
-            modal = new CompositeModal("mods", model, newItemLabelModel(model), ctx, getViewMode(view), ctx.getExternalContainer()) {
+            final CompositeModal modal = new CompositeModal("mods", model, newItemLabelModel(model), ctx, getViewMode(view), ctx.getExternalContainer()) {
                 @Override
                 protected WicketBuildContext buildModalContent(BSContainer<?> modalBody, ViewMode viewModeModal) {
                     buildFields(ctx, modalBody.newGrid());
@@ -151,32 +151,28 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
             return modal;
         }
 
-        public SingularButton getButton(SViewCompositeModal view, IModel<SIComposite> model, CompositeModal modal) {
-            SingularButton button = new SingularButton("btn", model) {
+        public AjaxLink createShowEditFormLink(SViewCompositeModal view, IModel<SIComposite> model, CompositeModal modal) {
+            final AjaxLink showEditFormLink = new AjaxLink<SIComposite>("btn", model) {
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                public void onClick(AjaxRequestTarget target) {
                     modal.show(target);
                 }
-
-                @Override
-                public boolean isEnabledInHierarchy() {
-                    return true;
-                }
             };
+
             IModel<String> labelModel = $m.ofValue((isEdition(view) ? view.getEditActionLabel() : view.getViewActionLabel()) + " " + StringUtils.trimToEmpty(model.getObject().asAtr().getLabel()));
             Label          label      = new Label("link-label", labelModel);
-            button.add(label);
+            showEditFormLink.add(label);
 
             WebMarkupContainer iconError = new WebMarkupContainer("icon-error");
-            button.add(iconError);
+            showEditFormLink.add(iconError);
 
-            SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(new FeedbackFence(button))
+            SValidationFeedbackHandler feedbackHandler = SValidationFeedbackHandler.bindTo(new FeedbackFence(showEditFormLink))
                     .addInstanceModel(model)
-                    .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(button)));
-            button.add($b.classAppender("has-errors", $m.ofValue(feedbackHandler).map(SValidationFeedbackHandler::containsNestedErrors)));
-            button.add($b.attr("data-toggle", "tooltip"));
-            button.add($b.attr("data-placement", "right"));
-            button.add($b.attr("title", $m.get(() -> {
+                    .addListener(ISValidationFeedbackHandlerListener.withTarget(t -> t.add(showEditFormLink)));
+            showEditFormLink.add($b.classAppender("has-errors", $m.ofValue(feedbackHandler).map(SValidationFeedbackHandler::containsNestedErrors)));
+            showEditFormLink.add($b.attr("data-toggle", "tooltip"));
+            showEditFormLink.add($b.attr("data-placement", "right"));
+            showEditFormLink.add($b.attr("title", $m.get(() -> {
                 int qtdErros = feedbackHandler.collectNestedErrors().size();
                 if (qtdErros > 0) {
                     return String.format("%s erro(s) encontrado(s)", qtdErros);
@@ -189,9 +185,9 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
 
             WebMarkupContainer iconAnnotation = new WebMarkupContainer("icon-annotation");
             iconAnnotation.add(new AttributeModifier("class", $m.get(() -> new CompositeAnnotationIconState(ctx, model.getObject()).getIconCss())));
-            button.add(iconAnnotation);
+            showEditFormLink.add(iconAnnotation);
 
-            return button;
+            return showEditFormLink;
         }
 
         private boolean isEdition(SViewCompositeModal view) {
