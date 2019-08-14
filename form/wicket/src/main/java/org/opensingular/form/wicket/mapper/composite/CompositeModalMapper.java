@@ -19,6 +19,7 @@ package org.opensingular.form.wicket.mapper.composite;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
+import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -28,6 +29,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SInstanceViewState;
@@ -59,6 +62,9 @@ import static org.opensingular.lib.wicket.util.util.Shortcuts.$b;
 import static org.opensingular.lib.wicket.util.util.Shortcuts.$m;
 
 public class CompositeModalMapper extends DefaultCompositeMapper {
+    private static final MetaDataKey<Integer> CONTAINER_KEY = new MetaDataKey<Integer>() {
+        private static final long serialVersionUID = 1L;
+    };
 
     private SInstanceActionsProviders instanceActionsProviders = new SInstanceActionsProviders(this);
 
@@ -80,22 +86,58 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
 
         @Override
         public void buildView() {
-
             ctx.setHint(AbstractControlsFieldComponentMapper.NO_DECORATION, Boolean.FALSE);
             final IModel<SIComposite> model = (IModel<SIComposite>) ctx.getModel();
 
             if (!(ctx.getView() instanceof SViewCompositeModal)) {
                 throw new SingularFormException("CompositeModalMapper deve ser utilizado com SViewCompositeModal", ctx.getCurrentInstance());
             }
-            final SViewCompositeModal view            = (SViewCompositeModal) ctx.getView();
-            final BSContainer<?>      currentExternal = new BSContainer<>("externalContainerAtual");
-            final BSContainer<?>      currentSibling  = new BSContainer<>("externalContainerIrmao");
+            final SViewCompositeModal view = (SViewCompositeModal) ctx.getView();
+
+
+            CompositeModal modal = findExistingModal(model);
+            if (modal == null) {
+                modal = createNewModal(model, view);
+            }
+
+            SingularButton button = getButton(view, model, modal);
+            Label          label  = getLabel(model);
+            TemplatePanel panel = ctx.getContainer().newTemplateTag(t ->
+                    "<label wicket:id=\"label\" class=\"control-label composite-modal-label\"></label>" +
+                            "<a wicket:id=\"btn\" class=\"btn btn-add\">" +
+                            "<wicket:container wicket:id=\"link-label\" />" +
+                            "<i wicket:id=\"icon-error\" class=\"fa fa-exclamation-triangle\"></i>" +
+                            "<i wicket:id=\"icon-annotation\" ></i>" +
+                            "</a>" +
+                            "");
+            panel.add(getCssResourceBehavior());
+            panel.setOutputMarkupId(true);
+            panel.add(label);
+            panel.add(button);
+        }
+
+        private CompositeModal findExistingModal(IModel<SIComposite> model) {
+            return ctx.getExternalContainer().visitChildren(CompositeModal.class, new IVisitor<CompositeModal, CompositeModal>() {
+                @Override
+                public void component(CompositeModal object, IVisit<CompositeModal> visit) {
+                    final Integer key = object.getMetaData(CONTAINER_KEY);
+                    if (key != null && key.equals(model.getObject().getId())) {
+                        visit.stop(object);
+                    }
+                }
+            });
+        }
+
+        private CompositeModal createNewModal(IModel<SIComposite> model, SViewCompositeModal view) {
+            CompositeModal       modal;
+            final BSContainer<?> currentExternal = new BSContainer<>("externalContainerAtual");
+            final BSContainer<?> currentSibling  = new BSContainer<>("externalContainerIrmao");
 
             ctx.getExternalContainer().appendTag("div", true, null, currentExternal);
             ctx.getExternalContainer().appendTag("div", true, null, currentSibling);
             ctx = ctx.createChild(ctx.getContainer(), currentSibling, ctx.getModel());
 
-            final CompositeModal modal = new CompositeModal("mods", model, newItemLabelModel(model), ctx, getViewMode(view), ctx.getExternalContainer()) {
+            modal = new CompositeModal("mods", model, newItemLabelModel(model), ctx, getViewMode(view), ctx.getExternalContainer()) {
                 @Override
                 protected WicketBuildContext buildModalContent(BSContainer<?> modalBody, ViewMode viewModeModal) {
                     buildFields(ctx, modalBody.newGrid());
@@ -103,26 +145,10 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
                 }
             };
             modal.add($b.onEnterDelegate(modal.addButton, SINGULAR_PROCESS_EVENT));
-
+            modal.setMetaData(CONTAINER_KEY, model.getObject().getId());
 
             currentExternal.appendTag("div", true, null, modal);
-
-            SingularButton button = getButton(view, model, modal);
-            Label          label  = getLabel(model);
-            TemplatePanel panel = ctx.getContainer().newTemplateTag(t ->
-                    "<label wicket:id=\"label\" class=\"control-label composite-modal-label\"></label>" +
-                            "<a wicket:id=\"btn\" class=\"btn btn-add\">" +
-                                "<wicket:container wicket:id=\"link-label\" />" +
-                                "<i wicket:id=\"icon-error\" class=\"fa fa-exclamation-triangle\"></i>" +
-                                "<i wicket:id=\"icon-annotation\" ></i>" +
-                            "</a>" +
-                            "");
-            panel.add(getCssResourceBehavior());
-            panel.setOutputMarkupId(true);
-            panel.add(label);
-            panel.add(button);
-
-
+            return modal;
         }
 
         public SingularButton getButton(SViewCompositeModal view, IModel<SIComposite> model, CompositeModal modal) {
@@ -166,7 +192,6 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
             button.add(iconAnnotation);
 
             return button;
-
         }
 
         private boolean isEdition(SViewCompositeModal view) {
@@ -190,9 +215,9 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
         }
 
         protected void buildField(final BSRow row, final SInstanceFieldModel<SInstance> mField) {
-            final SViewCompositeModal view            = (SViewCompositeModal) ctx.getView();
-            SInstance iField = mField.getObject();
-            BSCol     col    = row.newCol();
+            final SViewCompositeModal view   = (SViewCompositeModal) ctx.getView();
+            SInstance                 iField = mField.getObject();
+            BSCol                     col    = row.newCol();
             configureColspan(ctx, iField, col);
             ctx.createChild(col, ctx.getExternalContainer(), mField).build(getViewMode(view));
         }
@@ -206,7 +231,7 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
             String              displayString      = viewCompositeModal.getDisplayString();
             return new Label("label", $m.get(() -> {
                 if (model.getObject() != null && model.getObject().isNotEmptyOfData()
-                    && !displayString.isEmpty()) {
+                        && !displayString.isEmpty()) {
                     CalculationContext calculationContext = new CalculationContext(model.getObject(), model.getObject());
                     return FormFreemarkerUtil.get().createInstanceCalculation(displayString).calculate(calculationContext);
                 }
@@ -231,7 +256,7 @@ public class CompositeModalMapper extends DefaultCompositeMapper {
         private final SIComposite        instance;
 
         public CompositeAnnotationIconState(WicketBuildContext ctx, SIComposite instance) {
-            this.ctx = ctx;
+            this.ctx      = ctx;
             this.instance = instance;
 
             defineState();
