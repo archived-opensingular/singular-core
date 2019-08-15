@@ -32,6 +32,7 @@ public class SViewAutoComplete extends SView {
 
     public enum Mode {STATIC, DYNAMIC}
     protected Mode fetch = Mode.STATIC;
+    private String notFoundMessage;
 
     public Mode fetch() {   return fetch;}
 
@@ -39,5 +40,21 @@ public class SViewAutoComplete extends SView {
 
     public SViewAutoComplete(Mode fetch){
         this.fetch = fetch;
+    }
+
+    public String getNotFoundMessage() {
+        return notFoundMessage;
+    }
+
+    /**
+     * Mensage a ser exibida quando não for encontrado nenhum resultado.
+     * Utilize {0} na mensagem quando quiser que a string pesquisada seja
+     * mostrada na mensagem
+     * @param notFoundMessage mensagem a ser exibida
+     * @return o this
+     */
+    public SViewAutoComplete withNotFoundMessage(String notFoundMessage) {
+        this.notFoundMessage = notFoundMessage;
+        return this;
     }
 }

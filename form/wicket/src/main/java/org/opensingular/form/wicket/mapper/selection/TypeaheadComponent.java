@@ -91,6 +91,7 @@ public class TypeaheadComponent extends Panel {
     private       BloodhoundDataBehavior      dynamicFetcher;
     private       TextField<String>           valueField;
     private       TextField<String>           labelField;
+    private       String                      notFoundMessage;
 
     public TypeaheadComponent(String id, IModel<? extends SInstance> model, SViewAutoComplete.Mode fetch) {
         super(id);
@@ -267,6 +268,13 @@ public class TypeaheadComponent extends Panel {
         js += "        display: 'value', ";
         js += "        typeaheadAppendToBody: 'true',";
         js += "        limit: Infinity,";// não limita os resultados exibidos
+        if (StringUtils.isNotBlank(notFoundMessage)) {
+            js += "        templates: {";
+            js += "             empty: function(context) {";
+            js += "                 $('.tt-dataset').text('" + notFoundMessage + "'.replace('{0}', context.query));";
+            js += "             }";
+            js += "        },";
+        }
         js += "        source: window.substringMatcher(" + jsOptionArray() + ") ";
         js += "     }";
         js += " );";
@@ -286,6 +294,13 @@ public class TypeaheadComponent extends Panel {
         js += "        name : 's-select-typeahead', ";
         js += "        display: 'value', ";
         js += "        limit: Infinity,";// não limita os resultados exibidos
+        if (StringUtils.isNotBlank(notFoundMessage)) {
+            js += "        templates: {";
+            js += "             empty: function(context) {";
+            js += "                 $('.tt-dataset').text('" + notFoundMessage + "'.replace('{0}', context.query));";
+            js += "             }";
+            js += "        },";
+        }
         js += "        source: " + createJSBloodhoundOpbject();
         js += "     }";
         js += " );";
@@ -354,6 +369,14 @@ public class TypeaheadComponent extends Panel {
 
     public TextField<String> getValueField() {
         return valueField;
+    }
+
+    public String getNotFoundMessage() {
+        return notFoundMessage;
+    }
+
+    public void setNotFoundMessage(String notFoundMessage) {
+        this.notFoundMessage = notFoundMessage;
     }
 }
 
