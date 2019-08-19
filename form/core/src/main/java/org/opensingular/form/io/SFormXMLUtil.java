@@ -130,7 +130,7 @@ public final class SFormXMLUtil {
         if (restoreMode) {
             newInstance.getDocument().finishRestoreMode();
         }
-        verifyIds(newInstance, new HashSet<>());
+        verifyIds(newInstance.getRoot(), new HashSet<>());
         return newInstance;
     }
 
