@@ -35,7 +35,9 @@ public class FormDAO extends BaseDAO<FormEntity, Long> {
 
     @Override
     public void delete(FormEntity formEntity) {
-        getSession().delete(formEntity.getCurrentFormVersionEntity());
+        if(formEntity.getCurrentFormVersionEntity() != null) {
+            getSession().delete(formEntity.getCurrentFormVersionEntity());
+        }
         getSession().delete(formEntity);
     }
 

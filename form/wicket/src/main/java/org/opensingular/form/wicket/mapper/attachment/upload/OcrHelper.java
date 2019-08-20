@@ -14,11 +14,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
-public class OcrHelper implements Loggable {
+public class OcrHelper implements Loggable, Serializable {
     public static final String MIN_TEXT_SIZE_THRESHOLD_PARAM = "singular.fileupload.ocr.min_chars";
 
     private int getMinTextSizeThreshold() {
