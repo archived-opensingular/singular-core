@@ -18,6 +18,29 @@ package org.opensingular.form.enums;
 
 public enum ModalSize {
 
-    NORMAL, LARGE, SMALL, FULL, FIT
+    NORMAL("Normal"),
+    LARGE("Grande"),
+    SMALL("Pequena"),
+    FULL("Cheia"),
+    FIT("Caber");
+
+    private String descricao;
+
+    ModalSize(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public static ModalSize valueOfEnum(String name) {
+        for (ModalSize modalSize : ModalSize.values()) {
+            if (modalSize.name().equalsIgnoreCase(name)) {
+                return modalSize;
+            }
+        }
+        return null;
+    }
 
 }
