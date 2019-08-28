@@ -16,6 +16,9 @@
 
 package org.opensingular.form.wicket.mapper.selection;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.model.IModel;
 import org.opensingular.form.SInstance;
 import org.opensingular.form.SingularFormException;
 import org.opensingular.form.converter.SInstanceConverter;
@@ -25,10 +28,6 @@ import org.opensingular.form.view.SViewSelectionBySelect;
 import org.opensingular.form.wicket.WicketBuildContext;
 import org.opensingular.form.wicket.mapper.AbstractControlsFieldComponentMapper;
 import org.opensingular.lib.wicket.util.bootstrap.layout.BSControls;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.model.IModel;
 
 import java.io.Serializable;
 
@@ -50,6 +49,9 @@ public class AutocompleteMapper extends AbstractControlsFieldComponentMapper {
             : SViewAutoComplete.Mode.STATIC;
 
         final TypeaheadComponent comp = new TypeaheadComponent(model.getObject().getName(), model, fetch);
+        if (view instanceof SViewAutoComplete) {
+            comp.setMinLength(((SViewAutoComplete) view).getMinLength());
+        }
         formGroup.appendDiv(comp);
         return comp.getValueField();
     }
