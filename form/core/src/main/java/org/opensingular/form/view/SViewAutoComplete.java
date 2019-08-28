@@ -43,6 +43,16 @@ public class SViewAutoComplete extends SView {
         public String getDescricao() {
             return descricao;
         }
+
+        public static Mode valueOfEnum(String name) {
+            for (Mode type : values()) {
+                if (type.name().equals(name)) {
+                    return type;
+                }
+            }
+
+            return null;
+        }
     }
     protected Mode fetch = Mode.STATIC;
     protected int minLength = 0;
