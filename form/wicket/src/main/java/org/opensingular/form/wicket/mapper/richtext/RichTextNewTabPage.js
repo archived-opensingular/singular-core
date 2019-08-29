@@ -74,6 +74,7 @@
                 title: document.title,
                 extraPlugins: plugin,
                 allowedContent: true,
+                autoParagraph: false,
                 skin: 'office2013',
                 language: 'pt-br',
                 buttonPlugin: {
