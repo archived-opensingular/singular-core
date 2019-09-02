@@ -40,10 +40,14 @@ public class TempFileInputStream extends FileInputStream implements Loggable{
     @Override
     public void close() throws IOException {
         super.close();
-        String  name               = tempFile.getName();
-        boolean deletedWithSuccess = tempFile.delete();
-        if(!deletedWithSuccess){
-            getLogger().warn("Não foi possivel deletar o arquivo {} corretamente", name);
+        if (tempFile != null) {
+            String  name               = tempFile.getName();
+            boolean deletedWithSuccess = tempFile.delete();
+            if (!deletedWithSuccess) {
+                getLogger().warn("Não foi possivel deletar o arquivo {} corretamente", name);
+            } else {
+                tempFile = null;
+            }
         }
     }
 
