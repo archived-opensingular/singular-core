@@ -18,10 +18,13 @@ package org.opensingular.form.type.country.brazil;
 
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SInfoType;
+import org.opensingular.form.SInstance;
 import org.opensingular.form.STypeComposite;
 import org.opensingular.form.TypeBuilder;
 import org.opensingular.form.type.core.STypeString;
 import org.opensingular.lib.commons.util.Loggable;
+
+import java.util.function.Predicate;
 
 @SInfoType(name = "Conta", spackage = SPackageCountryBrazil.class)
 public class STypeBankAccount extends STypeComposite<SIComposite> implements Loggable {
@@ -32,18 +35,22 @@ public class STypeBankAccount extends STypeComposite<SIComposite> implements Log
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-
+        asAtr().displayString("${agencia!} - ${conta!} - ${banco!}");
         banco = this.addFieldString("banco");
-        banco.asAtr().maxLength(12).label("Banco").asAtrBootstrap().colPreference(2);
+        banco.asAtr().maxLength(12).required(requiredChildrenWhenParentIsRequired())
+                .label("Banco").asAtrBootstrap().colPreference(2);
 
         agencia = this.addFieldString("agencia");
-        agencia.asAtr().label("Agência").maxLength(12);
+        agencia.asAtr().label("Agência").maxLength(12).required(requiredChildrenWhenParentIsRequired());
         agencia.asAtrBootstrap().colPreference(2);
 
         conta = this.addFieldString("conta");
-        conta.asAtr().label("Conta").maxLength(12);
+        conta.asAtr().label("Conta").maxLength(12).required(requiredChildrenWhenParentIsRequired());
         conta.asAtrBootstrap().colPreference(2);
 
     }
 
+    private Predicate<SInstance> requiredChildrenWhenParentIsRequired() {
+        return s -> s.getParent().isRequired();
+    }
 }
