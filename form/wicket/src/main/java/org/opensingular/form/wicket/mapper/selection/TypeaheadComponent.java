@@ -16,13 +16,12 @@
 
 package org.opensingular.form.wicket.mapper.selection;
 
+import com.google.gson.Gson;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.json.JSONArray;
-import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
@@ -53,7 +52,9 @@ import org.opensingular.lib.commons.lambda.IFunction;
 import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -91,6 +92,8 @@ public class TypeaheadComponent extends Panel {
     private       BloodhoundDataBehavior      dynamicFetcher;
     private       TextField<String>           valueField;
     private       TextField<String>           labelField;
+    private       String                      notFoundMessage;
+    private       int                         minLength = 1;
 
     public TypeaheadComponent(String id, IModel<? extends SInstance> model, SViewAutoComplete.Mode fetch) {
         super(id);
@@ -101,13 +104,13 @@ public class TypeaheadComponent extends Panel {
     }
 
     protected static String generateResultOptions(Map<String, String> options) {
-        JSONArray arr = new JSONArray();
-        options.entrySet().forEach((e) -> arr.put(newValue(e.getKey(), e.getValue())));
-        return arr.toString();
+        List<Map<String, String>> lista = new ArrayList<>();
+        options.entrySet().forEach((e) -> lista.add(newValue(e.getKey(), e.getValue())));
+        return new Gson().toJson(lista);
     }
 
-    protected static JSONObject newValue(String key, String label) {
-        JSONObject value = new JSONObject();
+    protected static Map<String, String> newValue(String key, String label) {
+        Map<String, String> value = new HashMap<>();
         value.put(BLOODHOUND_SUGGESTION_KEY_NAME, key);
         value.put(BLOODHOUND_SUGGESTION_LABEL_NAME, label);
         return value;
@@ -259,7 +262,7 @@ public class TypeaheadComponent extends Panel {
         js += " $('#" + labelField.getMarkupId() + "').typeahead( ";
         js += "     { ";
         js += "          highlight: true,";
-        js += "          minLength: 0,";
+        js += "          minLength: " + getMinLength() + ",";
         js += "          hint:false";
         js += "      },";
         js += "     {";
@@ -267,6 +270,13 @@ public class TypeaheadComponent extends Panel {
         js += "        display: 'value', ";
         js += "        typeaheadAppendToBody: 'true',";
         js += "        limit: Infinity,";// não limita os resultados exibidos
+        if (StringUtils.isNotBlank(notFoundMessage)) {
+            js += "        templates: {";
+            js += "             empty: function(context) {";
+            js += "                 $('.tt-dataset').text('" + notFoundMessage + "'.replace('{0}', context.query));";
+            js += "             }";
+            js += "        },";
+        }
         js += "        source: window.substringMatcher(" + jsOptionArray() + ") ";
         js += "     }";
         js += " );";
@@ -279,13 +289,20 @@ public class TypeaheadComponent extends Panel {
         js += " $('#" + container.getMarkupId() + " .typeahead').typeahead( ";
         js += "     { ";
         js += "          limit: Infinity,";
-        js += "          minLength: 1,";
+        js += "          minLength: " + getMinLength() + ",";
         js += "          hint:false";
         js += "      },";
         js += "     {";
         js += "        name : 's-select-typeahead', ";
         js += "        display: 'value', ";
         js += "        limit: Infinity,";// não limita os resultados exibidos
+        if (StringUtils.isNotBlank(notFoundMessage)) {
+            js += "        templates: {";
+            js += "             empty: function(context) {";
+            js += "                 $('.tt-dataset').text('" + notFoundMessage + "'.replace('{0}', context.query));";
+            js += "             }";
+            js += "        },";
+        }
         js += "        source: " + createJSBloodhoundOpbject();
         js += "     }";
         js += " );";
@@ -354,6 +371,23 @@ public class TypeaheadComponent extends Panel {
 
     public TextField<String> getValueField() {
         return valueField;
+    }
+
+    public String getNotFoundMessage() {
+        return notFoundMessage;
+    }
+
+    public void setNotFoundMessage(String notFoundMessage) {
+        this.notFoundMessage = notFoundMessage;
+    }
+
+    public int getMinLength() {
+        return minLength;
+    }
+
+    public TypeaheadComponent setMinLength(int minLength) {
+        this.minLength = minLength;
+        return this;
     }
 }
 

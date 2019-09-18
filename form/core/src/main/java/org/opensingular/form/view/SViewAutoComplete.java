@@ -30,8 +30,33 @@ package org.opensingular.form.view;
  */
 public class SViewAutoComplete extends SView {
 
-    public enum Mode {STATIC, DYNAMIC}
+    public enum Mode {
+        STATIC("Estático"),
+        DYNAMIC("Dinâmico");
+
+        private String descricao;
+
+        Mode(String descricao) {
+            this.descricao = descricao;
+        }
+
+        public String getDescricao() {
+            return descricao;
+        }
+
+        public static Mode valueOfEnum(String name) {
+            for (Mode type : values()) {
+                if (type.name().equals(name)) {
+                    return type;
+                }
+            }
+
+            return null;
+        }
+    }
     protected Mode fetch = Mode.STATIC;
+    private String notFoundMessage;
+    protected int minLength = 0;
 
     public Mode fetch() {   return fetch;}
 
@@ -39,5 +64,35 @@ public class SViewAutoComplete extends SView {
 
     public SViewAutoComplete(Mode fetch){
         this.fetch = fetch;
+    }
+
+    public int getMinLength() {
+        return minLength;
+    }
+
+    public SViewAutoComplete setMinLength(int minLength) {
+        this.minLength = minLength;
+        return this;
+    }
+
+    public SViewAutoComplete setFetch(Mode fetch) {
+        this.fetch = fetch;
+        return this;
+    }
+
+    public String getNotFoundMessage() {
+        return notFoundMessage;
+    }
+
+    /**
+     * Mensage a ser exibida quando não for encontrado nenhum resultado.
+     * Utilize {0} na mensagem quando quiser que a string pesquisada seja
+     * mostrada na mensagem
+     * @param notFoundMessage mensagem a ser exibida
+     * @return o this
+     */
+    public SViewAutoComplete withNotFoundMessage(String notFoundMessage) {
+        this.notFoundMessage = notFoundMessage;
+        return this;
     }
 }
