@@ -35,7 +35,7 @@ public class STypeBankAccount extends STypeComposite<SIComposite> implements Log
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        asAtr().displayString("${agencia!} - ${conta!} - ${banco!}");
+        asAtr().displayString("Banco:  ${banco!} | Agência: ${agencia!} | Conta Corrente: ${conta!}");
         banco = this.addFieldString("banco");
         banco.asAtr().maxLength(12).required(requiredChildrenWhenParentIsRequired())
                 .label("Banco").asAtrBootstrap().colPreference(2);
