@@ -51,6 +51,7 @@ public class AutocompleteMapper extends AbstractControlsFieldComponentMapper {
         final TypeaheadComponent comp = new TypeaheadComponent(model.getObject().getName(), model, fetch);
         if (view instanceof SViewAutoComplete) {
             comp.setNotFoundMessage(((SViewAutoComplete) view).getNotFoundMessage());
+            comp.setMinLength(((SViewAutoComplete) view).getMinLength());
         }
         formGroup.appendDiv(comp);
         return comp.getValueField();
