@@ -21,8 +21,8 @@ public enum ModalSize {
     NORMAL("Normal"),
     LARGE("Grande"),
     SMALL("Pequena"),
-    FULL("Cheia"),
-    FIT("Caber");
+    FULL("Máximo"),
+    FIT("Adaptável ao conteúdo");
 
     private String descricao;
 
