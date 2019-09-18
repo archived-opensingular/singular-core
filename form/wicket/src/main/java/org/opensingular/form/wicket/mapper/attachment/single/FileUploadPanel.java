@@ -63,6 +63,7 @@ import org.opensingular.lib.commons.util.Loggable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -238,6 +239,8 @@ public class FileUploadPanel extends Panel implements Loggable {
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         PackageTextTemplate fileUploadJSTemplate = new PackageTextTemplate(FileUploadPanel.class, "FileUploadPanel.js");
+        fileUploadJSTemplate.setCharset(StandardCharsets.UTF_8);
+        fileUploadJSTemplate.setEncoding("UTF-8");
         Map<String, String> params               = new HashMap<>();
         params.put("maxChunkSize", SingularProperties.get(SINGULAR_FILEUPLOAD_MAXCHUNKSIZE, DEFAULT_FILE_UPLOAD_MAX_CHUNK_SIZE));
 

@@ -21,6 +21,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDat
 import org.apache.wicket.extensions.markup.html.repeater.tree.ISortableTreeProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.opensingular.lib.commons.lambda.IConsumer;
 import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.wicket.util.datatable.column.BSActionColumn;
@@ -38,21 +39,25 @@ import java.util.List;
  */
 public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> implements Serializable {
 
-    public interface BSActionColumnCallback<T, S> extends IConsumer<BSActionColumn<T, S>> {}
+    public interface BSActionColumnCallback<T, S> extends IConsumer<BSActionColumn<T, S>> {
+    }
 
-    private final List<? extends IColumn<T, S>> columns              = new ArrayList<>();
-    private ISortableDataProvider<T, S>         dataProvider;
-    private ISortableTreeProvider<T, S>         treeProvider;
-    private Long                                rowsPerPage          = null;
+    private final List<? extends IColumn<T, S>> columns     = new ArrayList<>();
+    private       ISortableDataProvider<T, S>   dataProvider;
+    private       ISortableTreeProvider<T, S>   treeProvider;
+    private       Long                          rowsPerPage = null;
 
-    private boolean                             stripedRows          = true;
-    private boolean                             hoverRows            = true;
-    private boolean                             borderedTable        = true;
-    private boolean                             advanceTable         = false;
-    private boolean                             condensedTable       = false;
-    private boolean                             showNoRecordsToolbar = true;
+    private boolean        stripedRows          = true;
+    private boolean        hoverRows            = true;
+    private boolean        borderedTable        = true;
+    private boolean        advanceTable         = false;
+    private boolean        condensedTable       = false;
+    private boolean        showNoRecordsToolbar = true;
+    private IModel<String> noRecordsMessage     = new ResourceModel("datatable.no-records-found");
 
-    public BSDataTableBuilder() {}
+
+    public BSDataTableBuilder() {
+    }
 
     public BSDataTableBuilder(ISortableDataProvider<T, S> dataProvider) {
         setDataProvider(dataProvider);
@@ -65,12 +70,13 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> implements 
     public static <T> BSDataTableBuilder<T, ?, ?> create() {
         return new BSDataTableBuilder<>();
     }
+
     @SuppressWarnings("unchecked")
     public static <T, S> BSDataTableBuilder<T, S, IColumn<T, S>> create(Class<T> beanType, Class<S> sortType) {
         return (BSDataTableBuilder<T, S, IColumn<T, S>>) create();
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public <C extends IColumn<T, S>> BSDataTableBuilder<T, S, C> appendColumn(C column) {
         ((List) columns).add(column);
         return (BSDataTableBuilder<T, S, C>) this;
@@ -85,6 +91,7 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> implements 
     public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(IModel<String> displayModel, IFunction<T, Object> propertyFunction) {
         return appendColumn(new BSPropertyColumn<>(displayModel, propertyFunction));
     }
+
     public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(String headerTitle, IFunction<T, Object> propertyFunction) {
         return appendPropertyColumn(Model.of(headerTitle), propertyFunction);
     }
@@ -92,6 +99,7 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> implements 
     public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(IModel<String> displayModel, String propertyExpression) {
         return appendColumn(new BSPropertyColumn<>(displayModel, propertyExpression));
     }
+
     public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(String headerTitle, String propertyExpression) {
         return appendPropertyColumn(Model.of(headerTitle), propertyExpression);
     }
@@ -99,6 +107,7 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> implements 
     public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(IModel<String> displayModel, S sortProperty, IFunction<T, ?> propertyFunction) {
         return appendColumn(new BSPropertyColumn<>(displayModel, sortProperty, propertyFunction));
     }
+
     public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(String headerTitle, S sortProperty, IFunction<T, ?> propertyFunction) {
         return appendPropertyColumn(Model.of(headerTitle), sortProperty, propertyFunction);
     }
@@ -108,7 +117,7 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> implements 
     }
 
     public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(IModel<String> displayModel, S sortProperty, String propertyExpression, String cssClass) {
-        return appendColumn(new BSPropertyColumn<T, S>(displayModel, sortProperty, propertyExpression){
+        return appendColumn(new BSPropertyColumn<T, S>(displayModel, sortProperty, propertyExpression) {
             @Override
             public String getCssClass() {
                 return cssClass;
@@ -121,8 +130,8 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> implements 
     }
 
     public BSDataTableBuilder<T, S, BSPropertyActionColumn<T, S>> appendPropertyActionColumn(IModel<String> displayModel,
-            IFunction<T, Object> propertyFunction) {
-       return appendColumn(new BSPropertyActionColumn<>(displayModel, propertyFunction));
+                                                                                             IFunction<T, Object> propertyFunction) {
+        return appendColumn(new BSPropertyActionColumn<>(displayModel, propertyFunction));
     }
 
     public BSDataTableBuilder<T, S, BSActionColumn<T, S>> appendActionColumn(IModel<String> displayModel, BSActionColumnCallback<T, S> callback) {
@@ -131,7 +140,7 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> implements 
         return appendColumn(column);
     }
 
-    public BSDataTableBuilder<T, S, BSActionColumn<T, S>> appendStaticActionColumn(BSActionColumn column){
+    public BSDataTableBuilder<T, S, BSActionColumn<T, S>> appendStaticActionColumn(BSActionColumn column) {
         return appendColumn(column);
     }
 
@@ -189,38 +198,47 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> implements 
         return this;
     }
 
+    public IModel<String> getNoRecordsMessage() {
+        return noRecordsMessage;
+    }
+
+    public BSDataTableBuilder<T, S, PREVCOL> setNoRecordsMessage(IModel<String> noRecordsMessage) {
+        this.noRecordsMessage = noRecordsMessage;
+        return this;
+    }
+
     public BSDataTable<T, S> build(String id) {
         return newDatatable(id, new ArrayList<>(columns), dataProvider)
-            .setRowsPerPage(rowsPerPage)
-            .setStripedRows(stripedRows)
-            .setHoverRows(hoverRows)
-            .setAdvanceTable(advanceTable)
-            .setBorderedTable(borderedTable)
-            .setCondensedTable(condensedTable)
-            .setShowNoRecordsToolbar(showNoRecordsToolbar);
+                .setRowsPerPage(rowsPerPage)
+                .setStripedRows(stripedRows)
+                .setHoverRows(hoverRows)
+                .setAdvanceTable(advanceTable)
+                .setBorderedTable(borderedTable)
+                .setCondensedTable(condensedTable)
+                .setShowNoRecordsToolbar(showNoRecordsToolbar);
     }
 
     protected BSDataTable<T, S> newDatatable(String id, List<? extends IColumn<T, S>> columns, ISortableDataProvider<T, S> dataProvider) {
-        return new BSDataTable<>(id, new ArrayList<>(columns), dataProvider);
+        return new BSDataTable<>(id, new ArrayList<>(columns), dataProvider, noRecordsMessage);
     }
 
     public BSFlexDataTable<T, S> buildFlex(String id) {
         BSFlexDataTable<T, S> table = new BSFlexDataTable<>(id, new ArrayList<>(columns), dataProvider);
         table
-            .setRowsPerPage(rowsPerPage)
-            .setStripedRows(stripedRows)
-            .setHoverRows(hoverRows)
-            .setBorderedTable(borderedTable)
-            .setCondensedTable(condensedTable);
+                .setRowsPerPage(rowsPerPage)
+                .setStripedRows(stripedRows)
+                .setHoverRows(hoverRows)
+                .setBorderedTable(borderedTable)
+                .setCondensedTable(condensedTable);
         return table;
     }
 
     public BSTableTree<T, S> buildTree(String id) {
         return new BSTableTree<>(id, new ArrayList<>(columns), treeProvider)
-            .setRowsPerPage(rowsPerPage)
-            .setStripedRows(stripedRows)
-            .setHoverRows(hoverRows)
-            .setBorderedTable(borderedTable)
-            .setCondensedTable(condensedTable);
+                .setRowsPerPage(rowsPerPage)
+                .setStripedRows(stripedRows)
+                .setHoverRows(hoverRows)
+                .setBorderedTable(borderedTable)
+                .setCondensedTable(condensedTable);
     }
 }

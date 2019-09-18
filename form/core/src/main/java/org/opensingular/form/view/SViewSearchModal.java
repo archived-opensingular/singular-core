@@ -17,7 +17,9 @@
 package org.opensingular.form.view;
 
 import org.apache.commons.lang3.StringUtils;
+import org.opensingular.form.SInstance;
 import org.opensingular.form.enums.ModalSize;
+import org.opensingular.lib.commons.lambda.IFunction;
 
 /**
  * The type S view search modal.
@@ -30,6 +32,8 @@ public class SViewSearchModal extends SView implements ConfigurableModal<SViewSe
     private boolean enableRowClick;
     private String labelButton;
     private boolean showRemoveButton;
+    private String noRecordsMessage;
+    private IFunction<SInstance, String> alertMessageProvider;
 
     /**
      * Instantiates a new S view search modal.
@@ -132,6 +136,24 @@ public class SViewSearchModal extends SView implements ConfigurableModal<SViewSe
 
     public boolean isShowRemoveButton() {
         return showRemoveButton;
+    }
+
+    public SViewSearchModal setNoRecordsMessage(String noRecordsMessage) {
+        this.noRecordsMessage = noRecordsMessage;
+        return this;
+    }
+
+    public String getNoRecordsMessage() {
+        return noRecordsMessage;
+    }
+
+    public SViewSearchModal setAlertMessageProvider(IFunction<SInstance, String> alertMessageProvider) {
+        this.alertMessageProvider = alertMessageProvider;
+        return this;
+    }
+
+    public IFunction<SInstance, String> getAlertMessageProvider() {
+        return alertMessageProvider;
     }
 }
 

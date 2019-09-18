@@ -16,6 +16,7 @@
 
 package org.opensingular.form.wicket.mapper.search;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -30,6 +31,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.opensingular.form.SIComposite;
@@ -52,6 +54,7 @@ import org.opensingular.form.wicket.model.ISInstanceAwareModel;
 import org.opensingular.form.wicket.model.SInstanceRootModel;
 import org.opensingular.form.wicket.panel.SingularFormPanel;
 import org.opensingular.lib.commons.lambda.IConsumer;
+import org.opensingular.lib.commons.lambda.IFunction;
 import org.opensingular.lib.commons.lambda.ISupplier;
 import org.opensingular.lib.commons.util.Loggable;
 import org.opensingular.lib.wicket.util.datatable.BSDataTableBuilder;
@@ -94,8 +97,8 @@ class SearchModalBodyPanel extends Panel implements Loggable {
 
     SearchModalBodyPanel(String id, WicketBuildContext ctx, IConsumer<AjaxRequestTarget> selectCallback) {
         super(id);
-        this.ctx = ctx;
-        this.viewSupplier = ctx.getViewSupplier(SViewSearchModal.class);
+        this.ctx            = ctx;
+        this.viewSupplier   = ctx.getViewSupplier(SViewSearchModal.class);
         this.selectCallback = selectCallback;
         validate();
     }
@@ -115,9 +118,9 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         super.onInitialize();
 
         final Component filterButton;
-        dataTableFilter = new DataTableFilter();
+        dataTableFilter        = new DataTableFilter();
         innerSingularFormPanel = buildInnerSingularFormPanel();
-        filterButton = buildFilterButton();
+        filterButton           = buildFilterButton();
         add(buildRemoveElement());
         resultTable = buildResultTable(getConfig());
         resultTable.add(new Behavior() {
@@ -130,6 +133,23 @@ class SearchModalBodyPanel extends Panel implements Loggable {
         add(innerSingularFormPanel);
         add(filterButton);
         add(resultTable);
+
+        add(new Label("alertMessage", new LoadableDetachableModel<String>() {
+            @Override
+            protected String load() {
+                IFunction<SInstance, String> msgProvider = viewSupplier.get().getAlertMessageProvider();
+                if (msgProvider != null) {
+                    return msgProvider.apply(getInstance());
+                }
+                return null;
+            }
+        }) {
+            @Override
+            public boolean isVisible() {
+                final Object modelObject = getDefaultModelObject();
+                return modelObject != null && StringUtils.isNotEmpty(getDefaultModel().toString());
+            }
+        });
 
         innerSingularFormPanel.add($b.onEnterDelegate(filterButton, SINGULAR_PROCESS_EVENT));
 
@@ -234,6 +254,10 @@ class SearchModalBodyPanel extends Panel implements Loggable {
                             selectCallback.accept(target);
                         }));
 
+        final String noRecordsMessage = viewSupplier.get().getNoRecordsMessage();
+        if (StringUtils.isNotEmpty(noRecordsMessage)) {
+            builder.setNoRecordsMessage(Model.of(noRecordsMessage));
+        }
 
         return builder.build(RESULT_TABLE_ID)
                 .setOnNewRowItem(i -> i.add(getSelectedRowBehavior()));
