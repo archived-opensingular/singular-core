@@ -59,7 +59,8 @@ class MasterDetailModal extends AbstractCompositeModal {
         closeCallback   = target1 -> revert();
         currentInstance = new SInstanceListItemModel<>(getModel(), list.indexOf(list.addNew()));
         actionLabel.setObject(getView().getNewActionLabel());
-        configureNewContent(actionLabel.getObject(), target, null);
+        MasterDetailModal.this.configureNewContent(actionLabel.getObject(), target, null);
+        btnCancel.setVisible(true);
     }
 
     @Override

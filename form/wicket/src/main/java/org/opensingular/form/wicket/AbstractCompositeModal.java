@@ -44,6 +44,7 @@ public abstract class AbstractCompositeModal extends BFModalWindow {
     protected IModel<String>               actionLabel;
     public    ActionAjaxButton             addButton;
     private   IConsumer<AjaxRequestTarget> onHideCallback;
+    protected ActionAjaxLink<Void>         btnCancel;
 
     public AbstractCompositeModal(String id,
                           IModel<? extends SInstance> model,
@@ -94,7 +95,7 @@ public abstract class AbstractCompositeModal extends BFModalWindow {
         this.addButton(BSModalBorder.ButtonStyle.EMPTY, actionLabel, addButton);
 
         if (viewMode.isEdition()) {
-            this.addLink(BSModalBorder.ButtonStyle.CANCEL, $m.ofValue("Cancelar"), new ActionAjaxLink<Void>("btn-cancelar") {
+            btnCancel = new ActionAjaxLink<Void>("btn-cancelar") {
                 @Override
                 protected void onAction(AjaxRequestTarget target) {
                     rollbackTheInstance(target);
@@ -102,7 +103,8 @@ public abstract class AbstractCompositeModal extends BFModalWindow {
                         WicketFormProcessing.validateErrors(this.getParent(), target, model.getObject(), false);
                     }
                 }
-            });
+            };
+            this.addLink(BSModalBorder.ButtonStyle.CANCEL, $m.ofValue("Cancelar"), btnCancel);
         }
 
         getModalBorder().setCloseIconCallback(this::rollbackTheInstance);
@@ -149,15 +151,23 @@ public abstract class AbstractCompositeModal extends BFModalWindow {
      * @param viewMode The viewMode, this is useful for force READ_ONLY case.
      */
     public void showExisting(AjaxRequestTarget target, IModel<SInstance> forEdit, WicketBuildContext ctx, @Nullable ViewMode viewMode) {
-        closeCallback = null;
+        closeCallback   = null;
         currentInstance = forEdit;
         String prefix;
-        if (isEdition(ctx)) {
+        boolean isEdition = ctx.getViewMode().isEdition();
+        if (viewMode != null) {
+            isEdition = viewMode.isEdition();
+        }
+        if (isEdition) {
             prefix = getView().getEditActionLabel();
             actionLabel.setObject(prefix);
         } else {
             prefix = "";
             actionLabel.setObject("Fechar");
+        }
+
+        if (btnCancel != null) {
+            btnCancel.setVisible(isEdition);
         }
         saveState();
         configureNewContent(prefix, target, viewMode);
