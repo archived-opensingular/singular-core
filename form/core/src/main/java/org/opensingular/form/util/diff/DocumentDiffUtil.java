@@ -16,6 +16,7 @@
 
 package org.opensingular.form.util.diff;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.opensingular.form.SIComposite;
 import org.opensingular.form.SIList;
 import org.opensingular.form.SISimple;
@@ -32,6 +33,7 @@ import org.opensingular.form.type.core.attachment.STypeAttachment;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -97,9 +99,9 @@ public final class DocumentDiffUtil {
      * instância. Ou seja, retorna o DiffInfo preenchido com sub DiffInfo (se for o caso).
      */
     private static DiffInfo calculateDiff(DiffInfo parent, SInstance original, SInstance newer) {
-        DiffInfo info = new DiffInfo(original, newer, DiffType.UNKNOWN_STATE);
+        DiffInfo        info          = new DiffInfo(original, newer, DiffType.UNKNOWN_STATE);
         CalculatorEntry originalEntry = getRegister().get(original);
-        CalculatorEntry newerEntry = getRegister().get(newer);
+        CalculatorEntry newerEntry    = getRegister().get(newer);
 
         if (originalEntry != newerEntry && original != null && newer != null) {
             if (parent == null) {
@@ -131,7 +133,7 @@ public final class DocumentDiffUtil {
      */
     private static void calculateDiffSimple(DiffInfo info, SInstance original, SInstance newer) {
         Object originalValue = original == null ? null : original.getValue();
-        Object newerValue = newer == null ? null : newer.getValue();
+        Object newerValue    = newer == null ? null : newer.getValue();
         if (originalValue == null) {
             if (newerValue == null) {
                 info.setType(DiffType.UNCHANGED_EMPTY);
@@ -154,21 +156,31 @@ public final class DocumentDiffUtil {
     private static void calculateDiffComposite(DiffInfo info, SIComposite original, SIComposite newer) {
         Set<String> names = new HashSet<>();
         if (newer != null) {
-            for (SType<?> newerTypeField : newer.getType().getFields()) {
-                SInstance newerField = newer.getField(newerTypeField);
-                SInstance originalField = null;
-                if (original != null) {
-                    originalField = original.getFieldOpt(newerTypeField.getNameSimple()).orElse(null);
+            Collection<SType<?>> fields = newer.getType().getFields();
+            if (CollectionUtils.isEmpty(fields)) {
+                info.setType(DiffType.UNCHANGED_EMPTY);
+            } else {
+                for (SType<?> newerTypeField : fields) {
+                    SInstance newerField    = newer.getField(newerTypeField);
+                    SInstance originalField = null;
+                    if (original != null) {
+                        originalField = original.getFieldOpt(newerTypeField.getNameSimple()).orElse(null);
+                    }
+                    calculateDiff(info, originalField, newerField);
+                    names.add(newerTypeField.getNameSimple());
                 }
-                calculateDiff(info, originalField, newerField);
-                names.add(newerTypeField.getNameSimple());
             }
         }
         if (original != null) {
             //noinspection Convert2streamapi
-            for (SType<?> originalTypeField : original.getType().getFields()) {
-                if (!names.contains(originalTypeField.getNameSimple())) {
-                    calculateDiff(info, original.getField(originalTypeField), null);
+            Collection<SType<?>> fields = original.getType().getFields();
+            if (CollectionUtils.isEmpty(fields)) {
+                info.setType(DiffType.UNCHANGED_EMPTY);
+            } else {
+                for (SType<?> originalTypeField : fields) {
+                    if (!names.contains(originalTypeField.getNameSimple())) {
+                        calculateDiff(info, original.getField(originalTypeField), null);
+                    }
                 }
             }
         }
@@ -184,11 +196,11 @@ public final class DocumentDiffUtil {
                 original.getValues());
         List<? extends SInstance> newerList = newer == null ? Collections.emptyList() : new LinkedList<>(
                 newer.getValues());
-        boolean[] consumed = new boolean[newerList.size()];
-        int posNotConsumed = 0;
+        boolean[] consumed       = new boolean[newerList.size()];
+        int       posNotConsumed = 0;
         for (int posO = 0; posO < originals.size(); posO++) {
-            SInstance iO = originals.get(posO);
-            int posN = findById(iO.getId(), newerList);
+            SInstance iO   = originals.get(posO);
+            int       posN = findById(iO.getId(), newerList);
             if (posN != -1) {
                 posNotConsumed = calculateDiffNewListElement(info, newerList, posN, consumed, posNotConsumed);
             }
@@ -222,8 +234,8 @@ public final class DocumentDiffUtil {
     private static int diffLine(DiffInfo parent, SInstance instanceOriginal, int posO,
                                 List<? extends SInstance> newerList, boolean[] consumed, int posN, int posNotConsumed) {
         SInstance instanceNewer = posN == -1 ? null : newerList.get(posN);
-        DiffInfo info = calculateDiff(parent, instanceOriginal, instanceNewer);
-        int returnValue = posNotConsumed;
+        DiffInfo  info          = calculateDiff(parent, instanceOriginal, instanceNewer);
+        int       returnValue   = posNotConsumed;
         info.setOriginalIndex(posO);
         if (posN != -1) {
             info.setNewerIndex(posN);
@@ -265,7 +277,7 @@ public final class DocumentDiffUtil {
      */
     private static void calculateDiffAttachment(DiffInfo info, SIAttachment original, SIAttachment newer) {
         boolean originalEmpty = original == null || original.getFileId() == null;
-        boolean newerEmpty = newer == null || newer.getFileId() == null;
+        boolean newerEmpty    = newer == null || newer.getFileId() == null;
 
         if (originalEmpty) {
             calculateDiffAttachmentWhenOriginalEmpty(info, newer, newerEmpty);
@@ -319,7 +331,7 @@ public final class DocumentDiffUtil {
             return info.copyWithoutChildren();
         }
         List<DiffInfo> children = info.getChildren();
-        List<DiffInfo> newList = new ArrayList<>(children.size());
+        List<DiffInfo> newList  = new ArrayList<>(children.size());
         for (DiffInfo child : children) {
             child = removeUnchangedAndCompact(child);
             if (child != null) {
@@ -408,7 +420,7 @@ public final class DocumentDiffUtil {
             if (instance == null) {
                 return null;
             }
-            SType<?> type = instance.getType();
+            SType<?>        type  = instance.getType();
             CalculatorEntry entry = root.get(type.getClass());
             if (entry == null || entry == root) {
                 throw new SingularFormException(
@@ -426,9 +438,9 @@ public final class DocumentDiffUtil {
      * esse último é uma class derivada de {@link STypeComposite}.</p>
      */
     private static class CalculatorEntry {
-        private final Class<?> typeClass;
+        private final Class<?>              typeClass;
         private final TypeDiffCalculator<?> calculator;
-        private List<CalculatorEntry> subEntries;
+        private       List<CalculatorEntry> subEntries;
 
         private CalculatorEntry(Class<?> typeClass, TypeDiffCalculator<?> calculator) {
             this.typeClass = typeClass;

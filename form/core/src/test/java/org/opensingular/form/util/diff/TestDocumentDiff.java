@@ -121,6 +121,47 @@ public class TestDocumentDiff extends TestCaseForm {
     }
 
     @Test
+    public void testEmptyCompositeType() {
+        STypeComposite emptyType = createTestDictionary().getType(STypeComposite.class);
+
+        SIComposite emptyInstance1 = (SIComposite) emptyType.newInstance();
+        SIComposite emptyInstance2 = (SIComposite) emptyType.newInstance();
+
+        DocumentDiff diff;
+        diff = calculateDiff(emptyInstance1, emptyInstance1, 0);
+        assertDiffUnchangedEmpty(diff, emptyType);
+
+        diff = calculateDiff(emptyInstance1, emptyInstance2, 0);
+        assertDiffUnchangedEmpty(diff, emptyType);
+
+
+        diff = calculateDiff(emptyInstance2, emptyInstance1, 0);
+        assertDiffUnchangedEmpty(diff, emptyType);
+    }
+
+    @Test
+    public void testEmptyCompositeDifferentType() {
+        STypeComposite emptyType = createTestDictionary().getType(STypeComposite.class);
+        TestCompositeB typeB = createTestDictionary().getType(TestCompositeB.class);
+
+        SIComposite emptyInstance1 = (SIComposite) emptyType.newInstance();
+        SIComposite iB1 = typeB.newInstance();
+        iB1.setValue(typeB.name, "Daniel");
+        iB1.setValue(typeB.info, "special");
+
+        DocumentDiff diff;
+        diff = calculateDiff(emptyInstance1, iB1, 2);
+        assertDiffNew(diff, typeB.name);
+        assertDiffNew(diff, typeB.info);
+
+        diff = calculateDiff(iB1, emptyInstance1, 2);
+        assertDiffDeleted(diff, typeB.name);
+        assertDiffDeleted(diff, typeB.info);
+
+
+    }
+
+    @Test
     public void testCompositeOfDifferentTypes() {
         TestCompositeA typeA = createTestDictionary().getType(TestCompositeA.class);
         TestCompositeB typeB = createTestDictionary().getType(TestCompositeB.class);
