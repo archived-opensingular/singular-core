@@ -50,7 +50,7 @@ h4 + .decorator-actions.align-right {
 }
 
 .decorator-actions.align-left {
-  display: inline-block;
+  display: contents;
   //position: absolute; //BUG quando o help está no título de um bloco. A barra de rolagem cresce indefinidamente
   height: 100%;
   margin-left: 1em;
