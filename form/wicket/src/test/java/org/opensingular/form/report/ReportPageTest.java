@@ -18,6 +18,8 @@
 
 package org.opensingular.form.report;
 
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.filter.FilteringHeaderResponse;
 import org.junit.Test;
 import org.opensingular.form.PackageBuilder;
 import org.opensingular.form.SType;
@@ -108,6 +110,11 @@ public class ReportPageTest extends SingularWicketTestCase {
             @Override
             protected void configureMenu(ReportMenuBuilder menu) {
                 menu.addItem(DefaultIcons.PENCIL, "X1", report);
+            }
+
+            @Override
+            public void renderHead(IHeaderResponse response) {
+                new FilteringHeaderResponse(response);
             }
         };
     }
