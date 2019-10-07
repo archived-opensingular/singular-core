@@ -18,6 +18,8 @@
 
 package org.opensingular.lib.wicket.util.template;
 
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.filter.FilteringHeaderResponse;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Test;
 import org.opensingular.lib.wicket.util.WicketUtilsDummyApplication;
@@ -32,7 +34,10 @@ public class SingularTemplateTest {
     }
 
     private static class AdmTemplate extends SingularTemplate {
-
+        @Override
+        public void renderHead(IHeaderResponse response) {
+            new FilteringHeaderResponse(response);
+        }
     }
 
 }

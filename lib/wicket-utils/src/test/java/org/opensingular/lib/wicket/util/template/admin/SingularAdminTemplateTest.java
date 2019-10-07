@@ -18,6 +18,8 @@
 
 package org.opensingular.lib.wicket.util.template.admin;
 
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.filter.FilteringHeaderResponse;
 import org.apache.wicket.mock.MockApplication;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -54,6 +56,12 @@ public class SingularAdminTemplateTest extends WicketTestCase {
         @Override
         protected boolean isWithMenu() {
             return false;
+        }
+
+        @Override
+        public void renderHead(IHeaderResponse response) {
+            new FilteringHeaderResponse(response);
+            super.renderHead(response);
         }
     }
 }

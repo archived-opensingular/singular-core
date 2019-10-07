@@ -104,14 +104,15 @@ public abstract class SingularTemplate extends WebPage {
 
     @Override
     public void renderHead(IHeaderResponse response) {
-        singularWebResourcesFactory.getStyleHeaders().forEach(response::render);
-        singularWebResourcesFactory.getScriptHeaders().forEach(response::render);
-        final ImmutableMap<String, CharSequence> model = ImmutableMap.of(
-                "logo", getRequestCycle().urlFor(singularWebResourcesFactory.getLogoResourceReference(), null),
-                "errorImage", getRequestCycle().urlFor(singularWebResourcesFactory.gerErrorImageResourceReference(), null));
-
-        final PackageTextTemplate cssTemplate = new PackageTextTemplate(SingularTemplate.class, "SingularTemplate.css");
-        response.render(CssHeaderItem.forCSS(cssTemplate.interpolate(model).getString(), null));
+        if (singularWebResourcesFactory != null) {
+            singularWebResourcesFactory.getStyleHeaders().forEach(response::render);
+            singularWebResourcesFactory.getScriptHeaders().forEach(response::render);
+            final ImmutableMap<String, CharSequence> model = ImmutableMap.of(
+                    "logo", getRequestCycle().urlFor(singularWebResourcesFactory.getLogoResourceReference(), null),
+                    "errorImage", getRequestCycle().urlFor(singularWebResourcesFactory.gerErrorImageResourceReference(), null));
+            final PackageTextTemplate cssTemplate = new PackageTextTemplate(SingularTemplate.class, "SingularTemplate.css");
+            response.render(CssHeaderItem.forCSS(cssTemplate.interpolate(model).getString(), null));
+        }
     }
 
     protected IModel<String> getPageTitleModel() {
