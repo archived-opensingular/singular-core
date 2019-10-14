@@ -18,6 +18,7 @@ public class OcrUtil {
     public static final  String PDF_TO_TIFF_COMMAND       = "singular.fileupload.ocr.pdf_to_tiff.command";
     public static final  String TESSERACT_PDF_OCR_COMMAND = "singular.fileupload.ocr.tesseract.command";
 
+
     public static File runOcrOnPdfCommandLine(File pdfFile) {
         try {
             File   tiffFile  = File.createTempFile(UUID.randomUUID().toString(), ".tiff");
