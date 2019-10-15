@@ -18,6 +18,7 @@ package org.opensingular.form.wicket.mapper.selection;
 
 import com.google.gson.Gson;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -60,6 +61,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.google.common.collect.Maps.newLinkedHashMap;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringEscapeUtils.escapeEcmaScript;
 import static org.opensingular.form.wicket.mapper.selection.TypeaheadComponent.generateResultOptions;
 import static org.opensingular.lib.wicket.util.util.WicketUtils.$b;
 
@@ -258,7 +261,8 @@ public class TypeaheadComponent extends Panel {
     private String staticJSFetch() {
         String js = "";
         js += " $('#" + labelField.getMarkupId() + "').typeahead('destroy');";
-        js += " $('#" + labelField.getMarkupId() + "').val('" + ObjectUtils.defaultIfNull(Optional.ofNullable(labelField.getModel()).map((x) -> x.getObject()).orElse(null), "") + "');";
+
+        js += " $('#" + labelField.getMarkupId() + "').val('" + Optional.ofNullable(labelField.getModel()).map(IModel::getObject).map(StringEscapeUtils::escapeEcmaScript).orElse("") + "');";
         js += " $('#" + labelField.getMarkupId() + "').typeahead( ";
         js += "     { ";
         js += "          highlight: true,";
